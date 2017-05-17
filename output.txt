@@ -1,0 +1,3 @@
+llh@tinymagnet.com:~/DBMS/Run$ ./dbms -?
+(Lena Hellstrom) bad option...should be "f" or "b" or "a"
+llh@tinymagnet.com:~/DBMS/Run$ 
