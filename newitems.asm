@@ -233,29 +233,29 @@ AddReceivedItemExpandedGetItem:
 	+ CMP.b #$70 : !BLT + : CMP.b #$80 : !BGE + ; Free Map
 		AND #$0F : CMP #$08 : !BGE ++
 			%ValueShift()
-			ORA $73F368 : STA $7EF368 ; Map 1
+			ORA $7EF368 : STA $7EF368 ; Map 1
 		++
 			!SUB #$08
 			%ValueShift()
-			ORA $73F369 : STA $7EF369 ; Map 2
+			ORA $7EF369 : STA $7EF369 ; Map 2
 		BRL .done
 	+ CMP.b #$80 : !BLT + : CMP.b #$90 : !BGE + ; Free Compass
 		AND #$0F : CMP #$08 : !BGE ++
 			%ValueShift()
-			ORA $73F364 : STA $7EF364 ; Compass 1
+			ORA $7EF364 : STA $7EF364 ; Compass 1
 		++
 			!SUB #$08
 			%ValueShift()
-			ORA $73F365 : STA $7EF365 ; Compass 2
+			ORA $7EF365 : STA $7EF365 ; Compass 2
 		BRL .done
 	+ CMP.b #$90 : !BLT + : CMP.b #$A0 : !BGE + ; Free Big Key
 		AND #$0F : CMP #$08 : !BGE ++
 			%ValueShift()
-			ORA $73F366 : STA $7EF366 ; Big Key 1
+			ORA $7EF366 : STA $7EF366 ; Big Key 1
 		++
 			!SUB #$08
 			%ValueShift()
-			ORA $73F367 : STA $7EF367 ; Big Key 2
+			ORA $7EF367 : STA $7EF367 ; Big Key 2
 		BRL .done
 	+ CMP.b #$A0 : !BLT + : CMP.b #$B0 : !BGE + ; Free Small Key
 		AND #$0F : TAX
