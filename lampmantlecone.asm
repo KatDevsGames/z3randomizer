@@ -30,4 +30,10 @@ CheckForZelda:
 	LDA $7EF3CC
 RTL
 ;================================================================================
+;--------------------------------------------------------------------------------
+SetOverlayIfLamp:
+	LDA $7EF34A ; check if lamp
+	STA $1D ; write it directly to the overlay, this isn't a terrible idea at all
+RTL
+;================================================================================
 ;LDA $7EF3CA : EOR #$40 : LSR #6 : AND #$01 ; return the same result as having the lantern in the light world

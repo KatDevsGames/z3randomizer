@@ -55,6 +55,7 @@ DrawDungeonCompassCounts:
 		+ : ++
 		JSL.l HexToDec
 		
+		;LDX.b #$00 ; check the width on this
 		LDA $7F5006 : AND.w #$00FF : ORA #$2400 : STA $7EC794
 		LDA $7F5007 : AND.w #$00FF : ORA #$2400 : STA $7EC796
 		

@@ -131,7 +131,7 @@ org $30803B ; PC 0x18003B
 MapMode:
 db #$00 ; #$00 = Always On (default) - #$01 = Require Map Item
 CompassMode:
-db #$01 ; #$00 = Off (default) - #$01 = Display Dungeon Count
+db #$00 ; #$00 = Off (default) - #$01 = Display Dungeon Count
 ;--------------------------------------------------------------------------------
 org $308080 ; PC 0x180080
 Upgrade5BombsRefill:
@@ -145,9 +145,9 @@ db #$00
 ;--------------------------------------------------------------------------------
 org $308084 ; PC 0x180084
 PotionHealthRefill:
-db #$08 ; #$A0 - Full Refill (Default)
+db #$A0 ; #$A0 - Full Refill (Default)
 PotionMagicRefill:
-db #$08 ; #$80 - Full Refill (Default)
+db #$80 ; #$80 - Full Refill (Default)
 ;--------------------------------------------------------------------------------
 org $308040 ; PC 0x180040
 UncleQuote:
