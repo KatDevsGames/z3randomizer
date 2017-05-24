@@ -369,8 +369,8 @@ LDA.w BottleListExpanded, X
 org $09895C ; 4895C - ancilla_init.asm:1344 (LDA PotionList, X)
 LDA.w PotionListExpanded, X
 ;--------------------------------------------------------------------------------
-;org $06D1EB ; 351EB - sprite_absorbable.asm:364 (STA $7EF375) ; bugbug commented out until i figure out why it doesn't work
-;JSL HandleBombAbsorbtion
+org $06D1EB ; 351EB - sprite_absorbable.asm:364 (STA $7EF375) ; bugbug commented out until i figure out why it doesn't work
+JSL HandleBombAbsorbtion
 ;--------------------------------------------------------------------------------
 
 ;================================================================================
@@ -773,7 +773,7 @@ org $1ED577 ; <- F5577 - sprite_agahnim.asm:418 (PHX)
 JML.l GetAgahnimPalette
 GetAgahnimPaletteReturn:
 ;--------------------------------------------------------------------------------
-org $1ED577 ; <- F5577 - sprite_agahnim.asm:587 (INC $0E30, X)
+org $1ED678 ; <- F5678 - sprite_agahnim.asm:587 (INC $0E30, X)
 NOP #2
 JSL.l GetAgahnimLightning
 ;--------------------------------------------------------------------------------

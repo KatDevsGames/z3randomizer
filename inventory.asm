@@ -176,6 +176,7 @@ FullInventoryExternal:
 	LDA !LOCK_STATS : BEQ + : RTL : +
 	PHA : PHX : PHP : JMP AddInventory_fullItemCounts
 ;--------------------------------------------------------------------------------
+!SHAME_CHEST = "$7EF416" ; ---s ----
 AddInventory:
 	PHA : PHX : PHP
 	
@@ -258,6 +259,15 @@ AddInventory:
 	
 	.dungeonCounts
 	LDA $1B : BNE + : BRL .fullItemCounts : +
+	; ==BEGIN INDOOR-ONLY SECTION
+	
+	REP #$20 ; Set 16-bit Accumulator
+	LDA $A0 ; load room ID
+	CMP.w #$0010 : BNE + ; Ganon Fall Room
+		;!SHAME_CHEST = "$7EF416" ; ---s ----
+		LDA !SHAME_CHEST : ORA.w #$0010 : STA !SHAME_CHEST
+	+
+	SEP #$20 ; Set 8-bit Accumulator
 	
 	LDA $040C ; get dungeon id
 	
@@ -315,6 +325,7 @@ AddInventory:
 		;BRL .fullItemCounts
 	+
 	
+	; == END INDOOR-ONLY SECTION
 	.fullItemCounts
 	
 	CPY.b #$3B : BNE + ; Skip Total Counts for Repeat Silver Arrows
@@ -459,12 +470,40 @@ AddInventory:
 	+ CPY.b #$50 : BNE + ; Master Sword (Safe)
 		JSR .incrementSword
 		BRL .done
-	+ CPY.b #$51 : !BLT + ; Items 4D - 4F - Capacity Upgrades
+	+ CPY.b #$51 : !BLT + ; Items 51 - 54 - Capacity Upgrades
 	  CPY.b #$55 : !BGE +
 		JSR .incrementCapacity
 		BRL .done
 	+ CPY.b #$58 : BNE + ; Upgrade-Only Sivler Arrows
 		JSR .incrementBow
+		BRL .done
+	+ CPY.b #$5E : BNE + ; Progressive Sword
+		JSR .incrementSword
+		BRL .done
+	+ CPY.b #$5F : BNE + ; Progressive Shield
+		JSR .incrementShield
+		BRL .done
+	+ CPY.b #$60 : BNE + ; Progressive Armor
+		JSR .incrementMail
+		BRL .done
+	+ CPY.b #$61 : BNE + ; Progressive Lifting Glove
+		JSR .incrementA
+		BRL .done
+	+ CPY.b #$70 : !BLT + ; Items 70 - 7F - Free Maps
+	  CPY.b #$80 : !BGE +
+		JSR .incrementMap
+		BRL .done
+	+ CPY.b #$80 : !BLT + ; Items 80 - 8F - Free Compasses
+	  CPY.b #$90 : !BGE +
+		JSR .incrementCompass
+		BRL .done
+	+ CPY.b #$90 : !BLT + ; Items 90 - 9F - Free Big Keys
+	  CPY.b #$A0 : !BGE +
+		JSR .incrementBigKey
+		BRL .done
+	+ CPY.b #$A0 : !BLT + ; Items A0 - AF - Free Small Keys
+	  CPY.b #$B0 : !BGE +
+		JSR .incrementKey
 		BRL .done
 	+
 	.done
@@ -620,20 +659,14 @@ RTL
 ;--------------------------------------------------------------------------------
 
 ;--------------------------------------------------------------------------------
-; HandleBombAbsorbtion: ; NOTE CAREFULLY HOW THESE TWO FUNCTIONS ARE PARTIALLY COMMENTED OUT
+; HandleBombAbsorbtion:
 ;--------------------------------------------------------------------------------
 HandleBombAbsorbtion:
 	STA $7EF375 ; thing we wrote over
-;RTL ; don't return, fall throgh to next function
-;--------------------------------------------------------------------------------
-
-;--------------------------------------------------------------------------------
-; Link_ReceiveItem_PreselectItems:
-;--------------------------------------------------------------------------------
-;Link_ReceiveItem_PreselectItems:
-	LDA $0202 : BNE + ; skip if we already have some item selected
-;	LDA $7EF343 : BEQ + ; skip if we have no bombs
+	LDA $0303 : BNE + ; skip if we already have some item selected
 		LDA.b #$04 : STA $0202 ; set selected item to bombs
+		LDA.b #$01 : STA $0303 ; set selected item to bombs
+		JSL.l HUD_RebuildLong
 	+
 RTL
 ;--------------------------------------------------------------------------------

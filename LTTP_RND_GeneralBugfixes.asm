@@ -35,14 +35,15 @@ db #$00 ; expand file to 2mb
 !NPC_FLAGS   = "$7EF410"
 !NPC_FLAGS_2 = "$7EF411"
 !INVENTORY_SWAP = "$7EF412"
-!HUD_FLAG = "$7EF416" ; --h- ----
-!PROGRESSIVE_SHIELD = "$7EF416" ; ss-- ----
 !INVENTORY_SWAP_2 = "$7EF414"
 !MAP_ZOOM = "$7EF415"
+!PROGRESSIVE_SHIELD = "$7EF416" ; ss-- ----
+!HUD_FLAG = "$7EF416" ; --h- ----
+!SHAME_CHEST = "$7EF416" ; ---s ----
 !HAS_GROVE_ITEM = "$7EF416" ; ---- ---g general flags, don't waste these
 !HIGHEST_SWORD_LEVEL = "$7EF417" ; --- -sss
-!FRESH_FILE_MARKER = "$7EF4F0" ; zero if fresh file
 !SRAM_SINK = "$7EF41E" ; <- change this
+!FRESH_FILE_MARKER = "$7EF4F0" ; zero if fresh file
 ;$7EF41A[w] - Programmable Item #1
 ;$7EF41C[w] - Programmable Item #3
 ;$7EF41E[w] - Programmable Item #3
@@ -400,6 +401,9 @@ DrawProgressIcons: ; this returns short
 
 org $0DED29
 DrawEquipment: ; this returns short
+
+org $0DFA78
+HUD_RebuildLong:
 
 org $0EEE10
 Messaging_Text:
