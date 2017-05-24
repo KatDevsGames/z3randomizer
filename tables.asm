@@ -133,6 +133,10 @@ db #$00 ; #$00 = Always On (default) - #$01 = Require Map Item
 CompassMode:
 db #$00 ; #$00 = Off (default) - #$01 = Display Dungeon Count
 ;--------------------------------------------------------------------------------
+org $30803D ; PC 0x18003D
+PersistentFloodgate:
+db #$00 ; #$00 = Off (default) - #$01 = On
+;--------------------------------------------------------------------------------
 org $308080 ; PC 0x180080
 Upgrade5BombsRefill:
 db #$00
