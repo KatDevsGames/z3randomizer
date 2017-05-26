@@ -28,6 +28,7 @@ DarkWorldFlagSet:
 	.noMirror
 	.aga1Alive
 	LDA #$00 : STA $7EF3CA ; set flag to light world
+	LDA $7EF3CC : CMP #$07 : BNE + : LDA.b #$08 : STA $7EF3CC : + ; convert frog to dwarf
 	;LDA $7EF3CC : CMP #$07 : BNE + : LDA.b #$00 : STA $7EF3CC : + ; clear frog
 	.done
 	PLA
@@ -41,7 +42,8 @@ SetDeathWorldChecked:
 	LDA $7EF3C5 : CMP.b #$03 : !BGE .done; thing we originally did - skip if agahnim 1 is dead
 	LDA $A0 : CMP.b #$00 : BEQ .done ; skip if we died in ganon's room
 	LDA.b #$00 : STA $7EF3CA : STA $7E0FFF ; set the world to the light world if he's still alive
-	;LDA $7EF3CC : CMP #$07 : BNE .done : LDA.b #$00 : STA $7EF3CC ; clear dwarf tagalong
+	LDA $7EF3CC : CMP #$07 : BNE .done : LDA.b #$08 : STA $7EF3CC ; convert frog to dwarf
+	;LDA $7EF3CC : CMP #$07 : BNE .done : LDA.b #$00 : STA $7EF3CC ; clear frog
 	.done
 	PLA
 RTL
@@ -49,7 +51,7 @@ RTL
 MasterSwordFollowerClear:
 	LDA $7EF3CC
 	CMP #$0E : BEQ .clear ; clear master sword follower
-	CMP #$07 : BEQ .clear ; clear frog
+	;CMP #$07 : BEQ .clear ; clear frog
 	;CMP #$08 : BEQ .clear ; clear dwarf - consider flute implications
 RTL
 	.clear

@@ -20,10 +20,13 @@ org $00FFD7 ; <- 7FD7 - Bank00.asm : 9177 (db $0A   ; rom size)
 db #$0B ; mark rom as 16mbit
 
 org $00FFD8 ; <- 7FD8 - Bank00.asm : 9178 (db $03   ; ram size (sram size))
-db #$07 ; mark sram as 128k
+db #$05 ; mark sram as 32k
 
 org $3FFFFF ; <- 1FFFFF
 db #$00 ; expand file to 2mb
+
+org $1FFFF8 ; timestamp rom
+dl #$20170525
 
 ;================================================================================
 
@@ -89,6 +92,7 @@ incsrc rngfixes.asm
 incsrc medallions.asm
 incsrc inventory.asm
 incsrc ganonfixes.asm
+incsrc zelda.asm
 incsrc maidencrystals.asm
 incsrc zoraking.asm
 incsrc catfish.asm
@@ -319,6 +323,9 @@ Sprite_ShowMessageUnconditional:
 
 org $05FA8E
 Sprite_ShowMessageMinimal:
+
+org $05EC96
+Sprite_ZeldaLong:
 
 org $06DC5C
 Sprite_DrawShadowLong:

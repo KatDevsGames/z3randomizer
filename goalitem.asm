@@ -25,3 +25,10 @@ DrawGoalIndicator:
 	PLX
 RTL
 ;--------------------------------------------------------------------------------
+GoalItemGanonCheck:
+	LDA $0E20, X : CMP.b #$D6 : BNE .normal ; skip if not ganon
+		LDA InvincibleGanon : CMP #$01 : BNE + : RTL : +
+	.normal
+	LDA $44 : CMP.b #$80 ; thing we wrote over
+RTL
+;--------------------------------------------------------------------------------
