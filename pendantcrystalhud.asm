@@ -28,18 +28,37 @@ GetCrystalNumber:
 	PLX
 RTL
 ;================================================================================
+!INVENTORY_MAP = "$7EF368"
 OverworldMap_CheckObject:
-	LDA $FFFFFF
 	PHX
+		LDA $FFFFFF
 		LDA $7EF3C7 : CMP.b #$03 : BNE +
 			;LW Map
+			LDA.l MapMode : BEQ +++
+			LDA.l !INVENTORY_MAP : AND.b #$01 : BNE +++
+				PHX
+					LDA.l .lw_map_offsets, X : TAX ; put map offset into X
+					LDA.l !INVENTORY_MAP, X
+				PLX
+				AND.l .lw_map_masks, X : BNE +++
+				BRL .fail
+			+++
 			LDA.l .lw_offsets, X
-			BPL +++ : CLC : BRA .done : +++
+			BPL +++ : CLC : BRA .done : +++ ; don't display master sword
 			TAX : BRA ++
 		+ : CMP.b #$07 : BNE .fail
 			;DW Map
-			LDA.l .dw_offsets, X : TAX
-			BRA ++
+			LDA.l MapMode : BEQ +++
+			LDA.l !INVENTORY_MAP : AND.b #$02 : BNE +++
+				PHX
+					LDA.l .dw_map_offsets, X : TAX ; put map offset into X
+					LDA.l !INVENTORY_MAP, X
+				PLX
+				AND.l .dw_map_masks, X : BNE +++
+				BRL .fail
+			+++
+			LDA.l .dw_offsets, X
+			TAX : BRA ++
 	SEC
 	PLX
 RTL
@@ -64,6 +83,14 @@ RTL
 db $02, $0A, $03, $FF
 .dw_offsets
 db $06, $08, $0C, $0B, $07, $09, $05
+.lw_map_offsets
+db $01, $01, $00
+.dw_map_offsets
+db $01, $01, $00, $00, $00, $01, $00
+.lw_map_masks
+db $20, $10, $20, $00
+.dw_map_masks
+db $02, $04, $80, $10, $40, $01, $04
 ;================================================================================
 SetLWDWMap:
 	PHP

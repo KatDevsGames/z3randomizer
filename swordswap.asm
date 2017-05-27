@@ -42,3 +42,30 @@ GetSmithSword:
 	JSL ItemSet_SmithSword
 	JMP.l Smithy_AlreadyGotSword
 ;================================================================================
+CheckMedallionSword:
+	;LDA $FFFFFF
+	PHB : PHX : PHY
+		LDA.l SwordlessMode : BEQ +
+			LDA $8A : CMP.b #$70 : BNE ++
+				LDA.l MireRequiredMedallion : TAX : LDA.l .medallion_type, X : CMP $0303 : BNE +
+				LDA $7EF2F0 : AND.b #$20 : BNE +
+				LDA.b #$08 : PHA : PLB ; set data bank to $08
+				LDY.b #$02 : JSL.l Ancilla_CheckIfEntranceTriggered : BCS .permit ; misery mire
+				BRA +
+			++ : CMP.b #$47 : BNE ++
+				LDA.l TRockRequiredMedallion : TAX : LDA.l .medallion_type, X : CMP $0303 : BNE +
+				LDA $7EF2C7 : AND.b #$20 : BNE +
+				LDA.b #$08 : PHA : PLB ; set data bank to $08
+				LDY.b #$03 : JSL.l Ancilla_CheckIfEntranceTriggered : BCS .permit ; turtle rock
+			++
+		+
+	PLY : PLX : PLB
+	LDA $7EF359
+RTL
+	.permit
+	PLY : PLX : PLB
+	LDA.b #$02 ; Pretend we have master sword
+RTL
+.medallion_type
+db #$0F, #$10, #$11
+;================================================================================

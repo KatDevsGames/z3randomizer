@@ -44,6 +44,10 @@ OnNewFile:
 	LDA.l StartingTime+2 : STA $7EF454+2
 	SEP #$20 ; set 8-bit accumulator
 	;LDA #$FF : STA !RNG_ITEM_LOCK_IN ; reset rng item lock-in
+	LDA.l SwordlessMode : BEQ +
+		;LDA.b #$FF : STA $7EF2XX ; open aga tower curtain
+		;LDA.b #$FF : STA $7EF2XX ; open skull woods curtain
+	+
 RTL
 ;--------------------------------------------------------------------------------
 OnLinkDamaged:

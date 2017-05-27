@@ -75,7 +75,7 @@ PedestalMusicCheck:
 ;db #$01 ; #$01 = Master Sword (default)
 org $0589B0 ; PC 0x289B0 ; sprite_master_sword.asm : 179
 PedestalSword:
-db #$01 ; #$01 = Master Sword (default)
+db #$6A ; #$01 = Master Sword (default)
 
 org $308029 ; PC 0x180029
 SmithItemMode:
@@ -139,6 +139,10 @@ db #$00 ; #$00 = Off (default) - #$01 = On
 ;--------------------------------------------------------------------------------
 org $30803E ; PC 0x18003E
 InvincibleGanon:
+db #$00 ; #$00 = Off (default) - #$01 = On
+;--------------------------------------------------------------------------------
+org $30803F ; PC 0x18003F
+SwordlessMode:
 db #$00 ; #$00 = Off (default) - #$01 = On
 ;--------------------------------------------------------------------------------
 org $308080 ; PC 0x180080
@@ -347,36 +351,6 @@ db $69 ; Eastern
 db $7F ; Darkness
 db $00 ;
 db $00 ;
-; Values are as the table below.
-;--------------------------------------------------------------------------------
-; THIS ENTIRE TABLE IS DEPRECATED
-;org $0AC52D ; PC 0x5452D
-;CrystalNum_Darkness:
-;db $7F
-;
-;org $0AC527 ; PC 0x54527
-;CrystalNum_Swamp:
-;db $79
-;
-;org $0AC52C ; PC 0x5452C
-;CrystalNum_Skull:
-;db $6C ; 6C
-;
-;org $0AC52A ; PC 0x5452A
-;CrystalNum_Thieves:
-;db $6D
-;
-;org $0AC528 ; PC 0x54528
-;CrystalNum_Ice:
-;db $6E
-;
-;org $0AC529 ; PC 0x54529
-;CrystalNum_Mire:
-;db $6F
-;
-;org $0AC52B ; PC 0x5452B
-;CrystalNum_TRock:
-;db $7C ; 7C
 
 ;1 Indicator : 7F
 ;2 Indicator : 79
@@ -951,8 +925,10 @@ db $04
 ;6A:Goal Item (Single/Triforce)
 ;6B:Goal Item (Multi/Power Star)
 
-;70 - Map of ---
-;71 - Map of ---
+;DO NOT PLACE FREE DUNGEON ITEMS WITHIN THEIR OWN DUNGEONS - USE THE NORMAL VARIANTS
+
+;70 - Map of Light World
+;71 - Map of Dark World
 ;72 - Map of Ganon's Tower
 ;73 - Map of Turtle Rock
 ;74 - Map of Thieves' Town
@@ -968,8 +944,8 @@ db $04
 ;7E - Map of Hyrule Castle
 ;7F - Map of Sewers
 
-;80 - Compass of ---
-;81 - Compass of ---
+;80 - Compass of Light World
+;81 - Compass of Dark World
 ;82 - Compass of Ganon's Tower
 ;83 - Compass of Turtle Rock
 ;84 - Compass of Thieves' Town

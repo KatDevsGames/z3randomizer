@@ -179,7 +179,6 @@ FullInventoryExternal:
 !SHAME_CHEST = "$7EF416" ; ---s ----
 AddInventory:
 	PHA : PHX : PHP
-	
 	CPY.b #$0C : BNE + ; Blue Boomerang
 		LDA !INVENTORY_SWAP : ORA #$80 : STA !INVENTORY_SWAP
 		BRL .incrementCounts
