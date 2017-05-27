@@ -45,8 +45,8 @@ OnNewFile:
 	SEP #$20 ; set 8-bit accumulator
 	;LDA #$FF : STA !RNG_ITEM_LOCK_IN ; reset rng item lock-in
 	LDA.l SwordlessMode : BEQ +
-		;LDA.b #$FF : STA $7EF2XX ; open aga tower curtain
-		;LDA.b #$FF : STA $7EF2XX ; open skull woods curtain
+		LDA.b #$80 : STA $7EF061 ; open aga tower curtain
+		LDA.b #$80 : STA $7EF093 ; open skull woods curtain
 	+
 RTL
 ;--------------------------------------------------------------------------------
