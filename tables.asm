@@ -161,6 +161,10 @@ db #$A0 ; #$A0 - Full Refill (Default)
 PotionMagicRefill:
 db #$80 ; #$80 - Full Refill (Default)
 ;--------------------------------------------------------------------------------
+org $308086 ; PC 0x180086
+GanonAgahRNG:
+db #$01 ; $00 = vanilla behavior, $01 = no extra blue balls/warps, $02 = use the random table
+;--------------------------------------------------------------------------------
 org $308040 ; PC 0x180040
 UncleQuote:
 db #$00 ; #$00 - #$1F

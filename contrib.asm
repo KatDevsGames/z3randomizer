@@ -136,3 +136,64 @@ Sprite_ShowSolicitedMessageIfPlayerFacing_Alt:
 	RTL
 }
 ;================================================================
+
+RandomAgah:
+{
+	LDA.l GanonAgahRNG : BNE +
+		JSL GetRandomInt
+		RTL
+	+
+	CMP #$01 : BEQ .noBlueBalls
+	CMP #$02 : BEQ .rigRng
+	
+	.noBlueBalls
+		JSL GetRandomInt
+		ORA #$01 ;guarantee no blue ball
+		RTL
+	
+	.rigRng
+		PHX
+		
+		LDA $A0 : CMP #$20 : BEQ + ; branch if at agah 1 (they use a different part of the random table)
+			;g tower agahnim 
+			LDX $0FA3
+			LDA.l $AF8100, X ; random table
+			INX
+			STX $0FA3
+			BRA .return
+		+
+		
+		;light world agahnim
+		LDX $0FA2
+		LDA.l $AF8000, X ; random table
+		INX
+		STX $0FA2
+		
+		.return
+		PLX
+		RTL
+}
+
+RandomGanon:
+{
+	LDA.l GanonAgahRNG : BNE + ; branch if not using vanilla behavior
+		JSL GetRandomInt
+		RTL
+	+
+	CMP #$01 : BEQ .noTeleports
+	CMP #$02 : BEQ .rigRng
+	
+	.noTeleports
+		JSL GetRandomInt
+		AND #$FE ; set least significant bit to 0 to prevent teleport
+		RTL
+
+	.rigRng
+		PHX
+		LDX $0FA4
+		LDA.l $AF8200, X ; random table
+		INX
+		STX $0FA4
+		PLX
+		RTL
+}
