@@ -617,6 +617,10 @@ org $308169 ; PC 0x180169
 AgahnimDoorStyle:
 db #$00 ; #00 = Never Locked - #$01 = Locked During Escape (default)
 ;================================================================================
+org $30816A ; PC 0x18016A
+FreeItemTest:
+db #$00 ; #00 = Off - #$01 = On (default)
+;================================================================================
 org $308190 ; PC 0x180190
 TimerStyle:
 db #$00 ; #$00 = Off (Default) - #$01 Countdown - #$02 = Stopwatch
@@ -1056,6 +1060,10 @@ dw #9999 ; Rupee Limit
 ; $7F5091 - Item Animation Busy Flag
 ; $7F5092 - Potion Animation Busy Flags (Health)
 ; $7F5093 - Potion Animation Busy Flags (Magic)
+; $7F5094 - Dialog Offset Pointer (Low)
+; $7F5095 - Dialog Offset Pointer (High)
+; $7F5096 - Dialog Offset Pointer Return (Low)
+; $7F5097 - Dialog Offset Pointer Return (High)
 ; $7F50D0 - $7F50FF - Block Cypher Parameters
 ; $7F5100 - $7F51FF - Block Cypher Buffer
 ;

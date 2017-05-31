@@ -44,11 +44,43 @@ RTL
 ;	PLY : PLX : PLA
 ;endmacro
 ;--------------------------------------------------------------------------------
+;macro LoadDialogAddress(address)
+;	PHA : PHX : PHY
+;	PHP
+;	PHB : PHK : PLB
+;		SEP #$30 ; set 8-bit accumulator and index registers
+;		LDA $00 : PHA
+;		LDA $01 : PHA
+;		LDA $02 : PHA
+;			LDA.b #$01 : STA $7F5035 ; set flag
+;	
+;			LDA.b #<address> : STA $00 ; write pointer to direct page
+;			LDA.b #<address>>>8 : STA $01
+;			LDA.b #<address>>>16 : STA $02
+;	
+;			LDX.b #$00 : LDY.b #$00
+;			-
+;				LDA [$00], Y ; load the next character from the pointer
+;				STA $7F5700, X ; write to the buffer
+;				INX : INY
+;			CMP.b #$7F : BNE -
+;		PLA : STA $02
+;		PLA : STA $01
+;		PLA : STA $00
+;	PLB
+;	PLP
+;	PLY : PLX : PLA
+;endmacro
+;--------------------------------------------------------------------------------
+!OFFSET_POINTER = "$7F5094"
+!OFFSET_RETURN = "$7F5096"
+!DIALOG_BUFFER = "$7F5700"
 macro LoadDialogAddress(address)
-	PHP
 	PHA : PHX : PHY
+	PHP
 	PHB : PHK : PLB
-		SEP #$30 ; set 8-bit accumulator and index registers
+		SEP #$20 ; set 8-bit accumulator
+		REP #$10 ; set 16-bit index registers
 		LDA $00 : PHA
 		LDA $01 : PHA
 		LDA $02 : PHA
@@ -58,19 +90,86 @@ macro LoadDialogAddress(address)
 			LDA.b #<address>>>8 : STA $01
 			LDA.b #<address>>>16 : STA $02
 	
-			LDX.b #$00 : LDY.b #$00
+			LDA !OFFSET_POINTER : TAX : LDY.w #$0000
 			-
 				LDA [$00], Y ; load the next character from the pointer
-				STA $7F5700, X ; write to the buffer
+				STA !DIALOG_BUFFER, X ; write to the buffer
 				INX : INY
 			CMP.b #$7F : BNE -
+			REP #$20 ; set 16-bit accumulator
+			TXA : STA !OFFSET_RETURN ; copy out X into
+			LDA.w #$0000 : STA !OFFSET_POINTER
+			SEP #$20 ; set 8-bit accumulator
 		PLA : STA $02
 		PLA : STA $01
 		PLA : STA $00
 	PLB
-	PLY : PLX : PLA
 	PLP
+	PLY : PLX : PLA
 endmacro
+;--------------------------------------------------------------------------------
+FreeDungeonItemNotice:
+	PHX : PHA
+	LDA.l FreeItemTest : BNE + : BRL .skip : +
+	
+	AND.b #$F0 ; looking at high bits only
+	CMP.b #$70 : BNE + ; map of...
+		%LoadDialogAddress(Notice_MapOf)
+		BRL .dungeon
+	+ : CMP.b #$80 : BNE + ; compass of...
+		%LoadDialogAddress(Notice_CompassOf)
+		BRL .dungeon
+	+ : CMP.b #$90 : BNE + ; big key of...
+		%LoadDialogAddress(Notice_BigKeyOf)
+		BRA .dungeon
+	+ : CMP.b #$A0 : BNE + ; small key of...
+		%LoadDialogAddress(Notice_SmallKeyOf)
+		PLA : AND.b #$0F : STA $7F5020 : LDA.b #$0F : !SUB $7F5020 : PHA
+	+
+	
+	.dungeon
+	LDA !OFFSET_RETURN : STA !OFFSET_POINTER
+	PLA : PHA
+	AND.b #$0F ; looking at high bits only
+	CMP.b #$00 : BNE + ; ...light world
+		%LoadDialogAddress(Notice_LightWorld)
+	+ : CMP.b #$01 : BNE + ; ...dark world
+		%LoadDialogAddress(Notice_DarkWorld)
+	+ : CMP.b #$02 : BNE + ; ...ganon's tower
+		%LoadDialogAddress(Notice_GTower)
+	+ : CMP.b #$03 : BNE + ; ...turtle rock
+		%LoadDialogAddress(Notice_TRock)
+	+ : CMP.b #$04 : BNE + ; ...thieves' town
+		%LoadDialogAddress(Notice_Thieves)
+	+ : CMP.b #$05 : BNE + ; ...tower of hera
+		%LoadDialogAddress(Notice_Hera)
+	+ : CMP.b #$06 : BNE + ; ...ice palace
+		%LoadDialogAddress(Notice_Ice)
+	+ : CMP.b #$07 : BNE + ; ...skull woods
+		%LoadDialogAddress(Notice_Skull)
+	+ : CMP.b #$08 : BNE + ; ...misery mire
+		%LoadDialogAddress(Notice_Mire)
+	+ : CMP.b #$09 : BNE + ; ...dark palace
+		%LoadDialogAddress(Notice_PoD)
+	+ : CMP.b #$0A : BNE + ; ...swamp palace
+		%LoadDialogAddress(Notice_Swamp)
+	+ : CMP.b #$0B : BNE + ; ...agahnim's tower
+		%LoadDialogAddress(Notice_AgaTower)
+	+ : CMP.b #$0C : BNE + ; ...desert palace
+		%LoadDialogAddress(Notice_Desert)
+	+ : CMP.b #$0D : BNE + ; ...eastern palace
+		%LoadDialogAddress(Notice_Eastern)
+	+ : CMP.b #$0E : BNE + ; ...hyrule castle
+		%LoadDialogAddress(Notice_Castle)
+	+ : CMP.b #$0F : BNE + ; ...sewers
+		%LoadDialogAddress(Notice_Sewers)
+	+
+	
+	;LDA.b #$01 : STA $7F5035 ; set alternate dialog flag
+	JSL.l Sprite_ShowMessageMinimal
+	.skip
+	PLA : PLX
+RTL
 ;--------------------------------------------------------------------------------
 DialogBlind:
 	%LoadDialogAddress(BlindText)

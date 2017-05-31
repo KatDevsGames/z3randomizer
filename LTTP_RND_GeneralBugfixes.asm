@@ -191,6 +191,7 @@ warnpc $348000
 
 org $320000
 Extra_Text_Table:
+incsrc itemtext.asm
 	
 incsrc externalhooks.asm
 ;================================================================================
