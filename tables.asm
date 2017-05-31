@@ -90,8 +90,8 @@ org $06B55C ; PC 0x3355C ; sprite_smithy_bros.asm : 634
 SmithSword:
 db #$02 ; #$02 = Tempered Sword (default)
 
-org $05EBD4 ; PC 0x2EBD4 - sprite_zelda.asm:23 - (LDA $7EF359 : CMP.b #$02 : BCS .hasMasterSword) - Zelda Spawnpoint Sword Check
-db #$05 ; #$02 = Tempered Sword (default) - #$05 = All Swords 
+;org $05EBD4 ; PC 0x2EBD4 - sprite_zelda.asm:23 - (LDA $7EF359 : CMP.b #$02 : BCS .hasMasterSword) - Zelda Spawnpoint Sword Check
+;db #$05 ; #$02 = Tempered Sword (default) - #$05 = All Swords 
 ;--------------------------------------------------------------------------------
 org $308030 ; PC 0x180030
 EnableSRAMTrace:
@@ -603,15 +603,19 @@ StandingKey_Hera:
 ;================================================================================
 org $308165 ; PC 0x180165
 GoalItemIcon:
-dw #$280D ; #280D = Star (default) - #$280E = Triforce Piece
+dw #$280D ; #$280D = Star (default) - #$280E = Triforce Piece
 ;================================================================================
 org $308167 ; PC 0x180167
 GoalItemRequirement:
-db #$00 ; #00 = Off (default) - #$XX = Require $XX Goal Items
+db #$00 ; #$00 = Off (default) - #$XX = Require $XX Goal Items
 ;================================================================================
 org $308168 ; PC 0x180168
 ByrnaCaveSpikeDamage:
-db #$08 ; #08 = 1 Heart (default) - #$02 = 1/4 Heart
+db #$08 ; #$08 = 1 Heart (default) - #$02 = 1/4 Heart
+;================================================================================
+org $308169 ; PC 0x180169
+AgahnimDoorStyle:
+db #$00 ; #00 = Never Locked - #$01 = Locked During Escape (default)
 ;================================================================================
 org $308190 ; PC 0x180190
 TimerStyle:
