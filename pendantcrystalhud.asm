@@ -31,8 +31,7 @@ RTL
 !INVENTORY_MAP = "$7EF368"
 OverworldMap_CheckObject:
 	PHX
-		LDA $FFFFFF
-		LDA $7EF3C7 : CMP.b #$03 : BNE +
+		LDA $7EF3CA : AND.b #$40 : BNE +
 			;LW Map
 			LDA.l MapMode : BEQ +++
 			LDA.l !INVENTORY_MAP : AND.b #$01 : BNE +++

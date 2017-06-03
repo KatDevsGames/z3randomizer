@@ -44,43 +44,11 @@ RTL
 ;	PLY : PLX : PLA
 ;endmacro
 ;--------------------------------------------------------------------------------
-;macro LoadDialogAddress(address)
-;	PHA : PHX : PHY
-;	PHP
-;	PHB : PHK : PLB
-;		SEP #$30 ; set 8-bit accumulator and index registers
-;		LDA $00 : PHA
-;		LDA $01 : PHA
-;		LDA $02 : PHA
-;			LDA.b #$01 : STA $7F5035 ; set flag
-;	
-;			LDA.b #<address> : STA $00 ; write pointer to direct page
-;			LDA.b #<address>>>8 : STA $01
-;			LDA.b #<address>>>16 : STA $02
-;	
-;			LDX.b #$00 : LDY.b #$00
-;			-
-;				LDA [$00], Y ; load the next character from the pointer
-;				STA $7F5700, X ; write to the buffer
-;				INX : INY
-;			CMP.b #$7F : BNE -
-;		PLA : STA $02
-;		PLA : STA $01
-;		PLA : STA $00
-;	PLB
-;	PLP
-;	PLY : PLX : PLA
-;endmacro
-;--------------------------------------------------------------------------------
-!OFFSET_POINTER = "$7F5094"
-!OFFSET_RETURN = "$7F5096"
-!DIALOG_BUFFER = "$7F5700"
 macro LoadDialogAddress(address)
 	PHA : PHX : PHY
 	PHP
 	PHB : PHK : PLB
-		SEP #$20 ; set 8-bit accumulator
-		REP #$10 ; set 16-bit index registers
+		SEP #$30 ; set 8-bit accumulator and index registers
 		LDA $00 : PHA
 		LDA $01 : PHA
 		LDA $02 : PHA
@@ -90,16 +58,12 @@ macro LoadDialogAddress(address)
 			LDA.b #<address>>>8 : STA $01
 			LDA.b #<address>>>16 : STA $02
 	
-			LDA !OFFSET_POINTER : TAX : LDY.w #$0000
+			LDX.b #$00 : LDY.b #$00
 			-
 				LDA [$00], Y ; load the next character from the pointer
-				STA !DIALOG_BUFFER, X ; write to the buffer
+				STA $7F5700, X ; write to the buffer
 				INX : INY
 			CMP.b #$7F : BNE -
-			REP #$20 ; set 16-bit accumulator
-			TXA : STA !OFFSET_RETURN ; copy out X into
-			LDA.w #$0000 : STA !OFFSET_POINTER
-			SEP #$20 ; set 8-bit accumulator
 		PLA : STA $02
 		PLA : STA $01
 		PLA : STA $00
@@ -107,6 +71,42 @@ macro LoadDialogAddress(address)
 	PLP
 	PLY : PLX : PLA
 endmacro
+;--------------------------------------------------------------------------------
+!OFFSET_POINTER = "$7F5094"
+!OFFSET_RETURN = "$7F5096"
+!DIALOG_BUFFER = "$7F5700"
+;macro LoadDialogAddress(address)
+;	PHA : PHX : PHY
+;	PHP
+;	PHB : PHK : PLB
+;		SEP #$20 ; set 8-bit accumulator
+;		REP #$10 ; set 16-bit index registers
+;		LDA $00 : PHA
+;		LDA $01 : PHA
+;		LDA $02 : PHA
+;			LDA.b #$01 : STA $7F5035 ; set flag
+;	
+;			LDA.b #<address> : STA $00 ; write pointer to direct page
+;			LDA.b #<address>>>8 : STA $01
+;			LDA.b #<address>>>16 : STA $02
+;	
+;			LDA !OFFSET_POINTER : TAX : LDY.w #$0000
+;			-
+;				LDA [$00], Y ; load the next character from the pointer
+;				STA !DIALOG_BUFFER, X ; write to the buffer
+;				INX : INY
+;			CMP.b #$7F : BNE -
+;			REP #$20 ; set 16-bit accumulator
+;			TXA : STA !OFFSET_RETURN ; copy out X into
+;			LDA.w #$0000 : STA !OFFSET_POINTER
+;			SEP #$20 ; set 8-bit accumulator
+;		PLA : STA $02
+;		PLA : STA $01
+;		PLA : STA $00
+;	PLB
+;	PLP
+;	PLY : PLX : PLA
+;endmacro
 ;--------------------------------------------------------------------------------
 FreeDungeonItemNotice:
 	PHX : PHA
