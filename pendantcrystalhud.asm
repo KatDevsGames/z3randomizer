@@ -45,7 +45,7 @@ OverworldMap_CheckObject:
 			LDA.l .lw_offsets, X
 			BPL +++ : CLC : BRA .done : +++ ; don't display master sword
 			TAX : BRA ++
-		+ : CMP.b #$07 : BNE .fail
+		+
 			;DW Map
 			LDA.l MapMode : BEQ +++
 			LDA.l !INVENTORY_MAP : AND.b #$02 : BNE +++
