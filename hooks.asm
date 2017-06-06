@@ -806,13 +806,21 @@ NOP
 ;================================================================================
 ; Glitched Mode Fixes
 ;--------------------------------------------------------------------------------
+org $0691AC ; <- 311AC - sprite_prep.asm:2453 (LDY $0FFF)
+JSL.l GetAgahnimPalette
+NOP #2
+;--------------------------------------------------------------------------------
+org $06F0DD ; <- 370DD - Bank06.asm:5399 (STA $0BA0, X)
+JSL.l GetAgahnimDeath
+NOP #2
+;--------------------------------------------------------------------------------
 org $1ED4E6 ; <- F54E6 - sprite_agahnim.asm:314 (LDY $0FFF)
 JSL.l GetAgahnimType
 NOP #2
 ;--------------------------------------------------------------------------------
 org $1ED577 ; <- F5577 - sprite_agahnim.asm:418 (PHX)
-JML.l GetAgahnimPalette
-GetAgahnimPaletteReturn:
+JML.l GetAgahnimSlot
+GetAgahnimSlotReturn:
 ;--------------------------------------------------------------------------------
 org $1ED678 ; <- F5678 - sprite_agahnim.asm:587 (INC $0E30, X)
 NOP #2
