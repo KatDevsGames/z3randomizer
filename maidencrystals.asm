@@ -6,6 +6,7 @@
 ; MaidenCrystalScript
 ;--------------------------------------------------------------------------------
 MaidenCrystalScript:
+	LDA.b #$00 : STA $7F5091
     STZ $02D8
     STZ $02DA
     STZ $2E

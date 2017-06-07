@@ -129,7 +129,7 @@ db #$00 ; #$00 = Off (default) - #$01 = On
 ;--------------------------------------------------------------------------------
 org $30803B ; PC 0x18003B
 MapMode:
-db #$00 ; #$00 = Always On (default) - #$01 = Require Map Item
+db #$01 ; #$00 = Always On (default) - #$01 = Require Map Item
 CompassMode:
 db #$00 ; #$00 = Off (default) - #$01 = Display Dungeon Count
 ;--------------------------------------------------------------------------------
@@ -142,8 +142,24 @@ InvincibleGanon:
 db #$00 ; #$00 = Off (default) - #$01 = On
 ;--------------------------------------------------------------------------------
 org $30803F ; PC 0x18003F
-SwordlessMode:
+HammerableGanon:
 db #$00 ; #$00 = Off (default) - #$01 = On
+;--------------------------------------------------------------------------------
+org $308040 ; PC 0x180040
+PreopenCurtains:
+db #$00 ; #$00 = Off (default) - #$01 = On
+;--------------------------------------------------------------------------------
+org $308041 ; PC 0x180041
+AllowSwordlessEntranceMedallion:
+db #$00 ; #$00 = Off (default) - #$01 = On
+;--------------------------------------------------------------------------------
+org $308041 ; PC 0x180041
+PermitSQFromBosses:
+db #$00 ; #$00 = Off (default) - #$01 = On
+;--------------------------------------------------------------------------------
+org $308042 ; PC 0x180042
+StartingSword:
+db #$00 ; #$00 = No Sword (default) - #$FF = Non-Sword
 ;--------------------------------------------------------------------------------
 org $308080 ; PC 0x180080
 Upgrade5BombsRefill:
@@ -164,10 +180,6 @@ db #$80 ; #$80 - Full Refill (Default)
 org $308086 ; PC 0x180086
 GanonAgahRNG:
 db #$01 ; $00 = vanilla behavior, $01 = no extra blue balls/warps, $02 = use the random table
-;--------------------------------------------------------------------------------
-org $308040 ; PC 0x180040
-UncleQuote:
-db #$00 ; #$00 - #$1F
 ;--------------------------------------------------------------------------------
 org $098B7C ; PC 0x48B7C
 EtherTablet:
@@ -622,8 +634,8 @@ AgahnimDoorStyle:
 db #$00 ; #00 = Never Locked - #$01 = Locked During Escape (default)
 ;================================================================================
 org $30816A ; PC 0x18016A
-FreeItemTest:
-db #$00 ; #00 = Off - #$01 = On (default)
+FreeItemText:
+db #$01 ; #00 = Off - #$01 = On (default)
 ;================================================================================
 org $308190 ; PC 0x180190
 TimerStyle:

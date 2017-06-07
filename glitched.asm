@@ -31,3 +31,11 @@ GetAgahnimLightning:
 		LDA.b #$00 ; Use Agahnim 1
 		RTL
 ;--------------------------------------------------------------------------------
+AllowJoypadInput:
+	LDA PermitSQFromBosses : BEQ .fullCheck
+	LDA $0112 : ORA $02E4
+RTL
+	.fullCheck
+	LDA $0112 : ORA $02E4 : ORA $0FFC
+RTL
+;--------------------------------------------------------------------------------

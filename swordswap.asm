@@ -45,7 +45,7 @@ GetSmithSword:
 CheckMedallionSword:
 	;LDA $FFFFFF
 	PHB : PHX : PHY
-		LDA.l SwordlessMode : BEQ +
+		LDA.l AllowSwordlessEntranceMedallion : BEQ +
 			LDA $8A : CMP.b #$70 : BNE ++
 				LDA.l MireRequiredMedallion : TAX : LDA.l .medallion_type, X : CMP $0303 : BNE +
 				LDA $7EF2F0 : AND.b #$20 : BNE +

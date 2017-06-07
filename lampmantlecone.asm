@@ -23,8 +23,10 @@ RTL
 ; Output: 0 locked, 1 open
 ;--------------------------------------------------------------------------------
 CheckForZelda:
-	LDA.l OpenMode : BEQ + ; Skip if not open mode
-		LDA.b #$01 ; open mode, pretend we have zelda anyway
+	;LDA.l OpenMode : BEQ + ; Skip if not open mode
+	;LDA $FFFFFF
+	LDA.l $7EF3C5 : CMP.b #$02 : !BLT + ; Skip if rain is falling
+		LDA.b #$01 ; pretend we have zelda anyway
 		RTL
 	+
 	LDA $7EF3CC

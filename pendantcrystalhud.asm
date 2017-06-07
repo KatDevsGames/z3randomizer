@@ -31,6 +31,7 @@ RTL
 !INVENTORY_MAP = "$7EF368"
 OverworldMap_CheckObject:
 	PHX
+		;CPX.b #$01 : BNE + : BRL ++ : + : BRL .fail
 		LDA $7EF3CA : AND.b #$40 : BNE +
 			;LW Map
 			LDA.l MapMode : BEQ +++
@@ -83,11 +84,11 @@ db $02, $0A, $03, $FF
 .dw_offsets
 db $06, $08, $0C, $0B, $07, $09, $05
 .lw_map_offsets
-db $01, $01, $00
+db $01, $00, $01
 .dw_map_offsets
 db $01, $01, $00, $00, $00, $01, $00
 .lw_map_masks
-db $20, $10, $20, $00
+db $20, $20, $10, $00
 .dw_map_masks
 db $02, $04, $80, $10, $40, $01, $04
 ;================================================================================
