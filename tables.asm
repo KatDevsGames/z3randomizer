@@ -543,6 +543,8 @@ Bugfix_SwampWaterLevel:
 db #$01 ; #$00 = Original Behavior - #$01 = Randomizer Behavior (Default)
 Bugfix_PreAgaDWDungeonDeathToFakeDW:
 db #$01 ; #$00 = Original Behavior - #$01 = Randomizer Behavior (Default)
+Bugfix_SetWorldOnAgahnimDeath:
+db #$01 ; #$00 = Original Behavior - #$01 = Randomizer Behavior (Default)
 ;--------------------------------------------------------------------------------
 ;org $08D01A ; PC 0x4501A - ancilla_flute.asm - 42
 ;OldHauntedGroveItem:
