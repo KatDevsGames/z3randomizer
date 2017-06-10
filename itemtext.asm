@@ -44,7 +44,7 @@ Notice_GTower:
 
 ; Turtle Rock
 Notice_TRock:
-	db #76, $00, $BD, $00, $BE, $00, $BB, $00, $BD, $00, $B5, $00, $AE, $00, $FF, $00, $BB, $00, $B8, $00, $AC, $00, $B4
+	db $76, $00, $BD, $00, $BE, $00, $BB, $00, $BD, $00, $B5, $00, $AE, $00, $FF, $00, $BB, $00, $B8, $00, $AC, $00, $B4
 	dw #$7F7F
 
 ; Thieves Town

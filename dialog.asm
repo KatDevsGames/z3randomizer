@@ -85,21 +85,7 @@ macro LoadDialogAddress(address)
 		LDA $01 : PHA
 		LDA $02 : PHA
 			LDA.b #$01 : STA $7F5035 ; set flag
-	
-			LDA.b #<address> : STA $00 ; write pointer to direct page
-			LDA.b #<address>>>8 : STA $01
-			LDA.b #<address>>>16 : STA $02
-			
-			REP #$20 : LDA !OFFSET_POINTER : TAX : LDY.w #$0000 : SEP #$20 ; copy 2-byte offset pointer to X and set Y to 0
-			?loop:
-				LDA [$00], Y ; load the next character from the pointer
-				STA !DIALOG_BUFFER, X ; write to the buffer
-				INX : INY
-			CMP.b #$7F : BNE ?loop
-			REP #$20 ; set 16-bit accumulator
-			TXA : INC : STA !OFFSET_RETURN ; copy out X into
-			LDA.w #$0000 : STA !OFFSET_POINTER
-			SEP #$20 ; set 8-bit accumulator
+			%CopyDialog(<address>)
 		PLA : STA $02
 		PLA : STA $01
 		PLA : STA $00
@@ -108,68 +94,114 @@ macro LoadDialogAddress(address)
 	PLY : PLX : PLA
 endmacro
 ;--------------------------------------------------------------------------------
+macro CopyDialog(address)
+	LDA.b #<address> : STA $00 ; write pointer to direct page
+	LDA.b #<address>>>8 : STA $01
+	LDA.b #<address>>>16 : STA $02
+
+	REP #$20 : LDA !OFFSET_POINTER : TAX : LDY.w #$0000 : SEP #$20 ; copy 2-byte offset pointer to X and set Y to 0
+	?loop:
+		LDA [$00], Y ; load the next character from the pointer
+		STA !DIALOG_BUFFER, X ; write to the buffer
+		INX : INY
+	CMP.b #$7F : BNE ?loop
+	REP #$20 ; set 16-bit accumulator
+	TXA : INC : STA !OFFSET_RETURN ; copy out X into
+	LDA.w #$0000 : STA !OFFSET_POINTER
+	SEP #$20 ; set 8-bit accumulator
+endmacro
+;--------------------------------------------------------------------------------
+!ITEM_TEMPORARY = "$7F5040"
 FreeDungeonItemNotice:
-	PHX : PHA
+	STA !ITEM_TEMPORARY
+	
+	PHA : PHX : PHY
+	PHP
+	PHB : PHK : PLB
+		SEP #$20 ; set 8-bit accumulator
+		REP #$10 ; set 16-bit index registers
+		LDA $00 : PHA
+		LDA $01 : PHA
+		LDA $02 : PHA
+	;--------------------------------
+	
 	LDA.l FreeItemText : BNE + : BRL .skip : +
 	
-	PLA : PHA
+	LDA !ITEM_TEMPORARY
 	AND.b #$F0 ; looking at high bits only
 	CMP.b #$70 : BNE + ; map of...
-		%LoadDialogAddress(Notice_MapOf)
+		%CopyDialog(Notice_MapOf)
 		BRL .dungeon
 	+ : CMP.b #$80 : BNE + ; compass of...
-		%LoadDialogAddress(Notice_CompassOf)
+		%CopyDialog(Notice_CompassOf)
 		BRL .dungeon
 	+ : CMP.b #$90 : BNE + ; big key of...
-		%LoadDialogAddress(Notice_BigKeyOf)
+		%CopyDialog(Notice_BigKeyOf)
 		BRA .dungeon
 	+ : CMP.b #$A0 : BNE + ; small key of...
-		%LoadDialogAddress(Notice_SmallKeyOf)
+		%CopyDialog(Notice_SmallKeyOf)
 		PLA : AND.b #$0F : STA $7F5020 : LDA.b #$0F : !SUB $7F5020 : PHA
 	+
-	
+
 	.dungeon
 	LDA !OFFSET_RETURN : DEC #2 : STA !OFFSET_POINTER
-	PLA : PHA
+	LDA !ITEM_TEMPORARY
 	AND.b #$0F ; looking at high bits only
 	CMP.b #$00 : BNE + ; ...light world
-		%LoadDialogAddress(Notice_LightWorld)
+		%CopyDialog(Notice_LightWorld) : BRL .done
 	+ : CMP.b #$01 : BNE + ; ...dark world
-		%LoadDialogAddress(Notice_DarkWorld)
+		%CopyDialog(Notice_DarkWorld) : BRL .done
 	+ : CMP.b #$02 : BNE + ; ...ganon's tower
-		%LoadDialogAddress(Notice_GTower)
+		%CopyDialog(Notice_GTower) : BRL .done
 	+ : CMP.b #$03 : BNE + ; ...turtle rock
-		%LoadDialogAddress(Notice_TRock)
+		%CopyDialog(Notice_TRock) : BRL .done
 	+ : CMP.b #$04 : BNE + ; ...thieves' town
-		%LoadDialogAddress(Notice_Thieves)
+		%CopyDialog(Notice_Thieves) : BRL .done
 	+ : CMP.b #$05 : BNE + ; ...tower of hera
-		%LoadDialogAddress(Notice_Hera)
+		%CopyDialog(Notice_Hera) : BRL .done
 	+ : CMP.b #$06 : BNE + ; ...ice palace
-		%LoadDialogAddress(Notice_Ice)
+		%CopyDialog(Notice_Ice) : BRL .done
 	+ : CMP.b #$07 : BNE + ; ...skull woods
-		%LoadDialogAddress(Notice_Skull)
+		%CopyDialog(Notice_Skull) : BRL .done
 	+ : CMP.b #$08 : BNE + ; ...misery mire
-		%LoadDialogAddress(Notice_Mire)
+		%CopyDialog(Notice_Mire) : BRL .done
 	+ : CMP.b #$09 : BNE + ; ...dark palace
-		%LoadDialogAddress(Notice_PoD)
+		%CopyDialog(Notice_PoD) : BRL .done
 	+ : CMP.b #$0A : BNE + ; ...swamp palace
-		%LoadDialogAddress(Notice_Swamp)
+		%CopyDialog(Notice_Swamp) : BRL .done
 	+ : CMP.b #$0B : BNE + ; ...agahnim's tower
-		%LoadDialogAddress(Notice_AgaTower)
+		%CopyDialog(Notice_AgaTower) : BRL .done
 	+ : CMP.b #$0C : BNE + ; ...desert palace
-		%LoadDialogAddress(Notice_Desert)
+		%CopyDialog(Notice_Desert) : BRL .done
 	+ : CMP.b #$0D : BNE + ; ...eastern palace
-		%LoadDialogAddress(Notice_Eastern)
+		%CopyDialog(Notice_Eastern) : BRA .done
 	+ : CMP.b #$0E : BNE + ; ...hyrule castle
-		%LoadDialogAddress(Notice_Castle)
+		%CopyDialog(Notice_Castle) : BRA .done
 	+ : CMP.b #$0F : BNE + ; ...sewers
-		%LoadDialogAddress(Notice_Sewers)
+		%CopyDialog(Notice_Sewers)
 	+
+	.done
 	
-	;LDA.b #$01 : STA $7F5035 ; set alternate dialog flag
+	LDA.b #$01 : STA $7F5035 ; set alternate dialog flag
+	
+	;--------------------------------
+		PLA : STA $02
+		PLA : STA $01
+		PLA : STA $00
+	PLB
+	PLP
+	PLY : PLX : PLA
 	JSL.l Sprite_ShowMessageMinimal
+RTL
+	
 	.skip
-	PLA : PLX
+	;--------------------------------
+		PLA : STA $02
+		PLA : STA $01
+		PLA : STA $00
+	PLB
+	PLP
+	PLY : PLX : PLA
 RTL
 ;--------------------------------------------------------------------------------
 DialogBlind:

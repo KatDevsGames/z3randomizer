@@ -26,7 +26,7 @@ org $3FFFFF ; <- 1FFFFF
 db #$00 ; expand file to 2mb
 
 org $1FFFF8 ; timestamp rom
-dl #$20170606
+dl #$20170610
 
 ;================================================================================
 
@@ -189,15 +189,15 @@ GFX_HUD_Palette:
 incbin hudpalette.pal
 warnpc $348000
 
-org $320000
+org $328000
 Extra_Text_Table:
 incsrc itemtext.asm
 	
 incsrc externalhooks.asm
 ;================================================================================
-org $2F8000 ; PC 0x178000
+org $AF8000 ; PC 0x178000
 Static_RNG:
-warnpc $2F8400
+warnpc $AF8400
 ;================================================================================
 ;bank $3A reserved for downstream use (Plandomizer)
 ;bank $3B reserved for downstream use (Plandomizer)

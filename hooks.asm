@@ -311,7 +311,10 @@ org $1EE094 ; PC 0xF6094 - sprite_hylian_plaque.asm : 79 (JSL Sprite_ShowMessage
 JSL.l DialogPedestal
 ;--------------------------------------------------------------------------------
 org $08C431 ; <- 44431 - ancilla_receive_item.asm : 125 (LDA $0C5E, X : CMP.b #$01 : BNE .notMasterSword2)
-LDA $8A : CMP.b #$80 : NOP
+JSL.l MSMusicReset : NOP
+;LDA $8A : CMP.b #$80 : NOP
+; $22 = $0000 - $00FF - MS Pedestal
+; $22 = $0100 - $00FF - Hobo
 ;--------------------------------------------------------------------------------
 
 ;================================================================================
@@ -790,9 +793,12 @@ LDX.w #HUD_TileMap
 org $0DFA9C ; <- 6FA9C - headsup_display.asm : 629 (MVN $0D, $7E ; $Transfer 0x014A bytes from $6FE77 -> $7EC700)
 MVN $207E
 ;--------------------------------------------------------------------------------
-org $0DE48E ; <- 6E48E - equipment.asm : 1233 (LDA.w #$11CE : STA $00)
+;org $0DE48E ; <- 6E48E - equipment.asm : 1233 (LDA.w #$11CE : STA $00) - HOOK HERE TO DRAW ON THE ITEM SCREEN
+;JSL.l DrawHUDSilverArrows
+;NOP
+;--------------------------------------------------------------------------------
+org $0DFB1F ; 6FB1F - headsup_display.asm : 681 (LDA $7EF340 : BEQ .hastNoBow)
 JSL.l DrawHUDSilverArrows
-NOP
 ;--------------------------------------------------------------------------------
 
 ;================================================================================
@@ -983,7 +989,7 @@ LDX.b #$F1 : STX $012C
 ;================================================================================
 org $029090 ; <- 11090 - Bank02.asm:3099 (LDA $7EF374 : LSR A : BCS BRANCH_GAMMA)
 JSL.l CheckHeraObject : BNE + : NOP
-STX $012C
+STX $012C ; DON'T MOVE THIS FORWARD OR MADNESS AWAITS
 +
 ;================================================================================
 org $029798 ; <- 11798 - Bank02.asm:4287 (CMP $02895C, X : BNE BRANCH_ALPHA)

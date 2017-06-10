@@ -75,7 +75,7 @@ PedestalMusicCheck:
 ;db #$01 ; #$01 = Master Sword (default)
 org $0589B0 ; PC 0x289B0 ; sprite_master_sword.asm : 179
 PedestalSword:
-db #$6A ; #$01 = Master Sword (default)
+db #$01 ; #$01 = Master Sword (default)
 
 org $308029 ; PC 0x180029
 SmithItemMode:
@@ -1065,7 +1065,8 @@ dw #9999 ; Rupee Limit
 ; $7F503D - Stats Rupee Total
 ; $7F503E - Stats Item Total
 ; $7F503F - Bonk Repeat
-; $7F5040 - $7F507E - Unused
+; $7F5040 - Free Item Dialog Temporary
+; $7F5041 - $7F507E - Unused
 ; $7F507E - Clock Status
 ; $7F507F - Always Zero
 ; $7F5080 - $7F5083 - Clock Hours
@@ -1082,6 +1083,7 @@ dw #9999 ; Rupee Limit
 ; $7F5097 - Dialog Offset Pointer Return (High)
 ; $7F50D0 - $7F50FF - Block Cypher Parameters
 ; $7F5100 - $7F51FF - Block Cypher Buffer
+; $7F5200 - $7F52FF - RNG Pointer Block
 ;
 ; $7F5700 - $7F57FF - Dialog Buffer
 ;================================================================================

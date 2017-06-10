@@ -644,15 +644,26 @@ Link_ReceiveItemAlternatesExpanded:
 	PLB
 RTL
 ;--------------------------------------------------------------------------------
+;DrawHUDSilverArrows:
+;	LDA $7EF340 : AND.w #$00FF : BNE +
+;		LDA $7EF414 : AND.w #$0040 : BEQ +
+;	        LDA.w #$2810 : STA $11C8
+;	        LDA.w #$2811 : STA $11CA
+;	        LDA.w #$2820 : STA $1208
+;	        LDA.w #$2821 : STA $120A
+;	+
+;	LDA.w #$11CE : STA $00 ; thing we wrote over
+;RTL
+;--------------------------------------------------------------------------------
+;Return $7EF340 unless no bow and silvers, then return 3
 DrawHUDSilverArrows:
-	LDA $7EF340 : AND.w #$00FF : BNE +
-		LDA $7EF414 : AND.w #$0040 : BEQ +
-	        LDA.w #$2810 : STA $11C8
-	        LDA.w #$2811 : STA $11CA
-	        LDA.w #$2820 : STA $1208
-	        LDA.w #$2821 : STA $120A
+	LDA $7EF340 : BNE +
+		LDA $7EF414 : AND.b #$40 : BEQ ++
+			LDA.b #$03
+			RTL
+		++
+		LDA $7EF340
 	+
-	LDA.w #$11CE : STA $00 ; thing we wrote over
 RTL
 ;--------------------------------------------------------------------------------
 !RNG_ITEM = "$7EF450"
