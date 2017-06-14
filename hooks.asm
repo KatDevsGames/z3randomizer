@@ -742,13 +742,13 @@ org $01EE94 ; <- EE94 - Bank01.asm : 14121
 JSL.l RigChestRNG
 ;--------------------------------------------------------------------------------
 org $1ED63E ; <- F563E - sprite_agahnim.asm
-JSL RandomAgah
+JSL RNG_Agahnim1
 org $1ED6EF ; <- F56EF - sprite_agahnim.asm
-JSL RandomAgah
-org $1D9488 ; <- E9488 - sprite_ganon.asm
-JSL RandomGanon
+JSL RNG_Agahnim1
 org $1D91E3 ; <- E91E3 - sprite_ganon.asm
-JSL RandomGanon
+JSL RNG_Ganon_Extra_Warp
+org $1D9488 ; <- E9488 - sprite_ganon.asm
+JSL RNG_Ganon
 ;--------------------------------------------------------------------------------
 ;org $01EDB2 ; <- EDB2 - Bank01.asm : 14038
 ;INC $04C4

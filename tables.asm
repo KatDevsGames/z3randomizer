@@ -179,7 +179,7 @@ db #$80 ; #$80 - Full Refill (Default)
 ;--------------------------------------------------------------------------------
 org $308086 ; PC 0x180086
 GanonAgahRNG:
-db #$01 ; $00 = vanilla behavior, $01 = no extra blue balls/warps, $02 = use the random table
+db #$00 ; $00 = static rng, $01 = no extra blue balls/warps
 ;--------------------------------------------------------------------------------
 org $308090 ; PC 0x180090 (0x40 bytes)
 ShovelSpawnTable:

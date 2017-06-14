@@ -39,8 +39,18 @@ RNG_Lanmolas1:
 	LDA.b #$00 : BRA _rng_done
 RNG_Moldorm1:
 	LDA.b #$01 : BRA _rng_done
-RNG_Agahnim1:;x
-	LDA.b #$02 : BRA _rng_done
+RNG_Agahnim1:
+	LDA.b $A0 : CMP #$20 : BNE RNG_Agahnim2 ; Agah 1 and 2 use the same code, check which agah we're fighting and branch
+	LDA.b #$02
+	JSL.l GetStaticRNG : PHA
+	LDA.l GanonAgahRNG : BEQ + ; check if blue balls are disabled
+		PLA
+		ORA #$01 ; guarantee no blue ball
+		RTL
+	+
+	PLA
+	RTL
+	
 RNG_Helmasaur:
 	LDA.b #$03 : BRA _rng_done
 RNG_Arrghus:
@@ -57,12 +67,30 @@ RNG_Lanmolas2:;x
 	LDA.b #$09 : BRA _rng_done
 RNG_Moldorm2:;x
 	LDA.b #$0A : BRA _rng_done
-RNG_Agahnim2:;x
-	LDA.b #$0B : BRA _rng_done
+RNG_Agahnim2:
+	LDA.b #$0B
+	JSL.l GetStaticRNG : PHA
+	LDA.l GanonAgahRNG : BEQ + ; check if blue balls are disabled
+		PLA
+		ORA #$01 ; guarantee no blue ball
+		RTL
+	+
+	PLA
+	RTL
 RNG_Agahnim2Phantoms:;x
 	LDA.b #$0C : BRA _rng_done
-RNG_Ganon:;x
-	LDA.b #$0D
+RNG_Ganon:
+	LDA.b #$0D : BRA _rng_done
+RNG_Ganon_Extra_Warp:
+	LDA.b #$0E
+	JSL.l GetStaticRNG : PHA
+	LDA GanonAgahRNG : BEQ + ; check if warps are disabled
+		PLA
+		AND #$FE ; set least significant bit to 0 to prevent teleport
+		RTL
+	+
+	PLA
+	RTL
 	_rng_done:
 	JSL.l GetStaticRNG
 RTL
@@ -107,6 +135,6 @@ dw #$0280 ; 10 = Moldorm 2
 dw #$02C0 ; 11 = Agahnim 2
 dw #$0300 ; 12 = Agahnim 2 Phantoms
 dw #$0340 ; 13 = Ganon
-dw #$0380 ; 14 = Unused
+dw #$0380 ; 14 = Ganon Extra Warp
 dw #$03C0 ; 15 = Unused
 ;--------------------------------------------------------------------------------
