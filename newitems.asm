@@ -655,15 +655,21 @@ RTL
 ;	LDA.w #$11CE : STA $00 ; thing we wrote over
 ;RTL
 ;--------------------------------------------------------------------------------
-;Return $7EF340 unless no bow and silvers, then return 3
-DrawHUDSilverArrows:
+;Return $7EF340 but also draw silver arrows if you have the upgrade even if you don't have the bow
+CheckHUDSilverArrows:
 	LDA $7EF340 : BNE +
 		LDA $7EF414 : AND.b #$40 : BEQ ++
-			LDA.b #$03
-			RTL
+			JSL.l DrawHUDSilverArrows
 		++
 		LDA $7EF340
 	+
+RTL
+;--------------------------------------------------------------------------------
+DrawHUDSilverArrows:
+	LDA.b #$86 : STA $7EC720 ; draw silver arrow marker
+	LDA.b #$24 : STA $7EC721
+	LDA.b #$87 : STA $7EC722
+	LDA.b #$24 : STA $7EC723
 RTL
 ;--------------------------------------------------------------------------------
 !RNG_ITEM = "$7EF450"

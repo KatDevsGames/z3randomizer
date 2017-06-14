@@ -61,6 +61,10 @@ JSL.l SpawnZelda : NOP #2
 org $06F2C8 ; <- 372C8 - Bank06.asm : 5776 (LDA $44 : CMP.b #$80 : BEQ .no_collision)
 JSL.l GoalItemGanonCheck
 ;--------------------------------------------------------------------------------
+;Hammerable Ganon
+org $06F2EA ; <- 372EA - Bank06.asm : 5791 (LDA $0E20, X : CMP.b #$D6 : BCS .no_collision)
+JSL.l GoalItemGanonCheck : NOP
+;--------------------------------------------------------------------------------
 
 ;================================================================================
 ; Stat Hooks
@@ -726,7 +730,7 @@ JSL.l CheckFullHealth
 ;--------------------------------------------------------------------------------
 
 ;================================================================================
-; RNG Fix
+; RNG Fixes
 ;--------------------------------------------------------------------------------
 org $1DFD9E ; <- EFD9E - sprite_diggin_guy.asm : 307
 NOP #8
@@ -749,7 +753,77 @@ JSL RandomGanon
 ;org $01EDB2 ; <- EDB2 - Bank01.asm : 14038
 ;INC $04C4
 ;--------------------------------------------------------------------------------
-
+org $05A3F4 ; <- 2A3F4 - sprite_lanmola.asm : 112 (JSL GetRandomInt : AND.b #$07 : TAY)
+JSL.l RNG_Lanmolas1
+org $05A401 ; <- 2A401 - sprite_lanmola.asm : 116 (JSL GetRandomInt : AND.b #$07 : TAY)
+JSL.l RNG_Lanmolas1
+org $05A4FA ; <- 2A4FA - sprite_lanmola.asm : 241 (JSL GetRandomInt : AND.b #$07 : TAY)
+JSL.l RNG_Lanmolas1
+org $05A507 ; <- 2A507 - sprite_lanmola.asm : 245 (JSL GetRandomInt : AND.b #$07 : TAY)
+JSL.l RNG_Lanmolas1
+;--------------------------------------------------------------------------------
+org $1DD817 ; <- ED817 - sprite_giant_moldorm.asm : 187 (JSL GetRandomInt : AND.b #$02 : DEC A : STA $0EB0, X)
+JSL.l RNG_Moldorm1
+org $1DD821 ; <- ED821 - sprite_giant_moldorm.asm : 189 (JSL GetRandomInt : AND.b #$1F : ADC.b #$20 : STA !timer_0, X)
+JSL.l RNG_Moldorm1
+org $1DD832 ; <- ED832 - sprite_giant_moldorm.asm : 203 (JSL GetRandomInt : AND.b #$0F : ADC.b #$08 : STA !timer_0, X)
+JSL.l RNG_Moldorm1
+;--------------------------------------------------------------------------------
+org $1E81A9 ; <- F01A9 - sprite_helmasaur_king.asm : 247 (JSL GetRandomInt : AND.b #$07 : TAY)
+JSL.l RNG_Helmasaur
+org $1E8262 ; <- F0262 - sprite_helmasaur_king.asm : 373 (JSL GetRandomInt : AND.b #$01 : BEQ BRANCH_BETA)
+JSL.l RNG_Helmasaur
+org $1DEEE1 ; <- EEEE1 - sprite_helmasaur_fireball.asm : 236 (JSL GetRandomInt : STA $0FB6)
+JSL.l RNG_Helmasaur
+;--------------------------------------------------------------------------------
+org $1EB5F7 ; <- F35F7 - sprite_arrghus.asm : 328 (JSL GetRandomInt : AND.b #$3F : ADC.b #$30 : STA $0DF0, X)
+JSL.l RNG_Arrghus
+;--------------------------------------------------------------------------------
+org $1EBF4D ; <- F3F4D - sprite_mothula.asm : 180 (JSL GetRandomInt : AND.b #$07 : TAY)
+JSL.l RNG_Mothula
+org $1EBF60 ; <- F3F60 - sprite_mothula.asm : 187 (JSL GetRandomInt : AND.b #$1F : ADC.b #$40 : STA $0DF0, X)
+JSL.l RNG_Mothula
+org $1EBFBE ; <- F3FBE - sprite_mothula.asm : 261 (JSL GetRandomInt : AND.b #$1F : ORA.b #$40 : STA !beam_timer, X)
+JSL.l RNG_Mothula
+org $1EC095 ; <- F4095 - sprite_mothula.asm : 373 (JSL GetRandomInt : AND.b #$1F : CMP #$1E : BCC .already_in_range)
+JSL.l RNG_Mothula
+;--------------------------------------------------------------------------------
+org $1E957A ; <- F157A - sprite_kholdstare.asm : 209 (JSL GetRandomInt : AND.b #$3F : ADC.b #$20 : STA $0DF0, X)
+JSL.l RNG_Kholdstare
+org $1E95F0 ; <- F15F0 - sprite_kholdstare.asm : 289 (JSL GetRandomInt : AND.b #$3F : ADC.b #$60 : STA $0DF0, X)
+JSL.l RNG_Kholdstare
+org $1E95FB ; <- F15FB - sprite_kholdstare.asm : 291 (JSL GetRandomInt : PHA : AND.b #$03 : TAY)
+JSL.l RNG_Kholdstare
+org $1E96C9 ; <- F16C9 - sprite_kholdstare.asm : 453 (JSL GetRandomInt : AND.b #$07 : TAY)
+JSL.l RNG_Kholdstare
+org $1E96E5 ; <- F16E5 - sprite_kholdstare.asm : 458 (JSL GetRandomInt : AND.b #$07 : TAY)
+JSL.l RNG_Kholdstare
+org $1E97D5 ; <- F17D5 - sprite_kholdstare.asm : 605 (JSL GetRandomInt : AND.b #$04 : STA $0D)
+JSL.l RNG_Kholdstare
+;--------------------------------------------------------------------------------
+org $1DE5B4 ; <- EE5E4 - sprite_vitreous.asm : 207 (JSL GetRandomInt : AND.b #$0F : TAY)
+JSL.l RNG_Vitreous
+org $1DE626 ; <- EE626 - sprite_vitreous.asm : 255 (JSL GetRandomInt : AND.b #$07 : STA $0D90, Y)
+JSL.l RNG_Vitreous
+;--------------------------------------------------------------------------------
+org $1DB61C ; <- EB16C - sprite_trinexx.asm : 530 (JSL GetRandomInt : AND.b #$07 : TAY)
+JSL.l RNG_Trinexx
+org $1DB186 ; <- EB186 - sprite_trinexx.asm : 535 (JSL GetRandomInt : AND.b #$07 : TAY)
+JSL.l RNG_Trinexx
+org $1DB25E ; <- EB25E - sprite_trinexx.asm : 643 (JSL GetRandomInt : AND.b #$03 : TAY : CMP $00 : BEQ BRANCH_ALPHA)
+JSL.l RNG_Trinexx
+org $1DB28D ; <- EB28D - sprite_trinexx.asm : 661 (JSL GetRandomInt : AND.b #$03 : CMP.b #$01 : TYA : BCS BRANCH_GAMMA)
+JSL.l RNG_Trinexx
+org $1DB9B0 ; <- EB9B0 - sprite_sidenexx.asm : 165 (JSL GetRandomInt : AND.b #$07 : INC A : CMP.b #$05 : BCS BRANCH_ALPHA)
+JSL.l RNG_Trinexx
+org $1DB9CC ; <- EB9CC - sprite_sidenexx.asm : 175 (JSL GetRandomInt : LSR A : BCS BRANCH_ALPHA)
+JSL.l RNG_Trinexx
+org $1DBA5D ; <- EBA5D - sprite_sidenexx.asm : 270 (JSL GetRandomInt : AND.b #$0F : STA $0DF0, X)
+JSL.l RNG_Trinexx
+org $1DBAB1 ; <- EBAB1 - sprite_sidenexx.asm : 314 (JSL GetRandomInt : AND.b #$0F : LDY.b #$00 : SUB.b #$03)
+JSL.l RNG_Trinexx
+org $1DBAC3 ; <- EBAC3 - sprite_sidenexx.asm : 323 (JSL GetRandomInt : AND.b #$0F : ADD.b #$0C : STA $02 : STZ $03)
+JSL.l RNG_Trinexx
 ;================================================================================
 ; HUD Changes
 ;--------------------------------------------------------------------------------
@@ -782,10 +856,13 @@ JSL.l DrawMagicHeader
 NOP #17
 ;--------------------------------------------------------------------------------
 org $0DFB29 ; <- - headsup_display.asm : 688 (LDA.b #$86 : STA $7EC71E)
-LDA.b #$86 : STA $7EC720 ; nudge silver arrow right
-LDA.b #$24 : STA $7EC721
-LDA.b #$87 : STA $7EC722
-LDA.b #$24 : STA $7EC723
+;LDA.b #$86 : STA $7EC720 ; nudge silver arrow right - remember to update this in newit
+;LDA.b #$24 : STA $7EC721
+;LDA.b #$87 : STA $7EC722
+;LDA.b #$24 : STA $7EC723
+JSL.l DrawHUDSilverArrows : BRA +
+	NOP #18
++
 ;--------------------------------------------------------------------------------
 ; Insert our version of the hud tilemap
 org $0DFA96 ; <- 6FA96 - headsup_display.asm : 626 (LDX.w #.hud_tilemap)
@@ -798,7 +875,7 @@ MVN $207E
 ;NOP
 ;--------------------------------------------------------------------------------
 org $0DFB1F ; 6FB1F - headsup_display.asm : 681 (LDA $7EF340 : BEQ .hastNoBow)
-JSL.l DrawHUDSilverArrows
+JSL.l CheckHUDSilverArrows
 ;--------------------------------------------------------------------------------
 
 ;================================================================================

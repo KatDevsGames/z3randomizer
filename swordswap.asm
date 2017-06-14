@@ -30,6 +30,14 @@ LoadSwordForDamage:
 	.done
 RTL
 ;================================================================================
+CheckGanonHammerDamage:
+	LDA.l HammerableGanon : BEQ +
+	LDA $0E20, X : CMP.b #$D8 ; original behavior except ganon
+RTL
+	+
+	LDA $0E20, X : CMP.b #$D6 ; original behavior
+RTL
+;================================================================================
 GetSmithSword:
 	JSL ItemCheck_SmithSword : BEQ + : JMP.l Smithy_AlreadyGotSword : +
 	LDA.l SmithItemMode : BNE +

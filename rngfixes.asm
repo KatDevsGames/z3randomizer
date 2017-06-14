@@ -39,7 +39,7 @@ RNG_Lanmolas1:
 	LDA.b #$00 : BRA _rng_done
 RNG_Moldorm1:
 	LDA.b #$01 : BRA _rng_done
-RNG_Agahnim1:
+RNG_Agahnim1:;x
 	LDA.b #$02 : BRA _rng_done
 RNG_Helmasaur:
 	LDA.b #$03 : BRA _rng_done
@@ -53,15 +53,15 @@ RNG_Vitreous:
 	LDA.b #$07 : BRA _rng_done
 RNG_Trinexx:
 	LDA.b #$08 : BRA _rng_done
-RNG_Lanmolas2:
+RNG_Lanmolas2:;x
 	LDA.b #$09 : BRA _rng_done
-RNG_Moldorm2:
+RNG_Moldorm2:;x
 	LDA.b #$0A : BRA _rng_done
-RNG_Agahnim2:
+RNG_Agahnim2:;x
 	LDA.b #$0B : BRA _rng_done
-RNG_Agahnim2Phantoms:
+RNG_Agahnim2Phantoms:;x
 	LDA.b #$0C : BRA _rng_done
-RNG_Ganon:
+RNG_Ganon:;x
 	LDA.b #$0D
 	_rng_done:
 	JSL.l GetStaticRNG
@@ -75,7 +75,7 @@ GetStaticRNG:
 	PHX : PHP
 	REP #$20 ; set 16-bit accumulator and index registers
 	AND.w #$007F
-	ASL : TAX : LDA !RNG_POINTERS, X : INC : STA !RNG_POINTERS, X : TAX : ASL ; increment pointer and move value to X
+	ASL : TAX : LDA !RNG_POINTERS, X : INC : AND.w #$03FF : STA !RNG_POINTERS, X : TAX : ASL ; increment pointer and move value to X
 	LDA Static_RNG, X ; load RNG value
 	PLP : PLX
 RTL

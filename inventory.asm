@@ -950,7 +950,7 @@ SpawnShovelItem:
 		
 		LSR #2 : TAX ; clobber lower 2 bis - we have 64 slots now
 		
-		LDA .spawn_table, X ; look up the drop on the table
+		LDA.l ShovelSpawnTable, X ; look up the drop on the table
 		
 		;most of this part below is copied from the digging game
 		
@@ -995,22 +995,6 @@ RTL
 .x_offsets
     db $00
     db $13
-
-.spawn_table
-	db $B2 ; Gold Bee
-	db $D8, $D8, $D8 ; Single Heart
-	db $D8, $D8, $D8, $D8, $D8 ; Single Heart
-	db $D9, $D9, $D9, $D9, $D9 ; Green Rupee
-	db $DA, $DA, $DA, $DA, $DA ; Blue Rupee
-	db $DB, $DB, $DB, $DB, $DB ; Red Rupee
-	db $DC, $DC, $DC, $DC, $DC ; 1 Bomb
-	db $DD, $DD, $DD, $DD, $DD ; 4 Bombs
-	db $DE, $DE, $DE, $DE, $DE ; 8 Bombs
-	db $DF, $DF, $DF, $DF, $DF ; Small Magic
-	db $E0, $E0, $E0, $E0, $E0 ; Large Magic
-	db $E1, $E1, $E1, $E1, $E1 ; 5 Arrows
-	db $E2, $E2, $E2, $E2, $E2 ; 10 Arrows
-	db $E3, $E3, $E3, $E3, $E3 ; Fairy
 	
 }
 ;--------------------------------------------------------------------------------

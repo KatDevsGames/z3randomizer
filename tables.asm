@@ -181,6 +181,23 @@ org $308086 ; PC 0x180086
 GanonAgahRNG:
 db #$01 ; $00 = vanilla behavior, $01 = no extra blue balls/warps, $02 = use the random table
 ;--------------------------------------------------------------------------------
+org $308090 ; PC 0x180090 (0x40 bytes)
+ShovelSpawnTable:
+	db $B2 ; Gold Bee
+	db $D8, $D8, $D8 ; Single Heart
+	db $D8, $D8, $D8, $D8, $D8 ; Single Heart
+	db $D9, $D9, $D9, $D9, $D9 ; Green Rupee
+	db $DA, $DA, $DA, $DA, $DA ; Blue Rupee
+	db $DB, $DB, $DB, $DB, $DB ; Red Rupee
+	db $DC, $DC, $DC, $DC, $DC ; 1 Bomb
+	db $DD, $DD, $DD, $DD, $DD ; 4 Bombs
+	db $DE, $DE, $DE, $DE, $DE ; 8 Bombs
+	db $DF, $DF, $DF, $DF, $DF ; Small Magic
+	db $E0, $E0, $E0, $E0, $E0 ; Large Magic
+	db $E1, $E1, $E1, $E1, $E1 ; 5 Arrows
+	db $E2, $E2, $E2, $E2, $E2 ; 10 Arrows
+	db $E3, $E3, $E3, $E3, $E3 ; Fairy
+;--------------------------------------------------------------------------------
 org $098B7C ; PC 0x48B7C
 EtherTablet:
 	db #$10 ; #$10 = Ether

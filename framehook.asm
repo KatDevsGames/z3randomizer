@@ -23,9 +23,9 @@
 FrameHookAction:
 	JSL $0080B5 ; Module_MainRouting
 	PHA : PHP
-		LDA EnableSRAMTrace : AND.l TournamentSeedInverse : BEQ +
-			LDA $1A : BNE ++ : JSL.l WriteStatusPreview : ++ ; write every 256 frames
-		+
+		;LDA EnableSRAMTrace : AND.l TournamentSeedInverse : BEQ +
+		;	LDA $1A : BNE ++ : JSL.l WriteStatusPreview : ++ ; write every 256 frames
+		;+
 		
 		LDA !LOCK_STATS : BNE ++
 			REP #$20 ; set 16-bit accumulator

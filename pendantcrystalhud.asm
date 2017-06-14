@@ -117,10 +117,10 @@ CheckHeraObject:
 	LDA CrystalPendantFlags_2_hera : BNE .crystal
 	
 	.pendant
-	LDA $7EF374 : AND.l CrystalPendantFlags_hera
+	LDA $7EF374 : AND.l CrystalPendantFlags_hera : AND.w #$00FF
 RTL
 	.crystal
-	LDA $7EF37A : AND.l CrystalPendantFlags_hera
+	LDA $7EF37A : AND.l CrystalPendantFlags_hera : AND.w #$00FF
 RTL
 ;================================================================================
 ;GetPendantCrystalWorld:

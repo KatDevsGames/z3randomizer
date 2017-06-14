@@ -1,6 +1,12 @@
 ;================================================================================
 ; RTPreview SRAM Hook
 ;--------------------------------------------------------------------------------
+MaybeWriteSRAMTrace:
+	LDA EnableSRAMTrace : AND.l TournamentSeedInverse : BEQ +
+		JSL.l WriteStatusPreview
+	+
+RTL
+;--------------------------------------------------------------------------------
 WriteStatusPreview:
 	PHA
 		LDA $4300 : PHA ; preserve DMA parameters

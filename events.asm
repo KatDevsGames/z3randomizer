@@ -78,6 +78,7 @@ RTL
 ;--------------------------------------------------------------------------------
 PostItemGet:
 	;LDA.b #$00 : STA !ITEM_BUSY ; mark item as finished
+	JSL.l MaybeWriteSRAMTrace
 RTL
 ;--------------------------------------------------------------------------------
 PostItemAnimation:
