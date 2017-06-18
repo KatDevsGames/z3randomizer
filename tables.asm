@@ -139,7 +139,7 @@ db #$00 ; #$00 = Off (default) - #$01 = On
 ;--------------------------------------------------------------------------------
 org $30803E ; PC 0x18003E
 InvincibleGanon:
-db #$00 ; #$00 = Off (default) - #$01 = On
+db #$00 ; #$00 = Off (default) - #$01 = On - #$02 = Require All Dungeons
 ;--------------------------------------------------------------------------------
 org $30803F ; PC 0x18003F
 HammerableGanon:
@@ -672,7 +672,7 @@ dw #$B9B0, #$FFFF ; $FFFFB9B0 = -5 minutes
 GreenClockAmount:
 dw #$0000, #$0000
 StartingTime:
-dw #$4650, #$0000 ; #$A5E0, #$0001 = 30 minutes
+dw #$0000, #$0000 ; #$A5E0, #$0001 = 30 minutes
 ;================================================================================
 org $09E3BB ; PC 0x4E3BB
 db $EB ; Hera Big Key (Set to programmable HP $EB) (set to $E4 for original hookable/boomable key behavior)
@@ -770,7 +770,7 @@ db $7f, $7f
 ; SahasrahlaNoPendantText
 org $308A00 ; PC 0x180A00
 SahasrahlaNoPendantText: 
-; Want something|for free? Tell|you what…|bring me the|green pendant.
+; Want something|for free? Tell|you what|bring me the|green pendant.
 db $74, $00, $C0, $00, $AA, $00, $B7, $00, $BD, $00, $FF, $00, $BC, $00, $B8, $00, $B6, $00, $AE, $00, $BD, $00, $B1, $00, $B2, $00, $B7, $00, $B0, $75, $00, $AF, $00, $B8, $00, $BB, $00, $FF, $00, $AF, $00, $BB, $00, $AE, $00, $AE, $00, $C6, $00, $FF, $00, $BD, $00, $AE, $00, $B5, $00, $B5, $76, $00, $C2, $00, $B8, $00, $BE, $00, $FF, $00, $C0, $00, $B1, $00, $AA, $00, $BD, $00, $CC, $7E, $73, $76, $00, $AB, $00, $BB, $00, $B2, $00, $B7, $00, $B0, $00, $FF, $00, $B6, $00, $AE, $00, $FF, $00, $BD, $00, $B1, $00, $AE, $73, $76, $00, $B0, $00, $BB, $00, $AE, $00, $AE, $00, $B7, $00, $FF, $00, $B9, $00, $AE, $00, $B7, $00, $AD, $00, $AA, $00, $B7, $00, $BD, $00, $CD
 db $7f, $7f
 ;--------------------------------------------------------------------------------
@@ -786,7 +786,7 @@ db $7f, $7f
 ; AlcoholicText
 org $308C00 ; PC 0x180C00
 AlcoholicText: 
-; If you haven't|found Quake|yet…|it's not your|fault.
+; If you haven't|found Quake|yet|it's not your|fault.
 db $74, $00, $B2, $00, $AF, $00, $FF, $00, $C2, $00, $B8, $00, $BE, $00, $FF, $00, $B1, $00, $AA, $00, $BF, $00, $AE, $00, $B7, $00, $D8, $00, $BD, $75, $00, $AF, $00, $B8, $00, $BE, $00, $B7, $00, $AD, $00, $FF, $00, $BA, $00, $BE, $00, $AA, $00, $B4, $00, $AE, $76, $00, $C2, $00, $AE, $00, $BD, $00, $CC, $7E, $73, $76, $00, $B2, $00, $BD, $00, $D8, $00, $BC, $00, $FF, $00, $B7, $00, $B8, $00, $BD, $00, $FF, $00, $C2, $00, $B8, $00, $BE, $00, $BB, $73, $76, $00, $AF, $00, $AA, $00, $BE, $00, $B5, $00, $BD, $00, $CD
 db $7f, $7f
 ;--------------------------------------------------------------------------------

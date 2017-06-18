@@ -630,12 +630,15 @@ RTL
 
 .incrementBossSword
 	LDA $7EF359
-	CMP #$01 : BNE +
-		%TopHalf($7EF425)
+	BNE + : -
+		%TopHalf($7EF452) : RTS
+	+ CMP #$FF : BEQ -
+	+ CMP #$01 : BNE +
+		%TopHalf($7EF425) : RTS
 	+ CMP #$02 : BNE +
-		%BottomHalf($7EF425)
+		%BottomHalf($7EF425) : RTS
 	+ CMP #$03 : BNE +
-		%TopHalf($7EF426)
+		%TopHalf($7EF426) : RTS
 	+ CMP #$04 : BNE +
 		%BottomHalf($7EF426)
 	+
