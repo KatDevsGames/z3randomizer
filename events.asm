@@ -77,7 +77,11 @@ PreItemGet:
 RTL
 ;--------------------------------------------------------------------------------
 PostItemGet:
-	;LDA.b #$00 : STA !ITEM_BUSY ; mark item as finished
+	;LDA $02D8
+	;CMP #$70 : !BLT +
+	;CMP #$B0 : !BGE +
+	;	JSL.l FreeDungeonItemNotice
+	;+
 	JSL.l MaybeWriteSRAMTrace
 RTL
 ;--------------------------------------------------------------------------------

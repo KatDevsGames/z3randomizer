@@ -146,7 +146,7 @@ FreeDungeonItemNotice:
 	.dungeon
 	LDA !OFFSET_RETURN : DEC #2 : STA !OFFSET_POINTER
 	LDA !ITEM_TEMPORARY
-	AND.b #$0F ; looking at high bits only
+	AND.b #$0F ; looking at low bits only
 	CMP.b #$00 : BNE + ; ...light world
 		%CopyDialog(Notice_LightWorld) : BRL .done
 	+ : CMP.b #$01 : BNE + ; ...dark world
@@ -191,6 +191,7 @@ FreeDungeonItemNotice:
 	PLB
 	PLP
 	PLY : PLX : PLA
+
 	JSL.l Sprite_ShowMessageMinimal
 RTL
 	

@@ -231,7 +231,6 @@ AddReceivedItemExpandedGetItem:
 		CMP GoalItemRequirement : !BLT ++ : JSL.l StatsFinalPrep : ++
 		BRL .done
 	+ CMP.b #$70 : !BLT + : CMP.b #$80 : !BGE + ; Free Map
-		JSL.l FreeDungeonItemNotice
 		AND #$0F : CMP #$08 : !BGE ++
 			%ValueShift()
 			ORA $7EF368 : STA $7EF368 ; Map 1
@@ -241,7 +240,6 @@ AddReceivedItemExpandedGetItem:
 			ORA $7EF369 : STA $7EF369 ; Map 2
 		BRL .done
 	+ CMP.b #$80 : !BLT + : CMP.b #$90 : !BGE + ; Free Compass
-		JSL.l FreeDungeonItemNotice
 		AND #$0F : CMP #$08 : !BGE ++
 			%ValueShift()
 			ORA $7EF364 : STA $7EF364 ; Compass 1
@@ -251,7 +249,6 @@ AddReceivedItemExpandedGetItem:
 			ORA $7EF365 : STA $7EF365 ; Compass 2
 		BRL .done
 	+ CMP.b #$90 : !BLT + : CMP.b #$A0 : !BGE + ; Free Big Key
-		JSL.l FreeDungeonItemNotice
 		AND #$0F : CMP #$08 : !BGE ++
 			%ValueShift()
 			ORA $7EF366 : STA $7EF366 ; Big Key 1
@@ -261,7 +258,6 @@ AddReceivedItemExpandedGetItem:
 			ORA $7EF367 : STA $7EF367 ; Big Key 2
 		BRL .done
 	+ CMP.b #$A0 : !BLT + : CMP.b #$B0 : !BGE + ; Free Small Key
-		JSL.l FreeDungeonItemNotice
 		AND #$0F : TAX
 		LDA $7EF37C, X : INC : STA $7EF37C, X ; Increment Key Count
 		TXA : ASL : CMP $040C : BNE ++
@@ -276,6 +272,7 @@ RTL
 ; #$70 - Maps
 ; #$80 - Compasses
 ; #$90 - Big Keys
+; #$A0 - Small Keys
 ;--------------------------------------------------------------------------------
 !PROGRESSIVE_SHIELD = "$7EF416" ; ss-- ----
 !RNG_ITEM = "$7EF450"
