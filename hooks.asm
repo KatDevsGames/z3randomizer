@@ -811,7 +811,7 @@ JSL.l RNG_Kholdstare
 org $1E97D5 ; <- F17D5 - sprite_kholdstare.asm : 605 (JSL GetRandomInt : AND.b #$04 : STA $0D)
 JSL.l RNG_Kholdstare
 ;--------------------------------------------------------------------------------
-org $1DE5B4 ; <- EE5E4 - sprite_vitreous.asm : 207 (JSL GetRandomInt : AND.b #$0F : TAY)
+org $1DE5E4 ; <- EE5E4 - sprite_vitreous.asm : 207 (JSL GetRandomInt : AND.b #$0F : TAY)
 JSL.l RNG_Vitreous
 org $1DE626 ; <- EE626 - sprite_vitreous.asm : 255 (JSL GetRandomInt : AND.b #$07 : STA $0D90, Y)
 JSL.l RNG_Vitreous
