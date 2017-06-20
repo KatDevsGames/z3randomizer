@@ -816,7 +816,7 @@ JSL.l RNG_Vitreous
 org $1DE626 ; <- EE626 - sprite_vitreous.asm : 255 (JSL GetRandomInt : AND.b #$07 : STA $0D90, Y)
 JSL.l RNG_Vitreous
 ;--------------------------------------------------------------------------------
-org $1DB61C ; <- EB16C - sprite_trinexx.asm : 530 (JSL GetRandomInt : AND.b #$07 : TAY)
+org $1DB16C ; <- EB16C - sprite_trinexx.asm : 530 (JSL GetRandomInt : AND.b #$07 : TAY)
 JSL.l RNG_Trinexx
 org $1DB186 ; <- EB186 - sprite_trinexx.asm : 535 (JSL GetRandomInt : AND.b #$07 : TAY)
 JSL.l RNG_Trinexx
