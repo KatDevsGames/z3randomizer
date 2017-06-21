@@ -687,6 +687,12 @@ JSL.l CheckMedallionSword
 org $07A656 ; <- 3A656 - Bank07.asm:6133 (LDA $7EF359 : INC A : AND.b #$FE : BEQ BRANCH_BETA) - Quake
 JSL.l CheckMedallionSword
 ;--------------------------------------------------------------------------------
+org $05F3A0 ; <- 2F3A0 - sprite_medallion_tablet.asm:240 (LDA $7EF359 : BMI .zeta)
+JSL.l CheckTabletSword
+;--------------------------------------------------------------------------------
+org $05F40A ; <- 2F40A - sprite_medallion_tablet.asm:303 (LDA $7EF359 : BMI .show_hylian_script)
+JSL.l CheckTabletSword
+;--------------------------------------------------------------------------------
 
 ;================================================================================
 ; Medallion Tablets
@@ -811,12 +817,12 @@ JSL.l RNG_Kholdstare
 org $1E97D5 ; <- F17D5 - sprite_kholdstare.asm : 605 (JSL GetRandomInt : AND.b #$04 : STA $0D)
 JSL.l RNG_Kholdstare
 ;--------------------------------------------------------------------------------
-org $1DE5E4 ; <- EE5E4 - sprite_vitreous.asm : 207 (JSL GetRandomInt : AND.b #$0F : TAY)
+org $1DE5B4 ; <- EE5E4 - sprite_vitreous.asm : 207 (JSL GetRandomInt : AND.b #$0F : TAY)
 JSL.l RNG_Vitreous
 org $1DE626 ; <- EE626 - sprite_vitreous.asm : 255 (JSL GetRandomInt : AND.b #$07 : STA $0D90, Y)
 JSL.l RNG_Vitreous
 ;--------------------------------------------------------------------------------
-org $1DB16C ; <- EB16C - sprite_trinexx.asm : 530 (JSL GetRandomInt : AND.b #$07 : TAY)
+org $1DB61C ; <- EB16C - sprite_trinexx.asm : 530 (JSL GetRandomInt : AND.b #$07 : TAY)
 JSL.l RNG_Trinexx
 org $1DB186 ; <- EB186 - sprite_trinexx.asm : 535 (JSL GetRandomInt : AND.b #$07 : TAY)
 JSL.l RNG_Trinexx

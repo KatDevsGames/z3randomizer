@@ -17,10 +17,11 @@ OnDungeonEntrance:
 	PHA : PHP
 		SEP #$20 ; set 8-bit accumulator
 		LDA $040C : CMP #$FF : BEQ + ; don't do this unless it's a real dungeon
+		REP #$20 : LDA $A0 : CMP.w #18 : BEQ + : SEP #$20 ; skip if we're in the sanctuary
 		LDA $7EF3CC ; load follower
 		CMP #$0C : BNE + ; skip if not the purple chest
 			LDA #$00 : STA $7EF3CC
-		+
+		+ ; this might get hit from above in either accumulator mode
 	PLP : PLA
 	STA $7EC172 ; thing we wrote over
 RTL
@@ -77,11 +78,6 @@ PreItemGet:
 RTL
 ;--------------------------------------------------------------------------------
 PostItemGet:
-	;LDA $02D8
-	;CMP #$70 : !BLT +
-	;CMP #$B0 : !BGE +
-	;	JSL.l FreeDungeonItemNotice
-	;+
 	JSL.l MaybeWriteSRAMTrace
 RTL
 ;--------------------------------------------------------------------------------

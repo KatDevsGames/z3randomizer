@@ -20,6 +20,9 @@ DarkWorldFlagSet:
 	LDA Bugfix_PreAgaDWDungeonDeathToFakeDW : BEQ +
 		LDA $10 : CMP #$12 : BEQ .done ; don't do anything in death mode
 	+
+	LDA $1B : BEQ + ; skip this unless indoors - THIS PART FIXES THE OTHER FUCKUP WITH THE PYRAMID SPAWN IN GLITCHED
+		LDA $A0 : CMP.b #$00 : BEQ .done ; skip if we died in ganon's room
+	+
 	LDA.l Bugfix_MirrorlessSQToLW : BEQ +
 		LDA $7EF353 : BEQ .noMirror ; check if we have the mirror
 	+
@@ -29,7 +32,6 @@ DarkWorldFlagSet:
 	.aga1Alive
 	LDA #$00 : STA $7EF3CA ; set flag to light world
 	LDA $7EF3CC : CMP #$07 : BNE + : LDA.b #$08 : STA $7EF3CC : + ; convert frog to dwarf
-	;LDA $7EF3CC : CMP #$07 : BNE + : LDA.b #$00 : STA $7EF3CC : + ; clear frog
 	.done
 	PLA
 RTL
@@ -43,7 +45,6 @@ SetDeathWorldChecked:
 	LDA $A0 : CMP.b #$00 : BEQ .done ; skip if we died in ganon's room
 	LDA.b #$00 : STA $7EF3CA : STA $7E0FFF ; set the world to the light world if he's still alive
 	LDA $7EF3CC : CMP #$07 : BNE .done : LDA.b #$08 : STA $7EF3CC ; convert frog to dwarf
-	;LDA $7EF3CC : CMP #$07 : BNE .done : LDA.b #$00 : STA $7EF3CC ; clear frog
 	.done
 	PLA
 RTL

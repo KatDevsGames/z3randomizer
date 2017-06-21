@@ -2,7 +2,8 @@
 ; Spawn Zelda (or not)
 ;--------------------------------------------------------------------------------
 SpawnZelda:
-    LDA.l $7EF3CC : CMP #$08 : BEQ +
+    LDA.l $7EF3CC : CMP #$08 : BEQ + ; don't spawn if dwarf is present
+    CMP #$0C : BEQ + ; don't spawn if purple chest is present
 		CLC : RTL
 	+
 	SEC

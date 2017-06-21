@@ -30,6 +30,14 @@ LoadSwordForDamage:
 	.done
 RTL
 ;================================================================================
+CheckTabletSword:
+	LDA.l AllowHammerTablets : BEQ +
+	LDA $7EF34B : BEQ + ; check for hammer
+		LDA.b #$02 : RTL
+	+
+	LDA $7EF359 ; get actual sword value
+RTL
+;================================================================================
 CheckGanonHammerDamage:
 	LDA.l HammerableGanon : BEQ +
 	LDA $0E20, X : CMP.b #$D8 ; original behavior except ganon
