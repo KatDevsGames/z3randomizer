@@ -188,11 +188,11 @@ DrawPendantCrystalDiagram:
 			LDA.w #$2D44 : STA $1472
 			LDA.w #$2D45 : STA $1474
 		+ LDA $7EF37A : AND.w #$0004 : BEQ + ; crystal 5
-			LDA.w #$2D44 : STA $14B4
-			LDA.w #$2D45 : STA $14B6
+			LDA.w #$2544 : STA $14B4
+			LDA.w #$2545 : STA $14B6
 		+ LDA $7EF37A : AND.w #$0001 : BEQ + ; crystal 6
-			LDA.w #$2D44 : STA $1476
-			LDA.w #$2D45 : STA $1478
+			LDA.w #$2544 : STA $1476
+			LDA.w #$2545 : STA $1478
 		+ LDA $7EF37A : AND.w #$0008 : BEQ + ; crystal 7
 			LDA.w #$2D44 : STA $14B8
 			LDA.w #$2D45 : STA $14BA
