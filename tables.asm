@@ -1008,8 +1008,8 @@ db $04
 ;8E - Compass of Hyrule Castle
 ;8F - Compass of Sewers
 
-;90 - Big Key of ---
-;91 - Big Key of ---
+;90 - Skull Key
+;91 - Reserved
 ;92 - Big Key of Ganon's Tower
 ;93 - Big Key of Turtle Rock
 ;94 - Big Key of Thieves' Town
@@ -1039,8 +1039,8 @@ db $04
 ;AB - Small Key of Thieves' Town
 ;AC - Small Key of Turtle Rock
 ;AD - Small Key of Ganon's Tower
-;AE - Small Key of ---
-;AF - Small Key of ---
+;AE - Reserved
+;AF - Reserved
 ;--------------------------------------------------------------------------------
 org $308400 ; PC 0x180400
 ;================================================================================
