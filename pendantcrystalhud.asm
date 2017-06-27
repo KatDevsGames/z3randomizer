@@ -114,7 +114,7 @@ RTL
 RTL
 ;================================================================================
 CheckHeraObject:
-	LDA CrystalPendantFlags_2_hera : BNE .crystal
+	LDA CrystalPendantFlags_2_hera : AND.w #$00FF : BNE .crystal
 	
 	.pendant
 	LDA $7EF374 : AND.l CrystalPendantFlags_hera : AND.w #$00FF
