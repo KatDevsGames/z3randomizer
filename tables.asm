@@ -185,7 +185,7 @@ org $308086 ; PC 0x180086
 GanonAgahRNG:
 db #$00 ; $00 = static rng, $01 = no extra blue balls/warps
 ;--------------------------------------------------------------------------------
-org $308090 ; PC 0x180090 (0x40 bytes)
+org $308100 ; PC 0x180100 (0x40 bytes)
 ShovelSpawnTable:
 	db $B2 ; Gold Bee
 	db $D8, $D8, $D8 ; Single Heart
