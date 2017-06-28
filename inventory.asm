@@ -231,10 +231,7 @@ AddInventory:
 	CPY.b #$50 : BEQ .isSword
 	BRA +
 		.isSword
-		LDA $7EF42A : AND #$40 : BNE ++ ; skip additional processing if we have the fairy sword flag yet
-			BRL .dungeonCounts
-		++
-			BRL .itemCounts
+		BRL .dungeonCounts
 	+
 	CPY.b #$3B : BNE + : BRL .dungeonCounts : + ; Silver Arrow Bow - Skip Shop/Fairy Check for Silver Arrow Bow
 	
@@ -522,15 +519,7 @@ RTL
 		PLA
 	+
 	
-	LDA $00 : PHA
-		LDA.l FairySword : STA $00
-		CPY $00 : BNE + ; increment if not the fairy sword
-			LDA $7EF42A : BIT #$40 : BNE ++ ; skip if we have the fairy sword flag yet
-			ORA.b #$40 : STA $7EF42A ; set fairy sword flag
-		+
-		LDA $7EF422 : !ADD #$20 : STA $7EF422 ; increment sword counter
-		++
-	PLA : STA $00
+	LDA $7EF422 : !ADD #$20 : STA $7EF422 ; increment sword counter
 RTS
 
 .incrementShield

@@ -38,9 +38,8 @@
 ; b - heart containers
 ; p - pendant upgrades
 ;--------------------------------------------------------------------------------
-; $7EF42A bfsccccc
+; $7EF42A b-sccccc
 ; b - bomb acquired
-; f - fairy sword acquired
 ; s - silver arrow bow acquired
 ; c - chests before gtower big key
 ;--------------------------------------------------------------------------------

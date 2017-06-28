@@ -6,6 +6,7 @@ FlipperKill:
 	LDA $5D : CMP #$04 : BNE .done ; skip if we're not swimming
 	LDA $7EF356 : BNE .done ; skip if we have the flippers
 	LDA $7F5001 : BEQ .done ; skip if we're not marked in danger for softlock
+	LDA $8A : CMP $7F5098 : BEQ .done ; skip if we're on the same screen we entered the water on
 	JSL.l KillFairies ; take away fairies
 	LDA.b #$00 : STA $7EF36D ; kill link
 	LDA.b #$00 : STA $7F5001 ; mark fake flipper softlock as impossible
@@ -40,5 +41,18 @@ FlipperFlag:
 	.safe
 	LDA #$00 : STA $7F5001 ; mark fake flipper softlock as impossible
 	.done 
+RTL
+;--------------------------------------------------------------------------------
+RegisterWaterEntryScreen:
+	PHA
+		LDA $8A : STA $7F5098 ; store ow index
+	PLA
+RTL
+;--------------------------------------------------------------------------------
+MysteryWaterFunction: ; *$3AE54 ALTERNATE ENTRY POINT
+    LDA.b #$20 : STA $02E2
+    STZ $037B
+    STZ $55
+    STZ $0360
 RTL
 ;--------------------------------------------------------------------------------

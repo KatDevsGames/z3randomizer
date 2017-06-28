@@ -54,6 +54,7 @@ GiveBonkItem:
 	JSR LoadBonkItem
 	CMP #$24 : BNE .notKey
 	.key
+		JSL.l AddInventory_incrementKeyLong
 		LDA $7EF36F : INC A : STA $7EF36F
 		LDA.b #$2F : JSL.l Sound_SetSfx3PanLong
 RTL

@@ -36,6 +36,7 @@ OnFileLoad:
 	JSL.l MasterSwordFollowerClear
 	JSL.l InitOpenMode
 	LDA #$FF : STA !RNG_ITEM_LOCK_IN ; reset rng item lock-in
+	LDA #$00 : STA $7F5001 ; mark fake flipper softlock as impossible
 RTL
 ;--------------------------------------------------------------------------------
 !RNG_ITEM_LOCK_IN = "$7F5090"
@@ -53,8 +54,15 @@ OnNewFile:
 RTL
 ;--------------------------------------------------------------------------------
 OnLinkDamaged:
-	;JSL.l FlipperKill
+	JSL.l FlipperKill
 	JSL.l OHKOTimer
+RTL
+;--------------------------------------------------------------------------------
+OnEnterWater:
+	JSL.l RegisterWaterEntryScreen
+	
+	JSL.l MysteryWaterFunction
+	LDX.b #$04
 RTL
 ;--------------------------------------------------------------------------------
 OnLinkDamagedFromPit:
