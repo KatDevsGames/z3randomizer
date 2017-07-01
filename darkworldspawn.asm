@@ -17,11 +17,14 @@ RTL
 ;--------------------------------------------------------------------------------
 DarkWorldFlagSet:
 	PHA
+	
+	LDA !FORCE_PYRAMID : AND.b #$08 : BNE .pyramid
+	
 	LDA Bugfix_PreAgaDWDungeonDeathToFakeDW : BEQ +
 		LDA $10 : CMP #$12 : BEQ .done ; don't do anything in death mode
 	+
 	LDA $1B : BEQ + ; skip this unless indoors - THIS PART FIXES THE OTHER FUCKUP WITH THE PYRAMID SPAWN IN GLITCHED
-		LDA $A0 : CMP.b #$00 : BEQ .done ; skip if we died in ganon's room
+		LDA $A0 : BEQ .done ; skip if we died in ganon's room
 	+
 	LDA.l Bugfix_MirrorlessSQToLW : BEQ +
 		LDA $7EF353 : BEQ .noMirror ; check if we have the mirror
@@ -35,6 +38,11 @@ DarkWorldFlagSet:
 	.done
 	PLA
 RTL
+	.pyramid
+	LDA #$40 : STA $7EF3CA ; set flag to dark world
+	LDA $7EF3CC : CMP #$08 : BNE + : LDA.b #$07 : STA $7EF3CC : + ; convert dwarf to frog
+	PLA
+RTL
 ;--------------------------------------------------------------------------------
 SetDeathWorldChecked:
 	PHA
@@ -42,7 +50,10 @@ SetDeathWorldChecked:
 		LDA $040C : CMP #$FF : BNE .done ; unless it's a cave
 	+
 	LDA $7EF3C5 : CMP.b #$03 : !BGE .done; thing we originally did - skip if agahnim 1 is dead
-	LDA $A0 : CMP.b #$00 : BEQ .done ; skip if we died in ganon's room
+	LDA $A0 : BNE + ; check if we died in ganon's room
+		LDA !FORCE_PYRAMID : ORA.b #$08 : STA !FORCE_PYRAMID ; set pyramid flag
+		BRL DarkWorldFlagSet_pyramid
+	+
 	LDA.b #$00 : STA $7EF3CA : STA $7E0FFF ; set the world to the light world if he's still alive
 	LDA $7EF3CC : CMP #$07 : BNE .done : LDA.b #$08 : STA $7EF3CC ; convert frog to dwarf
 	.done

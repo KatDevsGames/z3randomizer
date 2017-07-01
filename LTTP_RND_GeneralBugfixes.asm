@@ -26,7 +26,7 @@ org $3FFFFF ; <- 1FFFFF
 db #$00 ; expand file to 2mb
 
 org $1FFFF8 ; timestamp rom
-dl #$20170628
+dl #$20170701
 
 ;================================================================================
 
@@ -42,6 +42,8 @@ dl #$20170628
 !MAP_ZOOM = "$7EF415"
 !PROGRESSIVE_SHIELD = "$7EF416" ; ss-- ----
 !HUD_FLAG = "$7EF416" ; --h- ----
+!FORCE_PYRAMID = "$7EF416" ; ---- p---
+!IGNORE_FAIRIES = "$7EF416" ; ---- -i--
 !SHAME_CHEST = "$7EF416" ; ---s ----
 !HAS_GROVE_ITEM = "$7EF416" ; ---- ---g general flags, don't waste these
 !HIGHEST_SWORD_LEVEL = "$7EF417" ; --- -sss
@@ -194,6 +196,10 @@ Extra_Text_Table:
 incsrc itemtext.asm
 	
 incsrc externalhooks.asm
+;================================================================================
+org $119100 ; PC 0x89100
+incbin map_icons.gfx
+warnpc $119401
 ;================================================================================
 org $AF8000 ; PC 0x178000
 Static_RNG: ; each line below is 512 bytes of rng

@@ -129,7 +129,7 @@ db #$00 ; #$00 = Off (default) - #$01 = On
 ;--------------------------------------------------------------------------------
 org $30803B ; PC 0x18003B
 MapMode:
-db #$01 ; #$00 = Always On (default) - #$01 = Require Map Item
+db #$00 ; #$00 = Always On (default) - #$01 = Require Map Item
 CompassMode:
 db #$00 ; #$00 = Off (default) - #$01 = Display Dungeon Count
 ;--------------------------------------------------------------------------------
@@ -331,7 +331,7 @@ dw $0100 ; #$6234 - Master Sword
 
 org $0ABEF8 ; PC 0x53EF8
 MapObject_Eastern:
-dw $6038 ; #$6038 - Green Pendant / Courage
+dw $6238 ; #$6038 - Green Pendant / Courage
 
 org $0ABF1C ; PC 0x53F1C
 MapObject_Desert:
