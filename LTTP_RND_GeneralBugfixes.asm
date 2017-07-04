@@ -122,7 +122,9 @@ incsrc compasses.asm
 incsrc hashalphabet.asm ; <- TAKE OUT THE EXTRA ORGS IN HERE - THIS IS WHY WE COULDN'T ADD MORE FILES EARLIER
 warnpc $A18000
 
-incsrc translations.asm
+org $1C8000 ; text tables for translation
+incbin i18n_en.bin
+warnpc $1CF356
 
 org $A18000 ; static mapping area
 incsrc framehook.asm
