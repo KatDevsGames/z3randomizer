@@ -288,7 +288,9 @@ AddReceivedItemExpanded:
 		JSL.l PreItemGet
 		
 		LDA $02D8 : CMP #$5E : BNE ++ ; Progressive Sword
-			LDA $7EF359 : BNE + ; No Sword
+			LDA $7EF359 : CMP.l ProgressiveSwordLimit : !BLT +
+				LDA.l ProgressiveSwordReplacement : STA $02D8 : BRL .done
+			+ : CMP.b #$00 : BNE + ; No Sword
 				LDA.b #$49 : STA $02D8 : BRL .done
 			+ : CMP.b #$01 : BNE + ; Fighter Sword
 				LDA.b #$50 : STA $02D8 : BRL .done
@@ -297,16 +299,22 @@ AddReceivedItemExpanded:
 			+ ; Everything Else
 				LDA.b #$03 : STA $02D8 : BRL .done
 		++ : CMP.b #$5F : BNE ++ ; Progressive Shield
+			LDA !PROGRESSIVE_SHIELD : LSR #6 : CMP.l ProgressiveShieldLimit : !BLT +
+				LDA.l ProgressiveShieldReplacement : STA $02D8 : BRL .done
+			+
 			LDA !PROGRESSIVE_SHIELD : AND.b #$C0 : BNE + ; No Shield
 				LDA.b #$04 : STA $02D8
-				LDA !PROGRESSIVE_SHIELD : AND.b #$3F : ORA.b #$40 : STA !PROGRESSIVE_SHIELD : BRA .done
+				LDA !PROGRESSIVE_SHIELD : !ADD.b #$40 : STA !PROGRESSIVE_SHIELD : BRL .done
 			+ : CMP.b #$40 : BNE + ; Fighter Shield
 				LDA.b #$05 : STA $02D8
-				LDA !PROGRESSIVE_SHIELD : AND.b #$3F : ORA.b #$80 : STA !PROGRESSIVE_SHIELD : BRA .done
+				LDA !PROGRESSIVE_SHIELD : !ADD.b #$40 : STA !PROGRESSIVE_SHIELD : BRA .done
 			+ ; Everything Else
-				LDA.b #$06 : STA $02D8 : BRA .done
+				LDA.b #$06 : STA $02D8
+				LDA !PROGRESSIVE_SHIELD : !ADD.b #$40 : STA !PROGRESSIVE_SHIELD : BRA .done
 		++ : CMP.b #$60 : BNE ++ ; Progressive Armor
-			LDA $7EF35B : BNE + ; No Shield
+			LDA $7EF35B : CMP.l ProgressiveArmorLimit : !BLT +
+				LDA.l ProgressiveArmorReplacement : STA $02D8 : BRL .done
+			+ : BNE + ; No Shield
 				LDA.b #$22 : STA $02D8 : BRA .done
 			+ ; Everything Else
 				LDA.b #$23 : STA $02D8 : BRA .done

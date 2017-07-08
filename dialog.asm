@@ -242,6 +242,38 @@ RTL
 	PLA : JSL Sprite_ShowMessageUnconditional ; Text From MSPedestalText (tables.asm)
 RTL
 ;--------------------------------------------------------------------------------
+DialogEtherTablet:
+	PHA
+	LDA $0202 : CMP.b #$0F : BEQ + ; Show normal text if book is not equipped
+	-
+	PLA : JSL Sprite_ShowMessageUnconditional ; Wacky Hylian Text
+RTL
+	+
+	BIT $F4 : BVC - ; Show normal text if Y is not pressed
+	LDA $7EF359 : CMP.b #$02 : !BGE .noText
+	%LoadDialogAddress(EtherTabletText)
+	PLA : JSL Sprite_ShowMessageUnconditional ; Text From MSPedestalText (tables.asm)
+RTL
+	.noText
+	PLA
+RTL
+;--------------------------------------------------------------------------------
+DialogBombosTablet:
+	PHA
+	LDA $0202 : CMP.b #$0F : BEQ + ; Show normal text if book is not equipped
+	-
+	PLA : JSL Sprite_ShowMessageUnconditional ; Wacky Hylian Text
+RTL
+	+
+	BIT $F4 : BVC - ; Show normal text if Y is not pressed
+	LDA $7EF359 : CMP.b #$02 : !BGE .noText
+	%LoadDialogAddress(BombosTabletText)
+	PLA : JSL Sprite_ShowMessageUnconditional ; Text From MSPedestalText (tables.asm)
+RTL
+	.noText
+	PLA
+RTL
+;--------------------------------------------------------------------------------
 DialogUncle:
 	;%LoadDialog(UncleQuote,DialogUncleData)
 	%LoadDialogAddress(UncleText)

@@ -1317,11 +1317,11 @@ NOP #4
 ;----------------------------------------------------
 ;-- Bombos tablet
 org $05F3BF ; <- 2F3BF sprite_medallion_tablet.asm : 254 (JSL Sprite_ShowMessageUnconditional)
-NOP #4
+JSL.l DialogBombosTablet
 ;----------------------------------------------------
 ;-- Ether tablet
 org $05F429 ; <- 2F429 sprite_medallion_tablet.asm : 317 (JSL Sprite_ShowMessageUnconditional)
-NOP #4
+JSL.l DialogEtherTablet
 ;----------------------------------------------------
 ;-- Agahnim 1 Defeated
 org $068475 ; <- 30475 Bank06.asm : 762 - (JSL Sprite_ShowMessageMinimal)

@@ -185,6 +185,20 @@ org $308086 ; PC 0x180086
 GanonAgahRNG:
 db #$00 ; $00 = static rng, $01 = no extra blue balls/warps
 ;--------------------------------------------------------------------------------
+org $308090 ; PC 0x180090
+ProgressiveSwordLimit:
+db #$04 ; #$04 (default)
+ProgressiveSwordReplacement:
+db #$47 ; #$47 - 20 Rupees (default)
+ProgressiveShieldLimit:
+db #$03 ; #$03 (default)
+ProgressiveShieldReplacement:
+db #$47 ; #$47 - 20 Rupees (default)
+ProgressiveArmorLimit:
+db #$02 ; #$02 (default)
+ProgressiveArmorReplacement:
+db #$47 ; #$47 - 20 Rupees (default)
+;--------------------------------------------------------------------------------
 org $308100 ; PC 0x180100 (0x40 bytes)
 ShovelSpawnTable:
 	db $B2 ; Gold Bee
@@ -773,7 +787,7 @@ db $7f, $7f
 ; $308A00 (0x180A00) - $308AFF (0x180AFF)
 ; SahasrahlaNoPendantText
 org $308A00 ; PC 0x180A00
-SahasrahlaNoPendantText: 
+SahasrahlaNoPendantText:
 ; Want something|for free? Tell|you what|bring me the|green pendant.
 db $74, $00, $C0, $00, $AA, $00, $B7, $00, $BD, $00, $FF, $00, $BC, $00, $B8, $00, $B6, $00, $AE, $00, $BD, $00, $B1, $00, $B2, $00, $B7, $00, $B0, $75, $00, $AF, $00, $B8, $00, $BB, $00, $FF, $00, $AF, $00, $BB, $00, $AE, $00, $AE, $00, $C6, $00, $FF, $00, $BD, $00, $AE, $00, $B5, $00, $B5, $76, $00, $C2, $00, $B8, $00, $BE, $00, $FF, $00, $C0, $00, $B1, $00, $AA, $00, $BD, $00, $CC, $7E, $73, $76, $00, $AB, $00, $BB, $00, $B2, $00, $B7, $00, $B0, $00, $FF, $00, $B6, $00, $AE, $00, $FF, $00, $BD, $00, $B1, $00, $AE, $73, $76, $00, $B0, $00, $BB, $00, $AE, $00, $AE, $00, $B7, $00, $FF, $00, $B9, $00, $AE, $00, $B7, $00, $AD, $00, $AA, $00, $B7, $00, $BD, $00, $CD
 db $7f, $7f
@@ -781,7 +795,7 @@ db $7f, $7f
 ; $308B00 (0x180B00) - $308BFF (0x180BFF)
 ; SahasrahlaAfterItemText
 org $308B00 ; PC 0x180B00
-SahasrahlaAfterItemText: 
+SahasrahlaAfterItemText:
 ; I already gave|you all I have|Why don't you|go bother|someone else?
 db $74, $00, $B2, $00, $FF, $00, $AA, $00, $B5, $00, $BB, $00, $AE, $00, $AA, $00, $AD, $00, $C2, $00, $FF, $00, $B0, $00, $AA, $00, $BF, $00, $AE, $75, $00, $C2, $00, $B8, $00, $BE, $00, $FF, $00, $AA, $00, $B5, $00, $B5, $00, $FF, $00, $B2, $00, $FF, $00, $B1, $00, $AA, $00, $BF, $00, $AE, $76, $00, $C0, $00, $B1, $00, $C2, $00, $FF, $00, $AD, $00, $B8, $00, $B7, $00, $D8, $00, $BD, $00, $FF, $00, $C2, $00, $B8, $00, $BE, $7E, $73, $76, $00, $B0, $00, $B8, $00, $FF, $00, $AB, $00, $B8, $00, $BD, $00, $B1, $00, $AE, $00, $BB, $73, $76, $00, $BC, $00, $B8, $00, $B6, $00, $AE, $00, $B8, $00, $B7, $00, $AE, $00, $FF, $00, $AE, $00, $B5, $00, $BC, $00, $AE, $00, $C6
 db $7f, $7f
@@ -789,7 +803,7 @@ db $7f, $7f
 ; $308C00 (0x180C00) - $308CFF (0x180CFF)
 ; AlcoholicText
 org $308C00 ; PC 0x180C00
-AlcoholicText: 
+AlcoholicText:
 ; If you haven't|found Quake|yet|it's not your|fault.
 db $74, $00, $B2, $00, $AF, $00, $FF, $00, $C2, $00, $B8, $00, $BE, $00, $FF, $00, $B1, $00, $AA, $00, $BF, $00, $AE, $00, $B7, $00, $D8, $00, $BD, $75, $00, $AF, $00, $B8, $00, $BE, $00, $B7, $00, $AD, $00, $FF, $00, $BA, $00, $BE, $00, $AA, $00, $B4, $00, $AE, $76, $00, $C2, $00, $AE, $00, $BD, $00, $CC, $7E, $73, $76, $00, $B2, $00, $BD, $00, $D8, $00, $BC, $00, $FF, $00, $B7, $00, $B8, $00, $BD, $00, $FF, $00, $C2, $00, $B8, $00, $BE, $00, $BB, $73, $76, $00, $AF, $00, $AA, $00, $BE, $00, $B5, $00, $BD, $00, $CD
 db $7f, $7f
@@ -797,7 +811,7 @@ db $7f, $7f
 ; $308D00 (0x180D00) - $308DFF (0x180DFF)
 ; BombShopGuyText
 org $308D00 ; PC 0x180D00
-BombShopGuyText: 
+BombShopGuyText:
 ; please deliver|this big bomb|to my fairy|friend in the|pyramid?
 db $74, $00, $B9, $00, $B5, $00, $AE, $00, $AA, $00, $BC, $00, $AE, $00, $FF, $00, $AD, $00, $AE, $00, $B5, $00, $B2, $00, $BF, $00, $AE, $00, $BB, $75, $00, $BD, $00, $B1, $00, $B2, $00, $BC, $00, $FF, $00, $AB, $00, $B2, $00, $B0, $00, $FF, $00, $AB, $00, $B8, $00, $B6, $00, $AB, $76, $00, $BD, $00, $B8, $00, $FF, $00, $B6, $00, $C2, $00, $FF, $00, $AF, $00, $AA, $00, $B2, $00, $BB, $00, $C2, $7E, $73, $76, $00, $AF, $00, $BB, $00, $B2, $00, $AE, $00, $B7, $00, $AD, $00, $FF, $00, $B2, $00, $B7, $00, $FF, $00, $BD, $00, $B1, $00, $AE, $73, $76, $00, $B9, $00, $C2, $00, $BB, $00, $AA, $00, $B6, $00, $B2, $00, $AD, $00, $C6
 db $7f, $7f
@@ -808,6 +822,22 @@ org $308E00 ; PC 0x180E00
 BombShopGuyNoCrystalsText: 
 ; bring me the|5th and 6th|crystals so I|can make a big|bomb!
 db $74, $00, $AB, $00, $BB, $00, $B2, $00, $B7, $00, $B0, $00, $FF, $00, $B6, $00, $AE, $00, $FF, $00, $BD, $00, $B1, $00, $AE, $75, $00, $A5, $00, $BD, $00, $B1, $00, $FF, $00, $AA, $00, $B7, $00, $AD, $00, $FF, $00, $A6, $00, $BD, $00, $B1, $76, $00, $AC, $00, $BB, $00, $C2, $00, $BC, $00, $BD, $00, $AA, $00, $B5, $00, $BC, $00, $FF, $00, $BC, $00, $B8, $00, $FF, $00, $B2, $7E, $73, $76, $00, $AC, $00, $AA, $00, $B7, $00, $FF, $00, $B6, $00, $AA, $00, $B4, $00, $AE, $00, $FF, $00, $AA, $00, $FF, $00, $AB, $00, $B2, $00, $B0, $73, $76, $00, $AB, $00, $B8, $00, $B6, $00, $AB, $00, $C7
+db $7f, $7f
+;--------------------------------------------------------------------------------
+; $308F00 (0x180F00) - $308FFF (0x180FFF)
+; EtherTabletText
+org $308F00 ; PC 0x180F00
+EtherTabletText: 
+; bring me the|5th and 6th|crystals so I|can make a big|bomb!
+db $74, $00, $AB, $00, $BB, $00, $B2, $00, $B7, $00, $B0, $00, $FF, $00, $B6, $00, $AE, $00, $FF, $00, $BD, $00, $B1, $00, $AE, $75, $00, $A5, $00, $BD, $00, $B1, $00, $FF, $00, $AA, $00, $B7, $00, $AD, $00, $FF, $00, $A6, $00, $BD, $00, $B1, $76, $00, $AC, $00, $BB, $00, $C2, $00, $BC, $00, $BD, $00, $AA, $00, $B5, $00, $BC, $00, $FF, $00, $BC, $00, $B8, $00, $FF, $00, $B2, $7E, $73, $76, $00, $AC, $00, $AA, $00, $B7, $00, $FF, $00, $B6, $00, $AA, $00, $B4, $00, $AE, $00, $FF, $00, $AA, $00, $FF, $00, $AB, $00, $B2, $00, $B0, $73, $76, $00, $AB, $00, $B8, $00, $B6, $00, $AB, $00, $C7
+db $7f, $7f
+;--------------------------------------------------------------------------------
+; $308E00 (0x180E00) - $308EFF (0x180EFF)
+; BombosTabletText
+org $309000 ; PC 0x181000
+BombosTabletText:
+; please deliver|this big bomb|to my fairy|friend in the|pyramid?
+db $74, $00, $B9, $00, $B5, $00, $AE, $00, $AA, $00, $BC, $00, $AE, $00, $FF, $00, $AD, $00, $AE, $00, $B5, $00, $B2, $00, $BF, $00, $AE, $00, $BB, $75, $00, $BD, $00, $B1, $00, $B2, $00, $BC, $00, $FF, $00, $AB, $00, $B2, $00, $B0, $00, $FF, $00, $AB, $00, $B8, $00, $B6, $00, $AB, $76, $00, $BD, $00, $B8, $00, $FF, $00, $B6, $00, $C2, $00, $FF, $00, $AF, $00, $AA, $00, $B2, $00, $BB, $00, $C2, $7E, $73, $76, $00, $AF, $00, $BB, $00, $B2, $00, $AE, $00, $B7, $00, $AD, $00, $FF, $00, $B2, $00, $B7, $00, $FF, $00, $BD, $00, $B1, $00, $AE, $73, $76, $00, $B9, $00, $C2, $00, $BB, $00, $AA, $00, $B6, $00, $B2, $00, $AD, $00, $C6
 db $7f, $7f
 ;================================================================================
 org $30A000 ; $30A000 (0x182000) - $30A07F (0x18007F)
@@ -1114,7 +1144,7 @@ dw #9999 ; Rupee Limit
 !BIGRAM = "$7EC900";
 ; $7EC900 - Big RAM Buffer ($1F00)
 ;================================================================================
-org $309000 ; PC 0x181000
+org $30FF00 ; PC 0x187F00
 NameHashTable: ; change this for each new version - MOVE THIS TO BANK $30
 db $57, $41, $D6, $7A, $E0, $10, $8A, $97, $A2, $89, $82, $45, $46, $1C, $DF, $F7
 db $55, $0F, $1D, $56, $AC, $29, $DC, $D1, $25, $2A, $C5, $92, $42, $B7, $BE, $50

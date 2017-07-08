@@ -54,7 +54,7 @@ GiveBonkItem:
 	JSR LoadBonkItem
 	CMP #$24 : BNE .notKey
 	.key
-		JSL.l AddInventory_incrementKeyLong
+		PHY : LDY.b #$24 : JSL.l AddInventory : PLY ; do inventory processing for a small key
 		LDA $7EF36F : INC A : STA $7EF36F
 		LDA.b #$2F : JSL.l Sound_SetSfx3PanLong
 RTL
