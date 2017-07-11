@@ -119,6 +119,7 @@ incsrc glitched.asm
 incsrc hardmode.asm
 incsrc goalitem.asm
 incsrc compasses.asm
+incsrc doorframefixes.asm
 incsrc hashalphabet.asm ; <- TAKE OUT THE EXTRA ORGS IN HERE - THIS IS WHY WE COULDN'T ADD MORE FILES EARLIER
 warnpc $A18000
 

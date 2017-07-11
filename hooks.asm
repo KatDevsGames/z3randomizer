@@ -1745,3 +1745,24 @@ JSL.l LampCheck
 org $01F503 ; <- F503 - Bank01.asm:14994 (LDA.b #$01 : STA $1D)
 JSL.l SetOverlayIfLamp
 ;================================================================================
+
+;================================================================================
+; Overworld Door Frame Overlay Fix
+;
+; When entering an overworld entrance, if it is an entrance to a simple cave, we
+; store the entrance id, then use that (instead of the cave id) to determine the
+; overlay to draw when leaving the cave again. We also use this value to
+; identify the tavern entrance to determine whether link should walk up or down.
+;--------------------------------------------------------------------------------
+org $1BBD5F ; <- Bank1b.asm:296 (LDA $1BBB73, X : STA $010E)
+JSL.l StoreLastEntranceID
+NOP #3
+;--------------------------------------------------------------------------------
+org $02D754 ; <- Bank02.asm:10847 (LDA $D724, X : STA $0696 : STZ $0698)
+JSL.l CacheDoorFrameData
+NOP #5
+;--------------------------------------------------------------------------------
+org $0298AD ; <- Bank02.asm:4495 (LDA $010E : CMP.b #$43)
+JSL.l WalkDownIntoTavern
+NOP #1
+;================================================================================
