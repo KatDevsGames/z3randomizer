@@ -27,22 +27,35 @@ RTL
 ;--------------------------------------------------------------------------------
 GoalItemGanonCheck:
 	LDA $0E20, X : CMP.b #$D6 : BNE .success ; skip if not ganon
-		LDA InvincibleGanon : BNE +
-			;#$00 = Off
-			BRA .success
-		+ : CMP #$01 : BNE +
-			;#$01 = On
-			RTL
-		+ ; CMP #$02 BNE + this is a comment
-			;#$02 = Require All Dungeons
-			LDA $7EF374 : AND.b #$07 : CMP #$07 : BNE .fail ; require all pendants
-			LDA $7EF37A : AND.b #$7F : CMP #$7F : BNE .fail ; require all crystals
-			LDA $7EF3C5 : CMP.b #$03 : !BLT .fail ; require post-aga world state
-			BRA .success
+		JSL.l CheckGanonVulnerability
+		BCS .success
+		
 		.fail
+		LDA $0D80, X : CMP.b #17 : !BLT .success ; decmial 17 because Acmlm's chart is decimal
 		LDA.b #$00
 RTL
 		.success
 		LDA $44 : CMP.b #$80 ; thing we wrote over
 RTL
+;--------------------------------------------------------------------------------
+;Carry clear = ganon invincible
+;Carry set = ganon vulnerable
+CheckGanonVulnerability:
+	LDA InvincibleGanon : BEQ .success
+		;#$00 = Off
+	+ : CMP #$01 : BEQ .fail
+		;#$01 = On
+	+ : CMP #$02 : BNE +
+		;#$02 = Require All Dungeons
+		LDA $7EF374 : AND.b #$07 : CMP #$07 : BNE .fail ; require all pendants
+		LDA $7EF37A : AND.b #$7F : CMP #$7F : BNE .fail ; require all crystals
+		LDA $7EF3C5 : CMP.b #$03 : !BLT .fail ; require post-aga world state
+		BRA .success
+	+ ; CMP #$03 : BNE + this is a comment
+		;#$03 = Require All Crystals
+		LDA $7EF37A : AND.b #$7F : CMP #$7F : BNE .fail ; require all crystals
+		BRA .success
+	+
+.fail : CLC : RTL
+.success : SEC : RTL
 ;--------------------------------------------------------------------------------

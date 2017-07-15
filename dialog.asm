@@ -221,12 +221,22 @@ DialogTriforce:
 RTL
 ;--------------------------------------------------------------------------------
 DialogGanon1:
-	%LoadDialogAddress(GanonText1)
+	JSL.l CheckGanonVulnerability : BCS +
+		%LoadDialogAddress(GanonText1Alternate)
+		BRA ++
+	+
+		%LoadDialogAddress(GanonText1)
+	++	
 	JSL.l Sprite_ShowMessageMinimal
 RTL
 ;--------------------------------------------------------------------------------
 DialogGanon2:
-	%LoadDialogAddress(GanonText2)
+	JSL.l CheckGanonVulnerability : BCS +
+		%LoadDialogAddress(GanonText2Alternate)
+		BRA ++
+	+
+		%LoadDialogAddress(GanonText2)
+	++	
 	JSL.l Sprite_ShowMessageMinimal
 RTL
 ;--------------------------------------------------------------------------------
