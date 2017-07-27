@@ -282,12 +282,45 @@ RTL
 !SINGLE_INDEX_BITMASK_TEMP = "$7F5022"
 !LOCK_IN = "$7F5090"
 !ITEM_BUSY = "$7F5091"
+;2B:Bottle Already Filled w/ Red Potion
+;2C:Bottle Already Filled w/ Green Potion
+;2D:Bottle Already Filled w/ Blue Potion
+;3C:Bottle Already Filled w/ Bee
+;3D:Bottle Already Filled w/ Fairy
+;48:Bottle Already Filled w/ Gold Bee
 AddReceivedItemExpanded:
 {
 	PHA : PHX
 		JSL.l PreItemGet
-		
-		LDA $02D8 : CMP #$5E : BNE ++ ; Progressive Sword
+		LDA $02D8 : CMP.b #$16 : BNE ++ ; Bottle
+			JSR.w CountBottles : CMP.l BottleLimit : !BLT +++
+				LDA.l BottleLimitReplacement : STA $02D8
+			+++ : BRL .done
+		++ : CMP.b #$2B : BNE ++ ; Red Potion w/bottle
+			JSR.w CountBottles : CMP.l BottleLimit : !BLT +++
+				LDA.l BottleLimitReplacement : STA $02D8
+			+++ : BRL .done
+		++ : CMP.b #$2C : BNE ++ ; Green Potion w/bottle
+			JSR.w CountBottles : CMP.l BottleLimit : !BLT +++
+				LDA.l BottleLimitReplacement : STA $02D8
+			+++ : BRL .done
+		++ : CMP.b #$2D : BNE ++ ; Blue Potion w/bottle
+			JSR.w CountBottles : CMP.l BottleLimit : !BLT +++
+				LDA.l BottleLimitReplacement : STA $02D8
+			+++ : BRL .done
+		++ : CMP.b #$3C : BNE ++ ; Bee w/bottle
+			JSR.w CountBottles : CMP.l BottleLimit : !BLT +++
+				LDA.l BottleLimitReplacement : STA $02D8
+			+++ : BRL .done
+		++ : CMP.b #$3D : BNE ++ ; Fairy w/bottle
+			JSR.w CountBottles : CMP.l BottleLimit : !BLT +++
+				LDA.l BottleLimitReplacement : STA $02D8
+			+++ : BRL .done
+		++ : CMP.b #$48 : BNE ++ ; Gold Bee w/bottle
+			JSR.w CountBottles : CMP.l BottleLimit : !BLT +++
+				LDA.l BottleLimitReplacement : STA $02D8
+			+++ : BRL .done
+		++ : CMP.b #$5E : BNE ++ ; Progressive Sword
 			LDA $7EF359 : CMP.l ProgressiveSwordLimit : !BLT +
 				LDA.l ProgressiveSwordReplacement : STA $02D8 : BRL .done
 			+ : CMP.b #$00 : BNE + ; No Sword
@@ -758,4 +791,14 @@ GetRNGItemMulti:
 	STA !LOCK_IN
 	TAX : XBA : LDA.l RNGMultiItemTable, X
 RTL
+;--------------------------------------------------------------------------------
+CountBottles:
+	LDX.b #$00
+	LDA $7EF35C : BEQ ++ : INX
+	++ : LDA $7EF35D : BEQ ++ : INX
+	++ : LDA $7EF35E : BEQ ++ : INX
+	++ : LDA $7EF35F : BEQ ++ : INX
+	++
+	TXA
+RTS
 ;--------------------------------------------------------------------------------

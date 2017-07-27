@@ -51,7 +51,8 @@ SetDeathWorldChecked:
 		LDA $040C : CMP #$FF : BNE .done ; unless it's a cave
 	+
 	LDA $7EF3C5 : CMP.b #$03 : !BGE .done; thing we originally did - skip if agahnim 1 is dead
-	LDA $A0 : BNE + ; check if we died in ganon's room
+	
+	LDA $1B : BNE + : LDA $A0 : BNE + ; check if we died in ganon's room
 		LDA !FORCE_PYRAMID : ORA.b #$08 : STA !FORCE_PYRAMID ; set pyramid flag
 		BRL DarkWorldFlagSet_pyramid
 	+

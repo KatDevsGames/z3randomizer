@@ -920,6 +920,16 @@ RTL
 ;--------------------------------------------------------------------------------
 SpawnShovelGamePrizeSFX:
 	STA $7FFE00 ; thing we wrote over
+	LDA.b #$1B : STA $012F ; play puzzle sound
+RTL
+;--------------------------------------------------------------------------------
+
+;--------------------------------------------------------------------------------
+; SpawnChestGamePrizeSFX:
+;--------------------------------------------------------------------------------
+SpawnChestGamePrizeSFX:
+	ORA.b #$40 : STA $0403 ; thing we wrote over
+	STA $FFFFFF
 	PHA
 		LDA.b #$1B : STA $012F ; play puzzle sound
 	PLA

@@ -198,6 +198,10 @@ ProgressiveArmorLimit:
 db #$02 ; #$02 - 2 Armors (default)
 ProgressiveArmorReplacement:
 db #$47 ; #$47 - 20 Rupees (default)
+BottleLimit:
+db #$04 ; #$04 - 4 Bottles (default)
+BottleLimitReplacement:
+db #$47 ; #$47 - 20 Rupees (default)
 ;--------------------------------------------------------------------------------
 org $308100 ; PC 0x180100 (0x40 bytes)
 ShovelSpawnTable:
