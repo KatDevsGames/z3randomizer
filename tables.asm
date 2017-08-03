@@ -676,6 +676,10 @@ org $308169 ; PC 0x180169
 AgahnimDoorStyle:
 db #$00 ; #00 = Never Locked - #$01 = Locked During Escape (default)
 ;================================================================================
+org $308170 ; PC 0x180170
+GanonPyramidRespawn:
+db #$01 ; #00 = Do not respawn on Pyramid after Death - #$01 = Respawn on Pyramid after Death (default)
+;================================================================================
 org $30816A ; PC 0x18016A
 FreeItemText:
 db #$01 ; #00 = Off - #$01 = On (default)
