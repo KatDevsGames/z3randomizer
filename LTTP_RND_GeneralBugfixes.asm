@@ -25,8 +25,8 @@ db #$05 ; mark sram as 32k
 org $3FFFFF ; <- 1FFFFF
 db #$00 ; expand file to 2mb
 
-org $1FFFF8 ; timestamp rom
-dl #$20170801
+org $1FFFF8 ; <- FFFF8 timestamp rom
+db #$20, #$17, #$08, #$06 ; year/month/day
 
 ;================================================================================
 
