@@ -677,6 +677,12 @@ db #$00 ; #00 = Never Locked - #$01 = Locked During Escape (default)
 org $30816A ; PC 0x18016A
 FreeItemText:
 db #$01 ; #00 = Off - #$01 = On (default)
+org $30816B ; PC 0x18016B
+ByrnaCaveCaneOfByrnaUsage:
+db #$04, #$02, #$01 ; normal, 1/2, 1/4 magic
+org $30816E ; PC 0x18016E
+ByrnaCaveCapeUsage:
+db #$04, #$08, #$10 ; normal, 1/2, 1/4 magic
 ;================================================================================
 org $308190 ; PC 0x180190
 TimerStyle:
