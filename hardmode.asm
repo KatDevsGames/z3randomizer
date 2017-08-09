@@ -43,7 +43,7 @@ CalculateCapeUsage:
 	+
 		SEP #$20 ; set 8-bit accumulator
 		PHX : TYX
-		LDA.l ByrnaCaveCapeUsage, X : STA $4C
+		LDA.l ByrnaCaveCapeUsage, X : STA $4C ; set cape decrement timer
 		PLX
 	++
 	LDA $7EF36E ; thing we wrote over

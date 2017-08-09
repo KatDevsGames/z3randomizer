@@ -10,7 +10,7 @@ HeartPiece_Lumberjack_Tree:
 HeartPiece_Spectacle_Cave:
 	db #$17
 HeartPiece_Circle_Bushes:
-	db #$61
+	db #$17
 HeartPiece_Graveyard_Warp:
 	db #$17
 HeartPiece_Mire_Warp:
@@ -677,6 +677,7 @@ db #$00 ; #00 = Never Locked - #$01 = Locked During Escape (default)
 org $30816A ; PC 0x18016A
 FreeItemText:
 db #$01 ; #00 = Off - #$01 = On (default)
+;================================================================================
 org $30816B ; PC 0x18016B
 ByrnaCaveCaneOfByrnaUsage:
 db #$04, #$02, #$01 ; normal, 1/2, 1/4 magic
