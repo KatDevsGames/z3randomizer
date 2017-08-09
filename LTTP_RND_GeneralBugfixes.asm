@@ -50,7 +50,7 @@ dl #$20170726
 !SRAM_SINK = "$7EF41E" ; <- change this
 !FRESH_FILE_MARKER = "$7EF4F0" ; zero if fresh file
 ;$7EF41A[w] - Programmable Item #1
-;$7EF41C[w] - Programmable Item #3
+;$7EF41C[w] - Programmable Item #2
 ;$7EF41E[w] - Programmable Item #3
 ;$7EF420 - $7EF44F - Stat Tracking Bank 1
 ;$7EF450 - $7EF45F - RNG Item (Single) Flags
@@ -217,18 +217,18 @@ warnpc $AF8401
 ;bank $3F reserved for internal debugging
 ;$7F5700 - $7F57FF reserved for downstream use
 ;================================================================================
-org $0080DC ; <- 0xDC - Bank00.asm:179 - Kill Music
+;org $0080DC ; <- 0xDC - Bank00.asm:179 - Kill Music
 ;db #$A9, #$00, #$EA
 ;LDA.b #$00 : NOP
 ;================================================================================
-org $0AC53E ; <- 5453E - Bank0A.asm:1103 - (LDA $0AC51F, X) - i have no idea what this is for anymore
+;org $0AC53E ; <- 5453E - Bank0A.asm:1103 - (LDA $0AC51F, X) - i have no idea what this is for anymore
 ;LDA.b #$7F
 ;NOP #2
 ;================================================================================
 ;org $05DF8B ; <- 2DF8B - Bank05.asm : 2483
 ;AND.w #$0100 ; allow Sprite_DrawMultiple to access lower half of sprite tiles
 ;================================================================================
-;org $0DF8F1 ; this is required for the X-indicator in the HUD
+;org $0DF8F1 ; this is required for the X-indicator in the HUD except not anymore obviously
 ;
 ;;red pendant
 ;db $2B, $31, $2C, $31, $3D, $31, $2E, $31

@@ -282,7 +282,7 @@ RTS
 ; in:	A - Loot ID
 ; out:  A - OAM Slots Taken
 ;--------------------------------------------------------------------------------
-; This wastes two OAM slots if you don't want a shadow - fix later
+; This wastes two OAM slots if you don't want a shadow - fix later - I wrote "fix later" over a year ago and it's still not fixed (Aug 6, 2017)
 ;-------------------------------------------------------------------------------- 2084B8
 !SPRITE_OAM = "$7EC025"
 !SKIP_EOR = "$7F5008"
