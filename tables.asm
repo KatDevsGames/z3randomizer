@@ -10,7 +10,7 @@ HeartPiece_Lumberjack_Tree:
 HeartPiece_Spectacle_Cave:
 	db #$17
 HeartPiece_Circle_Bushes:
-	db #$17
+	db #$3D
 HeartPiece_Graveyard_Warp:
 	db #$17
 HeartPiece_Mire_Warp:
@@ -644,7 +644,7 @@ HeartContainer_Mothula:
 HeartContainer_Blind:
 	db #$3E
 HeartContainer_Kholdstare:
-	db #$3E
+	db #$6A
 HeartContainer_Vitreous:
 	db #$3E
 HeartContainer_Trinexx:

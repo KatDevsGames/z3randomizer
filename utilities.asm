@@ -8,6 +8,22 @@
 ; out:	A - Sprite GFX ID
 ;--------------------------------------------------------------------------------
 GetSpriteID:
+	
+	CMP.b #$16 : BEQ .bottle ; Bottle
+	CMP.b #$2B : BEQ .bottle ; Red Potion w/bottle
+	CMP.b #$2C : BEQ .bottle ; Green Potion w/bottle
+	CMP.b #$2D : BEQ .bottle ; Blue Potion w/bottle
+	CMP.b #$3C : BEQ .bottle ; Bee w/bottle
+	CMP.b #$3D : BEQ .bottle ; Fairy w/bottle
+	CMP.b #$48 : BEQ .bottle ; Gold Bee w/bottle
+		BRA .notBottle
+		.bottle
+			PHA : JSR.w CountBottles : CMP.l BottleLimit : !BLT +
+				PLA : LDA.l BottleLimitReplacement
+				JSL.l GetSpriteID
+				RTL
+			+
+		PLA : .notBottle
 	PHX
 	PHB : PHK : PLB
 	;--------
@@ -20,6 +36,13 @@ RTL
 		JSL.l GetRNGItemSingle : JMP GetSpriteID
 	++ CMP.b #$FB : BNE ++ ; RNG Item (Multi)
 		JSL.l GetRNGItemMulti : JMP GetSpriteID
+	++ CMP.b #$FD : BNE ++ ; Progressive Armor
+		LDA $7EF35B : CMP.l ProgressiveArmorLimit : !BLT + ; Progressive Armor Limit
+			LDA.l ProgressiveArmorReplacement
+			JSL.l GetSpriteID
+			RTL
+		+
+		LDA.b #$04 : RTL
 	++ CMP.b #$FE : BNE ++ ; Progressive Sword
 		LDA $7EF359
 		CMP.l ProgressiveSwordLimit : !BLT + ; Progressive Sword Limit
@@ -80,7 +103,7 @@ RTL
 	db $FE, $FF ; Progressive Sword & Shield
 	
 	;6x
-	db $04, $0D ; Progressive Armor & Gloves
+	db $FD, $0D ; Progressive Armor & Gloves
 	db $FA, $FB ; RNG Single & Multi
 	db $FF, $FF, $FF, $FF, $FF, $FF ; Unused
 	db $49, $4A, $49 ; Goal Item Single, Multi & Alt Multi
@@ -106,6 +129,22 @@ RTL
 ; out:	A - Palette
 ;--------------------------------------------------------------------------------
 GetSpritePalette:
+	
+	CMP.b #$16 : BEQ .bottle ; Bottle
+	CMP.b #$2B : BEQ .bottle ; Red Potion w/bottle
+	CMP.b #$2C : BEQ .bottle ; Green Potion w/bottle
+	CMP.b #$2D : BEQ .bottle ; Blue Potion w/bottle
+	CMP.b #$3C : BEQ .bottle ; Bee w/bottle
+	CMP.b #$3D : BEQ .bottle ; Fairy w/bottle
+	CMP.b #$48 : BEQ .bottle ; Gold Bee w/bottle
+		BRA .notBottle
+		.bottle
+			PHA : JSR.w CountBottles : CMP.l BottleLimit : !BLT +
+				PLA : LDA.l BottleLimitReplacement
+				JSL.l GetSpritePalette
+				RTL
+			+
+		PLA : .notBottle
 	PHX
 	PHB : PHK : PLB
 	;--------
@@ -141,7 +180,11 @@ RTL
 		+ ; Everything Else
 			LDA.b #$08 : RTL
 	++ : CMP.b #$FF : BNE ++ ; Progressive Armor
-		LDA $7EF35B : BNE + ; Green Tunic
+		LDA $7EF35B : CMP.l ProgressiveArmorLimit : !BLT + ; Progressive Armor Limit
+			LDA.l ProgressiveArmorReplacement
+			JSL.l GetSpritePalette
+			RTL
+		+ : CMP.b #$00 : BNE + ; Green Tunic
 			LDA.b #$04 : RTL
 		+ ; Everything Else
 			LDA.b #$02 : RTL
@@ -205,13 +248,28 @@ IsNarrowSprite:
 	PHB : PHK : PLB
 
 	;--------
-	CMP.b #$5E : BNE ++ ; Special Handler for Progressive Sword
+	CMP.b #$16 : BEQ .bottle ; Bottle
+	CMP.b #$2B : BEQ .bottle ; Red Potion w/bottle
+	CMP.b #$2C : BEQ .bottle ; Green Potion w/bottle
+	CMP.b #$2D : BEQ .bottle ; Blue Potion w/bottle
+	CMP.b #$3C : BEQ .bottle ; Bee w/bottle
+	CMP.b #$3D : BEQ .bottle ; Fairy w/bottle
+	CMP.b #$48 : BEQ .bottle ; Gold Bee w/bottle
+		BRA .notBottle
+		.bottle
+			JSR.w CountBottles : CMP.l BottleLimit : !BLT +
+				LDA.l BottleLimitReplacement
+				JSL.l IsNarrowSprite
+				BRL .done
+			+ : BRA .continue
+		.notBottle
+	CMP.b #$5E : BNE ++ ; Progressive Sword
 		LDA $7EF359 : CMP.l ProgressiveSwordLimit : !BLT + ; Progressive Sword Limit
 			LDA.l ProgressiveSwordReplacement
 			JSL.l IsNarrowSprite
 			BRA .done
 		+ : BRA .continue
-	++ : CMP.b #$5F : BNE ++ ; Special Handler for Progressive Shield
+	++ : CMP.b #$5F : BNE ++ ; Progressive Shield
 		LDA !PROGRESSIVE_SHIELD : AND #$C0 : BNE + : SEC : BRA .done ; No Shield
 		LSR #6 : CMP.l ProgressiveShieldLimit : !BLT + ; Progressive Shield Limit
 			LDA.l ProgressiveShieldReplacement
@@ -220,6 +278,12 @@ IsNarrowSprite:
 		+
 		;LDA $7EF35A : BNE + : SEC : BRA .done : +; No Shield
 		BRA .false ; Everything Else
+	++ CMP.b #$60 : BNE ++ ; Progressive Armor
+		LDA $7EF35B : CMP.l ProgressiveArmorLimit : !BLT + ; Progressive Armor Limit
+			LDA.l ProgressiveArmorReplacement
+			JSL.l IsNarrowSprite
+			BRA .done
+		+
 	++ CMP.b #$62 : BNE ++ ; RNG Item (Single)
 		JSL.l GetRNGItemSingle : BRA .continue
 	++ CMP.b #$63 : BNE ++ ; RNG Item (Multi)
