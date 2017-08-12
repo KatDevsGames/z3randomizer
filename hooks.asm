@@ -713,9 +713,14 @@ JSL.l ItemCheck_BombosTablet
 org $05F285 ; <- 2F285
 JSL.l ItemCheck_EtherTablet
 ;--------------------------------------------------------------------------------
-org $098BCC ; <- 48BCC - ancilla_init.asm : 1679 (LDA AddReceiveItem.item_graphics_indices, Y : STA $72)
-;JSL.l SetTabletItem
-JSL SpawnTabletItem : PLX : PLB : RTL
+;org $098BCC ; <- 48BCC - ancilla_init.asm : 1679 (LDA AddReceiveItem.item_graphics_indices, Y : STA $72)
+;;JSL.l SetTabletItem
+;JSL SpawnTabletItem : PLX : PLB : RTL
+;--------------------------------------------------------------------------------
+org $07859F ; <- 3859F - Bank07.asm : 965 (JSL AddPendantOrCrystal)
+JSL SpawnTabletItem
+org $07862A ; <- 3862A - Bank07.asm : 1064 (JSL AddPendantOrCrystal)
+JSL SpawnTabletItem
 ;--------------------------------------------------------------------------------
 
 ;================================================================================
@@ -1747,6 +1752,9 @@ JSL.l CheckForZelda
 ;--------------------------------------------------------------------------------
 org $1AFC55 ; <- D7C55 - sprite_movable_mantle.asm:34 (LDA $7EF34A : BEQ .return)
 NOP #6 ; remove check
+;--------------------------------------------------------------------------------
+org $068841 ; <- 30841 - sprite_prep.asm:269 (LDA $0D00, X : ADD.b #$03 : STA $0D00, X)
+JSL.l Mantle_CorrectPosition : NOP #2
 ;--------------------------------------------------------------------------------
 org $0DFA53 ; <- 6FA53 - hud check for lantern
 JSL.l LampCheck

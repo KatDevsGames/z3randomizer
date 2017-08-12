@@ -26,7 +26,7 @@ org $3FFFFF ; <- 1FFFFF
 db #$00 ; expand file to 2mb
 
 org $1FFFF8 ; <- FFFF8 timestamp rom
-db #$20, #$17, #$08, #$09 ; year/month/day
+db #$20, #$17, #$08, #$11 ; year/month/day
 
 ;================================================================================
 
@@ -102,6 +102,7 @@ incsrc flute.asm
 incsrc dungeondrops.asm
 incsrc halfmagicbat.asm
 incsrc newitems.asm
+incsrc mantle.asm
 incsrc swordswap.asm
 incsrc stats.asm
 incsrc scratchpad.asm
@@ -376,6 +377,9 @@ Ancilla_SetOam_XY_Long:
 
 org $0985E2 ; (break on $0985E4)
 AddReceivedItem:
+
+org $098BAD
+AddPendantOrCrystal:
 
 org $0993DF
 AddDashTremor:
