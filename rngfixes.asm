@@ -21,6 +21,7 @@ RigChestRNG:
 	JSL.l DecrementItemCounter
 RTL
 	.forceHeart
+	LDA #$33 : STX $C8 ; assure the correct state if player talked to shopkeeper
 	LDA $0403 : AND.b #$40 : BNE .notHeart
 	LDA #$07 ; give prize item
 RTL
