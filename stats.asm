@@ -356,19 +356,19 @@ StatsFinalPrep:
 		
 		;LDA $FFFFFF
 		;JSL.l Clock_IsSupported
-		BRA +
-			REP #$20 ; set 16-bit accumulator
-		
-			LDA $00 : PHA
-			LDA $02 : PHA
-		
-			JSL.l Clock_QuickStamp
-			LDA $00 : STA !RTA_END
-			LDA $02 : STA !RTA_END+2
-		
-			PLA : STA $02
-			PLA : STA $00
-		+
+		;BRA +
+		;	REP #$20 ; set 16-bit accumulator
+		;
+		;	LDA $00 : PHA
+		;	LDA $02 : PHA
+		;
+		;	JSL.l Clock_QuickStamp
+		;	LDA $00 : STA !RTA_END
+		;	LDA $02 : STA !RTA_END+2
+		;
+		;	PLA : STA $02
+		;	PLA : STA $00
+		;+
 		
 		.done
 	PLP : PLX : PLA
