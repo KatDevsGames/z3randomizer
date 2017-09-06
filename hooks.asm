@@ -253,13 +253,13 @@ db #$80 ; BRA
 org $0DE81A ; <- 6E81A - equipment.asm : 1597 (STA $00)
 RTS
 org $0DE7B9 ; <- 6E7B9 - equipment.asm : 1548 (LDA.w #$16D0)
-LDA.w #$1610
+LDA.w #$1590
 org $0DE7CF ; <- 6E7CF - equipment.asm : 1554 (LDA.w #$16C8)
-LDA.w #$1608
+LDA.w #$1588
 org $0DE7E5 ; <- 6E7E5 - equipment.asm : 1560 (LDA.w #$16D8)
-LDA.w #$1618
+LDA.w #$1598
 org $0DECEB ; <- 6ECEB - equipment.asm : 1946 (LDA.w #$16E0)
-LDA.w #$1620
+LDA.w #$15A0
 ;--------------------------------------------------------------------------------
 ;org $0DE9D8 ; <- 6E9D8 - equipment.asm : 1635 (LDA $E860, X : STA $12EA, X)
 ;BRA DrawProgressIcons_initPendantDiagram_notext
@@ -901,9 +901,9 @@ LDX.w #HUD_TileMap
 org $0DFA9C ; <- 6FA9C - headsup_display.asm : 629 (MVN $0D, $7E ; $Transfer 0x014A bytes from $6FE77 -> $7EC700)
 MVN $207E
 ;--------------------------------------------------------------------------------
-;org $0DE48E ; <- 6E48E - equipment.asm : 1233 (LDA.w #$11CE : STA $00) - HOOK HERE TO DRAW ON THE ITEM SCREEN
-;JSL.l DrawHUDSilverArrows
-;NOP
+org $0DE48E ; <- 6E48E - equipment.asm : 1233 (LDA.w #$11CE : STA $00) - HOOK HERE TO DRAW ON THE ITEM SCREEN
+JSL.l DrawHUDDungeonItems
+NOP
 ;--------------------------------------------------------------------------------
 org $0DFB1F ; 6FB1F - headsup_display.asm : 681 (LDA $7EF340 : BEQ .hastNoBow)
 JSL.l CheckHUDSilverArrows
