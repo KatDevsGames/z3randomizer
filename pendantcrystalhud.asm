@@ -186,10 +186,10 @@ DrawHUDDungeonItems:
 	REP #$20 ; set 16-bit accumulator
 
 	; Big Keys
-	LDA $7EF366 : AND.w #$0008 : BEQ + ; sewers
+	LDA $7EF367 : AND.w #$0080 : BEQ + ; sewers
 		LDA.w #$2826 : STA $1686
 	+
-	LDA $7EF367 : AND.w #$0040 : BEQ + ; Eastern
+	LDA $7EF367 : AND.w #$0020 : BEQ + ; Eastern
 		LDA.w #$2826 : STA $1688
 	+
 	LDA $7EF367 : AND.w #$0010 : BEQ + ; Desert
@@ -198,7 +198,7 @@ DrawHUDDungeonItems:
 	LDA $7EF366 : AND.w #$0020 : BEQ + ; Hera
 		LDA.w #$2826 : STA $168C
 	+
-	LDA $7EF366 : AND.w #$0004 : BEQ + ; Agahnims Tower
+	LDA $7EF367 : AND.w #$0008 : BEQ + ; Agahnims Tower
 		LDA.w #$2826 : STA $168E
 	+
 	LDA $7EF367 : AND.w #$0002 : BEQ + ; PoD
@@ -227,10 +227,10 @@ DrawHUDDungeonItems:
 	+
 
 	; Maps
-	LDA $7EF368 : AND.w #$0008 : BEQ + ; sewers
+	LDA $7EF369 : AND.w #$0080 : BEQ + ; sewers
 		LDA.w #$2826 : STA $16C6
 	+
-	LDA $7EF369 : AND.w #$0040 : BEQ + ; Eastern
+	LDA $7EF369 : AND.w #$0020 : BEQ + ; Eastern
 		LDA.w #$2826 : STA $16C8
 	+
 	LDA $7EF369 : AND.w #$0010 : BEQ + ; Desert
@@ -239,7 +239,7 @@ DrawHUDDungeonItems:
 	LDA $7EF368 : AND.w #$0020 : BEQ + ; Hera
 		LDA.w #$2826 : STA $16CC
 	+
-	LDA $7EF368 : AND.w #$0004 : BEQ + ; Agahnims Tower
+	LDA $7EF369 : AND.w #$0008 : BEQ + ; Agahnims Tower
 		LDA.w #$2826 : STA $16CE
 	+
 	LDA $7EF369 : AND.w #$0002 : BEQ + ; PoD
@@ -268,10 +268,10 @@ DrawHUDDungeonItems:
 	+
 
 	; Compasses
-	LDA $7EF364 : AND.w #$0008 : BEQ + ; sewers
+	LDA $7EF365 : AND.w #$0080 : BEQ + ; sewers
 		LDA.w #$2C26 : STA $1706
 	+
-	LDA $7EF365 : AND.w #$0040 : BEQ + ; Eastern
+	LDA $7EF365 : AND.w #$0020 : BEQ + ; Eastern
 		LDA.w #$2C26 : STA $1708
 	+
 	LDA $7EF365 : AND.w #$0010 : BEQ + ; Desert
@@ -280,7 +280,7 @@ DrawHUDDungeonItems:
 	LDA $7EF364 : AND.w #$0020 : BEQ + ; Hera
 		LDA.w #$2C26 : STA $170C
 	+
-	LDA $7EF364 : AND.w #$0004 : BEQ + ; Agahnims Tower
+	LDA $7EF365 : AND.w #$0008 : BEQ + ; Agahnims Tower
 		LDA.w #$2C26 : STA $170E
 	+
 	LDA $7EF365 : AND.w #$0002 : BEQ + ; PoD
