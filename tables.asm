@@ -139,7 +139,9 @@ db #$00 ; #$00 = Off (default) - #$01 = On
 ;--------------------------------------------------------------------------------
 org $30803E ; PC 0x18003E
 InvincibleGanon:
-db #$00 ; #$00 = Off (default) - #$01 = On - #$02 = Require All Dungeons
+db #$00 
+; #$00 = Off (default) - #$01 = On - #$02 = Require All Dungeons
+; #$03 = Require Crystals and Aga2 - #$04 = Require Crystals
 ;--------------------------------------------------------------------------------
 org $30803F ; PC 0x18003F
 HammerableGanon:
@@ -673,6 +675,10 @@ db #$08 ; #$08 = 1 Heart (default) - #$02 = 1/4 Heart
 org $308169 ; PC 0x180169
 AgahnimDoorStyle:
 db #$00 ; #00 = Never Locked - #$01 = Locked During Escape (default)
+;================================================================================
+org $308170 ; PC 0x180170
+GanonPyramidRespawn:
+db #$01 ; #00 = Do not respawn on Pyramid after Death - #$01 = Respawn on Pyramid after Death (default)
 ;================================================================================
 org $30816A ; PC 0x18016A
 FreeItemText:

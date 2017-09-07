@@ -52,8 +52,12 @@ CheckGanonVulnerability:
 		LDA $7EF3C5 : CMP.b #$03 : !BLT .fail ; require post-aga world state
 		LDA $7EF2DB : AND.b #$20 : CMP #$20 : BNE .fail ; require aga2 defeated (pyramid hole open)
 		BRA .success
+	+ : CMP #$04 : BNE +
+		;#$04 = Require All Crystals
+		LDA $7EF37A : AND.b #$7F : CMP #$7F : BNE .fail ; require all crystals
+		BRA .success
 	+ ; CMP #$03 : BNE + this is a comment
-		;#$03 = Require All Crystals
+		;#$03 = Require All Crystals and Aga 2
 		LDA $7EF37A : AND.b #$7F : CMP #$7F : BNE .fail ; require all crystals
 		LDA $7EF2DB : AND.b #$20 : CMP #$20 : BNE .fail ; require aga2 defeated (pyramid hole open)
 		BRA .success
