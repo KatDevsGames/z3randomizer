@@ -220,7 +220,7 @@ AddReceivedItemExpandedGetItem:
 	+ CMP.b #$63 : BNE + ; RNG Pool Item (Multi)
 		BRL .done
 	+ CMP.b #$6A : BNE + ; Goal Collectable (Single/Triforce)
-		JSL.l StatsFinalPrep
+		JSL.l ActivateGoal
 		BRL .done
 	+ CMP.b #$6B : BNE + ; Goal Collectable (Multi/Power Star)
 		BRA .multi_collect
@@ -228,7 +228,7 @@ AddReceivedItemExpandedGetItem:
 		.multi_collect
 		LDA GoalItemRequirement : BEQ ++
 		LDA !GOAL_COUNTER : INC : STA !GOAL_COUNTER
-		CMP GoalItemRequirement : !BLT ++ : JSL.l StatsFinalPrep : ++
+		CMP GoalItemRequirement : !BLT ++ : JSL.l ActivateGoal : ++
 		BRL .done
 	+ CMP.b #$70 : !BLT + : CMP.b #$80 : !BGE + ; Free Map
 		AND #$0F : CMP #$08 : !BGE ++
@@ -237,6 +237,7 @@ AddReceivedItemExpandedGetItem:
 		++
 			!SUB #$08
 			%ValueShift()
+			BIT.b #$C0 : BEQ +++ : LDA.b #$C0 : +++ ; Make Hyrule Castle / Sewers Count for Both
 			ORA $7EF369 : STA $7EF369 ; Map 2
 		BRL .done
 	+ CMP.b #$80 : !BLT + : CMP.b #$90 : !BGE + ; Free Compass
@@ -246,6 +247,7 @@ AddReceivedItemExpandedGetItem:
 		++
 			!SUB #$08
 			%ValueShift()
+			BIT.b #$C0 : BEQ +++ : LDA.b #$C0 : +++ ; Make Hyrule Castle / Sewers Count for Both
 			ORA $7EF365 : STA $7EF365 ; Compass 2
 		BRL .done
 	+ CMP.b #$90 : !BLT + : CMP.b #$A0 : !BGE + ; Free Big Key
@@ -255,6 +257,7 @@ AddReceivedItemExpandedGetItem:
 		++
 			!SUB #$08
 			%ValueShift()
+			BIT.b #$C0 : BEQ +++ : LDA.b #$C0 : +++ ; Make Hyrule Castle / Sewers Count for Both
 			ORA $7EF367 : STA $7EF367 ; Big Key 2
 		BRL .done
 	+ CMP.b #$A0 : !BLT + : CMP.b #$B0 : !BGE + ; Free Small Key
@@ -801,4 +804,9 @@ CountBottles:
 	++
 	TXA
 RTS
+;--------------------------------------------------------------------------------
+ActivateGoal:
+    STZ $11
+    STZ $B0
+JMP.l StatsFinalPrep
 ;--------------------------------------------------------------------------------

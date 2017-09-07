@@ -242,7 +242,7 @@ AddInventory:
 			CMP.w #271 : BNE + : BRL .shop : + ; villiage of outcasts shop, lumberjack shop, lake hylia shop, dark world magic shop
 			CMP.w #272 : BNE + : BRL .shop : + ; red shield shop
 			CMP.w #284 : BNE + : BRL .shop : + ; bomb shop
-			;CMP.w #265 : BNE + : BRL .shop : + ; potion shop - commented this out because it's easier to just block potion refills
+			;CMP.w #265 : BNE + : BRL .shop : + ; potion shop - commented this out because it's easier to just block potion refills because this one interferes with the powder item being counted
 			;CMP.w #271 : BNE + : BRL .shop : + ; lake hylia shop
 			CMP.w #287 : BNE + : BRL .shop : + ; kakariko shop
 			CMP.w #255 : BNE + : BRL .shop : + ; light world death mountain shop
@@ -257,12 +257,12 @@ AddInventory:
 	LDA $1B : BNE + : BRL .fullItemCounts : +
 	; ==BEGIN INDOOR-ONLY SECTION
 	
-	REP #$20 ; Set 16-bit Accumulator
-	LDA $A0 ; load room ID
-	CMP.w #$0010 : BNE + ; Ganon Fall Room
+	;REP #$20 ; Set 16-bit Accumulator
+	;LDA $A0 ; load room ID
+	;CMP.w #$0010 : BNE + ; Ganon Fall Room - I think this got taken out
 		;!SHAME_CHEST = "$7EF416" ; ---s ----
-		LDA !SHAME_CHEST : ORA.w #$0010 : STA !SHAME_CHEST
-	+
+		;LDA !SHAME_CHEST : ORA.w #$0010 : STA !SHAME_CHEST
+	;+
 	SEP #$20 ; Set 8-bit Accumulator
 	
 	LDA $040C ; get dungeon id
@@ -738,6 +738,7 @@ RTL
 ; GetWitchLootOAMTableIndex
 ; in:	A - Loot ID
 ; out:	A - Loot OAM Table Index
+; check if this is even still referenced anywhere
 ;--------------------------------------------------------------------------------
 GetWitchLootOAMTableIndex:
 	PHX

@@ -17,7 +17,7 @@ RTL
 ;--------------------------------------------------------------------------------
 DarkWorldFlagSet:
 	PHA
-	
+	STA $FFFFFF
 	LDA !FORCE_PYRAMID : AND.b #$08 : BNE .pyramid
 	
 	LDA Bugfix_PreAgaDWDungeonDeathToFakeDW : BEQ +
@@ -46,13 +46,17 @@ RTL
 RTL
 ;--------------------------------------------------------------------------------
 SetDeathWorldChecked:
-	PHA
+	PHA : STA $FFFFFF
 	LDA $1B : BEQ + ; skip this for indoors
 		LDA $040C : CMP #$FF : BNE .done ; unless it's a cave
 	+
 	LDA $7EF3C5 : CMP.b #$03 : !BGE .done; thing we originally did - skip if agahnim 1 is dead
 	
+;<<<<<<< crystalsgoalganonrespawn
 	LDA $1B : BNE + : LDA $A0 : BNE + : LDA GanonPyramidRespawn : BEQ + ; check if we died in ganon's room and pyramid respawn is enabled
+;=======
+;	LDA $1B : BEQ + : LDA $A0 : BNE + ; check if we died in ganon's room
+;>>>>>>> master
 		LDA !FORCE_PYRAMID : ORA.b #$08 : STA !FORCE_PYRAMID ; set pyramid flag
 		BRL DarkWorldFlagSet_pyramid
 	+

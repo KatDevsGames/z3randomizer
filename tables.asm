@@ -10,7 +10,7 @@ HeartPiece_Lumberjack_Tree:
 HeartPiece_Spectacle_Cave:
 	db #$17
 HeartPiece_Circle_Bushes:
-	db #$61
+	db #$3D
 HeartPiece_Graveyard_Warp:
 	db #$17
 HeartPiece_Mire_Warp:
@@ -646,7 +646,7 @@ HeartContainer_Mothula:
 HeartContainer_Blind:
 	db #$3E
 HeartContainer_Kholdstare:
-	db #$3E
+	db #$6A
 HeartContainer_Vitreous:
 	db #$3E
 HeartContainer_Trinexx:
@@ -683,6 +683,7 @@ db #$01 ; #00 = Do not respawn on Pyramid after Death - #$01 = Respawn on Pyrami
 org $30816A ; PC 0x18016A
 FreeItemText:
 db #$01 ; #00 = Off - #$01 = On (default)
+;================================================================================
 org $30816B ; PC 0x18016B
 ByrnaCaveCaneOfByrnaUsage:
 db #$04, #$02, #$01 ; normal, 1/2, 1/4 magic

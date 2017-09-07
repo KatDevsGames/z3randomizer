@@ -8,6 +8,22 @@
 ; out:	A - Sprite GFX ID
 ;--------------------------------------------------------------------------------
 GetSpriteID:
+	
+	CMP.b #$16 : BEQ .bottle ; Bottle
+	CMP.b #$2B : BEQ .bottle ; Red Potion w/bottle
+	CMP.b #$2C : BEQ .bottle ; Green Potion w/bottle
+	CMP.b #$2D : BEQ .bottle ; Blue Potion w/bottle
+	CMP.b #$3C : BEQ .bottle ; Bee w/bottle
+	CMP.b #$3D : BEQ .bottle ; Fairy w/bottle
+	CMP.b #$48 : BEQ .bottle ; Gold Bee w/bottle
+		BRA .notBottle
+		.bottle
+			PHA : JSR.w CountBottles : CMP.l BottleLimit : !BLT +
+				PLA : LDA.l BottleLimitReplacement
+				JSL.l GetSpriteID
+				RTL
+			+
+		PLA : .notBottle
 	PHX
 	PHB : PHK : PLB
 	;--------
@@ -20,19 +36,37 @@ RTL
 		JSL.l GetRNGItemSingle : JMP GetSpriteID
 	++ CMP.b #$FB : BNE ++ ; RNG Item (Multi)
 		JSL.l GetRNGItemMulti : JMP GetSpriteID
+	++ CMP.b #$FD : BNE ++ ; Progressive Armor
+		LDA $7EF35B : CMP.l ProgressiveArmorLimit : !BLT + ; Progressive Armor Limit
+			LDA.l ProgressiveArmorReplacement
+			JSL.l GetSpriteID
+			RTL
+		+
+		LDA.b #$04 : RTL
 	++ CMP.b #$FE : BNE ++ ; Progressive Sword
-		LDA $7EF359 : BNE + ; No Sword
+		LDA $7EF359
+		CMP.l ProgressiveSwordLimit : !BLT + ; Progressive Sword Limit
+			LDA.l ProgressiveSwordReplacement
+			JSL.l GetSpriteID
+			RTL
+		+ : CMP.b #$00 : BNE + ; No Sword
 			LDA.b #$43 : RTL
 		+ : CMP.b #$01 : BNE + ; Fighter Sword
 			LDA.b #$44 : RTL
 		+ : CMP.b #$02 : BNE + ; Master Sword
 			LDA.b #$45 : RTL
-		+ ; Everything Else
+		+ ; CMP.b #$03 : BNE + ; Tempered Sword
 			LDA.b #$46 : RTL
+		+
 	++ : CMP.b #$FF : BNE ++ ; Progressive Shield
-		LDA !PROGRESSIVE_SHIELD : AND #$C0 : BNE + ; No Shield
+		LDA !PROGRESSIVE_SHIELD : AND #$C0 : LSR #6
+		CMP.l ProgressiveShieldLimit : !BLT + ; Progressive Shield Limit
+			LDA.l ProgressiveShieldReplacement
+			JSL.l GetSpriteID
+			RTL
+		+ : CMP.b #$00 : BNE + ; No Shield
 			LDA.b #$2D : RTL
-		+ : CMP.b #$40 : BNE + ; Fighter Shield
+		+ : CMP.b #$01 : BNE + ; Fighter Shield
 			LDA.b #$20 : RTL
 		+ ; Everything Else
 			LDA.b #$2E : RTL
@@ -69,7 +103,7 @@ RTL
 	db $FE, $FF ; Progressive Sword & Shield
 	
 	;6x
-	db $04, $0D ; Progressive Armor & Gloves
+	db $FD, $0D ; Progressive Armor & Gloves
 	db $FA, $FB ; RNG Single & Multi
 	db $FF, $FF, $FF, $FF, $FF, $FF ; Unused
 	db $49, $4A, $49 ; Goal Item Single, Multi & Alt Multi
@@ -95,6 +129,22 @@ RTL
 ; out:	A - Palette
 ;--------------------------------------------------------------------------------
 GetSpritePalette:
+	
+	CMP.b #$16 : BEQ .bottle ; Bottle
+	CMP.b #$2B : BEQ .bottle ; Red Potion w/bottle
+	CMP.b #$2C : BEQ .bottle ; Green Potion w/bottle
+	CMP.b #$2D : BEQ .bottle ; Blue Potion w/bottle
+	CMP.b #$3C : BEQ .bottle ; Bee w/bottle
+	CMP.b #$3D : BEQ .bottle ; Fairy w/bottle
+	CMP.b #$48 : BEQ .bottle ; Gold Bee w/bottle
+		BRA .notBottle
+		.bottle
+			PHA : JSR.w CountBottles : CMP.l BottleLimit : !BLT +
+				PLA : LDA.l BottleLimitReplacement
+				JSL.l GetSpritePalette
+				RTL
+			+
+		PLA : .notBottle
 	PHX
 	PHB : PHK : PLB
 	;--------
@@ -104,7 +154,12 @@ GetSpritePalette:
 RTL
 	.specialHandling
 	CMP.b #$FD : BNE ++ ; Progressive Sword
-		LDA $7EF359 : BNE + ; No Sword
+		LDA $7EF359
+		CMP.l ProgressiveSwordLimit : !BLT + ; Progressive Sword Limit
+			LDA.l ProgressiveSwordReplacement
+			JSL.l GetSpritePalette
+			RTL
+		+ : CMP.b #$00 : BNE + ; No Sword
 			LDA.b #$04 : RTL
 		+ : CMP.b #$01 : BNE + ; Fighter Sword
 			LDA.b #$04 : RTL
@@ -113,14 +168,23 @@ RTL
 		+ ; Everything Else
 			LDA.b #$08 : RTL
 	++ : CMP.b #$FE : BNE ++ ; Progressive Shield
-		LDA $7EF35A : BNE + ; No Shield
+		LDA !PROGRESSIVE_SHIELD : AND #$C0 : LSR #6
+		CMP.l ProgressiveShieldLimit : !BLT + ; Progressive Shield Limit
+			LDA.l ProgressiveShieldReplacement
+			JSL.l GetSpritePalette
+			RTL
+		+ : CMP.b #$00 : BNE + ; No Shield
 			LDA.b #$04 : RTL
 		+ : CMP.b #$01 : BNE + ; Fighter Shield
 			LDA.b #$02 : RTL
 		+ ; Everything Else
 			LDA.b #$08 : RTL
 	++ : CMP.b #$FF : BNE ++ ; Progressive Armor
-		LDA $7EF35B : BNE + ; Green Tunic
+		LDA $7EF35B : CMP.l ProgressiveArmorLimit : !BLT + ; Progressive Armor Limit
+			LDA.l ProgressiveArmorReplacement
+			JSL.l GetSpritePalette
+			RTL
+		+ : CMP.b #$00 : BNE + ; Green Tunic
 			LDA.b #$04 : RTL
 		+ ; Everything Else
 			LDA.b #$02 : RTL
@@ -184,9 +248,42 @@ IsNarrowSprite:
 	PHB : PHK : PLB
 
 	;--------
-	CMP.b #$5F : BNE ++ ; Special Handler for Progressive Shield
-		LDA $7EF35A : BNE + : SEC : BRA .done : +; No Shield
+	CMP.b #$16 : BEQ .bottle ; Bottle
+	CMP.b #$2B : BEQ .bottle ; Red Potion w/bottle
+	CMP.b #$2C : BEQ .bottle ; Green Potion w/bottle
+	CMP.b #$2D : BEQ .bottle ; Blue Potion w/bottle
+	CMP.b #$3C : BEQ .bottle ; Bee w/bottle
+	CMP.b #$3D : BEQ .bottle ; Fairy w/bottle
+	CMP.b #$48 : BEQ .bottle ; Gold Bee w/bottle
+		BRA .notBottle
+		.bottle
+			JSR.w CountBottles : CMP.l BottleLimit : !BLT +
+				LDA.l BottleLimitReplacement
+				JSL.l IsNarrowSprite
+				BRL .done
+			+ : BRA .continue
+		.notBottle
+	CMP.b #$5E : BNE ++ ; Progressive Sword
+		LDA $7EF359 : CMP.l ProgressiveSwordLimit : !BLT + ; Progressive Sword Limit
+			LDA.l ProgressiveSwordReplacement
+			JSL.l IsNarrowSprite
+			BRA .done
+		+ : BRA .continue
+	++ : CMP.b #$5F : BNE ++ ; Progressive Shield
+		LDA !PROGRESSIVE_SHIELD : AND #$C0 : BNE + : SEC : BRA .done ; No Shield
+		LSR #6 : CMP.l ProgressiveShieldLimit : !BLT + ; Progressive Shield Limit
+			LDA.l ProgressiveShieldReplacement
+			JSL.l IsNarrowSprite
+			BRA .done
+		+
+		;LDA $7EF35A : BNE + : SEC : BRA .done : +; No Shield
 		BRA .false ; Everything Else
+	++ CMP.b #$60 : BNE ++ ; Progressive Armor
+		LDA $7EF35B : CMP.l ProgressiveArmorLimit : !BLT + ; Progressive Armor Limit
+			LDA.l ProgressiveArmorReplacement
+			JSL.l IsNarrowSprite
+			BRA .done
+		+
 	++ CMP.b #$62 : BNE ++ ; RNG Item (Single)
 		JSL.l GetRNGItemSingle : BRA .continue
 	++ CMP.b #$63 : BNE ++ ; RNG Item (Multi)
@@ -282,7 +379,7 @@ RTS
 ; in:	A - Loot ID
 ; out:  A - OAM Slots Taken
 ;--------------------------------------------------------------------------------
-; This wastes two OAM slots if you don't want a shadow - fix later
+; This wastes two OAM slots if you don't want a shadow - fix later - I wrote "fix later" over a year ago and it's still not fixed (Aug 6, 2017)
 ;-------------------------------------------------------------------------------- 2084B8
 !SPRITE_OAM = "$7EC025"
 !SKIP_EOR = "$7F5008"
