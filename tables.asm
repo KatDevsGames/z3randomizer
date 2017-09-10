@@ -169,7 +169,7 @@ db #$00 ; #$00 = Off (default) - #$01 = On
 ;--------------------------------------------------------------------------------
 org $308045 ; PC 0x180045
 HUDDundeonItems:
-db #$FF ; 0000dcba a: bitwise Keys, b: Big Key, c: Map, d: Compass
+db #$FF ; display ----dcba a: Small Keys, b: Big Key, c: Map, d: Compass
 ;--------------------------------------------------------------------------------
 org $308080 ; PC 0x180080
 Upgrade5BombsRefill:
