@@ -260,7 +260,11 @@ DialogEtherTablet:
 RTL
 	+
 	BIT $F4 : BVC - ; Show normal text if Y is not pressed
-	LDA $7EF359 : CMP.b #$FF : BEQ .yesText : CMP.b #$02 : !BGE .noText
+	LDA.l AllowHammerTablets : BEQ ++
+		LDA $7EF34B : BEQ .yesText : BRA .noText
+	++
+		LDA $7EF359 : CMP.b #$FF : BEQ .yesText : CMP.b #$02 : !BGE .noText
+	;++
 	.yesText
 	%LoadDialogAddress(EtherTabletText)
 	PLA : JSL Sprite_ShowMessageUnconditional ; Text From MSPedestalText (tables.asm)
@@ -277,7 +281,11 @@ DialogBombosTablet:
 RTL
 	+
 	BIT $F4 : BVC - ; Show normal text if Y is not pressed
-	LDA $7EF359 : CMP.b #$FF : BEQ .yesText : CMP.b #$02 : !BGE .noText
+	LDA.l AllowHammerTablets : BEQ ++
+		LDA $7EF34B : BEQ .yesText : BRA .noText
+	++
+		LDA $7EF359 : CMP.b #$FF : BEQ .yesText : CMP.b #$02 : !BGE .noText
+	;++
 	.yesText
 	%LoadDialogAddress(BombosTabletText)
 	PLA : JSL Sprite_ShowMessageUnconditional ; Text From MSPedestalText (tables.asm)

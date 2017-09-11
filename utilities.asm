@@ -29,10 +29,15 @@ GetSpriteID:
 	;--------
 	TAX : LDA .gfxSlots, X ; look up item gfx
 	PLB : PLX
-	CMP.b #$FA : !BGE .specialHandling
+	CMP.b #$F9 : !BGE .specialHandling
 RTL
 	.specialHandling
-	CMP.b #$FA : BNE ++ ; RNG Item (Single)
+	CMP.b #$F9 : BNE ++ ; Progressive Magic
+		LDA.l $7EF37B : BNE +++
+			LDA.b #$3B : RTL ; Half Magic
+		+++
+			LDA.b #$3C : RTL ; Quarter Magic
+	++ CMP.b #$FA : BNE ++ ; RNG Item (Single)
 		JSL.l GetRNGItemSingle : JMP GetSpriteID
 	++ CMP.b #$FB : BNE ++ ; RNG Item (Multi)
 		JSL.l GetRNGItemMulti : JMP GetSpriteID
@@ -89,7 +94,7 @@ RTL
     db $23, $23, $29, $2A, $2C, $2B, $03, $03
     
     db $34, $35, $31, $33, $02, $32, $36, $37
-	db $2C, $43, $0C, $38, $39, $3A, $3B, $3C
+	db $2C, $43, $0C, $38, $39, $3A, $F9, $3C
 	; db $2C, $06, $0C, $38, $FF, $FF, $FF, $FF
 	
 	;5x

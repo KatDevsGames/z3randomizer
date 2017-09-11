@@ -19,15 +19,24 @@ JMP.l PyramidFairy_BRANCH_GAMMA
 ;	;JSL ItemSet_SmithSword - too early
 ;JMP.l Smithy_DoesntHaveSword
 ;================================================================================
+;LoadSwordForDamage:
+;	LDA $7EF359 : CMP #$04 : BNE .done ; skip if not gold sword
+;	LDA $1B : BEQ + ; skip if outdoors
+;	LDA $A0 : CMP #41 : BNE + ; decimal 41 ; skip if not in the mothula room
+;		LDA #$03 ; pretend we're using tempered
+;		BRA .done
+;	+
+;	LDA #$04 ; nvm gold sword is fine
+;	.done
+;RTL
+;================================================================================
 LoadSwordForDamage:
-	LDA $7EF359 : CMP #$04 : BNE .done ; skip if not gold sword
-	LDA $1B : BEQ + ; skip if outdoors
-	LDA $A0 : CMP #41 : BNE + ; decimal 41 ; skip if not in the mothula room
-		LDA #$03 ; pretend we're using tempered
-		BRA .done
-	+
-	LDA #$04 ; nvm gold sword is fine
-	.done
+	LDA $0E20, X : CMP.b #$88 : BNE .notMoth
+		LDA $7EF359 ; load normal sword value
+		CMP.b #$04 : !BLT + : DEC : +
+		RTL
+	.notMoth
+	LDA $7EF359 ; load normal sword value
 RTL
 ;================================================================================
 CheckTabletSword:

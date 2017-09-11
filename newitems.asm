@@ -323,6 +323,10 @@ AddReceivedItemExpanded:
 			JSR.w CountBottles : CMP.l BottleLimit : !BLT +++
 				LDA.l BottleLimitReplacement : STA $02D8
 			+++ : BRL .done
+		++ : CMP.b #$4E : BNE ++ ; Progressive Magic
+			LDA $7EF37B : BEQ +++
+				LDA.b #$4F : STA $02D8
+			+++ : BRL .done
 		++ : CMP.b #$5E : BNE ++ ; Progressive Sword
 			LDA $7EF359 : CMP.l ProgressiveSwordLimit : !BLT +
 				LDA.l ProgressiveSwordReplacement : STA $02D8 : BRL .done
