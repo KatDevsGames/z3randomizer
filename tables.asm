@@ -632,7 +632,7 @@ HauntedGroveItem:
 org $308150 ; PC 0x180150
 HeartContainerBossValues:
 HeartContainer_ArmosKnights:
-	db #$3E ; #$3E = Boss Heart (putting pendants here cause main pendant to not drop for obvious (in retrospect) reasons)
+	db #$3E ; #$3E = Boss Heart (putting pendants here causes main pendants to not drop for obvious (in retrospect) reasons)
 HeartContainer_Lanmolas:
 	db #$3E
 HeartContainer_Moldorm:
@@ -646,7 +646,7 @@ HeartContainer_Mothula:
 HeartContainer_Blind:
 	db #$3E
 HeartContainer_Kholdstare:
-	db #$6A
+	db #$3E
 HeartContainer_Vitreous:
 	db #$3E
 HeartContainer_Trinexx:
