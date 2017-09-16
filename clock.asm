@@ -65,7 +65,6 @@ endmacro
 ;--------------------------------------------------------------------------------
 
 Clock_Test:
-	LDA $FFFFFF
 	JSL.l Clock_Init
 	JSL.l Clock_IsSupported
 RTL

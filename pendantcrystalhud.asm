@@ -140,11 +140,46 @@ ShowDungeonItems:
 	LDA $040C : AND.w #$00FF : CMP.w #$00FF ; original logic
 RTL
 ;--------------------------------------------------------------------------------
+UpdateKeys:
+	PHX : PHP
+	SEP #$30 ; set 8-bit accumulator & index registers
+		LDA $040C : CMP.b $1F : !BLT .skip
+		
+		LSR : TAX ; get dungeon index and store to X
+	
+		LDA $7EF36F ; load current key count
+		STA $7EF37C, X ; save to main counts
+		
+		CPX.b #$00 : BNE +
+			STA $7EF37D ; copy HC to sewers
+		+ : CPX.b #$01 : BNE +
+			STA $7EF37C ; copy sewers to HC
+		+
+		.skip
+	PLP : PLX
+	JSL.l PostItemGet
+RTL
+;$37C = Sewer Passage
+;$37D = Hyrule Castle
+;$37E = Eastern Palace
+;$37F = Desert Palace
+;$380 = Hyrule Castle 2
+;$381 = Swamp Palace
+;$382 = Dark Palace
+;$383 = Misery Mire
+;$384 = Skull Woods
+;$385 = Ice Palace
+;$386 = Tower of Hera
+;$387 = Gargoyle's Domain
+;$388 = Turtle Rock
+;$389 = Ganon's Tower
+;--------------------------------------------------------------------------------
 DrawHUDDungeonItems:
-	LDA HUDDundeonItems : BNE +
-		LDA.w #$11CE : STA $00 ; thing we wrote over
-		RTL
-	+
+	LDA.l HUDDungeonItems : BNE + : RTL : +
+	
+	PHP
+	REP #$30 ; set 16-bit accumulator & index registers
+	
 	; dungeon names
 	LDA.w #$2D50 : STA $1646 ; sewers
 	LDA.w #$2D54 : STA $1648 ; Agahnims Tower
@@ -170,7 +205,7 @@ DrawHUDDungeonItems:
 	INX #2 : CPX.w #$0020 : BCC -
 
 	LDA !HUD_FLAG : AND.w #$0020 : BEQ + : BRL +++ : +
-	LDA HUDDundeonItems : AND.w #$0001 : BNE + : BRL ++ : +
+	LDA HUDDungeonItems : AND.w #$0001 : BNE + : BRL ++ : +
 		LDA.w #$2810 : STA $1684 ; small keys icon
 		SEP #$20 ; set 8-bit accumulator
 		; Small Keys
@@ -195,7 +230,7 @@ DrawHUDDungeonItems:
 	++
 
 	; Big Keys
-	LDA HUDDundeonItems : AND.w #$0002 : BNE + : BRL ++ : +
+	LDA HUDDungeonItems : AND.w #$0002 : BNE + : BRL ++ : +
 		LDA.w #$2811 : STA $16C4 ; big key icon
 		LDA $7EF367 : AND.w #$0080 : BEQ + ; sewers
 			LDA.w #$2826 : STA $16C6
@@ -242,7 +277,7 @@ DrawHUDDungeonItems:
 	+++
 	LDA !HUD_FLAG : AND.w #$0020 : BNE + : BRL +++ : +
 	; Maps
-	LDA HUDDundeonItems : AND.w #$0004 : BNE + : BRL ++ : +
+	LDA HUDDungeonItems : AND.w #$0004 : BNE + : BRL ++ : +
 		LDA.w #$2821 : STA $1684 ; map icon
 		LDA $7EF369 : AND.w #$0080 : BEQ + ; sewers
 			LDA.w #$2826 : STA $1686
@@ -286,7 +321,7 @@ DrawHUDDungeonItems:
 	++
 
 	; Compasses
-	LDA HUDDundeonItems : AND.w #$0008 : BNE + : BRL ++ : +
+	LDA HUDDungeonItems : AND.w #$0008 : BNE + : BRL ++ : +
 		LDA.w #$2C20 : STA $16C4 ; compass icon
 		LDA $7EF365 : AND.w #$0080 : BEQ + ; sewers
 			LDA.w #$2C26 : STA $16C6
@@ -327,11 +362,8 @@ DrawHUDDungeonItems:
 		LDA $7EF364 : AND.w #$0004 : BEQ + ; Ganon's Tower
 			LDA.w #$2C26 : STA $16E4
 		+
-	++
-
-	+++
-
-	LDA.w #$11CE : STA $00 ; thing we wrote over
+	++ : +++
+	PLP
 RTL
 ;--------------------------------------------------------------------------------
 ;================================================================================

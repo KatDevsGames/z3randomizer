@@ -48,7 +48,6 @@ macro Blt32(value1,value2)
 endmacro
 ;--------------------------------------------------------------------------------
 CalculateTimer:
-	LDA $FFFFFF
 	LDA.w #$0000
 	STA.l !CLOCK_HOURS ; clear digit storage
 	STA.l !CLOCK_HOURS+2

@@ -194,10 +194,16 @@ IncrementFlute:
 RTL
 ;--------------------------------------------------------------------------------
 IncrementSmallKeys:
+	STA $7EF36F ; thing we wrote over, write small key count
 	LDA !LOCK_STATS : BNE +
 		JSL AddInventory_incrementKeyLong
 	+
-	LDA $7EF36F ; thing we wrote over, read small key count
+	JSL.l UpdateKeys
+RTL
+;--------------------------------------------------------------------------------
+DecrementSmallKeys:
+	STA $7EF36F ; thing we wrote over, write small key count
+	JSL.l UpdateKeys
 RTL
 ;--------------------------------------------------------------------------------
 IncrementAgahnim2Sword:

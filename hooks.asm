@@ -92,7 +92,8 @@ NOP
 ;org $05FC7E ; <- 2FC7E - sprite_dash_item.asm : 118 (LDA $7EF36F : INC A : STA $7EF36F)
 ;JSL.l IncrementSmallKeys
 ;--------------------------------------------------------------------------------
-org $06D18D ; <- 3518D - sprite_absorbable.asm : 274 (LDA $7EF36F : INC A : STA $7EF36F)
+;org $06D18D ; <- 3518D - sprite_absorbable.asm : 274 (LDA $7EF36F : INC A : STA $7EF36F)
+org $06D192 ; <- 35192 - sprite_absorbable.asm : 274 (STA $7EF36F)
 JSL.l IncrementSmallKeys
 ;--------------------------------------------------------------------------------
 org $00F945 ; <- 7945 - Bank00.asm : 8557 (JSL SavePalaceDeaths)
@@ -886,7 +887,7 @@ org $0DFC37 ; <- 6FC37 - headsup_display.asm : 828 (LDA.w #$28F7)
 JSL.l DrawMagicHeader
 NOP #17
 ;--------------------------------------------------------------------------------
-org $0DFB29 ; <- - headsup_display.asm : 688 (LDA.b #$86 : STA $7EC71E)
+org $0DFB29 ; <- headsup_display.asm : 688 (LDA.b #$86 : STA $7EC71E)
 ;LDA.b #$86 : STA $7EC720 ; nudge silver arrow right - remember to update this in newit
 ;LDA.b #$24 : STA $7EC721
 ;LDA.b #$87 : STA $7EC722
@@ -895,15 +896,21 @@ JSL.l DrawHUDSilverArrows : BRA +
 	NOP #18
 +
 ;--------------------------------------------------------------------------------
+org $01CF67 ; <- CF67 - Bank01.asm : 11625 (STA $7EF36F)
+JSL.l DecrementSmallKeys
+;--------------------------------------------------------------------------------
+org $0DED04 ; <- 6ED04 - equipment.asm : 1963 (REP #$30)
+JSL.l DrawHUDDungeonItems
+;--------------------------------------------------------------------------------
 ; Insert our version of the hud tilemap
 org $0DFA96 ; <- 6FA96 - headsup_display.asm : 626 (LDX.w #.hud_tilemap)
 LDX.w #HUD_TileMap
 org $0DFA9C ; <- 6FA9C - headsup_display.asm : 629 (MVN $0D, $7E ; $Transfer 0x014A bytes from $6FE77 -> $7EC700)
 MVN $207E
 ;--------------------------------------------------------------------------------
-org $0DE48E ; <- 6E48E - equipment.asm : 1233 (LDA.w #$11CE : STA $00) - HOOK HERE TO DRAW ON THE ITEM SCREEN
-JSL.l DrawHUDDungeonItems
-NOP
+;org $0DE48E ; <- 6E48E - equipment.asm : 1233 (LDA.w #$11CE : STA $00) - HOOK HERE TO DRAW ON THE ITEM SCREEN
+;JSL.l DrawHUDDungeonItems
+;NOP
 ;--------------------------------------------------------------------------------
 org $0DFB1F ; 6FB1F - headsup_display.asm : 681 (LDA $7EF340 : BEQ .hastNoBow)
 JSL.l CheckHUDSilverArrows

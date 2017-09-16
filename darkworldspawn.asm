@@ -17,7 +17,6 @@ RTL
 ;--------------------------------------------------------------------------------
 DarkWorldFlagSet:
 	PHA
-	STA $FFFFFF
 	LDA !FORCE_PYRAMID : AND.b #$08 : BNE .pyramid
 	
 	LDA Bugfix_PreAgaDWDungeonDeathToFakeDW : BEQ +
@@ -46,7 +45,7 @@ RTL
 RTL
 ;--------------------------------------------------------------------------------
 SetDeathWorldChecked:
-	PHA : STA $FFFFFF
+	PHA
 	LDA $1B : BEQ + ; skip this for indoors
 		LDA $040C : CMP #$FF : BNE .done ; unless it's a cave
 	+
