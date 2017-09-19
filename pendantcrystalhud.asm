@@ -156,8 +156,8 @@ UpdateKeys:
 			STA $7EF37C ; copy sewers to HC
 		+
 		.skip
-	PLP : PLX
 	JSL.l PostItemGet
+	PLP : PLX
 RTL
 ;$37C = Sewer Passage
 ;$37D = Hyrule Castle
