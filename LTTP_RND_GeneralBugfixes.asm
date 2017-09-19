@@ -26,7 +26,7 @@ org $3FFFFF ; <- 1FFFFF
 db #$00 ; expand file to 2mb
 
 org $1FFFF8 ; <- FFFF8 timestamp rom
-db #$20, #$17, #$09, #$15 ; year/month/day
+db #$20, #$17, #$09, #$18 ; year/month/day
 
 ;================================================================================
 
@@ -198,7 +198,7 @@ warnpc $348000
 org $328000
 Extra_Text_Table:
 incsrc itemtext.asm
-	
+
 incsrc externalhooks.asm
 ;================================================================================
 org $119100 ; PC 0x89100
@@ -408,7 +408,7 @@ OAM_AllocateFromRegionF:
 
 org $0DBB67
 Sound_SetSfxPanWithPlayerCoords:
-	
+
 org $0DBB8A
 Sound_SetSfx3PanLong:
 
@@ -435,10 +435,10 @@ Messaging_Text:
 
 org $1BED03
 Palette_Sword:
-	
+
 org $1BED29
 Palette_Shield:
-	
+
 org $1BEDF9
 Palette_ArmorAndGloves:
 
@@ -447,7 +447,7 @@ Palette_Hud:
 
 org $1DF65D
 Sprite_SpawnDynamically:
-	
+
 org $1DFD4B
 DiggingGameGuy_AttemptPrizeSpawn:
 ;================================================================================
