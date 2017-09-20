@@ -1174,6 +1174,9 @@ dw #9999 ; Rupee Limit
 ; $7F5097 - Dialog Offset Pointer Return (High)
 ; $7F5098 - Water Entry Index
 ; $7F5099 - Last Entered Entrance
+
+; $7F50A0 - Event Parameter 1
+
 ; $7F50D0 - $7F50FF - Block Cypher Parameters
 ; $7F5100 - $7F51FF - Block Cypher Buffer
 ; $7F5200 - $7F52FF - RNG Pointer Block

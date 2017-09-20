@@ -91,6 +91,12 @@ RTL
 ;--------------------------------------------------------------------------------
 PostItemAnimation:
 	LDA.b #$00 : STA !ITEM_BUSY ; mark item as finished
+	
+	LDA $7F50A0 : BEQ +
+		JSL.l Main_ShowTextMessage
+		LDA.b #$00 : STA $7F50A0
+	+
+	
     STZ $02E9 : LDA $0C5E, X ; thing we wrote over to get here
 RTL
 ;--------------------------------------------------------------------------------

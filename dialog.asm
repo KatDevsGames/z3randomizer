@@ -98,7 +98,10 @@ macro CopyDialog(address)
 	LDA.b #<address> : STA $00 ; write pointer to direct page
 	LDA.b #<address>>>8 : STA $01
 	LDA.b #<address>>>16 : STA $02
-
+	%CopyDialogIndirect()
+endmacro
+;--------------------------------------------------------------------------------
+macro CopyDialogIndirect()
 	REP #$20 : LDA !OFFSET_POINTER : TAX : LDY.w #$0000 : SEP #$20 ; copy 2-byte offset pointer to X and set Y to 0
 	?loop:
 		LDA [$00], Y ; load the next character from the pointer
@@ -110,6 +113,12 @@ macro CopyDialog(address)
 	LDA.w #$0000 : STA !OFFSET_POINTER
 	SEP #$20 ; set 8-bit accumulator
 endmacro
+;--------------------------------------------------------------------------------
+LoadDialogAddressIndirect:
+	LDA.b #$01 : STA $7F5035 ; set flag
+	%CopyDialogIndirect()
+	;%LoadDialogAddress(UncleText)
+RTL
 ;--------------------------------------------------------------------------------
 !ITEM_TEMPORARY = "$7F5040"
 FreeDungeonItemNotice:
@@ -192,7 +201,7 @@ FreeDungeonItemNotice:
 	PLP
 	PLY : PLX : PLA
 
-	JSL.l Sprite_ShowMessageMinimal
+	JSL.l Main_ShowTextMessage
 RTL
 	
 	.skip
