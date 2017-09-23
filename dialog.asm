@@ -14,6 +14,7 @@ RTL
 ; $7F5700 - $7F57FF - Dialog Buffer
 ;--------------------------------------------------------------------------------
 ResetDialogPointer:
+	STZ $1CF0 : STZ $1CF1 ; reset decompression buffer
 	LDA.b #$00 : STA $7F5035 ; zero out the alternate flag
 	LDA.b #$1C : STA $1CE9 ; thing we wrote over
 RTL
@@ -84,6 +85,7 @@ macro LoadDialogAddress(address)
 		LDA $00 : PHA
 		LDA $01 : PHA
 		LDA $02 : PHA
+			STZ $1CF0 : STZ $1CF1 ; reset decompression buffer
 			LDA.b #$01 : STA $7F5035 ; set flag
 			%CopyDialog(<address>)
 		PLA : STA $02
