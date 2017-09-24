@@ -65,14 +65,14 @@ CheckGanonVulnerability:
 		;#$04 = Require All Crystals
 		LDA $7EF37A : AND.b #$7F : CMP #$7F : BNE .fail ; require all crystals
 		BRA .success
-	+ CMP #$03 : BNE +
+	+ : CMP #$03 : BNE +
 		;#$03 = Require All Crystals and Aga 2
 		LDA $7EF37A : AND.b #$7F : CMP #$7F : BNE .fail ; require all crystals
 		LDA $7EF2DB : AND.b #$20 : CMP #$20 : BNE .fail ; require aga2 defeated (pyramid hole open)
 		BRA .success
-	+ CMP #$05 : BNE +
+	+ : CMP #$05 : BNE +
 		;#$05 = Require 100 Goal Items
-		LDA.l !GOAL_COUNTER : CMP.w #100 : !BLT .fail ; require 100 goal items
+		LDA.l !GOAL_COUNTER : CMP.b #100 : !BLT .fail ; require 100 goal items
 		BRA .success
 	+
 .fail : CLC : RTL
