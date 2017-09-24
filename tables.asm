@@ -674,7 +674,7 @@ dw #$280E ; #$280D = Star (default) - #$280E = Triforce Piece
 ;================================================================================
 org $308167 ; PC 0x180167
 GoalItemRequirement:
-db #$FF ; #$00 = Off (default) - #$XX = Require $XX Goal Items ; #$FF = Counter-Only
+db #$FF ; #$00 = Off (default) - #$XX = Require $XX Goal Items - #$FF = Counter-Only
 ;================================================================================
 org $308168 ; PC 0x180168
 ByrnaCaveSpikeDamage:
