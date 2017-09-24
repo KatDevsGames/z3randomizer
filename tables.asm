@@ -140,8 +140,12 @@ db #$00 ; #$00 = Off (default) - #$01 = On
 org $30803E ; PC 0x18003E
 InvincibleGanon:
 db #$00 
-; #$00 = Off (default) - #$01 = On - #$02 = Require All Dungeons
-; #$03 = Require Crystals and Aga2 - #$04 = Require Crystals
+; #$00 = Off (default)
+; #$01 = On
+; #$02 = Require All Dungeons
+; #$03 = Require Crystals and Aga2
+; #$04 = Require Crystals
+; #$05 = Require 100 Goal Items
 ;--------------------------------------------------------------------------------
 org $30803F ; PC 0x18003F
 HammerableGanon:
@@ -666,11 +670,11 @@ StandingKey_Hera:
 ;================================================================================
 org $308165 ; PC 0x180165
 GoalItemIcon:
-dw #$280D ; #$280D = Star (default) - #$280E = Triforce Piece
+dw #$280E ; #$280D = Star (default) - #$280E = Triforce Piece
 ;================================================================================
 org $308167 ; PC 0x180167
 GoalItemRequirement:
-db #$00 ; #$00 = Off (default) - #$XX = Require $XX Goal Items
+db #$FF ; #$00 = Off (default) - #$XX = Require $XX Goal Items ; #$FF = Counter-Only
 ;================================================================================
 org $308168 ; PC 0x180168
 ByrnaCaveSpikeDamage:

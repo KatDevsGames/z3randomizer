@@ -12,16 +12,25 @@ DrawGoalIndicator:
 	    LDA.l !GOAL_COUNTER
 		AND.w #$00FF
 	    JSL.l HexToDec
+		LDA $7F5005 : AND.w #$00FF : ORA.w #$2400 : STA $7EC72C, X : INX #2 ; draw 10's digit and move the cursor
 		LDA $7F5006 : AND.w #$00FF : ORA.w #$2400 : STA $7EC72C, X : INX #2 ; draw 10's digit and move the cursor
 		LDA $7F5007 : AND.w #$00FF : ORA.w #$2400 : STA $7EC72C, X : INX #2 ; draw 1's and move the cursor
 		
-		LDA.w #$2830 : STA $7EC72C, X : INX #2 ; draw slash and move the cursor
+		LDA.l GoalItemRequirement : AND.w #$00FF : CMP.w #$00FF : BEQ .skip
+			LDA.w #$2830 : STA $7EC72C, X : INX #2 ; draw slash and move the cursor
 		
-		LDA.l GoalItemRequirement
-		AND.w #$00FF
-	    JSL.l HexToDec
-		LDA $7F5006 : AND.w #$00FF : ORA.w #$2400 : STA $7EC72C, X : INX #2 ; draw 10's digit and move the cursor
-		LDA $7F5007 : AND.w #$00FF : ORA.w #$2400 : STA $7EC72C, X : INX #2 ; draw 1's and move the cursor
+			LDA.l GoalItemRequirement
+			AND.w #$00FF
+		    JSL.l HexToDec
+			LDA $7F5006 : AND.w #$00FF : ORA.w #$2400 : STA $7EC72C, X : INX #2 ; draw 10's digit and move the cursor
+			LDA $7F5007 : AND.w #$00FF : ORA.w #$2400 : STA $7EC72C, X : INX #2 ; draw 1's and move the cursor
+			BRA .done
+		.skip
+			LDA.w #$207F
+			STA $7EC72C, X : INX #
+			STA $7EC72C, X : INX #
+			STA $7EC72C, X : INX #
+		.done
 	PLX
 RTL
 ;--------------------------------------------------------------------------------
@@ -56,10 +65,14 @@ CheckGanonVulnerability:
 		;#$04 = Require All Crystals
 		LDA $7EF37A : AND.b #$7F : CMP #$7F : BNE .fail ; require all crystals
 		BRA .success
-	+ ; CMP #$03 : BNE + this is a comment
+	+ CMP #$03 : BNE + this is a comment
 		;#$03 = Require All Crystals and Aga 2
 		LDA $7EF37A : AND.b #$7F : CMP #$7F : BNE .fail ; require all crystals
 		LDA $7EF2DB : AND.b #$20 : CMP #$20 : BNE .fail ; require aga2 defeated (pyramid hole open)
+		BRA .success
+	+ CMP #$05 : BNE + this is a comment
+		;#$05 = Require 100 Goal Items
+		LDA.l !GOAL_COUNTER : CMP.w #100 : !BLT .fail ; require 100 goal items
 		BRA .success
 	+
 .fail : CLC : RTL
