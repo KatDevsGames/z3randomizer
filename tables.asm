@@ -139,7 +139,7 @@ db #$00 ; #$00 = Off (default) - #$01 = On
 ;--------------------------------------------------------------------------------
 org $30803E ; PC 0x18003E
 InvincibleGanon:
-db #$00 
+db #$05
 ; #$00 = Off (default)
 ; #$01 = On
 ; #$02 = Require All Dungeons
