@@ -177,8 +177,8 @@ warnpc $31A800
 
 org $31A800
 GFX_New_Items:
-;incbin newitems.gfx
-incbin eventitems.gfx ; *EVENT*
+incbin newitems.gfx
+;incbin eventitems.gfx ; *EVENT*
 warnpc $31B000
 
 org $31B000

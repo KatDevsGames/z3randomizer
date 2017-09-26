@@ -133,45 +133,45 @@ endmacro
 ;--------------------------------------------------------------------------------
 ;carry clear if pass
 ;carry set if caught
-incsrc eventdata.asm
-ProcessEventItems:
-	LDA $00 : PHA
-	LDA $01 : PHA
-	LDA $02 : PHA
-	PHY : PHP
-		LDA $02D8
-		CMP.b #$70 : !BLT + : CMP.b #$E0 : !BGE + ; Free Item Block
-			!SUB #$70
-			
-			REP #$30 ; set 16-bit accumulator & index registers
-			AND.w #$00FF : ASL : TAX
-			LDA.l EventDataOffsets, X : !ADD.w #EventDataTable : STA $00
-			
-			SEP #$20 ; set 8-bit accumulator
-			PHK : PLA : STA $02
-			
-			JSL.l LoadDialogAddressIndirect
-			
-			SEP #$10 ; set 8-bit index registers
-			LDX.b #$01 : BRA .done
-		+
-		LDX.b #$00
-	.done
-	PLP : PLY
-	PLA : STA $02
-	PLA : STA $01
-	PLA : STA $00
-RTS
+;incsrc eventdata.asm
+;ProcessEventItems:
+;	LDA $00 : PHA
+;	LDA $01 : PHA
+;	LDA $02 : PHA
+;	PHY : PHP
+;		LDA $02D8
+;		CMP.b #$70 : !BLT + : CMP.b #$E0 : !BGE + ; Free Item Block
+;			!SUB #$70
+;			
+;			REP #$30 ; set 16-bit accumulator & index registers
+;			AND.w #$00FF : ASL : TAX
+;			LDA.l EventDataOffsets, X : !ADD.w #EventDataTable : STA $00
+;			
+;			SEP #$20 ; set 8-bit accumulator
+;			PHK : PLA : STA $02
+;			
+;			JSL.l LoadDialogAddressIndirect
+;			
+;			SEP #$10 ; set 8-bit index registers
+;			LDX.b #$01 : BRA .done
+;		+
+;		LDX.b #$00
+;	.done
+;	PLP : PLY
+;	PLA : STA $02
+;	PLA : STA $01
+;	PLA : STA $00
+;RTS
 ;--------------------------------------------------------------------------------
 AddReceivedItemExpandedGetItem:
 	PHX
 	
-	JSR.w ProcessEventItems : CPX.b #$00 : BEQ ++
-		;JSL.l Main_ShowTextMessage
-		LDA !GOAL_COUNTER : INC : STA !GOAL_COUNTER
-		LDA.b #$01 : STA $7F50A0
-		BRL .done
-	++
+	;JSR.w ProcessEventItems : CPX.b #$00 : BEQ ++
+	;	;JSL.l Main_ShowTextMessage
+	;	LDA !GOAL_COUNTER : INC : STA !GOAL_COUNTER
+	;	LDA.b #$01 : STA $7F50A0
+	;	BRL .done
+	;++
 
 	LDA $02D8 ; check inventory
 	CMP.b #$4C : BNE + ; 50 bombs
@@ -493,8 +493,8 @@ AddReceivedItemExpanded:
 	db  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ; Free Map
 	db  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ; Free Compass
 	db  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ; Free Big Key
-	db  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ; *EVENT*
-	;db  4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4 ; Free Small Key
+	;db  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ; *EVENT*
+	db  4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4 ; Free Small Key
 	db  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ; Unused
 	db  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ; Unused
 	db  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ; Unused
@@ -529,14 +529,14 @@ AddReceivedItemExpanded:
 	db $FF, $FF, $FF, $FF, $FF, $FF ; Unused
 	db $49, $4A, $49 ; Goal Item Single, Multi & Alt Multi
 	db $FF, $FF, $FF ; Unused
-	;db $21, $21, $21, $21, $21, $21, $21, $21, $21, $21, $21, $21, $21, $21, $21, $21 ; Free Map
-	;db $16, $16, $16, $16, $16, $16, $16, $16, $16, $16, $16, $16, $16, $16, $16, $16 ; Free Compass
-	;db $22, $22, $22, $22, $22, $22, $22, $22, $22, $22, $22, $22, $22, $22, $22, $22 ; Free Big Key
-	;db $0F, $0F, $0F, $0F, $0F, $0F, $0F, $0F, $0F, $0F, $0F, $0F, $0F, $0F, $0F, $0F ; Free Small Key
-	db $49, $49, $49, $49, $49, $49, $49, $49, $49, $49, $49, $49, $49, $49, $49, $49 ; *EVENT*
-	db $49, $49, $49, $49, $49, $49, $49, $49, $49, $49, $49, $49, $49, $49, $49, $49 ; *EVENT*
-	db $49, $49, $49, $49, $49, $49, $49, $49, $49, $49, $49, $49, $49, $49, $49, $49 ; *EVENT*
-	db $49, $49, $49, $49, $49, $49, $49, $49, $49, $49, $49, $49, $49, $49, $49, $49 ; *EVENT*
+	db $21, $21, $21, $21, $21, $21, $21, $21, $21, $21, $21, $21, $21, $21, $21, $21 ; Free Map
+	db $16, $16, $16, $16, $16, $16, $16, $16, $16, $16, $16, $16, $16, $16, $16, $16 ; Free Compass
+	db $22, $22, $22, $22, $22, $22, $22, $22, $22, $22, $22, $22, $22, $22, $22, $22 ; Free Big Key
+	db $0F, $0F, $0F, $0F, $0F, $0F, $0F, $0F, $0F, $0F, $0F, $0F, $0F, $0F, $0F, $0F ; Free Small Key
+	;db $49, $49, $49, $49, $49, $49, $49, $49, $49, $49, $49, $49, $49, $49, $49, $49 ; *EVENT*
+	;db $49, $49, $49, $49, $49, $49, $49, $49, $49, $49, $49, $49, $49, $49, $49, $49 ; *EVENT*
+	;db $49, $49, $49, $49, $49, $49, $49, $49, $49, $49, $49, $49, $49, $49, $49, $49 ; *EVENT*
+	;db $49, $49, $49, $49, $49, $49, $49, $49, $49, $49, $49, $49, $49, $49, $49, $49 ; *EVENT*
 	
 	db $49, $49, $49, $49, $49, $49, $49, $49, $49, $49, $49, $49, $49, $49, $49, $49 ; Unused
 	db $49, $49, $49, $49, $49, $49, $49, $49, $49, $49, $49, $49, $49, $49, $49, $49 ; Unused
@@ -575,8 +575,8 @@ AddReceivedItemExpanded:
 	db $02, $02, $02, $02, $02, $02, $02, $02, $02, $02, $02, $02, $02, $02, $02, $02 ; Free Map
 	db $02, $02, $02, $02, $02, $02, $02, $02, $02, $02, $02, $02, $02, $02, $02, $02 ; Free Compass
 	db $02, $02, $02, $02, $02, $02, $02, $02, $02, $02, $02, $02, $02, $02, $02, $02 ; Free Big Key
-	;db $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00 ; Free Small Key
-	db $02, $02, $02, $02, $02, $02, $02, $02, $02, $02, $02, $02, $02, $02, $02, $02 ; *EVENT*
+	db $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00 ; Free Small Key
+	;db $02, $02, $02, $02, $02, $02, $02, $02, $02, $02, $02, $02, $02, $02, $02, $02 ; *EVENT*
 	
 	db $02, $02, $02, $02, $02, $02, $02, $02, $02, $02, $02, $02, $02, $02, $02, $02 ; Unused
 	db $02, $02, $02, $02, $02, $02, $02, $02, $02, $02, $02, $02, $02, $02, $02, $02 ; Unused
@@ -609,14 +609,14 @@ AddReceivedItemExpanded:
 	db  4, 4, 4 ; Goal Item Single, Multi & Alt Multi
 	db  0, 0, 0 ; Unused
 	db  4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4 ; Free Map
-	;db  2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2 ; Free Compass
-	db  4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4 ; *EVENT*
+	db  2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2 ; Free Compass
+	;db  4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4 ; *EVENT*
 	db  4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4 ; Free Big Key
 	db  4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4 ; Free Small Key
-	db  4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4 ; *EVENT*
-	db  4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4 ; *EVENT*
-	db  4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4 ; *EVENT*
-	db  4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4 ; *EVENT*
+	db  4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4 ; Unused
+	db  4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4 ; Unused
+	db  4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4 ; Unused
+	db  4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4 ; Unused
 
 ; \item Target SRAM addresses for items you receive
 .item_target_addr
