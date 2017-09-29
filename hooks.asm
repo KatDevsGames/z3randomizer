@@ -1600,8 +1600,20 @@ org $1DE1A1 ; <- EE1A1 - sprite_great_catfish.asm : 445
 JSL.l LoadCatfishItemGFX
 NOP #2
 ;--------------------------------------------------------------------------------
+org $1DDF49 ; <- EDF49 - sprite_great_catfish.asm : 19
+JML.l JumpToSplashItemTarget : NOP
+org $1DDF4E ; <- EDF4E - sprite_great_catfish.asm : 21
+SplashItem_SpawnSplash:
+org $1DDF52 ; <- EDF52 - sprite_great_catfish.asm : 27
+SplashItem_SpawnOther:
+org $1DE228 ; <- EE228 - sprite_great_catfish.asm : 290
+LDA.b #$FF
+;--------------------------------------------------------------------------------
 org $1DDF81 ; <- EDF81 - sprite_great_catfish.asm : 61
 JSL.l DrawThrownItem
+;--------------------------------------------------------------------------------
+;org $1DE1B0 ; <- EE1B0 - sprite_great_catfish.asm : 461
+;NOP #2
 ;--------------------------------------------------------------------------------
 org $05EE53 ; <- 2EE53 - mushroom.asm : 22
 JSL.l ItemCheck_Mushroom

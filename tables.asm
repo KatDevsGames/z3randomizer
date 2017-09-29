@@ -10,7 +10,7 @@ HeartPiece_Lumberjack_Tree:
 HeartPiece_Spectacle_Cave:
 	db #$17
 HeartPiece_Circle_Bushes:
-	db #$3D
+	db #$17
 HeartPiece_Graveyard_Warp:
 	db #$17
 HeartPiece_Mire_Warp:
@@ -22,7 +22,7 @@ org $308010 ; PC 0x180010
 RupeeNPC_MoldormCave:
 	db #$46 ; #$46 = 300 Rupees
 RupeeNPC_NortheastDarkSwampCave:
-	db #$46
+	db #$46 ; #$46 = 300 Rupees
 LibraryItem:
 	db #$1D ; #$1D = Book of Mudora
 MushroomItem:
@@ -139,7 +139,7 @@ db #$00 ; #$00 = Off (default) - #$01 = On
 ;--------------------------------------------------------------------------------
 org $30803E ; PC 0x18003E
 InvincibleGanon:
-db #$05
+db #$00
 ; #$00 = Off (default)
 ; #$01 = On
 ; #$02 = Require All Dungeons
@@ -674,7 +674,7 @@ dw #$280E ; #$280D = Star (default) - #$280E = Triforce Piece
 ;================================================================================
 org $308167 ; PC 0x180167
 GoalItemRequirement:
-db #$FF ; #$00 = Off (default) - #$XX = Require $XX Goal Items - #$FF = Counter-Only
+db #$00 ; #$00 = Off (default) - #$XX = Require $XX Goal Items - #$FF = Counter-Only
 ;================================================================================
 org $308168 ; PC 0x180168
 ByrnaCaveSpikeDamage:
@@ -690,7 +690,7 @@ db #$01 ; #00 = Do not respawn on Pyramid after Death - #$01 = Respawn on Pyrami
 ;================================================================================
 org $30816A ; PC 0x18016A
 FreeItemText:
-db #$01 ; #00 = Off - #$01 = On (default)
+db #$00 ; #00 = Off - #$01 = On (default)
 ;================================================================================
 org $30816B ; PC 0x18016B
 ByrnaCaveCaneOfByrnaUsage:
