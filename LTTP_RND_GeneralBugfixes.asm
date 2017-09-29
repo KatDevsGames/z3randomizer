@@ -202,6 +202,10 @@ incsrc itemtext.asm
 
 incsrc externalhooks.asm
 ;================================================================================
+org $AF8000
+incsrc tournament.asm
+warnpc $B00000
+;================================================================================
 org $119100 ; PC 0x89100
 incbin map_icons.gfx
 warnpc $119401
@@ -211,6 +215,7 @@ Static_RNG: ; each line below is 512 bytes of rng
 incsrc staticrng.asm
 warnpc $AF8401
 ;================================================================================
+;bank $2F reserved for tournament use
 ;bank $3A reserved for downstream use (Plandomizer)
 ;bank $3B reserved for downstream use (Plandomizer)
 ;bank $3F reserved for internal debugging
