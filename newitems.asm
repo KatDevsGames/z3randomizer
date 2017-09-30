@@ -172,8 +172,9 @@ AddReceivedItemExpandedGetItem:
 	;	LDA.b #$01 : STA $7F50A0
 	;	BRL .done
 	;++
-
+	
 	LDA $02D8 ; check inventory
+	JSL.l FreeDungeonItemNotice
 	CMP.b #$4C : BNE + ; 50 bombs
 		;LDA.b #$07 : STA $7EF370 ; upgrade bombs
 		LDA.b #50 : !SUB.l StartingMaxBombs : STA $7EF370 ; upgrade bombs

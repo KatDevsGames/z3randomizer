@@ -152,7 +152,9 @@ FreeDungeonItemNotice:
 	+ : CMP.b #$A0 : BNE + ; small key of...
 		%CopyDialog(Notice_SmallKeyOf)
 		PLA : AND.b #$0F : STA $7F5020 : LDA.b #$0F : !SUB $7F5020 : PHA
+		BRA .dungeon
 	+
+	BRL .skip ; it's not something we are going to give a notice for
 
 	.dungeon
 	LDA !OFFSET_RETURN : DEC #2 : STA !OFFSET_POINTER
@@ -194,6 +196,7 @@ FreeDungeonItemNotice:
 	.done
 	
 	LDA.b #$01 : STA $7F5035 ; set alternate dialog flag
+	LDA.b #$01 : STA $7F50A0
 	
 	;--------------------------------
 		PLA : STA $02
@@ -202,8 +205,7 @@ FreeDungeonItemNotice:
 	PLB
 	PLP
 	PLY : PLX : PLA
-
-	JSL.l Main_ShowTextMessage
+	;JSL.l Main_ShowTextMessage
 RTL
 	
 	.skip
