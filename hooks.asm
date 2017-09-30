@@ -253,14 +253,14 @@ org $0DE6F4 ; <- 6E6F4 - equipment.asm : 1474 (BCC .lacksAbility)
 db #$80 ; BRA
 org $0DE81A ; <- 6E81A - equipment.asm : 1597 (STA $00)
 RTS
-org $0DE7B9 ; <- 6E7B9 - equipment.asm : 1548 (LDA.w #$16D0)
-LDA.w #$1590
-org $0DE7CF ; <- 6E7CF - equipment.asm : 1554 (LDA.w #$16C8)
-LDA.w #$1588
-org $0DE7E5 ; <- 6E7E5 - equipment.asm : 1560 (LDA.w #$16D8)
-LDA.w #$1598
-org $0DECEB ; <- 6ECEB - equipment.asm : 1946 (LDA.w #$16E0)
-LDA.w #$15A0
+org $0DE7B9 ; <- 6E7B9 - equipment.asm : 1548 (LDA.w #$16D0 : STA $00)
+JSL.l DrawGlovesInMenuLocation : NOP
+org $0DE7CF ; <- 6E7CF - equipment.asm : 1554 (LDA.w #$16C8 : STA $00)
+JSL.l DrawBootsInMenuLocation : NOP
+org $0DE7E5 ; <- 6E7E5 - equipment.asm : 1560 (LDA.w #$16D8 : STA $00)
+JSL.l DrawFlippersInMenuLocation : NOP
+org $0DECEB ; <- 6ECEB - equipment.asm : 1946 (LDA.w #$16E0 : STA $00)
+JSL.l DrawMoonPearlInMenuLocation : NOP
 ;--------------------------------------------------------------------------------
 ;org $0DE9D8 ; <- 6E9D8 - equipment.asm : 1635 (LDA $E860, X : STA $12EA, X)
 ;BRA DrawProgressIcons_initPendantDiagram_notext

@@ -174,6 +174,38 @@ RTL
 ;$388 = Turtle Rock
 ;$389 = Ganon's Tower
 ;--------------------------------------------------------------------------------
+DrawBootsInMenuLocation:
+	LDA.l HUDDungeonItems : BNE +
+		LDA.w #$1608 : STA $00
+		RTL
+	+
+	LDA.w #$1588 : STA $00
+RTL
+;--------------------------------------------------------------------------------
+DrawGlovesInMenuLocation:
+	LDA.l HUDDungeonItems : BNE +
+		LDA.w #$1610 : STA $00
+		RTL
+	+
+	LDA.w #$1590 : STA $00
+RTL
+;--------------------------------------------------------------------------------
+DrawFlippersInMenuLocation:
+	LDA.l HUDDungeonItems : BNE +
+		LDA.w #$1618 : STA $00
+		RTL
+	+
+	LDA.w #$1598 : STA $00
+RTL
+;--------------------------------------------------------------------------------
+DrawMoonPearlInMenuLocation:
+	LDA.l HUDDungeonItems : BNE +
+		LDA.w #$1620 : STA $00
+		RTL
+	+
+	LDA.w #$15A0 : STA $00
+RTL
+;--------------------------------------------------------------------------------
 DrawHUDDungeonItems:
 	LDA.l HUDDungeonItems : BNE + : RTL : +
 	

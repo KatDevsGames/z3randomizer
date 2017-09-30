@@ -42,6 +42,7 @@ RTL
 !RNG_ITEM_LOCK_IN = "$7F5090"
 OnNewFile:
 	REP #$20 ; set 16-bit accumulator
+	LDA.l LinkStartingRupees : STA $7EF362 : STA $7EF360
 	LDA.l StartingTime : STA $7EF454
 	LDA.l StartingTime+2 : STA $7EF454+2
 	SEP #$20 ; set 8-bit accumulator

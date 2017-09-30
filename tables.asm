@@ -173,7 +173,11 @@ db #$00 ; #$00 = Off (default) - #$01 = On
 ;--------------------------------------------------------------------------------
 org $308045 ; PC 0x180045
 HUDDungeonItems:
-db #$FF ; display ----dcba a: Small Keys, b: Big Key, c: Map, d: Compass
+db #$00 ; display ----dcba a: Small Keys, b: Big Key, c: Map, d: Compass
+;--------------------------------------------------------------------------------
+org $308046 ; PC 0x180046 Link's starting equipment
+LinkStartingRupees:
+dw #$0000
 ;--------------------------------------------------------------------------------
 org $308080 ; PC 0x180080
 Upgrade5BombsRefill:
