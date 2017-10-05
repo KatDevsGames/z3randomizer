@@ -1185,6 +1185,8 @@ dw #9999 ; Rupee Limit
 
 ; $7F50A0 - Event Parameter 1
 
+; $7F50B0 - $7F50BF - Downstream Reserved (Enemizer)
+
 ; $7F50D0 - $7F50FF - Block Cypher Parameters
 ; $7F5100 - $7F51FF - Block Cypher Buffer
 ; $7F5200 - $7F52FF - RNG Pointer Block
