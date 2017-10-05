@@ -26,12 +26,12 @@ RTL
 ;	LDA $01 : PHA
 ;	LDA $02 : PHA
 ;		LDA.b #$01 : STA $7F5035 ; set flag
-;		
+;
 ;		LDA <index> : ASL : !ADD.l <index> : TAX ; get quote offset *3, move to X
 ;		LDA <table>, X : STA $00 ; write pointer to direct page
 ;		LDA <table>+1, X : STA $01
 ;		LDA <table>+2, X : STA $02
-;		
+;
 ;		LDX.b #$00 : LDY.b #$00
 ;		-
 ;			LDA [$00], Y ; load the next character from the pointer
@@ -54,11 +54,11 @@ RTL
 ;		LDA $01 : PHA
 ;		LDA $02 : PHA
 ;			LDA.b #$01 : STA $7F5035 ; set flag
-;	
+;
 ;			LDA.b #<address> : STA $00 ; write pointer to direct page
 ;			LDA.b #<address>>>8 : STA $01
 ;			LDA.b #<address>>>16 : STA $02
-;	
+;
 ;			LDX.b #$00 : LDY.b #$00
 ;			-
 ;				LDA [$00], Y ; load the next character from the pointer
@@ -125,7 +125,7 @@ RTL
 !ITEM_TEMPORARY = "$7F5040"
 FreeDungeonItemNotice:
 	STA !ITEM_TEMPORARY
-	
+
 	PHA : PHX : PHY
 	PHP
 	PHB : PHK : PLB
@@ -135,9 +135,10 @@ FreeDungeonItemNotice:
 		LDA $01 : PHA
 		LDA $02 : PHA
 	;--------------------------------
-	
+
 	LDA.l FreeItemText : BNE + : BRL .skip : +
-	
+
+	LDA #$00 : STA $7F5010 ; initialize scratch
 	LDA !ITEM_TEMPORARY
 	AND.b #$F0 ; looking at high bits only
 	CMP.b #$70 : BNE + ; map of...
@@ -152,6 +153,7 @@ FreeDungeonItemNotice:
 	+ : CMP.b #$A0 : BNE + ; small key of...
 		%CopyDialog(Notice_SmallKeyOf)
 		PLA : AND.b #$0F : STA $7F5020 : LDA.b #$0F : !SUB $7F5020 : PHA
+		LDA #$01 : STA $7F5010 ; set up a flip for small keys
 		BRA .dungeon
 	+
 	BRL .skip ; it's not something we are going to give a notice for
@@ -160,6 +162,12 @@ FreeDungeonItemNotice:
 	LDA !OFFSET_RETURN : DEC #2 : STA !OFFSET_POINTER
 	LDA !ITEM_TEMPORARY
 	AND.b #$0F ; looking at low bits only
+	STA $7F5011
+	LDA $7F5010 : BEQ +
+		LDA $7F5010
+		LDA #$0F : !SUB $7F5011 : STA $7F5011 ; flip the values for small keys
+	+
+	LDA $7F5011
 	CMP.b #$00 : BNE + ; ...light world
 		%CopyDialog(Notice_LightWorld) : BRL .done
 	+ : CMP.b #$01 : BNE + ; ...dark world
@@ -194,10 +202,10 @@ FreeDungeonItemNotice:
 		%CopyDialog(Notice_Sewers)
 	+
 	.done
-	
+
 	LDA.b #$01 : STA $7F5035 ; set alternate dialog flag
 	LDA.b #$01 : STA $7F50A0
-	
+
 	;--------------------------------
 		PLA : STA $02
 		PLA : STA $01
@@ -207,7 +215,7 @@ FreeDungeonItemNotice:
 	PLY : PLX : PLA
 	;JSL.l Main_ShowTextMessage
 RTL
-	
+
 	.skip
 	;--------------------------------
 		PLA : STA $02
@@ -239,7 +247,7 @@ DialogGanon1:
 		BRA ++
 	+
 		%LoadDialogAddress(GanonText1)
-	++	
+	++
 	JSL.l Sprite_ShowMessageMinimal
 RTL
 ;--------------------------------------------------------------------------------
@@ -249,7 +257,7 @@ DialogGanon2:
 		BRA ++
 	+
 		%LoadDialogAddress(GanonText2)
-	++	
+	++
 	JSL.l Sprite_ShowMessageMinimal
 RTL
 ;--------------------------------------------------------------------------------
