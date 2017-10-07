@@ -275,6 +275,7 @@ AddReceivedItemExpandedGetItem:
 		AND #$0F : CMP #$08 : !BGE ++
 			%ValueShift()
 			ORA $7EF368 : STA $7EF368 ; Map 1
+			BRL .done
 		++
 			!SUB #$08
 			%ValueShift()
@@ -285,6 +286,7 @@ AddReceivedItemExpandedGetItem:
 		AND #$0F : CMP #$08 : !BGE ++
 			%ValueShift()
 			ORA $7EF364 : STA $7EF364 ; Compass 1
+			BRL .done
 		++
 			!SUB #$08
 			%ValueShift()
@@ -295,6 +297,7 @@ AddReceivedItemExpandedGetItem:
 		AND #$0F : CMP #$08 : !BGE ++
 			%ValueShift()
 			ORA $7EF366 : STA $7EF366 ; Big Key 1
+			BRL .done
 		++
 			!SUB #$08
 			%ValueShift()
