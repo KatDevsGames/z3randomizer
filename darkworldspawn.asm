@@ -52,7 +52,7 @@ SetDeathWorldChecked:
 	LDA $7EF3C5 : CMP.b #$03 : !BGE .done; thing we originally did - skip if agahnim 1 is dead
 	
 ;<<<<<<< crystalsgoalganonrespawn
-	LDA $1B : BNE + : LDA $A0 : BNE + : LDA GanonPyramidRespawn : BEQ + ; check if we died in ganon's room and pyramid respawn is enabled
+	LDA $1B : BEQ + : LDA $A0 : BNE + : LDA GanonPyramidRespawn : BEQ + ; check if we died in ganon's room and pyramid respawn is enabled
 ;=======
 ;	LDA $1B : BEQ + : LDA $A0 : BNE + ; check if we died in ganon's room
 ;>>>>>>> master

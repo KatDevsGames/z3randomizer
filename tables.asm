@@ -179,6 +179,10 @@ org $308046 ; PC 0x180046 Link's starting equipment
 LinkStartingRupees:
 dw #$0000
 ;--------------------------------------------------------------------------------
+org $308048 ; PC 0x180048
+QuickMenu:
+db #$00 ; #$00 = Off (default) - #$01 = On
+;--------------------------------------------------------------------------------
 org $308080 ; PC 0x180080
 Upgrade5BombsRefill:
 db #$00
@@ -363,7 +367,7 @@ dw $0100 ; #$6234 - Master Sword
 
 org $0ABEF8 ; PC 0x53EF8
 MapObject_Eastern:
-dw $6238 ; #$6038 - Green Pendant / Courage
+dw $6038 ; #$6038 - Green Pendant / Courage
 
 org $0ABF1C ; PC 0x53F1C
 MapObject_Desert:
@@ -391,11 +395,11 @@ dw $6434 ; #6434 - Crystal
 
 org $0ABF5A ; PC 0x53F5A
 MapObject_Ice:
-dw $6434 ; #6434 - Crystal
+dw $6432 ; #6434 - Crystal 5/6
 
 org $0ABF48 ; PC 0x53F48
 MapObject_Mire:
-dw $6434 ; #6434 - Crystal
+dw $6432 ; #6434 - Crystal 5/6
 
 org $0ABF24 ; PC 0x53F24
 MapObject_TRock:

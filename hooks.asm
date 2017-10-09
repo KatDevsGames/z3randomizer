@@ -611,6 +611,12 @@ NOP #2
 org $0DDE9F ; <- 6DE9F equipment.asm:300 - LDA.b #$0A : STA $0200
 LDA.b #$04
 ;--------------------------------------------------------------------------------
+org $0DDE59 ; <- 6DE59 equipment.asm:247 - REP #$20
+JSL.l BringMenuDownEnhanced : RTS
+;--------------------------------------------------------------------------------
+org $0DDFBC ; <- 6DFBC equipment.asm:599 - LDA $EA : ADD.w #$0008 : STA $EA : SEP #$20 : BNE .notDoneScrolling
+JSL.l RaiseHudMenu : NOP #3
+;--------------------------------------------------------------------------------
 org $0DDE3D ; <- 6DE3D equipment.asm:217 - BNE .equippedItemIsntBottle
 db $80 ; BRA
 ;--------------------------------------------------------------------------------

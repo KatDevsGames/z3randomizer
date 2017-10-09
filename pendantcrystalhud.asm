@@ -48,7 +48,7 @@ OverworldMap_CheckObject:
 			TAX : BRA ++
 		+
 			;DW Map
-			LDA.l MapMode : BEQ +++
+			LDA.l MapMode : BEQ +++			
 			LDA.l !INVENTORY_MAP : AND.b #$02 : BNE +++
 				PHX
 					LDA.l .dw_map_offsets, X : TAX ; put map offset into X
@@ -85,12 +85,13 @@ db $02, $0A, $03, $FF
 db $06, $08, $0C, $0B, $07, $09, $05
 .lw_map_offsets
 db $01, $00, $01
+; pod skull trock thieves mire ice swamp
 .dw_map_offsets
-db $01, $01, $00, $00, $00, $01, $00
+db $01, $00, $00, $00, $01, $00, $01
 .lw_map_masks
 db $20, $20, $10, $00
 .dw_map_masks
-db $02, $04, $80, $10, $40, $01, $04
+db $02, $80, $08, $10, $01, $40, $04
 ;================================================================================
 SetLWDWMap:
 	PHP
@@ -131,6 +132,29 @@ RTL
 ;	PLX : PLB
 ;	CMP.b #$00
 ;RTL
+;================================================================================
+BringMenuDownEnhanced:
+	LDA.l QuickMenu : AND.l TournamentSeedInverse : BEQ +
+		REP #$20 ; set 16-bit accumulator
+			LDA.w #$FF18 : STA $EA ; immediately scroll to the end
+		SEP #$20 ; set 8-bit accumulator
+		INC $0200
+		RTL
+	+
+	REP #$20 ; set 16-bit accumulator
+		LDA $EA : !SUB.w #$0008 : STA $EA : CMP.w #$FF18
+	SEP #$20 ; set 8-bit accumulator
+	BNE .notDoneScrolling
+		INC $0200
+	.notDoneScrolling
+RTL
+;================================================================================
+RaiseHudMenu:
+	LDA.l QuickMenu : AND.l TournamentSeedInverse : AND.w #$00FF : BEQ +
+		LDA.w #$0000 : STA $EA : RTL
+	+
+	LDA $EA : !ADD.w #$0008 : STA $EA
+RTL
 ;================================================================================
 ShowDungeonItems:
 	LDA $040C : AND.w #$00FF : CMP.w #$00FF : BNE + : RTL : + ; return normal result if outdoors or in a cave
