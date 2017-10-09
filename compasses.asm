@@ -41,7 +41,7 @@ DrawDungeonCompassCounts:
 			LDA $7EF438 : AND.w #$00F0 : LSR #4
 			BRA ++
 	    + : CMP.w #$0014 : BNE + ; Tower of Hera
-			LDA $7EF435 : AND.w #$001C : LSR #5
+			LDA $7EF435 : AND.w #$001C : LSR #2
 			BRA ++
 	    + : CMP.w #$0016 : BNE + ; Thieves' Town
 			LDA $7EF437 : AND.w #$000F
@@ -50,7 +50,7 @@ DrawDungeonCompassCounts:
 			LDA $7EF439 : AND.w #$00F0 : LSR #4
 			BRA ++
 	    + : CMP.w #$001A : BNE + ; Ganon's Tower
-			LDA $7EF436 : AND.w #$00F8 : LSR #5
+			LDA $7EF436 : AND.w #$00F8 : LSR #3
 			BRA ++
 		+ : ++
 		JSL.l HexToDec
