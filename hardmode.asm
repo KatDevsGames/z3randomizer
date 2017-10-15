@@ -19,14 +19,17 @@ CalculateByrnaUsage:
 	LDA $1B : BEQ ++
 	REP #$20 ; set 16-bit accumulator
 	LDA $A0 ; these are all decimal because i got them that way
-	CMP.w #279 : BEQ + ; Spike Cave
+	CMP.w #95 : BEQ + ; Ice Palace Spike Room
+	CMP.w #172 : BEQ + ; Blind Boss Room
 	CMP.w #179 : BEQ + ; Room in Misery Mire
+	CMP.w #213 : BEQ + ; Laser Bridge
+	CMP.w #279 : BEQ + ; Spike Cave
 	SEP #$20 ; set 8-bit accumulator
 	BRA ++
 	+
 		SEP #$20 ; set 8-bit accumulator
 		PHX : TYX
-		LDA.l ByrnaCaveCaneOfByrnaUsage, X : STA $00
+		LDA.l HardModeExclusionCaneOfByrnaUsage, X : STA $00
 		PLX
 	++
 	LDA $7EF36E ; thing we wrote over
@@ -36,14 +39,16 @@ CalculateCapeUsage:
 	LDA $1B : BEQ ++
 	REP #$20 ; set 16-bit accumulator
 	LDA $A0 ; these are all decimal because i got them that way
-	CMP.w #279 : BEQ + ; Spike Cave
+	CMP.w #95 : BEQ + ; Ice Palace Spike Room
 	CMP.w #179 : BEQ + ; Room in Misery Mire
+	CMP.w #213 : BEQ + ; Laser Bridge
+	CMP.w #279 : BEQ + ; Spike Cave
 	SEP #$20 ; set 8-bit accumulator
 	BRA ++
 	+
 		SEP #$20 ; set 8-bit accumulator
 		PHX : TYX
-		LDA.l ByrnaCaveCapeUsage, X : STA $4C ; set cape decrement timer
+		LDA.l HardModeExclusionCapeUsage, X : STA $4C ; set cape decrement timer
 		PLX
 	++
 	LDA $7EF36E ; thing we wrote over

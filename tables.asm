@@ -257,6 +257,9 @@ db $01 ; #$01 = 1/2 Magic (default) - #$02 = 1/4 Magic
 org $07ADA7 ; PC 0x3ADA7 - Bank07.asm:7216 - (db 4, 8, 8)
 CapeMagicUse:
 db $04, $08, $10 ; change to db $04, $08, $08 for original cape behavior
+org $08DC42 ; PC 0x45C42 - ancilla_cane_spark.asm:200 - (db 4, 2, 1)
+ByrnaMagicUsage:
+db #$04, #$02, #$01 ; normal, 1/2, 1/4 magic
 ;--------------------------------------------------------------------------------
 ;Dungeon Music
 ;org $02D592 ; PC 0x15592
@@ -701,10 +704,10 @@ FreeItemText:
 db #$00 ; #00 = Off - #$01 = On (default)
 ;================================================================================
 org $30816B ; PC 0x18016B
-ByrnaCaveCaneOfByrnaUsage:
+HardModeExclusionCaneOfByrnaUsage:
 db #$04, #$02, #$01 ; normal, 1/2, 1/4 magic
 org $30816E ; PC 0x18016E
-ByrnaCaveCapeUsage:
+HardModeExclusionCapeUsage:
 db #$04, #$08, #$10 ; normal, 1/2, 1/4 magic
 ;================================================================================
 org $308190 ; PC 0x180190
