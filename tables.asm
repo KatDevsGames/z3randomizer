@@ -182,6 +182,12 @@ dw #$0000
 org $308048 ; PC 0x180048
 QuickMenu:
 db #$00 ; #$00 = Off (default) - #$01 = On
+org $0DDD9A ; PC 0x6DD9A (equipment.asm:95) ; Menu Down Chime
+#$11 ; #$11 = Vwoop Down (Default) - #$20 = Menu Chime
+org $0DDF2A ; PC 0x6DF2A (equipment.asm:466) ; Menu Up Chime
+#$12 ; #$12 = Vwoop Up (Default) - #$20 = Menu Chime
+org $0DE0E9 ; PC 0x6DE0E9 (equipment.asm:780) ; Menu Up Chime
+#$12 ; #$12 = Vwoop Up (Default) - #$20 = Menu Chime
 ;--------------------------------------------------------------------------------
 org $308080 ; PC 0x180080
 Upgrade5BombsRefill:
