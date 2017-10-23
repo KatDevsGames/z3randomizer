@@ -605,6 +605,15 @@ ORA.w #$4000 : STA $0084, Y
 JSL.l AddYMarker
 NOP #2
 ;--------------------------------------------------------------------------------
+org $0DF789+6 ; <- 6F789+6 (not in disassembly) - red bottle hud tile, lower right
+dw #$2413 ; (Orig: #$24E3)
+org $0DF789+6+8  ; green bottle hud tile, lower right
+dw #$3C12 ; (Orig: #$3CE3)
+org $0DF789+6+16 ; blue bottle hud tile, lower right
+dw #$2C14 ; (Orig: #$2CD2)
+org $0DF789+6+40 ; good bee hud tile, lower right
+dw #$2815 ; (Orig: #$283A)
+;--------------------------------------------------------------------------------
 ;org $0DDE9B ; <- 6DE9B equipment.asm:296 - LDA $0202 : CMP.b #$10 : BNE .notOnBottleMenu (CMP instruction)
 ;CMP.b #$FF
 ;--------------------------------------------------------------------------------
