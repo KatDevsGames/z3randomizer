@@ -137,6 +137,7 @@ incsrc init.asm
 
 org $A48000 ; code bank - PUT NEW CODE HERE
 incsrc openmode.asm
+incsrc endingsequence.asm
 
 ;org $228000 ; contrib area
 org $A28000 ; contrib area

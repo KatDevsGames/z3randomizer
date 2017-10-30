@@ -164,6 +164,18 @@ org $0EFBC6 ; <- 77BC6 - vwf.asm : 2717 (LDA.b #$1C : STA $1CE9)
 JSL.l ResetDialogPointer
 RTS
 ;--------------------------------------------------------------------------------
+org $0EED0B ; <- PC 0x76D0B - Bank0E.asm : 3276 (LDA $E924, Y : STA $1008, X)
+JSL.l EndingSequenceTableOverride
+NOP #2
+;--------------------------------------------------------------------------------
+org $0EED15 ; <- PC 0x76D15 - Bank0E.asm : 3282 (LDA $E924, Y : STA $1008, X)
+JSL.l EndingSequenceTableOverride
+NOP #2
+;--------------------------------------------------------------------------------
+org $0EED2A ; <- PC 0x76D2A - Bank0E.asm : 3295 (LDA $E924, Y : AND.w #$00FF)
+JSL.l EndingSequenceTableLookupOverride
+NOP #2
+;--------------------------------------------------------------------------------
 
 ;================================================================================
 ; Master Sword Chest Fix
@@ -455,7 +467,7 @@ JSL.l RefillMagic
 ; Early Bottle Fix
 ;--------------------------------------------------------------------------------
 org $09894C ; <- 4894C - ancilla_init.asm:1327
-JSL.l InitializeBottles 
+JSL.l InitializeBottles
 ;--------------------------------------------------------------------------------
 
 ;================================================================================
@@ -1000,7 +1012,7 @@ JSL.l DrawPendantCrystalDiagram : RTS
 ;================================================================================
 org $0DEDCC ; <- 6EDCC - equipment.asm:2043 - (LDA $040C : AND.w #$00FF : CMP.w #$00FF : BNE .inSpecificDungeon)
 JSL.l ShowDungeonItems : NOP #5
- 
+
 org $0DEE59 ; <- 6EE59 - equipment.asm:2126 - (LDA $040C : AND.w #$00FF : CMP.w #$00FF : BEQ .notInPalace)
 JSL.l ShowDungeonItems : NOP #5
 
@@ -1402,7 +1414,7 @@ NOP #4
 
 ;-- Yes, I'm sure
 org $06B495 ; <- 33495 sprite_smithy_bros.asm : 479 (JSL Sprite_ShowMessageUnconditional)
-NOP #4	
+NOP #4
 
 ;-- We'll take your sword
 org $06B4F3 ; <- 334F3 sprite_smithy_bros.asm : 556 (JSL Sprite_ShowMessageUnconditional)
@@ -1520,7 +1532,7 @@ NOP #6
 org $1ED379 ; <- F5379 - sprite_agahnim.asm:75 - JSL PrepDungeonExit
 JSL FixAgahnimFollowers
 ;================================================================================
- 
+
 ;================================================================================
 ; Randomize NPC Items
 ;--------------------------------------------------------------------------------
