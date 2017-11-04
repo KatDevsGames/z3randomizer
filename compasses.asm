@@ -3,13 +3,16 @@
 ;--------------------------------------------------------------------------------
 !GOAL_COUNTER = "$7EF460"
 DrawDungeonCompassCounts:
-	LDA.l CompassMode : AND.w #$00FF : BNE + : RTL : + ; Item Counts
 	LDA $1B : AND.w #$00FF : BNE + : RTL : + ; Skip if outdoors
 	LDA $040C : CMP.w #$00FF : BNE + : RTL : + ; Skip if not in a dungeon
+	LDA.l CompassMode : AND.w #$00FF : BNE + : RTL : + ; Item Counts
 	PHX
 		LDX $040C ; Load dungeon ID to X
-		LDA $7EF364 : AND .item_masks, X ; Load compass values to A, mask with dungeon item masks
-		BNE + : BRL .done : + ; skip if we don't have compass
+		
+		CMP.w #$0002 : BEQ ++ ; if CompassMode==2, we don't check for the compass
+			LDA $7EF364 : AND .item_masks, X ; Load compass values to A, mask with dungeon item masks
+			BNE + : BRL .done : + ; skip if we don't have compass
+		++
 		
 		LDA $040C
 	    CMP.w #$0000 : BNE + ; Sewer Passage

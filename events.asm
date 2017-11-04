@@ -26,6 +26,14 @@ OnDungeonEntrance:
 	STA $7EC172 ; thing we wrote over
 RTL
 ;--------------------------------------------------------------------------------
+OnDungeonExit:
+	STA $040C : STZ $04AC ; thing we wrote over
+	
+	PHA : PHP
+		JSL.l HUD_RebuildLong
+	PLP : PLA
+RTL
+;--------------------------------------------------------------------------------
 !RNG_ITEM_LOCK_IN = "$7F5090"
 OnFileLoad:
 	LDA !FRESH_FILE_MARKER : BNE +
