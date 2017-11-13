@@ -180,8 +180,8 @@ LinkStartingRupees:
 dw #$0000
 ;--------------------------------------------------------------------------------
 org $308048 ; PC 0x180048
-QuickMenu:
-db #$00 ; #$00 = Off (default) - #$01 = On
+MenuSpeed:
+db #$08 ; #$08 (default) - higher is faster - #$E8 = instant open
 org $0DDD9A ; PC 0x6DD9A (equipment.asm:95) ; Menu Down Chime
 db #$11 ; #$11 = Vwoop Down (Default) - #$20 = Menu Chime
 org $0DDF2A ; PC 0x6DF2A (equipment.asm:466) ; Menu Up Chime
@@ -226,10 +226,6 @@ BottleLimit:
 db #$04 ; #$04 - 4 Bottles (default)
 BottleLimitReplacement:
 db #$47 ; #$47 - 20 Rupees (default)
-;--------------------------------------------------------------------------------
-org $3080b0 ; PC 0x1800b0
-MenuSpeed:
-dw #$0008 ; #$0008 (default)
 ;--------------------------------------------------------------------------------
 org $308100 ; PC 0x180100 (0x40 bytes)
 ShovelSpawnTable:
