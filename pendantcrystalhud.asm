@@ -142,7 +142,10 @@ BringMenuDownEnhanced:
 		RTL
 	+
 	REP #$20 ; set 16-bit accumulator
-		LDA $EA : !SUB.w #$0008 : STA $EA : CMP.w #$FF18
+		LDA $EA : !SUB.l MenuSpeed : STA $EA : CMP.w #$FF18
+		!BGE .noOvershoot
+			LDA.w #$FF18 : STA $EA : CMP.w #$FF18
+		.noOvershoot
 	SEP #$20 ; set 8-bit accumulator
 	BNE .notDoneScrolling
 		INC $0200
@@ -153,7 +156,10 @@ RaiseHudMenu:
 	LDA.l QuickMenu : AND.l TournamentSeedInverse : AND.w #$00FF : BEQ +
 		LDA.w #$0000 : STA $EA : RTL
 	+
-	LDA $EA : !ADD.w #$0008 : STA $EA
+	LDA $EA : !ADD.l MenuSpeed : STA $EA
+	!BLT .noOvershoot
+		LDA.w #$0000 : STA $EA
+	.noOvershoot
 RTL
 ;================================================================================
 ShowDungeonItems:

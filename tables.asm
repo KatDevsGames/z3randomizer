@@ -227,6 +227,10 @@ db #$04 ; #$04 - 4 Bottles (default)
 BottleLimitReplacement:
 db #$47 ; #$47 - 20 Rupees (default)
 ;--------------------------------------------------------------------------------
+org $3080b0 ; PC 0x1800b0
+MenuSpeed:
+dw #$0008 ; #$0008 (default)
+;--------------------------------------------------------------------------------
 org $308100 ; PC 0x180100 (0x40 bytes)
 ShovelSpawnTable:
 	db $B2 ; Gold Bee
