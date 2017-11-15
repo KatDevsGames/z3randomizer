@@ -658,6 +658,9 @@ NOP
 org $0DE12D ; <- 6E12D - equipment.asm : 828
 JSL.l CloseBottleMenu
 ;--------------------------------------------------------------------------------
+org $0DDF1E ; <- 6DF1E - equipment.asm : 462 - LDA $F4 : AND.b #$10 : BEQ .dontLeaveMenu
+JSL.l CheckCloseItemMenu
+;--------------------------------------------------------------------------------
 org $0DEE70 ; <- 6EE70 - equipment.asm : 2137
 JSL.l PrepItemScreenBigKey
 NOP

@@ -379,6 +379,8 @@ StatsFinalPrep:
 		.done
 	PLP : PLX : PLA
 	LDA.b #$19 : STA $10 ; thing we wrote over, load triforce room
+    STZ $11
+    STZ $B0
 RTL
 ;--------------------------------------------------------------------------------
 ; Notes:

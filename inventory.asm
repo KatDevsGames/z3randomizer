@@ -235,7 +235,8 @@ AddInventory:
 	+
 	CPY.b #$3B : BNE + : BRL .dungeonCounts : + ; Silver Arrow Bow - Skip Shop/Fairy Check for Silver Arrow Bow
 	
-	LDA $02E9 : CMP #$01 : BEQ ++ ; skip shop check for chests
+	LDA $1B : BEQ ++ ; skip shop check if outdoors
+	LDA $02E9 : CMP.b #$01 : BEQ ++ ; skip shop check for chests
 		PHP : REP #$20 ; set 16-bit accumulator
 			LDA $048E
 			CMP.w #274 : BNE + : BRL .shop : + ; dark world death mountain shop, ornamental shield shop

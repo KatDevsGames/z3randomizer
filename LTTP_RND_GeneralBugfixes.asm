@@ -26,7 +26,7 @@ org $3FFFFF ; <- 1FFFFF
 db #$00 ; expand file to 2mb
 
 org $1FFFF8 ; <- FFFF8 timestamp rom
-db #$20, #$17, #$10, #$22 ; year/month/day
+db #$20, #$17, #$11, #$14 ; year/month/day
 
 ;================================================================================
 
@@ -216,10 +216,20 @@ Static_RNG: ; each line below is 512 bytes of rng
 incsrc staticrng.asm
 warnpc $AF8401
 ;================================================================================
-;bank $2F reserved for tournament use
-;bank $3A reserved for downstream use (Plandomizer)
-;bank $3B reserved for downstream use (Plandomizer)
-;bank $3F reserved for internal debugging
+;Bank Map
+;$20 Code Bank
+;$21 Reserved (Frame Hook & Init)
+;$22 Contrib Code
+;$23 Stats & Credits
+;$24 Code Bank
+;$30 Main Configuration Table
+;$31 Graphics Bank
+;$32 Text Bank
+;$33 Graphics Bank
+;$2F reserved for tournament use
+;$3A reserved for downstream use (Plandomizer)
+;$3B reserved for downstream use (Plandomizer)
+;$3F reserved for internal debugging
 ;$7F5700 - $7F57FF reserved for downstream use
 ;================================================================================
 ;org $0080DC ; <- 0xDC - Bank00.asm:179 - Kill Music
