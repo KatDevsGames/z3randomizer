@@ -134,15 +134,20 @@ RTL
 ;RTL
 ;================================================================================
 BringMenuDownEnhanced:
-	LDA.l QuickMenu : AND.l TournamentSeedInverse : BEQ +
-		REP #$20 ; set 16-bit accumulator
-			LDA.w #$FF18 : STA $EA ; immediately scroll to the end
-		SEP #$20 ; set 8-bit accumulator
-		INC $0200
-		RTL
-	+
 	REP #$20 ; set 16-bit accumulator
-		LDA $EA : !SUB.w #$0008 : STA $EA : CMP.w #$FF18
+		LDA.l TournamentSeed : AND.w #$00FF
+		BEQ +
+			LDA.w #$0008 : BRA ++ ; use default speed on tournament seeds
+		+
+			LDA.l MenuSpeed
+		++
+
+		EOR.w #$FFFF : !ADD.w #$0001 ; negate menu speed
+
+		!ADD.w $EA : CMP.w #$FF18 : !BGE .noOvershoot
+			LDA.w #$FF18 ; if we went past the limit, go to the limit
+		.noOvershoot
+		STA $EA : CMP.w #$FF18
 	SEP #$20 ; set 8-bit accumulator
 	BNE .notDoneScrolling
 		INC $0200
@@ -150,10 +155,17 @@ BringMenuDownEnhanced:
 RTL
 ;================================================================================
 RaiseHudMenu:
-	LDA.l QuickMenu : AND.l TournamentSeedInverse : AND.w #$00FF : BEQ +
-		LDA.w #$0000 : STA $EA : RTL
+	LDA.l TournamentSeed : AND.w #$00FF
+	BEQ +
+		LDA.w #$0008 : BRA ++ ; use default speed on tournament seeds
 	+
-	LDA $EA : !ADD.w #$0008 : STA $EA
+		LDA.l MenuSpeed : AND.w #$00FF
+	++
+
+	!ADD.w $EA : BMI .noOvershoot
+		LDA.w #$0000 ; if we went past the limit, go to the limit
+	.noOvershoot
+	STA $EA
 RTL
 ;================================================================================
 ShowDungeonItems:

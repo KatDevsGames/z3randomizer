@@ -180,8 +180,8 @@ LinkStartingRupees:
 dw #$0000
 ;--------------------------------------------------------------------------------
 org $308048 ; PC 0x180048
-QuickMenu:
-db #$00 ; #$00 = Off (default) - #$01 = On
+MenuSpeed:
+db #$08 ; #$08 (default) - higher is faster - #$E8 = instant open
 org $0DDD9A ; PC 0x6DD9A (equipment.asm:95) ; Menu Down Chime
 db #$11 ; #$11 = Vwoop Down (Default) - #$20 = Menu Chime
 org $0DDF2A ; PC 0x6DF2A (equipment.asm:466) ; Menu Up Chime
