@@ -151,6 +151,7 @@ FreeDungeonItemNotice:
 		%CopyDialog(Notice_BigKeyOf)
 		BRA .dungeon
 	+ : CMP.b #$A0 : BNE + ; small key of...
+		LDA !ITEM_TEMPORARY : CMP.b #$AF : BNE ++ : BRL .skip : ++
 		%CopyDialog(Notice_SmallKeyOf)
 		PLA : AND.b #$0F : STA $7F5020 : LDA.b #$0F : !SUB $7F5020 : PHA
 		LDA #$01 : STA $7F5010 ; set up a flip for small keys

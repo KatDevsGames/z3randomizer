@@ -131,7 +131,7 @@ org $30803B ; PC 0x18003B
 MapMode:
 db #$00 ; #$00 = Always On (default) - #$01 = Require Map Item
 CompassMode:
-db #$02 ; #$00 = Off (default) - #$01 = Display Dungeon Count w/Compass - #$02 = Display Dungeon Count Always
+db #$00 ; #$00 = Off (default) - #$01 = Display Dungeon Count w/Compass - #$02 = Display Dungeon Count Always
 ;--------------------------------------------------------------------------------
 org $30803D ; PC 0x18003D
 PersistentFloodgate:
@@ -720,6 +720,10 @@ org $308171 ; PC 0x180171
 GanonPyramidRespawn:
 db #$01 ; #00 = Do not respawn on Pyramid after Death - #$01 = Respawn on Pyramid after Death (default)
 ;================================================================================
+org $308172 ; PC 0x180172
+GenericKeys:
+db #$00 ; #00 = Dungeon-Specific Keys (Default) - #$01 = Generic Keys
+;================================================================================
 org $308190 ; PC 0x180190
 TimerStyle:
 db #$00 ; #$00 = Off (Default) - #$01 Countdown - #$02 = Stopwatch
@@ -1210,7 +1214,7 @@ db $04
 ;AC - Small Key of Turtle Rock
 ;AD - Small Key of Ganon's Tower
 ;AE - Reserved
-;AF - Reserved
+;AF - Generic Small Key
 ;--------------------------------------------------------------------------------
 org $308400 ; PC 0x180400
 ;================================================================================

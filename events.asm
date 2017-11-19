@@ -87,6 +87,10 @@ OnLinkDamagedFromPit:
 	LDA.b #$14 : STA $11 ; thing we wrote over
 RTL
 ;--------------------------------------------------------------------------------
+OnLinkDamagedFromPitOutdoors:
+	JSL.l OHKOTimer ; make sure this is last
+RTL
+;--------------------------------------------------------------------------------
 !RNG_ITEM_LOCK_IN = "$7F5090"
 OnOWTransition:
 	JSL.l FloodGateReset
