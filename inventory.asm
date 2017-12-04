@@ -172,9 +172,13 @@ macro BottomHalf(address)
 	PLX : PLA
 endmacro
 ;--------------------------------------------------------------------------------
+;FullInventoryExternal:
+;	LDA !LOCK_STATS : BEQ + : RTL : +
+;	PHA : PHX : PHP : JMP AddInventory_fullItemCounts
+;--------------------------------------------------------------------------------
 FullInventoryExternal:
 	LDA !LOCK_STATS : BEQ + : RTL : +
-	PHA : PHX : PHP : JMP AddInventory_fullItemCounts
+	PHA : PHX : PHP : JMP AddInventory_incrementCounts
 ;--------------------------------------------------------------------------------
 !SHAME_CHEST = "$7EF416" ; ---s ----
 AddInventory:

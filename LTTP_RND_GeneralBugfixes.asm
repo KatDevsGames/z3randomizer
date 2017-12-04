@@ -26,7 +26,7 @@ org $3FFFFF ; <- 1FFFFF
 db #$00 ; expand file to 2mb
 
 org $1FFFF8 ; <- FFFF8 timestamp rom
-db #$20, #$17, #$11, #$18 ; year/month/day
+db #$20, #$17, #$12, #$03 ; year/month/day
 
 ;================================================================================
 
@@ -121,6 +121,7 @@ incsrc hardmode.asm
 incsrc goalitem.asm
 incsrc compasses.asm
 incsrc doorframefixes.asm
+;incsrc shopkeeper.asm
 incsrc hashalphabet.asm ; <- TAKE OUT THE EXTRA ORGS IN HERE - THIS IS WHY WE COULDN'T ADD MORE FILES EARLIER
 warnpc $A18000
 
@@ -374,6 +375,9 @@ Sprite_DirectionToFacePlayer:
 org $06F12F
 Sprite_CheckDamageToPlayerSameLayerLong:
 
+org $06F86A
+OAM_AllocateDeferToPlayerLong:
+
 org $07999D
 Link_ReceiveItem:
 
@@ -467,4 +471,7 @@ Sprite_SpawnDynamically:
 
 org $1DFD4B
 DiggingGameGuy_AttemptPrizeSpawn:
+
+org $1EF4E7
+Sprite_PlayerCantPassThrough:
 ;================================================================================

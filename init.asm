@@ -20,6 +20,27 @@ Init_Primary:
 		INX
 		CPX #$FF : !BLT -
 	
+	LDX #$00
+	-
+		LDA $702000, X : CMP $00FFC0, X : BNE .clear
+		INX
+		CPX #$15 : !BLT -
+	BRA .done
+	.clear
+		REP #$30 ; set 16-bit accumulator & index registers
+		LDA.w #$0000
+		-
+			STA $700000, X
+			INX
+			CPX #$2000 : !BLT -
+		SEP #$30 ; set 8-bit accumulator & index registers
+		LDX #$00
+		-
+			LDA $00FFC0, X : STA $702000, X
+			INX
+			CPX #$15 : !BLT -
+	.done
+	
 	LDA.b #$01 : STA $420D ; enable fastrom access on upper banks
 	
 	LDA.b #$81 : STA $4200 ; thing we wrote over, turn on NMI & gamepad

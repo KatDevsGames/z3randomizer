@@ -103,7 +103,7 @@ db #$00 ; #$00 = Off (default) - #$01 = On
 ;--------------------------------------------------------------------------------
 org $308032 ; PC 0x180032
 OpenMode:
-db #$00 ; #$00 = Classic (default) - #$01 = Open
+db #$01 ; #$00 = Classic (default) - #$01 = Open
 ;--------------------------------------------------------------------------------
 org $308033 ; PC 0x180033
 HeartBeep:
@@ -131,7 +131,7 @@ org $30803B ; PC 0x18003B
 MapMode:
 db #$00 ; #$00 = Always On (default) - #$01 = Require Map Item
 CompassMode:
-db #$00 ; #$00 = Off (default) - #$01 = Display Dungeon Count w/Compass - #$02 = Display Dungeon Count Always
+db #$02 ; #$00 = Off (default) - #$01 = Display Dungeon Count w/Compass - #$02 = Display Dungeon Count Always
 ;--------------------------------------------------------------------------------
 org $30803D ; PC 0x18003D
 PersistentFloodgate:
@@ -743,7 +743,7 @@ StartingTime:
 dw #$0000, #$0000 ; #$A5E0, #$0001 = 30 minutes
 ;================================================================================
 org $09E3BB ; PC 0x4E3BB
-db $EB ; Hera Big Key (Set to programmable HP $EB) (set to $E4 for original hookable/boomable key behavior)
+db $E4 ; Hera Basement Key (Set to programmable HP $EB) (set to $E4 for original hookable/boomable key behavior)
 ;================================================================================
 org $308210 ; PC 0x180210
 RandomizerSeedType:

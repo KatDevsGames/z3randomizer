@@ -199,7 +199,9 @@ IncrementSmallKeys:
 		JSL AddInventory_incrementKeyLong
 	+
 	JSL.l UpdateKeys
-RTL
+	PHY : LDY.b #24 : JSL.l FullInventoryExternal : PLY
+	JSL.l HUD_RebuildLong
+;RTL
 ;--------------------------------------------------------------------------------
 DecrementSmallKeys:
 	STA $7EF36F ; thing we wrote over, write small key count
