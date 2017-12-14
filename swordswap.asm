@@ -32,11 +32,47 @@ JMP.l PyramidFairy_BRANCH_GAMMA
 ;================================================================================
 LoadSwordForDamage:
 	LDA $0E20, X : CMP.b #$88 : BNE .notMoth
-		LDA $7EF359 ; load normal sword value
+		JSR.w LoadModifiedSwordLevel ; load normal sword value
 		CMP.b #$04 : !BLT + : DEC : +
 		RTL
 	.notMoth
+	JSR.w LoadModifiedSwordLevel ; load normal sword value
+RTL
+;================================================================================
+; $7F50C0 - Sword Modifier
+LoadModifiedSwordLevel: ; returns short
+	LDA $7F50C0 : BEQ +
+		!ADD $7EF359 ; add normal sword value to modifier
+			BNE ++ : LDA.b #$01 : RTS : ++
+			CMP.b #$05 : !BLT ++ : LDA.b #$04 : RTS : ++
+		RTS
+	+
 	LDA $7EF359 ; load normal sword value
+RTS
+;================================================================================
+; $7EF35B - Armor Inventory
+; $7F50C2 - Armor Modifier
+; $7F5020 - Scratch Space (Caller Preserved)
+LoadModifiedArmorLevel:
+	PHA
+		LDA $7EF35B : !ADD $7F50C2
+		CMP.b #$FF : BNE + : LDA.b #$00 : +
+		CMP.b #$03 : !BLT + : LDA.b #$02 : +
+		STA $7F5020
+	PLA
+	!ADD $7F5020
+RTL
+;================================================================================
+; $7EF37B - Magic Inventory
+; $7F50C3 - Magic Modifier
+LoadModifiedMagicLevel:
+	LDA $7F50C3 : BEQ +
+		!ADD $7EF37B ; add normal magic value to modifier
+			CMP.b #$FF : BNE + : LDA.b #$00 : +
+			CMP.b #$03 : !BLT ++ : LDA.b #$02 : RTS : ++
+		RTL
+	+
+	LDA $7F50C3 ; load normal magic value
 RTL
 ;================================================================================
 CheckTabletSword:

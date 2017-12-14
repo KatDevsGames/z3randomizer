@@ -45,6 +45,9 @@ ProcessMenuButtons:
 	.sel_held
 	CLC ; no buttons
 RTL
+	;.l_pressed
+	;JSL.l SpawnAngryCucco
+;RTL
 	.sel_pressed
 	LDA !HUD_FLAG : ORA #$20 : STA !HUD_FLAG ; set hud flag
 	LDA.b #$20 : STA $012F ; menu select sound

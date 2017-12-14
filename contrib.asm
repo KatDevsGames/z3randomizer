@@ -8,7 +8,7 @@ Sprite_ShowMessageFromPlayerContact_Edit:
 
 	LDA $4D : CMP.b #$02 : BEQ .dont_show
 	
-	JSL.l Sprite_DirectionToFacePlayer : TYA : EOR.b #$03
+	JSL.l Sprite_DirectionToFacePlayerLong : TYA : EOR.b #$03
 	SEC
 RTL
 .dont_show
@@ -27,7 +27,7 @@ Sprite_ShowSolicitedMessageIfPlayerFacing_Edit:
 	LDA $4D : CMP.b #$02 : BEQ .alpha
 	
 	STZ $1CE8 ; set text choice to 1st option (usually yes/confirm/etc)
-	JSL.l Sprite_DirectionToFacePlayer : PHX : TYX
+	JSL.l Sprite_DirectionToFacePlayerLong : PHX : TYX
 	
 	; Make sure that the sprite is facing towards the player, otherwise
 	; talking can't happen. (What sprites actually use this???)
@@ -90,7 +90,7 @@ Sprite_ShowSolicitedMessageIfPlayerFacing_Alt:
 	LDA $0F10, X : BNE .alpha
 	LDA $4D : CMP.b #$02 : BEQ .alpha
 	
-	JSL Sprite_DirectionToFacePlayer : PHX : TYX
+	JSL Sprite_DirectionToFacePlayerLong : PHX : TYX
 	
 	; Make sure that the sprite is facing towards the player, otherwise
 	; talking can't happen. (What sprites actually use this???)

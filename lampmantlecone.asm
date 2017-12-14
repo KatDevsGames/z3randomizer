@@ -4,6 +4,9 @@
 ; Output: 0 for darkness, 1 for lamp cone
 ;--------------------------------------------------------------------------------
 LampCheck:
+	LDA $7F50C4 : CMP.b #$01 : BNE + : RTL : +
+				  CMP.b #$FF : BNE + : INC : RTL : +
+	
 	LDA $7EF34A : BNE .done ; skip if we already have lantern
 	
 	LDA $7EF3CA : BNE +

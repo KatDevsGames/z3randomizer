@@ -122,6 +122,7 @@ incsrc goalitem.asm
 incsrc compasses.asm
 incsrc doorframefixes.asm
 ;incsrc shopkeeper.asm
+incsrc cuccostorm.asm
 incsrc hashalphabet.asm ; <- TAKE OUT THE EXTRA ORGS IN HERE - THIS IS WHY WE COULDN'T ADD MORE FILES EARLIER
 warnpc $A18000
 
@@ -357,6 +358,9 @@ Sprite_ShowMessageMinimal:
 org $05EC96
 Sprite_ZeldaLong:
 
+org $06A7DB
+Chicken_SpawnAvengerChicken: ; returns short
+
 org $06DC5C
 Sprite_DrawShadowLong:
 
@@ -369,8 +373,11 @@ Sprite_PrepAndDrawSingleLargeLong:
 org $06DC00
 Sprite_PrepAndDrawSingleSmallLong:
 
+org $06EA18
+Sprite_ApplySpeedTowardsPlayerLong:
+
 org $06EAA6
-Sprite_DirectionToFacePlayer:
+Sprite_DirectionToFacePlayerLong:
 
 org $06F12F
 Sprite_CheckDamageToPlayerSameLayerLong:
@@ -402,6 +409,9 @@ AddPendantOrCrystal:
 org $0993DF
 AddDashTremor:
 
+org $09AE64
+Sprite_SetSpawnedCoords:
+
 org $09AD58
 GiveRupeeGift:
 
@@ -426,6 +436,12 @@ OAM_AllocateFromRegionF:
 
 org $0DBB67
 Sound_SetSfxPanWithPlayerCoords:
+
+org $0DBB6E
+Sound_SetSfx1PanLong:
+
+org $0DBB7C
+Sound_SetSfx2PanLong:
 
 org $0DBB8A
 Sound_SetSfx3PanLong:
@@ -468,6 +484,9 @@ ShopKeeper_RapidTerminateReceiveItem:
 
 org $1DF65D
 Sprite_SpawnDynamically:
+
+org $1DF65F
+Sprite_SpawnDynamically_arbitrary:
 
 org $1DFD4B
 DiggingGameGuy_AttemptPrizeSpawn:

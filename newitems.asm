@@ -847,7 +847,7 @@ GetRNGItemSingle:
 			CMP.l RNGSingleTableSize : !BLT +++ : LDA.b #$00 : +++ ; rollover index if needed
 			STA !SINGLE_INDEX_TEMP ; store index
 			INX : CPX.l RNGSingleTableSize : !BLT .recheck
-			LDA.b #$5A ; everything is gone, default to null item
+			LDA.b #$5A ; everything is gone, default to null item - MAKE THIS AN OPTION FOR THIS AND THE OTHER ONE
 			BRA .single_done
 	.single_unused
 		LDA !SINGLE_INDEX_TEMP

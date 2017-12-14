@@ -1285,6 +1285,15 @@ dw #9999 ; Rupee Limit
 
 ; $7F50B0 - $7F50BF - Downstream Reserved (Enemizer)
 
+; $7F50C0 - Sword Modifier
+; $7F50C1 - Shield Modifier (Not Implemented)
+; $7F50C2 - Armor Modifier
+; $7F50C3 - Magic Modifier
+; $7F50C4 - Light Cone Modifier
+; $7F50C5 - Cucco Attack Modifier
+; $7F50C6 - Old Man Dash Modifier
+; $7F50C7 - Ice Physics Modifier
+
 ; $7F50D0 - $7F50FF - Block Cypher Parameters
 ; $7F5100 - $7F51FF - Block Cypher Buffer
 ; $7F5200 - $7F52FF - RNG Pointer Block

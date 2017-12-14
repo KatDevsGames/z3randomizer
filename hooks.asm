@@ -358,6 +358,34 @@ JSL.l MSMusicReset : NOP
 ;--------------------------------------------------------------------------------
 
 ;================================================================================
+; Temporary Nerfs and Buffs
+;--------------------------------------------------------------------------------
+org $06F400 ; <- 37F400 - Bank06.asm : 5963 (CLC : ADC $7EF35B)
+JSL.l LoadModifiedArmorLevel : NOP
+;--------------------------------------------------------------------------------
+org $07ADDB ; <- 3ADDB - Bank07.asm : 7251 (LDA $7EF37B : TAY)
+JSL.l LoadModifiedMagicLevel
+;--------------------------------------------------------------------------------
+org $07AE0D ; <- 3AE0D - Bank07.asm : 7279 (LDA $7EF37B : TAY)
+JSL.l LoadModifiedMagicLevel
+;--------------------------------------------------------------------------------
+org $07AE8E ; <- 3AE8E - Bank07.asm : 7376 (LDA $7EF37B : TAY)
+JSL.l LoadModifiedMagicLevel
+;--------------------------------------------------------------------------------
+org $08DCB9 ; <- 45CB9 - ancilla_cane_spark.asm : 256 (LDA $7EF37B : TAY)
+JSL.l LoadModifiedMagicLevel
+;--------------------------------------------------------------------------------
+org $07B08B
+LinkItem_MagicCostBaseIndices:
+;--------------------------------------------------------------------------------
+org $07B096 ; <- 3B096 - Bank07.asm : 7731 (LDA LinkItem_MagicCostBaseIndices, X : CLC : ADC $7EF37B : TAX)
+JSL.l LoadModifiedMagicLevel : !ADD.w LinkItem_MagicCostBaseIndices
+;--------------------------------------------------------------------------------
+org $07B0D5 ; <- 3B0D5 - Bank07.asm : 7783 (LDA LinkItem_MagicCostBaseIndices, X : CLC : ADC $7EF37B : TAX)
+JSL.l LoadModifiedMagicLevel : !ADD.w LinkItem_MagicCostBaseIndices
+;--------------------------------------------------------------------------------
+
+;================================================================================
 ; New Items
 ;--------------------------------------------------------------------------------
 org $07B57B ; <- 3B57B - Bank07.asm : 8523 (BMI .cantOpen)
