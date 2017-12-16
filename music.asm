@@ -77,3 +77,13 @@ PreOverworld_LoadProperties_ChooseMusic:
 
     JML.l PreOverworld_LoadProperties_SetSong
 ;--------------------------------------------------------------------------------
+
+;--------------------------------------------------------------------------------
+;0 = Is Kakariko Overworld
+;1 = Not Kakariko Overworld
+PsychoSolder_MusicCheck:
+    LDA $040A : CMP.b #$18 : BNE .done ; thing we overwrote - check if overworld location is Kakariko
+        LDA $1B  ; Also check that we are outdoors
+    .done
+RTL
+;--------------------------------------------------------------------------------
