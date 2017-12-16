@@ -75,6 +75,15 @@ LoadModifiedMagicLevel:
 	LDA $7F50C3 ; load normal magic value
 RTL
 ;================================================================================
+; $7E0348 - Ice Value
+; $7F50C7 - Ice Modifier
+LoadModifiedIceFloorValue_a11:
+	LDA.w $0348 : ORA $7F50C7 : AND.b #$11
+RTL
+LoadModifiedIceFloorValue_a01:
+	LDA.w $0348 : ORA $7F50C7 : AND.b #$01
+RTL
+;================================================================================
 CheckTabletSword:
 	LDA.l AllowHammerTablets : BEQ +
 	LDA $7EF34B : BEQ + ; check for hammer
