@@ -78,10 +78,16 @@ RTL
 ; $7E0348 - Ice Value
 ; $7F50C7 - Ice Modifier
 LoadModifiedIceFloorValue_a11:
-	LDA.w $0348 : ORA $7F50C7 : AND.b #$11
+	LDA $5D : CMP #$01 : BEQ +
+	LDA $5B : BNE +
+		LDA.w $0348 : ORA $7F50C7 : AND.b #$11 : RTL
+	+ : LDA.w $0348 : AND.b #$11
 RTL
 LoadModifiedIceFloorValue_a01:
-	LDA.w $0348 : ORA $7F50C7 : AND.b #$01
+	LDA $5D : CMP #$01 : BEQ +
+	LDA $5B : BNE +
+		LDA.w $0348 : ORA $7F50C7 : AND.b #$01 : RTL
+	+ : LDA.w $0348 : AND.b #$01
 RTL
 ;================================================================================
 CheckTabletSword:

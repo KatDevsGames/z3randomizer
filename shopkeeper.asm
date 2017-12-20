@@ -68,14 +68,14 @@ DrawPrice:
 				%DrawDigit(#100,#4)
 			
 			.len2
-				%DrawDigit(#10,#2
+				%DrawDigit(#10,#2)
 			
 			.len1
 				%DrawDigit(#1,#0)
 				
 		SEP #$20 ; set 8-bit accumulator
 		TXA : LSR #3 : STA $06 ; request 1-4 OAM slots
-		ASL #2 : JSL.l OAM_AllocateFromRegionA ; request 4-16 bytes
+		ASL #2 : JSL.l OAM_AllocateFromRegionB ; request 4-16 bytes
 		TXA : LSR #3
 	PLP : PLY : PLX
 RTS
@@ -96,7 +96,7 @@ Sprite_ShopKeeper:
 		
 		; Draw Shopkeeper
 		LDA.b #$02 : STA $06 ; request 2 OAM slots
-		LDA #$08 : JSL.l OAM_AllocateFromRegionB ; request 8 bytes
+		LDA #$08 : JSL.l OAM_AllocateFromRegionA ; request 8 bytes
 		LDA.b #$02 : STA $06 ; request 2 OAM slots
 		STZ $07
 		LDA $1A : AND #$10 : BEQ +
@@ -114,7 +114,7 @@ Sprite_ShopKeeper:
 	
 		; Draw Items
 		LDA.b #$03 : STA $06 ; request 3 OAM slots
-		LDA #$0C : JSL.l OAM_AllocateFromRegionB ; request 12 bytes
+		LDA #$0C : JSL.l OAM_AllocateFromRegionA ; request 12 bytes
 		LDA.b #$03 : STA $06 ; request 3 OAM slots
 		STZ $07
 		LDA.b #.oam_items : STA $08
@@ -122,22 +122,29 @@ Sprite_ShopKeeper:
 		JSL.l Sprite_DrawMultiple_quantity_preset
 		LDA $90 : !ADD.b #$04*3 : STA $90 ; increment oam pointer
 		LDA $92 : INC #3 : STA $92
-	
-		; Draw Prices
-		;LDA.b #$0C : STA $06 ; request 12 OAM slots
-		;LDA #$30 : JSL.l OAM_AllocateFromRegionA ; request 48 bytes
-		;LDA.b #$0C : STA $06 ; request 12 OAM slots
-		;STZ $07
-		;LDA.b #.oam_prices : STA $08
-		;LDA.b #.oam_prices>>8 : STA $09
-		;JSL.l Sprite_DrawMultiple_quantity_preset
-		;LDA $90 : !ADD.b #4*12 : STA $90 ; increment oam pointer
-		;LDA $92 : INC #12 : STA $92
+		
 		
 		LDA.b #$00 : STA.l !SKIP_EOR
-		
+				
 		REP #$20 ; set 16-bit accumulator
-		LDA.w #651 : STA $0C ; set value
+		LDA.w #1234 : STA $0C ; set value
+		LDA.w #-40 : STA $0E ; set coordinate
+		JSR.w DrawPrice
+		SEP #$20 : STA $06 ; set 8-bit accumulator & store result
+		PHA
+			STZ $07
+			LDA.b #!BIGRAM : STA $08
+			LDA.b #!BIGRAM>>8 : STA $09
+			LDA.b #$7E : PHA : PLB ; set data bank to $7E
+			JSL.l Sprite_DrawMultiple_quantity_preset
+			PHK : PLB
+			LDA 1,s
+			ASL #2 : !ADD $90 : STA $90 ; increment oam pointer
+		PLA
+		!ADD $92 : STA $92
+				
+		REP #$20 ; set 16-bit accumulator
+		LDA.w #5678 : STA $0C ; set value
 		LDA.w #8 : STA $0E ; set coordinate
 		JSR.w DrawPrice
 		SEP #$20 : STA $06 ; set 8-bit accumulator & store result
@@ -147,13 +154,14 @@ Sprite_ShopKeeper:
 			LDA.b #!BIGRAM>>8 : STA $09
 			LDA.b #$7E : PHA : PLB ; set data bank to $7E
 			JSL.l Sprite_DrawMultiple_quantity_preset
+			PHK : PLB
 			LDA 1,s
 			ASL #2 : !ADD $90 : STA $90 ; increment oam pointer
 		PLA
 		!ADD $92 : STA $92
 		
 		REP #$20 ; set 16-bit accumulator
-		LDA.w #55 : STA $0C ; set value
+		LDA.w #9012 : STA $0C ; set value
 		LDA.w #56 : STA $0E ; set coordinate
 		JSR.w DrawPrice
 		SEP #$20 : STA $06 ; set 8-bit accumulator & store result
@@ -163,6 +171,7 @@ Sprite_ShopKeeper:
 			LDA.b #!BIGRAM>>8 : STA $09
 			LDA.b #$7E : PHA : PLB ; set data bank to $7E
 			JSL.l Sprite_DrawMultiple_quantity_preset
+			PHK : PLB
 			LDA 1,s
 			ASL #2 : !ADD $90 : STA $90 ; increment oam pointer
 		PLA
@@ -171,11 +180,11 @@ Sprite_ShopKeeper:
 RTL
 ;--------------------------------------------------------------------------------
 .oam_shopkeeper_f1
-dw 8, -8 : db $00, $0C, $00, $02
-dw 8, 0 : db $10, $0C, $00, $02
+dw 0, -8 : db $00, $0C, $00, $02
+dw 0, 0 : db $10, $0C, $00, $02
 .oam_shopkeeper_f2
-dw 8, -8 : db $00, $0C, $00, $02
-dw 8, 0 : db $10, $4C, $00, $02
+dw 0, -8 : db $00, $0C, $00, $02
+dw 0, 0 : db $10, $4C, $00, $02
 ;--------------------------------------------------------------------------------
 .oam_items
 dw -40, 40 : db $C0, $08, $00, $02
