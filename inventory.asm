@@ -79,7 +79,7 @@ RTL
 		LDA !INVENTORY_SWAP : BIT #$04 : BEQ .error ; make sure we have shovel
 					  AND #$03 : BEQ .error ; make sure we have one of the flutes
 		LDA $7EF34C : CMP #01 : BNE .toShovel ; not shovel
-		
+
 		LDA !INVENTORY_SWAP : AND #$01 : BEQ .toFakeFlute ; check for real flute
 		LDA #$03 ; set real flute
 		BRA .fluteSuccess
@@ -144,13 +144,13 @@ RTL
 ;--------------------------------------------------------------------------------
 CloseBottleMenu:
 	LDA $F6 : AND #$40 : BEQ .x_not_pressed ; skip if X is not down
-    
+
 	LDA.b #$10 : STA $0207 ; set 16 frame cool off
     LDA.b #$20 : STA $012F ; make menu sound
-	
+
 	INC $0200 ; return to normal menu
     STZ $0205
-	
+
 	LDA #$00
 RTL
 	.x_not_pressed
@@ -219,10 +219,10 @@ AddInventory:
 	+ CPY.b #$58 : BNE + ; Upgrade-Only Silver Arrows
 		LDA !INVENTORY_SWAP_2 : ORA #$40 : STA !INVENTORY_SWAP_2
 	+
-	
+
 	.incrementCounts
 	LDA !LOCK_STATS : BEQ + : BRL .done : +
-	
+
 	; don't count any of this stuff
 	CPY.b #$20 : BNE + : BRL .itemCounts : + ; Crystal
 	CPY.b #$26 : BNE + : BRL .itemCounts : + ; Heart Piece Completion Heart
@@ -233,7 +233,7 @@ AddInventory:
 	CPY.b #$38 : BNE + : BRL .itemCounts : + ; Pendant
 	CPY.b #$39 : BNE + : BRL .itemCounts : + ; Pendant
 	CPY.b #$00 : BNE + : BRL .itemCounts : + ; Uncle Sword & Shield
-	
+
 	CPY.b #$04 : !BLT .isSword ; Swords - Skip Shop/Fairy Check for Swords
 	CPY.b #$50 : BEQ .isSword
 	BRA +
@@ -241,7 +241,7 @@ AddInventory:
 		BRL .dungeonCounts
 	+
 	CPY.b #$3B : BNE + : BRL .dungeonCounts : + ; Silver Arrow Bow - Skip Shop/Fairy Check for Silver Arrow Bow
-	
+
 	LDA $1B : BEQ ++ ; skip shop check if outdoors
 	LDA $02E9 : CMP.b #$01 : BEQ ++ ; skip shop check for chests
 		PHP : REP #$20 ; set 16-bit accumulator
@@ -260,11 +260,11 @@ AddInventory:
 		.shop
 		PLP : BRL .done
 	++
-	
+
 	.dungeonCounts
 	LDA $1B : BNE + : BRL .fullItemCounts : +
 	; ==BEGIN INDOOR-ONLY SECTION
-	
+
 	;REP #$20 ; Set 16-bit Accumulator
 	;LDA $A0 ; load room ID
 	;CMP.w #$0010 : BNE + ; Ganon Fall Room - I think this got taken out
@@ -272,9 +272,9 @@ AddInventory:
 		;LDA !SHAME_CHEST : ORA.w #$0010 : STA !SHAME_CHEST
 	;+
 	SEP #$20 ; Set 8-bit Accumulator
-	
+
 	LDA $040C ; get dungeon id
-	
+
 	CMP.b #$00 : BNE + ; Sewers (Escape)
 		BRA ++
 	+ CMP.b #$02 : BNE + ; Hyrule Castle (Escape)
@@ -328,26 +328,26 @@ AddInventory:
 		++
 		;BRL .fullItemCounts
 	+
-	
+
 	; == END INDOOR-ONLY SECTION
 	.fullItemCounts
-	
+
 	CPY.b #$3B : BNE + ; Skip Total Counts for Repeat Silver Arrows
 		LDA $7EF42A : BIT #$20 : BEQ + : BRA .itemCounts
 	+
-	
+
 	LDA $7EF355 : BNE + ; Check for Boots
 		LDA $7EF432 : INC : STA $7EF432 ; Increment Pre Boots Counter
 	+
-	
+
 	LDA $7EF353 : BNE + ; Check for Mirror
 		LDA $7EF433 : INC : STA $7EF433 ; Increment Pre Mirror Counter
 	+
-	
+
 	LDA $7EF423 : INC : STA $7EF423 ; Increment Item Total
-	
+
 	.itemCounts
-	
+
 	CPY.b #$00 : BNE + ; Fighter's Sword & Fighter's Shield
 		JSR .incrementSword
 		JSR .incrementShield
@@ -526,7 +526,7 @@ RTL
 		LDA !HIGHEST_SWORD_LEVEL : AND #$F8 : ORA 1,s : STA !HIGHEST_SWORD_LEVEL
 		PLA
 	+
-	
+
 	LDA $7EF422 : !ADD #$20 : STA $7EF422 ; increment sword counter
 RTS
 
@@ -651,7 +651,7 @@ Link_ReceiveItem_HUDRefresh:
 		DEC : STA $7EF375 ; decrease bomb fill count
 		LDA.b #$01 : STA $7EF343 ; increase actual bomb count
 	+
-	
+
 	JSL.l HUD_RefreshIconLong ; thing we wrote over
 	JSL.l PostItemGet
 RTL
@@ -687,23 +687,23 @@ AddYMarker:
 					  AND.w #$03 : BNE .drawYBubble ; make sure we have one of the flutes
 					  BRA .drawNormal
 	+ CMP.w #$10 : BEQ .drawJarMarker
-	
+
 	.drawNormal
 	LDA.w #$7C60
 	BRA .drawTile
 
 	.drawJarMarker
-	;SEP #$20 : LDA !JAR_STATUS : INC : AND.b #$01 : STA !JAR_STATUS : REP #$20 : BEQ .drawXBubble 
-	LDA $0207 : AND.w #$0020 : BNE .drawXBubble 
-	
+	;SEP #$20 : LDA !JAR_STATUS : INC : AND.b #$01 : STA !JAR_STATUS : REP #$20 : BEQ .drawXBubble
+	LDA $0207 : AND.w #$0020 : BNE .drawXBubble
+
 	.drawYBubble
 	LDA.w #$3D4F
 	BRA .drawTile
-	
+
 	.drawXBubble
 	JSR MakeCircleBlue
 	LDA.w #$2D3E
-	 
+
 	.drawTile
 	STA $FFC4, Y
 RTL
@@ -716,16 +716,16 @@ RTL
 MakeCircleBlue:
     LDA $FFC0, Y : AND.w #$EFFF : STA $FFC0, Y
     LDA $FFC2, Y : AND.w #$EFFF : STA $FFC2, Y
-    
+
     LDA $FFFE, Y : AND.w #$EFFF : STA $FFFE, Y
     LDA $0004, Y : AND.w #$EFFF : STA $0004, Y
-    
+
     LDA $003E, Y : AND.w #$EFFF : STA $003E, Y
     LDA $0044, Y : AND.w #$EFFF : STA $0044, Y
-    
+
     LDA $0080, Y : AND.w #$EFFF : STA $0080, Y
     LDA $0082, Y : AND.w #$EFFF : STA $0082, Y
-    
+
     LDA $FFBE, Y : AND.w #$EFFF : STA $FFBE, Y
     LDA $FFC4, Y : AND.w #$EFFF : STA $FFC4, Y
     LDA $0084, Y : AND.w #$EFFF : STA $0084, Y
@@ -776,7 +776,7 @@ ClearOWKeys:
 		PLA : LDA $7EF38B : STA $7EF36F
 		RTL
 	+
-	PLA : STA $7EF36F, X
+	PLA : STA $7EF36F
 RTL
 ;--------------------------------------------------------------------------------
 
@@ -874,16 +874,16 @@ LoadMushroom:
 	.justGFX
 	;LDA MushroomItem
 	;JSL.l PrepDynamicTile
-	
+
 	PHA
-	
+
 	LDA #$01 : STA !REDRAW
 	LDA $5D : CMP #$14 : BEQ .skip ; skip if we're mid-mirror
 
 	LDA #$00 : STA !REDRAW
 	LDA MushroomItem
 	JSL.l PrepDynamicTile
-	
+
 	.skip
 	PLA
 RTL
@@ -899,11 +899,11 @@ DrawMushroom:
 		LDA !REDRAW : BEQ .skipInit ; skip init if already ready
 		JSL.l LoadMushroom_justGFX
 		BRA .done ; don't draw on the init frame
-		
+
 		.skipInit
 		LDA MushroomItem
 		JSL.l DrawDynamicTile
-	
+
 		.done
 	PLY : PLA
 RTL
@@ -990,31 +990,31 @@ RTL
 !REDRAW = "$7F5000"
 SpawnShovelItem:
 	LDA.b #$01 : STA !REDRAW
-	
+
     LDA $03FC : BEQ +
     	JSL DiggingGameGuy_AttemptPrizeSpawn
 		BRL .skip
 	+
-	
+
 	LDA $035B : AND.b #$01 : BNE + : BRL .skip : + ; corner dig fix
-	
+
 	PHY : PHP
 	PHB : PHK : PLB
 		SEP #$30 ; set 8-bit accumulator and index registers
-		
+
 		LDA $1B : BEQ + : JMP .no_drop : + ; skip if indoors
-		
+
 		LDA $8A : CMP #$2A : BEQ .no_drop ; don't drop in the haunted grove
 		          CMP #$68 : BEQ .no_drop ; don't drop in the digging game area
-		
+
 		JSL GetRandomInt : BIT #$03 : BNE .no_drop ; drop with 1/4 chance
-		
+
 		LSR #2 : TAX ; clobber lower 2 bis - we have 64 slots now
-		
+
 		LDA.l ShovelSpawnTable, X ; look up the drop on the table
-		
+
 		;most of this part below is copied from the digging game
-		
+
 		STA $7FFE00
 		JSL Sprite_SpawnDynamically
 
@@ -1031,15 +1031,15 @@ SpawnShovelItem:
 		LDA $22 : !ADD .x_offsets, X
 		                        AND.b #$F0 : STA $0D10, Y
 		LDA $23 : ADC.b #$00               : STA $0D30, Y
-	
+
 		LDA $20 : !ADD.b #$16 : AND.b #$F0 : STA $0D00, Y
 		LDA $21 : ADC.b #$00               : STA $0D20, Y
-	
+
 		LDA.b #$00 : STA $0F20, Y
 		TYX
 
 		LDA.b #$30 : JSL Sound_SetSfx3PanLong
-		
+
 		.no_drop
 	PLB
 	PLP : PLY
@@ -1056,6 +1056,6 @@ RTL
 .x_offsets
     db $00
     db $13
-	
+
 }
 ;--------------------------------------------------------------------------------
