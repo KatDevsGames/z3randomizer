@@ -26,7 +26,7 @@ org $3FFFFF ; <- 1FFFFF
 db #$00 ; expand file to 2mb
 
 org $1FFFF8 ; <- FFFF8 timestamp rom
-db #$20, #$17, #$12, #$19 ; year/month/day
+db #$20, #$17, #$12, #$22 ; year/month/day
 
 ;================================================================================
 
@@ -384,6 +384,9 @@ Sprite_CheckDamageToPlayerSameLayerLong:
 
 org $06F86A
 OAM_AllocateDeferToPlayerLong:
+
+org $0791B3
+Player_HaltDashAttackLong:
 
 org $07999D
 Link_ReceiveItem:

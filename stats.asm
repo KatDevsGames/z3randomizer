@@ -173,7 +173,9 @@ DungeonStairsTransition:
 	JSL Dungeon_SaveRoomQuadrantData
 	BRA StatTransitionCounter
 DungeonExitTransition:
-	LDA.b #$0F : STA $10
+	JSL Player_HaltDashAttackLong
+	LDA.b #$00 : STA $0301 ; stop item dashing
+	LDA.b #$0F : STA $10 ; stop running through the transition
 StatTransitionCounter:
 	PHA : PHP
 		LDA !LOCK_STATS : BNE +
@@ -195,12 +197,15 @@ RTL
 ;--------------------------------------------------------------------------------
 IncrementSmallKeys:
 	STA $7EF36F ; thing we wrote over, write small key count
-	LDA !LOCK_STATS : BNE +
-		JSL AddInventory_incrementKeyLong
-	+
-	JSL.l UpdateKeys
-	PHY : LDY.b #24 : JSL.l FullInventoryExternal : PLY
-	JSL.l HUD_RebuildLong
+	
+	PHX
+		LDA !LOCK_STATS : BNE +
+			JSL AddInventory_incrementKeyLong
+		+
+		JSL.l UpdateKeys
+		PHY : LDY.b #24 : JSL.l FullInventoryExternal : PLY
+		JSL.l HUD_RebuildLong
+	PLX
 RTL
 ;--------------------------------------------------------------------------------
 DecrementSmallKeys:

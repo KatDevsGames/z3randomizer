@@ -68,23 +68,23 @@ RTL
 LoadModifiedMagicLevel:
 	LDA $7F50C3 : BEQ +
 		!ADD $7EF37B ; add normal magic value to modifier
-			CMP.b #$FF : BNE + : LDA.b #$00 : +
-			CMP.b #$03 : !BLT ++ : LDA.b #$02 : RTS : ++
+			CMP.b #$FF : BNE ++ : LDA.b #$00 : RTL : ++
+			CMP.b #$03 : !BLT ++ : LDA.b #$02 : ++
 		RTL
 	+
-	LDA $7F50C3 ; load normal magic value
+	LDA $7EF37B ; load normal magic value
 RTL
 ;================================================================================
 ; $7E0348 - Ice Value
 ; $7F50C7 - Ice Modifier
 LoadModifiedIceFloorValue_a11:
-	LDA $5D : CMP #$01 : BEQ +
+	LDA $5D : CMP #$01 : BEQ + : CMP #$17 : BEQ + : CMP #$1C : BEQ +
 	LDA $5B : BNE +
 		LDA.w $0348 : ORA $7F50C7 : AND.b #$11 : RTL
 	+ : LDA.w $0348 : AND.b #$11
 RTL
 LoadModifiedIceFloorValue_a01:
-	LDA $5D : CMP #$01 : BEQ +
+	LDA $5D : CMP #$01 : BEQ + : CMP #$17 : BEQ + : CMP #$1C : BEQ +
 	LDA $5B : BNE +
 		LDA.w $0348 : ORA $7F50C7 : AND.b #$01 : RTL
 	+ : LDA.w $0348 : AND.b #$01

@@ -389,10 +389,10 @@ org $07B08B
 LinkItem_MagicCostBaseIndices:
 ;--------------------------------------------------------------------------------
 org $07B096 ; <- 3B096 - Bank07.asm : 7731 (LDA LinkItem_MagicCostBaseIndices, X : CLC : ADC $7EF37B : TAX)
-JSL.l LoadModifiedMagicLevel : !ADD.w LinkItem_MagicCostBaseIndices
+JSL.l LoadModifiedMagicLevel : !ADD.w LinkItem_MagicCostBaseIndices, X
 ;--------------------------------------------------------------------------------
 org $07B0D5 ; <- 3B0D5 - Bank07.asm : 7783 (LDA LinkItem_MagicCostBaseIndices, X : CLC : ADC $7EF37B : TAX)
-JSL.l LoadModifiedMagicLevel : !ADD.w LinkItem_MagicCostBaseIndices
+JSL.l LoadModifiedMagicLevel : !ADD.w LinkItem_MagicCostBaseIndices, X
 ;--------------------------------------------------------------------------------
 
 ;================================================================================
