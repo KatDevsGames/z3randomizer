@@ -214,7 +214,6 @@ DecrementSmallKeys:
 RTL
 ;--------------------------------------------------------------------------------
 IncrementAgahnim2Sword:
-	JSL.l Dungeon_SaveRoomData_justKeys ; thing we wrote over
 	PHA
 		LDA !LOCK_STATS : BNE +
 			JSL AddInventory_incrementBossSwordLong

@@ -34,6 +34,11 @@ OnDungeonExit:
 	PLP : PLA
 RTL
 ;--------------------------------------------------------------------------------
+OnAga2Defeated:
+	JSL.l Dungeon_SaveRoomData_justKeys ; thing we wrote over, make sure this is first
+	JSL.l IncrementAgahnim2Sword
+RTL
+;--------------------------------------------------------------------------------
 !RNG_ITEM_LOCK_IN = "$7F5090"
 OnFileLoad:
 	LDA !FRESH_FILE_MARKER : BNE +

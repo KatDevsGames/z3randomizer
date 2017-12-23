@@ -233,7 +233,7 @@ JSL.l CalculateCapeUsage
 ; Misc Stats
 ;--------------------------------------------------------------------------------
 org $029E2E ; <- 11E2E - module_ganon_emerges.asm : 59 (JSL Dungeon_SaveRoomData.justKeys)
-JSL.l IncrementAgahnim2Sword
+JSL.l OnAga2Defeated
 ;--------------------------------------------------------------------------------
 org $0DDBDE ; <- 6DBDE - headsup_display.asm : 105 (DEC A : BPL .subtractRupees)
 JSL.l IncrementSpentRupees
