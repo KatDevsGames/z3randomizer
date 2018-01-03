@@ -1,7 +1,7 @@
 ;================================================================================
 ; Inventory Updates
 ;================================================================================
-!INVENTORY_SWAP = "$7EF412"
+!INVENTORY_SWAP = "$7EF38C"
 ; Item Tracking Slot
 ; brmp-skf
 ; b = blue boomerang
@@ -13,7 +13,7 @@
 ; k = fake flute
 ; f = working flute
 ;--------------------------------------------------------------------------------
-!INVENTORY_SWAP_2 = "$7EF414"
+!INVENTORY_SWAP_2 = "$7EF38E"
 ; Item Tracking Slot #2
 ; bs------
 ; b = bow

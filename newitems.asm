@@ -37,17 +37,17 @@
 ;GetAnimatedSpriteGfxFile:
 ;    LDY.b #$32
 ;    CMP.b #$39 : BCS +      ; If tile index >= 0x39, use sprite file 0x32 (Blank file)
-;    
+;
 ;    LDY.b #$5D
-;        
+;
 ;    CMP.b #$23 : BEQ +      ; If tile index is 0x23 (Pendant)...
 ;    CMP.b #$37 : BCS +      ; ...or tile index >= 0x37, use sprite file 0x5D (Pendant, Boots, 20 Rupees)
-;    
+;
 ;    LDY.b #$5C
-;    
+;
 ;    CMP.b #$0C : BEQ +      ; If tile index is 0x0C (Flute)...
 ;    CMP.b #$24 : BCS +      ; ...or tile index >= 24, use sprite file 0x5C (Rupees, Crystal, Heart Piece ... ...)
-;    
+;
 ;    ; Otherwise, use sprite file 0x5B (Medallions, Mirror, Flippers, Lantern, Compass...)
 ;    LDY.b #$5B
 ;+
@@ -63,7 +63,7 @@ GetAnimatedSpriteGfxFile:
     CMP.b #$48 : BNE +
 		LDY.b #$60 : JML GetAnimatedSpriteGfxFile_return
 	+
-	
+
     CMP.b #$24 : !BGE +
 		LDY.b #$5B : JML GetAnimatedSpriteGfxFile_return
 	+
@@ -130,6 +130,7 @@ endmacro
 ;--------------------------------------------------------------------------------
 !CHALLENGE_TIMER = "$7EF454"
 !GOAL_COUNTER = "$7EF460"
+!INVENTORY_SWAP_2 = "$7EF38E"
 ;--------------------------------------------------------------------------------
 ;carry clear if pass
 ;carry set if caught
@@ -142,16 +143,16 @@ endmacro
 ;		LDA $02D8
 ;		CMP.b #$70 : !BLT + : CMP.b #$E0 : !BGE + ; Free Item Block
 ;			!SUB #$70
-;			
+;
 ;			REP #$30 ; set 16-bit accumulator & index registers
 ;			AND.w #$00FF : ASL : TAX
 ;			LDA.l EventDataOffsets, X : !ADD.w #EventDataTable : STA $00
-;			
+;
 ;			SEP #$20 ; set 8-bit accumulator
 ;			PHK : PLA : STA $02
-;			
+;
 ;			JSL.l LoadDialogAddressIndirect
-;			
+;
 ;			SEP #$10 ; set 8-bit index registers
 ;			LDX.b #$01 : BRA .done
 ;		+
@@ -165,7 +166,7 @@ endmacro
 ;--------------------------------------------------------------------------------
 AddReceivedItemExpandedGetItem:
 	PHX
-	
+
 	;JSR.w ProcessEventItems : CPX.b #$00 : BEQ ++
 	;	;JSL.l Main_ShowTextMessage
 	;	LDA !GOAL_COUNTER : INC : STA !GOAL_COUNTER
@@ -176,7 +177,7 @@ AddReceivedItemExpandedGetItem:
 	LDA $02D8 ; check inventory
 	JSL.l FreeDungeonItemNotice
 	CMP.b #$0B : BNE + ; Bow
-		LDA $7EF414 : AND.b #$40 : BEQ ++
+		LDA !INVENTORY_SWAP_2 : AND.b #$40 : BEQ ++
 			LDA.b #03 : STA $7EF340 ; set bow silver
 		++
 		BRL .done
@@ -427,7 +428,7 @@ AddReceivedItemExpanded:
 		++
 		.done
 	PLX : PLA
-	
+
     PHB : PHK ; we're skipping the corresponding instructions to grab the data bank
 	JMP.l AddReceivedItem+2
 }
@@ -438,16 +439,16 @@ AddReceivedItemExpanded:
 .y_offsets
     db -5, -5, -5, -5, -5, -4, -4, -5
     db -5, -4, -4, -4, -2, -4, -4, -4
-    
+
     db -4, -4, -4, -4, -4, -4, -4, -4
     db -4, -4, -4, -4, -4, -4, -4, -4
-    
+
     db -4, -4, -4, -5, -4, -4, -4, -4
     db -4, -4, -2, -4, -4, -4, -4, -4
-    
+
     db -4, -4, -4, -4, -2, -2, -2, -4
     db -4, -4, -4, -4, -4, -4, -4, -4
-    
+
     db -4, -4, -2, -2, -4, -2, -4, -4
     db -4, -5, -4, -4
 	;new
@@ -476,16 +477,16 @@ AddReceivedItemExpanded:
 .x_offsets
     db  4,  4,  4,  4,  4,  0,  0,  4
     db  4,  4,  4,  4,  5,  0,  0,  0
-    
+
     db  0,  0,  0,  4,  0,  4,  0,  0
     db  4,  0,  0,  0,  0,  0,  0,  0
-    
+
     db  0,  0,  0,  0,  4,  0,  0,  0
     db  0,  0,  5,  0,  0,  0,  0,  0
-    
+
     db  0,  0,  0,  0,  4,  4,  4,  0
     db  0,  0,  0,  0,  0,  0,  0,  0
-    
+
     db  0,  0,  4,  4,  0,  4,  0,  0
     db  0,  4,  0,  0
 	;new
@@ -515,16 +516,16 @@ AddReceivedItemExpanded:
 .item_graphics_indices
     db $06, $18, $18, $18, $2D, $20, $2E, $09
     db $09, $0A, $08, $05, $10, $0B, $2C, $1B
-    
+
     db $1A, $1C, $14, $19, $0C, $07, $1D, $2F
     db $07, $15, $12, $0D, $0D, $0E, $11, $17
-    
+
     db $28, $27, $04, $04, $0F, $16, $03, $13
     db $01, $1E, $10, $00, $00, $00, $00, $00
 
     db $00, $30, $22, $21, $24, $24, $24, $23
     db $23, $23, $29, $2A, $2C, $2B, $03, $03
-    
+
     db $34, $35, $31, $33, $02, $32, $36, $37
     db $2C, $06, $0C, $38
 	;new
@@ -549,7 +550,7 @@ AddReceivedItemExpanded:
 	;db $49, $49, $49, $49, $49, $49, $49, $49, $49, $49, $49, $49, $49, $49, $49, $49 ; *EVENT*
 	;db $49, $49, $49, $49, $49, $49, $49, $49, $49, $49, $49, $49, $49, $49, $49, $49 ; *EVENT*
 	;db $49, $49, $49, $49, $49, $49, $49, $49, $49, $49, $49, $49, $49, $49, $49, $49 ; *EVENT*
-	
+
 	db $49, $49, $49, $49, $49, $49, $49, $49, $49, $49, $49, $49, $49, $49, $49, $49 ; Unused
 	db $49, $49, $49, $49, $49, $49, $49, $49, $49, $49, $49, $49, $49, $49, $49, $49 ; Unused
 	db $49, $49, $49, $49, $49, $49, $49, $49, $49, $49, $49, $49, $49, $49, $49, $49 ; Unused
@@ -558,16 +559,16 @@ AddReceivedItemExpanded:
 .wide_item_flag
     db $00, $00, $00, $00, $00, $02, $02, $00
     db $00, $00, $00, $00, $00, $02, $02, $02
-    
+
     db $02, $02, $02, $00, $02, $00, $02, $02
     db $00, $02, $02, $02, $02, $02, $02, $02
-    
+
     db $02, $02, $02, $02, $00, $02, $02, $02
     db $02, $02, $00, $02, $02, $02, $02, $02
-    
+
     db $02, $02, $02, $02, $00, $00, $00, $02
     db $02, $02, $02, $02, $02, $02, $02, $02
-    
+
     db $02, $02, $00, $00, $02, $00, $02, $02
     db $02, $00, $02, $02
 	;new
@@ -589,25 +590,25 @@ AddReceivedItemExpanded:
 	db $02, $02, $02, $02, $02, $02, $02, $02, $02, $02, $02, $02, $02, $02, $02, $02 ; Free Big Key
 	db $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00 ; Free Small Key
 	;db $02, $02, $02, $02, $02, $02, $02, $02, $02, $02, $02, $02, $02, $02, $02, $02 ; *EVENT*
-	
+
 	db $02, $02, $02, $02, $02, $02, $02, $02, $02, $02, $02, $02, $02, $02, $02, $02 ; Unused
 	db $02, $02, $02, $02, $02, $02, $02, $02, $02, $02, $02, $02, $02, $02, $02, $02 ; Unused
 	db $02, $02, $02, $02, $02, $02, $02, $02, $02, $02, $02, $02, $02, $02, $02, $02 ; Unused
 	db $02, $02, $02, $02, $02, $02, $02, $02, $02, $02, $02, $02, $02, $02, $02, $02 ; Unused
-	
+
 .properties
     db  5, -1,  5,  5,  5,  5,  5,  1
     db  2,  1,  1,  1,  2,  2,  2,  4
-	
+
     db  4,  4,  1,  1,  2,  1,  1,  1
     db  2,  1,  2,  1,  4,  4,  2,  1
-	
+
     db  6,  1,  2,  1,  2,  2,  1,  2
     db  2,  4,  1,  1,  4,  2,  1,  4
-	
+
     db  2,  2,  4,  4,  4,  2,  1,  4
     db  1,  2,  2,  1,  2,  2,  1,  1
-	
+
     db  4,  4,  1,  2,  2,  4,  4,  4
     db  2,  5,  2,  1
 	;new
@@ -685,10 +686,10 @@ AddReceivedItemExpanded:
 
     db $FF, $01, $FF, $02, $FF, $FF, $FF, $FF
     db $FF, $FF, $02, $FF, $FF, $FF, $FF, $FF
-    
+
     db $FF, $FF, $FF, $FF, $FF, $FB, $EC, $FF
     db $FF, $FF, $01, $03, $FF, $FF, $FF, $FF
-    
+
     db $9C, $CE, $FF, $01, $0A, $FF, $FF, $FF
     db $FF, $01, $03, $01
 	;new
@@ -713,7 +714,7 @@ AddReceivedItemExpanded:
 	db $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF ; Unused
 	db $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF ; Unused
 	db $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF ; Unused
-	
+
     ;0x00 - Sewer Passage
     ;0x02 - Hyrule Castle
     ;0x04 - Eastern Palace
@@ -728,18 +729,18 @@ AddReceivedItemExpanded:
     ;0x16 - Gargoyle's Domain
     ;0x18 - Turtle Rock
     ;0x1A - Ganon's Tower
-	
+
 .item_masks ; these are dungeon correlations to $7EF364 - $7EF369 so it knows where to store compasses, etc
     dw $8000, $4000, $2000, $1000, $0800, $0400, $0200, $0100
     dw $0080, $0040, $0020, $0010, $0008, $0004, $0000, $0000
-	
+
 	dw $0000, $0000, $0000, $0000, $0000, $0000, $0000, $0000
 	dw $0000, $0000, $0000, $0000, $0000, $0000, $0000, $0000
 	dw $0000, $0000, $0000, $0000, $0000, $0000, $0000, $0000
 	dw $0000, $0000, $0000, $0000, $0000, $0000, $0000, $0000
 	dw $0000, $0000, $0000, $0000, $0000, $0000, $0000, $0000
 	dw $0000, $0000, $0000, $0000, $0000, $0000, $0000, $0000
-	
+
 	dw $0000, $0000, $0000, $0000, $0000, $0000, $0000, $0000
 	dw $0000, $0000, $0000, $0000, $0000, $0000, $0000, $0000
 	dw $0000, $0000, $0000, $0000, $0000, $0000, $0000, $0000
@@ -762,19 +763,19 @@ Link_ReceiveItemAlternatesExpanded:
 {
     db -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1
     db -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1 ; db -1,  -1,  -1,  -1, $44,  -1,  -1,  -1
-    
+
     db -1,  -1, $35,  -1,  -1,  -1,  -1,  -1
     db -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1
-    
+
     db -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1
     db -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1 ; db -1,  -1, $46,  -1,  -1,  -1,  -1,  -1
-    
+
     db -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1
     db -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1
-    
+
     db -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1
     db -1,  -1,  -1,  -1
-	
+
 	db -1,  -1,  -1,  -1
 	db -1 ; Master Sword (Safe)
 	db -1,  -1,  -1,  -1 ; +5/+10 Bomb Arrows
@@ -806,7 +807,7 @@ RTL
 ;--------------------------------------------------------------------------------
 ;DrawHUDSilverArrows:
 ;	LDA $7EF340 : AND.w #$00FF : BNE +
-;		LDA $7EF414 : AND.w #$0040 : BEQ +
+;		LDA !INVENTORY_SWAP_2 : AND.w #$0040 : BEQ +
 ;	        LDA.w #$2810 : STA $11C8
 ;	        LDA.w #$2811 : STA $11CA
 ;	        LDA.w #$2820 : STA $1208
@@ -818,7 +819,7 @@ RTL
 ;Return $7EF340 but also draw silver arrows if you have the upgrade even if you don't have the bow
 CheckHUDSilverArrows:
 	LDA $7EF340 : BNE +
-		LDA $7EF414 : AND.b #$40 : BEQ ++
+		LDA !INVENTORY_SWAP_2 : AND.b #$40 : BEQ ++
 			JSL.l DrawHUDSilverArrows
 		++
 		LDA $7EF340
@@ -882,7 +883,7 @@ RTS
 ;--------------------------------------------------------------------------------
 MarkRNGItemSingle:
 	;STA !SINGLE_INDEX_TEMP
-	
+
 	LSR #3 : STA !SINGLE_INDEX_OFFSET_TEMP : TAX
 	LDA.l !RNG_ITEM, X
 	STA.l !SINGLE_INDEX_BITMASK_TEMP

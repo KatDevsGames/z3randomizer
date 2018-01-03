@@ -28,7 +28,7 @@ RTL
 ;--------------------------------------------------------------------------------
 OnDungeonExit:
 	STA $040C : STZ $04AC ; thing we wrote over
-	
+
 	PHA : PHP
 		JSL.l HUD_RebuildLong
 	PLP : PLA
@@ -59,12 +59,12 @@ OnNewFile:
 		LDA.l LinkStartingRupees : STA $7EF362 : STA $7EF360
 		LDA.l StartingTime : STA $7EF454
 		LDA.l StartingTime+2 : STA $7EF454+2
-	
+
 		LDX.w #$00 : - ; copy over starting equipment
 			LDA StartingEquipment, X : STA $7EF340, X
 			INX : INX
-		CPX.w #$004B : !BLT -
-	
+		CPX.w #$004F : !BLT -
+
 		SEP #$20 ; set 8-bit accumulator
 		;LDA #$FF : STA !RNG_ITEM_LOCK_IN ; reset rng item lock-in
 		LDA.l PreopenCurtains : BEQ +
@@ -82,7 +82,7 @@ RTL
 ;--------------------------------------------------------------------------------
 OnEnterWater:
 	JSL.l RegisterWaterEntryScreen
-	
+
 	JSL.l MysteryWaterFunction
 	LDX.b #$04
 RTL
@@ -117,12 +117,12 @@ RTL
 ;--------------------------------------------------------------------------------
 PostItemAnimation:
 	LDA.b #$00 : STA !ITEM_BUSY ; mark item as finished
-	
+
 	LDA $7F50A0 : BEQ +
 		JSL.l Main_ShowTextMessage
 		LDA.b #$00 : STA $7F50A0
 	+
-	
+
     STZ $02E9 : LDA $0C5E, X ; thing we wrote over to get here
 RTL
 ;--------------------------------------------------------------------------------

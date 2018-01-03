@@ -26,7 +26,7 @@ org $3FFFFF ; <- 1FFFFF
 db #$00 ; expand file to 2mb
 
 org $1FFFF8 ; <- FFFF8 timestamp rom
-db #$20, #$17, #$12, #$22 ; year/month/day
+db #$20, #$18, #$01, #$02 ; year/month/day
 
 ;================================================================================
 
@@ -35,10 +35,10 @@ db #$20, #$17, #$12, #$22 ; year/month/day
 !BLT = "BCC"
 !BGE = "BCS"
 
+!INVENTORY_SWAP = "$7EF38C"
+!INVENTORY_SWAP_2 = "$7EF38E"
 !NPC_FLAGS   = "$7EF410"
 !NPC_FLAGS_2 = "$7EF411"
-!INVENTORY_SWAP = "$7EF412"
-!INVENTORY_SWAP_2 = "$7EF414"
 !MAP_ZOOM = "$7EF415"
 !PROGRESSIVE_SHIELD = "$7EF416" ; ss-- ----
 !HUD_FLAG = "$7EF416" ; --h- ----
