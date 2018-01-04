@@ -1945,17 +1945,9 @@ org $02C2F3 ; <- Bank02.asm:10391 (JSL Dungeon_LoadRoom)
 ;================================================================================
 ; Hook for graphicsoverride.asm
 ;--------------------------------------------------------------------------------
-org $00E1DB ; <- Bank00.asm:4866 (PHB : PHK : PLB : LDA.b #$80)
-    JML GraphicsOverrideHook
-    NOP
-    GraphicsOverrideResume:
-;--------------------------------------------------------------------------------
-org $028BE7 ; <- Bank02.asm:2299 (JSL Dungeon_LoadRoom)
-    JSL LoadRoomHook
-;--------------------------------------------------------------------------------
-org $029309 ; <- Bank02.asm:3533 (JSL Dungeon_LoadRoom)
-    JSL LoadRoomHook
-;--------------------------------------------------------------------------------
-org $02C2F3 ; <- Bank02.asm:10391 (JSL Dungeon_LoadRoom)
-    JSL LoadRoomHook
+org $00E64D ; <- Bank00.asm:5656 (STZ $00 : STX $01 : STA $02)
+    JML BgGraphicsLoading
+    BgGraphicsLoadingCancel:
+    RTS : NOP
+    BgGraphicsLoadingResume:
 ;================================================================================
