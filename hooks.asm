@@ -1925,3 +1925,41 @@ org $0298AD ; <- Bank02.asm:4495 (LDA $010E : CMP.b #$43)
 JSL.l WalkDownIntoTavern
 NOP #1
 ;================================================================================
+
+;================================================================================
+; Hooks for roomloading.asm
+;--------------------------------------------------------------------------------
+org $02895D ; <- Bank02.asm:1812 (JSL Dungeon_LoadRoom)
+    JSL LoadRoomHook
+;--------------------------------------------------------------------------------
+org $028BE7 ; <- Bank02.asm:2299 (JSL Dungeon_LoadRoom)
+    JSL LoadRoomHook
+;--------------------------------------------------------------------------------
+org $029309 ; <- Bank02.asm:3533 (JSL Dungeon_LoadRoom)
+    JSL LoadRoomHook
+;--------------------------------------------------------------------------------
+org $02C2F3 ; <- Bank02.asm:10391 (JSL Dungeon_LoadRoom)
+    JSL LoadRoomHook
+;================================================================================
+
+;================================================================================
+; Hooks into the "Reloading all graphics" routine
+;--------------------------------------------------------------------------------
+org $00E64D ; <- Bank00.asm:5656 (STZ $00 : STX $01 : STA $02)
+    JML BgGraphicsLoading
+    BgGraphicsLoadingCancel:
+    RTS : NOP
+    BgGraphicsLoadingResume:
+;================================================================================
+
+;================================================================================
+; Hook when updating the floor tileset in dungeons (such as between floors)
+;--------------------------------------------------------------------------------
+org $00DF62 ; <- Bank00.asm:4672 (LDX.w #$0000 : LDY.w #$0040)
+    JML ReloadingFloors
+    NOP : NOP
+    ReloadingFloorsResume:
+org $00DF6E ; <- A few instructions later, right after JSR Do3To4High16Bit
+    ReloadingFloorsCancel:
+;================================================================================
+
