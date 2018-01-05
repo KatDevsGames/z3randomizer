@@ -1943,7 +1943,7 @@ org $02C2F3 ; <- Bank02.asm:10391 (JSL Dungeon_LoadRoom)
 ;================================================================================
 
 ;================================================================================
-; Hook for graphicsoverride.asm
+; Hooks into the "Reloading all graphics" routine
 ;--------------------------------------------------------------------------------
 org $00E64D ; <- Bank00.asm:5656 (STZ $00 : STX $01 : STA $02)
     JML BgGraphicsLoading
@@ -1951,3 +1951,15 @@ org $00E64D ; <- Bank00.asm:5656 (STZ $00 : STX $01 : STA $02)
     RTS : NOP
     BgGraphicsLoadingResume:
 ;================================================================================
+
+;================================================================================
+; Hook when updating the floor tileset in dungeons (such as between floors)
+;--------------------------------------------------------------------------------
+org $00DF62 ; <- Bank00.asm:4672 (LDX.w #$0000 : LDY.w #$0040)
+    JML ReloadingFloors
+    NOP : NOP
+    ReloadingFloorsResume:
+org $00DF6E ; <- A few instructions later, right after JSR Do3To4High16Bit
+    ReloadingFloorsCancel:
+;================================================================================
+
