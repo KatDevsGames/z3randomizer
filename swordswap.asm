@@ -119,26 +119,47 @@ GetSmithSword:
 	JMP.l Smithy_AlreadyGotSword
 ;================================================================================
 CheckMedallionSword:
-	;LDA $FFFFFF
 	PHB : PHX : PHY
-		LDA.l AllowSwordlessEntranceMedallion : BEQ +
-			LDA $8A : CMP.b #$70 : BNE ++
-				LDA.l MireRequiredMedallion : TAX : LDA.l .medallion_type, X : CMP $0303 : BNE +
-				LDA $7EF2F0 : AND.b #$20 : BNE +
-				LDA.b #$08 : PHA : PLB ; set data bank to $08
-				LDY.b #$02 : JSL.l Ancilla_CheckIfEntranceTriggered : BCS .permit ; misery mire
-				BRA +
-			++ : CMP.b #$47 : BNE ++
-				LDA.l TRockRequiredMedallion : TAX : LDA.l .medallion_type, X : CMP $0303 : BNE +
-				LDA $7EF2C7 : AND.b #$20 : BNE +
-				LDA.b #$08 : PHA : PLB ; set data bank to $08
-				LDY.b #$03 : JSL.l Ancilla_CheckIfEntranceTriggered : BCS .permit ; turtle rock
-			++
+		LDA.l AllowSwordlessEntranceMedallion : BNE +++ : BRL + : +++
+			LDA $1B : BEQ .outdoors
+			.indoors
+				REP #$20 ; set 16-bit accumulator
+				LDA $A0 ; load room ID
+				CMP.w #$000E : BNE ++ : .freezor1
+					LDA $22 : AND.w #$01FF : CMP #368-8 : !BLT .normal : CMP #368+32-8 : !BGE .normal ; check x-coord
+					LDA $20 : AND.w #$01FF : CMP #400-22 : !BLT .normal : CMP #400+32-22 : !BGE .normal ; check y-coord
+					BRL .permit
+				++ : CMP.w #$007E : BNE ++ : .freezor2
+					LDA $22 : AND.w #$01FF : CMP #112-8 : !BLT .normal : CMP #112+32-8 : !BGE .normal ; check x-coord
+					LDA $20 : AND.w #$01FF : CMP #400-22 : !BLT .normal : CMP #400+32-22 : !BGE .normal ; check y-coord
+					BRL .permit
+				++ : CMP.w #$00DE : BNE ++ : .kholdstare
+					LDA $22 : AND.w #$01FF : CMP #368-8 : !BLT .normal : CMP #368+32-8 : !BGE .normal ; check x-coord
+					LDA $20 : AND.w #$01FF : CMP #144-22 : !BLT .normal : CMP #144+32-22 : !BGE .normal ; check y-coord
+					BRA .permit
+				++ : .normal
+				SEP #$20 ; set 8-bit accumulator
+				BRA .done
+			.outdoors
+				LDA $8A : CMP.b #$70 : BNE ++
+					LDA.l MireRequiredMedallion : TAX : LDA.l .medallion_type, X : CMP $0303 : BNE +
+					LDA $7EF2F0 : AND.b #$20 : BNE +
+					LDA.b #$08 : PHA : PLB ; set data bank to $08
+					LDY.b #$02 : JSL.l Ancilla_CheckIfEntranceTriggered : BCS .permit ; misery mire
+					BRA +
+				++ : CMP.b #$47 : BNE ++
+					LDA.l TRockRequiredMedallion : TAX : LDA.l .medallion_type, X : CMP $0303 : BNE +
+					LDA $7EF2C7 : AND.b #$20 : BNE +
+					LDA.b #$08 : PHA : PLB ; set data bank to $08
+					LDY.b #$03 : JSL.l Ancilla_CheckIfEntranceTriggered : BCS .permit ; turtle rock
+				++
+			.done
 		+
 	PLY : PLX : PLB
 	LDA $7EF359
 RTL
 	.permit
+	SEP #$20 ; set 8-bit accumulator
 	PLY : PLX : PLB
 	LDA.b #$02 ; Pretend we have master sword
 RTL

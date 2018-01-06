@@ -58,9 +58,12 @@ GetAgahnimLightning:
 		LDA.b #$00 ; Use Agahnim 1
 		RTL
 ;--------------------------------------------------------------------------------
+;0 = Allow
+;1 = Forbid
 AllowJoypadInput:
 	LDA PermitSQFromBosses : BEQ .fullCheck
-	LDA $0112 : ORA $02E4
+	LDA $0403 : AND.b #$80 : BEQ .fullCheck
+		LDA $0112 : ORA $02E4 ; we have heart container, do short check
 RTL
 	.fullCheck
 	LDA $0112 : ORA $02E4 : ORA $0FFC

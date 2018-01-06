@@ -100,7 +100,7 @@ RTL
 	;5x
 	db $44 ; Safe Master Sword
 	db $3D, $3E, $3F, $40 ; Bomb & Arrow +5/+10
-	db $00, $00, $00 ; 3x Programmable Item
+	db $2C, $00, $00 ; 3x Programmable Item
 	db $41 ; Upgrade-Only Silver Arrows
 	db $24 ; 1 Rupoor
 	db $47 ; Null Item
@@ -235,7 +235,7 @@ RTL
 	
 	db $04 ; Safe Master Sword
 	db $08, $08, $08, $08 ; Bomb & Arrow +5/+10
-	db $00, $00, $00 ; Programmable Items 1-2
+	db $04, $00, $00 ; Programmable Items 1-3
 	db $02 ; Upgrade-Only Silver Arrows
 	db $06 ; 1 Rupoor
 	db $02 ; Null Item

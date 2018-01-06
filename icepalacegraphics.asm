@@ -69,7 +69,8 @@ ReloadingFloors:
     LDY.w #$0000                ; Target
     LDA.w #$0800                ; Length
     PHB
-    MVN $7F, IcePalaceFloorGfx>>16
+    ;MVN $7F, IcePalaceFloorGfx>>16
+	MVN $A07F ; CHANGE THIS IF YOU MOVE THE FILE - kkat
     PLB
 
     ; Pretend that we ran the original routine
