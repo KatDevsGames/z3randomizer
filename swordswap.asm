@@ -120,7 +120,7 @@ GetSmithSword:
 ;================================================================================
 CheckMedallionSword:
 	PHB : PHX : PHY
-		LDA.l AllowSwordlessEntranceMedallion : BNE +++ : BRL + : +++
+		LDA.l AllowSwordlessMedallionUse : BNE +++ : BRL + : +++
 			LDA $1B : BEQ .outdoors
 			.indoors
 				REP #$20 ; set 16-bit accumulator

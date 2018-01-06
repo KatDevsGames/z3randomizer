@@ -62,12 +62,15 @@ macro DrawBombosPlatform(roomX, roomY, quadX, quadY)
 endMacro
 
 IcePalaceBombosSE:
+	LDA AllowSwordlessMedallionUse : BNE + : RTL : +
     %DrawBombosPlatform(14, 18, 1, 1)
     RTL
 IcePalaceBombosSW:
+	LDA AllowSwordlessMedallionUse : BNE + : RTL : +
     %DrawBombosPlatform(14, 18, 0, 1)
     RTL
 IcePalaceBombosNE:
+	LDA AllowSwordlessMedallionUse : BNE + : RTL : +
     %DrawBombosPlatform(14, 18, 1, 0)
     RTL
 
