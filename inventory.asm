@@ -461,6 +461,7 @@ AddInventory:
 		JSR .incrementY
 		BRL .done
 	+ CPY.b #$4B : BNE + ; Pegasus Boots
+		JSR .stampBoots
 		JSR .incrementA
 		BRL .done
 	+ CPY.b #$4C : BNE + ; Bomb Capacity Upgrade
@@ -515,6 +516,41 @@ AddInventory:
 RTL
 ; WHICH BEE IS BOTTLED?
 ; MAKE SURE FAIRY FOUNTAINS DON'T FUCK THE COUNTS UP
+
+!NMI_TIME = "$7EF43E"
+
+!SWORD_TIME = "$7EF458"
+!BOOTS_TIME = "$7EF45C"
+!FLUTE_TIME = "$7EF460"
+!MIRROR_TIME = "$7EF464"
+
+.stampSword
+	REP $20 ; set 16-bit accumulator
+	LDA !NMI_TIME : STA !SWORD_TIME
+	LDA !NMI_TIME+2 : STA !SWORD_TIME+2
+	REP $20 ; set 8-bit accumulator
+RTS
+
+.stampBoots
+	REP $20 ; set 16-bit accumulator
+	LDA !NMI_TIME : STA !BOOTS_TIME
+	LDA !NMI_TIME+2 : STA !BOOTS_TIME+2
+	REP $20 ; set 8-bit accumulator
+RTS
+
+.stampFlute
+	REP $20 ; set 16-bit accumulator
+	LDA !NMI_TIME : STA !FLUTE_TIME
+	LDA !NMI_TIME+2 : STA !FLUTE_TIME+2
+	REP $20 ; set 8-bit accumulator
+RTS
+
+.stampMirror
+	REP $20 ; set 16-bit accumulator
+	LDA !NMI_TIME : STA !MIRROR_TIME
+	LDA !NMI_TIME+2 : STA !MIRROR_TIME+2
+	REP $20 ; set 8-bit accumulator
+RTS
 
 .incrementSword
 	; CHECK FOR DUPLICATE SWORDS
