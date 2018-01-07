@@ -106,6 +106,9 @@ JSL.l IncrementSmallKeys
 org $00F945 ; <- 7945 - Bank00.asm : 8557 (JSL SavePalaceDeaths)
 JSL.l StatTransitionCounter ; we're not bothering to restore the instruction we wrote over
 ;--------------------------------------------------------------------------------
+org $09F443 ; <- 4F443 - module_death.asm : 257 (STA $7EF35C, X)
+JSL.l IncrementFairyRevivalCounter
+;--------------------------------------------------------------------------------
 org $02B6F3 ; <- 136F3 - Bank02.asm : 8600 (LDA.b #$0F : STA $10)
 JSL.l DungeonExitTransition
 ;--------------------------------------------------------------------------------

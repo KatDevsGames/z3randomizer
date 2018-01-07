@@ -115,7 +115,7 @@
 ; s - swordless bosses
 ; c - capacity upgrades
 ;--------------------------------------------------------------------------------
-; $7EF453 - unused
+; $7EF453 - fairy revival counter
 ;--------------------------------------------------------------------------------
 ; $7EF454w[2] - challenge timer (low)
 ;--------------------------------------------------------------------------------
@@ -224,6 +224,18 @@ IncrementSmallKeys:
 	PLX
 RTL
 ;--------------------------------------------------------------------------------
+IncrementSmallKeysNoPrimary:
+	STA $7EF36F ; thing we wrote over, write small key count
+	
+	PHX
+		LDA !LOCK_STATS : BNE +
+			JSL AddInventory_incrementKeyLong
+		+
+		JSL.l UpdateKeys
+		JSL.l HUD_RebuildLong
+	PLX
+RTL
+;--------------------------------------------------------------------------------
 DecrementSmallKeys:
 	STA $7EF36F ; thing we wrote over, write small key count
 	JSL.l UpdateKeys
@@ -244,6 +256,16 @@ IncrementDeathCounter:
 		LDA $7EF36D : BNE + ; link is still alive, skip
 			LDA !DEATH_COUNTER : INC : STA !DEATH_COUNTER
 			;JSL.l DecrementSaveCounter
+		+
+	PLA
+RTL
+;--------------------------------------------------------------------------------
+!FAIRY_COUNTER = "$7EF453"
+IncrementFairyRevivalCounter:
+	STA $7EF35C, X ; thing we wrote over
+	PHA
+		LDA !LOCK_STATS : BNE +
+			LDA !FAIRY_COUNTER : INC : STA !FAIRY_COUNTER
 		+
 	PLA
 RTL
