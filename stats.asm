@@ -213,7 +213,6 @@ RTL
 ;--------------------------------------------------------------------------------
 IncrementSmallKeys:
 	STA $7EF36F ; thing we wrote over, write small key count
-	
 	PHX
 		LDA !LOCK_STATS : BNE +
 			JSL AddInventory_incrementKeyLong
@@ -226,7 +225,6 @@ RTL
 ;--------------------------------------------------------------------------------
 IncrementSmallKeysNoPrimary:
 	STA $7EF36F ; thing we wrote over, write small key count
-	
 	PHX
 		LDA !LOCK_STATS : BNE +
 			JSL AddInventory_incrementKeyLong
