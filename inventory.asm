@@ -381,11 +381,15 @@ AddInventory:
 	+ CPY.b #$17 : BNE + ; Heart Piece
 		JSR .incrementHeartPiece
 		BRL .done
-	+ CPY.b #$18 : !BLT + ; Items 18 - 1A
-	  CPY.b #$1B : !BGE +
+	+ CPY.b #$18 : !BLT + ; Items 18 - 19
+	  CPY.b #$1A : !BGE +
 		JSR .incrementY
 		BRL .done
-	+ CPY.b #$1D : BNE + ; Book of Mudora - leave this above the 1B-1F condition
+	+ CPY.b #$1A : BNE + ; Magic Mirror
+		JSR .stampMirror
+		JSR .incrementY
+		BRL .done
+	+ CPY.b #$1D : BNE + ; Book of Mudora - LEAVE THIS ABOVE THE 1B-1F CONDITION - kkat
 		JSR .incrementY
 		BRL .done
 	+ CPY.b #$1B : !BLT + ; Items 1B - 1F
@@ -458,6 +462,7 @@ AddInventory:
 		JSR .incrementSword
 		BRL .done
 	+ CPY.b #$4A : BNE + ; Flute (Active)
+		JSR .stampFlute
 		JSR .incrementY
 		BRL .done
 	+ CPY.b #$4B : BNE + ; Pegasus Boots
@@ -526,8 +531,11 @@ RTL
 
 .stampSword
 	REP $20 ; set 16-bit accumulator
-	LDA !NMI_TIME : STA !SWORD_TIME
-	LDA !NMI_TIME+2 : STA !SWORD_TIME+2
+	LDA !SWORD_TIME : BNE +
+	LDA !SWORD_TIME+2 : BNE +
+		LDA !NMI_TIME : STA !SWORD_TIME
+		LDA !NMI_TIME+2 : STA !SWORD_TIME+2
+	+
 	REP $20 ; set 8-bit accumulator
 RTS
 
@@ -554,6 +562,7 @@ RTS
 
 .incrementSword
 	; CHECK FOR DUPLICATE SWORDS
+	JSR .stampSword
 	TYA ; load sword item
 	CMP.b #$50 : BNE + : LDA.b #$01 : + ; convert extra master sword to normal one
 	CMP.b #$49 : BNE + : LDA.b #$00 : + ; convert extra fighter sword to normal one
