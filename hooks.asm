@@ -101,7 +101,7 @@ NOP
 ;--------------------------------------------------------------------------------
 ;org $06D18D ; <- 3518D - sprite_absorbable.asm : 274 (LDA $7EF36F : INC A : STA $7EF36F)
 org $06D192 ; <- 35192 - sprite_absorbable.asm : 274 (STA $7EF36F)
-JSL.l IncrementSmallKeys
+JSL.l IncrementSmallKeysNoPrimary
 ;--------------------------------------------------------------------------------
 org $00F945 ; <- 7945 - Bank00.asm : 8557 (JSL SavePalaceDeaths)
 JSL.l StatTransitionCounter ; we're not bothering to restore the instruction we wrote over
