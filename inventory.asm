@@ -530,34 +530,34 @@ RTL
 !MIRROR_TIME = "$7EF464"
 
 .stampSword
-	REP $20 ; set 16-bit accumulator
+	REP #$20 ; set 16-bit accumulator
 	LDA !SWORD_TIME : BNE +
 	LDA !SWORD_TIME+2 : BNE +
 		LDA !NMI_TIME : STA !SWORD_TIME
 		LDA !NMI_TIME+2 : STA !SWORD_TIME+2
 	+
-	REP $20 ; set 8-bit accumulator
+	SEP #$20 ; set 8-bit accumulator
 RTS
 
 .stampBoots
-	REP $20 ; set 16-bit accumulator
+	REP #$20 ; set 16-bit accumulator
 	LDA !NMI_TIME : STA !BOOTS_TIME
 	LDA !NMI_TIME+2 : STA !BOOTS_TIME+2
-	REP $20 ; set 8-bit accumulator
+	SEP #$20 ; set 8-bit accumulator
 RTS
 
 .stampFlute
-	REP $20 ; set 16-bit accumulator
+	REP #$20 ; set 16-bit accumulator
 	LDA !NMI_TIME : STA !FLUTE_TIME
 	LDA !NMI_TIME+2 : STA !FLUTE_TIME+2
-	REP $20 ; set 8-bit accumulator
+	SEP #$20 ; set 8-bit accumulator
 RTS
 
 .stampMirror
-	REP $20 ; set 16-bit accumulator
+	REP #$20 ; set 16-bit accumulator
 	LDA !NMI_TIME : STA !MIRROR_TIME
 	LDA !NMI_TIME+2 : STA !MIRROR_TIME+2
-	REP $20 ; set 8-bit accumulator
+	SEP #$20 ; set 8-bit accumulator
 RTS
 
 .incrementSword
