@@ -370,18 +370,22 @@ AddInventory:
 	+ CPY.b #$06 : BNE + ; Mirror Shield
 		JSR .incrementShield
 		BRL .done
-	+ CPY.b #$07 : !BLT + ; Items 7 - D
+	+ CPY.b #$07 : !BLT + ; Items $07 - $0D
 	  CPY.b #$0E : !BGE +
 		JSR .incrementY
 		BRL .done
-	+ CPY.b #$0F : !BLT + ; Items F - 16
+	+ CPY.b #$14 : BNE + ; Flute (Inactive) - LEAVE THIS ABOVE THE 0F-16 CONDITION - kkat
+		JSR .stampFlute
+		JSR .incrementY
+		BRL .done
+	+ CPY.b #$0F : !BLT + ; Items $0F - $16
 	  CPY.b #$17 : !BGE +
 		JSR .incrementY
 		BRL .done
 	+ CPY.b #$17 : BNE + ; Heart Piece
 		JSR .incrementHeartPiece
 		BRL .done
-	+ CPY.b #$18 : !BLT + ; Items 18 - 19
+	+ CPY.b #$18 : !BLT + ; Items $18 - $19
 	  CPY.b #$1A : !BGE +
 		JSR .incrementY
 		BRL .done
@@ -392,7 +396,7 @@ AddInventory:
 	+ CPY.b #$1D : BNE + ; Book of Mudora - LEAVE THIS ABOVE THE 1B-1F CONDITION - kkat
 		JSR .incrementY
 		BRL .done
-	+ CPY.b #$1B : !BLT + ; Items 1B - 1F
+	+ CPY.b #$1B : !BLT + ; Items $1B - $1F
 	  CPY.b #$20 : !BGE +
 		JSR .incrementA
 		BRL .done
@@ -402,7 +406,7 @@ AddInventory:
 	+ CPY.b #$21 : BNE + ; Bug Net
 		JSR .incrementY
 		BRL .done
-	+ CPY.b #$22 : !BLT + ; Items 22 - 23
+	+ CPY.b #$22 : !BLT + ; Items $22 - $23
 	  CPY.b #$24 : !BGE +
 		JSR .incrementMail
 		BRL .done
@@ -424,7 +428,7 @@ AddInventory:
 	+ CPY.b #$29 : BNE + ; Musoroom
 		JSR .incrementY
 		BRL .done
-	+ CPY.b #$2A : !BLT + ; Items 2A - 2D
+	+ CPY.b #$2A : !BLT + ; Items $2A - $2D
 	  CPY.b #$2E : !BGE +
 		JSR .incrementY
 		BRL .done
@@ -437,11 +441,11 @@ AddInventory:
 	+ CPY.b #$33 : BNE + ; Map
 		JSR .incrementMap
 		BRL .done
-	+ CPY.b #$37 : !BLT + ; Items 37 - 39 - Pendants
+	+ CPY.b #$37 : !BLT + ; Items $37 - $39 - Pendants
 	  CPY.b #$3A : !BGE +
 		JSR .incrementPendant
 		BRL .done
-	+ CPY.b #$3A : !BLT + ; Items 3A - 3B - Bow & Silver Arrows
+	+ CPY.b #$3A : !BLT + ; Items $3A - $3B - Bow & Silver Arrows
 	  CPY.b #$3C : !BGE +
 		JSR .incrementBow
 		BRL .done
@@ -451,7 +455,7 @@ AddInventory:
 	+ CPY.b #$3D : BNE + ; Bottle w/Fairy
 		JSR .incrementY
 		BRL .done
-	+ CPY.b #$3E : !BLT + ; Items 3E - 3F - Heart Containers
+	+ CPY.b #$3E : !BLT + ; Items $3E - $3F - Heart Containers
 	  CPY.b #$40 : !BGE +
 		JSR .incrementHeartContainer
 		BRL .done
@@ -473,14 +477,14 @@ AddInventory:
 		JSR .incrementCapacity
 		JSR .maybeIncrementBombs
 		BRL .done
-	+ CPY.b #$4D : !BLT + ; Items 4D - 4F - Capacity Upgrades
+	+ CPY.b #$4D : !BLT + ; Items $4D - $4F - Capacity Upgrades
 	  CPY.b #$50 : !BGE +
 		JSR .incrementCapacity
 		BRL .done
 	+ CPY.b #$50 : BNE + ; Master Sword (Safe)
 		JSR .incrementSword
 		BRL .done
-	+ CPY.b #$51 : !BLT + ; Items 51 - 54 - Capacity Upgrades
+	+ CPY.b #$51 : !BLT + ; Items $51 - $54 - Capacity Upgrades
 	  CPY.b #$55 : !BGE +
 		JSR .incrementCapacity
 		BRL .done
@@ -499,19 +503,19 @@ AddInventory:
 	+ CPY.b #$61 : BNE + ; Progressive Lifting Glove
 		JSR .incrementA
 		BRL .done
-	+ CPY.b #$70 : !BLT + ; Items 70 - 7F - Free Maps
+	+ CPY.b #$70 : !BLT + ; Items $70 - $7F - Free Maps
 	  CPY.b #$80 : !BGE +
 		JSR .incrementMap
 		BRL .done
-	+ CPY.b #$80 : !BLT + ; Items 80 - 8F - Free Compasses
+	+ CPY.b #$80 : !BLT + ; Items $80 - $8F - Free Compasses
 	  CPY.b #$90 : !BGE +
 		JSR .incrementCompass
 		BRL .done
-	+ CPY.b #$90 : !BLT + ; Items 90 - 9F - Free Big Keys
+	+ CPY.b #$90 : !BLT + ; Items $90 - $9F - Free Big Keys
 	  CPY.b #$A0 : !BGE +
 		JSR .incrementBigKey
 		BRL .done
-	+ CPY.b #$A0 : !BLT + ; Items A0 - AF - Free Small Keys
+	+ CPY.b #$A0 : !BLT + ; Items $A0 - $AF - Free Small Keys
 	  CPY.b #$B0 : !BGE +
 		JSR .incrementKey
 		BRL .done
