@@ -545,22 +545,31 @@ RTS
 
 .stampBoots
 	REP #$20 ; set 16-bit accumulator
-	LDA !NMI_TIME : STA !BOOTS_TIME
-	LDA !NMI_TIME+2 : STA !BOOTS_TIME+2
+	LDA !BOOTS_TIME : BNE +
+	LDA !BOOTS_TIME+2 : BNE +
+		LDA !NMI_TIME : STA !BOOTS_TIME
+		LDA !NMI_TIME+2 : STA !BOOTS_TIME+2
+	+
 	SEP #$20 ; set 8-bit accumulator
 RTS
 
 .stampFlute
 	REP #$20 ; set 16-bit accumulator
-	LDA !NMI_TIME : STA !FLUTE_TIME
-	LDA !NMI_TIME+2 : STA !FLUTE_TIME+2
+	LDA !FLUTE_TIME : BNE +
+	LDA !FLUTE_TIME+2 : BNE +
+		LDA !NMI_TIME : STA !FLUTE_TIME
+		LDA !NMI_TIME+2 : STA !FLUTE_TIME+2
+	+
 	SEP #$20 ; set 8-bit accumulator
 RTS
 
 .stampMirror
 	REP #$20 ; set 16-bit accumulator
-	LDA !NMI_TIME : STA !MIRROR_TIME
-	LDA !NMI_TIME+2 : STA !MIRROR_TIME+2
+	LDA !MIRROR_TIME : BNE +
+	LDA !MIRROR_TIME+2 : BNE +
+		LDA !NMI_TIME : STA !MIRROR_TIME
+		LDA !NMI_TIME+2 : STA !MIRROR_TIME+2
+	+
 	SEP #$20 ; set 8-bit accumulator
 RTS
 
