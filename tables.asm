@@ -724,6 +724,10 @@ org $308172 ; PC 0x180172
 GenericKeys:
 db #$00 ; #00 = Dungeon-Specific Keys (Default) - #$01 = Generic Keys
 ;================================================================================
+org $308173 ; PC 0x180173
+Bob:
+db #$01 ; #00 = Off - #$01 = On (Default)
+;================================================================================
 org $308190 ; PC 0x180190
 TimerStyle:
 db #$00 ; #$00 = Off (Default) - #$01 Countdown - #$02 = Stopwatch

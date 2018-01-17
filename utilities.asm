@@ -424,11 +424,38 @@ DrawDynamicTile:
 	LDA #$7E : PHB : PHA : PLB
 		LDA.b #$01 : STA.l !SKIP_EOR
 		JSL Sprite_DrawMultiple_quantity_preset
+		LDA.b #$00 : STA.l !SKIP_EOR
 	PLB
 	
 	LDA $90 : !ADD.b #$08 : STA $90 ; leave the pointer in the right spot to draw the shadow, if desired
 	LDA $92 : INC #2 : STA $92
 	PLA
+RTL
+;--------------------------------------------------------------------------------
+DrawDynamicTileNoShadow:
+	JSL.l IsNarrowSprite : BCS .narrow
+	
+	.full
+	LDA.b #$01 : STA $06
+	LDA #$04 : JSL.l OAM_AllocateFromRegionC
+	BRA .draw
+	
+	.narrow
+	LDA.b #$02 : STA $06
+	LDA #$08 : JSL.l OAM_AllocateFromRegionC
+	
+	.draw
+	LDA.b #!SPRITE_OAM>>0 : STA $08
+	LDA.b #!SPRITE_OAM>>8 : STA $09
+	STZ $07
+	LDA #$7E : PHB : PHA : PLB
+		LDA.b #$01 : STA.l !SKIP_EOR
+		JSL Sprite_DrawMultiple_quantity_preset
+		LDA Bob : BNE + : LDA.b #$00 : STA.l !SKIP_EOR : + ; Bob fix is conditional
+	PLB
+	
+	LDA $90 : !ADD.b #$08 : STA $90 ; leave the pointer in the right spot to draw the shadow, if desired
+	LDA $92 : INC #2 : STA $92
 RTL
 ;--------------------------------------------------------------------------------
 

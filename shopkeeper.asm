@@ -24,6 +24,38 @@ RTL
 ;--------------------------------------------------------------------------------
 !BIGRAM = "$7EC900";
 ;--------------------------------------------------------------------------------
+!SPRITE_OAM = "$7EC025"
+; A = Tile ID
+macro UploadOAM(dest)
+	PHA : PHP
+
+	PHA
+		REP #$20 ; set 16-bit accumulator
+		LDA.w #$0000 : STA.l !SPRITE_OAM
+		               STA.l !SPRITE_OAM+2
+		LDA.w #$0200 : STA.l !SPRITE_OAM+6
+		SEP #$20 ; set 8-bit accumulator
+		LDA.b <dest> : STA.l !SPRITE_OAM+4
+
+	LDA $01,s
+
+		JSL.l GetSpritePalette
+		STA !SPRITE_OAM+5 : STA !SPRITE_OAM+13
+	PLA
+	JSL.l IsNarrowSprite : BCS .narrow
+
+	BRA .done
+
+	.narrow
+	REP #$20 ; set 16-bit accumulator
+	LDA.w #$0000 : STA.l !SPRITE_OAM+7
+	               STA.l !SPRITE_OAM+14
+	LDA.w #$0800 : STA.l !SPRITE_OAM+9
+	LDA.w #$3400 : STA.l !SPRITE_OAM+11
+
+	.done
+	PLP : PLA
+endmacro
 ;--------------------------------------------------------------------------------
 ; $0A : Digit Offset
 ; $0C-$0D : Value to Display
@@ -51,6 +83,8 @@ macro DrawDigit(value,offset)
 	LDA $0E : !ADD.w #$0008 : STA $0E ; move offset 8px right
 endmacro
 ;--------------------------------------------------------------------------------
+!COLUMN_LOW = "$7F5020"
+!COLUMN_HIGH = "$7F5021"
 DrawPrice:
 	PHX : PHY : PHP
 		LDY.b #$FF
@@ -75,7 +109,16 @@ DrawPrice:
 				
 		SEP #$20 ; set 8-bit accumulator
 		TXA : LSR #3 : STA $06 ; request 1-4 OAM slots
-		ASL #2 : JSL.l OAM_AllocateFromRegionB ; request 4-16 bytes
+		;ASL #2 : JSL.l OAM_AllocateFromRegionB ; request 4-16 bytes
+		ASL #2
+			PHA
+				LDA $22 : CMP !COLUMN_LOW : !BLT .off
+						  CMP !COLUMN_HIGH : !BGE .off
+				.on
+				PLA : JSL.l OAM_AllocateFromRegionB : BRA + ; request 4-16 bytes
+				.off
+				PLA : JSL.l OAM_AllocateFromRegionA ; request 4-16 bytes
+			+
 		TXA : LSR #3
 	PLP : PLY : PLX
 RTS
@@ -87,9 +130,19 @@ dw $0230, $0231, $0202, $0203, $0212, $0213, $0222, $0223, $0232, $0233
 dw 4, 0, -4, -8
 ;--------------------------------------------------------------------------------
 SpritePrep_ShopKeeper:
-	
+
+	;LDA.b #$AF ; Generic small key
+	LDA.b #$4F ; 1/4 magic
+	;%UploadOAM(#$24)
+	JSR.w LoadDynamicTileOAMTable
+	JSL.l GetSpriteID ; convert loot id to sprite id
+	JSL.l GetAnimatedSpriteTile_variable
+	;%UploadOAM(#$C2)
+	;%UploadOAM(#$C4)
 RTL
 ;--------------------------------------------------------------------------------
+!COLUMN_LOW = "$7F5020"
+!COLUMN_HIGH = "$7F5021"
 Sprite_ShopKeeper:
 	PHB : PHK : PLB
 		JSL.l Sprite_PlayerCantPassThrough
@@ -114,7 +167,12 @@ Sprite_ShopKeeper:
 	
 		; Draw Items
 		LDA.b #$03 : STA $06 ; request 3 OAM slots
-		LDA #$0C : JSL.l OAM_AllocateFromRegionA ; request 12 bytes
+		LDA $20 : CMP.b #$60 : !BGE .below
+			.above
+			LDA #$0C : JSL.l OAM_AllocateFromRegionA : BRA + ; request 12 bytes
+			.below
+			LDA #$0C : JSL.l OAM_AllocateFromRegionB ; request 12 bytes
+		+
 		LDA.b #$03 : STA $06 ; request 3 OAM slots
 		STZ $07
 		LDA.b #.oam_items : STA $08
@@ -125,7 +183,16 @@ Sprite_ShopKeeper:
 		
 		
 		LDA.b #$00 : STA.l !SKIP_EOR
+		
+		; $22
+		; 0x48 - Left
+		; 0x60 - Midpoint 1
+		; 0x78 - Center
+		; 0x90 - Midpoint 2
+		; 0xA8 - Right
 				
+		LDA.b #$00 : STA !COLUMN_LOW
+		LDA.b #$60 : STA !COLUMN_HIGH
 		REP #$20 ; set 16-bit accumulator
 		LDA.w #1234 : STA $0C ; set value
 		LDA.w #-40 : STA $0E ; set coordinate
@@ -142,7 +209,9 @@ Sprite_ShopKeeper:
 			ASL #2 : !ADD $90 : STA $90 ; increment oam pointer
 		PLA
 		!ADD $92 : STA $92
-				
+			
+		LDA.b #$60 : STA !COLUMN_LOW
+		LDA.b #$90 : STA !COLUMN_HIGH	
 		REP #$20 ; set 16-bit accumulator
 		LDA.w #5678 : STA $0C ; set value
 		LDA.w #8 : STA $0E ; set coordinate
@@ -159,7 +228,9 @@ Sprite_ShopKeeper:
 			ASL #2 : !ADD $90 : STA $90 ; increment oam pointer
 		PLA
 		!ADD $92 : STA $92
-		
+			
+		LDA.b #$90 : STA !COLUMN_LOW
+		LDA.b #$FF : STA !COLUMN_HIGH	
 		REP #$20 ; set 16-bit accumulator
 		LDA.w #9012 : STA $0C ; set value
 		LDA.w #56 : STA $0E ; set coordinate

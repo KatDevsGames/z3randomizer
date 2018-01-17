@@ -44,7 +44,7 @@ DrawBonkItemGFX:
 	.skipInit
 	
     JSR LoadBonkItem
-	JSL.l DrawDynamicTile
+	JSL.l DrawDynamicTileNoShadow
 	
 	.done
 	PLA

@@ -1042,11 +1042,11 @@ JSL.l GetMagicBatItem
 ;================================================================================
 ; Replacement Shopkeeper
 ;--------------------------------------------------------------------------------
-;org $068BEB ; <- 30BEB - Bank07.asm:1125 - (INC $0BA0, X)
-;JSL.l SpritePrep_ShopKeeper : RTS
+org $068BEB ; <- 30BEB - Bank07.asm:1125 - (INC $0BA0, X)
+JSL.l SpritePrep_ShopKeeper : RTS
 ;--------------------------------------------------------------------------------
-;org $1EEEE3 ; <- F6EE3 - sprite_shopkeeper.asm:7 - (LDA $0E80, X)
-;JSL.l Sprite_ShopKeeper : RTS
+org $1EEEE3 ; <- F6EE3 - sprite_shopkeeper.asm:7 - (LDA $0E80, X)
+JSL.l Sprite_ShopKeeper : RTS
 ;--------------------------------------------------------------------------------
 
 ;================================================================================
