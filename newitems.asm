@@ -348,7 +348,14 @@ AddReceivedItemExpanded:
 {
 	PHA : PHX
 		JSL.l PreItemGet
-		LDA $02D8 : CMP.b #$16 : BNE ++ ; Bottle
+		
+		LDA $02D8 ; Item Value
+		JSR AttemptItemSubstitution
+		STA $02D8
+		
+		JSR IncrementItemCounters
+			
+		CMP.b #$16 : BNE ++ ; Bottle
 			JSR.w CountBottles : CMP.l BottleLimit : !BLT +++
 				LDA.l BottleLimitReplacement : STA $02D8
 			+++ : BRL .done
@@ -780,7 +787,7 @@ Link_ReceiveItemAlternatesExpanded:
 	db -1 ; Master Sword (Safe)
 	db -1,  -1,  -1,  -1 ; +5/+10 Bomb Arrows
 	db -1,  -1,  -1 ; 3x Programmable Item
-	db -1 ; Upgrade-Only Sivler Arrows
+	db -1 ; Upgrade-Only Silver Arrows
 	db -1 ; 1 Rupoor
 	db -1 ; Null Item
 	db -1, -1, -1 ; Red, Blue & Green Clocks
@@ -801,7 +808,10 @@ Link_ReceiveItemAlternatesExpanded:
 ;--------------------------------------------------------------------------------
 .loadAlternate
 	PHB : PHK : PLB
-		LDA Link_ReceiveItemAlternatesExpanded, Y : STA $03
+		;TYA : JSR IncrementItemCounters
+		;LDA Link_ReceiveItemAlternatesExpanded, Y : STA $03
+		TYA : JSR AttemptItemSubstitution : STA $03
+		CPY $03 : BNE + : LDA.b #$FF : STA $03 : +
 	PLB
 RTL
 ;--------------------------------------------------------------------------------
@@ -914,6 +924,49 @@ GetRNGItemMulti:
 	STA !LOCK_IN
 	TAX : XBA : LDA.l RNGMultiItemTable, X
 RTL
+;--------------------------------------------------------------------------------
+IncrementItemCounters:
+	PHX : PHA
+		LDX.b #$00
+		-
+			LDA.l ItemSubstitutionRules, X
+			CMP.b #$FF : BEQ .exit
+			CMP 1,s : BNE .noMatch
+				.match
+					PHX
+						TXA : LSR #2 : TAX
+						LDA !ITEM_LIMIT_COUNTS, X : INC : STA !ITEM_LIMIT_COUNTS, X
+					PLX
+					BEQ .exit
+				.noMatch
+					INX #4
+		BRA -
+	.exit
+	PLA : PLX
+RTS
+;--------------------------------------------------------------------------------
+AttemptItemSubstitution:
+	PHX : PHA
+	LDX.b #$00
+	-
+		LDA.l ItemSubstitutionRules, X
+		CMP.b #$FF : BEQ .exit
+		CMP 1,s : BNE .noMatch
+			.match
+				PHX
+					TXA : LSR #2 : TAX
+					LDA !ITEM_LIMIT_COUNTS, X
+					CMP.l ItemSubstitutionRules+1, X : !BLT +
+						LDA.l ItemSubstitutionRules+2, X : STA 2,s
+					+
+				PLX
+				BEQ .exit
+			.noMatch
+				INX #4
+	BRA -
+.exit
+	PLA : PLX
+RTS
 ;--------------------------------------------------------------------------------
 CountBottles:
 	LDX.b #$00

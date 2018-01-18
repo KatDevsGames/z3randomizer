@@ -26,7 +26,7 @@ org $3FFFFF ; <- 1FFFFF
 db #$00 ; expand file to 2mb
 
 org $1FFFF8 ; <- FFFF8 timestamp rom
-db #$20, #$18, #$01, #$17 ; year/month/day
+db #$20, #$18, #$01, #$18 ; year/month/day
 
 ;================================================================================
 
@@ -65,6 +65,10 @@ db #$20, #$18, #$01, #$17 ; year/month/day
 !FORCE_HEART_SPAWN = "$7F5033";
 !SKIP_HEART_SAVE = "$7F5034";
 
+!INVENTORY_SWAP = "$7EF38C"
+!INVENTORY_SWAP_2 = "$7EF38E"
+
+!ITEM_LIMIT_COUNTS = "$7EF390"
 ;================================================================================
 
 incsrc hooks.asm

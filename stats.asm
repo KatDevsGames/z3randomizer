@@ -189,8 +189,10 @@ DungeonStairsTransition:
 	JSL Dungeon_SaveRoomQuadrantData
 	BRA StatTransitionCounter
 DungeonExitTransition:
-	JSL Player_HaltDashAttackLong
-	LDA.b #$00 : STA $0301 ; stop item dashing
+	LDA $7F50C7 : BEQ + ; ice physics
+		JSL Player_HaltDashAttackLong
+		LDA.b #$00 : STA $0301 ; stop item dashing
+	+
 	LDA.b #$0F : STA $10 ; stop running through the transition
 StatTransitionCounter:
 	PHA : PHP
