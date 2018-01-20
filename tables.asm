@@ -728,6 +728,13 @@ org $308173 ; PC 0x180173
 Bob:
 db #$01 ; #00 = Off - #$01 = On (Default)
 ;================================================================================
+org $308174 ; PC 0x180174
+; Flag to fix Fake Light World/Fake Dark World as caused by leaving the underworld
+; to the other world (As can be caused by EG, Certain underworld clips, or Entance Randomizer).
+; Currently, Fake Worlds triggered by other causes like YBA's Fake Flute, are not affected.
+FixFakeWorld:
+db #$00 ; #00 = Fix Off (Default) - #$01 = Fix On
+;================================================================================
 org $308190 ; PC 0x180190
 TimerStyle:
 db #$00 ; #$00 = Off (Default) - #$01 Countdown - #$02 = Stopwatch
