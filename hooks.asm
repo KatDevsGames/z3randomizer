@@ -342,6 +342,11 @@ PyramidFairy_BRANCH_IOTA:
 org $06C948 ; <- 34948 - sprite_ponds.asm : 961
 PyramidFairy_BRANCH_GAMMA:
 ;--------------------------------------------------------------------------------
+;org $0EF7BD ; <- 777BD - sprite_ponds.asm : 1890 (LDA $7EF340, X : BMI .invalidValue : BNE VWF_ChangeItemTiles)
+;JSL.l ReadInventoryPond
+;org $0EF7E4 ; <- 777E4 - sprite_ponds.asm : 1922 (LDA $7EF340, X : BMI .invalidValue : BNE VWF_ChangeItemTiles)
+;JSL.l ReadInventoryPond
+;--------------------------------------------------------------------------------
 org $1EE16E ; <- F616E - sprite_bomb_shop_entity.asm : 73
 NOP #8 ; fix bomb shop dialog for dwarfless big bomb
 org $068A14 ; <- 30A14 - sprite_prep.asm : 716
@@ -471,6 +476,9 @@ LDA.w BottleListExpanded, X
 
 org $09895C ; 4895C - ancilla_init.asm:1344 (LDA PotionList, X)
 LDA.w PotionListExpanded, X
+;--------------------------------------------------------------------------------
+org $098A36 ; <- 48A36 - ancilla_init.asm:1432 (LDA AddReceiveItem.item_graphics_indices, Y : STA $72)
+LDA AddReceivedItemExpanded_item_graphics_indices, Y
 ;--------------------------------------------------------------------------------
 org $06D1EB ; 351EB - sprite_absorbable.asm:364 (STA $7EF375) ; bugbug commented out until i figure out why it doesn't work
 JSL HandleBombAbsorbtion
@@ -1042,11 +1050,14 @@ JSL.l GetMagicBatItem
 ;================================================================================
 ; Replacement Shopkeeper
 ;--------------------------------------------------------------------------------
-;org $068BEB ; <- 30BEB - Bank07.asm:1125 - (INC $0BA0, X)
-;JSL.l SpritePrep_ShopKeeper : RTS
+org $068BEB ; <- 30BEB - Bank07.asm:1125 - (INC $0BA0, X)
+JSL.l SpritePrep_ShopKeeper : RTS
 ;--------------------------------------------------------------------------------
-;org $1EEEE3 ; <- F6EE3 - sprite_shopkeeper.asm:7 - (LDA $0E80, X)
-;JSL.l Sprite_ShopKeeper : RTS
+org $1EEEE3 ; <- F6EE3 - sprite_shopkeeper.asm:7 - (LDA $0E80, X)
+JSL.l Sprite_ShopKeeper : RTS
+;--------------------------------------------------------------------------------
+org $00D55E ; <- 555E - Bank00.asm:3491 (LDX.w #$2D40)
+JSL.l LoadModifiedTileBufferAddress : NOP #2
 ;--------------------------------------------------------------------------------
 
 ;================================================================================

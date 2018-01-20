@@ -460,6 +460,23 @@ RTL
 ;--------------------------------------------------------------------------------
 
 ;--------------------------------------------------------------------------------
+!TILE_UPLOAD_OFFSET_OVERRIDE = "$7F5042"
+LoadModifiedTileBufferAddress:
+	PHA
+	LDA !TILE_UPLOAD_OFFSET_OVERRIDE : BEQ +
+		TAX
+    	LDY.w #$0002
+		LDA.w #$0000 : STA !TILE_UPLOAD_OFFSET_OVERRIDE
+		BRA .done
+	+
+    LDX.w #$2D40
+    LDY.w #$0002
+	.done
+	PLA
+RTL
+;--------------------------------------------------------------------------------
+
+;--------------------------------------------------------------------------------
 ; Sprite_IsOnscreen
 ; in:	X - Sprite Slot
 ; out:	Carry - 1 = On Screen, 0 = Off Screen

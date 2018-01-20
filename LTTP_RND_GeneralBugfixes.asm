@@ -26,7 +26,7 @@ org $3FFFFF ; <- 1FFFFF
 db #$00 ; expand file to 2mb
 
 org $1FFFF8 ; <- FFFF8 timestamp rom
-db #$20, #$18, #$01, #$18 ; year/month/day
+db #$20, #$18, #$01, #$19 ; year/month/day
 
 ;================================================================================
 
@@ -61,6 +61,8 @@ db #$20, #$18, #$01, #$18 ; year/month/day
 
 !REDRAW = "$7F5000"
 !GANON_WARP_CHAIN = "$7F5032";
+
+!TILE_UPLOAD_BUFFER = "$7EA180";
 
 !FORCE_HEART_SPAWN = "$7F5033";
 !SKIP_HEART_SAVE = "$7F5034";

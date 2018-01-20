@@ -1267,7 +1267,10 @@ dw #9999 ; Rupee Limit
 ; $7F503E - Stats Item Total
 ; $7F503F - Bonk Repeat
 ; $7F5040 - Free Item Dialog Temporary
-; $7F5041 - $7F507E - Unused
+; $7F5041 - Unused
+; $7F5042 - Tile Upload Offset Override (Low)
+; $7F5043 - Tile Upload Offset Override (High)
+; $7F5044 - $7F507E - Unused
 ; $7F507E - Clock Status
 ; $7F507F - Always Zero
 ; $7F5080 - $7F5083 - Clock Hours

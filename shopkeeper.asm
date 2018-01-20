@@ -129,17 +129,92 @@ dw $0230, $0231, $0202, $0203, $0212, $0213, $0222, $0223, $0232, $0233
 .digit_offsets
 dw 4, 0, -4, -8
 ;--------------------------------------------------------------------------------
+!TILE_UPLOAD_OFFSET_OVERRIDE = "$7F5042"
+!FREE_TILE_BUFFER = "#$1180"
 SpritePrep_ShopKeeper:
-
-	;LDA.b #$AF ; Generic small key
-	LDA.b #$4F ; 1/4 magic
-	;%UploadOAM(#$24)
-	JSR.w LoadDynamicTileOAMTable
+	REP #$20 ; set 16-bit accumulator
+	LDA.w !FREE_TILE_BUFFER : STA !TILE_UPLOAD_OFFSET_OVERRIDE
+	SEP #$20 ; set 8-bit accumulator
+	LDA.b #$32 ; item
 	JSL.l GetSpriteID ; convert loot id to sprite id
 	JSL.l GetAnimatedSpriteTile_variable
-	;%UploadOAM(#$C2)
-	;%UploadOAM(#$C4)
+	
+
+	REP #$20 ; set 16-bit accumulator
+	LDA.w !FREE_TILE_BUFFER+$80 : STA !TILE_UPLOAD_OFFSET_OVERRIDE
+	SEP #$20 ; set 8-bit accumulator
+	LDA.b #$51 ; item
+	JSL.l GetSpriteID ; convert loot id to sprite id
+	JSL.l GetAnimatedSpriteTile_variable
+	
+
+	REP #$20 ; set 16-bit accumulator
+	LDA.w !FREE_TILE_BUFFER+$100 : STA !TILE_UPLOAD_OFFSET_OVERRIDE
+	SEP #$20 ; set 8-bit accumulator
+	LDA.b #$6C ; item
+	JSL.l GetSpriteID ; convert loot id to sprite id
+	JSL.l GetAnimatedSpriteTile_variable
+	STA $FFFFFF
+	LDA #$80 : STA $2100
+	JSR UploadVRAMTiles
+	LDA #$0F : STA $2100
 RTL
+;--------------------------------------------------------------------------------
+UploadVRAMTiles:
+		LDA $4300 : PHA ; preserve DMA parameters
+		LDA $4301 : PHA ; preserve DMA parameters
+		LDA $4302 : PHA ; preserve DMA parameters
+		LDA $4303 : PHA ; preserve DMA parameters
+		LDA $4304 : PHA ; preserve DMA parameters
+		LDA $4305 : PHA ; preserve DMA parameters
+		LDA $4306 : PHA ; preserve DMA parameters
+		;--------------------------------------------------------------------------------
+		LDA #$01 : STA $4300 ; set DMA transfer direction A -> B, bus A auto increment, double-byte mode
+		LDA #$18 : STA $4301 ; set bus B destination to VRAM register
+		LDA #$80 : STA $2115 ; set VRAM to increment by 2 on high register write
+		
+		LDA #$80 : STA $4302 ; set bus A source address to tile buffer
+		LDA #$A1 : STA $4303
+		LDA #$7E : STA $4304
+		
+		LDA #$40 : STA $4305 : STZ $4306 ; set transfer size to 0x40
+		STZ $2116 ; set WRAM register source address
+		LDA #$5C : STA $2117
+		LDA #$01 : STA $420B ; begin DMA transfer
+		
+		LDA #$40 : STA $4305 : STZ $4306 ; set transfer size to 0x40
+		STZ $2116 ; set WRAM register source address
+		LDA #$5D : STA $2117
+		LDA #$01 : STA $420B ; begin DMA transfer
+		
+		LDA #$40 : STA $4305 : STZ $4306 ; set transfer size to 0x40
+		LDA #$20 : STA $2116 ; set WRAM register source address
+		LDA #$5C : STA $2117
+		LDA #$01 : STA $420B ; begin DMA transfer
+		
+		LDA #$40 : STA $4305 : STZ $4306 ; set transfer size to 0x40
+		LDA #$20 : STA $2116 ; set WRAM register source address
+		LDA #$5D : STA $2117
+		LDA #$01 : STA $420B ; begin DMA transfer
+		
+		LDA #$40 : STA $4305 : STZ $4306 ; set transfer size to 0x40
+		LDA #$40 : STA $2116 ; set WRAM register source address
+		LDA #$5C : STA $2117
+		LDA #$01 : STA $420B ; begin DMA transfer
+		
+		LDA #$40 : STA $4305 : STZ $4306 ; set transfer size to 0x40
+		LDA #$40 : STA $2116 ; set WRAM register source address
+		LDA #$5D : STA $2117
+		LDA #$01 : STA $420B ; begin DMA transfer
+		;--------------------------------------------------------------------------------
+		PLA : STA $4306 ; restore DMA parameters
+		PLA : STA $4305 ; restore DMA parameters
+		PLA : STA $4304 ; restore DMA parameters
+		PLA : STA $4303 ; restore DMA parameters
+		PLA : STA $4302 ; restore DMA parameters
+		PLA : STA $4301 ; restore DMA parameters
+		PLA : STA $4300 ; restore DMA parameters
+RTS
 ;--------------------------------------------------------------------------------
 !COLUMN_LOW = "$7F5020"
 !COLUMN_HIGH = "$7F5021"
@@ -194,7 +269,7 @@ Sprite_ShopKeeper:
 		LDA.b #$00 : STA !COLUMN_LOW
 		LDA.b #$60 : STA !COLUMN_HIGH
 		REP #$20 ; set 16-bit accumulator
-		LDA.w #1234 : STA $0C ; set value
+		LDA.w #80 : STA $0C ; set value
 		LDA.w #-40 : STA $0E ; set coordinate
 		JSR.w DrawPrice
 		SEP #$20 : STA $06 ; set 8-bit accumulator & store result
@@ -213,7 +288,7 @@ Sprite_ShopKeeper:
 		LDA.b #$60 : STA !COLUMN_LOW
 		LDA.b #$90 : STA !COLUMN_HIGH	
 		REP #$20 ; set 16-bit accumulator
-		LDA.w #5678 : STA $0C ; set value
+		LDA.w #100 : STA $0C ; set value
 		LDA.w #8 : STA $0E ; set coordinate
 		JSR.w DrawPrice
 		SEP #$20 : STA $06 ; set 8-bit accumulator & store result
@@ -232,7 +307,7 @@ Sprite_ShopKeeper:
 		LDA.b #$90 : STA !COLUMN_LOW
 		LDA.b #$FF : STA !COLUMN_HIGH	
 		REP #$20 ; set 16-bit accumulator
-		LDA.w #9012 : STA $0C ; set value
+		LDA.w #300 : STA $0C ; set value
 		LDA.w #56 : STA $0E ; set coordinate
 		JSR.w DrawPrice
 		SEP #$20 : STA $06 ; set 8-bit accumulator & store result
@@ -259,8 +334,8 @@ dw 0, 0 : db $10, $4C, $00, $02
 ;--------------------------------------------------------------------------------
 .oam_items
 dw -40, 40 : db $C0, $08, $00, $02
-dw 8, 40 : db $C2, $04, $00, $02
-dw 56, 40 : db $C4, $02, $00, $02
+dw 8, 40 : db $C2, $08, $00, $02
+dw 56, 40 : db $C4, $08, $00, $02
 ;--------------------------------------------------------------------------------
 .oam_prices
 dw -48, 56 : db $30, $02, $00, $00
