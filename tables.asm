@@ -1270,7 +1270,9 @@ dw #9999 ; Rupee Limit
 ; $7F5041 - Unused
 ; $7F5042 - Tile Upload Offset Override (Low)
 ; $7F5043 - Tile Upload Offset Override (High)
-; $7F5044 - $7F507E - Unused
+; $7F5044 - $7F504F - Unused
+; $7F5050 - $7F505F - Shop Block
+; $7F5060 - $7F507E - Unused
 ; $7F507E - Clock Status
 ; $7F507F - Always Zero
 ; $7F5080 - $7F5083 - Clock Hours
@@ -1354,5 +1356,19 @@ org $30C000 ; PC 0x184000 - 0x184007
 ItemSubstitutionRules:
 ;db [item][quantity][substitution][pad]
 db $12, $01, $35, $FF
+db $FF, $FF, $FF, $FF
+;================================================================================
+;shop_config - t--- --qq
+; t - 0=Shop - 1=TakeAny
+; qq - # of items for sale
+org $30C800 ; PC 0x184800 - 0x184FFF
+ShopTable:
+;db [id][roomID-low][roomID-high][entranceID-low][entranceID-high][shop_config][pad][pad]
+db $FF, $12, $01, $58, $00, $03, $00, $00
+ShopContentsTable:
+;db [id][item][price-low][price-high]
+db $FF, $AF, $50, $00
+db $FF, $27, $0A, $00
+db $FF, $12, $F4, $01
 db $FF, $FF, $FF, $FF
 ;================================================================================

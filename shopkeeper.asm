@@ -123,42 +123,103 @@ DrawPrice:
 	PLP : PLY : PLX
 RTS
 ;--------------------------------------------------------------------------------
+!TILE_UPLOAD_OFFSET_OVERRIDE = "$7F5042"
+!FREE_TILE_BUFFER = "#$1180"
+!SHOP_ID = "$7F5050"
+!SHOP_TYPE = "$7F5051"
+!SHOP_INVENTORY = "$7F5051"
+!SCRATCH_CAPACITY = "$7F5020"
+;--------------------------------------------------------------------------------
 .digit_properties
 dw $0230, $0231, $0202, $0203, $0212, $0213, $0222, $0223, $0232, $0233
 ;--------------------------------------------------------------------------------
 .digit_offsets
 dw 4, 0, -4, -8
 ;--------------------------------------------------------------------------------
-!TILE_UPLOAD_OFFSET_OVERRIDE = "$7F5042"
-!FREE_TILE_BUFFER = "#$1180"
 SpritePrep_ShopKeeper:
-	REP #$20 ; set 16-bit accumulator
-	LDA.w !FREE_TILE_BUFFER : STA !TILE_UPLOAD_OFFSET_OVERRIDE
-	SEP #$20 ; set 8-bit accumulator
-	LDA.b #$32 ; item
-	JSL.l GetSpriteID ; convert loot id to sprite id
-	JSL.l GetAnimatedSpriteTile_variable
+	PHX : PHY : PHP
+	REP #$30 ; set 16-bit accumulator & index registers
+	;LDA $A0
+	LDX.w #$0000
+	-
+		LDA ShopTable+1, X : CMP $A0 : BNE +
+		LDA ShopTable+3, X : CMP $010E : BNE +
+			SEP #$20 ; set 8-bit accumulator
+			LDA ShopTable, X : STA !SHOP_ID
+			LDA ShopTable+5, X : STA !SHOP_TYPE
+			AND.b #$03 : STA !SCRATCH_CAPACITY
+			ASL : !ADD !SCRATCH_CAPACITY : STA !SCRATCH_CAPACITY
+			BRA .success
+		+
+		TXA : !ADD.w #$0008 : TAX
+		LDA ShopTable, X : AND.w #$00FF : CMP.w #$00FF : BEQ .fail
+	BRA -
 	
-
-	REP #$20 ; set 16-bit accumulator
-	LDA.w !FREE_TILE_BUFFER+$80 : STA !TILE_UPLOAD_OFFSET_OVERRIDE
+	.fail
 	SEP #$20 ; set 8-bit accumulator
-	LDA.b #$51 ; item
-	JSL.l GetSpriteID ; convert loot id to sprite id
-	JSL.l GetAnimatedSpriteTile_variable
+	LDA.b #$FF : STA !SHOP_TYPE ; $FF = error condition
+	BRA .done
 	
-
-	REP #$20 ; set 16-bit accumulator
-	LDA.w !FREE_TILE_BUFFER+$100 : STA !TILE_UPLOAD_OFFSET_OVERRIDE
+	.success
 	SEP #$20 ; set 8-bit accumulator
-	LDA.b #$6C ; item
-	JSL.l GetSpriteID ; convert loot id to sprite id
-	JSL.l GetAnimatedSpriteTile_variable
-	STA $FFFFFF
+	
+	LDX.w #$0000
+	LDY.w #$0000
+	-
+		TYA : CMP !SCRATCH_CAPACITY : !BGE .stop
+		LDA.l ShopContentsTable+1, X : CMP.b #$FF : BEQ .stop
+		LDA.l ShopContentsTable, X : CMP !SHOP_ID : BNE +
+			LDA.l ShopContentsTable+1, X : PHX : TYX : STA.l !SHOP_INVENTORY, X : PLX
+			LDA.l ShopContentsTable+2, X : PHX : TYX : STA.l !SHOP_INVENTORY+1, X : PLX
+			LDA.l ShopContentsTable+3, X : PHX : TYX : STA.l !SHOP_INVENTORY+2, X : PLX
+			PHX : PHY
+				LDA.l ShopContentsTable+1, X : TAY
+				REP #$20 ; set 16-bit accumulator
+				LDA 1,s : TAX : LDA.l .tile_offsets, X : TAX
+				JSR LoadTile
+			PLY : PLX
+			INX #4
+			INY #3
+		+
+	BRA -
+	.stop
+	
 	LDA #$80 : STA $2100
 	JSR UploadVRAMTiles
 	LDA #$0F : STA $2100
+
+	.done
+	PLP : PLY : PLX
 RTL
+.tile_offsets
+dw $0000 : db $00
+dw $0080 : db $00
+dw $0100 : db $00
+;--------------------------------------------------------------------------------
+; X - Tile Buffer Offset
+; Y - Item ID
+LoadTile:
+	TXA : !ADD.w !FREE_TILE_BUFFER : STA !TILE_UPLOAD_OFFSET_OVERRIDE ; load offset from X
+	SEP #$30 ; set 8-bit accumulator & index registers
+	TYA ; load item ID from Y
+	JSL.l GetSpriteID ; convert loot id to sprite id
+	JSL.l GetAnimatedSpriteTile_variable
+	REP #$10 ; set 16-bit index registers
+RTS
+;--------------------------------------------------------------------------------
+;shop_config - t--- --qq
+; t - 0=Shop - 1=TakeAny
+; qq - # of items for sale
+;org $30C800 ; PC 0x184800 - 0x184FFF
+;ShopTable:
+;;db [id][roomID-low][roomID-high][entranceID-low][entranceID-high][shop_config][pad][pad]
+;db $FF, $12, $01, $58, $00, $FF, $00, $00
+;ShopContentsTable:
+;;db [id][item][price-low][price-high]
+;db $FF, $AF, $50, $00
+;db $FF, $27, $0A, $00
+;db $FF, $12, $F4, $01
+;db $FF, $FF, $FF, $FF
 ;--------------------------------------------------------------------------------
 UploadVRAMTiles:
 		LDA $4300 : PHA ; preserve DMA parameters
@@ -288,7 +349,7 @@ Sprite_ShopKeeper:
 		LDA.b #$60 : STA !COLUMN_LOW
 		LDA.b #$90 : STA !COLUMN_HIGH	
 		REP #$20 ; set 16-bit accumulator
-		LDA.w #100 : STA $0C ; set value
+		LDA.w #10 : STA $0C ; set value
 		LDA.w #8 : STA $0E ; set coordinate
 		JSR.w DrawPrice
 		SEP #$20 : STA $06 ; set 8-bit accumulator & store result
@@ -307,7 +368,7 @@ Sprite_ShopKeeper:
 		LDA.b #$90 : STA !COLUMN_LOW
 		LDA.b #$FF : STA !COLUMN_HIGH	
 		REP #$20 ; set 16-bit accumulator
-		LDA.w #300 : STA $0C ; set value
+		LDA.w #500 : STA $0C ; set value
 		LDA.w #56 : STA $0E ; set coordinate
 		JSR.w DrawPrice
 		SEP #$20 : STA $06 ; set 8-bit accumulator & store result
@@ -334,8 +395,8 @@ dw 0, 0 : db $10, $4C, $00, $02
 ;--------------------------------------------------------------------------------
 .oam_items
 dw -40, 40 : db $C0, $08, $00, $02
-dw 8, 40 : db $C2, $08, $00, $02
-dw 56, 40 : db $C4, $08, $00, $02
+dw 8, 40 : db $C2, $04, $00, $02
+dw 56, 40 : db $C4, $02, $00, $02
 ;--------------------------------------------------------------------------------
 .oam_prices
 dw -48, 56 : db $30, $02, $00, $00
