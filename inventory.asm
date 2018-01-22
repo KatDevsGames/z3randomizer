@@ -830,6 +830,7 @@ RTL
 ;--------------------------------------------------------------------------------
 ClearOWKeys:
 	PHA
+	JSL.l FakeWorldFix
 	LDA.l GenericKeys : BEQ +
 		PLA : LDA $7EF38B : STA $7EF36F
 		RTL
