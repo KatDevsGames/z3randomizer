@@ -15,7 +15,9 @@ DrawDungeonCompassCounts:
 		++
 		
 		LDA $040C
-	    CMP.w #$0000 : BNE + ; Sewer Passage
+	    CMP.w #$0000 : BNE + ; Sewer Passage, use Hyrule Castle counts
+			LDA $7EF434 : AND.w #$00F0 : LSR #4
+			BRL ++
 	    + : CMP.w #$0002 : BNE + ; Hyrule Castle
 			LDA $7EF434 : AND.w #$00F0 : LSR #4
 			BRL ++
@@ -65,7 +67,9 @@ DrawDungeonCompassCounts:
 		LDA.w #$2830 : STA $7EC798
 		
 		LDA $040C
-	    CMP.w #$0000 : BNE + ; Sewer Passage
+	    CMP.w #$0000 : BNE + ; Sewer Passage, use Hyrule Castle counts
+			LDA.w #$0008
+			BRL ++
 	    + : CMP.w #$0002 : BNE + ; Hyrule Castle
 			LDA.w #$0008
 			BRL ++
@@ -121,7 +125,7 @@ RTL
 }
 ;--------------------------------------------------------------------------------
 ; $7EF434 - hhhhdddd - item locations checked
-; h - hyrule castle
+; h - hyrule castle/sewers
 ; d - palace of darkness
 ;--------------------------------------------------------------------------------
 ; $7EF435 - dddhhhaa - item locations checked

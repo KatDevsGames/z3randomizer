@@ -284,7 +284,7 @@ DrawHUDDungeonItems:
 		LDA.w #$2810 : STA $1684 ; small keys icon
 		SEP #$20 ; set 8-bit accumulator
 		; Small Keys
-		LDA.b #$16 : !ADD $7EF37C : STA $1686 : LDA.b #$28 : ADC #$00 : sta $1686+1 ; sewers
+		LDA.b #$16 : !ADD $7EF37D : STA $1686 : LDA.b #$28 : ADC #$00 : sta $1686+1 ; Hyrule Castle
 		LDA.b #$16 : !ADD $7EF380 : STA $1688 : LDA.b #$28 : ADC #$00 : sta $1688+1 ; Agahnims Tower
 
 		LDA.b #$16 : !ADD $7EF37E : STA $168C : LDA.b #$28 : ADC #$00 : sta $168C+1 ; Eastern
@@ -307,7 +307,7 @@ DrawHUDDungeonItems:
 	; Big Keys
 	LDA HUDDungeonItems : AND.w #$0002 : BNE + : BRL ++ : +
 		LDA.w #$2811 : STA $16C4 ; big key icon
-		LDA $7EF367 : AND.w #$0080 : BEQ + ; sewers
+		LDA $7EF367 : AND.w #$0040 : BEQ + ; Hyrule Castle
 			LDA.w #$2826 : STA $16C6
 		+
 		LDA $7EF367 : AND.w #$0008 : BEQ + ; Agahnims Tower
@@ -354,7 +354,7 @@ DrawHUDDungeonItems:
 	; Maps
 	LDA HUDDungeonItems : AND.w #$0004 : BNE + : BRL ++ : +
 		LDA.w #$2821 : STA $1684 ; map icon
-		LDA $7EF369 : AND.w #$0080 : BEQ + ; sewers
+		LDA $7EF369 : AND.w #$0040 : BEQ + ; Hyrule Castle
 			LDA.w #$2826 : STA $1686
 		+
 		LDA $7EF369 : AND.w #$0008 : BEQ + ; Agahnims Tower
@@ -398,7 +398,7 @@ DrawHUDDungeonItems:
 	; Compasses
 	LDA HUDDungeonItems : AND.w #$0008 : BNE + : BRL ++ : +
 		LDA.w #$2C20 : STA $16C4 ; compass icon
-		LDA $7EF365 : AND.w #$0080 : BEQ + ; sewers
+		LDA $7EF365 : AND.w #$0040 : BEQ + ; Hyrule Castle
 			LDA.w #$2C26 : STA $16C6
 		+
 		LDA $7EF365 : AND.w #$0008 : BEQ + ; Agahnims Tower
