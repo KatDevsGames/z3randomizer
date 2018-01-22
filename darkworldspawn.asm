@@ -61,6 +61,12 @@ SetDeathWorldChecked:
 	PLA
 RTL
 ;--------------------------------------------------------------------------------
+FakeWorldFix:
+	LDA FixFakeWorld : BEQ +
+		LDA $8A : AND.b #$40 : STA $7EF3CA
+	+
+RTL
+;--------------------------------------------------------------------------------
 MasterSwordFollowerClear:
 	LDA $7EF3CC
 	CMP #$0E : BEQ .clear ; clear master sword follower

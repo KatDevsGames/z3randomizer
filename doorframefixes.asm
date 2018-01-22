@@ -3,17 +3,12 @@
 ;================================================================================
 
 ;--------------------------------------------------------------------------------
-; StoreLastEntranceID
+; StoreLastOverworldDoorID
 ;--------------------------------------------------------------------------------
-StoreLastEntranceID:
-	CPX #$003a : BCC .noStore
-	TXA : SBC #$3a
-	BRA .done
-	.noStore
-		LDA #$00
-	.done
-		STA $7F5099
-		LDA $1BBB73, X : STA $010E		
+StoreLastOverworldDoorID:
+	TXA : INC
+	STA $7F5099
+	LDA $1BBB73, X : STA $010E
 RTL
 ;--------------------------------------------------------------------------------
 
@@ -24,13 +19,12 @@ CacheDoorFrameData:
 	LDA $7F5099 : BEQ .originalBehaviour
 	DEC : ASL : TAX
 	LDA EntranceDoorFrameTable, X : STA $0696
+	LDA EntranceAltDoorFrameTable, X : STA $0698
 	BRA .done
 	.originalBehaviour
 		LDA $D724, X : STA $0696
-	.done
 		STZ $0698
-		LDA #$00
-		STA $7F5099
+	.done
 RTL
 ;--------------------------------------------------------------------------------
 
@@ -39,6 +33,7 @@ RTL
 ;--------------------------------------------------------------------------------
 WalkDownIntoTavern:
 	LDA $7F5099
-	CMP #$08
+	; tavern door has index 0x42 (saved off value is incremented by one)
+	CMP #$43
 RTL
 ;--------------------------------------------------------------------------------
