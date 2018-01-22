@@ -449,7 +449,7 @@ RequestItemOAM:
 		STA $06 ; request A OAM slots
 		LDA $20 : CMP.b #$60 : !BGE .below
 			.above
-			LDA 1,s : ASL #2 : JSL.l OAM_AllocateFromRegionA : BRA + ; request 4A bytes
+			LDA 1,s : ASL #2 : JSL.l OAM_AllocateFromRegionA ; request 4A bytes
 			BRA +
 			.below
 			LDA 1,s : ASL #2 : JSL.l OAM_AllocateFromRegionB ; request 4A bytes
