@@ -26,7 +26,7 @@ org $3FFFFF ; <- 1FFFFF
 db #$00 ; expand file to 2mb
 
 org $1FFFF8 ; <- FFFF8 timestamp rom
-db #$20, #$18, #$01, #$20 ; year/month/day
+db #$20, #$18, #$01, #$21 ; year/month/day
 
 ;================================================================================
 
@@ -140,6 +140,10 @@ warnpc $1CF356
 
 org $A18000 ; static mapping area
 incsrc framehook.asm
+warnpc $A18800
+
+org $A18800 ; static mapping area
+incsrc zsnes.asm
 warnpc $A19000
 
 org $A1FF00 ; static mapping area

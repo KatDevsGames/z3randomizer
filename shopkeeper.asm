@@ -127,8 +127,9 @@ RTS
 !FREE_TILE_BUFFER = "#$1180"
 !SHOP_ID = "$7F5050"
 !SHOP_TYPE = "$7F5051"
-!SHOP_INVENTORY = "$7F5051"
+!SHOP_INVENTORY = "$7F5052"
 !SCRATCH_CAPACITY = "$7F5020"
+!SCRATCH_TEMP_X = "$7F5021"
 ;--------------------------------------------------------------------------------
 .digit_properties
 dw $0230, $0231, $0202, $0203, $0212, $0213, $0222, $0223, $0232, $0233
@@ -302,21 +303,7 @@ Sprite_ShopKeeper:
 		LDA $92 : INC #2 : STA $92
 	
 		; Draw Items
-		LDA.b #$03 : STA $06 ; request 3 OAM slots
-		LDA $20 : CMP.b #$60 : !BGE .below
-			.above
-			LDA #$0C : JSL.l OAM_AllocateFromRegionA : BRA + ; request 12 bytes
-			.below
-			LDA #$0C : JSL.l OAM_AllocateFromRegionB ; request 12 bytes
-		+
-		LDA.b #$03 : STA $06 ; request 3 OAM slots
-		STZ $07
-		LDA.b #.oam_items : STA $08
-		LDA.b #.oam_items>>8 : STA $09
-		JSL.l Sprite_DrawMultiple_quantity_preset
-		LDA $90 : !ADD.b #$04*3 : STA $90 ; increment oam pointer
-		LDA $92 : INC #3 : STA $92
-		
+		JSR.w Shopkeeper_DrawItems
 		
 		LDA.b #$00 : STA.l !SKIP_EOR
 		
@@ -393,24 +380,122 @@ dw 0, 0 : db $10, $0C, $00, $02
 dw 0, -8 : db $00, $0C, $00, $02
 dw 0, 0 : db $10, $4C, $00, $02
 ;--------------------------------------------------------------------------------
-.oam_items
-dw -40, 40 : db $C0, $08, $00, $02
-dw 8, 40 : db $C2, $04, $00, $02
-dw 56, 40 : db $C4, $02, $00, $02
+;!SHOP_TYPE = "$7F5051"
+;!SHOP_INVENTORY = "$7F5052"
+!SPRITE_OAM = "$7EC025"
+Shopkeeper_DrawItems:
+	PHB : PHK : PLB
+	PHX : PHY
+	TXA : STA !SCRATCH_TEMP_X;
+	LDX.b #$00
+	LDY.b #$00
+	LDA !SHOP_TYPE : AND.b #$03
+	CMP.b #$03 : BNE +
+		JSR.w Shopkeeper_DrawNextItem : BRA ++
+	+ CMP.b #$02 : BNE + : ++
+		JSR.w Shopkeeper_DrawNextItem : BRA ++
+	+ CMP.b #$01 : BNE + : ++
+		JSR.w Shopkeeper_DrawNextItem
+	+
+	PLY : PLX
+	PLB
+RTS
+
 ;--------------------------------------------------------------------------------
-.oam_prices
-dw -48, 56 : db $30, $02, $00, $00
-dw -40, 56 : db $31, $02, $00, $00
-dw -32, 56 : db $02, $02, $00, $00
-dw -24, 56 : db $03, $02, $00, $00
+Shopkeeper_DrawNextItem:
+	PHY
+	TYA : ASL #2 : TAY
+	REP #$20 ; set 16-bit accumulator
+	LDA.w .item_offsets, Y : STA.l !SPRITE_OAM
+	LDA.w .item_offsets+2, Y : STA.l !SPRITE_OAM+2
+	SEP #$20 ; set 8-bit accumulator
+	PLY
 
-dw 0, 56 : db $12, $02, $00, $00
-dw 8, 56 : db $13, $02, $00, $00
-dw 16, 56 : db $22, $02, $00, $00
-dw 24, 56 : db $23, $02, $00, $00
+	LDA.w .tile_indices, Y ; get item gfx index
+	STA.l !SPRITE_OAM+4
 
-dw 48, 56 : db $32, $02, $00, $00
-dw 56, 56 : db $33, $02, $00, $00
-dw 64, 56 : db $30, $02, $00, $00
-dw 72, 56 : db $31, $02, $00, $00
+	LDA.l !SHOP_INVENTORY, X ; get item palette
+	JSL.l GetSpritePalette : STA.l !SPRITE_OAM+5
+
+	LDA.b #$00 : STA.l !SPRITE_OAM+6
+
+	LDA.l !SHOP_INVENTORY, X ; get item palette
+	JSL.l IsNarrowSprite : BCS .narrow
+	.full
+		LDA.b #$02
+		STA.l !SPRITE_OAM+7
+		LDA.b #$01
+		BRA ++
+	.narrow
+		LDA.b #$00
+		STA.l !SPRITE_OAM+7
+		JSR.w PrepNarrowLower
+		LDA.b #$02
+	++
+	PHX : PHA : LDA !SCRATCH_TEMP_X : TAX : PLA : JSR.w RequestItemOAM : PLX
+	INY
+	INX #3
+RTS
+;--------------------------------------------------------------------------------
+.item_offsets
+dw -40, 40
+dw 8, 40
+dw 56, 40
+.tile_indices
+db $C0, $C2, $C4
+;--------------------------------------------------------------------------------
+RequestItemOAM:
+	PHX : PHY : PHA
+		STA $06 ; request A OAM slots
+		LDA $20 : CMP.b #$60 : !BGE .below
+			.above
+			LDA 1,s : ASL #2 : JSL.l OAM_AllocateFromRegionA : BRA + ; request 4A bytes
+			BRA +
+			.below
+			LDA 1,s : ASL #2 : JSL.l OAM_AllocateFromRegionB ; request 4A bytes
+		+
+		LDA 1,s  : STA $06 ; request 3 OAM slots
+		STZ $07
+		LDA.b #!SPRITE_OAM : STA $08
+		LDA.b #!SPRITE_OAM>>8 : STA $09
+		LDA #$7E : PHB : PHA : PLB
+			JSL Sprite_DrawMultiple_quantity_preset
+		PLB
+		LDA 1,s : ASL #2 : !ADD $90 : STA $90 ; increment oam pointer
+		LDA $92 : !ADD 1,s : STA $92
+	PLA : PLY : PLX
+RTS
+;--------------------------------------------------------------------------------
+PrepNarrowLower:
+	PHX
+	LDX.b #$00
+		REP #$20 ; set 16-bit accumulator
+		LDA !SPRITE_OAM, X : !ADD.w #$0004 : STA !SPRITE_OAM, X : STA !SPRITE_OAM+8, X
+		LDA !SPRITE_OAM+2, X : !ADD.w #$0008 : STA !SPRITE_OAM+10, X
+		LDA !SPRITE_OAM+4, X : !ADD.w #$0010 : STA !SPRITE_OAM+12, X
+		LDA !SPRITE_OAM+6, X : STA !SPRITE_OAM+14, X
+		SEP #$20 ; set 8-bit accumulator
+	PLX
+RTS
+;--------------------------------------------------------------------------------
+;.oam_items
+;dw -40, 40 : db $C0, $08, $00, $02
+;dw 8, 40 : db $C2, $04, $00, $02
+;dw 56, 40 : db $C4, $02, $00, $02
+;--------------------------------------------------------------------------------
+;.oam_prices
+;dw -48, 56 : db $30, $02, $00, $00
+;dw -40, 56 : db $31, $02, $00, $00
+;dw -32, 56 : db $02, $02, $00, $00
+;dw -24, 56 : db $03, $02, $00, $00
+;
+;dw 0, 56 : db $12, $02, $00, $00
+;dw 8, 56 : db $13, $02, $00, $00
+;dw 16, 56 : db $22, $02, $00, $00
+;dw 24, 56 : db $23, $02, $00, $00
+;
+;dw 48, 56 : db $32, $02, $00, $00
+;dw 56, 56 : db $33, $02, $00, $00
+;dw 64, 56 : db $30, $02, $00, $00
+;dw 72, 56 : db $31, $02, $00, $00
 ;--------------------------------------------------------------------------------
