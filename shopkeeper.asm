@@ -79,12 +79,12 @@ macro DrawDigit(value,offset)
 	LDA.w #56 : STA !BIGRAM, X : INX : INX
 	LDY $0A : TYA : ASL : TAY : LDA .digit_properties, Y : STA !BIGRAM, X : INX : INX
 	LDA.w #$0000 : STA !BIGRAM, X : INX : INX
-
+	
 	LDA $0E : !ADD.w #$0008 : STA $0E ; move offset 8px right
 endmacro
 ;--------------------------------------------------------------------------------
-!COLUMN_LOW = "$7F5020"
-!COLUMN_HIGH = "$7F5021"
+!COLUMN_LOW = "$7F5022"
+!COLUMN_HIGH = "$7F5023"
 DrawPrice:
 	PHX : PHY : PHP
 		LDY.b #$FF
@@ -109,7 +109,7 @@ DrawPrice:
 				
 		SEP #$20 ; set 8-bit accumulator
 		TXA : LSR #3 : STA $06 ; request 1-4 OAM slots
-		;ASL #2 : JSL.l OAM_AllocateFromRegionB ; request 4-16 bytes
+		STA $FFFFFF
 		ASL #2
 			PHA
 				LDA $22 : CMP !COLUMN_LOW : !BLT .off
@@ -278,8 +278,9 @@ UploadVRAMTiles:
 		PLA : STA $4300 ; restore DMA parameters
 RTS
 ;--------------------------------------------------------------------------------
-!COLUMN_LOW = "$7F5020"
-!COLUMN_HIGH = "$7F5021"
+;!SHOP_TYPE = "$7F5051"
+;!SCRATCH_CAPACITY = "$7F5020"
+;!SCRATCH_TEMP_X = "$7F5021"
 Sprite_ShopKeeper:
 	PHB : PHK : PLB
 		JSL.l Sprite_PlayerCantPassThrough
@@ -305,71 +306,13 @@ Sprite_ShopKeeper:
 		; Draw Items
 		JSR.w Shopkeeper_DrawItems
 		
-		LDA.b #$00 : STA.l !SKIP_EOR
-		
 		; $22
 		; 0x48 - Left
 		; 0x60 - Midpoint 1
 		; 0x78 - Center
 		; 0x90 - Midpoint 2
 		; 0xA8 - Right
-				
-		LDA.b #$00 : STA !COLUMN_LOW
-		LDA.b #$60 : STA !COLUMN_HIGH
-		REP #$20 ; set 16-bit accumulator
-		LDA.w #80 : STA $0C ; set value
-		LDA.w #-40 : STA $0E ; set coordinate
-		JSR.w DrawPrice
-		SEP #$20 : STA $06 ; set 8-bit accumulator & store result
-		PHA
-			STZ $07
-			LDA.b #!BIGRAM : STA $08
-			LDA.b #!BIGRAM>>8 : STA $09
-			LDA.b #$7E : PHA : PLB ; set data bank to $7E
-			JSL.l Sprite_DrawMultiple_quantity_preset
-			PHK : PLB
-			LDA 1,s
-			ASL #2 : !ADD $90 : STA $90 ; increment oam pointer
-		PLA
-		!ADD $92 : STA $92
-			
-		LDA.b #$60 : STA !COLUMN_LOW
-		LDA.b #$90 : STA !COLUMN_HIGH	
-		REP #$20 ; set 16-bit accumulator
-		LDA.w #10 : STA $0C ; set value
-		LDA.w #8 : STA $0E ; set coordinate
-		JSR.w DrawPrice
-		SEP #$20 : STA $06 ; set 8-bit accumulator & store result
-		PHA
-			STZ $07
-			LDA.b #!BIGRAM : STA $08
-			LDA.b #!BIGRAM>>8 : STA $09
-			LDA.b #$7E : PHA : PLB ; set data bank to $7E
-			JSL.l Sprite_DrawMultiple_quantity_preset
-			PHK : PLB
-			LDA 1,s
-			ASL #2 : !ADD $90 : STA $90 ; increment oam pointer
-		PLA
-		!ADD $92 : STA $92
-			
-		LDA.b #$90 : STA !COLUMN_LOW
-		LDA.b #$FF : STA !COLUMN_HIGH	
-		REP #$20 ; set 16-bit accumulator
-		LDA.w #500 : STA $0C ; set value
-		LDA.w #56 : STA $0E ; set coordinate
-		JSR.w DrawPrice
-		SEP #$20 : STA $06 ; set 8-bit accumulator & store result
-		PHA
-			STZ $07
-			LDA.b #!BIGRAM : STA $08
-			LDA.b #!BIGRAM>>8 : STA $09
-			LDA.b #$7E : PHA : PLB ; set data bank to $7E
-			JSL.l Sprite_DrawMultiple_quantity_preset
-			PHK : PLB
-			LDA 1,s
-			ASL #2 : !ADD $90 : STA $90 ; increment oam pointer
-		PLA
-		!ADD $92 : STA $92
+		
 	PLB
 RTL
 ;--------------------------------------------------------------------------------
@@ -387,6 +330,7 @@ Shopkeeper_DrawItems:
 	PHB : PHK : PLB
 	PHX : PHY
 	TXA : STA !SCRATCH_TEMP_X;
+	
 	LDX.b #$00
 	LDY.b #$00
 	LDA !SHOP_TYPE : AND.b #$03
@@ -433,6 +377,9 @@ Shopkeeper_DrawNextItem:
 		LDA.b #$02
 	++
 	PHX : PHA : LDA !SCRATCH_TEMP_X : TAX : PLA : JSR.w RequestItemOAM : PLX
+	
+	JSR.w Shopkeeper_DrawNextPrice
+	
 	INY
 	INX #3
 RTS
@@ -444,10 +391,44 @@ dw 56, 40
 .tile_indices
 db $C0, $C2, $C4
 ;--------------------------------------------------------------------------------
+!COLUMN_LOW = "$7F5022"
+!COLUMN_HIGH = "$7F5023"
+Shopkeeper_DrawNextPrice:
+	PHB : PHK : PLB
+	PHX : PHY : PHP
+	
+	REP #$20 ; set 16-bit accumulator
+	PHY
+		TYA : ASL : TAY
+		LDA.w .price_columns, Y : STA !COLUMN_LOW
+		LDA.w .price_offsets, Y : STA $0E ; set coordinate
+	PLY
+	LDA.l !SHOP_INVENTORY+1, X : STA $0C ; set value
+	JSR.w DrawPrice
+	SEP #$20 : STA $06 : STZ $07 ; set 8-bit accumulator & store result
+	PHA
+		LDA.b #!BIGRAM : STA $08
+		LDA.b #!BIGRAM>>8 : STA $09
+		LDA.b #$7E : PHA : PLB ; set data bank to $7E
+
+		PHX : PHA : LDA !SCRATCH_TEMP_X : TAX : PLA : JSL.l Sprite_DrawMultiple_quantity_preset : PLX
+		
+		LDA 1,s
+		ASL #2 : !ADD $90 : STA $90 ; increment oam pointer
+	PLA
+	!ADD $92 : STA $92
+	PLP : PLY : PLX
+	PLB
+RTS		
+.price_columns
+db #$00, #$60, #$60, #$90, #$90, $FF
+.price_offsets
+dw #-40, #8, #56
+;--------------------------------------------------------------------------------
 RequestItemOAM:
 	PHX : PHY : PHA
 		STA $06 ; request A OAM slots
-		LDA $20 : CMP.b #$60 : !BGE .below
+		LDA $20 : CMP.b #$62 : !BGE .below
 			.above
 			LDA 1,s : ASL #2 : JSL.l OAM_AllocateFromRegionA ; request 4A bytes
 			BRA +

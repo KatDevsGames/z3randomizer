@@ -26,7 +26,7 @@ org $3FFFFF ; <- 1FFFFF
 db #$00 ; expand file to 2mb
 
 org $1FFFF8 ; <- FFFF8 timestamp rom
-db #$20, #$18, #$01, #$21 ; year/month/day
+db #$20, #$18, #$01, #$23 ; year/month/day
 
 ;================================================================================
 
@@ -127,7 +127,7 @@ incsrc hardmode.asm
 incsrc goalitem.asm
 incsrc compasses.asm
 incsrc doorframefixes.asm
-;incsrc music.asm
+incsrc music.asm
 incsrc cuccostorm.asm
 incsrc roomloading.asm
 incsrc icepalacegraphics.asm
