@@ -1061,14 +1061,14 @@ JSL.l GetMagicBatItem
 ;================================================================================
 ; Replacement Shopkeeper
 ;--------------------------------------------------------------------------------
-;org $068BEB ; <- 30BEB - Bank07.asm:1125 - (INC $0BA0, X)
-;JSL.l SpritePrep_ShopKeeper : RTS
+org $068BEB ; <- 30BEB - Bank07.asm:1125 - (INC $0BA0, X)
+JSL.l SpritePrep_ShopKeeper : RTS
 ;--------------------------------------------------------------------------------
-;org $1EEEE3 ; <- F6EE3 - sprite_shopkeeper.asm:7 - (LDA $0E80, X)
-;JSL.l Sprite_ShopKeeper : RTS
+org $1EEEE3 ; <- F6EE3 - sprite_shopkeeper.asm:7 - (LDA $0E80, X)
+JSL.l Sprite_ShopKeeper : RTS
 ;--------------------------------------------------------------------------------
-;org $00D55E ; <- 555E - Bank00.asm:3491 (LDX.w #$2D40)
-;JSL.l LoadModifiedTileBufferAddress : NOP #2
+org $00D55E ; <- 555E - Bank00.asm:3491 (LDX.w #$2D40)
+JSL.l LoadModifiedTileBufferAddress : NOP #2
 ;--------------------------------------------------------------------------------
 
 ;================================================================================
@@ -1934,34 +1934,21 @@ JSL.l SetOverlayIfLamp
 ; Overworld Door Frame Overlay Fix
 ;
 ; When entering an overworld entrance, if it is an entrance to a simple cave, we
-; store the overworld door id, then use that (instead of the cave id) to determine the
+; store the entrance id, then use that (instead of the cave id) to determine the
 ; overlay to draw when leaving the cave again. We also use this value to
 ; identify the tavern entrance to determine whether link should walk up or down.
 ;--------------------------------------------------------------------------------
-org $1BBD5F ; <- Bank1b.asm:296 (LDA $1BBB73, X : STA $010E)
-JSL.l StoreLastOverworldDoorID
-NOP #3
+;org $1BBD5F ; <- Bank1b.asm:296 (LDA $1BBB73, X : STA $010E)
+;JSL.l StoreLastEntranceID
+;NOP #3
 ;--------------------------------------------------------------------------------
-org $02D754 ; <- Bank02.asm:10847 (LDA $D724, X : STA $0696 : STZ $0698)
-JSL.l CacheDoorFrameData
-NOP #5
+;org $02D754 ; <- Bank02.asm:10847 (LDA $D724, X : STA $0696 : STZ $0698)
+;JSL.l CacheDoorFrameData
+;NOP #5
 ;--------------------------------------------------------------------------------
-org $0298AD ; <- Bank02.asm:4495 (LDA $010E : CMP.b #$43)
-JSL.l WalkDownIntoTavern
-NOP #1
-;================================================================================
-
-;================================================================================
-; Music fixes
-;--------------------------------------------------------------------------------
-org $0282F4 ; <- Bank02.asm:654 (LDY.b #$58 ...)
-JML.l PreOverworld_LoadProperties_ChooseMusic
-org $028389  ; <- Bank02.asm:763
-PreOverworld_LoadProperties_SetSong:
-;--------------------------------------------------------------------------------
-org $05CC58 ; <- Bank05.asm:1307 (LDA $040A : CMP.b #$18)
-JSL PsychoSolder_MusicCheck
-NOP #1
+;org $0298AD ; <- Bank02.asm:4495 (LDA $010E : CMP.b #$43)
+;JSL.l WalkDownIntoTavern
+;NOP #1
 ;================================================================================
 
 ;================================================================================
@@ -2000,3 +1987,4 @@ org $00DF62 ; <- Bank00.asm:4672 (LDX.w #$0000 : LDY.w #$0040)
 org $00DF6E ; <- A few instructions later, right after JSR Do3To4High16Bit
     ReloadingFloorsCancel:
 ;================================================================================
+

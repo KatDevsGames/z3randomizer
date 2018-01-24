@@ -127,8 +127,7 @@ incsrc hardmode.asm
 incsrc goalitem.asm
 incsrc compasses.asm
 incsrc doorframefixes.asm
-incsrc music.asm
-;incsrc shopkeeper.asm
+;incsrc music.asm
 incsrc cuccostorm.asm
 incsrc roomloading.asm
 incsrc icepalacegraphics.asm
