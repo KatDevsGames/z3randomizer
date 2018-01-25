@@ -140,6 +140,27 @@ FreeDungeonItemNotice:
 
 	LDA #$00 : STA $7F5010 ; initialize scratch
 	LDA !ITEM_TEMPORARY
+	CMP.b #$24 : BNE + ; general small key
+		%CopyDialog(Notice_SmallKeyOf)
+		LDA !OFFSET_RETURN : DEC #2 : STA !OFFSET_POINTER
+		%CopyDialog(Notice_Self)
+		BRL .done
+	+ : CMP.b #$25 : BNE + ; general compass
+		%CopyDialog(Notice_CompassOf)
+		LDA !OFFSET_RETURN : DEC #2 : STA !OFFSET_POINTER
+		%CopyDialog(Notice_Self)
+		BRL .done
+	+ : CMP.b #$33 : BNE + ; general map
+		%CopyDialog(Notice_MapOf)
+		LDA !OFFSET_RETURN : DEC #2 : STA !OFFSET_POINTER
+		%CopyDialog(Notice_Self)
+		BRL .done
+	+ : CMP.b #$32 : BNE + ; general big key
+		%CopyDialog(Notice_BigKeyOf)
+		LDA !OFFSET_RETURN : DEC #2 : STA !OFFSET_POINTER
+		%CopyDialog(Notice_Self)
+		BRL .done
+	+
 	AND.b #$F0 ; looking at high bits only
 	CMP.b #$70 : BNE + ; map of...
 		%CopyDialog(Notice_MapOf)

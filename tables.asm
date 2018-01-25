@@ -707,7 +707,7 @@ db #$00 ; #00 = Never Locked - #$01 = Locked During Escape (default)
 ;================================================================================
 org $30816A ; PC 0x18016A
 FreeItemText:
-db #$00 ; #00 = Off - #$01 = On (default)
+db #$00 ; #00 = Off (default) - #$01 = On
 ;================================================================================
 org $30816B ; PC 0x18016B
 HardModeExclusionCaneOfByrnaUsage:

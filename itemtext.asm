@@ -52,7 +52,7 @@ Notice_Thieves:
 	db $76, $00, $BD, $00, $B1, $00, $B2, $00, $AE, $00, $BF, $00, $AE, $00, $BC, $00, $FF, $00, $BD, $00, $B8, $00, $C0, $00, $B7
 	dw #$7F7F
 
-; Tower of Hera	
+; Tower of Hera
 Notice_Hera:
 	db $76, $00, $BD, $00, $B8, $00, $C0, $00, $AE, $00, $BB, $00, $FF, $00, $B8, $00, $AF, $00, $FF, $00, $B1, $00, $AE, $00, $BB, $00, $AA
 	dw #$7F7F
@@ -105,4 +105,9 @@ Notice_Castle:
 ; Hyrule Castle
 Notice_Sewers:
 	db $76, $00, $B1, $00, $C2, $00, $BB, $00, $BE, $00, $B5, $00, $AE, $00, $FF, $00, $AC, $00, $AA, $00, $BC, $00, $BD, $00, $B5, $00, $AE
-	dw #$7F7F ; terminate
+	dw #$7F7F
+
+; This Dungeon
+Notice_Self:
+	db $76, $00, $BD, $00, $B1, $00, $B2, $00, $BC, $00, $FF, $00, $AD, $00, $BE, $00, $B7, $00, $B0, $00, $AE, $00, $B8, $00, $B7
+	dw #$7F7F
