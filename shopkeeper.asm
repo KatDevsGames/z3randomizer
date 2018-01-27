@@ -109,7 +109,6 @@ DrawPrice:
 				
 		SEP #$20 ; set 8-bit accumulator
 		TXA : LSR #3 : STA $06 ; request 1-4 OAM slots
-		STA $FFFFFF
 		ASL #2
 			PHA
 				LDA $22 : CMP !COLUMN_LOW : !BLT .off
@@ -148,8 +147,7 @@ SpritePrep_ShopKeeper:
 			SEP #$20 ; set 8-bit accumulator
 			LDA ShopTable, X : STA !SHOP_ID
 			LDA ShopTable+5, X : STA !SHOP_TYPE
-			AND.b #$03 : STA !SCRATCH_CAPACITY
-			ASL : !ADD !SCRATCH_CAPACITY : STA !SCRATCH_CAPACITY
+			AND.b #$03 : ASL #2 : STA !SCRATCH_CAPACITY
 			BRA .success
 		+
 		TXA : !ADD.w #$0008 : TAX
@@ -172,7 +170,7 @@ SpritePrep_ShopKeeper:
 		LDA.l ShopContentsTable, X : CMP !SHOP_ID : BNE +
 			LDA.l ShopContentsTable+1, X : PHX : TYX : STA.l !SHOP_INVENTORY, X : PLX
 			LDA.l ShopContentsTable+2, X : PHX : TYX : STA.l !SHOP_INVENTORY+1, X : PLX
-			LDA.l ShopContentsTable+3, X : PHX : TYX : STA.l !SHOP_INVENTORY+2, X : PLX
+			LDA.l ShopContentsTable+3, X : PHX : TYX : STA.l !SHOP_INVENTORY+2, X : LDA.b #$00 : STA.l !SHOP_INVENTORY+3, X : PLX
 			PHX : PHY
 				LDA.l ShopContentsTable+1, X : TAY
 				REP #$20 ; set 16-bit accumulator
@@ -180,7 +178,7 @@ SpritePrep_ShopKeeper:
 				JSR LoadTile
 			PLY : PLX
 			INX #4
-			INY #3
+			INY #4
 		+
 	BRA -
 	.stop
@@ -193,9 +191,9 @@ SpritePrep_ShopKeeper:
 	PLP : PLY : PLX
 RTL
 .tile_offsets
-dw $0000 : db $00
-dw $0080 : db $00
-dw $0100 : db $00
+dw $0000, $0000
+dw $0080, $0000
+dw $0100, $0000
 ;--------------------------------------------------------------------------------
 ; X - Tile Buffer Offset
 ; Y - Item ID
@@ -306,6 +304,9 @@ Sprite_ShopKeeper:
 		; Draw Items
 		JSR.w Shopkeeper_DrawItems
 		
+		; Set Up Hitboxes
+		JSR.w Shopkeeper_SetupHitboxes
+		
 		; $22
 		; 0x48 - Left
 		; 0x60 - Midpoint 1
@@ -322,6 +323,120 @@ dw 0, 0 : db $10, $0C, $00, $02
 .oam_shopkeeper_f2
 dw 0, -8 : db $00, $0C, $00, $02
 dw 0, 0 : db $10, $4C, $00, $02
+;--------------------------------------------------------------------------------
+Shopkeeper_SetupHitboxes:
+	PHX : PHY : PHP
+	LDY.b #$00
+	-
+		LDA $00EE : CMP $0F20, X : BNE .no_interaction  
+
+		JSR.w Setup_LinksHitbox
+		JSR.w Setup_ShopItemCollisionHitbox
+		JSL.l Utility_CheckIfHitBoxesOverlapLong
+		BCC .no_contact
+		    JSR.w Sprite_HaltSpecialPlayerMovementCopied
+		.no_contact
+
+		JSR.w Setup_ShopItemInteractionHitbox
+		JSL.l Utility_CheckIfHitBoxesOverlapLong
+		BCC .no_interaction
+		    LDA $F6 : AND.b #$80 : BEQ .no_interaction ; check for A-press
+			JSR.w Shopkeeper_BuyItem
+		.no_interaction
+		INY #4
+	CPY.b #$0C : !BLT -
+	
+	PLP : PLY : PLX
+RTS
+;--------------------
+Shopkeeper_BuyItem:
+	PHX : PHY
+		TYX
+		REP #$20 : LDA $7EF360 : CMP.l !SHOP_INVENTORY+1, X : SEP #$20 : !BGE .buy
+		.cant_afford
+			LDA.b #$3C : STA $012E ; error sound
+			BRA .done
+		.buy
+			REP #$20 : LDA $7EF360 : !SUB !SHOP_INVENTORY+1, X : STA $7EF360 : SEP #$20 ; Take price away
+			LDA !SHOP_INVENTORY, X : TAY : JSL.l Link_ReceiveItem
+			LDA !SHOP_INVENTORY+3, X : INC : STA !SHOP_INVENTORY+3, X
+	.done
+	PLY : PLX
+RTS
+;--------------------
+Setup_ShopItemCollisionHitbox:
+;The complications with XBA are to handle the fact that nintendo likes to store
+;high and low bytes of 16 bit postion values seperately :-(
+    ; load shopkeeper X (16 bit)
+    LDA $0D30, X : XBA : LDA $0D10, X 
+
+    REP #$20 ; set 16-bit accumulator
+    !ADD.w Shopkeeper_DrawNextItem_item_offsets, Y
+    !ADD.w #$0002 ; a small negative margin
+    ; TODO: add 4 for a narrow item
+    SEP #$20 ; set 8-bit accumulator
+
+    ; store hitbox X 
+    STA $04 : XBA : STA $0A 
+
+    ;load shopkeeper Y (16 bit)
+    LDA $0D20, X : XBA : LDA $0D00, X 
+
+    REP #$20 ; set 16-bit accumulator
+    !ADD.w Shopkeeper_DrawNextItem_item_offsets+2, Y
+    SEP #$20 ; set 8-bit accumulator
+
+    ; store hitbox Y Low: $05, High $0B
+    STA $05 : XBA : STA $0B 
+
+    LDA.b #12 : STA $06 ; Hitbox width, always 12 for existing (wide) shop items
+    ; TODO: for narrow sprite store make width 4 (i.e. 8 pixels smaller)
+
+    LDA.b #14 : STA $07 ; Hitbox height, always 14
+RTS
+;--------------------------------------------------------------------------------
+; Adjusts the already set up collision hitbox to be a suitable interaction hitbox
+Setup_ShopItemInteractionHitbox:
+	PHP
+	SEP #$20 ; set 8-bit accumulator
+	
+    ; collision hitbox has left margin of -2, we want margin of 8 so we subtract 10
+    LDA $04 : !SUB.b #$0A : STA $04
+    LDA $0A : SBC.b #$00 : STA $0A ; Apply borrow
+
+    ; collision hitbox has 0 top margin, we want a margin of 8 so we subtract 8
+    LDA $05 : !SUB.b #$08 : STA $05
+    LDA $0B : SBC.b #$00 : STA $0B ; Apply borrow    
+
+    ; We want a width of 32 for wide or 24 for narrow, so we add 20
+    LDA $06 : !ADD.b #20 : STA $06 ; Hitbox width
+
+    LDA.b #40 : STA $07 ; Hitbox height, always 40
+	PLP
+RTS
+;--------------------------------------------------------------------------------
+; Following is a copy of procedure $3770A (Bank06.asm Line 6273) 
+; because there is no long version available
+Setup_LinksHitbox:
+	LDA.b #$08 : STA $02
+                     STA $03
+        
+        LDA $22 : !ADD.b #$04 : STA $00
+        LDA $23 : ADC.b #$00 : STA $08
+        
+        LDA $20 : ADC.b #$08 : STA $01
+        LDA $21 : ADC.b #$00 : STA $09     
+RTS
+;--------------------------------------------------------------------------------
+; The following is a copy of procedure Sprite_HaltSpecialPlayerMovement (Bank1E.asm line 255)
+; because there is no long version available
+Sprite_HaltSpecialPlayerMovementCopied:
+        PHX      
+        JSL Sprite_NullifyHookshotDrag
+        STZ $5E ; Set Link's speed to zero...
+        JSL Player_HaltDashAttackLong
+        PLX
+RTS
 ;--------------------------------------------------------------------------------
 ;!SHOP_TYPE = "$7F5051"
 ;!SHOP_INVENTORY = "$7F5052"
@@ -347,6 +462,8 @@ RTS
 
 ;--------------------------------------------------------------------------------
 Shopkeeper_DrawNextItem:
+	LDA !SHOP_INVENTORY+3, X : BNE .next
+	
 	PHY
 	TYA : ASL #2 : TAY
 	REP #$20 ; set 16-bit accumulator
@@ -380,8 +497,9 @@ Shopkeeper_DrawNextItem:
 	
 	JSR.w Shopkeeper_DrawNextPrice
 	
+	.next
 	INY
-	INX #3
+	INX #4
 RTS
 ;--------------------------------------------------------------------------------
 .item_offsets

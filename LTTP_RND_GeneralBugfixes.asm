@@ -26,7 +26,7 @@ org $3FFFFF ; <- 1FFFFF
 db #$00 ; expand file to 2mb
 
 org $1FFFF8 ; <- FFFF8 timestamp rom
-db #$20, #$18, #$01, #$24 ; year/month/day
+db #$20, #$18, #$01, #$27 ; year/month/day
 
 ;================================================================================
 
@@ -113,6 +113,7 @@ incsrc swordswap.asm
 incsrc stats.asm
 incsrc scratchpad.asm
 incsrc map.asm
+incsrc msu.asm
 incsrc dialog.asm
 incsrc events.asm
 incsrc entrances.asm
@@ -370,6 +371,9 @@ Sprite_ShowMessageMinimal:
 org $05EC96
 Sprite_ZeldaLong:
 
+org $0683E6
+Utility_CheckIfHitBoxesOverlapLong:
+
 org $06A7DB
 Chicken_SpawnAvengerChicken: ; returns short
 
@@ -496,6 +500,9 @@ Palette_Hud:
 
 org $1CFAAA
 ShopKeeper_RapidTerminateReceiveItem:
+
+org $1CF500
+Sprite_NullifyHookshotDrag:
 
 org $1DF65D
 Sprite_SpawnDynamically:
