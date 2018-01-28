@@ -1555,6 +1555,8 @@ org $07B0CC ; <- 3B0CC Bank07.asm : 7767 - (JSL Main_ShowTextMessage)
 NOP #4
 ;----------------------------------------------------------
 ;-- Witch's Assistant
+org $05F8E7 ; <- 2F8E7 sprite_potion_shop.asm : 603 - (JSL Sprite_ShowSolicitedMessageIfPlayerFacing)
+JSL Sprite_ShowSolicitedMessageIfPlayerFacing_Edit
 org $05F8F5 ; <- 2F8F5 sprite_potion_shop.asm : 620 - (JSL Sprite_ShowSolicitedMessageIfPlayerFacing)
 JSL Sprite_ShowSolicitedMessageIfPlayerFacing_Edit
 ;----------------------------------------------------------
