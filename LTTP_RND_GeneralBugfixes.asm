@@ -26,7 +26,7 @@ org $3FFFFF ; <- 1FFFFF
 db #$00 ; expand file to 2mb
 
 org $1FFFF8 ; <- FFFF8 timestamp rom
-db #$20, #$18, #$01, #$27 ; year/month/day
+db #$20, #$18, #$01, #$29 ; year/month/day
 
 ;================================================================================
 
@@ -71,6 +71,7 @@ db #$20, #$18, #$01, #$27 ; year/month/day
 !INVENTORY_SWAP_2 = "$7EF38E"
 
 !ITEM_LIMIT_COUNTS = "$7EF390"
+!SHOP_PURCHASE_COUNTS = "$7EF3A0"
 ;================================================================================
 
 incsrc hooks.asm
@@ -512,6 +513,9 @@ Sprite_SpawnDynamically_arbitrary:
 
 org $1DFD4B
 DiggingGameGuy_AttemptPrizeSpawn:
+
+org $1EDE28
+Sprite_GetEmptyBottleIndex: ; this is totally in sprite_bees.asm
 
 org $1EF4E7
 Sprite_PlayerCantPassThrough:

@@ -1278,8 +1278,8 @@ dw #9999 ; Rupee Limit
 ; $7F5042 - Tile Upload Offset Override (Low)
 ; $7F5043 - Tile Upload Offset Override (High)
 ; $7F5044 - $7F504F - Unused
-; $7F5050 - $7F505F - Shop Block
-; $7F5060 - $7F507E - Unused
+; $7F5050 - $7F506F - Shop Block
+; $7F5070 - $7F507E - Unused
 ; $7F507E - Clock Status
 ; $7F507F - Always Zero
 ; $7F5080 - $7F5083 - Clock Hours
@@ -1389,7 +1389,7 @@ dw $0000, $0000
 ;===============================================================================
 org $30C000 ; PC 0x184000 - 0x184007
 ItemSubstitutionRules:
-;db [item][quantity][substitution][pad]
+;db [item][quantity][substitution][pad] - CURRENT LIMIT 16 ENTRIES
 db $12, $01, $35, $FF
 db $FF, $FF, $FF, $FF
 ;================================================================================
@@ -1401,16 +1401,19 @@ ShopTable:
 ;db [id][roomID-low][roomID-high][entranceID-low][entranceID-high][shop_config][pad][pad]
 db $FF, $12, $01, $58, $00, $03, $00, $00
 ShopContentsTable:
-;db [id][item][price-low][price-high]
-db $FF, $AF, $50, $00
-db $FF, $27, $0A, $00
-db $FF, $12, $F4, $01
-db $FF, $FF, $FF, $FF
+;db [id][item][price-low][price-high][max][repl_id][repl_price-low][repl_price-high]
+db $FF, $AF, $50, $00, $00, $FF, $00, $00
+db $FF, $27, $0A, $00, $00, $FF, $00, $00
+db $FF, $12, $F4, $01, $01, $2F, $3C, $00
+db $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF
 ;================================================================================
 track_list:
 db $00,$01,$03,$03,$03,$03,$03,$03
 db $01,$03,$01,$03,$03,$03,$03,$03
 db $03,$03,$03,$01,$03,$03,$03,$03
 db $03,$03,$03,$03,$03,$01,$03,$03
-db $03,$01,$01
+db $03,$01,$01,$FF,$FF,$FF,$FF,$FF
+db $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
+db $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
+db $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
 ;================================================================================

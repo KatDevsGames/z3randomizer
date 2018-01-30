@@ -126,9 +126,11 @@ RTS
 !FREE_TILE_BUFFER = "#$1180"
 !SHOP_ID = "$7F5050"
 !SHOP_TYPE = "$7F5051"
-!SHOP_INVENTORY = "$7F5052"
-!SCRATCH_CAPACITY = "$7F5020"
-!SCRATCH_TEMP_X = "$7F5021"
+!SHOP_INVENTORY = "$7F5052" ; $7F505E
+!SHOP_STATE = "$7F505F"
+!SCRATCH_CAPACITY = "$7F5060"
+!SCRATCH_TEMP_X = "$7F5061"
+!SHOP_SRAM_INDEX = "$7F5062"
 ;--------------------------------------------------------------------------------
 .digit_properties
 dw $0230, $0231, $0202, $0203, $0212, $0213, $0222, $0223, $0232, $0233
@@ -148,6 +150,7 @@ SpritePrep_ShopKeeper:
 			LDA ShopTable, X : STA !SHOP_ID
 			LDA ShopTable+5, X : STA !SHOP_TYPE
 			AND.b #$03 : ASL #2 : STA !SCRATCH_CAPACITY
+			TXA : LSR #3 : PHA : ASL : !ADD 1,s : STA !SHOP_SRAM_INDEX : PLA
 			BRA .success
 		+
 		TXA : !ADD.w #$0008 : TAX
@@ -157,7 +160,7 @@ SpritePrep_ShopKeeper:
 	.fail
 	SEP #$20 ; set 8-bit accumulator
 	LDA.b #$FF : STA !SHOP_TYPE ; $FF = error condition
-	BRA .done
+	BRL .done
 	
 	.success
 	SEP #$20 ; set 8-bit accumulator
@@ -165,22 +168,43 @@ SpritePrep_ShopKeeper:
 	LDX.w #$0000
 	LDY.w #$0000
 	-
-		TYA : CMP !SCRATCH_CAPACITY : !BGE .stop
-		LDA.l ShopContentsTable+1, X : CMP.b #$FF : BEQ .stop
-		LDA.l ShopContentsTable, X : CMP !SHOP_ID : BNE +
+		TYA : CMP !SCRATCH_CAPACITY : !BLT ++ : BRL .stop : ++
+		LDA.l ShopContentsTable+1, X : CMP.b #$FF : BNE ++ : BRL .stop : ++
+		
+		
+		LDA.l ShopContentsTable, X : CMP !SHOP_ID : BEQ ++ : BRL + : ++
 			LDA.l ShopContentsTable+1, X : PHX : TYX : STA.l !SHOP_INVENTORY, X : PLX
 			LDA.l ShopContentsTable+2, X : PHX : TYX : STA.l !SHOP_INVENTORY+1, X : PLX
-			LDA.l ShopContentsTable+3, X : PHX : TYX : STA.l !SHOP_INVENTORY+2, X : LDA.b #$00 : STA.l !SHOP_INVENTORY+3, X : PLX
+			LDA.l ShopContentsTable+3, X : PHX : TYX : STA.l !SHOP_INVENTORY+2, X : PLX
+			
+			PHY
+				PHX
+					LDA.b #$00 : XBA : TYA : LSR #2 : !ADD !SHOP_SRAM_INDEX : TAX
+					LDA !SHOP_PURCHASE_COUNTS, X : TYX : STA.l !SHOP_INVENTORY+3, X : TAY
+				PLX
+				
+				LDA.l ShopContentsTable+4, X : BEQ ++
+				TYA : CMP.l ShopContentsTable+4, X : !BLT ++
+					PLY
+					LDA.l ShopContentsTable+5, X : PHX : TYX : STA.l !SHOP_INVENTORY, X : PLX
+					LDA.l ShopContentsTable+6, X : PHX : TYX : STA.l !SHOP_INVENTORY+1, X : PLX
+					LDA.l ShopContentsTable+7, X : PHX : TYX : STA.l !SHOP_INVENTORY+2, X : PLX
+					BRA +++
+				++
+			PLY : +++
+			
 			PHX : PHY
-				LDA.l ShopContentsTable+1, X : TAY
+				PHX : TYX : LDA.l !SHOP_INVENTORY, X : PLX : TAY
 				REP #$20 ; set 16-bit accumulator
 				LDA 1,s : TAX : LDA.l .tile_offsets, X : TAX
 				JSR LoadTile
 			PLY : PLX
-			INX #4
+			INX #8
 			INY #4
 		+
-	BRA -
+		
+		
+	BRL -
 	.stop
 	
 	LDA #$80 : STA $2100
@@ -188,6 +212,7 @@ SpritePrep_ShopKeeper:
 	LDA #$0F : STA $2100
 
 	.done
+	LDA.b #$00 : STA !SHOP_STATE
 	PLP : PLY : PLX
 RTL
 .tile_offsets
@@ -206,6 +231,9 @@ LoadTile:
 	REP #$10 ; set 16-bit index registers
 RTS
 ;--------------------------------------------------------------------------------
+;!SHOP_INVENTORY, X
+;[id][$lo][$hi][purchase_counter]
+;--------------------------------------------------------------------------------
 ;shop_config - t--- --qq
 ; t - 0=Shop - 1=TakeAny
 ; qq - # of items for sale
@@ -214,11 +242,12 @@ RTS
 ;;db [id][roomID-low][roomID-high][entranceID-low][entranceID-high][shop_config][pad][pad]
 ;db $FF, $12, $01, $58, $00, $FF, $00, $00
 ;ShopContentsTable:
-;;db [id][item][price-low][price-high]
-;db $FF, $AF, $50, $00
-;db $FF, $27, $0A, $00
-;db $FF, $12, $F4, $01
-;db $FF, $FF, $FF, $FF
+;;db [id][item][price-low][price-high][max][repl_id][repl_price-low][repl_price-high]
+;db $FF, $AF, $50, $00, $00, $FF, $00, $00
+;db $FF, $27, $0A, $00, $00, $FF, $00, $00
+;db $FF, $12, $F4, $01, $01, $2F, $3C, $00
+;db $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF
+;!SHOP_PURCHASE_COUNTS = "$7EF3A0"
 ;--------------------------------------------------------------------------------
 UploadVRAMTiles:
 		LDA $4300 : PHA ; preserve DMA parameters
@@ -328,6 +357,12 @@ Shopkeeper_SetupHitboxes:
 	PHX : PHY : PHP
 	LDY.b #$00
 	-
+		PHY
+			TYA : LSR #2 : TAY
+			LDA.l !SHOP_STATE : AND.w Shopkeeper_ItemMasks, Y : BEQ +
+				PLY : BRA .no_interaction
+			+
+		PLY
 		LDA $00EE : CMP $0F20, X : BNE .no_interaction  
 
 		JSR.w Setup_LinksHitbox
@@ -349,20 +384,55 @@ Shopkeeper_SetupHitboxes:
 	PLP : PLY : PLX
 RTS
 ;--------------------
+;!SHOP_STATE
 Shopkeeper_BuyItem:
 	PHX : PHY
 		TYX
+		
+		LDA.l !SHOP_INVENTORY, X
+		CMP.b #$0E : BEQ .refill ; Bee Refill
+		CMP.b #$2E : BEQ .refill ; Red Potion Refill
+		CMP.b #$2F : BEQ .refill ; Green Potion Refill
+		CMP.b #$30 : BEQ .refill ; Blue Potion Refill
+		BRA +
+			.refill
+			STA $FFFFFF
+			JSL.l Sprite_GetEmptyBottleIndex : BMI .full_bottles
+		+
+
 		REP #$20 : LDA $7EF360 : CMP.l !SHOP_INVENTORY+1, X : SEP #$20 : !BGE .buy
+		
 		.cant_afford
+	        LDA.b #$7A
+	        LDY.b #$01
+	        JSL.l Sprite_ShowMessageUnconditional
 			LDA.b #$3C : STA $012E ; error sound
+			BRA .done
+		.full_bottles
+	        LDA.b #$6B
+	        LDY.b #$01
+	        JSL.l Sprite_ShowMessageUnconditional
 			BRA .done
 		.buy
 			REP #$20 : LDA $7EF360 : !SUB !SHOP_INVENTORY+1, X : STA $7EF360 : SEP #$20 ; Take price away
-			LDA !SHOP_INVENTORY, X : TAY : JSL.l Link_ReceiveItem
-			LDA !SHOP_INVENTORY+3, X : INC : STA !SHOP_INVENTORY+3, X
+			LDA.l !SHOP_INVENTORY, X : TAY : JSL.l Link_ReceiveItem
+			LDA.l !SHOP_INVENTORY+3, X : INC : STA.l !SHOP_INVENTORY+3, X
+			
+			TXA : LSR #2 : TAX
+			LDA.l !SHOP_STATE : ORA.w Shopkeeper_ItemMasks, X : STA.l !SHOP_STATE
+			PHX
+				TXA : !ADD !SHOP_SRAM_INDEX : TAX
+				LDA !SHOP_PURCHASE_COUNTS, X : INC : BEQ + : STA !SHOP_PURCHASE_COUNTS, X : +
+			PLX
 	.done
 	PLY : PLX
 RTS
+Shopkeeper_ItemMasks:
+db #$01, #$02, #$04
+;--------------------
+;!SHOP_ID = "$7F5050"
+;!SHOP_SRAM_INDEX = "$7F5062"
+;!SHOP_PURCHASE_COUNTS = "$7EF3A0"
 ;--------------------
 Setup_ShopItemCollisionHitbox:
 ;The complications with XBA are to handle the fact that nintendo likes to store
@@ -462,7 +532,7 @@ RTS
 
 ;--------------------------------------------------------------------------------
 Shopkeeper_DrawNextItem:
-	LDA !SHOP_INVENTORY+3, X : BNE .next
+	LDA.l !SHOP_STATE : AND.w Shopkeeper_ItemMasks, Y : BNE .next
 	
 	PHY
 	TYA : ASL #2 : TAY
