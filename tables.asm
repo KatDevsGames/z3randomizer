@@ -1229,6 +1229,18 @@ db $04
 ;--------------------------------------------------------------------------------
 org $308400 ; PC 0x180400
 ;================================================================================
+;Vortexes
+org $05AF79 ; PC 0x2AF79 (sprite_warp_vortex.asm:18) (BNE)
+db #$D0 ; #$D0 - Light-to-Dark (Default), #$F0 - Dark-to-Light, #$42 - Both Directions
+;Mirror
+org $07A943 ; PC 013A943 (Bank07.asm:6548) (BNE)
+db #$D0 ; #$D0 - Dark-to-Light (Default), #$F0 - Light-to-Dark, #$42 - Both Directions
+;Residual Portal
+org $07A96D ; PC 013A96D (Bank07.asm:6579) (BEQ)
+db #$F0 ; #$F0 - Light Side (Default), #$D0 - Dark Side, #$42 - Both Sides
+org $07A9A7 ; PC 013A9A7 (Bank07.asm:6622) (BNE)
+db #$D0 ; #$D0 - Light Side (Default), #$F0 - Dark Side, #$42 - Both Sides
+;================================================================================
 org $0DDBEC ; <- 6DBEC
 dw #10000 ; Rupee Limit +1
 org $0DDBF1 ; <- 6DBF1
@@ -1296,6 +1308,7 @@ dw #9999 ; Rupee Limit
 ; $7F5097 - Dialog Offset Pointer Return (High)
 ; $7F5098 - Water Entry Index
 ; $7F5099 - Last Entered Overworld Door ID
+; $7F509A - (Reserved)
 
 ; $7F50A0 - Event Parameter 1
 
@@ -1398,8 +1411,8 @@ db $FF, $FF, $FF, $FF
 ; qq - # of items for sale
 org $30C800 ; PC 0x184800 - 0x184FFF
 ShopTable:
-;db [id][roomID-low][roomID-high][entranceID-low][entranceID-high][shop_config][pad][pad]
-db $FF, $12, $01, $58, $00, $03, $00, $00
+;db [id][roomID-low][roomID-high][doorID][zero][shop_config][pad][pad]
+db $FF, $FF, $FF, $FF, $00, $03, $00, $00
 ShopContentsTable:
 ;db [id][item][price-low][price-high][max][repl_id][repl_price-low][repl_price-high]
 db $FF, $AF, $50, $00, $00, $FF, $00, $00
@@ -1407,7 +1420,8 @@ db $FF, $27, $0A, $00, $00, $FF, $00, $00
 db $FF, $12, $F4, $01, $01, $2F, $3C, $00
 db $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF
 ;================================================================================
-track_list:
+org $30D000
+MSUTrackList:
 db $00,$01,$03,$03,$03,$03,$03,$03
 db $01,$03,$01,$03,$03,$03,$03,$03
 db $03,$03,$03,$01,$03,$03,$03,$03

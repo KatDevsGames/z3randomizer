@@ -145,7 +145,8 @@ SpritePrep_ShopKeeper:
 	LDX.w #$0000
 	-
 		LDA ShopTable+1, X : CMP $A0 : BNE +
-		LDA ShopTable+3, X : CMP $010E : BNE +
+		;LDA ShopTable+3, X : CMP $010E : BNE +
+		LDA $7F5099 : AND #$00FF : CMP ShopTable+3, X : BNE +
 			SEP #$20 ; set 8-bit accumulator
 			LDA ShopTable, X : STA !SHOP_ID
 			LDA ShopTable+5, X : STA !SHOP_TYPE
@@ -214,6 +215,11 @@ SpritePrep_ShopKeeper:
 	.done
 	LDA.b #$00 : STA !SHOP_STATE
 	PLP : PLY : PLX
+	
+	LDA.l !SHOP_TYPE : CMP.b #$FF : BNE +
+		PLA : PLA : PLA
+		JML.l ShopkeeperFinishInit
+	+
 RTL
 .tile_offsets
 dw $0000, $0000
@@ -305,10 +311,20 @@ UploadVRAMTiles:
 		PLA : STA $4300 ; restore DMA parameters
 RTS
 ;--------------------------------------------------------------------------------
+Shopkepeer_CallOriginal:
+	PLA : PLA : PLA
+	LDA.b #ShopkeeperJumpTable>>16 : PHA
+	LDA.b #ShopkeeperJumpTable>>8 : PHA
+	LDA.b #ShopkeeperJumpTable : PHA
+    LDA $0E80, X
+    JML.l UseImplicitRegIndexedLocalJumpTable
+;--------------------------------------------------------------------------------
 ;!SHOP_TYPE = "$7F5051"
 ;!SCRATCH_CAPACITY = "$7F5020"
 ;!SCRATCH_TEMP_X = "$7F5021"
 Sprite_ShopKeeper:
+	LDA.l !SHOP_TYPE : CMP.b #$FF : BNE + : JMP.w Shopkepeer_CallOriginal : +
+	
 	PHB : PHK : PLB
 		JSL.l Sprite_PlayerCantPassThrough
 		

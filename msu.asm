@@ -177,7 +177,7 @@ spc_fallback:
     JML spc_continue
 
 msu_play:
-    LDA.l track_list,x
+    LDA.l MSUTrackList, X
     STA !REG_MSU_CONTROL
     STX !REG_CURRENT_MSU_TRACK
     JML spc_continue

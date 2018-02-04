@@ -26,7 +26,7 @@ org $3FFFFF ; <- 1FFFFF
 db #$00 ; expand file to 2mb
 
 org $1FFFF8 ; <- FFFF8 timestamp rom
-db #$20, #$18, #$01, #$29 ; year/month/day
+db #$20, #$18, #$02, #$04 ; year/month/day
 
 ;================================================================================
 
@@ -309,6 +309,9 @@ db GFX_HUD_Main>>8
 org $00D25B ; 0x525B - HUD Main L
 db GFX_HUD_Main
 ;================================================================================
+org $008781
+UseImplicitRegIndexedLocalJumpTable:
+
 org $008333
 Vram_EraseTilemaps_triforce:
 
