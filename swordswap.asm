@@ -33,7 +33,7 @@ JMP.l PyramidFairy_BRANCH_GAMMA
 LoadSwordForDamage:
 	LDA $0E20, X : CMP.b #$88 : BNE .notMoth
 		JSR.w LoadModifiedSwordLevel ; load normal sword value
-		CMP.b #$04 : !BLT + : DEC : +
+		CMP.b #$04 : !BLT + : DEC : + ; if it's gold sword, change it to tempered
 		RTL
 	.notMoth
 	JSR.w LoadModifiedSwordLevel ; load normal sword value
