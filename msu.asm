@@ -3,7 +3,7 @@
 ; MSU-1 Enhanced Audio Patch
 ; Zelda no Densetsu - Kamigami no Triforce
 ; Modified for VT Randomizer
-; 
+;
 ; Author: qwertymodo
 ;
 ; Free space used: 0x77DDD-0x77F8A
@@ -123,7 +123,7 @@ spc_fallback:
     STZ !REG_CURRENT_VOLUME
     STZ !REG_MSU_VOLUME
     JML spc_continue
-    
+
 do_fade:
     LDA !REG_CURRENT_VOLUME
     CMP !REG_TARGET_VOLUME
@@ -186,7 +186,7 @@ load_track:
     STX !REG_MSU_TRACK_LO
     STZ !REG_MSU_TRACK_HI
     STZ !REG_MSU_CONTROL
-    LDA.l track_list,x
+    LDA.l MSUTrackList,x
     STA !REG_MSU_LOAD_FLAG
     STX !REG_CURRENT_MSU_TRACK
     JML spc_continue
