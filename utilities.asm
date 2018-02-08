@@ -454,7 +454,7 @@ DrawDynamicTileNoShadow:
 		LDA Bob : BNE + : LDA.b #$00 : STA.l !SKIP_EOR : + ; Bob fix is conditional
 	PLB
 	
-	LDA $90 : !ADD.b #$08 : STA $90 ; leave the pointer in the right spot to draw the shadow, if desired
+	LDA $90 : !ADD.b #$08 : STA $90
 	LDA $92 : INC #2 : STA $92
 RTL
 ;--------------------------------------------------------------------------------
