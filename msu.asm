@@ -3,7 +3,7 @@
 ; MSU-1 Enhanced Audio Patch
 ; Zelda no Densetsu - Kamigami no Triforce
 ; Modified for VT Randomizer
-; 
+;
 ; Author: qwertymodo
 ;
 ; Free space used: 0x77DDD-0x77F8A
@@ -58,6 +58,7 @@
 !REG_MUSIC_CONTROL = $012C
 !REG_CURRENT_TRACK = $0130
 !REG_CURRENT_COMMAND = $0133
+!REG_MSU_LOAD_FLAG = $7F509B
 
 !REG_SPC_CONTROL = $2140
 !REG_NMI_FLAGS = $4210
@@ -93,7 +94,36 @@ msu_main:
     SEP #$30
     LDX !REG_MUSIC_CONTROL
     BNE command_ff
-    
+    LDA !REG_MSU_LOAD_FLAG
+    BEQ do_fade
+
+msu_check_busy:
+    LDA !REG_MSU_STATUS
+    BIT !FLAG_MSU_STATUS_AUDIO_BUSY
+    BEQ .ready
+    JML spc_continue
+.ready
+    LDA !REG_MSU_STATUS
+    BIT !FLAG_MSU_STATUS_TRACK_MISSING
+    BNE spc_fallback
+    LDA !VAL_VOLUME_FULL
+    STA !REG_TARGET_VOLUME
+    STA !REG_CURRENT_VOLUME
+    STA !REG_MSU_VOLUME
+    LDA !REG_MSU_LOAD_FLAG
+    STA !REG_MSU_CONTROL
+    LDA #$00
+    STA !REG_MSU_LOAD_FLAG
+    JML spc_continue
+
+spc_fallback:
+    STZ !REG_MSU_CONTROL
+    STZ !REG_CURRENT_MSU_TRACK
+    STZ !REG_TARGET_VOLUME
+    STZ !REG_CURRENT_VOLUME
+    STZ !REG_MSU_VOLUME
+    JML spc_continue
+
 do_fade:
     LDA !REG_CURRENT_VOLUME
     CMP !REG_TARGET_VOLUME
@@ -156,28 +186,29 @@ load_track:
     STX !REG_MSU_TRACK_LO
     STZ !REG_MSU_TRACK_HI
     STZ !REG_MSU_CONTROL
-    LDA !VAL_VOLUME_FULL
-    STA !REG_TARGET_VOLUME
-    STA !REG_CURRENT_VOLUME
-    STA !REG_MSU_VOLUME
-
-msu_check_busy:
-    LDA !REG_MSU_STATUS
-    BIT !FLAG_MSU_STATUS_AUDIO_BUSY
-    BNE msu_check_busy
-    BIT !FLAG_MSU_STATUS_TRACK_MISSING
-    BEQ msu_play
-
-spc_fallback:
-    STZ !REG_MSU_CONTROL
-    STZ !REG_CURRENT_MSU_TRACK
-    STZ !REG_TARGET_VOLUME
-    STZ !REG_CURRENT_VOLUME
-    STZ !REG_MSU_VOLUME
-    JML spc_continue
-
-msu_play:
-    LDA.l MSUTrackList, X
-    STA !REG_MSU_CONTROL
+    LDA.l MSUTrackList,x
+    STA !REG_MSU_LOAD_FLAG
     STX !REG_CURRENT_MSU_TRACK
     JML spc_continue
+
+
+ending_wait:
+    rep #$20
+    lda !REG_MSU_ID_01
+    cmp !VAL_MSU_ID_01
+    bne .done
+    lda !REG_MSU_ID_23
+    cmp !VAL_MSU_ID_23
+    bne .done
+    lda !REG_MSU_ID_45
+    cmp !VAL_MSU_ID_45
+    bne .done
+    sep #$20
+.wait
+    lda !REG_MSU_STATUS
+    bit !FLAG_MSU_STATUS_AUDIO_PLAYING
+    bne .wait
+.done
+    sep #$20
+    lda #$22
+    rtl

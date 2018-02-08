@@ -26,7 +26,7 @@ org $3FFFFF ; <- 1FFFFF
 db #$00 ; expand file to 2mb
 
 org $1FFFF8 ; <- FFFF8 timestamp rom
-db #$20, #$18, #$02, #$04 ; year/month/day
+db #$20, #$18, #$02, #$06 ; year/month/day
 
 ;================================================================================
 
@@ -350,6 +350,9 @@ Dungeon_SaveRoomData_justKeys:
 
 org $02B861
 Dungeon_SaveRoomQuadrantData:
+
+org $02FD8A ; 17D8A - Bank07.asm: 3732 Note: Different bank
+LoadGearPalettes_bunny:
 
 org $05A51D
 Sprite_SpawnFallingItem:

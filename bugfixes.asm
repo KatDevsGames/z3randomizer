@@ -24,7 +24,7 @@ RTL
 ;1 = Don't Reset Music
 MSMusicReset:
 	LDA $8A : CMP.b #$80 : BNE +
-		LDA $23 
+		LDA $23
 	+
 RTL
 ;--------------------------------------------------------------------------------
@@ -42,4 +42,39 @@ RTL
 ;	CPX.b #$1B : BNE + : LDA.b #$01 : RTL : +
 ;	LDA $7EF340, X
 ;RTL
+;--------------------------------------------------------------------------------
+
+;--------------------------------------------------------------------------------
+FixBunnyOnExitToLightWorld:
+    JSL.l FakeWorldFix
+    LDA.w $02E0 : BEQ +
+        JMP.w DecideIfBunny
+    +
+    LDA $7EF357; thing we overwrote
+RTL
+;--------------------------------------------------------------------------------
+
+;--------------------------------------------------------------------------------
+; fix issue where if a player beats aga1 without moon pearl, they don't turn into
+; bunny on the pyramid
+FixAga2Bunny:
+    LDA.l FixFakeWorld :  BEQ + ; Only use this fix is fakeworld fix is in use
+	JSL DecideIfBunny : BNE +
+		JSR MakeBunny
+		LDA.b #$04 : STA.w $012C ; play bunny music
+		BRA .done
+	+
+	LDA.b #$09 : STA.w $012C ; what we wrote over
+	.done
+RTL
+;--------------------------------------------------------------------------------
+
+;--------------------------------------------------------------------------------
+MakeBunny:
+    PHX : PHY
+	LDA.b #$17 : STA $5D ; set player mode to permabunny
+	LDA.b #$01 : STA $02E0 : STA $56 ; make player look like bunny
+	JSL LoadGearPalettes_bunny
+    PLY : PLX
+RTS
 ;--------------------------------------------------------------------------------
