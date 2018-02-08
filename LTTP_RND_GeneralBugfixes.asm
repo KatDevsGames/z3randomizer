@@ -351,6 +351,9 @@ Dungeon_SaveRoomData_justKeys:
 org $02B861
 Dungeon_SaveRoomQuadrantData:
 
+org $02FD8A ; 17D8A - Bank07.asm: 3732 Note: Different bank
+LoadGearPalettes_bunny:
+
 org $05A51D
 Sprite_SpawnFallingItem:
 
