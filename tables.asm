@@ -103,7 +103,7 @@ db #$00 ; #$00 = Off (default) - #$01 = On
 ;--------------------------------------------------------------------------------
 org $308032 ; PC 0x180032
 OpenMode:
-db #$01 ; #$00 = Classic (default) - #$01 = Open
+db #$01 ; #$00 = Normal (default) - #$01 = Open
 ;--------------------------------------------------------------------------------
 org $308033 ; PC 0x180033
 HeartBeep:
@@ -192,6 +192,10 @@ db #$12 ; #$12 = Vwoop Up (Default) - #$20 = Menu Chime
 org $308049 ; PC 0x180049
 MenuCollapse:
 db #$00 ; #$00 = Press Start (default) - #$10 = Release Start
+;--------------------------------------------------------------------------------
+org $30804A ; PC 0x18004A
+InvertedMode:
+db #$00 ; #$00 = Normal (default) - #$01 = Inverted
 ;--------------------------------------------------------------------------------
 org $308080 ; PC 0x180080
 Upgrade5BombsRefill:
@@ -1236,7 +1240,7 @@ db #$D0 ; #$D0 - Light-to-Dark (Default), #$F0 - Dark-to-Light, #$42 - Both Dire
 org $07A943 ; PC 013A943 (Bank07.asm:6548) (BNE)
 db #$D0 ; #$D0 - Dark-to-Light (Default), #$F0 - Light-to-Dark, #$42 - Both Directions
 ;Residual Portal
-org $07A96D ; PC 013A96D (Bank07.asm:6579) (BEQ)
+org $07A96D ; PC 013A96D (Bank07.asm:6578) (BEQ)
 db #$F0 ; #$F0 - Light Side (Default), #$D0 - Dark Side, #$42 - Both Sides
 org $07A9A7 ; PC 013A9A7 (Bank07.asm:6622) (BNE)
 db #$D0 ; #$D0 - Light Side (Default), #$F0 - Dark Side, #$42 - Both Sides
@@ -1407,13 +1411,16 @@ ItemSubstitutionRules:
 db $12, $01, $35, $FF
 db $FF, $FF, $FF, $FF
 ;================================================================================
-;shop_config - t--- --qq
+;shop_config - td-- --qq
 ; t - 0=Shop - 1=TakeAny
+; d - 0=Check Door - 1=Skip Door Check
 ; qq - # of items for sale
 org $30C800 ; PC 0x184800 - 0x18487F - max 16 shops
 ShopTable:
 ;db [id][roomID-low][roomID-high][doorID][zero][shop_config][pad][pad]
-db $FF, $FF, $FF, $FF, $00, $03, $00, $00
+;db $01, $1F, $01, $46, $00, $03, $00, $00 ; Kakariko shop 
+;db $FF, $12, $01, $58, $00, $03, $00, $00
+db $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF
 org $30C880 ; PC 0x184880 - 0x184FFF - max 240 entries
 ShopContentsTable:
 ;db [id][item][price-low][price-high][max][repl_id][repl_price-low][repl_price-high]

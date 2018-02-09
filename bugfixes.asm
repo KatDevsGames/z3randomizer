@@ -30,10 +30,30 @@ RTL
 ;--------------------------------------------------------------------------------
 
 ;--------------------------------------------------------------------------------
-;0 = Become Permabunny
+;0 = Become (Perma)bunny
 DecideIfBunny:
 	LDA $7EF357 : BEQ + : RTL : +
-	LDA $7EF3CA : AND.b #$40 : EOR #$40
+	LDA $7EF3CA : AND.b #$40
+	PHA : LDA.l InvertedMode : BNE .inverted
+	.normal
+		PLA : EOR #$40
+		BRA .done
+	.inverted
+		PLA
+	.done
+RTL
+;--------------------------------------------------------------------------------
+;0 = Become (Perma)bunny
+DecideIfBunnyByScreenIndex:
+	LDA $7EF357 : BEQ + : RTL : +
+	LDA $8A : AND.b #$40 : PHA
+	LDA.l InvertedMode : BNE .inverted
+	.normal
+		PLA : EOR #$40
+		BRA .done
+	.inverted
+		PLA
+	.done
 RTL
 ;--------------------------------------------------------------------------------
 

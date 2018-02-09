@@ -146,7 +146,9 @@ SpritePrep_ShopKeeper:
 	-
 		LDA ShopTable+1, X : CMP $A0 : BNE +
 		;LDA ShopTable+3, X : CMP $010E : BNE +
-		LDA $7F5099 : AND #$00FF : CMP ShopTable+3, X : BNE +
+		LDA ShopTable+5, X : AND.w #$0040 : BNE ++
+			LDA $7F5099 : AND #$00FF : CMP ShopTable+3, X : BNE +
+		++
 			SEP #$20 ; set 8-bit accumulator
 			LDA ShopTable, X : STA !SHOP_ID
 			LDA ShopTable+5, X : STA !SHOP_TYPE
@@ -154,8 +156,8 @@ SpritePrep_ShopKeeper:
 			TXA : LSR #3 : PHA : ASL : !ADD 1,s : STA !SHOP_SRAM_INDEX : PLA
 			BRA .success
 		+
-		TXA : !ADD.w #$0008 : TAX
 		LDA ShopTable, X : AND.w #$00FF : CMP.w #$00FF : BEQ .fail
+		INX #8
 	BRA -
 	
 	.fail
@@ -218,6 +220,8 @@ SpritePrep_ShopKeeper:
 	
 	LDA.l !SHOP_TYPE : CMP.b #$FF : BNE +
 		PLA : PLA : PLA
+        INC $0BA0, X
+        LDA $0E40, X
 		JML.l ShopkeeperFinishInit
 	+
 RTL
@@ -345,7 +349,14 @@ Sprite_ShopKeeper:
 		JSL.l Sprite_DrawMultiple_quantity_preset
 		LDA $90 : !ADD.b #$04*2 : STA $90 ; increment oam pointer
 		LDA $92 : INC #2 : STA $92
-	
+		
+		LDA.l !SHOP_TYPE : AND.b #$80 : BEQ + ; Take-any
+			PHX
+				LDA !SHOP_SRAM_INDEX : TAX
+				LDA !SHOP_PURCHASE_COUNTS, X : BEQ ++ : PLX : BRA .done : ++
+			PLX
+		+
+		
 		; Draw Items
 		JSR.w Shopkeeper_DrawItems
 		
@@ -358,7 +369,7 @@ Sprite_ShopKeeper:
 		; 0x78 - Center
 		; 0x90 - Midpoint 2
 		; 0xA8 - Right
-		
+		.done
 	PLB
 RTL
 ;--------------------------------------------------------------------------------
@@ -389,9 +400,9 @@ Shopkeeper_SetupHitboxes:
 		.no_contact
 
 		JSR.w Setup_ShopItemInteractionHitbox
-		JSL.l Utility_CheckIfHitBoxesOverlapLong
-		BCC .no_interaction
+		JSL.l Utility_CheckIfHitBoxesOverlapLong : BCC .no_interaction
 		    LDA $F6 : AND.b #$80 : BEQ .no_interaction ; check for A-press
+			LDA $10 : CMP.b #$0C : !BGE .no_interaction ; don't interact in other modes besides game action
 			JSR.w Shopkeeper_BuyItem
 		.no_interaction
 		INY #4
@@ -412,7 +423,6 @@ Shopkeeper_BuyItem:
 		CMP.b #$30 : BEQ .refill ; Blue Potion Refill
 		BRA +
 			.refill
-			STA $FFFFFF
 			JSL.l Sprite_GetEmptyBottleIndex : BMI .full_bottles
 		+
 
@@ -428,6 +438,7 @@ Shopkeeper_BuyItem:
 	        LDA.b #$6B
 	        LDY.b #$01
 	        JSL.l Sprite_ShowMessageUnconditional
+			LDA.b #$3C : STA $012E ; error sound
 			BRA .done
 		.buy
 			REP #$20 : LDA $7EF360 : !SUB !SHOP_INVENTORY+1, X : STA $7EF360 : SEP #$20 ; Take price away
@@ -435,11 +446,17 @@ Shopkeeper_BuyItem:
 			LDA.l !SHOP_INVENTORY+3, X : INC : STA.l !SHOP_INVENTORY+3, X
 			
 			TXA : LSR #2 : TAX
-			LDA.l !SHOP_STATE : ORA.w Shopkeeper_ItemMasks, X : STA.l !SHOP_STATE
-			PHX
-				TXA : !ADD !SHOP_SRAM_INDEX : TAX
-				LDA !SHOP_PURCHASE_COUNTS, X : INC : BEQ + : STA !SHOP_PURCHASE_COUNTS, X : +
-			PLX
+			LDA !SHOP_TYPE : AND.b #$80 : BNE +
+				LDA.l !SHOP_STATE : ORA.w Shopkeeper_ItemMasks, X : STA.l !SHOP_STATE
+				PHX
+					TXA : !ADD !SHOP_SRAM_INDEX : TAX
+					LDA !SHOP_PURCHASE_COUNTS, X : INC : BEQ +++ : STA !SHOP_PURCHASE_COUNTS, X : +++
+				PLX
+				BRA ++
+			+ ; Take-any
+				LDA.l !SHOP_STATE : ORA.b #$07 : STA.l !SHOP_STATE
+				PHX : LDA !SHOP_SRAM_INDEX : TAX : LDA.b #$01 : STA !SHOP_PURCHASE_COUNTS, X : PLX 
+			++
 	.done
 	PLY : PLX
 RTS
@@ -470,6 +487,10 @@ Setup_ShopItemCollisionHitbox:
 
     REP #$20 ; set 16-bit accumulator
     !ADD.w Shopkeeper_DrawNextItem_item_offsets+2, Y
+	PHA : LDA !SHOP_TYPE : AND.w #$0080 : BEQ + ; lower by 4 for Take-any
+		PLA : !ADD.w #$0004
+		BRA ++
+	+ : PLA : ++
     SEP #$20 ; set 8-bit accumulator
 
     ; store hitbox Y Low: $05, High $0B
@@ -554,7 +575,11 @@ Shopkeeper_DrawNextItem:
 	TYA : ASL #2 : TAY
 	REP #$20 ; set 16-bit accumulator
 	LDA.w .item_offsets, Y : STA.l !SPRITE_OAM
-	LDA.w .item_offsets+2, Y : STA.l !SPRITE_OAM+2
+	LDA !SHOP_TYPE : AND.w #$0080 : BNE +
+		LDA.w .item_offsets+2, Y : STA.l !SPRITE_OAM+2 : BRA ++
+	+
+		LDA.w .item_offsets+2, Y : !ADD.w #$0004 : STA.l !SPRITE_OAM+2
+	++
 	SEP #$20 ; set 8-bit accumulator
 	PLY
 
@@ -581,7 +606,9 @@ Shopkeeper_DrawNextItem:
 	++
 	PHX : PHA : LDA !SCRATCH_TEMP_X : TAX : PLA : JSR.w RequestItemOAM : PLX
 	
-	JSR.w Shopkeeper_DrawNextPrice
+	LDA !SHOP_TYPE : AND.b #$80 : BNE +
+		JSR.w Shopkeeper_DrawNextPrice
+	+
 	
 	.next
 	INY
