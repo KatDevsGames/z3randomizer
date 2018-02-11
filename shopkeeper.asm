@@ -128,7 +128,7 @@ RTS
 !SHOP_TYPE = "$7F5051"
 !SHOP_INVENTORY = "$7F5052" ; $7F505E
 !SHOP_STATE = "$7F505F"
-!SCRATCH_CAPACITY = "$7F5060"
+!SHOP_CAPACITY = "$7F5060"
 !SCRATCH_TEMP_X = "$7F5061"
 !SHOP_SRAM_INDEX = "$7F5062"
 !SHOP_MERCHANT = "$7F5063"
@@ -153,8 +153,8 @@ SpritePrep_ShopKeeper:
 			SEP #$20 ; set 8-bit accumulator
 			LDA ShopTable, X : STA !SHOP_ID
 			LDA ShopTable+5, X : STA !SHOP_TYPE
+			AND.b #$03 : ASL #2 : STA !SHOP_CAPACITY
 			LDA ShopTable+6, X : STA !SHOP_MERCHANT
-			AND.b #$03 : ASL #2 : STA !SCRATCH_CAPACITY
 			TXA : LSR #3 : PHA : ASL : !ADD 1,s : STA !SHOP_SRAM_INDEX : PLA
 			BRA .success
 		+
@@ -173,11 +173,10 @@ SpritePrep_ShopKeeper:
 	LDX.w #$0000
 	LDY.w #$0000
 	-
-		TYA : CMP !SCRATCH_CAPACITY : !BLT ++ : BRL .stop : ++
+		TYA : CMP !SHOP_CAPACITY : !BLT ++ : BRL .stop : ++
 		LDA.l ShopContentsTable+1, X : CMP.b #$FF : BNE ++ : BRL .stop : ++
 		
-		
-		LDA.l ShopContentsTable, X : CMP !SHOP_ID : BEQ ++ : BRL + : ++
+		LDA.l ShopContentsTable, X : CMP !SHOP_ID : BEQ ++ : BRL .next : ++
 			LDA.l ShopContentsTable+1, X : PHX : TYX : STA.l !SHOP_INVENTORY, X : PLX
 			LDA.l ShopContentsTable+2, X : PHX : TYX : STA.l !SHOP_INVENTORY+1, X : PLX
 			LDA.l ShopContentsTable+3, X : PHX : TYX : STA.l !SHOP_INVENTORY+2, X : PLX
@@ -205,10 +204,9 @@ SpritePrep_ShopKeeper:
 				JSR LoadTile
 			PLY : PLX
 			INY #4
-		+
+		
+		.next
 		INX #8
-		
-		
 	BRL -
 	.stop
 	
@@ -246,19 +244,6 @@ RTS
 ;!SHOP_INVENTORY, X
 ;[id][$lo][$hi][purchase_counter]
 ;--------------------------------------------------------------------------------
-;shop_config - t--- --qq
-; t - 0=Shop - 1=TakeAny
-; qq - # of items for sale
-;org $30C800 ; PC 0x184800 - 0x184FFF
-;ShopTable:
-;;db [id][roomID-low][roomID-high][entranceID-low][entranceID-high][shop_config][pad][pad]
-;db $FF, $12, $01, $58, $00, $FF, $00, $00
-;ShopContentsTable:
-;;db [id][item][price-low][price-high][max][repl_id][repl_price-low][repl_price-high]
-;db $FF, $AF, $50, $00, $00, $FF, $00, $00
-;db $FF, $27, $0A, $00, $00, $FF, $00, $00
-;db $FF, $12, $F4, $01, $01, $2F, $3C, $00
-;db $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF
 ;!SHOP_PURCHASE_COUNTS = "$7EF3A0"
 ;--------------------------------------------------------------------------------
 UploadVRAMTiles:
@@ -326,7 +311,7 @@ Shopkepeer_CallOriginal:
     JML.l UseImplicitRegIndexedLocalJumpTable
 ;--------------------------------------------------------------------------------
 ;!SHOP_TYPE = "$7F5051"
-;!SCRATCH_CAPACITY = "$7F5020"
+;!SHOP_CAPACITY = "$7F5020"
 ;!SCRATCH_TEMP_X = "$7F5021"
 Sprite_ShopKeeper:
 	LDA.l !SHOP_TYPE : CMP.b #$FF : BNE + : JMP.w Shopkepeer_CallOriginal : +
