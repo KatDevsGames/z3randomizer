@@ -50,6 +50,9 @@ OnFileLoad:
 	JSL.l InitOpenMode
 	LDA #$FF : STA !RNG_ITEM_LOCK_IN ; reset rng item lock-in
 	LDA #$00 : STA $7F5001 ; mark fake flipper softlock as impossible
+	LDA.l GenericKeys : BEQ +
+		LDA $7EF38B : STA $7EF36F ; copy generic keys to key counter
+	+
 RTL
 ;--------------------------------------------------------------------------------
 !RNG_ITEM_LOCK_IN = "$7F5090"

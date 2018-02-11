@@ -989,8 +989,8 @@ STA $7EC760 ; nudge arrow 10s digit right
 org $0DFCE8 ; <- 6FCE8
 STA $7EC762 ; nudge arrow 1s digit right
 
-org $0DFD0A ; <- 6FD0A - headsup_display.asm : 900
-STA $7EC766 ; nudge key digit right
+;org $0DFD0A ; <- 6FD0A - headsup_display.asm : 900
+;STA $7EC766 ; nudge key digit right
 
 org $0DFD13 ; <- 6FD13 - headsup_display.asm : 905
 STA $7EC726 ; key icon blank
@@ -1135,6 +1135,9 @@ JSL.l EndRainState : NOP #2
 ;================================================================================
 ; Generic Keys
 ;--------------------------------------------------------------------------------
+org $028157 ; <- 10157 - Bank02.asm:381 - (LDA $040C : CMP.b #$FF : BEQ .notPalace)
+JSL.l CheckKeys : NOP
+;--------------------------------------------------------------------------------
 org $028166 ; <- 10166 - Bank02.asm:396 - (LDA $7EF37C, X)
 JSL.l LoadKeys
 ;--------------------------------------------------------------------------------
@@ -1149,6 +1152,12 @@ JSL.l SaveKeys
 ;--------------------------------------------------------------------------------
 org $0282EC ; <- 102EC - Bank02.asm:650 - (STA $7EF36F)
 JSL.l ClearOWKeys
+;--------------------------------------------------------------------------------
+org $0DFA80 ; <- 6FA80 ; headsup_display.asm:596 - (LDA.b #$00 : STA $7EC017)
+JSL.l HUDRebuildIndoor : NOP #4
+;--------------------------------------------------------------------------------
+org $0DFD02 ; <- 6FD02 ; headsup_display.asm:900 - (LDA $05 : AND.w #$00FF : ORA.w #$2400 : STA $7EC764)
+JSL.l DrawKeyIcon : NOP #8
 ;--------------------------------------------------------------------------------
 
 ;================================================================================

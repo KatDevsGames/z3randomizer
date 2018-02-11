@@ -18,6 +18,17 @@ FlipLWDWFlag:
 	PLP
 RTL
 ;================================================================================
+HUDRebuildIndoor:
+	LDA.l GenericKeys : BEQ .normal
+	.generic
+	LDA.b #$00 : STA $7EC017
+	LDA $7EF38B ; generic key count
+RTL
+	.normal
+    LDA.b #$00 : STA $7EC017
+    LDA.b #$FF ; don't show keys
+RTL
+;================================================================================
 GetCrystalNumber:
 	PHX
 		TXA : ASL : TAX

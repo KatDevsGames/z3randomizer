@@ -316,10 +316,15 @@ AddReceivedItemExpandedGetItem:
 	+ CMP.b #$A0 : !BLT + : CMP.b #$B0 : !BGE + ; Free Small Key
 		AND #$0F : TAX
 		LDA $7EF37C, X : INC : STA $7EF37C, X ; Increment Key Count
-		TXA : ASL : CMP $040C : BNE ++
+		LDA.l GenericKeys : BEQ +
+		.generic
 			LDA $7EF36F : INC : STA $7EF36F
-		++
-		BRL .done
+			BRL .done
+		.normal
+			TXA : ASL : CMP $040C : BNE ++
+				LDA $7EF36F : INC : STA $7EF36F
+			++
+			BRL .done
 	+
 	.done
 	PLX
