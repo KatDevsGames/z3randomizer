@@ -1422,7 +1422,7 @@ db $FF, $FF, $FF, $FF
 org $30C800 ; PC 0x184800 - 0x18487F - max 16 shops
 ShopTable:
 ;db [id][roomID-low][roomID-high][doorID][zero][shop_config][shopkeeper_config][pad]
-;db $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF
+db $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF
 db $01, $0F, $01, $57, $00, $03, $51, $00
 db $02, $0F, $01, $60, $00, $03, $51, $00
 db $FF, $12, $01, $58, $00, $03, $50, $00
