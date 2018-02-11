@@ -66,12 +66,12 @@ RTL
 
 ;--------------------------------------------------------------------------------
 FixBunnyOnExitToLightWorld:
-    JSL.l FakeWorldFix
     LDA.w $02E0 : BEQ +
-        JMP.w DecideIfBunny
+        JSL.l DecideIfBunny : BEQ +
+        STZ $5D ; set player mode to Normal
+        STZ $02E0 : STZ $56 ; return player graphics to normal
     +
-    LDA $7EF357; thing we overwrote
-RTL
+RTS
 ;--------------------------------------------------------------------------------
 
 ;--------------------------------------------------------------------------------

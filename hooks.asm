@@ -1108,9 +1108,6 @@ JSL.l LoadModifiedTileBufferAddress : NOP #2
 org $078F32 ; <- 38F32 - Bank07.asm:2420 - (LDA $7EF357)
 JSL.l DecideIfBunny ; for bunny beams
 ;--------------------------------------------------------------------------------
-org $028468 ; <- 10468 Bank02.asm:911 - (LDA $7EF357)
-JSL.l FixBunnyOnExitToLightWorld ; for cross-world connections
-;--------------------------------------------------------------------------------
 
 ;================================================================================
 ; Other bunny Fixes

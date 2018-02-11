@@ -848,6 +848,8 @@ RTL
 ;--------------------------------------------------------------------------------
 ClearOWKeys:
 	PHA
+	JSL.l FakeWorldFix
+	JSR.w FixBunnyOnExitToLightWorld
 	LDA.l GenericKeys : BEQ +
 		PLA : LDA $7EF38B : STA $7EF36F
 		RTL
