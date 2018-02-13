@@ -2049,3 +2049,15 @@ org $00DF62 ; <- Bank00.asm:4672 (LDX.w #$0000 : LDY.w #$0040)
 org $00DF6E ; <- A few instructions later, right after JSR Do3To4High16Bit
     ReloadingFloorsCancel:
 ;================================================================================
+
+;================================================================================
+; Hook bow use - to use rupees instead of actual arrows
+;--------------------------------------------------------------------------------
+org $07A055
+NOP #$12 ; Remove archery minigame code
+
+org $07A06C ; <- Bank07.asm:5215 (LDA $7EF377) (Skip #$02) (DEC A : LDA $7EF377)
+JSL CheckEnoughRupeeArrows
+skip #$02 ;Skip the BEQ
+NOP #$0B ;Remove hud update code for bow/arrow kinda useless / Remove decrease arrow code
+;================================================================================
