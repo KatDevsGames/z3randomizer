@@ -1,5 +1,4 @@
 ;org $0DFE97 ; <- 6FE97 - headsup_display.asm:1009 (.hud_tilemap)
-; DO NOT EXCEED 0x150
 HUD_TileMap:
     dw $207F, $207F, $2850, $A856
     dw $2852, $285B, $285B, $285C
