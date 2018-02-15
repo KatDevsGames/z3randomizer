@@ -2,7 +2,7 @@ DecrementArrows:
 	LDA.l ArrowMode : BNE .rupees
 	.normal
     	LDA $7EF377 : BEQ .done
-    	DEC A : STA $7EF377 : INC
+    	DEC : STA $7EF377 : INC
 		BRA .done
 	.rupees
 		LDA $7EF340 : AND.b #$01 : BEQ +
