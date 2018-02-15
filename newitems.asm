@@ -857,20 +857,30 @@ RTL
 DrawHUDArrows:
 LDA.l ArrowMode : BEQ .normal
 	.rupee_arrows
-	LDA.b #$7F : STA $7EC720 ; draw no arrows
-	LDA.b #$24 : STA $7EC721
-	LDA.b #$7F : STA $7EC722
-	LDA.b #$24 : STA $7EC723
 	
-	LDA.b #$86 : STA $7EC714 ; draw silver arrow marker
-	LDA.b #$24 : STA $7EC715
-	LDA.b #$87 : STA $7EC716
-	LDA.b #$24 : STA $7EC717
+	LDA $7EF377 : BEQ .none ; assuming silvers will increment this. if we go with something else, reorder these checks
+	LDA $7EF340 : BNE +
+	LDA !INVENTORY_SWAP_2 : AND.b #$40 : BNE .silver
+	BRA .wooden
+	+ CMP.b #03 : !BGE .silver
+
+	.wooden
+	LDA.b #$A7 : STA $7EC720 ; draw wooden arrow marker
+	LDA.b #$20 : STA $7EC721
+	LDA.b #$A9 : STA $7EC722
+	LDA.b #$20 : STA $7EC723
 RTL
-	.normal
+	.normal ; in normal arrow mode this function is only ever called for silvers
+	.silver
 	LDA.b #$86 : STA $7EC720 ; draw silver arrow marker
 	LDA.b #$24 : STA $7EC721
 	LDA.b #$87 : STA $7EC722
+	LDA.b #$24 : STA $7EC723
+RTL
+	.none
+	LDA.b #$7F : STA $7EC720 ; draw no arrow marker
+	LDA.b #$24 : STA $7EC721
+	LDA.b #$7F : STA $7EC722
 	LDA.b #$24 : STA $7EC723
 RTL
 ;--------------------------------------------------------------------------------
