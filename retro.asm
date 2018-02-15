@@ -3,6 +3,7 @@ DecrementArrows:
 	.normal
     	LDA $7EF377 : BEQ .done
     	DEC A : STA $7EF377
+		BEQ .done
 	.rupees
 		LDA $7EF340 : AND.b #$01 : BEQ +
 			LDA.b #$00 : RTL
@@ -13,7 +14,7 @@ DecrementArrows:
 			PHA : LDA $7EF340 : DEC : AND #$0002 : TAX : PLA
 			!SUB.l ArrowModeWoodArrowCost, X ; CMP.w #$0000
 			BMI .not_enough_money
-				STA $7EF360 : BRA +
+				STA $7EF360 : INC : BRA +
 			.not_enough_money
 				LDA.w #$0000
 		+
