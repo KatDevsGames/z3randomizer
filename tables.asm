@@ -131,7 +131,7 @@ org $30803B ; PC 0x18003B
 MapMode:
 db #$00 ; #$00 = Always On (default) - #$01 = Require Map Item
 CompassMode:
-db #$02 ; #$00 = Off (default) - #$01 = Display Dungeon Count w/Compass - #$02 = Display Dungeon Count Always
+db #$00 ; #$00 = Off (default) - #$01 = Display Dungeon Count w/Compass - #$02 = Display Dungeon Count Always
 ;--------------------------------------------------------------------------------
 org $30803D ; PC 0x18003D
 PersistentFloodgate:
@@ -739,6 +739,14 @@ org $308174 ; PC 0x180174
 FixFakeWorld:
 db #$00 ; #00 = Fix Off (Default) - #$01 = Fix On
 ;================================================================================
+org $308175 ; PC 0x180175
+ArrowMode:
+db #$00 ; #00 = Normal (Default) - #$01 = Rupees
+ArrowModeWoodArrowCost: ; keep these together
+dw #$0005 ; #$0005 = 5 (Default)
+ArrowModeSilverArrowCost: ; keep these together
+dw #$000A ; #$000A = 10 (Default)
+;================================================================================
 org $308190 ; PC 0x180190
 TimerStyle:
 db #$00 ; #$00 = Off (Default) - #$01 Countdown - #$02 = Stopwatch
@@ -1327,6 +1335,9 @@ dw #9999 ; Rupee Limit
 ; $7F50C5 - Cucco Attack Modifier
 ; $7F50C6 - Old Man Dash Modifier
 ; $7F50C7 - Ice Physics Modifier
+; $7F50C8 - Infinite Arrows Modifier
+; $7F50C9 - Infinite Bombs Modifier
+; $7F50CA - Infinite Magic Modifier
 
 ; $7F50D0 - $7F50FF - Block Cypher Parameters
 ; $7F5100 - $7F51FF - Block Cypher Buffer

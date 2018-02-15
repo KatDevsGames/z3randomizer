@@ -316,6 +316,13 @@ AddReceivedItemExpandedGetItem:
 	+ CMP.b #$A0 : !BLT + : CMP.b #$B0 : !BGE + ; Free Small Key
 		AND #$0F : TAX
 		LDA $7EF37C, X : INC : STA $7EF37C, X ; Increment Key Count
+		
+		CPX.b #$00 : BNE +
+			STA $7EF37D ; copy HC to sewers
+		+ : CPX.b #$01 : BNE +
+			STA $7EF37C ; copy sewers to HC
+		+
+		
 		LDA.l GenericKeys : BEQ +
 		.generic
 			LDA $7EF36F : INC : STA $7EF36F
@@ -833,15 +840,34 @@ RTL
 ;--------------------------------------------------------------------------------
 ;Return $7EF340 but also draw silver arrows if you have the upgrade even if you don't have the bow
 CheckHUDSilverArrows:
+	LDA.l ArrowMode : BEQ .normal
+	.rupee_arrows
+		JSL.l DrawHUDArrows
+		LDA $7EF340
+		RTL
+	.normal
 	LDA $7EF340 : BNE +
 		LDA !INVENTORY_SWAP_2 : AND.b #$40 : BEQ ++
-			JSL.l DrawHUDSilverArrows
+			JSL.l DrawHUDArrows
 		++
 		LDA $7EF340
 	+
 RTL
 ;--------------------------------------------------------------------------------
-DrawHUDSilverArrows:
+DrawHUDArrows:
+LDA.l ArrowMode : BEQ .normal
+	.rupee_arrows
+	LDA.b #$7F : STA $7EC720 ; draw no arrows
+	LDA.b #$24 : STA $7EC721
+	LDA.b #$7F : STA $7EC722
+	LDA.b #$24 : STA $7EC723
+	
+	LDA.b #$86 : STA $7EC714 ; draw silver arrow marker
+	LDA.b #$24 : STA $7EC715
+	LDA.b #$87 : STA $7EC716
+	LDA.b #$24 : STA $7EC717
+RTL
+	.normal
 	LDA.b #$86 : STA $7EC720 ; draw silver arrow marker
 	LDA.b #$24 : STA $7EC721
 	LDA.b #$87 : STA $7EC722

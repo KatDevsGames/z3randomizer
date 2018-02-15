@@ -18,6 +18,19 @@ FlipLWDWFlag:
 	PLP
 RTL
 ;================================================================================
+HUDRebuildIndoorHole:
+	PHA
+	LDA.l GenericKeys : BEQ .normal
+	.generic
+	PLA
+	LDA $7EF38B ; generic key count
+	JSL.l HUD_RebuildIndoor_Palace
+RTL
+	.normal
+	PLA
+	JSL.l HUD_RebuildIndoor_Palace
+RTL
+;================================================================================
 HUDRebuildIndoor:
 	LDA.l GenericKeys : BEQ .normal
 	.generic
@@ -227,6 +240,20 @@ RTL
 ;$387 = Gargoyle's Domain
 ;$388 = Turtle Rock
 ;$389 = Ganon's Tower
+;--------------------------------------------------------------------------------
+DrawArrowTens:
+	PHA : LDA.l ArrowMode : AND.w #$00FF : BNE +
+		PLA : STA $7EC760 : RTL
+	+
+	PLA
+RTL
+;--------------------------------------------------------------------------------
+DrawArrowOnes:
+	PHA : LDA.l ArrowMode : AND.w #$00FF : BNE +
+		PLA : STA $7EC762 : RTL
+	+
+	PLA
+RTL
 ;--------------------------------------------------------------------------------
 DrawBootsInMenuLocation:
 	LDA.l HUDDungeonItems : BNE +

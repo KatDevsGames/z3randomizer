@@ -26,7 +26,7 @@ org $3FFFFF ; <- 1FFFFF
 db #$00 ; expand file to 2mb
 
 org $1FFFF8 ; <- FFFF8 timestamp rom
-db #$20, #$18, #$02, #$11 ; year/month/day
+db #$20, #$18, #$02, #$15 ; year/month/day
 
 ;================================================================================
 
@@ -490,6 +490,9 @@ DrawEquipment: ; this returns short
 
 org $0DFA78
 HUD_RebuildLong:
+
+org $0DFA88
+HUD_RebuildIndoor_Palace:
 
 org $0EEE10
 Messaging_Text:

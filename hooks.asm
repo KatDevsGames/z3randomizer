@@ -984,10 +984,10 @@ org $0DFCC4 ; <- 6FCC4
 STA $7EC75C ; nudge bomb 1s digit right
 
 org $0DFCDC ; <- 6FCDC
-STA $7EC760 ; nudge arrow 10s digit right
+JSL.l DrawArrowTens
 
 org $0DFCE8 ; <- 6FCE8
-STA $7EC762 ; nudge arrow 1s digit right
+JSL.l DrawArrowOnes
 
 ;org $0DFD0A ; <- 6FD0A - headsup_display.asm : 900
 ;STA $7EC766 ; nudge key digit right
@@ -1004,7 +1004,7 @@ org $0DFB29 ; <- headsup_display.asm : 688 (LDA.b #$86 : STA $7EC71E)
 ;LDA.b #$24 : STA $7EC721
 ;LDA.b #$87 : STA $7EC722
 ;LDA.b #$24 : STA $7EC723
-JSL.l DrawHUDSilverArrows : BRA +
+JSL.l DrawHUDArrows : BRA +
 	NOP #18
 +
 ;--------------------------------------------------------------------------------
@@ -1150,8 +1150,11 @@ JSL.l SaveKeys
 org $0282EC ; <- 102EC - Bank02.asm:650 - (STA $7EF36F)
 JSL.l ClearOWKeys
 ;--------------------------------------------------------------------------------
-org $0DFA80 ; <- 6FA80 ; headsup_display.asm:596 - (LDA.b #$00 : STA $7EC017)
+org $0DFA80 ; <- 6FA80 : headsup_display.asm:596 - (LDA.b #$00 : STA $7EC017)
 JSL.l HUDRebuildIndoor : NOP #4
+;--------------------------------------------------------------------------------
+org $029A35 ; <- 11A35 : Bank02.asm:4789 - (JSL HUD.RebuildIndoor.palace)
+JSL.l HUDRebuildIndoorHole
 ;--------------------------------------------------------------------------------
 org $0DFD02 ; <- 6FD02 ; headsup_display.asm:900 - (LDA $05 : AND.w #$00FF : ORA.w #$2400 : STA $7EC764)
 JSL.l DrawKeyIcon : NOP #8
@@ -1512,10 +1515,10 @@ STZ $1CE8 : NOP
 org $1EE523 ; <- F6523 sprite_kiki.asm : 373 kiki will open door
 NOP #4
 
-org $1EE414 ; <- F6414 sprite_kiki.asm : 193 don't have 10 rupees
-NOP #4
-org $1EE50C ; <- F650C sprite_kiki.asm : 356 don't have 100 rupees
-NOP #4
+;org $1EE414 ; <- F6414 sprite_kiki.asm : 193 don't have 10 rupees
+;NOP #4
+;org $1EE50C ; <- F650C sprite_kiki.asm : 356 don't have 100 rupees
+;NOP #4
 ;----------------------------------------------------
 ;-- Witch
 org $05E4FB ; <- 2E4FB sprite_witch.asm : 165 (JSL Sprite_ShowSolicitedMessageIfPlayerFacing)
@@ -2053,11 +2056,9 @@ org $00DF6E ; <- A few instructions later, right after JSR Do3To4High16Bit
 ;================================================================================
 ; Hook bow use - to use rupees instead of actual arrows
 ;--------------------------------------------------------------------------------
-org $07A055
-NOP #$12 ; Remove archery minigame code
+org $07A055 ; <- Bank07.asm:5205 (LDA $0B99 : BEQ BRANCH_DELTA)
+JSL.l ArrowGame : NOP #14
 
-org $07A06C ; <- Bank07.asm:5215 (LDA $7EF377) (Skip #$02) (DEC A : LDA $7EF377)
-JSL CheckEnoughRupeeArrows
-skip #$02 ;Skip the BEQ
-NOP #$0B ;Remove hud update code for bow/arrow kinda useless / Remove decrease arrow code
+org $07A06C ; <- Bank07.asm:5215 (LDA $7EF377 : BEQ BRANCH_EPSILON)
+JSL.l DecrementArrows : SKIP #2 : NOP #5
 ;================================================================================

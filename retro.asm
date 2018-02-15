@@ -1,31 +1,40 @@
-CheckEnoughRupeeArrows:
-{
-    LDA $0B99 : BNE .minigame_arrow
-    LDA $7EF340 : CMP #$03 : BCS .skip_arrow_check ;03 is the silver bow without arrows
-    LDA $7EF377 : BEQ .no_arrows
-    .skip_arrow_check
-    PHX
-    REP #$30 ;Set 16bit mode
-    LDA $7EF340 : AND #$00FF : TAX
-    LDA $7EF360 : CMP.l .rupees_cost, X : BCC .not_enough_rupees ;Load Rupees count
-    SBC.l .rupees_cost, X : STA $7EF360 ;decrease rupee by 5
+DecrementArrows:
+	LDA.l ArrowMode : BNE .rupees
+	.normal
+    	LDA $7EF377 : BEQ .done
+    	DEC A : STA $7EF377
+	.rupees
+		LDA $7EF340 : AND.b #$01 : BEQ +
+			LDA.b #$00 : RTL
+		+
+		PHX
+		REP #$20 ; set 16-bit accumulator
+    	LDA $7EF360 : BEQ +
+			PHA : LDA $7EF340 : DEC : AND #$0002 : TAX : PLA
+			!SUB.l ArrowModeWoodArrowCost, X ; CMP.w #$0000
+			BMI .not_enough_money
+				STA $7EF360 : BRA +
+			.not_enough_money
+				LDA.w #$0000
+		+
+		SEP #$20 ; set 8-bit accumulator
+		PLX
+	.done
+	CMP.b #$00
+RTL
 
-    SEP #$30
-    PLX
-    BRA .ignore_minigame
-    .minigame_arrow
-    DEC $0B99
-    .ignore_minigame
-    LDA #$01 ;return 01 if we have enough rupee so it doesnt despawn the arrow
-    RTL
-
-    .not_enough_rupees
-    SEP #$30
-    PLX
-    .no_arrows
-    LDA #$00 ;Return 00 if we don't have enough rupee so it despawn the arrow
-    RTL
-
-    .rupees_cost ;Normal, Normal, Silver, Silver
-    dw #$0005, #$0005, #$000A, #$000A
-}
+ArrowGame:
+    LDA $0B99 : BEQ +
+    	DEC $0B99 ; reduce minigame arrow count
+		LDA.l ArrowMode : BNE .rupees
+		.normal
+    		LDA $7EF377 : INC #2 : STA $7EF377 ; increment arrow count (by 2 for some reason)
+		.rupees
+			PHX
+			REP #$20 ; set 16-bit accumulator
+				PHA : LDA $7EF340 : DEC : AND #$0002 : TAX : PLA
+		    	LDA $7EF360 : !ADD.l ArrowModeWoodArrowCost, X : STA $7EF360
+			SEP #$20 ; set 8-bit accumulator
+			PLX
+	+
+RTL
