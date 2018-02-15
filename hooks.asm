@@ -1018,7 +1018,7 @@ JSL.l DrawHUDDungeonItems
 org $0DFA96 ; <- 6FA96 - headsup_display.asm : 626 (LDX.w #.hud_tilemap)
 LDX.w #HUD_TileMap
 org $0DFA9C ; <- 6FA9C - headsup_display.asm : 629 (MVN $0D, $7E ; $Transfer 0x014A bytes from $6FE77 -> $7EC700)
-MVN $207E
+MVN $217E
 ;--------------------------------------------------------------------------------
 ;org $0DE48E ; <- 6E48E - equipment.asm : 1233 (LDA.w #$11CE : STA $00) - HOOK HERE TO DRAW ON THE ITEM SCREEN
 ;JSL.l DrawHUDDungeonItems
