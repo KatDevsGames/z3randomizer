@@ -122,7 +122,6 @@ incsrc clock.asm
 incsrc accessability.asm
 incsrc heartbeep.asm
 incsrc capacityupgrades.asm
-incsrc hud.asm
 incsrc timer.asm
 incsrc glitched.asm
 incsrc hardmode.asm
@@ -143,6 +142,10 @@ warnpc $1CF356
 
 org $A18000 ; static mapping area
 incsrc framehook.asm
+warnpc $A186B0
+
+org $A186B0 ; static mapping area, do not move
+incsrc hud.asm
 warnpc $A18800
 
 org $A18800 ; static mapping area
