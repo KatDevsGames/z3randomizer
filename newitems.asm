@@ -317,11 +317,11 @@ AddReceivedItemExpandedGetItem:
 		AND #$0F : TAX
 		LDA $7EF37C, X : INC : STA $7EF37C, X ; Increment Key Count
 		
-		CPX.b #$00 : BNE +
+		CPX.b #$00 : BNE ++
 			STA $7EF37D ; copy HC to sewers
-		+ : CPX.b #$01 : BNE +
+		++ : CPX.b #$01 : BNE ++
 			STA $7EF37C ; copy sewers to HC
-		+
+		++
 		
 		LDA.l GenericKeys : BEQ +
 		.generic
