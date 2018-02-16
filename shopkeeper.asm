@@ -155,7 +155,7 @@ SpritePrep_ShopKeeper:
 			LDA ShopTable+5, X : STA !SHOP_TYPE
 			AND.b #$03 : ASL #2 : STA !SHOP_CAPACITY
 			LDA ShopTable+6, X : STA !SHOP_MERCHANT
-			TXA : LSR #3 : PHA : ASL : !ADD 1,s : STA !SHOP_SRAM_INDEX : PLA
+			LDA ShopTable+7, X : STA !SHOP_SRAM_INDEX
 			BRA .success
 		+
 		LDA ShopTable, X : AND.w #$00FF : CMP.w #$00FF : BEQ .fail
