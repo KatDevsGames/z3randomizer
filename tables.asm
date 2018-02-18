@@ -1427,22 +1427,22 @@ db $FF, $FF, $FF, $FF
 ; d - 0=Check Door - 1=Skip Door Check
 ; qq - # of items for sale
 
-;shopkeeper_config - -ppp --ss
+;shopkeeper_config - ppp- --ss
 ; ppp - palette
 ; ss - sprite type
 org $30C800 ; PC 0x184800 - 0x18487F - max 16 shops
 ShopTable:
 ;db [id][roomID-low][roomID-high][doorID][zero][shop_config][shopkeeper_config][sram_index]
 db $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF
-db $01, $0F, $01, $57, $00, $03, $51, $00
-db $02, $0F, $01, $60, $00, $03, $51, $03
-db $FF, $12, $01, $58, $00, $03, $50, $06
-db $02, $0F, $01, $57, $00, $03, $50, $09
-db $03, $0F, $01, $60, $00, $03, $50, $0c
-db $04, $0F, $01, $6F, $00, $03, $50, $0f
-db $05, $FF, $00, $00, $00, $03, $50, $12
-db $06, $1F, $01, $46, $00, $03, $50, $15
-db $FF, $12, $01, $58, $00, $03, $50, $18
+db $01, $0F, $01, $57, $00, $03, $C1, $00
+db $02, $0F, $01, $60, $00, $03, $C1, $03
+db $FF, $12, $01, $58, $00, $02, $E3, $06
+db $02, $0F, $01, $57, $00, $03, $A0, $09
+db $03, $0F, $01, $60, $00, $03, $A0, $0c
+db $04, $0F, $01, $6F, $00, $03, $A0, $0f
+db $05, $FF, $00, $00, $00, $03, $A0, $12
+db $06, $1F, $01, $46, $00, $03, $A0, $15
+db $FF, $12, $01, $58, $00, $03, $A0, $18
 org $30C880 ; PC 0x184880 - 0x184FFF - max 240 entries
 ShopContentsTable:
 ;db [id][item][price-low][price-high][max][repl_id][repl_price-low][repl_price-high]
@@ -1453,7 +1453,7 @@ db $02, $2E, $96, $00, $00, $FF, $00, $00
 db $02, $AF, $50, $00, $00, $FF, $00, $00
 db $02, $31, $32, $00, $00, $FF, $00, $00
 db $FF, $2E, $96, $00, $00, $FF, $00, $00
-db $FF, $AF, $50, $00, $00, $FF, $00, $00
+db $FF, $30, $2C, $01, $00, $FF, $00, $00
 db $FF, $31, $32, $00, $00, $FF, $00, $00
 db $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF
 ;================================================================================

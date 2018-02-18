@@ -345,33 +345,52 @@ Sprite_ShopKeeper:
 	PLB
 RTL
 ;--------------------------------------------------------------------------------
-;--------------------------------------------------------------------------------
-Shopkeeper_DrawMerchant:
-	LDA.l !SHOP_MERCHANT : AND.b #$0F
-	BEQ Shopkeeper_DrawMerchant_Type0
-	CMP.b #$01 : BEQ Shopkeeper_DrawMerchant_Type1
-Shopkeeper_DrawMerchant_Type0:
-	LDA.b #$02 : STA $06 ; request 2 OAM slots
-	LDA #$08 : JSL.l OAM_AllocateFromRegionA ; request 8 bytes
-	STZ $07
-	LDA $1A : AND #$10 : BEQ +
-		LDA.b #.oam_shopkeeper_f1 : STA $08
-		LDA.b #.oam_shopkeeper_f1>>8 : STA $09
-		BRA ++
+macro DrawMerchant(head,body,speed)
+	PHX : LDX.b #$00
+	LDA $1A : AND <speed> : BEQ +
+		-
+			LDA.w .oam_shopkeeper_f1, X : STA !BIGRAM, X : INX
+		CPX.b #$10 : !BLT -
 	+
-		LDA.b #.oam_shopkeeper_f2 : STA $08
-		LDA.b #.oam_shopkeeper_f2>>8 : STA $09
+		-
+			LDA.w .oam_shopkeeper_f2, X : STA !BIGRAM, X : INX
+		CPX.b #$10 : !BLT -
 	++
-	JSL.l Sprite_DrawMultiple_quantity_preset
-	LDA $90 : !ADD.b #$04*2 : STA $90 ; increment oam pointer
-	LDA $92 : INC #2 : STA $92
+	PLX
+	
+	LDA !SHOP_MERCHANT : LSR #4 : AND.b #$0E : ORA !BIGRAM+5 : STA !BIGRAM+5
+	LDA !SHOP_MERCHANT : LSR #4 : AND.b #$0E : ORA !BIGRAM+13 : STA !BIGRAM+13
+	
+	PHB
+		LDA.b #$02 : STA $06 ; request 2 OAM slots
+		LDA #$08 : JSL.l OAM_AllocateFromRegionA ; request 8 bytes
+		STZ $07
+	
+		LDA.b #!BIGRAM : STA $08
+		LDA.b #!BIGRAM>>8 : STA $09
+		LDA.b #$7E : PHA : PLB ; set data bank to $7E
+		JSL.l Sprite_DrawMultiple_quantity_preset
+		LDA $90 : !ADD.b #$04*2 : STA $90 ; increment oam pointer
+		LDA $92 : INC #2 : STA $92
+	PLB
 RTS
 .oam_shopkeeper_f1
-dw 0, -8 : db $00, $0A, $00, $02
-dw 0, 0 : db $10, $0A, $00, $02
+dw 0, -8 : db <head>, $00, $00, $02
+dw 0, 0 : db <body>, $00, $00, $02
 .oam_shopkeeper_f2
-dw 0, -8 : db $00, $0A, $00, $02
-dw 0, 0 : db $10, $4A, $00, $02
+dw 0, -8 : db <head>, $00, $00, $02
+dw 0, 0 : db <body>, $40, $00, $02
+endmacro
+;--------------------------------------------------------------------------------
+Shopkeeper_DrawMerchant:
+	LDA.l !SHOP_MERCHANT : AND.b #$03
+	BEQ Shopkeeper_DrawMerchant_Type0
+	CMP.b #$01 : BNE + : BRL Shopkeeper_DrawMerchant_Type1 : +
+	CMP.b #$02 : BNE + : BRL Shopkeeper_DrawMerchant_Type2 : +
+	CMP.b #$03 : BNE + : BRL Shopkeeper_DrawMerchant_Type3 : +
+;--------------------------------------------------------------------------------
+Shopkeeper_DrawMerchant_Type0:
+%DrawMerchant(#$00, #$10, #$10)
 ;--------------------------------------------------------------------------------
 Shopkeeper_DrawMerchant_Type1:
 	LDA.b #$01 : STA $06 ; request 1 OAM slot
@@ -393,6 +412,12 @@ RTS
 dw 0, 0 : db $46, $0A, $00, $02
 .oam_shopkeeper_f2
 dw 0, 0 : db $46, $4A, $00, $02
+;--------------------------------------------------------------------------------
+Shopkeeper_DrawMerchant_Type2:
+%DrawMerchant(#$84, #$10, #$40)
+;--------------------------------------------------------------------------------
+Shopkeeper_DrawMerchant_Type3:
+%DrawMerchant(#$8E, #$10, #$40)
 ;--------------------------------------------------------------------------------
 Shopkeeper_SetupHitboxes:
 	PHX : PHY : PHP
@@ -440,6 +465,7 @@ Shopkeeper_BuyItem:
 			JSL.l Sprite_GetEmptyBottleIndex : BMI .full_bottles
 		+
 
+		LDA !SHOP_TYPE : AND.b #$80 : BNE .buy ; don't charge if this is a take-any
 		REP #$20 : LDA $7EF360 : CMP.l !SHOP_INVENTORY+1, X : SEP #$20 : !BGE .buy
 		
 		.cant_afford
@@ -455,7 +481,9 @@ Shopkeeper_BuyItem:
 			LDA.b #$3C : STA $012E ; error sound
 			BRA .done
 		.buy
-			REP #$20 : LDA $7EF360 : !SUB !SHOP_INVENTORY+1, X : STA $7EF360 : SEP #$20 ; Take price away
+			LDA !SHOP_TYPE : AND.b #$80 : BNE ++ ; don't charge if this is a take-any
+				REP #$20 : LDA $7EF360 : !SUB !SHOP_INVENTORY+1, X : STA $7EF360 : SEP #$20 ; Take price away
+			++
 			LDA.l !SHOP_INVENTORY, X : TAY : JSL.l Link_ReceiveItem
 			LDA.l !SHOP_INVENTORY+3, X : INC : STA.l !SHOP_INVENTORY+3, X
 			
@@ -484,11 +512,21 @@ db #$01, #$02, #$04
 Setup_ShopItemCollisionHitbox:
 ;The complications with XBA are to handle the fact that nintendo likes to store
 ;high and low bytes of 16 bit postion values seperately :-(
-    ; load shopkeeper X (16 bit)
-    LDA $0D30, X : XBA : LDA $0D10, X 
 
-    REP #$20 ; set 16-bit accumulator
-    !ADD.w Shopkeeper_DrawNextItem_item_offsets, Y
+	REP #$20 ; set 16-bit accumulator
+	LDA $00 : PHA
+	SEP #$20 ; set 8-bit accumulator
+
+    ; load shopkeeper X (16 bit)
+    LDA $0D30, X : XBA : LDA $0D10, X
+	
+	REP #$20 ; set 16-bit accumulator
+	PHA : PHY
+		LDA !SHOP_TYPE : AND.w #$0003 : DEC : ASL : TAY
+		LDA.w Shopkeeper_DrawNextItem_item_offsets_idx, Y : STA $00 ; get table from the table table
+	PLY : PLA
+    
+    !ADD ($00), Y
     !ADD.w #$0002 ; a small negative margin
     ; TODO: add 4 for a narrow item
     SEP #$20 ; set 8-bit accumulator
@@ -500,7 +538,9 @@ Setup_ShopItemCollisionHitbox:
     LDA $0D20, X : XBA : LDA $0D00, X 
 
     REP #$20 ; set 16-bit accumulator
-    !ADD.w Shopkeeper_DrawNextItem_item_offsets+2, Y
+    PHY : INY #2
+		!ADD ($00), Y
+	PLY
 	PHA : LDA !SHOP_TYPE : AND.w #$0080 : BEQ + ; lower by 4 for Take-any
 		PLA : !ADD.w #$0004
 		BRA ++
@@ -514,6 +554,10 @@ Setup_ShopItemCollisionHitbox:
     ; TODO: for narrow sprite store make width 4 (i.e. 8 pixels smaller)
 
     LDA.b #14 : STA $07 ; Hitbox height, always 14
+	
+	REP #$20 ; set 16-bit accumulator
+	PLA : STA $00
+	SEP #$20 ; set 8-bit acc
 RTS
 ;--------------------------------------------------------------------------------
 ; Adjusts the already set up collision hitbox to be a suitable interaction hitbox
@@ -586,13 +630,17 @@ Shopkeeper_DrawNextItem:
 	LDA.l !SHOP_STATE : AND.w Shopkeeper_ItemMasks, Y : BEQ + : BRL .next : +
 	
 	PHY
-	TYA : ASL #2 : TAY
+	
+	LDA !SHOP_TYPE : AND.b #$03 : DEC : ASL : TAY
 	REP #$20 ; set 16-bit accumulator
-	LDA.w .item_offsets, Y : STA.l !SPRITE_OAM
+	LDA.w .item_offsets_idx, Y : STA $00 ; get table from the table table
+	LDA 1,s : ASL #2 : TAY ; set Y to the item index
+	LDA ($00), Y : STA.l !SPRITE_OAM ; load X-coordinate
+	INY #2
 	LDA !SHOP_TYPE : AND.w #$0080 : BNE +
-		LDA.w .item_offsets+2, Y : STA.l !SPRITE_OAM+2 : BRA ++
+		LDA ($00), Y : STA.l !SPRITE_OAM+2 : BRA ++ ; load Y-coordinate
 	+
-		LDA.w .item_offsets+2, Y : !ADD.w #$0004 : STA.l !SPRITE_OAM+2
+		LDA ($00), Y : !ADD.w #$0004 : STA.l !SPRITE_OAM+2 ; load Y-coordinate
 	++
 	SEP #$20 ; set 8-bit accumulator
 	PLY
@@ -637,7 +685,16 @@ Shopkeeper_DrawNextItem:
 	INX #4
 RTS
 ;--------------------------------------------------------------------------------
-.item_offsets
+.item_offsets_idx
+dw #.item_offsets_1
+dw #.item_offsets_2
+dw #.item_offsets_3
+.item_offsets_1
+dw 8, 40
+.item_offsets_2
+dw -16, 40
+dw 32, 40
+.item_offsets_3
 dw -40, 40
 dw 8, 40
 dw 56, 40
@@ -652,9 +709,15 @@ Shopkeeper_DrawNextPrice:
 	
 	REP #$20 ; set 16-bit accumulator
 	PHY
-		TYA : ASL : TAY
-		LDA.w .price_columns, Y : STA !COLUMN_LOW
-		LDA.w .price_offsets, Y : STA $0E ; set coordinate
+		LDA !SHOP_TYPE : AND.w #$0003 : DEC : ASL : TAY
+		LDA.w Shopkeeper_DrawNextItem_item_offsets_idx, Y : STA $00 ; get table from the table table
+		LDA.w .price_columns_idx, Y : STA $02 ; get table from the table table
+	PLY : PHY
+		TYA : ASL #2 : TAY
+		LDA ($00), Y : STA $0E ; set coordinate
+		TYA : LSR : TAY
+		LDA ($02), Y : STA !COLUMN_LOW
+		INY : LDA ($02), Y : STA !COLUMN_HIGH
 	PLY
 	LDA.l !SHOP_INVENTORY+1, X : STA $0C ; set value
 	JSR.w DrawPrice
@@ -672,11 +735,17 @@ Shopkeeper_DrawNextPrice:
 	!ADD $92 : STA $92
 	PLP : PLY : PLX
 	PLB
-RTS		
-.price_columns
+RTS
+.price_columns_idx
+dw #.price_columns_1
+dw #.price_columns_2
+dw #.price_columns_3
+.price_columns_1
+db #$00, #$FF
+.price_columns_2
+db #$00, #$80, #$80, $FF
+.price_columns_3
 db #$00, #$60, #$60, #$90, #$90, $FF
-.price_offsets
-dw #-40, #8, #56
 ;--------------------------------------------------------------------------------
 RequestItemOAM:
 	PHX : PHY : PHA
