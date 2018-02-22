@@ -45,6 +45,29 @@ JSL.l OnDungeonExit : NOP #2
 ;--------------------------------------------------------------------------------
 
 ;================================================================================
+; Infinite Bombs / Arrows / Magic
+;--------------------------------------------------------------------------------
+org $08A17A ; <- 4217A - ancilla_arrow.asm : 42 (AND.b #$04 : BEQ .dont_spawn_sparkle)
+CMP.b #$03 : db #$90 ; !BLT
+org $08A40E ; <- 4240E - ancilla_arrow.asm : 331 (AND.b #$04 : BNE .use_silver_palette)
+CMP.b #$03 : db #$B0 ; !BGE
+;--------------------------------------------------------------------------------
+org $098127 ; <- 48127 - ancilla_init.asm : 202 (LDA $7EF343 : BNE .player_has_bombs)
+JSL.l LoadBombCount
+org $098133 ; <- 48133 - ancilla_init.asm : 211 (STA $7EF343 : BNE .bombs_left_over)
+JSL.l StoreBombCount
+;--------------------------------------------------------------------------------
+org $0DE4BF ; <- 6E4BF - equipment.asm : 1249 (LDA $7EF343 : AND.w #$00FF : BEQ .gotNoBombs)
+JSL.l LoadBombCount16
+;--------------------------------------------------------------------------------
+org $0DDEB3 ; <- 6DEB3 - equipment.asm : 328 (LDA $7EF33F, X)
+JSL.l IsItemAvailable
+;--------------------------------------------------------------------------------
+org $0DFC5B ; <- 6FC5B - headsup_display.asm : 839 (LDA .mp_tilemap+0, X : STA $7EC746)
+JSL.l DrawMagicMeter : JMP.w + : NOP #21 : +
+;--------------------------------------------------------------------------------
+
+;================================================================================
 ; Inverted Mode
 ;--------------------------------------------------------------------------------
 org $028413 ; <- 10413 - Bank02.asm : 853 (LDA $7EF357 : BNE .notBunny)
@@ -978,10 +1001,10 @@ JSL.l OnDrawHud
 BRA $27
 
 org $0DFCB8 ; <- 6FCB8
-STA $7EC75A ; nudge bomb 10s digit right
+JSL.l DrawBombTens ; nudge bomb 10s digit right
 
 org $0DFCC4 ; <- 6FCC4
-STA $7EC75C ; nudge bomb 1s digit right
+JSL.l DrawBombOnes ; nudge bomb 1s digit right
 
 org $0DFCDC ; <- 6FCDC
 JSL.l DrawArrowTens

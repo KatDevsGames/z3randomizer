@@ -241,8 +241,13 @@ RTL
 ;$388 = Turtle Rock
 ;$389 = Ganon's Tower
 ;--------------------------------------------------------------------------------
+!INFINITE_ARROWS = "$7F50C8"
 DrawArrowTens:
 	PHA : LDA.l ArrowMode : AND.w #$00FF : BNE +
+		LDA !INFINITE_ARROWS : AND.w #$00FF : BEQ .finite
+		.infinite
+		PLA : LDA.w #$2431 : STA $7EC760 : RTL
+		.finite
 		PLA : STA $7EC760 : RTL
 	+
 	PLA
@@ -250,7 +255,35 @@ RTL
 ;--------------------------------------------------------------------------------
 DrawArrowOnes:
 	PHA : LDA.l ArrowMode : AND.w #$00FF : BNE +
+		LDA !INFINITE_ARROWS : AND.w #$00FF : BEQ .finite
+		.infinite
+		PLA : LDA.w #$2432 : STA $7EC762 : RTL
+		.finite
 		PLA : STA $7EC762 : RTL
+	+
+	PLA
+RTL
+;--------------------------------------------------------------------------------
+;--------------------------------------------------------------------------------
+!INFINITE_BOMBS = "$7F50C9"
+DrawBombTens:
+	PHA ;;; LDA.l ArrowMode : AND.w #$00FF : BNE +
+		LDA !INFINITE_BOMBS : AND.w #$00FF : BEQ .finite
+		.infinite
+		PLA : LDA.w #$2431 : STA $7EC75A : RTL
+		.finite
+		PLA : STA $7EC75A : RTL
+	+
+	PLA
+RTL
+;--------------------------------------------------------------------------------
+DrawBombOnes:
+	PHA ;;; LDA.l ArrowMode : AND.w #$00FF : BNE +
+		LDA !INFINITE_BOMBS : AND.w #$00FF : BEQ .finite
+		.infinite
+		PLA : LDA.w #$2432 : STA $7EC75C : RTL
+		.finite
+		PLA : STA $7EC75C : RTL
 	+
 	PLA
 RTL
@@ -261,6 +294,46 @@ DrawBootsInMenuLocation:
 		RTL
 	+
 	LDA.w #$1588 : STA $00
+RTL
+;--------------------------------------------------------------------------------
+!INFINITE_MAGIC = "$7F50CA"
+!DrawMagicMeter_mp_tilemap = "$0DFE0F" 
+DrawMagicMeter:
+	LDA !INFINITE_MAGIC : BNE + : BRL .green : +
+	LDX.w #$0080 ; load full magic meter graphics
+	LDA $1A : AND.w #$000C : LSR #2
+	BEQ .red
+	CMP.w #0001 : BEQ .yellow
+	CMP.w #0002 : BNE + : BRL .green : +
+	.blue
+	    LDA !DrawMagicMeter_mp_tilemap+0, X : AND.w #$EFFF : STA $7EC746
+	    LDA !DrawMagicMeter_mp_tilemap+2, X : AND.w #$EFFF : STA $7EC786
+	    LDA !DrawMagicMeter_mp_tilemap+4, X : AND.w #$EFFF : STA $7EC7C6
+	    LDA !DrawMagicMeter_mp_tilemap+6, X : AND.w #$EFFF : STA $7EC806
+		RTL
+	.red
+	    LDA !DrawMagicMeter_mp_tilemap+0, X : AND.w #$E7FF : STA $7EC746
+	    LDA !DrawMagicMeter_mp_tilemap+2, X : AND.w #$E7FF : STA $7EC786
+	    LDA !DrawMagicMeter_mp_tilemap+4, X : AND.w #$E7FF : STA $7EC7C6
+	    LDA !DrawMagicMeter_mp_tilemap+6, X : AND.w #$E7FF : STA $7EC806
+		RTL
+	.yellow
+	    LDA !DrawMagicMeter_mp_tilemap+0, X : AND.w #$EBFF : STA $7EC746
+	    LDA !DrawMagicMeter_mp_tilemap+2, X : AND.w #$EBFF : STA $7EC786
+	    LDA !DrawMagicMeter_mp_tilemap+4, X : AND.w #$EBFF : STA $7EC7C6
+	    LDA !DrawMagicMeter_mp_tilemap+6, X : AND.w #$EBFF : STA $7EC806
+		RTL
+	.orange
+	    LDA !DrawMagicMeter_mp_tilemap+0, X : AND.w #$E3FF : STA $7EC746
+	    LDA !DrawMagicMeter_mp_tilemap+2, X : AND.w #$E3FF : STA $7EC786
+	    LDA !DrawMagicMeter_mp_tilemap+4, X : AND.w #$E3FF : STA $7EC7C6
+	    LDA !DrawMagicMeter_mp_tilemap+6, X : AND.w #$E3FF : STA $7EC806
+		RTL
+	.green
+	    LDA !DrawMagicMeter_mp_tilemap+0, X : STA $7EC746
+	    LDA !DrawMagicMeter_mp_tilemap+2, X : STA $7EC786
+	    LDA !DrawMagicMeter_mp_tilemap+4, X : STA $7EC7C6
+	    LDA !DrawMagicMeter_mp_tilemap+6, X : STA $7EC806
 RTL
 ;--------------------------------------------------------------------------------
 DrawGlovesInMenuLocation:
