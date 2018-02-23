@@ -1179,6 +1179,9 @@ JSL.l HUDRebuildIndoor : NOP #4
 org $029A35 ; <- 11A35 : Bank02.asm:4789 - (JSL HUD.RebuildIndoor.palace)
 JSL.l HUDRebuildIndoorHole
 ;--------------------------------------------------------------------------------
+org $0DFCEC ; <- 6FCEC : headsup_display.asm:887 - (LDA.w #$007F : STA $05)
+LDA.w #$7F7F : STA $04 ; Have both key digits default to blank
+
 org $0DFD02 ; <- 6FD02 ; headsup_display.asm:900 - (LDA $05 : AND.w #$00FF : ORA.w #$2400 : STA $7EC764)
 JSL.l DrawKeyIcon : NOP #8
 ;--------------------------------------------------------------------------------
