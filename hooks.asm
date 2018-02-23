@@ -2095,3 +2095,20 @@ JSL.l QuickSwap
 org $02A451 ; <- 12451 - Bank02.asm:6283 (LDA $F6 : AND.b #$40 : BEQ .xButtonNotDown)
 JSL.l QuickSwap
 ;================================================================================
+
+;================================================================================
+; Tagalong Fixes
+;--------------------------------------------------------------------------------
+org $0689A7 ; <- 309A7 - sprite_prep.asm: 647 (LDA $7EF3CC : CMP.b #$06 : BEQ .killSprite)
+; Note: In JP 1.0 we have: (CMP.b #$00 : BNE .killSprite) appling US bugfix
+; Prevent followers from causing blind/maiden to despawn:
+CMP.b #$06 : db #$F0 ; BEQ
+;--------------------------------------------------------------------------------
+;Control which doors frog/smith can enter
+org $1BBCF0 ; <- DBCF0 - Bank1B.asm: 248 (LDA $04B8 : BNE BRANCH_MU)
+Overworld_Entrance_BRANCH_LAMBDA: ; Branch here to show Cannot Enter with Follower message
+
+org $1BBD55 ; <- DBD55 - Bank1B.asm: 290 (CPX.w #$0076 : BCC BRANCH_LAMBDA)
+JML.l SmithDoorCheck : NOP
+Overworld_Entrance_BRANCH_RHO: ; branch here to continue into door
+;================================================================================

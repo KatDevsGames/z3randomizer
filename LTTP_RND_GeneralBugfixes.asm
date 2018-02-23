@@ -329,6 +329,9 @@ DecompSwordGfx:
 org $00D348
 DecompShieldGfx:
 
+org $00D463
+Tagalong_LoadGfx:
+
 org $00D51B
 GetAnimatedSpriteTile:
 

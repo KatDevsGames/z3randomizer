@@ -3,6 +3,7 @@ PreOverworld_LoadProperties_ChooseMusic:
     ; A: scratch space (value never used)
     ; Y: set to overworld animated tileset
     ; X: set to music track/command id
+    JSR.w FixFrogSmith ; Just a convenient spot to install this hook 
 
     LDY.b #$58 ; death mountain animated tileset.
 
