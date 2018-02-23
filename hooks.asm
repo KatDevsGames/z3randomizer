@@ -523,8 +523,8 @@ LDA.w BottleListExpanded, X
 org $09895C ; 4895C - ancilla_init.asm:1344 (LDA PotionList, X)
 LDA.w PotionListExpanded, X
 ;--------------------------------------------------------------------------------
-org $098A36 ; <- 48A36 - ancilla_init.asm:1432 (LDA AddReceiveItem.item_graphics_indices, Y : STA $72)
-LDA AddReceivedItemExpanded_item_graphics_indices, Y
+;org $098A36 ; <- 48A36 - ancilla_init.asm:1432 (LDA AddReceiveItem.item_graphics_indices, Y : STA $72)
+;LDA AddReceivedItemExpanded_item_graphics_indices, Y
 ;--------------------------------------------------------------------------------
 org $06D1EB ; 351EB - sprite_absorbable.asm:364 (STA $7EF375) ; bugbug commented out until i figure out why it doesn't work
 JSL HandleBombAbsorbtion
