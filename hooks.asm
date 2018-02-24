@@ -1151,6 +1151,9 @@ JSL.l SetUncleRainState : RTS
 org $05EDDF ; <- 2EDDF - sprite_zelda.asm:398 - (LDA.b #$02 : STA $7EF3C5)
 JSL.l EndRainState : NOP #2
 ;--------------------------------------------------------------------------------
+org $05DF49 ; <- 2DF49 - sprite_uncle_and_priest.asm:984 - (JSL Link_ReceiveItem)
+JSL.l OnUncleItemGet
+;--------------------------------------------------------------------------------
 
 ;================================================================================
 ; Generic Keys

@@ -445,7 +445,8 @@ Shopkeeper_SetupHitboxes:
 			JSR.w Shopkeeper_BuyItem
 		.no_interaction
 		INY #4
-	CPY.b #$0C : !BLT -
+	TYA : CMP !SHOP_CAPACITY : !BLT -
+	;CPY.b #$0C : !BLT -
 	
 	PLP : PLY : PLX
 RTS

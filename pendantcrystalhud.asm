@@ -300,6 +300,7 @@ RTL
 !DrawMagicMeter_mp_tilemap = "$0DFE0F" 
 DrawMagicMeter:
 	LDA !INFINITE_MAGIC : BNE + : BRL .green : +
+	SEP #$20 : LDA.b #$80 : STA $7EF36E : REP #$20 ; set magic to max
 	LDX.w #$0080 ; load full magic meter graphics
 	LDA $1A : AND.w #$000C : LSR #2
 	BEQ .red

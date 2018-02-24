@@ -26,6 +26,14 @@ OnDungeonExit:
 	PLP : PLA
 RTL
 ;--------------------------------------------------------------------------------
+OnUncleItemGet:
+	JSL Link_ReceiveItem
+	LDA.l EscapeAssist
+	BIT.b #$04 : BEQ + : STA !INFINITE_MAGIC : +
+	BIT.b #$02 : BEQ + : STA !INFINITE_BOMBS : +
+	AND.b #$01 : STA !INFINITE_ARROWS
+RTL
+;--------------------------------------------------------------------------------
 OnAga2Defeated:
 	JSL.l Dungeon_SaveRoomData_justKeys ; thing we wrote over, make sure this is first
 	JSL.l IncrementAgahnim2Sword

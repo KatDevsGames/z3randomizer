@@ -178,7 +178,7 @@ AddReceivedItemExpandedGetItem:
 	JSL.l FreeDungeonItemNotice
 	CMP.b #$0B : BNE + ; Bow
 		LDA !INVENTORY_SWAP_2 : AND.b #$40 : BEQ ++
-			LDA.b #03 : STA $7EF340 ; set bow silver
+			LDA.b #03 : STA $7EF340 ; set bow to silver
 		++
 		BRL .done
 	+ CMP.b #$4C : BNE + ; 50 bombs
@@ -233,6 +233,9 @@ AddReceivedItemExpandedGetItem:
 	+ CMP.b #$58 : BNE + ; Upgrade-Only Sivler Arrows
 		LDA $7EF340 : BEQ ++ : CMP.b #$03 : !BGE ++
 			!ADD.b #$02 : STA $7EF340 ; switch to silver bow
+		++
+		LDA.l ArrowMode : BEQ ++
+			LDA.b #$01 : STA $7EF376
 		++
 	+ CMP.b #$59 : BNE + ; 1 Rupoor
 		REP #$20 : LDA $7EF360 : !SUB RupoorDeduction : STA $7EF360 : SEP #$20 ; Take 1 rupee

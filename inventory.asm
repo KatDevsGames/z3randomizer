@@ -208,13 +208,20 @@ AddInventory:
 		LDA !INVENTORY_SWAP : ORA #$01 : STA !INVENTORY_SWAP
 		BRL .incrementCounts
 	+ CPY.b #$0B : BNE + ; Bow
-		LDA !INVENTORY_SWAP_2 : ORA #$80 : STA !INVENTORY_SWAP_2
+		LDA ArrowMode : BNE +++
+			LDA !INVENTORY_SWAP_2 : ORA #$80 : STA !INVENTORY_SWAP_2
+		+++
 		BRL .incrementCounts
 	+ CPY.b #$3A : BNE + ; Bow & Arrows
 		LDA !INVENTORY_SWAP_2 : ORA #$80 : STA !INVENTORY_SWAP_2
 		BRL .incrementCounts
 	+ CPY.b #$3B : BNE + ; Bow & Silver Arrows
 		LDA !INVENTORY_SWAP_2 : ORA #$40 : STA !INVENTORY_SWAP_2
+		BRL .incrementCounts
+	+ CPY.b #$43 : BNE + ; Single arrow
+		LDA ArrowMode : BEQ +++
+			LDA !INVENTORY_SWAP_2 : ORA #$80 : STA !INVENTORY_SWAP_2 ; activate wood arrows in quick-swap
+		+++
 		BRL .incrementCounts
 	+ CPY.b #$58 : BNE + ; Upgrade-Only Silver Arrows
 		LDA !INVENTORY_SWAP_2 : ORA #$40 : STA !INVENTORY_SWAP_2

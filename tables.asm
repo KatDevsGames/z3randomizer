@@ -103,7 +103,7 @@ db #$00 ; #$00 = Off (default) - #$01 = On
 ;--------------------------------------------------------------------------------
 org $308032 ; PC 0x180032
 OpenMode:
-db #$01 ; #$00 = Normal (default) - #$01 = Open
+db #$00 ; #$00 = Normal (default) - #$01 = Open
 ;--------------------------------------------------------------------------------
 org $308033 ; PC 0x180033
 HeartBeep:
@@ -204,6 +204,14 @@ db #$00 ; #$00 = Off (default) - #$01 = On
 org $30804C ; PC 0x18004C
 SmithTravelsFreely:
 db #$00 ; #$00 = Off (default) - #$01 = On (frog/smith can enter multi-entrance doors)
+;--------------------------------------------------------------------------------
+org $30804D ; PC 0x18004D
+EscapeAssist:
+db #$00
+;---- -mba
+;m - Infinite Magic
+;b - Infinite Bombs
+;a - Infinite Arrows
 ;--------------------------------------------------------------------------------
 org $308080 ; PC 0x180080
 Upgrade5BombsRefill:
@@ -715,7 +723,7 @@ db #$08 ; #$08 = 1 Heart (default) - #$02 = 1/4 Heart
 ;================================================================================
 org $308169 ; PC 0x180169
 AgahnimDoorStyle:
-db #$00 ; #00 = Never Locked - #$01 = Locked During Escape (default)
+db #$01 ; #00 = Never Locked - #$01 = Locked During Escape (default)
 ;================================================================================
 org $30816A ; PC 0x18016A
 FreeItemText:
