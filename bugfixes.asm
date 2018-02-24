@@ -98,3 +98,20 @@ MakeBunny:
     PLY : PLX
 RTS
 ;--------------------------------------------------------------------------------
+
+;--------------------------------------------------------------------------------
+; fix issue where cross world caves (in Entrance randomizer) don't cause
+; frog to become smith or vice versa.
+FixFrogSmith:
+	LDA.l $7EF3CA : BNE .darkWorld
+		LDA.l $7EF3CC : CMP.b #$07 : BNE .done
+		LDA.b #$08 : STA.l $7EF3CC ; make frog into smith in light world
+		BRA .loadgfx
+	.darkWorld
+		LDA.l $7EF3CC : CMP.b #$08 : BNE .done
+		LDA.b #$07 : STA.l $7EF3CC ; make smith into frog in dark world
+	.loadgfx
+		JSL Tagalong_LoadGfx
+	.done
+RTS
+;--------------------------------------------------------------------------------

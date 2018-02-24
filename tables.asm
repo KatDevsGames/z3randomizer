@@ -197,6 +197,14 @@ org $30804A ; PC 0x18004A
 InvertedMode:
 db #$00 ; #$00 = Normal (default) - #$01 = Inverted
 ;--------------------------------------------------------------------------------
+org $30804B ; PC 0x18004B
+QuickSwapFlag:
+db #$00 ; #$00 = Off (default) - #$01 = On
+;--------------------------------------------------------------------------------
+org $30804C ; PC 0x18004C
+SmithTravelsFreely:
+db #$00 ; #$00 = Off (default) - #$01 = On (frog/smith can enter multi-entrance doors)
+;--------------------------------------------------------------------------------
 org $308080 ; PC 0x180080
 Upgrade5BombsRefill:
 db #$00

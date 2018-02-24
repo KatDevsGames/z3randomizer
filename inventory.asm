@@ -53,7 +53,7 @@ RTL
 	LDA.b #$20 : STA $012F ; menu select sound
 	JSL.l ResetEquipment
 RTL
-	.y_pressed
+	.y_pressed ; Note: used as entry point by quickswap code. Must preserve X. 
 	LDA.b #$10 : STA $0207
 	LDA $0202 ; check selected item
 	CMP #$02 : BNE + ; boomerang

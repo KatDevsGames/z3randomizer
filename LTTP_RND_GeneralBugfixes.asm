@@ -157,6 +157,7 @@ incsrc init.asm
 
 org $A48000 ; code bank - PUT NEW CODE HERE
 incsrc openmode.asm
+incsrc quickswap.asm
 incsrc endingsequence.asm
 
 ;org $228000 ; contrib area
@@ -327,6 +328,9 @@ DecompSwordGfx:
 
 org $00D348
 DecompShieldGfx:
+
+org $00D463
+Tagalong_LoadGfx:
 
 org $00D51B
 GetAnimatedSpriteTile:

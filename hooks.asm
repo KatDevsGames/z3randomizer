@@ -31,10 +31,10 @@ ReturnCheckZSNES:
 ;--------------------------------------------------------------------------------
 
 ;================================================================================
-; Dungeon Entrance Hook
+; Dungeon Entrance Hook (works, but not needed at the moment)
 ;--------------------------------------------------------------------------------
-org $02D8C7 ; <- 158C7 - Bank02.asm : 10981 (STA $7EC172)
-JSL.l OnDungeonEntrance
+;org $02D8C7 ; <- 158C7 - Bank02.asm : 10981 (STA $7EC172)
+;JSL.l OnDungeonEntrance
 ;--------------------------------------------------------------------------------
 
 ;================================================================================
@@ -1179,6 +1179,9 @@ JSL.l HUDRebuildIndoor : NOP #4
 org $029A35 ; <- 11A35 : Bank02.asm:4789 - (JSL HUD.RebuildIndoor.palace)
 JSL.l HUDRebuildIndoorHole
 ;--------------------------------------------------------------------------------
+org $0DFCEC ; <- 6FCEC : headsup_display.asm:887 - (LDA.w #$007F : STA $05)
+LDA.w #$7F7F : STA $04 ; Have both key digits default to blank
+
 org $0DFD02 ; <- 6FD02 ; headsup_display.asm:900 - (LDA $05 : AND.w #$00FF : ORA.w #$2400 : STA $7EC764)
 JSL.l DrawKeyIcon : NOP #8
 ;--------------------------------------------------------------------------------
@@ -2084,4 +2087,31 @@ JSL.l ArrowGame : NOP #14
 
 org $07A06C ; <- Bank07.asm:5215 (LDA $7EF377 : BEQ BRANCH_EPSILON)
 JSL.l DecrementArrows : SKIP #2 : NOP #5
+;================================================================================
+
+;================================================================================
+; Quick Swap
+;--------------------------------------------------------------------------------
+org $0287FB ; <- 107FB - Bank02.asm:1526 (LDA $F6 : AND.b #$40 : BEQ .dontActivateMap)
+JSL.l QuickSwap
+
+org $02A451 ; <- 12451 - Bank02.asm:6283 (LDA $F6 : AND.b #$40 : BEQ .xButtonNotDown)
+JSL.l QuickSwap
+;================================================================================
+
+;================================================================================
+; Tagalong Fixes
+;--------------------------------------------------------------------------------
+org $0689A7 ; <- 309A7 - sprite_prep.asm: 647 (LDA $7EF3CC : CMP.b #$06 : BEQ .killSprite)
+; Note: In JP 1.0 we have: (CMP.b #$00 : BNE .killSprite) appling US bugfix
+; Prevent followers from causing blind/maiden to despawn:
+CMP.b #$06 : db #$F0 ; BEQ
+;--------------------------------------------------------------------------------
+;Control which doors frog/smith can enter
+org $1BBCF0 ; <- DBCF0 - Bank1B.asm: 248 (LDA $04B8 : BNE BRANCH_MU)
+Overworld_Entrance_BRANCH_LAMBDA: ; Branch here to show Cannot Enter with Follower message
+
+org $1BBD55 ; <- DBD55 - Bank1B.asm: 290 (CPX.w #$0076 : BCC BRANCH_LAMBDA)
+JML.l SmithDoorCheck : NOP
+Overworld_Entrance_BRANCH_RHO: ; branch here to continue into door
 ;================================================================================
