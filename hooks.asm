@@ -2105,7 +2105,7 @@ JSL.l QuickSwap
 ;================================================================================
 ; Tagalong Fixes
 ;--------------------------------------------------------------------------------
-org $0689A7 ; <- 309A7 - sprite_prep.asm: 647 (LDA $7EF3CC : CMP.b #$06 : BEQ .killSprite)
+org $0689AB ; <- 309AB - sprite_prep.asm: 647 (LDA $7EF3CC : CMP.b #$06 : BEQ .killSprite)
 ; Note: In JP 1.0 we have: (CMP.b #$00 : BNE .killSprite) appling US bugfix
 ; Prevent followers from causing blind/maiden to despawn:
 CMP.b #$06 : db #$F0 ; BEQ
