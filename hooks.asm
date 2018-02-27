@@ -277,6 +277,9 @@ JSL.l CalculateCapeUsage
 org $07AE98 ; <- 3AE98 - Bank07.asm : 7380 (LDA $7EF36E)
 JSL.l CalculateCapeUsage
 ;--------------------------------------------------------------------------------
+org $08DCA7 ; <- 45CA7 - ancilla_cane_spark.asm : 256 (LDA.b #$01 : STA $037B)
+JSL.l ActivateInvulnerabilityOrDont : NOP
+;--------------------------------------------------------------------------------
 
 ;================================================================================
 ; Misc Stats

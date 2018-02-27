@@ -54,3 +54,21 @@ CalculateCapeUsage:
 	LDA $7EF36E ; thing we wrote over
 RTL
 ;--------------------------------------------------------------------------------
+ActivateInvulnerabilityOrDont:
+	LDA $1B : BEQ .nowhere_special
+	REP #$20 ; set 16-bit accumulator
+	LDA $A0 ; these are all decimal because i got them that way
+	CMP.w #95 : BEQ .somewhere_cool ; Ice Palace Spike Room
+	CMP.w #179 : BEQ .somewhere_cool ; Room in Misery Mire
+	CMP.w #213 : BEQ .somewhere_cool ; Laser Bridge
+	CMP.w #279 : BEQ .somewhere_cool ; Spike Cave
+	
+	SEP #$20 ; set 8-bit accumulator
+	BRA .nowhere_special
+	.somewhere_cool
+		SEP #$20 ; set 8-bit accumulator
+		LDA.b #$01 : STA $037B : RTL
+	.nowhere_special
+		LDA.l ByrnaInvulnerability : STA $037B
+RTL
+;--------------------------------------------------------------------------------

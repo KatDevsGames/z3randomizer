@@ -20,18 +20,24 @@ RTL
 ;--------------------------------------------------------------------------------
 OnDungeonExit:
 	STA $040C : STZ $04AC ; thing we wrote over
-
+	
 	PHA : PHP
 		JSL.l HUD_RebuildLong
+		JSL.l FloodGateResetInner
 	PLP : PLA
 RTL
 ;--------------------------------------------------------------------------------
 OnUncleItemGet:
 	JSL Link_ReceiveItem
+	
 	LDA.l EscapeAssist
 	BIT.b #$04 : BEQ + : STA !INFINITE_MAGIC : +
 	BIT.b #$02 : BEQ + : STA !INFINITE_BOMBS : +
-	AND.b #$01 : STA !INFINITE_ARROWS
+	BIT.b #$01 : BEQ + : STA !INFINITE_ARROWS : +
+
+	LDA.l UncleRefill : BIT.b #$04 : BEQ + : LDA.b #$80 : STA $7EF373 : + ; refill magic
+	LDA.l UncleRefill : BIT.b #$02 : BEQ + : LDA.b #50 : STA $7EF375 : + ; refill bombs
+	LDA.l UncleRefill : BIT.b #$01 : BEQ + : LDA.b #70 : STA $7EF376 : + ; refill arrows
 RTL
 ;--------------------------------------------------------------------------------
 OnAga2Defeated:
@@ -53,6 +59,20 @@ OnFileLoad:
 	LDA.l GenericKeys : BEQ +
 		LDA $7EF38B : STA $7EF36F ; copy generic keys to key counter
 	+
+	
+	STA $FFFFFF
+	LDA $7EF3C5 : CMP.b #$01 : BNE .notrain ; check if we're in rain state
+	.rain
+		LDA.l EscapeAssist
+		BIT.b #$04 : BEQ + : STA !INFINITE_MAGIC : +
+		BIT.b #$02 : BEQ + : STA !INFINITE_BOMBS : +
+		BIT.b #$01 : BEQ + : STA !INFINITE_ARROWS : +
+		BRA ++
+	.notrain
+		LDA.l EscapeAssist : BIT.b #$04 : BEQ + : LDA.b #$00 : STA !INFINITE_MAGIC : +
+		LDA.l EscapeAssist : BIT.b #$02 : BEQ + : LDA.b #$00 : STA !INFINITE_BOMBS : +
+		LDA.l EscapeAssist : BIT.b #$01 : BEQ + : LDA.b #$00 : STA !INFINITE_ARROWS : +
+	++
 RTL
 ;--------------------------------------------------------------------------------
 !RNG_ITEM_LOCK_IN = "$7F5090"

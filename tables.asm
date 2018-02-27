@@ -206,12 +206,24 @@ SmithTravelsFreely:
 db #$00 ; #$00 = Off (default) - #$01 = On (frog/smith can enter multi-entrance doors)
 ;--------------------------------------------------------------------------------
 org $30804D ; PC 0x18004D
-EscapeAssist:
+EscapeAssist: ; ScrubMode:
 db #$00
 ;---- -mba
 ;m - Infinite Magic
 ;b - Infinite Bombs
 ;a - Infinite Arrows
+;--------------------------------------------------------------------------------
+org $30804E ; PC 0x18004E
+UncleRefill:
+db #$00
+;---- -mba
+;m - Refill Magic
+;b - Refill Bombs
+;a - Refill Arrows
+;--------------------------------------------------------------------------------
+org $30804F ; PC 0x18004F
+ByrnaInvulnerability:
+db #$00 ; #$00 = Off - #$01 = On (default)
 ;--------------------------------------------------------------------------------
 org $308080 ; PC 0x180080
 Upgrade5BombsRefill:
