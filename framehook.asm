@@ -52,3 +52,28 @@ NMIHookAction:
 	
 JML.l NMIHookReturn
 ;--------------------------------------------------------------------------------
+!NMI_AUX = "$7F5044"
+PostNMIHookAction:
+	LDA !NMI_AUX+2 : BEQ +
+		LDA $00 : PHA ; preserve DP ram
+		LDA $01 : PHA
+		LDA $02 : PHA
+		
+		LDA !NMI_AUX+2 : STA $02 ; set up jump pointer
+		LDA !NMI_AUX+1 : STA $01
+		LDA !NMI_AUX+0 : STA $00
+		
+		PHK : PER .return-1 ; push stack for RTL return
+		JMP [$0000]
+		
+		.return
+		LDA.b #$00 : STA !NMI_AUX+2 ; zero bank byte of NMI hook pointer
+		
+		PLA : STA $02
+		PLA : STA $01
+		PLA : STA $00
+	+
+	
+	LDA $13 : STA $2100 ; thing we wrote over, turn screen back on
+JML.l PostNMIHookReturn
+;--------------------------------------------------------------------------------

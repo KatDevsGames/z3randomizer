@@ -132,6 +132,9 @@ RTS
 !SCRATCH_TEMP_X = "$7F5061"
 !SHOP_SRAM_INDEX = "$7F5062"
 !SHOP_MERCHANT = "$7F5063"
+!SHOP_DMA_TIMER = "$7F5064"
+;--------------------------------------------------------------------------------
+!NMI_AUX = "$7F5044"
 ;--------------------------------------------------------------------------------
 .digit_properties
 dw $0230, $0231, $0202, $0203, $0212, $0213, $0222, $0223, $0232, $0233
@@ -141,6 +144,7 @@ dw 4, 0, -4, -8
 ;--------------------------------------------------------------------------------
 SpritePrep_ShopKeeper:
 	PHX : PHY : PHP
+	
 	REP #$30 ; set 16-bit accumulator & index registers
 	;LDA $A0
 	LDX.w #$0000
@@ -211,8 +215,9 @@ SpritePrep_ShopKeeper:
 	.stop
 	
 	LDA #$80 : STA $2100
-	JSR UploadVRAMTiles
+	JSR Shopkeeper_UploadVRAMTiles
 	LDA #$0F : STA $2100
+	;JSR.w QueueItemDMA
 
 	.done
 	LDA.b #$00 : STA !SHOP_STATE
@@ -230,6 +235,12 @@ dw $0000, $0000
 dw $0080, $0000
 dw $0100, $0000
 ;--------------------------------------------------------------------------------
+QueueItemDMA:
+	LDA.b #Shopkeeper_UploadVRAMTilesLong>>0 : STA !NMI_AUX
+	LDA.b #Shopkeeper_UploadVRAMTilesLong>>8 : STA !NMI_AUX+1
+	LDA.b #Shopkeeper_UploadVRAMTilesLong>>16 : STA !NMI_AUX+2
+RTS
+;--------------------------------------------------------------------------------
 ; X - Tile Buffer Offset
 ; Y - Item ID
 LoadTile:
@@ -246,7 +257,10 @@ RTS
 ;--------------------------------------------------------------------------------
 ;!SHOP_PURCHASE_COUNTS = "$7EF3A0"
 ;--------------------------------------------------------------------------------
-UploadVRAMTiles:
+Shopkeeper_UploadVRAMTilesLong:
+	JSR.w Shopkeeper_UploadVRAMTiles
+RTL
+Shopkeeper_UploadVRAMTiles:
 		LDA $4300 : PHA ; preserve DMA parameters
 		LDA $4301 : PHA ; preserve DMA parameters
 		LDA $4302 : PHA ; preserve DMA parameters
@@ -314,6 +328,7 @@ Shopkepeer_CallOriginal:
 ;!SHOP_CAPACITY = "$7F5020"
 ;!SCRATCH_TEMP_X = "$7F5021"
 Sprite_ShopKeeper:
+	
 	LDA.l !SHOP_TYPE : CMP.b #$FF : BNE + : JMP.w Shopkepeer_CallOriginal : +
 	
 	PHB : PHK : PLB

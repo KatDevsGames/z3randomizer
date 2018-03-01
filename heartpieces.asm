@@ -33,6 +33,7 @@ RTL
 ;--------------------------------------------------------------------------------
 HeartContainerGet:
 	PHX : PHY
+	JSL.l AddInventory_incrementBossSwordLong
 	JSL.l LoadHeartContainerRoomValue : TAY ; load item value into Y register
 
 	BRA HeartPieceGet_skipLoad

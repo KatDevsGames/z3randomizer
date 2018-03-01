@@ -621,7 +621,7 @@ RTS
 	LDA $7EF429 : INC : AND #$03 : TAX
 	LDA $7EF429 : AND #$FC : STA $7EF429
 	TXA : ORA $7EF429 : STA $7EF429
-	JSR .incrementBossSword
+	; JSR .incrementBossSword
 RTS
 
 .incrementCapacity
@@ -642,7 +642,7 @@ RTS
 	LDA $7EF422 : INC : AND #$07 : TAX
 	LDA $7EF422 : AND #$F8 : STA $7EF422
 	TXA : ORA $7EF422 : STA $7EF422
-	JSR .incrementBossSword
+	; JSR .incrementBossSword
 RTS
 
 .incrementMail

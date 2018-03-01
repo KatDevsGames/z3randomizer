@@ -802,7 +802,12 @@ db #$00 ; #$00 = Casual (default) - #$01 = Glitched - #$02 = Speedrunner - #$FF 
 ;--------------------------------------------------------------------------------
 org $308211 ; PC 0x180211
 GameType:
-db #$00 ; #$00 = Randomizer (default) - #$01 = Plandomizer - #$FF = Other Editors
+;---- ridn
+;r - room randomization
+;i - item randomization
+;d - door/entrance randomization
+;n - enemy randomization
+db #$00 ; #$00 = Not Randomized (default)
 ;--------------------------------------------------------------------------------
 ;dgGe mutT
 ;d - Nonstandard Dungeon Configuration (Not Map/Compass/BigKey/SmallKeys in same quantity as vanilla)
@@ -1329,7 +1334,8 @@ dw #9999 ; Rupee Limit
 ; $7F5041 - Unused
 ; $7F5042 - Tile Upload Offset Override (Low)
 ; $7F5043 - Tile Upload Offset Override (High)
-; $7F5044 - $7F504F - Unused
+; $7F5044 - $7F5046 - NMI Auxiliary Function
+; $7F5047 - $7F504F - Unused
 ; $7F5050 - $7F506F - Shop Block
 ; $7F5070 - $7F507D - Unused
 ; $7F507E - Clock Status
@@ -1462,7 +1468,8 @@ org $30C800 ; PC 0x184800 - 0x18487F - max 16 shops
 ShopTable:
 ;db [id][roomID-low][roomID-high][doorID][zero][shop_config][shopkeeper_config][sram_index]
 db $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF
-db $01, $0F, $01, $57, $00, $03, $C1, $00
+db $01, $FF, $00, $00, $00, $43, $A0, $00
+;db $01, $0F, $01, $57, $00, $03, $C1, $00
 db $02, $0F, $01, $60, $00, $03, $C1, $03
 db $FF, $12, $01, $58, $00, $02, $E3, $06
 db $02, $0F, $01, $57, $00, $03, $A0, $09
