@@ -260,8 +260,9 @@ RTL
 ;--------------------------------------------------------------------------------
 DialogTriforce:
 	%LoadDialogAddress(TriforceText)
-    REP #$20 : LDA.w #$0171 : STA $1CF0 : SEP #$20 ; fix border
+	REP #$20 : LDA.w #$0171 : STA $1CF0 : SEP #$20 ; fix border
 	JSL.l Main_ShowTextMessage
+	JSL.l Messaging_Text
 RTL
 ;--------------------------------------------------------------------------------
 DialogGanon1:
