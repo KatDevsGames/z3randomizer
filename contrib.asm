@@ -78,6 +78,7 @@ OldMountainMan_TransitionFromTagalong_Edit:
         JML $09A6B6 ; <- 4A6B6 tagalong.asm:1194 (SEP #$30 : RTS)
 }
 ;================================================================
+!MAP_OVERLAY = "$7EF414" ; [2]
 Sprite_ShowSolicitedMessageIfPlayerFacing_Alt:
 {
 	STA $1CF0
@@ -111,9 +112,11 @@ Sprite_ShowSolicitedMessageIfPlayerFacing_Alt:
 		JSL DialogAlcoholic : BRA .SayNothing	
 
 	.SahasrahlaDialogs
+		REP #$20 : LDA.l MapReveal_Sahasrahla : ORA !MAP_OVERLAY : STA !MAP_OVERLAY : SEP #$20
 		JSL DialogSahasrahla : BRA .SayNothing
 	
 	.BombShopGuyDialog
+		REP #$20 : LDA.l MapReveal_BombShop : ORA !MAP_OVERLAY : STA !MAP_OVERLAY : SEP #$20
 		JSL DialogBombShopGuy
 	
 	.SayNothing

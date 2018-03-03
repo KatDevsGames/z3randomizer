@@ -26,7 +26,7 @@ org $3FFFFF ; <- 1FFFFF
 db #$00 ; expand file to 2mb
 
 org $1FFFF8 ; <- FFFF8 timestamp rom
-db #$20, #$18, #$02, #$28 ; year/month/day
+db #$20, #$18, #$03, #$02 ; year/month/day
 
 ;================================================================================
 
@@ -39,7 +39,7 @@ db #$20, #$18, #$02, #$28 ; year/month/day
 !INVENTORY_SWAP_2 = "$7EF38E"
 !NPC_FLAGS   = "$7EF410"
 !NPC_FLAGS_2 = "$7EF411"
-!MAP_ZOOM = "$7EF415"
+!MAP_OVERLAY = "$7EF414" ; [2]
 !PROGRESSIVE_SHIELD = "$7EF416" ; ss-- ----
 !HUD_FLAG = "$7EF416" ; --h- ----
 !FORCE_PYRAMID = "$7EF416" ; ---- p---
@@ -76,6 +76,7 @@ db #$20, #$18, #$02, #$28 ; year/month/day
 
 incsrc hooks.asm
 incsrc treekid.asm
+incsrc hashalphabethooks.asm
 
 ;org $208000 ; bank #$20
 org $A08000 ; bank #$A0
@@ -133,7 +134,7 @@ incsrc cuccostorm.asm
 incsrc roomloading.asm
 incsrc icepalacegraphics.asm
 incsrc retro.asm
-incsrc hashalphabet.asm ; <- TAKE OUT THE EXTRA ORGS IN HERE - THIS IS WHY WE COULDN'T ADD MORE FILES EARLIER
+incsrc hashalphabet.asm
 warnpc $A18000
 
 org $1C8000 ; text tables for translation

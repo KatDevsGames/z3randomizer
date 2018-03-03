@@ -1347,6 +1347,9 @@ NOP #6 ; remove crystal room cutscene check that causes softlocks
 ;================================================================================
 ; Text Changes
 ;--------------------------------------------------------------------------------
+org $06C7D3 ; <- 347D3 - sprite_ponds.asm:720 (LDA.b #$8A)
+JSL.l DialogFairyThrow
+;--------------------------------------------------------------------------------
 org $08C5ED ; <- 445ED - ancilla_receive_item.asm:395 (STA $1CF0 : CMP.w #$0070 : BNE .notGeezerSpeech)
 NOP #3
 ;--------------------------------------------------------------------------------
@@ -1363,7 +1366,7 @@ org $1DA4EC ; <- EA4EC - sprite_blind_entities.asm:845 (JSL Sprite_ShowMessageMi
 JSL.l DialogBlind
 ;--------------------------------------------------------------------------------
 org $06C94C ; <- 3494C - sprite_ponds.asm:970 (JSL Sprite_ShowMessageUnconditional)
-JSL.l DialogFatFairy
+JSL.l DialogPyramidFairy
 ;--------------------------------------------------------------------------------
 org $06C454 ; <- 34454 - sprite_ponds.asm:133 (LDA $0D80, X)
 LDA.b #$00 : NOP
@@ -1977,7 +1980,8 @@ NOP #36
 org $1DFDA8 ; <- EFDA9 - sprite_digging_game_guy.asm:309 (STA $7FFE00)
 JSL.l SpawnShovelGamePrizeSFX
 ;--------------------------------------------------------------------------------
-org $01EEB6 ; <- EEB6 - Bank01.asm:14138 (ORA.b #$40 : STA $0403)
+;org $01EEB6 ; <- EEB6 - Bank01.asm:14138 (ORA.b #$40 : STA $0403)
+org $01EECD ; <- EECD - Bank01.asm:160 (LDA.b #$0E : STA $012F)
 JSL.l SpawnChestGamePrizeSFX : NOP
 ;================================================================================
 

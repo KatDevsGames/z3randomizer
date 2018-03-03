@@ -743,10 +743,10 @@ db #$00 ; #00 = Off (default) - #$01 = On
 ;================================================================================
 org $30816B ; PC 0x18016B
 HardModeExclusionCaneOfByrnaUsage:
-db #$04, #$02, #$01 ; normal, 1/2, 1/4 magic
+db #$04, #$02, #$01 ; Normal, 1/2, 1/4 Magic
 org $30816E ; PC 0x18016E
 HardModeExclusionCapeUsage:
-db #$04, #$08, #$10 ; normal, 1/2, 1/4 magic
+db #$04, #$08, #$10 ; Normal, 1/2, 1/4 Magic
 ;================================================================================
 org $308171 ; PC 0x180171
 GanonPyramidRespawn:
@@ -774,6 +774,17 @@ ArrowModeWoodArrowCost: ; keep these together
 dw #$0005 ; #$0005 = 5 (Default)
 ArrowModeSilverArrowCost: ; keep these together
 dw #$000A ; #$000A = 10 (Default)
+;================================================================================
+org $30817A ; PC 0x18017A
+MapReveal_Sahasrahla:
+dw #$2000
+org $30817C ; PC 0x18017C
+MapReveal_BombShop:
+dw #$0140
+;================================================================================
+org $30817E ; PC 0x18017E
+Restrict_Ponds:
+db #$01 ; #$00 = Original Behavior - #$01 - Restrict to Bottles (Default)
 ;================================================================================
 org $308190 ; PC 0x180190
 TimerStyle:
@@ -885,7 +896,7 @@ db $7f, $7f
 ; $308900 (0x180900) - $3089FF (0x1809FF)
 ; Fat Fairy Text
 org $308900 ; PC 0x180900
-FatFairyText:
+PyramidFairyText:
 db $00, $b1, $00, $ae, $00, $c2, $00, $c7
 db $76, $00, $b5, $00, $b2, $00, $bc, $00, $bd, $00, $ae, $00, $b7, $00, $c7
 db $7f, $7f

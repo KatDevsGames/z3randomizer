@@ -97,7 +97,7 @@ RTL
 	CLC
 RTL
 	.midShovel
-	LDA #$01 : STA $7EF34C ; set shovel
+	; LDA #$01 : STA $7EF34C ; set shovel
 	.error
 	LDA.b #$3C : STA $012E ; error sound
 	.captured
@@ -1062,10 +1062,12 @@ RTL
 ; SpawnChestGamePrizeSFX:
 ;--------------------------------------------------------------------------------
 SpawnChestGamePrizeSFX:
-	ORA.b #$40 : STA $0403 ; thing we wrote over
-	PHA
-		LDA.b #$1B : STA $012F ; play puzzle sound
-	PLA
+	CPX.b #$07 : BNE .normal
+	LDA $A0 : CMP.b #$06 : BNE .normal
+	.prize
+	LDA.b #$1B : STA $012F : RTL ; play puzzle sound
+	.normal
+	LDA.b #$0E : STA $012F ; play chest sound
 RTL
 ;--------------------------------------------------------------------------------
 

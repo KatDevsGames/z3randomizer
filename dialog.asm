@@ -253,8 +253,22 @@ DialogBlind:
 	JSL.l Sprite_ShowMessageMinimal
 RTL
 ;--------------------------------------------------------------------------------
-DialogFatFairy:
-	%LoadDialogAddress(FatFairyText)
+DialogFairyThrow:
+	LDA.l Restrict_Ponds : BEQ .normal
+	LDA $7EF35C : ORA $7EF35D : ORA $7EF35E : ORA $7EF35F : BNE .normal
+	
+	.noInventory
+	LDA $0D80, X : !ADD #$08 : STA $0D80, X
+	LDA.b #$51
+	LDY.b #$01
+RTL
+	.normal
+	LDA.b #$88
+	LDY.b #$00
+RTL
+;--------------------------------------------------------------------------------
+DialogPyramidFairy:
+	%LoadDialogAddress(PyramidFairyText)
 	JSL.l Sprite_ShowMessageUnconditional
 RTL
 ;--------------------------------------------------------------------------------

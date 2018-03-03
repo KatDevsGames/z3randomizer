@@ -53,16 +53,17 @@ GetCrystalNumber:
 RTL
 ;================================================================================
 !INVENTORY_MAP = "$7EF368"
+!MAP_OVERLAY = "$7EF414" ; [2]
 OverworldMap_CheckObject:
 	PHX
 		;CPX.b #$01 : BNE + : BRL ++ : + : BRL .fail
 		LDA $7EF3CA : AND.b #$40 : BNE +
 			;LW Map
 			LDA.l MapMode : BEQ +++
-			LDA.l !INVENTORY_MAP : AND.b #$01 : BNE +++
+			LDA !INVENTORY_MAP : ORA !MAP_OVERLAY : AND.b #$01 : BNE +++
 				PHX
 					LDA.l .lw_map_offsets, X : TAX ; put map offset into X
-					LDA.l !INVENTORY_MAP, X
+					LDA !INVENTORY_MAP, X : ORA !MAP_OVERLAY, X
 				PLX
 				AND.l .lw_map_masks, X : BNE +++
 				BRL .fail
@@ -73,10 +74,10 @@ OverworldMap_CheckObject:
 		+
 			;DW Map
 			LDA.l MapMode : BEQ +++			
-			LDA.l !INVENTORY_MAP : AND.b #$02 : BNE +++
+			LDA !INVENTORY_MAP : ORA !MAP_OVERLAY : AND.b #$02 : BNE +++
 				PHX
 					LDA.l .dw_map_offsets, X : TAX ; put map offset into X
-					LDA.l !INVENTORY_MAP, X
+					LDA.l !INVENTORY_MAP, X : ORA !MAP_OVERLAY, X
 				PLX
 				AND.l .dw_map_masks, X : BNE +++
 				BRL .fail
