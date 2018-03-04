@@ -79,12 +79,14 @@ RTL
 ; $7F50C7 - Ice Modifier
 LoadModifiedIceFloorValue_a11:
 	LDA $5D : CMP #$01 : BEQ + : CMP #$17 : BEQ + : CMP #$1C : BEQ +
+	LDA $5E : CMP #$02 : BEQ +
 	LDA $5B : BNE +
 		LDA.w $0348 : ORA $7F50C7 : AND.b #$11 : RTL
 	+ : LDA.w $0348 : AND.b #$11
 RTL
 LoadModifiedIceFloorValue_a01:
 	LDA $5D : CMP #$01 : BEQ + : CMP #$17 : BEQ + : CMP #$1C : BEQ +
+	LDA $5E : CMP #$02 : BEQ +
 	LDA $5B : BNE +
 		LDA.w $0348 : ORA $7F50C7 : AND.b #$01 : RTL
 	+ : LDA.w $0348 : AND.b #$01

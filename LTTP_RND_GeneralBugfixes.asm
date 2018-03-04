@@ -130,11 +130,9 @@ incsrc goalitem.asm
 incsrc compasses.asm
 incsrc doorframefixes.asm
 incsrc music.asm
-incsrc cuccostorm.asm
+incsrc hashalphabet.asm
 incsrc roomloading.asm
 incsrc icepalacegraphics.asm
-incsrc retro.asm
-incsrc hashalphabet.asm
 warnpc $A18000
 
 org $1C8000 ; text tables for translation
@@ -160,6 +158,9 @@ org $A48000 ; code bank - PUT NEW CODE HERE
 incsrc openmode.asm
 incsrc quickswap.asm
 incsrc endingsequence.asm
+incsrc cuccostorm.asm
+incsrc retro.asm
+warnpc $A58000
 
 ;org $228000 ; contrib area
 org $A28000 ; contrib area
@@ -244,13 +245,13 @@ warnpc $AF8401
 ;$22 Contrib Code
 ;$23 Stats & Credits
 ;$24 Code Bank
+;$2F reserved for tournament use
 ;$30 Main Configuration Table
 ;$31 Graphics Bank
 ;$32 Text Bank
 ;$33 Graphics Bank
-;$2F reserved for tournament use
-;$3A reserved for downstream use (Plandomizer)
-;$3B reserved for downstream use (Plandomizer)
+;$3A reserved for downstream use
+;$3B reserved for downstream use
 ;$3F reserved for internal debugging
 ;$7F5700 - $7F57FF reserved for downstream use
 ;================================================================================
