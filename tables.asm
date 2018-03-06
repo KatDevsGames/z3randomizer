@@ -775,12 +775,12 @@ dw #$0005 ; #$0005 = 5 (Default)
 ArrowModeSilverArrowCost: ; keep these together
 dw #$000A ; #$000A = 10 (Default)
 ;================================================================================
-org $30817A ; PC 0x18017A
+org $30817A ; PC 0x18017A ; #$2000 for Eastern Palace
 MapReveal_Sahasrahla:
-dw #$2000
-org $30817C ; PC 0x18017C
+dw #$0000
+org $30817C ; PC 0x18017C ; #$0140 for Ice Palace and Misery Mire
 MapReveal_BombShop:
-dw #$0140
+dw #$0000
 ;================================================================================
 org $30817E ; PC 0x18017E
 Restrict_Ponds:
@@ -1475,12 +1475,11 @@ db $FF, $FF, $FF, $FF
 ;shopkeeper_config - ppp- --ss
 ; ppp - palette
 ; ss - sprite type
-org $30C800 ; PC 0x184800 - 0x18487F - max 16 shops
+org $30C800 ; PC 0x184800 - 0x1848FF - max 32 shops ; do not exceed 36 tracked items sram_index > ($24)
 ShopTable:
 ;db [id][roomID-low][roomID-high][doorID][zero][shop_config][shopkeeper_config][sram_index]
-;db $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF
+db $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF
 db $01, $FF, $00, $00, $00, $43, $A0, $00
-;db $01, $0F, $01, $57, $00, $03, $C1, $00
 db $02, $0F, $01, $60, $00, $03, $C1, $03
 db $FF, $12, $01, $58, $00, $02, $E3, $06
 db $02, $0F, $01, $57, $00, $03, $A0, $09
@@ -1489,7 +1488,7 @@ db $04, $0F, $01, $6F, $00, $03, $A0, $0f
 db $05, $FF, $00, $00, $00, $03, $A0, $12
 db $06, $1F, $01, $46, $00, $03, $A0, $15
 db $FF, $12, $01, $58, $00, $03, $A0, $18
-org $30C880 ; PC 0x184880 - 0x184FFF - max 240 entries
+org $30C900 ; PC 0x184900 - 0x184FFF - max 224 entries
 ShopContentsTable:
 ;db [id][item][price-low][price-high][max][repl_id][repl_price-low][repl_price-high]
 db $01, $2E, $96, $00, $00, $FF, $00, $00
