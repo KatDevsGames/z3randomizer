@@ -245,11 +245,14 @@ warnpc $AF8401
 ;$22 Contrib Code
 ;$23 Stats & Credits
 ;$24 Code Bank
-;$2F reserved for tournament use
+;$29 External hooks (rest of bank not used)
+;$2F Static RNG (rest is reserved for tournament use)
 ;$30 Main Configuration Table
 ;$31 Graphics Bank
 ;$32 Text Bank
 ;$33 Graphics Bank
+;$37 Don't Use ZSNES Graphics
+;$38 Don't Use ZSNES Graphics (continued)
 ;$3A reserved for downstream use
 ;$3B reserved for downstream use
 ;$3F reserved for internal debugging
