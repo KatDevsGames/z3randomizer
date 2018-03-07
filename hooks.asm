@@ -366,6 +366,9 @@ dw $0000, $0002, $0004, $0032, $0004, $0006, $0030
 ;JSL FlipGreenPendant
 ;NOP #6
 ;--------------------------------------------------------------------------------
+org $08AAE1 ; <- 42AE1 - ancilla_ether_spell.asm : 22 (LDA $031D : CMP.b #$0B)
+JSL.l SetEtherFlicker : NOP
+;--------------------------------------------------------------------------------
 
 ;================================================================================
 ; Ice Floor Toggle
@@ -1347,8 +1350,11 @@ NOP #6 ; remove crystal room cutscene check that causes softlocks
 ;================================================================================
 ; Text Changes
 ;--------------------------------------------------------------------------------
-org $06C7D3 ; <- 347D3 - sprite_ponds.asm:720 (LDA.b #$8A)
-JSL.l DialogFairyThrow
+;org $06C7D3 ; <- 347D3 - sprite_ponds.asm:720 (LDA.b #$8A)
+;JSL.l DialogFairyThrow
+;--------------------------------------------------------------------------------
+org $06C7BB ; <- 347BB - sprite_ponds.asm:702 (JSL Sprite_ShowMessageFromPlayerContact : BCC BRANCH_ALPHA)
+JSL.l FairyPond_Init
 ;--------------------------------------------------------------------------------
 org $08C5ED ; <- 445ED - ancilla_receive_item.asm:395 (STA $1CF0 : CMP.w #$0070 : BNE .notGeezerSpeech)
 NOP #3

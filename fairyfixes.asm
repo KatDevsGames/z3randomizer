@@ -24,3 +24,28 @@ RTL
     LDA.b #$01
 RTL
 ;--------------------------------------------------------------------------------
+FairyPond_Init:
+	LDA.l Restrict_Ponds : BNE +
+		LDA.b #$48
+		JSL.l Sprite_ShowMessageFromPlayerContact
+		RTL
+	+
+	PHY : JSL.l Sprite_CheckDamageToPlayerSameLayerLong : BCC +
+		LDA $7EF35C : CMP.b #$02 : BNE ++ : LDA.b #$1C : PHA : BRA .emptyBottle : ++
+		LDA $7EF35D : CMP.b #$02 : BNE ++ : LDA.b #$1D : PHA : BRA .emptyBottle : ++
+		LDA $7EF35E : CMP.b #$02 : BNE ++ : LDA.b #$1E : PHA : BRA .emptyBottle : ++
+		LDA $7EF35F : CMP.b #$02 : BNE ++ : LDA.b #$1F : PHA : BRA .emptyBottle : ++
+			.noInventory
+			LDA $0D80, X : !ADD #$0A : STA $0D80, X
+			LDA.b #$51
+			LDY.b #$01
+			JSL.l Sprite_ShowMessageFromPlayerContact
+			PLY
+		RTL
+			.emptyBottle
+			LDA $0D80, X : !ADD #$02 : STA $0D80, X
+			LDA.b #$01 : STA $02E4
+			PLA : STA $1CE8
+	+ :	PLY
+RTL
+;--------------------------------------------------------------------------------

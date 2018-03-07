@@ -37,7 +37,8 @@ RTL
 ;================================================================================
 ;--------------------------------------------------------------------------------
 SetOverlayIfLamp:
-	LDA $7EF34A ; check if lamp
+	;LDA $7EF34A ; check if lamp
+	JSL.l LampCheck
 	STA $1D ; write it directly to the overlay, this isn't a terrible idea at all
 RTL
 ;================================================================================

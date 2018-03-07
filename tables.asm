@@ -786,6 +786,10 @@ org $30817E ; PC 0x18017E
 Restrict_Ponds:
 db #$01 ; #$00 = Original Behavior - #$01 - Restrict to Bottles (Default)
 ;================================================================================
+org $30817F ; PC 0x18017F
+Seizure_Safety:
+db #$00 ; #$00 = Off (Default) - #$01 = Limit Certain Effects
+;================================================================================
 org $308190 ; PC 0x180190
 TimerStyle:
 db #$00 ; #$00 = Off (Default) - #$01 Countdown - #$02 = Stopwatch

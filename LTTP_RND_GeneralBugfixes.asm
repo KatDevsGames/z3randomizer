@@ -26,7 +26,7 @@ org $3FFFFF ; <- 1FFFFF
 db #$00 ; expand file to 2mb
 
 org $1FFFF8 ; <- FFFF8 timestamp rom
-db #$20, #$18, #$03, #$03 ; year/month/day
+db #$20, #$18, #$03, #$06 ; year/month/day
 
 ;================================================================================
 
@@ -381,6 +381,9 @@ Sprite_DrawMultiple_player_deferred:
 
 org $05E1A7 ; 02E1A7 - Bank05.asm : 2592
 Sprite_ShowSolicitedMessageIfPlayerFacing:
+
+org $05E1F0
+Sprite_ShowMessageFromPlayerContact:
 
 org $05E219
 Sprite_ShowMessageUnconditional:

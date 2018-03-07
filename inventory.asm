@@ -63,6 +63,13 @@ RTL
 		BRL .captured
 	+ CMP #$01 : BNE + ; bow
 		LDA !INVENTORY_SWAP_2 : AND #$C0 : CMP #$C0 : BNE .errorJump ; make sure we have both bows
+		PHX : LDX.b #$00 ; scan ancilla table for arrows
+			-- : CPX.b #$0A : !BGE ++
+				LDA $0C4A, X : CMP.b #$09 : BNE +++
+					PLX : BRA .errorJump ; found an arrow, don't allow the swap
+				+++
+			INX : BRA -- : ++
+		PLX
 		LDA $7EF340 : !SUB #$01 : EOR #$02 : !ADD #$01 : STA $7EF340 ; swap bows
 		LDA.b #$20 : STA $012F ; menu select sound
 		BRL .captured
