@@ -818,3 +818,21 @@ RTS
 ;dw 64, 56 : db $30, $02, $00, $00
 ;dw 72, 56 : db $31, $02, $00, $00
 ;--------------------------------------------------------------------------------
+
+ParadoxCaveGfxFix:
+    ; Always upload line unless you're moving into paradox cave (0x0FF) from above (0x0EF)
+    LDX $A0 : CPX #$00FF : BNE .uploadLine
+    LDX $A2 : CPX #$00EF : BNE .uploadLine
+
+    ;Ignore uploading four specific lines of tiles to VRAM
+    LDX $0118
+    CPX #$1800 : BEQ .skipLine
+    CPX #$1A00 : BEQ .skipLine
+    CPX #$1C00 : BEQ .skipLine
+    CPX #$1E00 : BEQ .skipLine
+
+.uploadLine
+    LDA.b #$01 : STA $420B
+
+.skipLine
+    RTL

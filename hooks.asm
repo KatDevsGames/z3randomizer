@@ -2135,3 +2135,10 @@ org $1BBD55 ; <- DBD55 - Bank1B.asm: 290 (CPX.w #$0076 : BCC BRANCH_LAMBDA)
 JML.l SmithDoorCheck : NOP
 Overworld_Entrance_BRANCH_RHO: ; branch here to continue into door
 ;================================================================================
+
+;================================================================================
+; Paradox Cave Shopkeeper Fixes
+;--------------------------------------------------------------------------------
+org $008C1B ; Bank00.asm@1633 (LDA.b #$01 : STA $420B)
+JSL ParadoxCaveGfxFix
+NOP
