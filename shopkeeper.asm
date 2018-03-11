@@ -826,9 +826,13 @@ ParadoxCaveGfxFix:
 
     ;Ignore uploading four specific lines of tiles to VRAM
     LDX $0118
-    CPX #$1800 : BEQ .skipLine
-    CPX #$1A00 : BEQ .skipLine
+    ; Line 1
+    CPX #$1800 : BEQ .skipMostOfLine
+    ; Line 2
+    CPX #$1A00 : BEQ .skipMostOfLine
+    ; Line 3
     CPX #$1C00 : BEQ .skipLine
+    ; Line 4
     CPX #$1E00 : BEQ .skipLine
 
 .uploadLine
@@ -836,3 +840,8 @@ ParadoxCaveGfxFix:
 
 .skipLine
     RTL
+
+.skipMostOfLine
+    ; Set line length to 192 bytes (the first 6 8x8 tiles in the line)
+    LDX.w #$00C0 : STX $4305
+    BRA .uploadLine
