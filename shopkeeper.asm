@@ -214,6 +214,15 @@ SpritePrep_ShopKeeper:
 	BRL -
 	.stop
 	
+	STA $FFFFFF
+	LDA $A0 : CMP.b #$FF : BNE .normal
+	.dumb
+		LDA $2137
+		LDA $213F
+		LDA $213D
+		CMP.b #60
+		!BLT .dumb
+	.normal
 	LDA #$80 : STA $2100
 	JSR Shopkeeper_UploadVRAMTiles
 	LDA #$0F : STA $2100
@@ -279,31 +288,31 @@ Shopkeeper_UploadVRAMTiles:
 		
 		LDA #$40 : STA $4305 : STZ $4306 ; set transfer size to 0x40
 		LDA #$60 : STA $2116 ; set VRAM register destination address
-		LDA #$5E : STA $2117
-		LDA #$01 : STA $420B ; begin DMA transfer
-		
-		LDA #$40 : STA $4305 : STZ $4306 ; set transfer size to 0x40
-		LDA #$60 : STA $2116 ; set WRAM register source address
-		LDA #$5F : STA $2117
-		LDA #$01 : STA $420B ; begin DMA transfer
-		
-		LDA #$40 : STA $4305 : STZ $4306 ; set transfer size to 0x40
-		LDA #$20 : STA $2116 ; set VRAM register destination address
 		LDA #$5C : STA $2117
 		LDA #$01 : STA $420B ; begin DMA transfer
 		
 		LDA #$40 : STA $4305 : STZ $4306 ; set transfer size to 0x40
-		LDA #$20 : STA $2116 ; set VRAM register destination address
+		LDA #$60 : STA $2116 ; set VRAM register destination address
 		LDA #$5D : STA $2117
 		LDA #$01 : STA $420B ; begin DMA transfer
 		
 		LDA #$40 : STA $4305 : STZ $4306 ; set transfer size to 0x40
-		LDA #$40 : STA $2116 ; set VRAM register destination address
+		LDA #$80 : STA $2116 ; set VRAM register destination address
 		LDA #$5C : STA $2117
 		LDA #$01 : STA $420B ; begin DMA transfer
 		
 		LDA #$40 : STA $4305 : STZ $4306 ; set transfer size to 0x40
-		LDA #$40 : STA $2116 ; set VRAM register destination address
+		LDA #$80 : STA $2116 ; set VRAM register destination address
+		LDA #$5D : STA $2117
+		LDA #$01 : STA $420B ; begin DMA transfer
+		
+		LDA #$40 : STA $4305 : STZ $4306 ; set transfer size to 0x40
+		LDA #$A0 : STA $2116 ; set VRAM register destination address
+		LDA #$5C : STA $2117
+		LDA #$01 : STA $420B ; begin DMA transfer
+		
+		LDA #$40 : STA $4305 : STZ $4306 ; set transfer size to 0x40
+		LDA #$A0 : STA $2116 ; set VRAM register destination address
 		LDA #$5D : STA $2117
 		LDA #$01 : STA $420B ; begin DMA transfer
 		;--------------------------------------------------------------------------------
@@ -715,7 +724,7 @@ dw -40, 40
 dw 8, 40
 dw 56, 40
 .tile_indices
-db $E6, $C2, $C4
+db $C6, $C8, $CA
 ;--------------------------------------------------------------------------------
 !COLUMN_LOW = "$7F5022"
 !COLUMN_HIGH = "$7F5023"
@@ -818,7 +827,6 @@ RTS
 ;dw 64, 56 : db $30, $02, $00, $00
 ;dw 72, 56 : db $31, $02, $00, $00
 ;--------------------------------------------------------------------------------
-
 ParadoxCaveGfxFix:
     ; Always upload line unless you're moving into paradox cave (0x0FF) from above (0x0EF)
     LDX $A0 : CPX #$00FF : BNE .uploadLine
@@ -831,9 +839,9 @@ ParadoxCaveGfxFix:
     ; Line 2
     CPX #$1A00 : BEQ .skipMostOfLine
     ; Line 3
-    CPX #$1C00 : BEQ .skipLine
+    CPX #$1C00 : BEQ .uploadLine
     ; Line 4
-    CPX #$1E00 : BEQ .skipLine
+    CPX #$1E00 : BEQ .uploadLine
 
 .uploadLine
     LDA.b #$01 : STA $420B
@@ -845,3 +853,4 @@ ParadoxCaveGfxFix:
     ; Set line length to 192 bytes (the first 6 8x8 tiles in the line)
     LDX.w #$00C0 : STX $4305
     BRA .uploadLine
+;--------------------------------------------------------------------------------
