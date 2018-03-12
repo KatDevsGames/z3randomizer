@@ -790,6 +790,13 @@ org $30817F ; PC 0x18017F
 Seizure_Safety:
 db #$00 ; #$00 = Off (Default) - #$01 = Limit Certain Effects
 ;================================================================================
+;---- --hb
+;h - Hookshot
+;b - Boomerang
+org $308180 ; PC 0x180180
+StunItemAction:
+db #$03 ; #$03 = Hookshot and Boomerang (Default)
+;================================================================================
 org $308190 ; PC 0x180190
 TimerStyle:
 db #$00 ; #$00 = Off (Default) - #$01 Countdown - #$02 = Stopwatch

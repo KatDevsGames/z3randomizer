@@ -62,7 +62,7 @@ ActivateInvulnerabilityOrDont:
 	CMP.w #179 : BEQ .somewhere_cool ; Room in Misery Mire
 	CMP.w #213 : BEQ .somewhere_cool ; Laser Bridge
 	CMP.w #279 : BEQ .somewhere_cool ; Spike Cave
-	
+
 	SEP #$20 ; set 8-bit accumulator
 	BRA .nowhere_special
 	.somewhere_cool
@@ -70,5 +70,21 @@ ActivateInvulnerabilityOrDont:
 		LDA.b #$01 : STA $037B : RTL
 	.nowhere_special
 		LDA.l ByrnaInvulnerability : STA $037B
+RTL
+;--------------------------------------------------------------------------------
+CheckStunItemAction:
+	LDA.b #$40 : STA $0DF0, X
+	LDA $0303 : CMP #$02 : BNE + ; boomerang
+		LDA.l StunItemAction : AND #$01 : CMP #$01 : BNE .no_stun
+		BRA .normal
+	+
+	LDA $0303 : CMP #$0E : BNE + ; hookshot
+		LDA.l StunItemAction : AND #$02 : CMP #$02 : BNE .no_stun
+		BRA .normal
+	+
+	LDA $0CF2 : BEQ .no_stun
+	.normal
+		LDA.b #$0B : STA $0DD0, X ; stun enemy
+	.no_stun
 RTL
 ;--------------------------------------------------------------------------------
