@@ -390,9 +390,9 @@ dl $080116, $070116; <- E97E
 ;--------------------------------------------------------------------------------
 ;org $06C9BC ; <- 349BC - sprite_ponds.asm : 1066
 ;org $06C9C0 ; <- 349C0 - sprite_ponds.asm : 1068
-org $06C926 ; <- 34926 - sprite_ponds.asm : 945
-JMP.l GetFairySword
-NOP #12
+;org $06C926 ; <- 34926 - sprite_ponds.asm : 945
+;JMP.l GetFairySword
+;NOP #12
 org $06C936 ; <- 34936 - sprite_ponds.asm : 952
 PyramidFairy_BRANCH_IOTA:
 org $06C948 ; <- 34948 - sprite_ponds.asm : 961
