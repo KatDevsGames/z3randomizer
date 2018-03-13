@@ -160,6 +160,7 @@ incsrc quickswap.asm
 incsrc endingsequence.asm
 incsrc cuccostorm.asm
 incsrc retro.asm
+incsrc dpadinvert.asm
 warnpc $A58000
 
 ;org $228000 ; contrib area
