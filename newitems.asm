@@ -231,9 +231,12 @@ AddReceivedItemExpandedGetItem:
 		%ProgrammableItemLogic(3)
 		BRL .done
 	+ CMP.b #$58 : BNE + ; Upgrade-Only Sivler Arrows
-		LDA $7EF340 : BEQ ++ : CMP.b #$03 : !BGE ++
-			!ADD.b #$02 : STA $7EF340 ; switch to silver bow
-		++
+		LDA.l SilverArrowsUseRestriction : BNE +++
+		LDA.l SilverArrowsAutoEquip : AND.b #$01 : BEQ +++
+			LDA $7EF340 : BEQ ++ : CMP.b #$03 : !BGE ++
+				!ADD.b #$02 : STA $7EF340 ; switch to silver bow
+			++
+		+++
 		LDA.l ArrowMode : BEQ ++
 			LDA.b #$01 : STA $7EF376
 		++

@@ -184,6 +184,13 @@ DungeonHoleWarpTransition:
 	BRA StatTransitionCounter
 DungeonHoleEntranceTransition:
 	JSL EnableForceBlank
+	
+	LDA.l SilverArrowsAutoEquip : AND.b #$02 : BEQ +
+		LDA $7EF340 : BEQ +
+		CMP.b #$03 : !BGE +
+		!ADD #$02 : STA $7EF340
+	+
+	
 	BRA StatTransitionCounter
 DungeonStairsTransition:
 	JSL Dungeon_SaveRoomQuadrantData

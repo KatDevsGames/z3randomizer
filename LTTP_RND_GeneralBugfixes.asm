@@ -26,7 +26,7 @@ org $3FFFFF ; <- 1FFFFF
 db #$00 ; expand file to 2mb
 
 org $1FFFF8 ; <- FFFF8 timestamp rom
-db #$20, #$18, #$03, #$11 ; year/month/day
+db #$20, #$18, #$03, #$12 ; year/month/day
 
 ;================================================================================
 
@@ -124,10 +124,6 @@ incsrc accessability.asm
 incsrc heartbeep.asm
 incsrc capacityupgrades.asm
 incsrc timer.asm
-incsrc glitched.asm
-incsrc hardmode.asm
-incsrc goalitem.asm
-incsrc compasses.asm
 incsrc doorframefixes.asm
 incsrc music.asm
 incsrc hashalphabet.asm
@@ -155,6 +151,10 @@ org $A1FF00 ; static mapping area
 incsrc init.asm
 
 org $A48000 ; code bank - PUT NEW CODE HERE
+incsrc glitched.asm
+incsrc hardmode.asm
+incsrc goalitem.asm
+incsrc compasses.asm
 incsrc openmode.asm
 incsrc quickswap.asm
 incsrc endingsequence.asm

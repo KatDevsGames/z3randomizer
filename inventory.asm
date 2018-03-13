@@ -66,20 +66,28 @@ RTL
 		PHX : LDX.b #$00 ; scan ancilla table for arrows
 			-- : CPX.b #$0A : !BGE ++
 				LDA $0C4A, X : CMP.b #$09 : BNE +++
-					PLX : BRA .errorJump ; found an arrow, don't allow the swap
+					PLX : BRA .errorJump2 ; found an arrow, don't allow the swap
 				+++
 			INX : BRA -- : ++
 		PLX
+		LDA.l SilverArrowsUseRestriction : BEQ ++
+		LDA $A0 : ORA $A1 : BEQ ++ ; not in ganon's room in restricted mode
+				LDA $7EF340 : CMP.b #$03 : !BLT .errorJump : !SUB #$02 : STA $7EF340
+				BRA .errorJump2
+		++
 		LDA $7EF340 : !SUB #$01 : EOR #$02 : !ADD #$01 : STA $7EF340 ; swap bows
 		LDA.b #$20 : STA $012F ; menu select sound
 		BRL .captured
+	+ BRA +
+		.errorJump
+		BRA .errorJump2
 	+ CMP #$05 : BNE + ; powder
 		LDA !INVENTORY_SWAP : AND #$30 : CMP #$30 : BNE .errorJump ; make sure we have mushroom & magic powder
 		LDA $7EF344 : EOR #$03 : STA $7EF344 ; swap mushroom & magic powder
 		LDA.b #$20 : STA $012F ; menu select sound
 		BRL .captured
-	;+ BRA +
-		.errorJump
+	+ BRA +
+		.errorJump2
 		BRA .error
 	+ CMP #$0D : BNE + ; flute
 		LDA $037A :	CMP #$01 : BEQ .midShovel ; inside a shovel animation, force the shovel & make error sound

@@ -14,7 +14,6 @@ OnDrawHud:
 RTL
 ;--------------------------------------------------------------------------------
 ;OnDungeonEntrance:
-;
 ;	STA $7EC172 ; thing we wrote over
 ;RTL
 ;--------------------------------------------------------------------------------
@@ -60,7 +59,11 @@ OnFileLoad:
 		LDA $7EF38B : STA $7EF36F ; copy generic keys to key counter
 	+
 	
-	STA $FFFFFF
+	LDA SilverArrowsUseRestriction : BEQ + ; fix bow type for restricted arrow mode
+		LDA $7EF340 : CMP.b #$3 : !BLT +
+		!SUB.b #$02 : STA $7EF340
+	+
+	
 	LDA $7EF3C5 : CMP.b #$01 : BNE .notrain ; check if we're in rain state
 	.rain
 		LDA.l EscapeAssist

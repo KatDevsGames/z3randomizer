@@ -797,6 +797,14 @@ org $308180 ; PC 0x180180
 StunItemAction:
 db #$03 ; #$03 = Hookshot and Boomerang (Default)
 ;================================================================================
+org $308181 ; PC 0x180181
+SilverArrowsUseRestriction:
+db #$00 ; #$00 = Off (Default) - #$01 = Only At Ganon
+;================================================================================
+org $308182 ; PC 0x180182
+SilverArrowsAutoEquip:
+db #$01 ; #$00 = Off - #$01 = Collection Time (Default) - #$02 = Entering Ganon - #$03 = Collection Time & Entering Ganon
+;================================================================================
 org $308190 ; PC 0x180190
 TimerStyle:
 db #$00 ; #$00 = Off (Default) - #$01 Countdown - #$02 = Stopwatch
