@@ -159,6 +159,7 @@ incsrc openmode.asm
 incsrc quickswap.asm
 incsrc endingsequence.asm
 incsrc cuccostorm.asm
+incsrc compression.asm
 incsrc retro.asm
 incsrc dpadinvert.asm
 warnpc $A58000

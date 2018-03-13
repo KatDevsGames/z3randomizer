@@ -2152,6 +2152,6 @@ Overworld_Entrance_BRANCH_RHO: ; branch here to continue into door
 ;================================================================================
 ; Paradox Cave Shopkeeper Fixes
 ;--------------------------------------------------------------------------------
-org $008C1B ; Bank00.asm@1633 (LDA.b #$01 : STA $420B)
+org $008C19 ; Bank00.asm@1633 (LDA.b #$01 : STA $420B)
 JSL ParadoxCaveGfxFix
 NOP
