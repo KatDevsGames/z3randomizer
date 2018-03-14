@@ -36,7 +36,15 @@ OnUncleItemGet:
 
 	LDA.l UncleRefill : BIT.b #$04 : BEQ + : LDA.b #$80 : STA $7EF373 : + ; refill magic
 	LDA.l UncleRefill : BIT.b #$02 : BEQ + : LDA.b #50 : STA $7EF375 : + ; refill bombs
-	LDA.l UncleRefill : BIT.b #$01 : BEQ + : LDA.b #70 : STA $7EF376 : + ; refill arrows
+	LDA.l UncleRefill : BIT.b #$01 : BEQ + ; refill arrows
+		LDA.b #70 : STA $7EF376 
+		
+		LDA.l ArrowMode : BEQ +
+			; rupee arrows, so also give the player some money to start
+			REP #$20 ; set 16-bit accumulator
+			LDA $7EF360 : !ADD.w #300 : STA $7EF360
+			SEP #$20 ; set 8-bit accumulator
+	+ 
 RTL
 ;--------------------------------------------------------------------------------
 OnAga2Defeated:
