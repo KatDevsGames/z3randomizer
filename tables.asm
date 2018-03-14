@@ -805,6 +805,10 @@ org $308182 ; PC 0x180182
 SilverArrowsAutoEquip:
 db #$01 ; #$00 = Off - #$01 = Collection Time (Default) - #$02 = Entering Ganon - #$03 = Collection Time & Entering Ganon
 ;================================================================================
+org $308183 ; PC 0x180183
+FreeUncleItemAmount:
+db #$12C = 300 rupees (Default)
+;================================================================================
 org $308190 ; PC 0x180190
 TimerStyle:
 db #$00 ; #$00 = Off (Default) - #$01 Countdown - #$02 = Stopwatch
