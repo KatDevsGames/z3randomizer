@@ -807,7 +807,7 @@ db #$01 ; #$00 = Off - #$01 = Collection Time (Default) - #$02 = Entering Ganon 
 ;================================================================================
 org $308183 ; PC 0x180183
 FreeUncleItemAmount:
-db #$12C = 300 rupees (Default)
+dw #$12C ; 300 rupees (Default)
 ;================================================================================
 org $308190 ; PC 0x180190
 TimerStyle:
