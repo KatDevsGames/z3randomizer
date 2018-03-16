@@ -185,11 +185,12 @@ DungeonHoleWarpTransition:
 DungeonHoleEntranceTransition:
 	JSL EnableForceBlank
 	
-	LDA $A0 : BNE +
 	LDA.l SilverArrowsAutoEquip : AND.b #$02 : BEQ +
-		LDA $7EF340 : BEQ +
-		CMP.b #$03 : !BGE +
-		!ADD #$02 : STA $7EF340
+	LDA $A0 : BNE + ; skip unless ganon's room
+	LDA !INVENTORY_SWAP_2 : AND.b #$40 : BEQ + ; skip if we don't have silvers
+	LDA $7EF340 : BEQ + ; skip if we have no bow
+	CMP.b #$03 : !BGE + ; skip if the bow is already silver
+		!ADD #$02 : STA $7EF340 ; increase bow to silver
 	+
 	
 	BRA StatTransitionCounter
