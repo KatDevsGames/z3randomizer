@@ -129,7 +129,7 @@ macro ValueShift()
 endmacro
 ;--------------------------------------------------------------------------------
 !CHALLENGE_TIMER = "$7EF454"
-!GOAL_COUNTER = "$7EF460"
+!GOAL_COUNTER = "$7EF418"
 !INVENTORY_SWAP_2 = "$7EF38E"
 ;--------------------------------------------------------------------------------
 ;carry clear if pass

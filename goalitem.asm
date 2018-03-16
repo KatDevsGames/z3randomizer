@@ -1,7 +1,7 @@
 ;--------------------------------------------------------------------------------
 ; $7F5010 - Scratch Space (Callee Preserved)
 ;--------------------------------------------------------------------------------
-!GOAL_COUNTER = "$7EF460"
+!GOAL_COUNTER = "$7EF418"
 !DRAW_ADDRESS = "$7EC72A"
 DrawGoalIndicator:
 	LDA.l GoalItemRequirement : AND.w #$00FF : BNE + : RTL : + ; Star Meter

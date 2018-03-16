@@ -52,9 +52,9 @@ db #$20, #$18, #$03, #$12 ; year/month/day
 ;$7EF41A[w] - Programmable Item #1
 ;$7EF41C[w] - Programmable Item #2
 ;$7EF41E[w] - Programmable Item #3
-;$7EF420 - $7EF44F - Stat Tracking Bank 1
+;$7EF418 - Goal Item Counter
+;$7EF420 - $7EF466 - Stat Tracking Bank 1
 ;$7EF450 - $7EF45F - RNG Item (Single) Flags
-;$7EF460 - Goal Item Counter
 
 !MS_GOT = "$7F5031"
 !DARK_WORLD = "$7EF3CA"

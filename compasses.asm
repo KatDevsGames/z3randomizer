@@ -1,7 +1,7 @@
 ;--------------------------------------------------------------------------------
 ; $7F5010 - Scratch Space (Callee Preserved)
 ;--------------------------------------------------------------------------------
-!GOAL_COUNTER = "$7EF460"
+!GOAL_COUNTER = "$7EF418"
 DrawDungeonCompassCounts:
 	LDA $1B : AND.w #$00FF : BNE + : RTL : + ; Skip if outdoors
 	LDA $040C : CMP.w #$00FF : BNE + : RTL : + ; Skip if not in a dungeon
