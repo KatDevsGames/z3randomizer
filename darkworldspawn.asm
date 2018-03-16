@@ -24,6 +24,12 @@ DarkWorldFlagSet:
 	LDA $1B : BNE + ; skip this unless indoors - THIS PART FIXES THE OTHER FUCKUP WITH THE PYRAMID SPAWN IN GLITCHED
 		LDA $A0 : BEQ .done ; skip if we died in ganon's room
 	+
+	JSL.l DoWorldFix
+	.done
+	PLA
+RTL
+;--------------------------------------------------------------------------------
+DoWorldFix:
 	LDA.l Bugfix_MirrorlessSQToLW : BEQ +
 		LDA $7EF353 : BEQ .noMirror ; check if we have the mirror
 	+
@@ -34,9 +40,7 @@ DarkWorldFlagSet:
 	LDA #$00 : STA $7EF3CA ; set flag to light world
 	LDA $7EF3CC : CMP #$07 : BNE + : LDA.b #$08 : STA $7EF3CC : + ; convert frog to dwarf
 	.done
-	PLA
 RTL
-
 ;--------------------------------------------------------------------------------
 SetDeathWorldChecked:
 	LDA $1B : BEQ + ; skip this for indoors

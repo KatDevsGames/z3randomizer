@@ -66,7 +66,7 @@ OnFileLoad:
 		JSL.l OnNewFile
 		LDA.b #$FF : STA !FRESH_FILE_MARKER
 	+
-	JSL.l DarkWorldFlagSet
+	JSL.l DoWorldFix
 	JSL.l MasterSwordFollowerClear
 	JSL.l InitOpenMode
 	LDA #$FF : STA !RNG_ITEM_LOCK_IN ; reset rng item lock-in
