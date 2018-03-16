@@ -178,6 +178,7 @@ AddReceivedItemExpandedGetItem:
 	JSL.l FreeDungeonItemNotice
 	CMP.b #$0B : BNE + ; Bow
 		LDA !INVENTORY_SWAP_2 : AND.b #$40 : BEQ ++
+		LDA.l SilverArrowsUseRestriction : BNE ++
 			LDA.b #03 : STA $7EF340 ; set bow to silver
 		++
 		BRL .done
