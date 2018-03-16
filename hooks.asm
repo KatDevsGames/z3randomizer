@@ -2000,7 +2000,7 @@ org $1DFDA8 ; <- EFDA9 - sprite_digging_game_guy.asm:309 (STA $7FFE00)
 JSL.l SpawnShovelGamePrizeSFX
 ;--------------------------------------------------------------------------------
 ;org $01EEB6 ; <- EEB6 - Bank01.asm:14138 (ORA.b #$40 : STA $0403)
-org $01EECD ; <- EECD - Bank01.asm:160 (LDA.b #$0E : STA $012F)
+org $01EECD ; <- EECD - Bank01.asm:14160 (LDA.b #$0E : STA $012F)
 JSL.l SpawnChestGamePrizeSFX : NOP
 ;================================================================================
 
