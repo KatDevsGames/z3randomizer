@@ -1003,10 +1003,11 @@ AttemptItemSubstitution:
 				PHX
 					TXA : LSR #2 : TAX
 					LDA !ITEM_LIMIT_COUNTS, X
-					CMP.l ItemSubstitutionRules+1, X : !BLT +
-						LDA.l ItemSubstitutionRules+2, X : STA 2,s
-					+
 				PLX
+				CMP.l ItemSubstitutionRules+1, X : !BLT +
+					LDA.l ItemSubstitutionRules+2, X : STA 2,s
+				+
+				
 				BEQ .exit
 			.noMatch
 				INX #4
