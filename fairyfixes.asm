@@ -40,7 +40,7 @@ FairyPond_Init:
 			LDA.b #$51
 			LDY.b #$01
 			JSL.l Sprite_ShowMessageFromPlayerContact
-			JMP ++
+			JMP .cleanup
 		
 			.emptyBottle
 			LDA.b #$02 : STA $0D80, X
