@@ -1747,7 +1747,7 @@ JSL.l DarkWorldLoadFix
 NOP #7
 ;--------------------------------------------------------------------------------
 org $09F520 ; <- 4F520 - module_death.asm : 401 (LDA $7EF3C5 : CMP.b #$03 : BCS BRANCH_THETA)
-JSL.l SetDeathWorldChecked
+JSL.l OnPlayerDead
 JSL.l IncrementDeathCounter
 NOP #6
 ;--------------------------------------------------------------------------------

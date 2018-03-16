@@ -39,7 +39,6 @@ RTL
 
 ;--------------------------------------------------------------------------------
 SetDeathWorldChecked:
-	PHA
 	LDA $1B : BEQ + ; skip this for indoors
 		LDA $040C : CMP #$FF : BNE .done ; unless it's a cave
 
@@ -52,12 +51,10 @@ SetDeathWorldChecked:
 	LDA.b #$00 : STA $7EF3CA : STA $7E0FFF ; set the world to the light world if he's still alive
 	LDA $7EF3CC : CMP #$07 : BNE .done : LDA.b #$08 : STA $7EF3CC ; convert frog to dwarf
 	.done
-	PLA
 RTL
 	.pyramid
 	LDA #$40 : STA $7EF3CA ; set flag to dark world
 	LDA $7EF3CC : CMP #$08 : BNE + : LDA.b #$07 : STA $7EF3CC : + ; convert dwarf to frog
-	PLA
 RTL
 ;--------------------------------------------------------------------------------
 FakeWorldFix:
@@ -79,5 +76,12 @@ RTL
 FixAgahnimFollowers:
 	LDA.b #$00 : STA $7EF3CC ; clear follower
 	JSL PrepDungeonExit ; thing we wrote over
+RTL
+;--------------------------------------------------------------------------------
+SetSilverBowMode:
+	LDA SilverArrowsUseRestriction : BEQ + ; fix bow type for restricted arrow mode
+		LDA $7EF340 : CMP.b #$3 : !BLT +
+		!SUB.b #$02 : STA $7EF340
+	+
 RTL
 ;================================================================================

@@ -17,12 +17,20 @@ RTL
 ;	STA $7EC172 ; thing we wrote over
 ;RTL
 ;--------------------------------------------------------------------------------
+OnPlayerDead:
+	PHA
+		JSL.l SetDeathWorldChecked
+		JSL.l SetSilverBowMode
+	PLA
+RTL
+;--------------------------------------------------------------------------------
 OnDungeonExit:
 	STA $040C : STZ $04AC ; thing we wrote over
 	
 	PHA : PHP
 		JSL.l HUD_RebuildLong
 		JSL.l FloodGateResetInner
+		JSL.l SetSilverBowMode
 	PLP : PLA
 RTL
 ;--------------------------------------------------------------------------------
@@ -67,10 +75,7 @@ OnFileLoad:
 		LDA $7EF38B : STA $7EF36F ; copy generic keys to key counter
 	+
 	
-	LDA SilverArrowsUseRestriction : BEQ + ; fix bow type for restricted arrow mode
-		LDA $7EF340 : CMP.b #$3 : !BLT +
-		!SUB.b #$02 : STA $7EF340
-	+
+	JSL.l SetSilverBowMode
 	
 	LDA $7EF3C5 : CMP.b #$01 : BNE .notrain ; check if we're in rain state
 	.rain
