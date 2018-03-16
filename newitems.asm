@@ -1006,7 +1006,7 @@ AttemptItemSubstitution:
 					LDA !ITEM_LIMIT_COUNTS, X
 				PLX
 				CMP.l ItemSubstitutionRules+1, X : !BLT +
-					LDA.l ItemSubstitutionRules+2, X : STA 2,s
+					LDA.l ItemSubstitutionRules+2, X : STA 1,s
 				+
 				
 				BEQ .exit
