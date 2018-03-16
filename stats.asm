@@ -185,6 +185,7 @@ DungeonHoleWarpTransition:
 DungeonHoleEntranceTransition:
 	JSL EnableForceBlank
 	
+	LDA $A0 : BNE +
 	LDA.l SilverArrowsAutoEquip : AND.b #$02 : BEQ +
 		LDA $7EF340 : BEQ +
 		CMP.b #$03 : !BGE +
