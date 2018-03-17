@@ -48,9 +48,9 @@ OnUncleItemGet:
 		LDA.b #70 : STA $7EF376 
 		
 		LDA.l ArrowMode : BEQ +
-			; rupee arrows, so also give the player some money to start
+			LDA !INVENTORY_SWAP_2 : ORA #$80 : STA !INVENTORY_SWAP_2 ; enable bow toggle
 			REP #$20 ; set 16-bit accumulator
-			LDA $7EF360 : !ADD.l FreeUncleItemAmount : STA $7EF360
+			LDA $7EF360 : !ADD.l FreeUncleItemAmount : STA $7EF360 ; rupee arrows, so also give the player some money to start
 			SEP #$20 ; set 8-bit accumulator
 	+ 
 RTL
