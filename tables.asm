@@ -1,7 +1,7 @@
 ;================================================================================
 ; Item Tables
 ;--------------------------------------------------------------------------------
-org $308000 ; bank #$30 ; PC 0x180000
+org $308000 ; bank #$30 ; PC 0x180000 - 0x180006
 HeartPieceIndoorValues:
 HeartPiece_Forest_Thieves:
 	db #$17 ; #$17 = Heart Piece
@@ -18,7 +18,9 @@ HeartPiece_Mire_Warp:
 HeartPiece_Smith_Pegs:
 	db #$17
 ;--------------------------------------------------------------------------------
-org $308010 ; PC 0x180010
+; 0x180006 - 0x18000F (unused)
+;--------------------------------------------------------------------------------
+org $308010 ; PC 0x180010 - 0x180017
 RupeeNPC_MoldormCave:
 	db #$46 ; #$46 = 300 Rupees
 RupeeNPC_NortheastDarkSwampCave:
@@ -35,6 +37,8 @@ EtherItem:
 	db #$10 ; #$10 = Ether Medallion
 BombosItem:
 	db #$0F ; #$0F = Bombos Medallion
+;--------------------------------------------------------------------------------
+; 0x180017 - 0x18001F (unused)
 ;--------------------------------------------------------------------------------
 org $308020 ; PC 0x180020
 DiggingGameRNG:
@@ -56,7 +60,7 @@ org $308023 ; PC 0x180023
 TRockRequiredMedallion:
 db #$02 ; #$02 = Quake (default)
 ;--------------------------------------------------------------------------------
-org $308024 ; PC 0x180024
+org $308024 ; PC 0x180024 - 0x180027
 BigFairyHealth:
 db #$A0 ; #$A0 = Refill Health (default) - #$00 = Don't Refill Health
 BigFairyMagic:
@@ -77,7 +81,7 @@ org $0589B0 ; PC 0x289B0 ; sprite_master_sword.asm : 179
 PedestalSword:
 db #$01 ; #$01 = Master Sword (default)
 
-org $308029 ; PC 0x180029
+org $308029 ; PC 0x180029 - 0x18002A
 SmithItemMode:
 db #$01 ; #$00 = Classic Tempering Process - #$01 = Quick Item Get (default)
 SmithItem:
@@ -92,6 +96,8 @@ db #$02 ; #$02 = Tempered Sword (default)
 
 ;org $05EBD4 ; PC 0x2EBD4 - sprite_zelda.asm:23 - (LDA $7EF359 : CMP.b #$02 : BCS .hasMasterSword) - Zelda Spawnpoint Sword Check
 ;db #$05 ; #$02 = Tempered Sword (default) - #$05 = All Swords
+;--------------------------------------------------------------------------------
+; 0x18002B- 0x18002F (Unused)
 ;--------------------------------------------------------------------------------
 org $308030 ; PC 0x180030
 EnableSRAMTrace:
@@ -109,17 +115,17 @@ org $308033 ; PC 0x180033
 HeartBeep:
 db #$20 ; #$00 = Off - #$20 = Normal (default) - #$40 = Half Speed - #$80 = Quarter Speed
 ;--------------------------------------------------------------------------------
-org $308034 ; PC 0x180034
+org $308034 ; PC 0x180034 - 0x180035
 StartingMaxBombs:
 db #10 ; #10 = Default (10 decimal)
 StartingMaxArrows:
 db #30 ; #30 = Default (30 decimal)
 ;--------------------------------------------------------------------------------
-org $308036 ; PC 0x180036
+org $308036 ; PC 0x180036 - 0x180037
 RupoorDeduction:
 dw #$000A ; #$0A - Default (10 decimal)
 ;--------------------------------------------------------------------------------
-org $308038 ; PC 0x180038
+org $308038 ; PC 0x180038 -0x18003A
 LampConeSewers:
 db #$01 ; #$00 = Off - #$01 = On (default)
 LampConeLightWorld:
@@ -127,7 +133,7 @@ db #$01 ; #$00 = Off - #$01 = On (default)
 LampConeDarkWorld:
 db #$00 ; #$00 = Off (default) - #$01 = On
 ;--------------------------------------------------------------------------------
-org $30803B ; PC 0x18003B
+org $30803B ; PC 0x18003B - PC 0x18003C
 MapMode:
 db #$00 ; #$00 = Always On (default) - #$01 = Require Map Item
 CompassMode:
@@ -225,7 +231,17 @@ org $30804F ; PC 0x18004F
 ByrnaInvulnerability:
 db #$01 ; #$00 = Off - #$01 = On (default)
 ;--------------------------------------------------------------------------------
-org $308080 ; PC 0x180080
+; Out of order 0x180050-0x18005C (CrystalPendantFlags_2)
+;--------------------------------------------------------------------------------
+; 0x18005D - 0x18005F (unused)
+;--------------------------------------------------------------------------------
+; Out of order 0x180060 - 0x18007E (ProgrammableItemLogicJump_1)
+;--------------------------------------------------------------------------------
+; 0x18007F (unused)
+;--------------------------------------------------------------------------------
+; Out of order 0x180070-0x18007F (CrystalNumberTable)
+;--------------------------------------------------------------------------------
+org $308080 ; PC 0x180080 - 0x180083
 Upgrade5BombsRefill:
 db #$00
 Upgrade10BombsRefill:
@@ -235,7 +251,7 @@ db #$00
 Upgrade10ArrowsRefill:
 db #$00
 ;--------------------------------------------------------------------------------
-org $308084 ; PC 0x180084
+org $308084 ; PC 0x180084 - 0x180085
 PotionHealthRefill:
 db #$A0 ; #$A0 - Full Refill (Default)
 PotionMagicRefill:
@@ -245,7 +261,9 @@ org $308086 ; PC 0x180086
 GanonAgahRNG:
 db #$00 ; $00 = static rng, $01 = no extra blue balls/warps
 ;--------------------------------------------------------------------------------
-org $308090 ; PC 0x180090
+; 0x180087 - 0x18008F (unused)
+;--------------------------------------------------------------------------------
+org $308090 ; PC 0x180090 - 0x180097
 ProgressiveSwordLimit:
 db #$04 ; #$04 - 4 Swords (default)
 ProgressiveSwordReplacement:
@@ -263,6 +281,12 @@ db #$04 ; #$04 - 4 Bottles (default)
 BottleLimitReplacement:
 db #$47 ; #$47 - 20 Rupees (default)
 ;--------------------------------------------------------------------------------
+; 0x180098 - 0x18009F (unused)
+;--------------------------------------------------------------------------------
+; Out of order 0x1800A0 - 0x1800A3 (Bugfix_MirrorlessSQToLW)
+;--------------------------------------------------------------------------------
+; 0x1800A4- 0x1800FF (unused)
+;--------------------------------------------------------------------------------
 org $308100 ; PC 0x180100 (0x40 bytes)
 ShovelSpawnTable:
 	db $B2 ; Gold Bee
@@ -279,6 +303,8 @@ ShovelSpawnTable:
 	db $E1, $E1, $E1, $E1, $E1 ; 5 Arrows
 	db $E2, $E2, $E2, $E2, $E2 ; 10 Arrows
 	db $E3, $E3, $E3, $E3, $E3 ; Fairy
+;--------------------------------------------------------------------------------
+; Bank 30 resumes below at HeartPieceOutdoorValues
 ;--------------------------------------------------------------------------------
 org $098B7C ; PC 0x48B7C
 EtherTablet:
@@ -451,7 +477,7 @@ MapObject_TRock:
 dw $6434 ; #6434 - Crystal
 
 ;--------------------------------------------------------------------------------
-org $308070 ; PC 0x180070
+org $308070 ; PC 0x180070 - 0x18007F (Out of order)
 CrystalNumberTable:
 db $00 ;
 db $79 ; Swamp
@@ -536,7 +562,7 @@ CrystalPendantFlags:
 ;Crystal 6: $01
 ;Crystal 7: $08
 ;--------------------------------------------------------------------------------
-org $308050 ; PC 0x180050
+org $308050 ; PC 0x180050 - 0x18005C (Out of order)
 CrystalPendantFlags_2:
     db $00 ; Sewers
 	db $00 ; Hyrule Castle
@@ -620,14 +646,14 @@ org $07B53B ; PC 0x3B53B
 RedBoomerangSubstitution:
 db #$FF ; no substitution
 ;--------------------------------------------------------------------------------
-org $308060 ; PC 0x180060
+org $308060 ; PC 0x180060 - 0x18007E (Out of order)
 ProgrammableItemLogicJump_1:
 JSL.l $000000 : RTL
 ProgrammableItemLogicJump_2:
 JSL.l $000000 : RTL
 ProgrammableItemLogicJump_3:
 JSL.l $000000 : RTL
-;--------------------------------------------------------------------------------
+
 org $308061 ; PC 0x180061
 ProgrammableItemLogicPointer_1:
 dl #$000000
@@ -638,7 +664,7 @@ org $30806B ; PC 0x18006B
 ProgrammableItemLogicPointer_3:
 dl #$000000
 ;--------------------------------------------------------------------------------
-org $3080A0 ; PC 0x1800A0
+org $3080A0 ; PC 0x1800A0 - 0x1800A3 (Out of order)
 Bugfix_MirrorlessSQToLW:
 db #$01 ; #$00 = Original Behavior - #$01 = Randomizer Behavior (Default)
 Bugfix_SwampWaterLevel:
@@ -665,7 +691,7 @@ org $06C93B ; PC 0x3493B
 PyramidPotion:
 	db #$2C ; #$2C = Green Potion
 ;--------------------------------------------------------------------------------
-org $308140 ; PC 0x180140
+org $308140 ; PC 0x180140 - 0x18014A
 HeartPieceOutdoorValues:
 HeartPiece_Spectacle:
 	db #$17
@@ -689,8 +715,10 @@ HeartPiece_Zora:
 	db #$17
 HauntedGroveItem:
 	db #$14 ; #$14 = Flute
+;--------------------------------------------------------------------------------
+; 0x18014B - 0x18014F (unused)
 ;================================================================================
-org $308150 ; PC 0x180150
+org $308150 ; PC 0x180150 - 0x180159
 HeartContainerBossValues:
 HeartContainer_ArmosKnights:
 	db #$3E ; #$3E = Boss Heart (putting pendants here causes main pendants to not drop for obvious (in retrospect) reasons)
@@ -712,14 +740,18 @@ HeartContainer_Vitreous:
 	db #$3E
 HeartContainer_Trinexx:
 	db #$3E
+;--------------------------------------------------------------------------------
+; 0x180159 - 0x18015F (unused)
 ;================================================================================
-org $308160 ; PC 0x180160
+org $308160 ; PC 0x180160 - 0x180162
 BonkKey_Desert:
 	db #$24 ; #$24 = Small Key (default)
 BonkKey_GTower:
 	db #$24 ; #$24 = Small Key (default)
 StandingKey_Hera:
 	db #$24 ; #$24 = Small Key (default)
+;--------------------------------------------------------------------------------
+; 0x180163 - 0x180164 (unused)
 ;================================================================================
 org $308165 ; PC 0x180165
 GoalItemIcon:
@@ -741,10 +773,10 @@ org $30816A ; PC 0x18016A
 FreeItemText:
 db #$00 ; #00 = Off (default) - #$01 = On
 ;================================================================================
-org $30816B ; PC 0x18016B
+org $30816B ; PC 0x18016B - 0x18016D
 HardModeExclusionCaneOfByrnaUsage:
 db #$04, #$02, #$01 ; Normal, 1/2, 1/4 Magic
-org $30816E ; PC 0x18016E
+org $30816E ; PC 0x18016E - 308170
 HardModeExclusionCapeUsage:
 db #$04, #$08, #$10 ; Normal, 1/2, 1/4 Magic
 ;================================================================================
@@ -767,7 +799,7 @@ org $308174 ; PC 0x180174
 FixFakeWorld:
 db #$00 ; #00 = Fix Off (Default) - #$01 = Fix On
 ;================================================================================
-org $308175 ; PC 0x180175
+org $308175 ; PC 0x180175 - 0x180179
 ArrowMode:
 db #$00 ; #00 = Normal (Default) - #$01 = Rupees
 ArrowModeWoodArrowCost: ; keep these together
@@ -808,16 +840,20 @@ db #$01 ; #$00 = Off - #$01 = Collection Time (Default) - #$02 = Entering Ganon 
 org $308183 ; PC 0x180183
 FreeUncleItemAmount:
 dw #$12C ; 300 rupees (Default)
+;--------------------------------------------------------------------------------
+; 0x180185 - 0x18018F (unused)
 ;================================================================================
-org $308190 ; PC 0x180190
+org $308190 ; PC 0x180190 - 0x180192
 TimerStyle:
 db #$00 ; #$00 = Off (Default) - #$01 Countdown - #$02 = Stopwatch
 TimeoutBehavior:
 db #$00 ; #$00 = DNF (Default) - #$01 = Sign Change (Requires TimerRestart == 1) - #$02 = OHKO
 TimerRestart:
 db #$00 ; #$00 = Locked (Default) - #$01 = Restart
+;--------------------------------------------------------------------------------
+; 0x180193 - 0x1801FF (unused)
 ;================================================================================
-org $308200 ; PC 0x180200
+org $308200 ; PC 0x180200 - 0x18020F
 RedClockAmount:
 dw #$4650, #$0000 ; $00004650 = +5 minutes
 BlueClockAmount:
@@ -862,10 +898,14 @@ TournamentSeed:
 db #$00 ; #$00 = Off (default) - #$01 = On
 TournamentSeedInverse:
 db #$01 ; #$00 = On - #$01 = Off (Default)
+;--------------------------------------------------------------------------------
+; 0x180215 - 0x18021F (unused)
 ;================================================================================
 ; $308220 (0x180220) - $30823F (0x18023F)
 ; Plandomizer Author Name (ASCII) - Leave unused chars as 0
 org $308220 ; PC 0x180220
+;--------------------------------------------------------------------------------
+; 0x180240 - 0x1802FF (unused)
 ;================================================================================
 ; $308300 (0x180300) - $3083FF (0x1803FF)
 ; MS Pedestal Text (ALTTP JP Text Format)
@@ -997,7 +1037,7 @@ db $74, $00, $B9, $00, $B5, $00, $AE, $00, $AA, $00, $BC, $00, $AE, $00, $FF, $0
 db $7f, $7f
 ;--------------------------------------------------------------------------------
 ; $309300 (0x181300) - $3094FF (0x1814FF)
-; free space
+; free space (unused)
 ;--------------------------------------------------------------------------------
 ; $309500 (0x181500) - $309FFF (0x181FFF) original 0x39C bytes
 ; Replacement Ending Sequence Text Data
@@ -1094,7 +1134,7 @@ db $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF
 db $FF, $FF, $FF, $FF, $FF, $FF, $FF
 RNGSingleTableSize:
 db $04
-org $30A080 ; $30A080 (0x182080) - $30A0FF (0x1800FF)
+org $30A080 ; $30A080 (0x182080) - $30A0FF (0x1820FF)
 RNGMultiItemTable:
 db $31, $36, $40, $46, $FF, $FF, $FF, $FF
 db $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF
@@ -1114,6 +1154,8 @@ db $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF
 db $FF, $FF, $FF, $FF, $FF, $FF, $FF
 RNGMultiTableSize:
 db $04
+;--------------------------------------------------------------------------------
+; Bank 30 continues down below at EntranceDoorFrameTable
 ;================================================================================
 ;PC 0x50563: $C5, $76 ; move tile and turn into chest orig: $3F, $14
 ;PC 0x50599: $38; lock door into room orig: $00
@@ -1305,8 +1347,6 @@ db $04
 ;AD - Small Key of Ganon's Tower
 ;AE - Reserved
 ;AF - Generic Small Key
-;--------------------------------------------------------------------------------
-org $308400 ; PC 0x180400
 ;================================================================================
 ;Vortexes
 org $05AF79 ; PC 0x2AF79 (sprite_warp_vortex.asm:18) (BNE)
@@ -1418,7 +1458,7 @@ dw #9999 ; Rupee Limit
 !BIGRAM = "$7EC900";
 ; $7EC900 - Big RAM Buffer ($1F00)
 ;================================================================================
-org $30FF00 ; PC 0x187F00
+org $30FF00 ; PC 0x187F00 - PC 0x187FFF (out of order)
 NameHashTable: ; change this for each new version - MOVE THIS TO BANK $30
 db $57, $41, $D6, $7A, $E0, $10, $8A, $97, $A2, $89, $82, $45, $46, $1C, $DF, $F7
 db $55, $0F, $1D, $56, $AC, $29, $DC, $D1, $25, $2A, $C5, $92, $42, $B7, $BE, $50
@@ -1476,7 +1516,9 @@ dw $0000, $0000, $0000, $0000, $0000, $0000, $0000, $0000
 dw $0000, $0000, $0000, $0000, $0000, $0000, $0000, $0000
 dw $0000, $0000, $0000, $0000, $0000, $0000, $0000, $0000
 dw $0000
-;===============================================================================
+;--------------------------------------------------------------------------------
+; 0x182305 - 182FFF (unused)
+;================================================================================
 org $30B000 ; PC 0x183000 - 0x183054
 StartingEquipment:
 dw $0000, $0000, $0000, $0000, $0000, $0000, $0000, $0000
@@ -1485,12 +1527,16 @@ dw $0000, $0000, $0000, $0000, $0000, $0000, $1818, $FF00
 dw $0000, $0000, $0000, $0000, $F800, $0000, $0000, $0000
 dw $0000, $0000, $0000, $0000, $0000, $0000, $0000, $0000
 dw $0000, $0000
-;===============================================================================
+;--------------------------------------------------------------------------------
+; 0x182355 - 183FFF (unused)
+;================================================================================
 org $30C000 ; PC 0x184000 - 0x184007
 ItemSubstitutionRules:
 ;db [item][quantity][substitution][pad] - CURRENT LIMIT 16 ENTRIES
 db $12, $01, $35, $FF
 db $FF, $FF, $FF, $FF
+;--------------------------------------------------------------------------------
+; 0x184008 - 0x1847FF (unused)
 ;================================================================================
 ;shop_config - td-- --qq
 ; t - 0=Shop - 1=TakeAny
@@ -1527,7 +1573,7 @@ db $FF, $30, $2C, $01, $00, $FF, $00, $00
 db $FF, $31, $32, $00, $00, $FF, $00, $00
 db $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF
 ;================================================================================
-org $30D000
+org $30D000 ; PC 0x18500 - 0x1853F
 MSUTrackList:
 db $00,$01,$03,$03,$03,$03,$03,$03
 db $01,$03,$01,$03,$03,$03,$03,$03
@@ -1537,4 +1583,8 @@ db $03,$01,$01,$FF,$FF,$FF,$FF,$FF
 db $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
 db $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
 db $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
-;================================================================================
+;--------------------------------------------------------------------------------
+; 0x18540 - 187EFF (unused)
+;--------------------------------------------------------------------------------
+; Out of order 0x187F00 - PC 0x187FFF (NameHashTable)
+;--------------------------------------------------------------------------------
