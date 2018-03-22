@@ -56,14 +56,14 @@ CalculateTimer:
 	STA.l !CLOCK_MINUTES+2
 	STA.l !CLOCK_SECONDS
 	STA.l !CLOCK_SECONDS+2
-	
+
 	LDA.l TimerStyle : AND.w #$00FF : CMP.w #$0002 : BNE + ; Stopwatch Mode
 		%Sub32(!BaseTimer,!ChallengeTimer,!CLOCK_TEMPORARY)
 		BRA ++
 	+ CMP.w #$0001 : BNE ++ ; Countdown Mode
 		%Sub32(!ChallengeTimer,!BaseTimer,!CLOCK_TEMPORARY)
 	++
-	
+
 	%Blt32(!CLOCK_TEMPORARY,.halfCycle) : !BLT +
 		LDA.l TimeoutBehavior : AND.w #$00FF : BNE ++ ; DNF
 			LDA.w #$0002 : STA.l !Status ; Set DNF Mode
@@ -75,18 +75,23 @@ CalculateTimer:
 			LDA.l !CLOCK_TEMPORARY+2 : EOR.w #$FFFF : ADC.w #$0000 : STA.l !CLOCK_TEMPORARY+2
 			LDA.w #$0001 : STA.l !Status ; Set Negative Mode
 			BRA .prepDigits
-		++ ; OHKO
+		++ CMP.w #$0002 : BNE ++ ; OHKO
 			LDA.w #$0002 : STA.l !Status ; Set DNF Mode
 			LDA.l !BaseTimer : STA.l !ChallengeTimer
 			LDA.l !BaseTimer+2 : STA.l !ChallengeTimer+2
 			RTS
+		++ ; End Game
+			SEP #$30
+				JSL.l ActivateGoal
+			REP #$30
+			RTS
 	+
-	
+
 	LDA.l TimerRestart : AND.w #$00FF : BEQ +
 		LDA.w #$0000 : STA.l !Status ; Set Positive Mode
 	+
 	.prepDigits
-	
+
 	-
 		%Blt32(!CLOCK_TEMPORARY,.hour) : !BLT +
 		%DecIncr(!CLOCK_HOURS)
@@ -100,7 +105,7 @@ CalculateTimer:
 		%DecIncr(!CLOCK_SECONDS)
 		%Sub32(!CLOCK_TEMPORARY,.second,!CLOCK_TEMPORARY) : BRA -
 	+
-	
+
 	LDA !CLOCK_HOURS : !ADD.w #$2490 : STA !CLOCK_HOURS ; convert decimal values to tiles
 	LDA !CLOCK_HOURS+2 : !ADD.w #$2490 : STA !CLOCK_HOURS+2
 	LDA !CLOCK_MINUTES : !ADD.w #$2490 : STA !CLOCK_MINUTES
@@ -121,9 +126,9 @@ dw #$FFFF, #$7FFF
 DrawChallengeTimer:
 	LDA.l TimerStyle : BNE + : RTL : + ; Hud Timer
     	LDA.w #$2807 : STA $7EC792
-    	
+
     	LDA.l !Status : AND.w #$0002 : BEQ + ; DNF / OKHO
-			
+
 			LDA.l TimeoutBehavior : AND.w #$00FF : BNE ++ ; DNF
 				LDA.w #$2808 : STA $7EC794
 				LDA.w #$2809 : STA $7EC796
@@ -155,7 +160,7 @@ DrawChallengeTimer:
 			LDA !CLOCK_SECONDS : STA $7EC7A4
 		++
 		LDA $1A : AND.w #$001F : BNE + : JSR CalculateTimer : +
-	    	
+
 RTL
 ;--------------------------------------------------------------------------------
 OHKOTimer:

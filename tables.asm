@@ -847,7 +847,7 @@ org $308190 ; PC 0x180190 - 0x180192
 TimerStyle:
 db #$00 ; #$00 = Off (Default) - #$01 Countdown - #$02 = Stopwatch
 TimeoutBehavior:
-db #$00 ; #$00 = DNF (Default) - #$01 = Sign Change (Requires TimerRestart == 1) - #$02 = OHKO
+db #$00 ; #$00 = DNF (Default) - #$01 = Sign Change (Requires TimerRestart == 1) - #$02 = OHKO - #$03 = End Game
 TimerRestart:
 db #$00 ; #$00 = Locked (Default) - #$01 = Restart
 ;--------------------------------------------------------------------------------
