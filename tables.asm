@@ -1448,6 +1448,7 @@ dw #9999 ; Rupee Limit
 ; $7F50CA - Infinite Magic Modifier
 ; $7F50CB - Invert D-Pad
 ; $7F50CC - Temporary OHKO
+; $7F50CD - Sprite Swapper
 
 ; $7F50D0 - $7F50FF - Block Cypher Parameters
 ; $7F5100 - $7F51FF - Block Cypher Buffer
