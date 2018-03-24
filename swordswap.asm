@@ -78,6 +78,7 @@ RTL
 ; $7E0348 - Ice Value
 ; $7F50C7 - Ice Modifier
 LoadModifiedIceFloorValue_a11:
+	LDA $A0 : CMP #$91 : BEQ + : CMP #$92 : BEQ + : CMP #$93 : BEQ + ; mire basement currently broken - not sure why
 	LDA $5D : CMP #$01 : BEQ + : CMP #$17 : BEQ + : CMP #$1C : BEQ +
 	LDA $5E : CMP #$02 : BEQ +
 	LDA $5B : BNE +
@@ -85,6 +86,7 @@ LoadModifiedIceFloorValue_a11:
 	+ : LDA.w $0348 : AND.b #$11
 RTL
 LoadModifiedIceFloorValue_a01:
+	LDA $A0 : CMP #$91 : BEQ + : CMP #$92 : BEQ + : CMP #$93 : BEQ + ; mire basement currently broken - not sure why
 	LDA $5D : CMP #$01 : BEQ + : CMP #$17 : BEQ + : CMP #$1C : BEQ +
 	LDA $5E : CMP #$02 : BEQ +
 	LDA $5B : BNE +
