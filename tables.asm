@@ -841,7 +841,28 @@ org $308183 ; PC 0x180183
 FreeUncleItemAmount:
 dw #$12C ; 300 rupees (Default)
 ;--------------------------------------------------------------------------------
-; 0x180185 - 0x18018F (unused)
+org $308185 ; PC 0x180185
+RainDeathRefillTable:
+RainDeathRefillMagic_Uncle:
+db #$00
+RainDeathRefillBombs_Uncle:
+db #$00
+RainDeathRefillArrows_Uncle:
+db #$00
+RainDeathRefillMagic_Cell:
+db #$00
+RainDeathRefillBombs_Cell:
+db #$00
+RainDeathRefillArrows_Cell:
+db #$00
+RainDeathRefillMagic_Mantle:
+db #$00
+RainDeathRefillBombs_Mantle:
+db #$00
+RainDeathRefillArrows_Mantle:
+db #$00
+;================================================================================
+; 0x18018E - 0x18018F (unused)
 ;================================================================================
 org $308190 ; PC 0x180190 - 0x180192
 TimerStyle:

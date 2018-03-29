@@ -76,19 +76,8 @@ OnFileLoad:
 	+
 	
 	JSL.l SetSilverBowMode
-	
-	LDA $7EF3C5 : CMP.b #$01 : BNE .notrain ; check if we're in rain state
-	.rain
-		LDA.l EscapeAssist
-		BIT.b #$04 : BEQ + : STA !INFINITE_MAGIC : +
-		BIT.b #$02 : BEQ + : STA !INFINITE_BOMBS : +
-		BIT.b #$01 : BEQ + : STA !INFINITE_ARROWS : +
-		BRA ++
-	.notrain
-		LDA.l EscapeAssist : BIT.b #$04 : BEQ + : LDA.b #$00 : STA !INFINITE_MAGIC : +
-		LDA.l EscapeAssist : BIT.b #$02 : BEQ + : LDA.b #$00 : STA !INFINITE_BOMBS : +
-		LDA.l EscapeAssist : BIT.b #$01 : BEQ + : LDA.b #$00 : STA !INFINITE_ARROWS : +
-	++
+	JSL.l RefreshRainAmmo
+	JSL.l SetEscapeAssist
 RTL
 ;--------------------------------------------------------------------------------
 !RNG_ITEM_LOCK_IN = "$7F5090"
