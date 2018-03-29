@@ -49,9 +49,7 @@ SetDeathWorldChecked:
 		LDA $A0 : BNE + : LDA GanonPyramidRespawn : BEQ + ; check if we died in ganon's room and pyramid respawn is enabled
 			BRA .pyramid
 	+
-	
 JMP DoWorldFix
-
 	.pyramid
 	LDA #$40 : STA $7EF3CA ; set flag to dark world
 	LDA $7EF3CC : CMP #$08 : BNE + : LDA.b #$07 : STA $7EF3CC : + ; convert dwarf to frog
