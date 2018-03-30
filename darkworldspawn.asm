@@ -53,6 +53,7 @@ JMP DoWorldFix
 	.pyramid
 	LDA #$40 : STA $7EF3CA ; set flag to dark world
 	LDA $7EF3CC : CMP #$08 : BNE + : LDA.b #$07 : STA $7EF3CC : + ; convert dwarf to frog
+	.done
 RTL
 ;--------------------------------------------------------------------------------
 FakeWorldFix:
