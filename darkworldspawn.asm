@@ -78,7 +78,7 @@ FixAgahnimFollowers:
 RTL
 ;--------------------------------------------------------------------------------
 macro SetMinimum(base,filler,compare)
-	LDA.l <compare> : SUB.l <base> : !BLT ?done
+	LDA.l <compare> : !SUB.l <base> : !BLT ?done
 		STA.l <filler>
 	?done:
 endmacro
