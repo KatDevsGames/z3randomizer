@@ -103,6 +103,12 @@ OnNewFile:
 	PLP : PLX
 RTL
 ;--------------------------------------------------------------------------------
+OnInitFileSelect:
+	; LDA.b #$10 : STA $BC ; init sprite pointer - does nothing unless spriteswap.asm is included
+	; JSL.l SpriteSwap_SetSprite
+	JSL.l EnableForceBlank
+RTL
+;--------------------------------------------------------------------------------
 OnLinkDamaged:
 	JSL.l FlipperKill
 	JSL.l OHKOTimer
