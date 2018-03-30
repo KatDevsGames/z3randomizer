@@ -248,6 +248,7 @@ warnpc $AF8401
 ;$23 Stats & Credits
 ;$24 Code Bank
 ;$29 External hooks (rest of bank not used)
+;$2E Reserved for Tournament Use
 ;$2F Static RNG (rest is reserved for tournament use)
 ;$30 Main Configuration Table
 ;$31 Graphics Bank
