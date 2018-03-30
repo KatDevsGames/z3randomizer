@@ -21,6 +21,7 @@ OnPlayerDead:
 	PHA
 		JSL.l SetDeathWorldChecked
 		JSL.l SetSilverBowMode
+		JSL.l RefreshRainAmmo
 	PLA
 RTL
 ;--------------------------------------------------------------------------------
