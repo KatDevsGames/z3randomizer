@@ -77,9 +77,9 @@ FixAgahnimFollowers:
 	JSL PrepDungeonExit ; thing we wrote over
 RTL
 ;--------------------------------------------------------------------------------
-macro SetMinimum(base,compare)
-	LDA.l <compare> : CMP.l <base> : !BLT ?done
-		STA.l <base>
+macro SetMinimum(base,filler,compare)
+	LDA.l <compare> : SUB.l <base> : !BLT ?done
+		STA.l <filler>
 	?done:
 endmacro
 RefreshRainAmmo:
@@ -87,19 +87,19 @@ RefreshRainAmmo:
 	.rain
 		LDA $7EF3C8
 		+ CMP.b #$03 : BNE + ; Uncle
-			%SetMinimum($7EF36E,RainDeathRefillMagic_Uncle)
-			%SetMinimum($7EF375,RainDeathRefillBombs_Uncle)
-			%SetMinimum($7EF377,RainDeathRefillArrows_Uncle)
+			%SetMinimum($7EF36E,$7EF373,RainDeathRefillMagic_Uncle)
+			%SetMinimum($7EF343,$7EF375,RainDeathRefillBombs_Uncle)
+			%SetMinimum($7EF377,$7EF376,RainDeathRefillArrows_Uncle)
 			BRA .done
 		+ CMP.b #$02 : BNE + ; Cell
-			%SetMinimum($7EF36E,RainDeathRefillMagic_Cell)
-			%SetMinimum($7EF375,RainDeathRefillBombs_Cell)
-			%SetMinimum($7EF377,RainDeathRefillArrows_Cell)
+			%SetMinimum($7EF36E,$7EF373,RainDeathRefillMagic_Cell)
+			%SetMinimum($7EF343,$7EF375,RainDeathRefillBombs_Cell)
+			%SetMinimum($7EF377,$7EF376,RainDeathRefillArrows_Cell)
 			BRA .done
 		+ CMP.b #$04 : BNE + ; Mantle
-			%SetMinimum($7EF36E,RainDeathRefillMagic_Mantle)
-			%SetMinimum($7EF375,RainDeathRefillBombs_Mantle)
-			%SetMinimum($7EF377,RainDeathRefillArrows_Mantle)
+			%SetMinimum($7EF36E,$7EF373,RainDeathRefillMagic_Mantle)
+			%SetMinimum($7EF343,$7EF375,RainDeathRefillBombs_Mantle)
+			%SetMinimum($7EF377,$7EF376,RainDeathRefillArrows_Mantle)
 		+
 	.done
 RTL
