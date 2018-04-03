@@ -21,7 +21,7 @@ DarkWorldFlagSet:
 	LDA Bugfix_PreAgaDWDungeonDeathToFakeDW : BEQ +
 		LDA $10 : CMP #$12 : BEQ .done ; don't do anything in death mode
 	+
-	LDA $1B : BNE + ; skip this unless indoors - THIS PART FIXES THE OTHER FUCKUP WITH THE PYRAMID SPAWN IN GLITCHED
+	LDA $1B : BEQ + ; skip this unless indoors - THIS PART FIXES THE OTHER FUCKUP WITH THE PYRAMID SPAWN IN GLITCHED
 		LDA $A0 : BEQ .done ; skip if we died in ganon's room
 	+
 	JSL.l DoWorldFix
