@@ -11,7 +11,7 @@ OnDrawHud:
 	JSL.l DrawChallengeTimer
 	JSL.l DrawGoalIndicator
 	JSL.l DrawDungeonCompassCounts
-	;JSL.l SwapSpriteIfNecissary
+	JSL.l SwapSpriteIfNecissary
 RTL
 ;--------------------------------------------------------------------------------
 ;OnDungeonEntrance:

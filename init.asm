@@ -43,6 +43,8 @@ Init_Primary:
 	
 	LDA.b #$01 : STA $420D ; enable fastrom access on upper banks
 	
+	LDA.b #$10 : STA $BC ; set default player sprite bank
+	
 	LDA.b #$81 : STA $4200 ; thing we wrote over, turn on NMI & gamepad
 RTL
 ;--------------------------------------------------------------------------------

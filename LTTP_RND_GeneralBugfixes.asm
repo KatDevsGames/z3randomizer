@@ -76,7 +76,7 @@ db #$20, #$18, #$04, #$02 ; year/month/day
 
 incsrc hooks.asm
 incsrc treekid.asm
-;incsrc spriteswap.asm
+incsrc spriteswap.asm
 incsrc hashalphabethooks.asm
 
 ;org $208000 ; bank #$20
