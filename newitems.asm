@@ -155,6 +155,11 @@ ProcessEventItems:
 			LDA $7EF450 : INC : STA $7EF450
 
 			SEP #$10 ; set 8-bit index registers
+
+			LDA GoalItemRequirement : BEQ ++
+			LDA !GOAL_COUNTER : INC : STA !GOAL_COUNTER
+			CMP GoalItemRequirement : !BLT ++ : JSL.l ActivateGoal : ++
+			
 			LDX.b #$01 : BRA .done
 		+
 		LDX.b #$00
