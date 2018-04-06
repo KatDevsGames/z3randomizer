@@ -229,10 +229,6 @@ incsrc itemtext.asm
 
 incsrc externalhooks.asm
 ;================================================================================
-org $AF8000
-incsrc tournament.asm
-warnpc $B00000
-;================================================================================
 org $119100 ; PC 0x89100
 incbin map_icons.gfx
 warnpc $119401
@@ -241,6 +237,11 @@ org $AF8000 ; PC 0x178000
 Static_RNG: ; each line below is 512 bytes of rng
 incsrc staticrng.asm
 warnpc $AF8401
+;================================================================================
+org $AF8400
+incsrc tournament.asm
+incsrc eventdata.asm
+warnpc $B08000
 ;================================================================================
 ;Bank Map
 ;$20 Code Bank

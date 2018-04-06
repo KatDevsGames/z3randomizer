@@ -136,28 +136,30 @@ endmacro
 ;carry set if caught
 ;incsrc eventdata.asm
 ProcessEventItems:
+	STA $FFFFFF
 	LDA $00 : PHA
 	LDA $01 : PHA
 	LDA $02 : PHA
 	PHY : PHP
+	PHB : LDA.b #$AF : PHA : PLB
 		LDA $02D8
-		CMP.b #$E0 : !BLT + : CMP.b #$E5 : !BGE + ; Free Item Block
-			!SUB #$E0
+		CMP.b #$E0 : BNE +
+			REP #$30 ; set 16-bit accumulator & index registers
+			LDA $7EF450 : ASL : TAX
+			LDA.l EventDataOffsets, X : !ADD #EventDataTable : STA $00
 
-			;REP #$30 ; set 16-bit accumulator & index registers
-			;AND.w #$00FF : ASL : TAX
-			;LDA.l EventDataOffsets, X : !ADD.w #EventDataTable : STA $00
+			SEP #$20 ; set 8-bit accumulator
+			LDA.b #$AF : STA $02
 
-			;SEP #$20 ; set 8-bit accumulator
-			;PHK : PLA : STA $02
+			JSL.l LoadDialogAddressIndirect
+			LDA $7EF450 : INC : STA $7EF450
 
-			;JSL.l LoadDialogAddressIndirect
-
-			;SEP #$10 ; set 8-bit index registers
-			;LDX.b #$01 : BRA .done
+			SEP #$10 ; set 8-bit index registers
+			LDX.b #$01 : BRA .done
 		+
 		LDX.b #$00
 	.done
+	PLB
 	PLP : PLY
 	PLA : STA $02
 	PLA : STA $01
@@ -166,13 +168,13 @@ RTS
 ;--------------------------------------------------------------------------------
 AddReceivedItemExpandedGetItem:
 	PHX
-
-	;JSR.w ProcessEventItems : CPX.b #$00 : BEQ ++
-	;	;JSL.l Main_ShowTextMessage
-	;	LDA !GOAL_COUNTER : INC : STA !GOAL_COUNTER
-	;	LDA.b #$01 : STA $7F50A0
-	;	BRL .done
-	;++
+	
+	JSR.w ProcessEventItems : CPX.b #$00 : BEQ ++
+		;JSL.l Main_ShowTextMessage
+		LDA !GOAL_COUNTER : INC : STA !GOAL_COUNTER
+		LDA.b #$01 : STA $7F50A0
+		BRL .done
+	++
 	;STA $FFFFFF
 	LDA $02D8 ; check inventory
 	JSL.l FreeDungeonItemNotice
