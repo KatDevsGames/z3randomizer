@@ -214,7 +214,7 @@ SpritePrep_ShopKeeper:
 	BRL -
 	.stop
 	
-	STA $FFFFFF
+	;STA $FFFFFF
 	LDA $A0 : CMP.b #$FF : BNE .normal
 	.dumb
 		LDA $2137
@@ -229,7 +229,18 @@ SpritePrep_ShopKeeper:
 	;JSR.w QueueItemDMA
 
 	.done
-	LDA.b #$00 : STA !SHOP_STATE
+	STA $FFFFFF
+	LDA.l !SHOP_TYPE : BIT.b #$20 : BEQ .notTakeAll ; Take-all
+	.takeAll
+
+		LDA.b #$00 : XBA : LDA !SHOP_SRAM_INDEX : TAX
+		LDA.l !SHOP_PURCHASE_COUNTS, X
+		BRA ++
+	.notTakeAll
+		LDA.b #$00
+	++
+	STA !SHOP_STATE
+	
 	PLP : PLY : PLX
 	
 	LDA.l !SHOP_TYPE : CMP.b #$FF : BNE +
@@ -346,12 +357,19 @@ Sprite_ShopKeeper:
 		; Draw Shopkeeper
 		JSR.w Shopkeeper_DrawMerchant
 		
-		LDA.l !SHOP_TYPE : AND.b #$80 : BEQ + ; Take-any
+		LDA.l !SHOP_TYPE : BIT.b #$80 : BEQ .normal ; Take-any
+			BIT.b #$20 : BNE + ; Not A Take-All
 			PHX
 				LDA !SHOP_SRAM_INDEX : TAX
 				LDA !SHOP_PURCHASE_COUNTS, X : BEQ ++ : PLX : BRA .done : ++
 			PLX
-		+
+			BRA .normal
+		+ ; Take-All
+			;PHX
+			;	LDA !SHOP_SRAM_INDEX : TAX
+			;	LDA.w !SHOP_PURCHASE_COUNTS, X : STA.l !SHOP_STATE
+			;PLX
+		.normal
 		
 		; Draw Items
 		JSR.w Shopkeeper_DrawItems
@@ -498,13 +516,13 @@ Shopkeeper_BuyItem:
 	        LDY.b #$01
 	        JSL.l Sprite_ShowMessageUnconditional
 			LDA.b #$3C : STA $012E ; error sound
-			BRA .done
+			BRL .done
 		.full_bottles
 	        LDA.b #$6B
 	        LDY.b #$01
 	        JSL.l Sprite_ShowMessageUnconditional
 			LDA.b #$3C : STA $012E ; error sound
-			BRA .done
+			BRL .done
 		.buy
 			LDA !SHOP_TYPE : AND.b #$80 : BNE ++ ; don't charge if this is a take-any
 				REP #$20 : LDA $7EF360 : !SUB !SHOP_INVENTORY+1, X : STA $7EF360 : SEP #$20 ; Take price away
@@ -513,7 +531,7 @@ Shopkeeper_BuyItem:
 			LDA.l !SHOP_INVENTORY+3, X : INC : STA.l !SHOP_INVENTORY+3, X
 			
 			TXA : LSR #2 : TAX
-			LDA !SHOP_TYPE : AND.b #$80 : BNE +
+			LDA !SHOP_TYPE : BIT.b #$80 : BNE +
 				LDA.l !SHOP_STATE : ORA.w Shopkeeper_ItemMasks, X : STA.l !SHOP_STATE
 				PHX
 					TXA : !ADD !SHOP_SRAM_INDEX : TAX
@@ -521,8 +539,15 @@ Shopkeeper_BuyItem:
 				PLX
 				BRA ++
 			+ ; Take-any
-				LDA.l !SHOP_STATE : ORA.b #$07 : STA.l !SHOP_STATE
-				PHX : LDA !SHOP_SRAM_INDEX : TAX : LDA.b #$01 : STA !SHOP_PURCHASE_COUNTS, X : PLX 
+			;STA $FFFFFF
+				BIT.b #$20 : BNE .takeAll
+				.takeAny
+					LDA.l !SHOP_STATE : ORA.b #$07 : STA.l !SHOP_STATE
+					PHX : LDA.l !SHOP_SRAM_INDEX : TAX : LDA.b #$01 : STA.l !SHOP_PURCHASE_COUNTS, X : PLX
+					BRA ++
+				.takeAll
+					LDA.l !SHOP_STATE : ORA.w Shopkeeper_ItemMasks, X : STA.l !SHOP_STATE
+					PHX : LDA.l !SHOP_SRAM_INDEX : TAX : LDA.l !SHOP_STATE : STA.l !SHOP_PURCHASE_COUNTS, X : PLX
 			++
 	.done
 	PLY : PLX

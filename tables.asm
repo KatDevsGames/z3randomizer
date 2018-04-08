@@ -1560,9 +1560,10 @@ db $FF, $FF, $FF, $FF
 ;--------------------------------------------------------------------------------
 ; 0x184008 - 0x1847FF (unused)
 ;================================================================================
-;shop_config - td-- --qq
+;shop_config - tda- --qq
 ; t - 0=Shop - 1=TakeAny
 ; d - 0=Check Door - 1=Skip Door Check
+; a - 0=Shop/TakeAny - 1=TakeAll
 ; qq - # of items for sale
 
 ;shopkeeper_config - ppp- --ss
@@ -1571,10 +1572,10 @@ db $FF, $FF, $FF, $FF
 org $30C800 ; PC 0x184800 - 0x1848FF - max 32 shops ; do not exceed 36 tracked items sram_index > ($24)
 ShopTable:
 ;db [id][roomID-low][roomID-high][doorID][zero][shop_config][shopkeeper_config][sram_index]
-db $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF
+;db $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF
 db $01, $FF, $00, $00, $00, $43, $A0, $00
 db $02, $0F, $01, $60, $00, $03, $C1, $03
-db $FF, $12, $01, $58, $00, $02, $E3, $06
+db $FF, $12, $01, $58, $00, $A3, $E3, $06
 db $02, $0F, $01, $57, $00, $03, $A0, $09
 db $03, $0F, $01, $60, $00, $03, $A0, $0c
 db $04, $0F, $01, $6F, $00, $03, $A0, $0f

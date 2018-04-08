@@ -136,7 +136,7 @@ endmacro
 ;carry set if caught
 ;incsrc eventdata.asm
 ProcessEventItems:
-	STA $FFFFFF
+	;STA $FFFFFF
 	LDA $00 : PHA
 	LDA $01 : PHA
 	LDA $02 : PHA
