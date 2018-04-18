@@ -103,14 +103,10 @@ Sprite_ShowSolicitedMessageIfPlayerFacing_Alt:
 	LDY $1CF1
 	
 	; Check what room we're in so we know which npc we're talking to
-	LDA.b $A0 : CMP #$03 : BEQ .AlcoholicDialog
-				CMP #$05 : BEQ .SahasrahlaDialogs
+	LDA.b $A0 :	CMP #$05 : BEQ .SahasrahlaDialogs
 				CMP #$1C : BEQ .BombShopGuyDialog
 						   BRA .SayNothing
 	
-	.AlcoholicDialog
-		JSL DialogAlcoholic : BRA .SayNothing	
-
 	.SahasrahlaDialogs
 		REP #$20 : LDA.l MapReveal_Sahasrahla : ORA !MAP_OVERLAY : STA !MAP_OVERLAY : SEP #$20
 		JSL DialogSahasrahla : BRA .SayNothing

@@ -250,11 +250,6 @@ RTL
 	PLY : PLX : PLA
 RTL
 ;--------------------------------------------------------------------------------
-DialogBlind:
-	%LoadDialogAddress(BlindText)
-	JSL.l Sprite_ShowMessageMinimal
-RTL
-;--------------------------------------------------------------------------------
 DialogFairyThrow:
 	LDA.l Restrict_Ponds : BEQ .normal
 	LDA $7EF35C : ORA $7EF35D : ORA $7EF35E : ORA $7EF35F : BNE .normal
@@ -269,48 +264,24 @@ RTL
 	LDY.b #$00
 RTL
 ;--------------------------------------------------------------------------------
-DialogPyramidFairy:
-	%LoadDialogAddress(PyramidFairyText)
-	JSL.l Sprite_ShowMessageUnconditional
-RTL
-;--------------------------------------------------------------------------------
-DialogTriforce:
-	%LoadDialogAddress(TriforceText)
-	REP #$20 : LDA.w #$0171 : STA $1CF0 : SEP #$20 ; fix border
-	JSL.l Main_ShowTextMessage
-	JSL.l Messaging_Text
-RTL
-;--------------------------------------------------------------------------------
 DialogGanon1:
 	JSL.l CheckGanonVulnerability : BCS +
-		%LoadDialogAddress(GanonText1Alternate)
+		REP #$20 : LDA.w #$018C : STA $1CF0 : SEP #$20
 		BRA ++
 	+
-		%LoadDialogAddress(GanonText1)
+		REP #$20 : LDA.w #$016D : STA $1CF0 : SEP #$20
 	++
 	JSL.l Sprite_ShowMessageMinimal
 RTL
 ;--------------------------------------------------------------------------------
 DialogGanon2:
 	JSL.l CheckGanonVulnerability : BCS +
-		%LoadDialogAddress(GanonText2Alternate)
+		REP #$20 : LDA.w #$018D : STA $1CF0 : SEP #$20
 		BRA ++
 	+
-		%LoadDialogAddress(GanonText2)
+		REP #$20 : LDA.w #$016F : STA $1CF0 : SEP #$20
 	++
 	JSL.l Sprite_ShowMessageMinimal
-RTL
-;--------------------------------------------------------------------------------
-DialogPedestal:
-	PHA
-	LDA $0202 : CMP.b #$0F : BEQ + ; Show normal text if book is not equipped
-	-
-	PLA : JSL Sprite_ShowMessageUnconditional ; Wacky Hylian Text
-RTL
-	+
-	BIT $F4 : BVC - ; Show normal text if Y is not pressed
-	%LoadDialogAddress(MSPedestalText)
-	PLA : JSL Sprite_ShowMessageUnconditional ; Text From MSPedestalText (tables.asm)
 RTL
 ;--------------------------------------------------------------------------------
 DialogEtherTablet:
@@ -327,8 +298,10 @@ RTL
 		LDA $7EF359 : CMP.b #$FF : BEQ .yesText : CMP.b #$02 : !BGE .noText
 	;++
 	.yesText
-	%LoadDialogAddress(EtherTabletText)
-	PLA : JSL Sprite_ShowMessageUnconditional ; Text From MSPedestalText (tables.asm)
+	PLA
+	LDA.b #$0c
+	LDY.b #$01
+	JSL Sprite_ShowMessageUnconditional ; Text From MSPedestalText (tables.asm)
 RTL
 	.noText
 	PLA
@@ -348,41 +321,36 @@ RTL
 		LDA $7EF359 : CMP.b #$FF : BEQ .yesText : CMP.b #$02 : !BGE .noText
 	;++
 	.yesText
-	%LoadDialogAddress(BombosTabletText)
-	PLA : JSL Sprite_ShowMessageUnconditional ; Text From MSPedestalText (tables.asm)
+	PLA 
+	LDA.b #$0D
+	LDY.b #$01
+	JSL Sprite_ShowMessageUnconditional ; Text From MSPedestalText (tables.asm)
 RTL
 	.noText
 	PLA
 RTL
 ;--------------------------------------------------------------------------------
-DialogUncle:
-	;%LoadDialog(UncleQuote,DialogUncleData)
-	%LoadDialogAddress(UncleText)
-	JSL Sprite_ShowMessageUnconditional
-RTL
-;--------------------------------------------------------------------------------
 DialogSahasrahla:
 	LDA.l $7EF374 : AND #$04 : BEQ + ;Check if player has green pendant
-		%LoadDialogAddress(SahasrahlaAfterItemText)
+		LDA.b #$35
+        LDY.b #$00
 		JSL.l Sprite_ShowMessageUnconditional
 		RTL
 	+
-	%LoadDialogAddress(SahasrahlaNoPendantText)
-	JSL.l Sprite_ShowMessageUnconditional
-RTL
-;--------------------------------------------------------------------------------
-DialogAlcoholic:
-	%LoadDialogAddress(AlcoholicText)
+	LDA.b #$31
+    LDY.b #$00
 	JSL.l Sprite_ShowMessageUnconditional
 RTL
 ;--------------------------------------------------------------------------------
 DialogBombShopGuy:
 	LDA.l $7EF37A : AND #$05 : CMP #$05 : BEQ + ;Check if player has crystals 5 & 6
-		%LoadDialogAddress(BombShopGuyNoCrystalsText)
+		LDA.b #$15
+        LDY.b #$01
 		JSL.l Sprite_ShowMessageUnconditional
 		RTL
 	+
-	%LoadDialogAddress(BombShopGuyText)
+	LDA.b #$16
+    LDY.b #$01
 	JSL.l Sprite_ShowMessageUnconditional
 RTL
 ;--------------------------------------------------------------------------------
