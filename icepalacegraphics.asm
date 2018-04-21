@@ -70,7 +70,7 @@ ReloadingFloors:
     LDA.w #$0800                ; Length
     PHB
     ;MVN $7F, IcePalaceFloorGfx>>16
-	MVN $A07F ; CHANGE THIS IF YOU MOVE THE FILE - kkat
+	MVN $B17F ; CHANGE THIS IF YOU MOVE THE GRAPHICS FILE - kkat
     PLB
 
     ; Pretend that we ran the original routine
@@ -79,6 +79,3 @@ ReloadingFloors:
     STA $03
 
     JML ReloadingFloorsCancel
-
-IcePalaceFloorGfx:
-    incbin ice_palace_floor.bin
