@@ -332,6 +332,9 @@ db GFX_HUD_Main
 org $008781
 UseImplicitRegIndexedLocalJumpTable:
 
+org $00879c
+UseImplicitRegIndexedLongJumpTable:
+
 org $008333
 Vram_EraseTilemaps_triforce:
 

@@ -143,9 +143,6 @@ org $0288D1 ; <- 108D1 - Bank02.asm : 1690 (STZ $0646)
 JSL.l IndoorSubtileTransitionCounter
 NOP #2
 ;--------------------------------------------------------------------------------
-org $02895D ; <- 1095D - Bank02.asm : 1812 (JSL Dungeon_LoadRoom)
-JSL.l IndoorTileTransitionCounter
-;--------------------------------------------------------------------------------
 org $07B574 ; <- 3B574 - Bank07.asm : 8519 (LDA.b #$01 : STA $02E9)
 JSL.l IncrementChestCounter
 NOP
@@ -2089,13 +2086,13 @@ org $02895D ; <- Bank02.asm:1812 (JSL Dungeon_LoadRoom)
     JSL LoadRoomHook
 ;--------------------------------------------------------------------------------
 org $028BE7 ; <- Bank02.asm:2299 (JSL Dungeon_LoadRoom)
-    JSL LoadRoomHook
+    JSL LoadRoomHook_noStats
 ;--------------------------------------------------------------------------------
 org $029309 ; <- Bank02.asm:3533 (JSL Dungeon_LoadRoom)
-    JSL LoadRoomHook
+    JSL LoadRoomHook_noStats
 ;--------------------------------------------------------------------------------
 org $02C2F3 ; <- Bank02.asm:10391 (JSL Dungeon_LoadRoom)
-    JSL LoadRoomHook
+    JSL LoadRoomHook_noStats
 ;================================================================================
 
 ;================================================================================
