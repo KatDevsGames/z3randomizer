@@ -888,32 +888,32 @@ RTL
 ; out:	A - Loot OAM Table Index
 ; check if this is even still referenced anywhere
 ;--------------------------------------------------------------------------------
-GetWitchLootOAMTableIndex:
-	PHX
-	PHB : PHK : PLB
-	;--------
-	TAX : LDA .gfxSlots, X ; look up item gfx
-	PLB : PLX
-RTL
-
-;DATA - Loot Identifier to Sprite ID
-{
-	.gfxSlots
-    db $FF, $FF, $FF, $FF, $05, $06, $FF, $0C
-    db $0B, $0D, $0A, $07, $13, $0E, $FF, $FF
-
-    db $FF, $FF, $FF, $FF, $FF, $09, $FF, $FF
-    db $08, $FF, $FF, $10, $11, $12, $FF, $FF
-
-    db $FF, $FF, $03, $04, $FF, $FF, $02, $FF
-    db $FF, $FF, $14, $15, $17, $16, $15, $17
-
-    db $16, $0F, $FF, $FF, $FF, $FF, $FF, $FF
-    db $FF, $FF, $FF, $FF, $FF, $FF, $02, $02
-
-    db $FF, $FF, $FF, $FF, $01, $FF, $FF, $FF
-    db $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF
-}
+;GetWitchLootOAMTableIndex:
+;	PHX
+;	PHB : PHK : PLB
+;	;--------
+;	TAX : LDA .gfxSlots, X ; look up item gfx
+;	PLB : PLX
+;RTL
+;
+;;DATA - Loot Identifier to Sprite ID
+;{
+;	.gfxSlots
+;    db $FF, $FF, $FF, $FF, $05, $06, $FF, $0C
+;    db $0B, $0D, $0A, $07, $13, $0E, $FF, $FF
+;
+;    db $FF, $FF, $FF, $FF, $FF, $09, $FF, $FF
+;    db $08, $FF, $FF, $10, $11, $12, $FF, $FF
+;
+;    db $FF, $FF, $03, $04, $FF, $FF, $02, $FF
+;    db $FF, $FF, $14, $15, $17, $16, $15, $17
+;
+;    db $16, $0F, $FF, $FF, $FF, $FF, $FF, $FF
+;    db $FF, $FF, $FF, $FF, $FF, $FF, $02, $02
+;
+;    db $FF, $FF, $FF, $FF, $01, $FF, $FF, $FF
+;    db $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF
+;}
 ;--------------------------------------------------------------------------------
 
 ;--------------------------------------------------------------------------------
