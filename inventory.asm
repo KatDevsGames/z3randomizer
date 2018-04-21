@@ -255,9 +255,11 @@ AddInventory:
 	CPY.b #$38 : BNE + : BRL .itemCounts : + ; Pendant
 	CPY.b #$39 : BNE + : BRL .itemCounts : + ; Pendant
 	CPY.b #$00 : BNE + : BRL .itemCounts : + ; Uncle Sword & Shield
-
+	
 	CPY.b #$04 : !BLT .isSword ; Swords - Skip Shop/Fairy Check for Swords
+	CPY.b #$49 : BEQ .isSword
 	CPY.b #$50 : BEQ .isSword
+	CPY.b #$5E : BEQ .isSword
 	BRA +
 		.isSword
 		BRL .dungeonCounts

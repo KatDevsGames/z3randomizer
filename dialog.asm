@@ -117,6 +117,7 @@ macro CopyDialogIndirect()
 endmacro
 ;--------------------------------------------------------------------------------
 LoadDialogAddressIndirect:
+	STZ $1CF0 : STZ $1CF1 ; reset decompression buffer
 	LDA.b #$01 : STA $7F5035 ; set flag
 	%CopyDialogIndirect()
 	;%LoadDialogAddress(UncleText)
@@ -225,6 +226,7 @@ FreeDungeonItemNotice:
 	+
 	.done
 
+	STZ $1CF0 : STZ $1CF1 ; reset decompression buffer
 	LDA.b #$01 : STA $7F5035 ; set alternate dialog flag
 	LDA.b #$01 : STA $7F50A0
 

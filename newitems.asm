@@ -908,29 +908,33 @@ RTL
 !SINGLE_INDEX_BITMASK_TEMP = "$7F5022"
 !LOCK_IN = "$7F5090"
 GetRNGItemSingle:
-	LDA !LOCK_IN : CMP #$FF : BEQ + : TAX : XBA : LDA.l RNGSingleItemTable, X : RTL : +
-	LDX.b #$00
-	.single_reroll
-		JSL.l GetRandomInt : AND.b #$7F ; select random value
-		INX : CPX #$7F : !BLT + : LDA.b #$00 : BRA +++ : + ; default to 0 if too many attempts
-		CMP.l RNGSingleTableSize : !BGE .single_reroll
-	+++
+	PHY
+		LDA !LOCK_IN : CMP.b #$FF : BEQ + : TAX : XBA : LDA.l RNGSingleItemTable, X : RTL : +
+		LDX.b #$00
+		.single_reroll
+			JSL.l GetRandomInt : AND.b #$7F ; select random value
+			INX : CPX #$7F : !BLT + : LDA.b #$00 : BRA +++ : + ; default to 0 if too many attempts
+			CMP.l RNGSingleTableSize : !BGE .single_reroll
+		+++
 
-	STA !SINGLE_INDEX_TEMP ; put our index value here
-	LDX #$00
-	.recheck
-		JSR.w CheckSingleItem : BEQ .single_unused ; already used
-			LDA !SINGLE_INDEX_TEMP : INC ; increment index
-			CMP.l RNGSingleTableSize : !BLT +++ : LDA.b #$00 : +++ ; rollover index if needed
-			STA !SINGLE_INDEX_TEMP ; store index
-			INX : CPX.l RNGSingleTableSize : !BLT .recheck
-			LDA.b #$5A ; everything is gone, default to null item - MAKE THIS AN OPTION FOR THIS AND THE OTHER ONE
-			BRA .single_done
-	.single_unused
-		LDA !SINGLE_INDEX_TEMP
-	.single_done
-		TAX : LDA.l RNGSingleItemTable, X
-		XBA : LDA.l !SINGLE_INDEX_TEMP : STA !LOCK_IN : XBA
+		STA !SINGLE_INDEX_TEMP ; put our index value here
+		LDX #$00
+		TAY
+		.recheck
+			TYA
+			JSR.w CheckSingleItem : BEQ .single_unused ; already used
+				LDA !SINGLE_INDEX_TEMP : INC ; increment index
+				CMP.l RNGSingleTableSize : !BLT +++ : LDA.b #$00 : +++ ; rollover index if needed
+				STA !SINGLE_INDEX_TEMP ; store index
+				INX : TAY : TXA : CMP.l RNGSingleTableSize : !BLT .recheck
+				LDA.b #$5A ; everything is gone, default to null item - MAKE THIS AN OPTION FOR THIS AND THE OTHER ONE
+				BRA .single_done
+		.single_unused
+			LDA !SINGLE_INDEX_TEMP
+		.single_done
+			TAX : LDA.l RNGSingleItemTable, X
+			XBA : LDA.l !SINGLE_INDEX_TEMP : STA !LOCK_IN : XBA
+	PLY
 RTL
 ;--------------------------------------------------------------------------------
 CheckSingleItem:

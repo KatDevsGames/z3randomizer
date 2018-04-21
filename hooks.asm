@@ -2126,7 +2126,7 @@ org $07A055 ; <- Bank07.asm:5205 (LDA $0B99 : BEQ BRANCH_DELTA)
 JSL.l ArrowGame : NOP #14
 
 org $07A06C ; <- Bank07.asm:5215 (LDA $7EF377 : BEQ BRANCH_EPSILON)
-JSL.l DecrementArrows : SKIP #2 : NOP #5
+JSL.l DecrementArrows : SKIP #2 : NOP : LDA $7EF377
 ;================================================================================
 
 ;================================================================================

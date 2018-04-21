@@ -229,7 +229,6 @@ SpritePrep_ShopKeeper:
 	;JSR.w QueueItemDMA
 
 	.done
-	STA $FFFFFF
 	LDA.l !SHOP_TYPE : BIT.b #$20 : BEQ .notTakeAll ; Take-all
 	.takeAll
 
