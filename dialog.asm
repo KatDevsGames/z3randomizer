@@ -250,6 +250,11 @@ RTL
 	PLY : PLX : PLA
 RTL
 ;--------------------------------------------------------------------------------
+DialogResetSelectionIndex:
+    JSL.l Attract_DecompressStoryGfx ; what we wrote over
+    STZ $1CE8
+RTL
+;--------------------------------------------------------------------------------
 DialogFairyThrow:
 	LDA.l Restrict_Ponds : BEQ .normal
 	LDA $7EF35C : ORA $7EF35D : ORA $7EF35E : ORA $7EF35F : BNE .normal

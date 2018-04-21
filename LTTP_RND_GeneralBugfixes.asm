@@ -356,6 +356,9 @@ GetAnimatedSpriteTile:
 org $00D52D
 GetAnimatedSpriteTile_variable:
 
+org $00D84E
+Attract_DecompressStoryGfx:
+
 org $00E529
 LoadSelectScreenGfx:
 

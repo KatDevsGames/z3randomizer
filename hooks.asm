@@ -1431,71 +1431,20 @@ LDA #$40 : STA !MS_GOT
 org $08C5E5 ; <- 445ED - ancilla_receive_item.asm:395 (LDA .item_messages, Y : CMP.w #$FFFF : BEQ .handleGraphics)
 LDA.w #$FFFF
 ;--------------------------------------------------------------------------------
-;-- zelda in jail
-org $05ED27 ; <- 2ED27 sprite_zelda.asm : 256 - (JSL Sprite_ShowMessageUnconditional)
-STZ $1CE8 : NOP
-;----------------------------------------------------
-;-- sanctuary
-org $05DDAB ; <- 2DDAB sprite_uncle_and_priest.asm : 635 - (JSL Sprite_ShowMessageUnconditional)
-STZ $1CE8 : NOP
-;----------------------------------------------------
-;-- King Zora
-org $059A82 ; <- 29A82 sprite_zora_king.asm : 229 - (LDA $1CE8 : BNE .player_says_just_came_to_visit)
-LDA.b #00 : NOP
-org $059A8D ; <- 29A8d sprite_zora_king.asm : 229 - (LDA $1CE8 : BNE .not_buying)
-LDA.b #00 : NOP
-;----------------------------------------------------
-;-- Kiki
-org $1EE3E6 ; <- F63E6 sprite_kiki.asm : 157 pay kiki 10 rupees
-STZ $1CE8 : NOP
-org $1EE4FB ; <- F64FB sprite_kiki.asm : 340 pay 100 rupees
-STZ $1CE8 : NOP
+;-- Reset Dialog Selection index for each new message
+org $0EEE5D ; <- 76E5D - vwf.asm:84 (JSL Attract_DecompressStoryGfx)
+JSL.l DialogResetSelectionIndex
 ;----------------------------------------------------
 ;-- Agahnim 1 Defeated
 org $068475 ; <- 30475 Bank06.asm : 762 - (JSL Sprite_ShowMessageMinimal)
 JSL.l AddInventory_incrementBossSwordLong
 ;NOP #4
 ;----------------------------------------------------------
-;-- Middle aged man opens purple chest
-org $06BD44 ; <- 33D44 sprite_middle_aged_man.asm : 107 (JSL Sprite_ShowMessageFromPlayerContact : BCC .return)
-JSL Sprite_ShowMessageFromPlayerContact_Edit
-; ^ still needed because of clearing $1CE8
-;----------------------------------------------------------
-;-- Smiths
-;-- Ask us to do anything
-org $06B418 ; <- 33418 sprite_smithy_bros.asm : 371 (JSL Sprite_ShowSolicitedMessageIfPlayerFacing : BCC .player_didnt_speak)
-JSL Sprite_ShowSolicitedMessageIfPlayerFacing_Edit
-; ^ still needed because of clearing $1CE8
-;-- 10 rupees to temper
-org $06B470 ; <- 33470 sprite_smithy_bros.asm : 447 (JSL Sprite_ShowMessageUnconditional)
-STZ $1CE8 : NOP
-;-- Yes, I'm sure
-org $06B495 ; <- 33495 sprite_smithy_bros.asm : 479 (JSL Sprite_ShowMessageUnconditional)
-STZ $1CE8 : NOP
 ;-- We'll take your sword
 org $06B4F3 ; <- 334F3 sprite_smithy_bros.asm : 556 (JSL Sprite_ShowMessageUnconditional)
 JSL ItemSet_SmithSword
 ;NOP #4
 ;----------------------------------------------------------
-;-- Bottle Vendor
-org $05EAE3 ; <- 2EAE3 sprite_bottle_vendor.asm : 104 - (JSL Sprite_ShowSolicitedMessageIfPlayerFacing : BCC .didnt_converse)
-JSL Sprite_ShowSolicitedMessageIfPlayerFacing_Edit
-; ^ still needed because of clearing $1CE8
-;----------------------------------------------------------
-;-- Digging Game Guy
-org $1DFC76 ; <- EFC76 sprite_digging_game_guy.asm : 46 (JSL Sprite_ShowSolicitedMessageIfPlayerFacing : BCC .return)
-JSL Sprite_ShowSolicitedMessageIfPlayerFacing_Edit
-; ^ still needed because of clearing $1CE8
-;----------------------------------------------------------
-;-- Flute Boy
-org $06B078 ; <- 33078 sprite_flute_boy.asm : 244 - (JSL Sprite_ShowSolicitedMessageIfPlayerFacing : BCC .didnt_speak)
-JSL Sprite_ShowSolicitedMessageIfPlayerFacing_Edit
-; ^ still needed because of clearing $1CE8
-;----------------------------------------------------------
-;-- Chest Game Guy
-org $1EEFBF ; <- F6FBF sprite_shopkeeper.asm : 121 - (JSL Sprite_ShowSolicitedMessageIfPlayerFacing : BCC BRANCH_ALPHA)
-JSL Sprite_ShowSolicitedMessageIfPlayerFacing_Edit
-; ^ still needed because of clearing $1CE8
 
 ;===================================
 ;-- Escort Text
