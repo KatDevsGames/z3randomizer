@@ -232,7 +232,7 @@ RenderCreditsStatCounter:
     ;   XXXX X00L   LLLL LLLL   BBBB SSSS   CCC- ----   ---- ----   AAAA AAAA   AAAA AAAA   AAAA AAAA
     
     ; == Determine stat type ==
-    LDA CreditsStats,y  ;   LLLL LLLL XXXX XTTL
+    LDA.w CreditsStats,y  ;   LLLL LLLL XXXX XTTL
     LSR
     AND #$0003          ; TT
     CMP.w #$0000
@@ -241,7 +241,7 @@ RenderCreditsStatCounter:
 
 .normalStat
     ; == Write Stripe header (VRAM address, i.e. tile coordinates) ==
-    LDA CreditsStats,y  ;   LLLL LLLL XXXX XTTL
+    LDA.w CreditsStats,y  ;   LLLL LLLL XXXX XTTL
     LSR #3
     AND #$001F          ; X XXXX
     CLC
@@ -272,7 +272,7 @@ RenderCreditsStatCounter:
     STA !ValueLow
     
     ; == Shift value ==
-    LDA CreditsStats+2,y;   CCC- ---- BBBB SSSS
+    LDA.w CreditsStats+2,y;   CCC- ---- BBBB SSSS
     AND.w #$000F        ;   SSSS
     BEQ +
     TAX
@@ -283,7 +283,7 @@ RenderCreditsStatCounter:
     STA !ValueLow
 +   
     ; == Mask value ==
-    LDA CreditsStats+2,y;   CCC- ---- BBBB SSSS
+    LDA.w CreditsStats+2,y;   CCC- ---- BBBB SSSS
     ;LSR #4
     ;AND.w #$000F        ;   BBBB
 	LSR #3
@@ -294,7 +294,7 @@ RenderCreditsStatCounter:
     STA !ValueLow
     
     ; == Cap value ==
-    LDA CreditsStats+3,y;   ---- ---- CCC- ----
+    LDA.w CreditsStats+3,y;   ---- ---- CCC- ----
     LSR #5
     AND.w #$0007        ;   CCC
     BEQ +
@@ -361,7 +361,7 @@ RenderCreditsStatCounter:
     ; Output format: HH:MM:SS.FF
     
     ; == Write Stripe header (VRAM address, i.e. tile coordinates) ==
-    LDA CreditsStats,y  ;   LLLL LLLL XXXX XTTL
+    LDA.w CreditsStats,y  ;   LLLL LLLL XXXX XTTL
     LSR #3
     AND #$001F          ; X XXXX
     CLC

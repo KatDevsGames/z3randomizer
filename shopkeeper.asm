@@ -77,7 +77,7 @@ macro DrawDigit(value,offset)
 	+
 	LDA $0E : STA !BIGRAM, X : INX : INX
 	LDA.w #56 : STA !BIGRAM, X : INX : INX
-	LDY $0A : TYA : ASL : TAY : LDA .digit_properties, Y : STA !BIGRAM, X : INX : INX
+	LDY $0A : TYA : ASL : TAY : LDA.w .digit_properties, Y : STA !BIGRAM, X : INX : INX
 	LDA.w #$0000 : STA !BIGRAM, X : INX : INX
 	
 	LDA $0E : !ADD.w #$0008 : STA $0E ; move offset 8px right
