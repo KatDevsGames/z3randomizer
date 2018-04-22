@@ -29,9 +29,9 @@ DrawGoalIndicator:
 			BRA .done
 		.skip
 			LDA.w #$207F
-			STA !DRAW_ADDRESS, X : INX #
-			STA !DRAW_ADDRESS, X : INX #
-			STA !DRAW_ADDRESS, X : INX #
+			STA !DRAW_ADDRESS, X : INX #2
+			STA !DRAW_ADDRESS, X : INX #2
+			STA !DRAW_ADDRESS, X : INX #2
 		.done
 	PLX
 RTL

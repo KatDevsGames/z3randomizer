@@ -184,8 +184,8 @@ LoadAlphabetTilemap:
 			INX #6 : INY
 		CPX #25 : !BLT -
 		
-		JSR DMAAlphabetTilemap:
 		
+		JSR DMAAlphabetTilemap
 	PLP : PLY : PLX : PLA
 RTL
 ;--------------------------------------------------------------------------------
