@@ -54,8 +54,8 @@ RTL
 FluteBoy:
 	LDA $10 : CMP.b #$1A : BEQ +
 		LDA.b #$01 : STA $0FDD
-		JMP.l FluteBoy_Abort
+		JML.l FluteBoy_Abort
 	+
 	LDA $0D80, X : CMP.b #$03 ; thing we wrote over
-JMP.l FluteBoy_Continue
+JML.l FluteBoy_Continue
 ;--------------------------------------------------------------------------------

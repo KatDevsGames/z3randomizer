@@ -463,7 +463,7 @@ AddReceivedItemExpanded:
 	PLX : PLA
 
     PHB : PHK ; we're skipping the corresponding instructions to grab the data bank
-	JMP.l AddReceivedItem+2
+	JML.l AddReceivedItem+2
 }
 ;--------------------------------------------------------------------------------
 ;DATA AddReceivedItemExpanded
@@ -1044,5 +1044,5 @@ RTS
 ActivateGoal:
     STZ $11
     STZ $B0
-JMP.l StatsFinalPrep
+JML.l StatsFinalPrep
 ;--------------------------------------------------------------------------------
