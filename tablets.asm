@@ -96,7 +96,7 @@ LoadNarrowObject:
 	LDA AddReceivedItemExpanded_wide_item_flag, X : STA ($92), Y ; AddReceiveItem.wide_item_flag? ; LDA.b #$00 : STA ($92), Y in the japanese version
 	PLY
 	;JSL.l DrawNarrowDroppedObject
-JMP.l LoadNarrowObjectReturn
+JML.l LoadNarrowObjectReturn
 ;--------------------------------------------------------------------------------
 DrawNarrowDroppedObject:
     ; If it's a 16x16 sprite, we'll only draw one, otherwise we'll end up drawing

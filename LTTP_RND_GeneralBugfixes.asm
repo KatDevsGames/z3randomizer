@@ -218,6 +218,11 @@ GFX_Hash_Alphabet:
 incbin hashalphabet.chr.gfx
 warnpc $31C001
 
+org $31C000
+IcePalaceFloorGfx:
+incbin ice_palace_floor.bin
+warnpc $31C801
+
 org $338000
 GFX_HUD_Palette:
 incbin hudpalette.pal
@@ -326,6 +331,9 @@ db GFX_HUD_Main
 ;================================================================================
 org $008781
 UseImplicitRegIndexedLocalJumpTable:
+
+org $00879c
+UseImplicitRegIndexedLongJumpTable:
 
 org $008333
 Vram_EraseTilemaps_triforce:

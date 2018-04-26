@@ -231,15 +231,104 @@ org $30804F ; PC 0x18004F
 ByrnaInvulnerability:
 db #$01 ; #$00 = Off - #$01 = On (default)
 ;--------------------------------------------------------------------------------
-; Out of order 0x180050-0x18005C (CrystalPendantFlags_2)
+org $308050 ; PC 0x180050 - 0x18005C
+CrystalPendantFlags_2:
+    db $00 ; Sewers
+	db $00 ; Hyrule Castle
+	db $00 ; Eastern Palace
+	db $00 ; Desert Palace
+	db $00 ; Agahnim's Tower
+	db $40 ; Swamp Palace
+	db $40 ; Palace of Darkness
+	db $40 ; Misery Mire
+    db $40 ; Skull Woods
+	db $40 ; Ice Palace
+.hera
+	db $00 ; Tower of Hera
+	db $40 ; Thieves' Town
+	db $40 ; Turtle Rock
+;Pendant: $00
+;Crystal: $40
 ;--------------------------------------------------------------------------------
 ; 0x18005D - 0x18005F (unused)
 ;--------------------------------------------------------------------------------
-; Out of order 0x180060 - 0x18007E (ProgrammableItemLogicJump_1)
+org $308060 ; PC 0x180060 - 0x18007E
+ProgrammableItemLogicJump_1:
+JSL.l $000000 : RTL
+ProgrammableItemLogicJump_2:
+JSL.l $000000 : RTL
+ProgrammableItemLogicJump_3:
+JSL.l $000000 : RTL
+
+org $308061 ; PC 0x180061
+ProgrammableItemLogicPointer_1:
+dl #$000000
+org $308066 ; PC 0x180066
+ProgrammableItemLogicPointer_2:
+dl #$000000
+org $30806B ; PC 0x18006B
+ProgrammableItemLogicPointer_3:
+dl #$000000
 ;--------------------------------------------------------------------------------
 ; 0x18007F (unused)
 ;--------------------------------------------------------------------------------
-; Out of order 0x180070-0x18007F (CrystalNumberTable)
+org $308070 ; PC 0x180070 - 0x18007F
+CrystalNumberTable:
+db $00 ;
+db $79 ; Swamp
+db $00 ;
+db $6E ; Ice
+db $00 ;
+db $6F ; Mire
+db $00 ;
+db $6D ; Thieves
+db $69 ; Desert
+db $7C ; TRock
+db $69 ; Hera
+db $6C ; Skull
+db $69 ; Eastern
+db $7F ; Darkness
+db $00 ;
+db $00 ;
+
+;1 Indicator : 7F
+;2 Indicator : 79
+;3 Indicator : 6C
+;4 Indicator : 6D
+;5 Indicator : 6E
+;6 Indicator : 6F
+;7 Indicator : 7C
+;8 Indicator : 7D
+;9 Indicator : 7E
+
+;Dark Red X  : 69
+;Light Red X : 78
+;White X     : 68
+
+;Pendant UL  : 60
+;Pendant UR  : 61
+;Pendant BL  : 70
+;Pendant BR  : 71
+
+;Sword UL    : 62
+;Sword UR    : 63
+;Sword BL    : 72
+;Sword BR    : 73
+
+;Crystal UL  : 64
+;Crystal UR  : 65
+;Crystal BL  : 74
+;Crystal BR  : 75
+
+;Skull UL    : 66
+;Skull UR    : 67
+;Skull BL    : 76
+;Skull BR    : 77
+
+;Warp UL     : 6A
+;Warp UR     : 6B
+;Warp BL     : 7A
+;Warp BR     : 7B
 ;--------------------------------------------------------------------------------
 org $308080 ; PC 0x180080 - 0x180083
 Upgrade5BombsRefill:
@@ -283,7 +372,15 @@ db #$47 ; #$47 - 20 Rupees (default)
 ;--------------------------------------------------------------------------------
 ; 0x180098 - 0x18009F (unused)
 ;--------------------------------------------------------------------------------
-; Out of order 0x1800A0 - 0x1800A3 (Bugfix_MirrorlessSQToLW)
+org $3080A0 ; PC 0x1800A0 - 0x1800A3
+Bugfix_MirrorlessSQToLW:
+db #$01 ; #$00 = Original Behavior - #$01 = Randomizer Behavior (Default)
+Bugfix_SwampWaterLevel:
+db #$01 ; #$00 = Original Behavior - #$01 = Randomizer Behavior (Default)
+Bugfix_PreAgaDWDungeonDeathToFakeDW:
+db #$01 ; #$00 = Original Behavior - #$01 = Randomizer Behavior (Default)
+Bugfix_SetWorldOnAgahnimDeath:
+db #$01 ; #$00 = Original Behavior - #$01 = Randomizer Behavior (Default)
 ;--------------------------------------------------------------------------------
 ; 0x1800A4- 0x1800FF (unused)
 ;--------------------------------------------------------------------------------
@@ -477,64 +574,6 @@ MapObject_TRock:
 dw $6434 ; #6434 - Crystal
 
 ;--------------------------------------------------------------------------------
-org $308070 ; PC 0x180070 - 0x18007F (Out of order)
-CrystalNumberTable:
-db $00 ;
-db $79 ; Swamp
-db $00 ;
-db $6E ; Ice
-db $00 ;
-db $6F ; Mire
-db $00 ;
-db $6D ; Thieves
-db $69 ; Desert
-db $7C ; TRock
-db $69 ; Hera
-db $6C ; Skull
-db $69 ; Eastern
-db $7F ; Darkness
-db $00 ;
-db $00 ;
-
-;1 Indicator : 7F
-;2 Indicator : 79
-;3 Indicator : 6C
-;4 Indicator : 6D
-;5 Indicator : 6E
-;6 Indicator : 6F
-;7 Indicator : 7C
-;8 Indicator : 7D
-;9 Indicator : 7E
-
-;Dark Red X  : 69
-;Light Red X : 78
-;White X     : 68
-
-;Pendant UL  : 60
-;Pendant UR  : 61
-;Pendant BL  : 70
-;Pendant BR  : 71
-
-;Sword UL    : 62
-;Sword UR    : 63
-;Sword BL    : 72
-;Sword BR    : 73
-
-;Crystal UL  : 64
-;Crystal UR  : 65
-;Crystal BL  : 74
-;Crystal BR  : 75
-
-;Skull UL    : 66
-;Skull UR    : 67
-;Skull BL    : 76
-;Skull BR    : 77
-
-;Warp UL     : 6A
-;Warp UR     : 6B
-;Warp BL     : 7A
-;Warp BR     : 7B
-;--------------------------------------------------------------------------------
 org $02A09B ; PC 0x1209B - Bank02.asm:5802 - (pool MilestoneItem_Flags:)
 CrystalPendantFlags:
     db $00 ; Sewers
@@ -562,24 +601,6 @@ CrystalPendantFlags:
 ;Crystal 6: $01
 ;Crystal 7: $08
 ;--------------------------------------------------------------------------------
-org $308050 ; PC 0x180050 - 0x18005C (Out of order)
-CrystalPendantFlags_2:
-    db $00 ; Sewers
-	db $00 ; Hyrule Castle
-	db $00 ; Eastern Palace
-	db $00 ; Desert Palace
-	db $00 ; Agahnim's Tower
-	db $40 ; Swamp Palace
-	db $40 ; Palace of Darkness
-	db $40 ; Misery Mire
-    db $40 ; Skull Woods
-	db $40 ; Ice Palace
-.hera
-	db $00 ; Tower of Hera
-	db $40 ; Thieves' Town
-	db $40 ; Turtle Rock
-;Pendant: $00
-;Crystal: $40
 ;Dungeons with no drops should match their respective world's normal vanilla prize ;xxx
 ;--------------------------------------------------------------------------------
 org $01C6FC ; PC 0xC6FC - Bank01.asm:10344 - (db $00, $00, $01, $02, $00, $06, $06, $06, $06, $06, $03, $06, $06)
@@ -645,34 +666,6 @@ db #$FF ; no substitution
 org $07B53B ; PC 0x3B53B
 RedBoomerangSubstitution:
 db #$FF ; no substitution
-;--------------------------------------------------------------------------------
-org $308060 ; PC 0x180060 - 0x18007E (Out of order)
-ProgrammableItemLogicJump_1:
-JSL.l $000000 : RTL
-ProgrammableItemLogicJump_2:
-JSL.l $000000 : RTL
-ProgrammableItemLogicJump_3:
-JSL.l $000000 : RTL
-
-org $308061 ; PC 0x180061
-ProgrammableItemLogicPointer_1:
-dl #$000000
-org $308066 ; PC 0x180066
-ProgrammableItemLogicPointer_2:
-dl #$000000
-org $30806B ; PC 0x18006B
-ProgrammableItemLogicPointer_3:
-dl #$000000
-;--------------------------------------------------------------------------------
-org $3080A0 ; PC 0x1800A0 - 0x1800A3 (Out of order)
-Bugfix_MirrorlessSQToLW:
-db #$01 ; #$00 = Original Behavior - #$01 = Randomizer Behavior (Default)
-Bugfix_SwampWaterLevel:
-db #$01 ; #$00 = Original Behavior - #$01 = Randomizer Behavior (Default)
-Bugfix_PreAgaDWDungeonDeathToFakeDW:
-db #$01 ; #$00 = Original Behavior - #$01 = Randomizer Behavior (Default)
-Bugfix_SetWorldOnAgahnimDeath:
-db #$01 ; #$00 = Original Behavior - #$01 = Randomizer Behavior (Default)
 ;--------------------------------------------------------------------------------
 ;org $08D01A ; PC 0x4501A - ancilla_flute.asm - 42
 ;OldHauntedGroveItem:
@@ -1499,25 +1492,6 @@ dw #9999 ; Rupee Limit
 !BIGRAM = "$7EC900";
 ; $7EC900 - Big RAM Buffer ($1F00)
 ;================================================================================
-org $30FF00 ; PC 0x187F00 - PC 0x187FFF (out of order)
-NameHashTable: ; change this for each new version - MOVE THIS TO BANK $30
-db $57, $41, $D6, $7A, $E0, $10, $8A, $97, $A2, $89, $82, $45, $46, $1C, $DF, $F7
-db $55, $0F, $1D, $56, $AC, $29, $DC, $D1, $25, $2A, $C5, $92, $42, $B7, $BE, $50
-db $64, $62, $31, $E8, $49, $63, $40, $5F, $C9, $47, $F6, $0B, $FA, $FC, $E4, $F0
-db $E6, $8F, $6D, $B1, $68, $A4, $D3, $0E, $54, $5D, $6B, $CF, $20, $69, $33, $07
-db $2C, $4D, $32, $77, $C1, $95, $7B, $DE, $66, $8C, $35, $84, $86, $7C, $44, $1A
-db $3E, $15, $D4, $0C, $B5, $90, $4C, $B2, $26, $1E, $38, $C0, $76, $9C, $2B, $7F
-db $5E, $D5, $75, $B6, $E3, $7D, $8D, $72, $3A, $CB, $6F, $5B, $AD, $BD, $F1, $BB
-db $05, $9A, $F4, $03, $02, $FF, $DA, $4F, $93, $B3, $14, $EC, $EE, $D7, $F9, $96
-db $A7, $13, $CA, $BF, $88, $19, $A3, $78, $24, $87, $3C, $9E, $B4, $27, $C2, $AF
-db $80, $C4, $C8, $6C, $E9, $94, $F8, $8B, $3D, $34, $A6, $53, $17, $22, $F3, $A5
-db $1B, $2E, $06, $39, $D2, $43, $73, $12, $09, $58, $30, $5C, $99, $98, $9F, $ED
-db $37, $67, $EA, $BA, $E7, $D9, $81, $08, $7E, $BC, $70, $5A, $51, $C3, $B9, $61
-db $36, $4B, $A8, $01, $65, $3B, $EF, $59, $04, $18, $79, $0D, $DD, $CE, $CC, $AE
-db $83, $21, $EB, $6E, $0A, $71, $B0, $11, $85, $C7, $A1, $FD, $E5, $16, $48, $FB
-db $F2, $23, $2F, $28, $9B, $AA, $AB, $D0, $6A, $9D, $C6, $2D, $00, $FE, $E1, $3F
-db $A0, $4A, $B8, $4E, $74, $1F, $8E, $A9, $F5, $CD, $60, $91, $DB, $D8, $52, $E2
-;================================================================================
 org $30A100 ; PC 0x182100 - 0x182304
 EntranceDoorFrameTable:
 ; data for multi-entrance caves
@@ -1641,5 +1615,22 @@ db $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
 ;--------------------------------------------------------------------------------
 ; 0x185140 - 187EFF (unused)
 ;--------------------------------------------------------------------------------
-; Out of order 0x187F00 - PC 0x187FFF (NameHashTable)
+org $30FF00 ; PC 0x187F00 - PC 0x187FFF
+NameHashTable: ; change this for each new version - MOVE THIS TO BANK $30
+db $57, $41, $D6, $7A, $E0, $10, $8A, $97, $A2, $89, $82, $45, $46, $1C, $DF, $F7
+db $55, $0F, $1D, $56, $AC, $29, $DC, $D1, $25, $2A, $C5, $92, $42, $B7, $BE, $50
+db $64, $62, $31, $E8, $49, $63, $40, $5F, $C9, $47, $F6, $0B, $FA, $FC, $E4, $F0
+db $E6, $8F, $6D, $B1, $68, $A4, $D3, $0E, $54, $5D, $6B, $CF, $20, $69, $33, $07
+db $2C, $4D, $32, $77, $C1, $95, $7B, $DE, $66, $8C, $35, $84, $86, $7C, $44, $1A
+db $3E, $15, $D4, $0C, $B5, $90, $4C, $B2, $26, $1E, $38, $C0, $76, $9C, $2B, $7F
+db $5E, $D5, $75, $B6, $E3, $7D, $8D, $72, $3A, $CB, $6F, $5B, $AD, $BD, $F1, $BB
+db $05, $9A, $F4, $03, $02, $FF, $DA, $4F, $93, $B3, $14, $EC, $EE, $D7, $F9, $96
+db $A7, $13, $CA, $BF, $88, $19, $A3, $78, $24, $87, $3C, $9E, $B4, $27, $C2, $AF
+db $80, $C4, $C8, $6C, $E9, $94, $F8, $8B, $3D, $34, $A6, $53, $17, $22, $F3, $A5
+db $1B, $2E, $06, $39, $D2, $43, $73, $12, $09, $58, $30, $5C, $99, $98, $9F, $ED
+db $37, $67, $EA, $BA, $E7, $D9, $81, $08, $7E, $BC, $70, $5A, $51, $C3, $B9, $61
+db $36, $4B, $A8, $01, $65, $3B, $EF, $59, $04, $18, $79, $0D, $DD, $CE, $CC, $AE
+db $83, $21, $EB, $6E, $0A, $71, $B0, $11, $85, $C7, $A1, $FD, $E5, $16, $48, $FB
+db $F2, $23, $2F, $28, $9B, $AA, $AB, $D0, $6A, $9D, $C6, $2D, $00, $FE, $E1, $3F
+db $A0, $4A, $B8, $4E, $74, $1F, $8E, $A9, $F5, $CD, $60, $91, $DB, $D8, $52, $E2
 ;--------------------------------------------------------------------------------

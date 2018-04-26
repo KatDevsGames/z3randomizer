@@ -1,10 +1,13 @@
 LoadRoomHook:
-    JSL $01873A ; Dungeon_LoadRoom (Bank01.asm:726)
+    JSL.l IndoorTileTransitionCounter
+
+    .noStats
+    JSL Dungeon_LoadRoom
     REP #$10 ; 16 bit XY
         LDX $A0 ; Room ID
         LDA RoomCallbackTable, X
     SEP #$10 ; 8 bit XY
-    JSL $00879c ; UseImplicitRegIndexedLocalJumpTable
+    JSL UseImplicitRegIndexedLongJumpTable
 ; Callback routines:
     dl NoCallback ; 00
     dl IcePalaceBombosSE ; 01

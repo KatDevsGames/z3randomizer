@@ -397,22 +397,22 @@ DrawHUDDungeonItems:
 		LDA.w #$2810 : STA $1684 ; small keys icon
 		SEP #$20 ; set 8-bit accumulator
 		; Small Keys
-		LDA.b #$16 : !ADD $7EF37D : STA $1686 : LDA.b #$28 : ADC #$00 : sta $1686+1 ; Hyrule Castle
-		LDA.b #$16 : !ADD $7EF380 : STA $1688 : LDA.b #$28 : ADC #$00 : sta $1688+1 ; Agahnims Tower
+		LDA.b #$16 : !ADD $7EF37D : STA $1686 : LDA.b #$28 : ADC #$00 : sta.w $1686+1 ; Hyrule Castle
+		LDA.b #$16 : !ADD $7EF380 : STA $1688 : LDA.b #$28 : ADC #$00 : sta.w $1688+1 ; Agahnims Tower
 
-		LDA.b #$16 : !ADD $7EF37E : STA $168C : LDA.b #$28 : ADC #$00 : sta $168C+1 ; Eastern
-		LDA.b #$16 : !ADD $7EF37F : STA $168E : LDA.b #$28 : ADC #$00 : sta $168E+1 ; Desert
-		LDA.b #$16 : !ADD $7EF386 : STA $1690 : LDA.b #$28 : ADC #$00 : sta $1690+1 ; Hera
+		LDA.b #$16 : !ADD $7EF37E : STA $168C : LDA.b #$28 : ADC #$00 : sta.w $168C+1 ; Eastern
+		LDA.b #$16 : !ADD $7EF37F : STA $168E : LDA.b #$28 : ADC #$00 : sta.w $168E+1 ; Desert
+		LDA.b #$16 : !ADD $7EF386 : STA $1690 : LDA.b #$28 : ADC #$00 : sta.w $1690+1 ; Hera
 
-		LDA.b #$16 : !ADD $7EF382 : STA $1694 : LDA.b #$28 : ADC #$00 : sta $1694+1 ; PoD
-		LDA.b #$16 : !ADD $7EF381 : STA $1696 : LDA.b #$28 : ADC #$00 : sta $1696+1 ; Swamp
-		LDA.b #$16 : !ADD $7EF384 : STA $1698 : LDA.b #$28 : ADC #$00 : sta $1698+1 ; Skull Woods
-		LDA.b #$16 : !ADD $7EF387 : STA $169A : LDA.b #$28 : ADC #$00 : sta $169A+1 ; Thieves Town
-		LDA.b #$16 : !ADD $7EF385 : STA $169C : LDA.b #$28 : ADC #$00 : sta $169C+1 ; Ice
-		LDA.b #$16 : !ADD $7EF383 : STA $169E : LDA.b #$28 : ADC #$00 : sta $169E+1 ; Mire
-		LDA.b #$16 : !ADD $7EF388 : STA $16A0 : LDA.b #$28 : ADC #$00 : sta $16A0+1 ; Turtle Rock
+		LDA.b #$16 : !ADD $7EF382 : STA $1694 : LDA.b #$28 : ADC #$00 : sta.w $1694+1 ; PoD
+		LDA.b #$16 : !ADD $7EF381 : STA $1696 : LDA.b #$28 : ADC #$00 : sta.w $1696+1 ; Swamp
+		LDA.b #$16 : !ADD $7EF384 : STA $1698 : LDA.b #$28 : ADC #$00 : sta.w $1698+1 ; Skull Woods
+		LDA.b #$16 : !ADD $7EF387 : STA $169A : LDA.b #$28 : ADC #$00 : sta.w $169A+1 ; Thieves Town
+		LDA.b #$16 : !ADD $7EF385 : STA $169C : LDA.b #$28 : ADC #$00 : sta.w $169C+1 ; Ice
+		LDA.b #$16 : !ADD $7EF383 : STA $169E : LDA.b #$28 : ADC #$00 : sta.w $169E+1 ; Mire
+		LDA.b #$16 : !ADD $7EF388 : STA $16A0 : LDA.b #$28 : ADC #$00 : sta.w $16A0+1 ; Turtle Rock
 
-		LDA.b #$16 : !ADD $7EF389 : STA $16A4 : LDA.b #$28 : ADC #$00 : sta $16A4+1 ; Ganon's Tower
+		LDA.b #$16 : !ADD $7EF389 : STA $16A4 : LDA.b #$28 : ADC #$00 : sta.w $16A4+1 ; Ganon's Tower
 
 		REP #$20 ; set 16-bit accumulator
 	++

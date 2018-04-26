@@ -23,5 +23,5 @@ MaidenCrystalScript:
 	
 	JSL.l MaybeWriteSRAMTrace
 	
-JMP $1ECF35 ; <- F4F35 - sprite_crystal_maiden.asm : 426
+JML.l $1ECF35 ; <- F4F35 - sprite_crystal_maiden.asm : 426
 ;--------------------------------------------------------------------------------

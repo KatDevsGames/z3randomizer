@@ -27,14 +27,14 @@ RTS
 SmithDoorCheck:
 	LDA.l SmithTravelsFreely : AND.w #$00FF : BEQ .orig
 		;If SmithTravelsFreely is set Frog/Smith can enter multi-entrance overworld doors
-		JMP.l Overworld_Entrance_BRANCH_RHO
+		JML.l Overworld_Entrance_BRANCH_RHO
 
 	.orig ; The rest is equivlent to what we overwrote
 	CPX.w #$0076 : !BGE +
-		JMP.l Overworld_Entrance_BRANCH_LAMBDA
+		JML.l Overworld_Entrance_BRANCH_LAMBDA
 	+
 
-JMP.l Overworld_Entrance_BRANCH_RHO
+JML.l Overworld_Entrance_BRANCH_RHO
 ;--------------------------------------------------------------------------------
 AllowStartFromSingleEntranceCave:
 ; 16 Bit A, 16 bit XY
