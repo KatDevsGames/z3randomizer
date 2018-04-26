@@ -89,6 +89,9 @@ org $07AA44 ; <- 3AA44 - Bank07.asm : 853 (LDA $7EF357 : BNE .playerHasMoonPearl
 NOP #6
 JSL.l DecideIfBunnyByScreenIndex : db #$D0 ; BNE
 ;--------------------------------------------------------------------------------
+org $02D9B9 ; <- 159B9 - Bank02.asm : 11089  (LDA $7EF3C8)
+JSL AllowStartFromSingleEntranceCave
+;--------------------------------------------------------------------------------
 
 ;================================================================================
 ; Hash Key Display

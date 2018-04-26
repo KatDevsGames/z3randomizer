@@ -797,7 +797,7 @@ org $308174 ; PC 0x180174
 ; to the other world (As can be caused by EG, Certain underworld clips, or Entance Randomizer).
 ; Currently, Fake Worlds triggered by other causes like YBA's Fake Flute, are not affected.
 FixFakeWorld:
-db #$00 ; #00 = Fix Off (Default) - #$01 = Fix On
+db #$01 ; #00 = Fix Off (Default) - #$01 = Fix On
 ;================================================================================
 org $308175 ; PC 0x180175 - 0x180179
 ArrowMode:
@@ -1369,17 +1369,36 @@ db $04
 ;AE - Reserved
 ;AF - Generic Small Key
 ;================================================================================
-;Vortexes
-org $05AF79 ; PC 0x2AF79 (sprite_warp_vortex.asm:18) (BNE)
-db #$D0 ; #$D0 - Light-to-Dark (Default), #$F0 - Dark-to-Light, #$42 - Both Directions
-;Mirror
-org $07A943 ; PC 013A943 (Bank07.asm:6548) (BNE)
-db #$D0 ; #$D0 - Dark-to-Light (Default), #$F0 - Light-to-Dark, #$42 - Both Directions
-;Residual Portal
-org $07A96D ; PC 013A96D (Bank07.asm:6578) (BEQ)
-db #$F0 ; #$F0 - Light Side (Default), #$D0 - Dark Side, #$42 - Both Sides
-org $07A9A7 ; PC 013A9A7 (Bank07.asm:6622) (BNE)
-db #$D0 ; #$D0 - Light Side (Default), #$F0 - Dark Side, #$42 - Both Sides
+;;Residual Portal
+;org $0283E0 ; PC 0x103E0 (Bank02.asm:816) (BNE)
+;db #$F0 ; #$D0 - Light Only (Default), #$F0 - Dark Only
+;org $02B34D ; PC 0x1334D (Bank02.asm:7902) (BNE)
+;db #$F0 ; #$D0 - Light Only (Default), #$F0 - Dark Only
+;;--------------------------------------------------------------------------------
+;;Vortexes
+;org $05AF79 ; PC 0x2AF79 (sprite_warp_vortex.asm:18) (BNE)
+;db #$F0 ; #$D0 - Light-to-Dark (Default), #$F0 - Dark-to-Light
+;;--------------------------------------------------------------------------------
+;;Duck
+;org $07A3F4 ; PC 0x3A3F4 (Bank07.asm:5772) (BNE)
+;db #$F0 ; #$D0 - Light Only (Default), #$F0 - Dark Only
+;;--------------------------------------------------------------------------------
+;;Mirror
+;org $07A943 ; PC 0x3A943 (Bank07.asm:6548) (BNE)
+;db #$80 ; #$D0 - Dark-to-Light (Default), #$F0 - Light-to-Dark, #$80 - Both Directions, #$42 - Disabled
+;;--------------------------------------------------------------------------------
+;;Residual Portal
+;org $07A96D ; PC 0x3A96D (Bank07.asm:6578) (BEQ)
+;db #$D0 ; #$F0 - Light Side (Default), #$D0 - Dark Side
+;org $07A9A7 ; PC 0x3A9A7 (Bank07.asm:6622) (BNE)
+;db #$F0 ; #$D0 - Light Side (Default), #$F0 - Dark Side
+;org $07A9F3 ; PC 0x3A9F3 (Bank07.asm:6677) (BNE)
+;db #$F0 ; #$D0 - Light Side (Default), #$F0 - Dark Side
+;org $07AA3A ; PC 0x3AA3A (Bank07.asm:6718) (BEQ)
+;db #$D0 ; #$F0 - Light Side (Default), #$D0 - Dark Side
+;;--------------------------------------------------------------------------------
+;org $08D40C ; PC 0x4540C (ancilla_morph_poof.asm:48) (BEQ)
+;db #$D0 ; #$F0 - Light Side (Default), #$D0 - Dark Side
 ;================================================================================
 org $0DDBEC ; <- 6DBEC
 dw #10000 ; Rupee Limit +1

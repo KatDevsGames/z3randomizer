@@ -1,69 +1,24 @@
-;--------------------------------------------------------------------------------
-;Dungeon Music
-;org $02D592 ; PC 0x15592
-;11 - Pendant Dungeon
-;16 - Crystal Dungeon
-;
-;org $02D592+$08
-;Music_Eastern:
-;db $11
-;
-;org $02D592+$09
-;Music_Desert:
-;db $16, $16, $16, $16
-;
-;org $02D592+$33
-;Music_Hera:
-;db $16
-;org $02907A ; 0x1107A - Bank02.asm:3089 (#$11)
-;Music_Hera2:
-;db $16
-;org $028B8C ; 0x10B8C - Bank02.asm:2231 (#$11)
-;Music_Hera3:
-;db $16
-;
-;org $02D592+$26
-;Music_Darkness:
-;db $11
-;
-;org $02D592+$25
-;Music_Swamp:
-;db $16
-;
-;org $02D592+$28
-;Music_Skull:
-;db $11, $11, $11, $11
-;
-;org $02D592+$76
-;Music_Skul_Drop:
-;db $11, $11, $11, $11
-;
-;org $02D592+$34
-;Music_Thieves:
-;db $11
-;
-;org $02D592+$2D
-;Music_Ice:
-;db $16
-;
-;org $02D592+$27
-;Music_Mire:
-;db $11
-;
-;org $02D592+$35
-;Music_TRock:
-;db $11
-;org $02D592+$15
-;Music_TRock2:
-;db $11
-;org $02D592+$18
-;Music_TRock3:
-;db $11, $11
-;
-;org $02D592+$37
-;Music_GTower:
-;db $11
-;--------------------------------------------------------------------------------
+;----------------------------------
+; Start at C-Shaped house
+;----------------------------------
+;org $02D8D2 : dw $11c
+;org $02D8E0 : db $23, $22, $23, $23, $19, $19, $19, $19
+;org $02D918 : dw $1900
+;org $02D926 : dw $2300
+;org $02D934 : dw $233e
+;org $02D942 : dw $1940
+;org $02D950 : dw $0177
+;org $02D95E : dw $017F
+;org $02D96C : db $03
+;org $02D973 : db $00
+;org $02D97A : db $FF
+;org $02D981 : db $00
+;org $02D988 : db $00
+;org $02D98F : db $02
+;org $02D996 : dw $0DE8
+;org $02D9A4 : dw $0054
+;org $02D9B2 : db $07
+
 
 ;org $06FA78 ; set all prize packs to bombs
 ;dd #$DDDDDDDD
