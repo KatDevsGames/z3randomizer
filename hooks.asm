@@ -2162,3 +2162,16 @@ Overworld_Entrance_BRANCH_RHO: ; branch here to continue into door
 org $008C19 ; Bank00.asm@1633 (LDA.b #$01 : STA $420B)
 JSL ParadoxCaveGfxFix
 NOP
+;================================================================================
+
+;================================================================================
+; Player Sprite Fixes
+;--------------------------------------------------------------------------------
+org $0DA9C8 ; <- 06A9C8 - player_oam.asm: 1663 (AND.w #$00FF : CMP.w #$00F8 : BCC BRANCH_MARLE)
+; We are converting this branching code that basically puts the carry from the
+; CMP into $02 into constant time code, so that player sprite head-bobbing can
+; be removed by sprites while remaining race legal (cycle-for-cycle identical
+; to the link sprite).
+LDA $02 ; always zero! (this replaces the BCC)
+ADC.w #0000 ; put the carry bit into the accumulator instead of a hardcoded 1.
+;================================================================================
