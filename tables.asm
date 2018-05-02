@@ -201,7 +201,7 @@ db #$00 ; #$00 = Press Start (default) - #$10 = Release Start
 ;--------------------------------------------------------------------------------
 org $30804A ; PC 0x18004A
 InvertedMode:
-db #$00 ; #$00 = Normal (default) - #$01 = Inverted
+db #$01 ; #$00 = Normal (default) - #$01 = Inverted
 ;--------------------------------------------------------------------------------
 org $30804B ; PC 0x18004B
 QuickSwapFlag:
@@ -1367,14 +1367,21 @@ db $04
 ;db #$F0 ; #$D0 - Light Only (Default), #$F0 - Dark Only
 ;org $02B34D ; PC 0x1334D (Bank02.asm:7902) (BNE)
 ;db #$F0 ; #$D0 - Light Only (Default), #$F0 - Dark Only
+;org $06DB78 ; PC 0x35B78 (Bank06.asm:2186) ($24)
+;db #$8B ; #$24 - Light Style, #$8B - Dark Style
 ;;--------------------------------------------------------------------------------
 ;;Vortexes
 ;org $05AF79 ; PC 0x2AF79 (sprite_warp_vortex.asm:18) (BNE)
-;db #$F0 ; #$D0 - Light-to-Dark (Default), #$F0 - Dark-to-Light
+;db #$F0 ; #$D0 - Light Only (Default), #$F0 - Dark Only
+;org $0DB3C5 ; PC 0x6B3C5 (sprite_properties.asm:119) ($C4)
+;db #$C6 ; #$C4 - Blue Portal, #$C6 - Red Portal
 ;;--------------------------------------------------------------------------------
 ;;Duck
 ;org $07A3F4 ; PC 0x3A3F4 (Bank07.asm:5772) (BNE)
 ;db #$F0 ; #$D0 - Light Only (Default), #$F0 - Dark Only
+;org $02E849 ; PC 0x16849 (Bank02.asm:11641)
+;;dw $0003, $0016, $0018, $002C, $002F, $0030, $003B, $003F ; Light World Flute Spots
+;dw $0043, $0056, $0058, $006C, $006F, $0070, $007B, $007F ; Dark World Flute Spots
 ;;--------------------------------------------------------------------------------
 ;;Mirror
 ;org $07A943 ; PC 0x3A943 (Bank07.asm:6548) (BNE)
