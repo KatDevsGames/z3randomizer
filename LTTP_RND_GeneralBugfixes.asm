@@ -470,8 +470,14 @@ Sprite_SetSpawnedCoords:
 org $09AD58
 GiveRupeeGift:
 
-org $1CFD69
-Main_ShowTextMessage:
+org $0ABA4F
+OverworldMap_InitGfx:
+
+org $0ABA99
+OverworldMap_DarkWorldTilemap:
+
+org $0ABAB9
+OverworldMap_LoadSprGfx:
 
 org $0DBA71
 GetRandomInt:
@@ -542,6 +548,9 @@ ShopKeeper_RapidTerminateReceiveItem:
 
 org $1CF500
 Sprite_NullifyHookshotDrag:
+
+org $1CFD69
+Main_ShowTextMessage:
 
 org $1DF65D
 Sprite_SpawnDynamically:

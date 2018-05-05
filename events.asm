@@ -143,6 +143,19 @@ OnOWTransition:
 	PLP
 RTL
 ;--------------------------------------------------------------------------------
+!DARK_DUCK_TEMP = "$7F509C"
+OnLoadDuckMap:
+	LDA !DARK_DUCK_TEMP
+	BNE +
+		INC : STA !DARK_DUCK_TEMP
+		JSL OverworldMap_InitGfx : DEC $0200
+		
+		RTL
+	+
+	LDA.b #$00 : STA !DARK_DUCK_TEMP
+	JSL OverworldMap_DarkWorldTilemap
+RTL
+;--------------------------------------------------------------------------------
 PreItemGet:
 	LDA.b #$01 : STA !ITEM_BUSY ; mark item as busy
 RTL

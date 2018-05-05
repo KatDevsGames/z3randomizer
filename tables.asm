@@ -201,7 +201,7 @@ db #$00 ; #$00 = Press Start (default) - #$10 = Release Start
 ;--------------------------------------------------------------------------------
 org $30804A ; PC 0x18004A
 InvertedMode:
-db #$01 ; #$00 = Normal (default) - #$01 = Inverted
+db #$00 ; #$00 = Normal (default) - #$01 = Inverted
 ;--------------------------------------------------------------------------------
 org $30804B ; PC 0x18004B
 QuickSwapFlag:
@@ -1382,6 +1382,10 @@ db $04
 ;org $02E849 ; PC 0x16849 (Bank02.asm:11641)
 ;;dw $0003, $0016, $0018, $002C, $002F, $0030, $003B, $003F ; Light World Flute Spots
 ;dw $0043, $0056, $0058, $006C, $006F, $0070, $007B, $007F ; Dark World Flute Spots
+;org $02E8D5 ; PC 0x168D5 (Bank02.asm:11661) ($07B7)
+;dw $07C8 ; $07B7 - Normal Location 3 Y (Default), $07C7 - Inverted Location 3 Y
+;org $02E8F7; PC 0x168F7 (Bank02.asm:11661) ($07B7)
+;dw $01F8 ; $0200 - Normal Location 3 X (Default), $0200 - Inverted Location 3 X
 ;;--------------------------------------------------------------------------------
 ;;Mirror
 ;org $07A943 ; PC 0x3A943 (Bank07.asm:6548) (BNE)
@@ -1470,6 +1474,7 @@ dw #9999 ; Rupee Limit
 ; $7F5099 - Last Entered Overworld Door ID
 ; $7F509A - (Reserved)
 ; $7F509B - MSU Flag
+; $7F509C - Inverted Mode Duck Map Temporary
 
 ; $7F50A0 - Event Parameter 1
 
