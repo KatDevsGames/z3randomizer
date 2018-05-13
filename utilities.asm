@@ -566,56 +566,29 @@ HexToDec:
 		STA $7F5003 : STA $7F5005 : STA $7F5006 ; clear digit storage
 	PLA
 	-
-	CMP.w #10000 : !BLT +
-	PHA : SEP #$20 : LDA $7F5003 : INC : STA $7F5003 : REP #$20 : PLA
-	!SUB.w #10000 : BRA -
+		CMP.w #10000 : !BLT +
+		PHA : SEP #$20 : LDA $7F5003 : INC : STA $7F5003 : REP #$20 : PLA
+		!SUB.w #10000 : BRA -
 	+ -
-	CMP.w #1000 : !BLT +
-	PHA : SEP #$20 : LDA $7F5004 : INC : STA $7F5004 : REP #$20 : PLA
-	!SUB.w #1000 : BRA -
+		CMP.w #1000 : !BLT +
+		PHA : SEP #$20 : LDA $7F5004 : INC : STA $7F5004 : REP #$20 : PLA
+		!SUB.w #1000 : BRA -
 	+ -
-	CMP.w #100 : !BLT +
-	PHA : SEP #$20 : LDA $7F5005 : INC : STA $7F5005 : REP #$20 : PLA
-	!SUB.w #100 : BRA -
+		CMP.w #100 : !BLT +
+		PHA : SEP #$20 : LDA $7F5005 : INC : STA $7F5005 : REP #$20 : PLA
+		!SUB.w #100 : BRA -
 	+ -
-	CMP.w #10 : !BLT +
-	PHA : SEP #$20 : LDA $7F5006 : INC : STA $7F5006 : REP #$20 : PLA
-	!SUB.w #10 : BRA -
+		CMP.w #10 : !BLT +
+		PHA : SEP #$20 : LDA $7F5006 : INC : STA $7F5006 : REP #$20 : PLA
+		!SUB.w #10 : BRA -
 	+ -
-	CMP.w #1 : !BLT +
-	PHA : SEP #$20 : LDA $7F5007 : INC : STA $7F5007 : REP #$20 : PLA
-	!SUB.w #1 : BRA -
+		CMP.w #1 : !BLT +
+		PHA : SEP #$20 : LDA $7F5007 : INC : STA $7F5007 : REP #$20 : PLA
+		!SUB.w #1 : BRA -
 	+ 
 	PLA
 RTL
 ;--------------------------------------------------------------------------------
 
-;--------------------------------------------------------------------------------
-; NameHash
-; out:
-; $00 - $07 - 64-bit Seed Hash
-;--------------------------------------------------------------------------------
-NameHash:
-	PHP
-	SEP #$30 ; set 8-bit accumulator & index registers
-	LDY #$00; ; for (j = 0; j < 8; ++j) {
-	-
-		CPY #$08 : !BGE +
-			LDA $00FFC0 : PHY : !ADD 1,s : STA 1,s : PLX : LDA.l NameHashTable, X ; h = T[(x[0] + j) % 256];
-			PHY
-				LDY #$01 ; for (i = 1; i < len; ++i) {
-				--
-					CPY #21 : !BGE ++ ; 21 decimal
-						TYX : EOR $00FFC0, X : TAX : LDA.l NameHashTable, X ; h = T[h ^ x[i]];
-					INY
-					BRA --
-				++ ; }
-			PLY : TYX
-			STA $00, X
-		INY
-		BRA -
-	+ ; }
-	PLP
-RTL
-;--------------------------------------------------------------------------------
+
 ;================================================================================

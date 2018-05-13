@@ -6,28 +6,8 @@ PrepHashAlphabet:
 		LDA.b #$06 : STA $14 ; thing we wrote over
 		RTL
 	+
-	
-	LDA $00 : PHA
-	LDA $01 : PHA
-	LDA $02 : PHA
-	LDA $03 : PHA
-	LDA $04 : PHA
-	LDA $05 : PHA
-	LDA $06 : PHA
-	LDA $07 : PHA
-	
-	JSL.l NameHash
 	JSL.l LoadAlphabetTiles
 	JSL.l LoadAlphabetTilemap
-	
-	PLA : STA $07
-	PLA : STA $06
-	PLA : STA $05
-	PLA : STA $04
-	PLA : STA $03
-	PLA : STA $02
-	PLA : STA $01
-	PLA : STA $00
 RTL
 ;--------------------------------------------------------------------------------
 
@@ -92,7 +72,7 @@ LoadAlphabetTiles:
 		LDA $2100 : PHA : LDA.b #$80 : STA $2100 ; save screen state & turn screen off
 		LDX.b #$00 : -
 
-			LDA $00, X
+			LDA.l SeedHash, X
 			REP #$20 ; set 16-bit accumulator
 			AND.w #$001F ; mask to alphabet of 32
 			JSL.l GetAlphabetTileAddr : STA $4302 ; set bus A source address to SRAM
@@ -172,7 +152,7 @@ LoadAlphabetTilemap:
 		
 		LDY.b #00
 		LDX.b #$00 : -
-			PHX : TYX : LDA $00, X : PLX
+			PHX : TYX : LDA.l SeedHash, X : PLX
 			AND.b #$1F ; mask to alphabet of 32
 			PHX : TAX : JSL.l GetAlphabetPalette : PLX
 			ORA.b #$01

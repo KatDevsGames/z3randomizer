@@ -52,11 +52,13 @@ MedallionTrigger_Bombos:
 	PLA
 RTL
 ;--------------------------------------------------------------------------------
+!EPILEPSY_TIMER = "$7F5041"
 MedallionTrigger_Ether:
 	PHA
-	LDA.l MireRequiredMedallion : CMP #$01 : BNE +
+	LDA.b #$00 : STA !EPILEPSY_TIMER
+	LDA.l MireRequiredMedallion : CMP.b #$01 : BNE +
 		JSL.l TryOpenMire
-	+ LDA.l TRockRequiredMedallion : CMP #$01 : BNE +
+	+ LDA.l TRockRequiredMedallion : CMP.b #$01 : BNE +
 		JSL.l TryOpenTRock
 	+
 	PLA
@@ -64,9 +66,9 @@ RTL
 ;--------------------------------------------------------------------------------
 MedallionTrigger_Quake:
 	PHA
-	LDA.l MireRequiredMedallion : CMP #$02 : BNE +
+	LDA.l MireRequiredMedallion : CMP.b #$02 : BNE +
 		JSL.l TryOpenMire
-	+ LDA.l TRockRequiredMedallion : CMP #$02 : BNE +
+	+ LDA.l TRockRequiredMedallion : CMP.b #$02 : BNE +
 		JSL.l TryOpenTRock
 	+
 	PLA

@@ -10,11 +10,27 @@ FlipGreenPendant:
     LDA $0C : STA $0803, X
 RTL
 ;================================================================================
+!EPILEPSY_TIMER = "$7F5041"
 SetEtherFlicker:
 	LDA.l Seizure_Safety : BNE +
 		LDA $031D : CMP.b #$0B : RTL
-	+ : CMP.b #$01 : BNE +
-		REP #$02 : RTL
 	+
+		LDA !EPILEPSY_TIMER : INC : STA !EPILEPSY_TIMER
+		
+		LDA.l Seizure_Safety : CMP !EPILEPSY_TIMER : BNE +++
+			LDA.b #$00 : STA !EPILEPSY_TIMER : BRA ++
+		+++
+			LSR : CMP !EPILEPSY_TIMER : !BLT ++
+				SEP #$02 : RTL
+		++
+		REP #$02
+	+
+RTL
+;================================================================================
+SetAttractMaidenFlicker:
+	LDA.l Seizure_Safety : BNE +
+		JSL.l Filter_MajorWhitenMain : LDA $5F : RTL
+	+
+		LDA #$00
 RTL
 ;================================================================================

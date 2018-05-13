@@ -26,7 +26,7 @@ org $3FFFFF ; <- 1FFFFF
 db #$00 ; expand file to 2mb
 
 org $1FFFF8 ; <- FFFF8 timestamp rom
-db #$20, #$18, #$05, #$04 ; year/month/day
+db #$20, #$18, #$05, #$12 ; year/month/day
 
 ;================================================================================
 
@@ -551,6 +551,9 @@ Sprite_NullifyHookshotDrag:
 
 org $1CFD69
 Main_ShowTextMessage:
+
+org $1DE9B6
+Filter_MajorWhitenMain:
 
 org $1DF65D
 Sprite_SpawnDynamically:
