@@ -123,12 +123,25 @@ dw #$003C, #$0000
 .halfCycle
 dw #$FFFF, #$7FFF
 ;--------------------------------------------------------------------------------
+!TEMPORARY_OHKO = "$7F50CC"
 DrawChallengeTimer:
+	LDA !TEMPORARY_OHKO : BEQ +
+    	LDA.w #$2807 : STA $7EC790
+		LDA.w #$280A : STA $7EC792
+		LDA.w #$280B : STA $7EC794
+		LDA.w #$280C : STA $7EC796
+		RTL
+	+
+    	LDA.w #$247F : STA $7EC790
+		LDA.w #$247F : STA $7EC792
+		LDA.w #$247F : STA $7EC794
+		LDA.w #$247F : STA $7EC796
+	++
+	
 	LDA.l TimerStyle : BNE + : RTL : + ; Hud Timer
     	LDA.w #$2807 : STA $7EC792
-
     	LDA.l !Status : AND.w #$0002 : BEQ + ; DNF / OKHO
-
+    	
 			LDA.l TimeoutBehavior : AND.w #$00FF : BNE ++ ; DNF
 				LDA.w #$2808 : STA $7EC794
 				LDA.w #$2809 : STA $7EC796
