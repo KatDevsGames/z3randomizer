@@ -140,6 +140,7 @@ DrawChallengeTimer:
 	
 	LDA.l TimerStyle : BNE + : RTL : + ; Hud Timer
     	LDA.w #$2807 : STA $7EC792
+    	
     	LDA.l !Status : AND.w #$0002 : BEQ + ; DNF / OKHO
     	
 			LDA.l TimeoutBehavior : AND.w #$00FF : BNE ++ ; DNF
