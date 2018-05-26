@@ -163,6 +163,7 @@ incsrc cuccostorm.asm
 incsrc compression.asm
 incsrc retro.asm
 incsrc dpadinvert.asm
+incsrc boots.asm
 warnpc $A58000
 
 ;org $228000 ; contrib area
