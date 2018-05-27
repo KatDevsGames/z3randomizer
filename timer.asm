@@ -125,7 +125,7 @@ dw #$FFFF, #$7FFF
 ;--------------------------------------------------------------------------------
 !TEMPORARY_OHKO = "$7F50CC"
 DrawChallengeTimer:
-	LDA !TEMPORARY_OHKO : AND.w #00FF : BEQ +
+	LDA !TEMPORARY_OHKO : AND.w #$00FF : BEQ +
     	LDA.w #$2807 : STA $7EC790
 		LDA.w #$280A : STA $7EC792
 		LDA.w #$280B : STA $7EC794
