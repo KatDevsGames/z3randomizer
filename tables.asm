@@ -882,7 +882,7 @@ db $E4 ; Hera Basement Key (Set to programmable HP $EB) (set to $E4 for original
 ;================================================================================
 org $308210 ; PC 0x180210
 RandomizerSeedType:
-db #$00 ; #$00 = Casual (default) - #$01 = Glitched - #$02 = Speedrunner - #$FF = Not Randomizer
+db #$00 ; #$00 = Casual (default) - #$01 = Glitched - #$02 = Speedrunner - #$A0 = Super Metroid Combo - #$FF = Not Randomizer
 ;--------------------------------------------------------------------------------
 org $308211 ; PC 0x180211
 GameType:
