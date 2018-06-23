@@ -3,7 +3,6 @@
 ;--------------------------------------------------------------------------------
 DarkWorldSaveFix:
 	LDA.b #$70 : PHA : PLB ; thing we wrote over - data bank change
-	JSL.l DarkWorldFlagSet
 	JSL.l MasterSwordFollowerClear
 	JSL.l StatSaveCounter
 RTL
@@ -15,24 +14,10 @@ DarkWorldLoadFix:
 	LDA.w #$0007 : STA $7EC00D : STA $7EC013 ; thing we wrote over - sets up some graphics timers
 RTL
 ;--------------------------------------------------------------------------------
-DarkWorldFlagSet:
-	PHA
-	
-	LDA Bugfix_PreAgaDWDungeonDeathToFakeDW : BEQ +
-		LDA $10 : CMP #$12 : BEQ .done ; don't do anything in death mode
-	+
-	LDA $1B : BEQ + ; skip this unless indoors - THIS PART FIXES THE OTHER FUCKUP WITH THE PYRAMID SPAWN IN GLITCHED
-		LDA $A0 : BEQ .done ; skip if we died in ganon's room
-	+
-	JSL.l DoWorldFix
-	.done
-	PLA
-RTL
-;--------------------------------------------------------------------------------
 DoWorldFix:
-	LDA.l Bugfix_MirrorlessSQToLW : BEQ +
+	LDA.l Bugfix_MirrorlessSQToLW : BEQ .skip_mirror_check
 		LDA $7EF353 : BEQ .noMirror ; check if we have the mirror
-	+
+	.skip_mirror_check ; alt entrance point
 	LDA $7EF3C5 : CMP.b #$03 : !BLT .aga1Alive ; check if agahnim 1 is alive
 	BRA .done
 	.noMirror
@@ -43,13 +28,18 @@ DoWorldFix:
 RTL
 ;--------------------------------------------------------------------------------
 SetDeathWorldChecked:
-	LDA $1B : BEQ + ; skip this for indoors
-		LDA $040C : CMP #$FF : BNE .done ; unless it's a cave
-
-		LDA $A0 : BNE + : LDA GanonPyramidRespawn : BEQ + ; check if we died in ganon's room and pyramid respawn is enabled
-			BRA .pyramid
-	+
+	LDA $1B : BEQ .outdoors
+		LDA $040C : CMP #$FF : BNE .dungeon
+		LDA $A0 : BNE ++
+			LDA GanonPyramidRespawn : BNE .pyramid ; if flag is set, force respawn at pyramid on death to ganon
+	    ++
+	.outdoors
 JMP DoWorldFix
+
+	.dungeon
+	LDA Bugfix_PreAgaDWDungeonDeathToFakeDW : BNE .done ; if the bugfix is enabled, we do nothing on death in dungeon
+JMP DoWorldFix_skip_mirror_check
+
 	.pyramid
 	LDA #$40 : STA $7EF3CA ; set flag to dark world
 	LDA $7EF3CC : CMP #$08 : BNE + : LDA.b #$07 : STA $7EF3CC : + ; convert dwarf to frog
