@@ -7,13 +7,6 @@ DarkWorldSaveFix:
 	JSL.l StatSaveCounter
 RTL
 ;--------------------------------------------------------------------------------
-DarkWorldLoadFix:
-	SEP #$20 ; set 8 bit accumulator
-	JSL.l OnFileLoad
-	REP #$20 ; restore 16 bit accumulator
-	LDA.w #$0007 : STA $7EC00D : STA $7EC013 ; thing we wrote over - sets up some graphics timers
-RTL
-;--------------------------------------------------------------------------------
 DoWorldFix:
 	LDA.l Bugfix_MirrorlessSQToLW : BEQ .skip_mirror_check
 		LDA $7EF353 : BEQ .noMirror ; check if we have the mirror

@@ -1770,7 +1770,7 @@ org $00894A ; <- 94A
 PHB : JSL.l DarkWorldSaveFix
 ;--------------------------------------------------------------------------------
 org $0CCF05 ; <- 64F05
-JSL.l DarkWorldLoadFix
+JSL.l OnFileLoad
 NOP #7
 ;--------------------------------------------------------------------------------
 org $09F520 ; <- 4F520 - module_death.asm : 401 (LDA $7EF3C5 : CMP.b #$03 : BCS BRANCH_THETA)

@@ -64,6 +64,7 @@ RTL
 ;--------------------------------------------------------------------------------
 !RNG_ITEM_LOCK_IN = "$7F5090"
 OnFileLoad:
+	SEP #$20 ; set 8 bit accumulator
 	LDA !FRESH_FILE_MARKER : BNE +
 		JSL.l OnNewFile
 		LDA.b #$FF : STA !FRESH_FILE_MARKER
@@ -76,10 +77,13 @@ OnFileLoad:
 	LDA.l GenericKeys : BEQ +
 		LDA $7EF38B : STA $7EF36F ; copy generic keys to key counter
 	+
-	
+
 	JSL.l SetSilverBowMode
 	JSL.l RefreshRainAmmo
 	JSL.l SetEscapeAssist
+
+	REP #$20 ; restore 16 bit accumulator
+	LDA.w #$0007 : STA $7EC00D : STA $7EC013 ; thing we wrote over - sets up some graphics timers
 RTL
 ;--------------------------------------------------------------------------------
 !RNG_ITEM_LOCK_IN = "$7F5090"
