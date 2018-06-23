@@ -2,7 +2,7 @@
 ; $7F5100 - $7F51FF - Block Cypher Buffer
 !v = "$7F5100"
 !n = "$04"
-!MXResult = "$06"
+!MXResult = "$08" ; an alternate name for the lower 32 bits of dpScratch
 !dpScratch = "$08"
 !keyBase = "$7F50D0"
 
@@ -12,167 +12,236 @@
 !sum = "$7F50E8"
 
 !p = "$7F50EC"
-!rounds = "$05"
+!rounds = "$06"
 !e = "$7F50F0"
 
 !upperScratch = "$7F50F2"
 
 CryptoDelta:
-dl #$9e3779b9
+dd #$9e3779b9
 
-macro LSR32(value,k)
-	LDX.w <k>
-	
-	?loop:
-	LDA <value>+2
-	LSR : STA <value>+2 ; do top part
-	PHP ; push carry
-	LDA <value>
-	LSR ; do bottom part
-	PLP ; pull carry
-	BCC ?nc
-		ORA #$80 ; pull in carry
-	?nc:
-	STA <value>
-	
-	DEX
-	CPX.w #$0000 : BNE ?loop
+; For use in an unrolled loop
+macro LSR32Single(value)
+	CLC;
+	LDA.b <value>+2 : ROR : STA.b <value>+2 ; do top part
+	LDA.b <value> : ROR : STA.b <value> ; do bottom part
+	; ROR handles the carry from the upper byte for us
 endmacro
 
-macro ASL32(value,k)
-	LDX.w <k>
-	
-	?loop:
-	LDA <value>
-	LSR : STA <value> ; do bottom part
-	PHP ; push carry
-	LDA <value>+2
-	LSR
-	PLP ; pull carry
-	ADC.w #$0000
-	STA <value>+2 ; do top part
-	
-	DEX
-	CPX.w #$0000 : BNE ?loop
+macro ASL32Single(value)
+	CLC
+	LDA.b <value> : ROL : STA.b <value> ; do bottom part
+	LDA.b <value>+2 : ROL : STA.b <value>+2 ; do top part
+	; ROL handles the carry from the lower byte for us
 endmacro
+
+;macro LSR32(value,k)
+;	LDX.b <k>
+;	?loop:
+;	%LSR32Single(<value>,<k>)
+;	DEX : CPX.b #$00 : BNE ?loop
+;endmacro
+
+;macro ASL32(value,k)
+;	LDX.b <k>
+;	?loop:
+;	%LSR32Single(<value>,<k>)
+;	DEX : CPX.b #$00 : BNE ?loop
+;endmacro
 
 CryptoMX:
 	PHX
-	LDA !z : STA !dpScratch
-	LDA !z+2 : STA !dpScratch+2
-	%LSR32(!dpScratch,#$05)
-	
-	LDA !y : STA !dpScratch+4
-	LDA !y+2 : STA !dpScratch+6
-	%ASL32(!dpScratch+4,#$02)
-	
-	LDA !dpScratch : EOR !dpScratch+4 : STA !upperScratch
-	LDA !dpScratch+2 : EOR !dpScratch+6 : STA !upperScratch+2
-	
+
+	; upperScratch = (z>>5 ^ y <<2)
+	LDA.w !z : STA.b !dpScratch
+	LDA.w !z+2 : STA.b !dpScratch+2
+	%LSR32Single(!dpScratch)
+	%LSR32Single(!dpScratch)
+	%LSR32Single(!dpScratch)
+	%LSR32Single(!dpScratch)
+	%LSR32Single(!dpScratch)
+	;%LSR32(!dpScratch,#$05)
+
+	LDA.w !y : STA.b !dpScratch+4
+	LDA.w !y+2 : STA.b !dpScratch+6
+	%ASL32Single(!dpScratch+4)
+	%ASL32Single(!dpScratch+4)
+	;%ASL32(!dpScratch+4,#$02)
+
+	LDA.b !dpScratch : EOR.b !dpScratch+4 : STA.w !upperScratch
+	LDA.b !dpScratch+2 : EOR.b !dpScratch+6 : STA.w !upperScratch+2
+
 	;================================
-	
-	LDA !z : STA !dpScratch
-	LDA !z+2 : STA !dpScratch+2
-	%ASL32(!dpScratch,#$04)
-	
-	LDA !y : STA !dpScratch+4
-	LDA !y+2 : STA !dpScratch+6
-	%LSR32(!dpScratch,#$03)
-	
-	LDA !dpScratch : EOR !dpScratch+4 : STA !upperScratch+4
-	LDA !dpScratch+2 : EOR !dpScratch+6 : STA !upperScratch+6
-	
+	; upperscratch2 = (y>>3^z<<4)
+
+	LDA.w !z : STA.b !dpScratch
+	LDA.w !z+2 : STA.b !dpScratch+2
+	%ASL32Single(!dpScratch)
+	%ASL32Single(!dpScratch)
+	%ASL32Single(!dpScratch)
+	%ASL32Single(!dpScratch)
+	;%ASL32(!dpScratch,#$04)
+
+	LDA.w !y : STA.b !dpScratch+4
+	LDA.w !y+2 : STA.b !dpScratch+6
+	%LSR32Single(!dpScratch+4)
+	%LSR32Single(!dpScratch+4)
+	%LSR32Single(!dpScratch+4)
+	;%LSR32(!dpScratch+4,#$03)
+
+	LDA.b !dpScratch : EOR.b !dpScratch+4 : STA.w !upperScratch+4
+	LDA.b !dpScratch+2 : EOR.b !dpScratch+6 : STA.w !upperScratch+6
+
 	;================================
-	
-	LDA !upperScratch : !ADD !upperScratch+4 : STA !upperScratch
-	LDA !upperScratch+2 : ADC !upperScratch+6 : STA !upperScratch+2
-	
+	; upperscratch = upperscratch + upperscratch2 ( == (z>>5^y<<2) + (y>>3^z<<4) )
+
+	LDA.w !upperScratch : !ADD.w !upperScratch+4 : STA.w !upperScratch
+	LDA.w !upperScratch+2 : ADC.w !upperScratch+6 : STA.w !upperScratch+2
+
 	;================================
-	
-	LDA !sum : EOR !y : STA !dpScratch
-	LDA !sum+2 : EOR !y+2 : STA !dpScratch+2
-	
+	; dpscratch = sum^y
+
+	LDA.w !sum : EOR.w !y : STA.b !dpScratch
+	LDA.w !sum+2 : EOR.w !y+2 : STA.b !dpScratch+2
+
 	;================================
-	
-	LDA !p : AND.w #$0003 : EOR !e : ASL #2 : TAX ; put (p&3)^e into X
-	LDA !keyBase, X : EOR !z : STA !upperScratch+4
-	LDA !keyBase+2, X : EOR !z+2 : STA !upperScratch+6
-	
+	; dpscratch2 =  (k[p&3^e]^z)
+
+	LDA.w !p : AND.w #$0003 : EOR.w !e : ASL #2 : TAX ; put (p&3)^e into X
+	LDA.w !keyBase, X : EOR.w !z : STA.b !dpScratch+4
+	LDA.w !keyBase+2, X : EOR.w !z+2 : STA.b !dpScratch+6
+
 	;================================
-	
-	LDA !upperScratch : EOR !upperScratch+4 : STA !MXResult
-	LDA !upperScratch+2 : EOR !upperScratch+6 : STA !MXResult+2
+	; upperscratch2 =  dpscratch + dpscratch2 (== (sum^y) + (k[p&3^e]^z))
+	LDA.b !dpScratch : !ADD.b !dpScratch+4 : STA.w !upperScratch+4
+	LDA.b !dpScratch+2 : ADC.b !dpScratch+6 : STA.w !upperScratch+6
+
+	;================================
+	; MXResult = uppserscratch ^ upperscratch2
+
+	LDA.w !upperScratch : EOR.w !upperScratch+4 : STA.b !MXResult
+	LDA.w !upperScratch+2 : EOR.w !upperScratch+6 : STA.b !MXResult+2
 	PLX
 RTS
 
-!DIVIDEND_LOW = $4204
-!DIVIDEND_HIGH = $4205
-!DIVISOR = $4206
-!QUOTIENT_LOW = $4214
-!QUOTIENT_HIGH = $4215
+;!DIVIDEND_LOW = $4204
+;!DIVIDEND_HIGH = $4205
+;!DIVISOR = $4206
+;!QUOTIENT_LOW = $4214
+;!QUOTIENT_HIGH = $4215
 
 XXTEA_Decode:
-	PHP
-		SEP #$20 ; set 8-bit accumulator
-		
+	PHP : PHB
+		SEP #$30 ; set 8-bit accumulator and index
+
+		LDA.b #$7F : PHA : PLB
+
+		STZ.b !n+1 ; set upper byte of n to be zero, so it can safely be accessed in 16-bit mode
+
+		; search for lookup table index to avoid division and multiplication
+		LDX.b #0
+		-
+			LDA.l .n_lookup, X
+			CMP.b !n : !BLT +
+			INX
+			BRA -
+		+
 		; rounds = 6 + 52/n;
-		LDA.b #52 : STA !DIVIDEND_LOW ; decimal 52
-		STZ !DIVIDEND_HIGH
-		LDA !n : STA !DIVISOR
-		; NOP #8 ; do something useful here?
-		LDA.b #$06
-		NOP #6
-		!ADD !QUOTIENT_LOW
-		STA !rounds
-		
-		; sum = rounds*DELTA;
-		LDA CryptoDelta : STA !dpScratch
-		LDA CryptoDelta+1 : STA !dpScratch+1
-		LDA CryptoDelta+2 : STA !dpScratch+2
-		LDA CryptoDelta+3 : STA !dpScratch+3
-		JSR .multiply
-		LDA !dpScratch
-		STA !sum
-		
-		; y = v[0];
+		LDA.l .round_counts, X : STA.b !rounds : STZ.b !rounds+1
+
 		REP #$20 ; set 16-bit accumulator
-		LDA !v : STA !y
-		LDA !v+2 : STA !y+2
+
+		; sum = rounds*DELTA;
+		TXA : ASL #2 : TAX
+		LDA.l .initial_sums, X : STA.w !sum
+		LDA.l .initial_sums+2, X : STA.w !sum+2
+
+		; y = v[0];
+		LDA.w !v : STA.w !y
+		LDA.w !v+2 : STA.w !y+2
 		---
-			LDA !sum : LSR #2 : AND #$03 : STA !e ; e = (sum >> 2) & 3;
-			
-			LDA !n : !SUB #$01 : STA !p ; for (p=n-1; p>0; p--) {
-			--
+			LDA.w !sum : LSR #2 : AND.w #$0003 : STA.w !e ; e = (sum >> 2) & 3;
+
+			LDA.b !n : DEC : STA.w !p
+			-- BEQ + ; for (p=n-1; p>0; p--) {
 				; z = v[p-1];
-				DEC : ASL #2 : TAX
-				LDA !v, X : STA !z
-				LDA !v+2, X : STA !z+2
-				
+				ASL #2 : TAX
+				LDA.w !v-4, X : STA.w !z
+				LDA.w !v-4+2, X : STA.w !z+2
+
 				; y = v[p] -= MX;
 				JSR CryptoMX
-				LDA !p : ASL #2 : TAX
-				LDA !v, X : !SUB !MXResult : STA !v, X : STA !y
-				LDA !v+2, X : SBC !MXResult+2 : STA !v+2, X : STA !y+2
-				
-			LDA !p : DEC : STA !p : BNE -- ; }
-			
+				LDA.w !p : ASL #2 : TAX
+				LDA.w !v, X : !SUB.b !MXResult : STA.w !v, X : STA.w !y
+				LDA.w !v+2, X : SBC.b !MXResult+2 : STA.w !v+2, X : STA.w !y+2
+
+			LDA.w !p : DEC : STA.w !p : BRA -- ; }
+			+
+
 			; z = v[n-1];
-			LDA !n : DEC : ASL #2 : TAX
-			LDA !v, X : STA !z
-			LDA !v+2, X : STA !z+2
-			
+			LDA.b !n : DEC : ASL #2 : TAX
+			LDA.w !v, X : STA.w !z
+			LDA.w !v+2, X : STA.w !z+2
+
 			; y = v[0] -= MX;
 			JSR CryptoMX
-			LDA !v : !SUB !MXResult : STA !v : STA !y
-			LDA !v+2 : SBC !MXResult+2 : STA !v+2 : STA !y+2
-			
+			LDA.w !v : !SUB.b !MXResult : STA.w !v : STA.w !y
+			LDA.w !v+2 : SBC.b !MXResult+2 : STA.w !v+2 : STA.w !y+2
+
 			; sum -= DELTA;
-			LDA !sum : !SUB CryptoDelta : STA !sum
-			LDA !sum+2 : !SUB CryptoDelta+2 : STA !sum+2
-			
-		LDA !rounds : BEQ + : BRL --- : + ; } while (--rounds);
-	PLP
+			LDA.w !sum : !SUB.l CryptoDelta : STA.w !sum
+			LDA.w !sum+2 : SBC.l CryptoDelta+2 : STA.w !sum+2
+
+		DEC !rounds : BEQ + : BRL --- : + ; } while (--rounds);
+	PLB : PLP
 RTL
+
+; Note: uncomment any values from these tables that correspond to values of n actually in use
+; (unused values are commented out to improve performance/ avoid wasting space)
+.n_lookup
+;db 52 ; n > 52
+;db 26 ; n is 27 to 52
+;db 17 ; n is 18 to 26
+;db 13 ; n is 14 to 17
+;db 10 ; n is 11 to 13
+;db 8  ; n is 9 to 10
+;db 7  ; n is 8
+;db 6  ; n is 7
+;db 5  ; n is 6
+;db 4  ; n is 5
+;db 3  ; n is 4
+;db 2  ; n is 3
+db 1  ; n is 2
+
+.round_counts
+;db 6  ; n > 52
+;db 7  ; n is 27 to 52
+;db 8  ; n is 18 to 26
+;db 9  ; n is 14 to 17
+;db 10 ; n is 11 to 13
+;db 11 ; n is 9 to 10
+;db 12 ; n is 8
+;db 13 ; n is 7
+;db 14 ; n is 6
+;db 16 ; n is 5
+;db 19 ; n is 4
+;db 23 ; n is 3
+db 32 ; n is 2
+
+.initial_sums
+;dd 6*$9e3779b9  ; n > 52
+;dd 7*$9e3779b9  ; n is 27 to 52
+;dd 8*$9e3779b9  ; n is 18 to 26
+;dd 9*$9e3779b9  ; n is 14 to 17
+;dd 10*$9e3779b9 ; n is 11 to 13
+;dd 11*$9e3779b9 ; n is 9 to 10
+;dd 12*$9e3779b9 ; n is 8
+;dd 13*$9e3779b9 ; n is 7
+;dd 14*$9e3779b9 ; n is 6
+;dd 16*$9e3779b9 ; n is 5
+;dd 19*$9e3779b9 ; n is 4
+;dd 23*$9e3779b9 ; n is 3
+dd 32*$9e3779b9 ; n is 2
 
 ;void btea(uint32_t *v, int n, uint32_t const key[4]) {
 ;  uint32_t y, z, sum;
@@ -195,47 +264,6 @@ RTL
 ;    } while (--rounds);
 ;  }
 
-.multiply
-           LDA     #$00
-           STA     !upperScratch+4   ;Clear upper half of
-           STA     !upperScratch+5   ;!upperScratchuct
-           STA     !upperScratch+6
-           STA     !upperScratch+7
-           LDX     #$20     ;Set binary count to 32
-.shift_r
-           LSR     !dpScratch+3   ;Shift multiplyer right
-           ROR     !dpScratch+2
-           ROR     !dpScratch+1
-           ROR     !dpScratch
-           BCC     .rotate_r ;Go rotate right if c = 0
-           LDA     !upperScratch+4    ;Get upper half of !upperScratchuct
-           !ADD    !rounds   ; and add multiplicand to it
-           STA     !upperScratch+4
-           LDA     !upperScratch+5
-           ADC.w   #$00
-           STA     !upperScratch+5
-           LDA     !upperScratch+6
-           ADC.w   #$00
-           STA     !upperScratch+6
-           LDA     !upperScratch+7
-           ADC.w   #$00
-.rotate_r
-           ROR     a        ;Rotate partial !upperScratchuct
-           STA     !upperScratch+7   ; right
-           ROR     !upperScratch+6
-           ROR     !upperScratch+5
-           ROR     !upperScratch+4
-           ROR     !upperScratch+3
-           ROR     !upperScratch+2
-           ROR     !upperScratch+1
-           ROR     !upperScratch
-           DEX              ;Decrement bit count and
-           BNE     .shift_r ; loop until 32 bits are done
-           ;LDA     MULXP1   ;Add dps and put sum in MULXP2
-           ;!ADD    MULXP2
-           ;STA     MULXP2
-RTS
-
 ;BTEA will encode or decode n words as a single block where n > 1
 ;
 ;v is the n word data vector
@@ -245,7 +273,6 @@ RTS
 ;assumes 32 bit 'long' and same endian coding and decoding
 ;#include <stdint.h>
 ;#define DELTA 0x9e3779b9
-;#define MX (((z>>5^y<<2) + (y>>3^z<<4)) ^ ((sum^y) + (key[(p&3)^e] ^ z)))
 ;#define MX ((((z>>5)^(y<<2)) + ((y>>3)^(z<<4))) ^ ((sum^y) + (key[(p&3)^e] ^ z)))
 ;
 ;void btea(uint32_t *v, int n, uint32_t const key[4]) {
@@ -259,7 +286,7 @@ RTS
 ;      sum += DELTA;
 ;      e = (sum >> 2) & 3;
 ;      for (p=0; p<n-1; p++) {
-;        y = v[p+1]; 
+;        y = v[p+1];
 ;        z = v[p] += MX;
 ;      }
 ;      y = v[0];
