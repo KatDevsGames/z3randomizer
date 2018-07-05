@@ -27,6 +27,11 @@ OnPlayerDead:
 RTL
 ;--------------------------------------------------------------------------------
 OnDungeonExit:
+	PHA : PHP
+		SEP #$20 ; set 8-bit accumulator
+		JSL.l PodEGFix
+	PLP : PLA
+
 	STA $040C : STZ $04AC ; thing we wrote over
 	
 	PHA : PHP
@@ -34,6 +39,12 @@ OnDungeonExit:
 		JSL.l FloodGateResetInner
 		JSL.l SetSilverBowMode
 	PLP : PLA
+RTL
+;--------------------------------------------------------------------------------
+OnQuit:
+	JSL.l PodEGFix
+
+	LDA.b #$10 : STA $1C ; thing we wrote over
 RTL
 ;--------------------------------------------------------------------------------
 OnUncleItemGet:

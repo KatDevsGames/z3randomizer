@@ -372,7 +372,7 @@ db #$47 ; #$47 - 20 Rupees (default)
 ;--------------------------------------------------------------------------------
 ; 0x180098 - 0x18009F (unused)
 ;--------------------------------------------------------------------------------
-org $3080A0 ; PC 0x1800A0 - 0x1800A3
+org $3080A0 ; PC 0x1800A0 - 0x1800A4
 Bugfix_MirrorlessSQToLW:
 db #$01 ; #$00 = Original Behavior - #$01 = Randomizer Behavior (Default)
 Bugfix_SwampWaterLevel:
@@ -381,8 +381,10 @@ Bugfix_PreAgaDWDungeonDeathToFakeDW:
 db #$01 ; #$00 = Original Behavior - #$01 = Randomizer Behavior (Default)
 Bugfix_SetWorldOnAgahnimDeath:
 db #$01 ; #$00 = Original Behavior - #$01 = Randomizer Behavior (Default)
+Bugfix_PodEG
+db #$01 ; #$00 = Original Behavior - #$01 = Randomizer Behavior (Default)
 ;--------------------------------------------------------------------------------
-; 0x1800A4- 0x1800FF (unused)
+; 0x1800A5- 0x1800FF (unused)
 ;--------------------------------------------------------------------------------
 org $308100 ; PC 0x180100 (0x40 bytes)
 ShovelSpawnTable:

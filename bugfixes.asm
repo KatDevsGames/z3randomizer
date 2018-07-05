@@ -115,3 +115,13 @@ FixFrogSmith:
 	.done
 RTS
 ;--------------------------------------------------------------------------------
+
+;--------------------------------------------------------------------------------
+;Fix for PoD causing accidental Exploration Glitch
+PodEGFix:
+    LDA Bugfix_PodEG : BNE .done
+    LDA $040C : CMP.b #$0C : BNE .done ;check if we are in PoD
+        STZ $047A ;disarm exploration glitch
+    .done
+RTL
+;--------------------------------------------------------------------------------
