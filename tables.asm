@@ -381,7 +381,7 @@ Bugfix_PreAgaDWDungeonDeathToFakeDW:
 db #$01 ; #$00 = Original Behavior - #$01 = Randomizer Behavior (Default)
 Bugfix_SetWorldOnAgahnimDeath:
 db #$01 ; #$00 = Original Behavior - #$01 = Randomizer Behavior (Default)
-Bugfix_PodEG
+Bugfix_PodEG:
 db #$01 ; #$00 = Original Behavior - #$01 = Randomizer Behavior (Default)
 ;--------------------------------------------------------------------------------
 ; 0x1800A5- 0x1800FF (unused)
