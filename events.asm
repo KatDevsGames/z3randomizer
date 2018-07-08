@@ -93,6 +93,10 @@ OnFileLoad:
 	JSL.l RefreshRainAmmo
 	JSL.l SetEscapeAssist
 
+	LDA.l IsEncrypted : CMP.b #01 : BNE +
+		JSL LoadStaticDecryptionKey
+	+
+
 	REP #$20 ; restore 16 bit accumulator
 	LDA.w #$0007 : STA $7EC00D : STA $7EC013 ; thing we wrote over - sets up some graphics timers
 RTL

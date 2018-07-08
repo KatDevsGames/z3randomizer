@@ -155,19 +155,14 @@ RTL
 ItemSet_Mushroom:
 	PHA
 		LDA !NPC_FLAGS_2 : ORA.b #$10 : STA !NPC_FLAGS_2
-		LDA.l MushroomItem : TAY
+		LDY $0DA0, X ; Retrieve stored item type
 	PLA
 	;LDY.b #$29
 	STZ $02E9 ; thing we wrote over - the mushroom is an npc for item purposes apparently
 RTL
 
 ItemSet_Powder:
-	PHA
-		LDA !NPC_FLAGS_2 : ORA.b #$20 : STA !NPC_FLAGS_2
-		LDA.l WitchItem : TAY
-	PLA
-	;LDY.b #$0D
-	STZ $02E9 ; thing we wrote over
+	PHA : LDA !NPC_FLAGS_2 : ORA.b #$20 : STA !NPC_FLAGS_2 : PLA
 RTL
 ;================================================================================
 
@@ -181,10 +176,12 @@ Set300RupeeNPCItem:
 	REP #$20 ; set 16-bit accumulator
 	LDA $A0 ; these are all decimal because i got them that way
 	CMP.w #291 : BNE +
-		LDA RupeeNPC_MoldormCave : TAY ; load moldorm cave value into Y
+		%GetPossiblyEncryptedItem(RupeeNPC_MoldormCave, SpriteItemValues)
+		TAY ; load moldorm cave value into Y
 		BRA .done
 	+ CMP.w #286 : BNE +
-		LDA RupeeNPC_NortheastDarkSwampCave : TAY ; load northeast dark swamp cave value into Y
+		%GetPossiblyEncryptedItem(RupeeNPC_NortheastDarkSwampCave, SpriteItemValues)
+		TAY ; load northeast dark swamp cave value into Y
 		BRA .done
 	+
 	LDY.b #$46 ; default to a normal 300 rupees

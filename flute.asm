@@ -4,8 +4,8 @@
 SpawnHauntedGroveItem:
 	LDA $8A : CMP.b #$2A : BEQ + : RTL : + ; Skip if not the haunted grove
 	LDA $1B : BEQ + : RTL : + ; Skip if indoors
-	
-	LDA.l HauntedGroveItem
+
+	%GetPossiblyEncryptedItem(HauntedGroveItem, HeartPieceOutdoorValues)
 	JSL.l PrepDynamicTile
 	
 	LDA.b #$EB

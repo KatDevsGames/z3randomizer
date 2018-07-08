@@ -931,7 +931,8 @@ RTL
 ;--------------------------------------------------------------------------------
 LoadPowder:
 	JSL.l Sprite_SpawnDynamically ; thing we wrote over
-	LDA WitchItem
+	%GetPossiblyEncryptedItem(WitchItem, SpriteItemValues)
+	STA $0DA0, Y ; Store item type
 	JSL.l PrepDynamicTile
 RTL
 ;--------------------------------------------------------------------------------
@@ -957,12 +958,12 @@ RTL
 DrawPowder:
 	LDA $02DA : BNE .defer ; defer if link is buying a potion
 	LDA.l !REDRAW : BEQ +
-		LDA WitchItem
+		LDA $0DA0, X ; Retrieve stored item type
 		JSL.l PrepDynamicTile
 		LDA #$00 : STA.l !REDRAW ; reset redraw flag
 		BRA .defer
 	+
-	LDA WitchItem
+	LDA $0DA0, X ; Retrieve stored item type
 	JSL.l DrawDynamicTile
 	.defer
 RTL
@@ -983,7 +984,8 @@ LoadMushroom:
 	LDA $5D : CMP #$14 : BEQ .skip ; skip if we're mid-mirror
 
 	LDA #$00 : STA !REDRAW
-	LDA MushroomItem
+	%GetPossiblyEncryptedItem(MushroomItem, SpriteItemValues)
+	STA $0DA0, X ; Store item type
 	JSL.l PrepDynamicTile
 
 	.skip
@@ -1003,7 +1005,7 @@ DrawMushroom:
 		BRA .done ; don't draw on the init frame
 
 		.skipInit
-		LDA MushroomItem
+		LDA $0DA0, X ; Retrieve stored item type
 		JSL.l DrawDynamicTile
 
 		.done
@@ -1015,7 +1017,7 @@ RTL
 ; CollectPowder:
 ;--------------------------------------------------------------------------------
 CollectPowder:
-	LDA.l WitchItem : TAY ; load witch item
+	LDY $0DA0, X ; Retrieve stored item type
     STZ $02E9 ; item from NPC
     JSL.l Link_ReceiveItem
 	;JSL.l FullInventoryExternal

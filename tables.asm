@@ -1,7 +1,7 @@
 ;================================================================================
 ; Item Tables
 ;--------------------------------------------------------------------------------
-org $308000 ; bank #$30 ; PC 0x180000 - 0x180006
+org $308000 ; bank #$30 ; PC 0x180000 - 0x180006 [encrypted]
 HeartPieceIndoorValues:
 HeartPiece_Forest_Thieves:
 	db #$17 ; #$17 = Heart Piece
@@ -18,9 +18,10 @@ HeartPiece_Mire_Warp:
 HeartPiece_Smith_Pegs:
 	db #$17
 ;--------------------------------------------------------------------------------
-; 0x180006 - 0x18000F (unused)
+; 0x180006 - 0x18000F (unused) [encrypted]
 ;--------------------------------------------------------------------------------
-org $308010 ; PC 0x180010 - 0x180017
+org $308010 ; PC 0x180010 - 0x180017 [encrypted]
+SpriteItemValues:
 RupeeNPC_MoldormCave:
 	db #$46 ; #$46 = 300 Rupees
 RupeeNPC_NortheastDarkSwampCave:
@@ -38,7 +39,7 @@ EtherItem:
 BombosItem:
 	db #$0F ; #$0F = Bombos Medallion
 ;--------------------------------------------------------------------------------
-; 0x180017 - 0x18001F (unused)
+; 0x180017 - 0x18001F (unused) [encrypted]
 ;--------------------------------------------------------------------------------
 org $308020 ; PC 0x180020
 DiggingGameRNG:
@@ -350,7 +351,11 @@ org $308086 ; PC 0x180086
 GanonAgahRNG:
 db #$00 ; $00 = static rng, $01 = no extra blue balls/warps
 ;--------------------------------------------------------------------------------
-; 0x180087 - 0x18008F (unused)
+org $308087 ; PC 0x180087
+IsEncrypted:
+dw #$0000 ; $0000 = not encrypted, $0001 = encrypted with static key, $0002 = Encrypted w/ passcode entry screen (Not implemented yet)
+;--------------------------------------------------------------------------------
+; 0x180089 - 0x18008F (unused)
 ;--------------------------------------------------------------------------------
 org $308090 ; PC 0x180090 - 0x180097
 ProgressiveSwordLimit:
@@ -384,7 +389,13 @@ db #$01 ; #$00 = Original Behavior - #$01 = Randomizer Behavior (Default)
 Bugfix_PodEG:
 db #$01 ; #$00 = Original Behavior - #$01 = Randomizer Behavior (Default)
 ;--------------------------------------------------------------------------------
-; 0x1800A5- 0x1800FF (unused)
+; 0x1800A5 - 0x1800AF (unused)
+;--------------------------------------------------------------------------------
+org $3080B0 ; 0x1800B0-0x1800BF
+StaticDecryptionKey:
+dd $00000000, $00000000, $00000000, $00000000
+;--------------------------------------------------------------------------------
+; 0x1800C0 - 0x1800FF (unused)
 ;--------------------------------------------------------------------------------
 org $308100 ; PC 0x180100 (0x40 bytes)
 ShovelSpawnTable:
@@ -686,7 +697,7 @@ org $06C93B ; PC 0x3493B
 PyramidPotion:
 	db #$2C ; #$2C = Green Potion
 ;--------------------------------------------------------------------------------
-org $308140 ; PC 0x180140 - 0x18014A
+org $308140 ; PC 0x180140 - 0x18014A [encrypted]
 HeartPieceOutdoorValues:
 HeartPiece_Spectacle:
 	db #$17
@@ -711,9 +722,9 @@ HeartPiece_Zora:
 HauntedGroveItem:
 	db #$14 ; #$14 = Flute
 ;--------------------------------------------------------------------------------
-; 0x18014B - 0x18014F (unused)
+; 0x18014B - 0x18014F (unused) [encrypted]
 ;================================================================================
-org $308150 ; PC 0x180150 - 0x180159
+org $308150 ; PC 0x180150 - 0x180159 [encrypted]
 HeartContainerBossValues:
 HeartContainer_ArmosKnights:
 	db #$3E ; #$3E = Boss Heart (putting pendants here causes main pendants to not drop for obvious (in retrospect) reasons)
@@ -736,7 +747,7 @@ HeartContainer_Vitreous:
 HeartContainer_Trinexx:
 	db #$3E
 ;--------------------------------------------------------------------------------
-; 0x180159 - 0x18015F (unused)
+; 0x180159 - 0x18015F (unused) [encrypted]
 ;================================================================================
 org $308160 ; PC 0x180160 - 0x180162
 BonkKey_Desert:

@@ -2,20 +2,21 @@
 ; Randomize Book of Mudora
 ;--------------------------------------------------------------------------------
 LoadLibraryItemGFX:
-    LDA.l LibraryItem
+	%GetPossiblyEncryptedItem(LibraryItem, SpriteItemValues)
+	STA $0DA0, X ; Store item type
 	JSL.l PrepDynamicTile
 RTL
 ;--------------------------------------------------------------------------------
 DrawLibraryItemGFX:
 	PHA
-    LDA.l LibraryItem
+    LDA $0DA0, X ; Retrieve stored item type
 	JSL.l DrawDynamicTile
 	PLA
 RTL
 ;--------------------------------------------------------------------------------
 SetLibraryItem:
     PHA
-	LDA LibraryItem : TAY
+	LDY $0DA0, X ; Retrieve stored item type
 	PLA
 	JSL.l ItemSet_Library ; contains thing we wrote over
 RTL

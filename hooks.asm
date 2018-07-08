@@ -2221,3 +2221,18 @@ org $0DA9C8 ; <- 06A9C8 - player_oam.asm: 1663 (AND.w #$00FF : CMP.w #$00F8 : BC
 LDA $02 ; always zero! (this replaces the BCC)
 ADC.w #0000 ; put the carry bit into the accumulator instead of a hardcoded 1.
 ;================================================================================
+
+;================================================================================
+; Chest Encryption
+;--------------------------------------------------------------------------------
+org $01EBEB ; <- 0EBEB - bank01.asm : 13760 (INC $0E)
+JML.l GetChestData : NOP
+org $01EBDE ; <- 0EBDE - bank01.asm : 13740 (.couldntFindChest)
+Dungeon_OpenKeyedObject_couldntFindChest:
+org $01EBF0 ; <- 0EBF0 - bank01.asm : 13764 (.nextChest)
+Dungeon_OpenKeyedObject_nextChest:
+org $01EC14 ; <- 0EC14 - bank01.asm : 13783 (LDX $040C)
+Dungeon_OpenKeyedObject_bigChest:
+org $01EC38 ; <- 0EC38 - bank01.asm : 13809 (.smallChest)
+Dungeon_OpenKeyedObject_smallChest:
+;================================================================================
