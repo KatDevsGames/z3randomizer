@@ -26,7 +26,7 @@ org $3FFFFF ; <- 1FFFFF
 db #$00 ; expand file to 2mb
 
 org $1FFFF8 ; <- FFFF8 timestamp rom
-db #$20, #$18, #$06, #$13 ; year/month/day
+db #$20, #$18, #$08, #$08 ; year/month/day
 
 ;================================================================================
 
@@ -164,6 +164,7 @@ incsrc compression.asm
 incsrc retro.asm
 incsrc dpadinvert.asm
 incsrc boots.asm
+incsrc fileselect.asm
 warnpc $A58000
 
 ;org $228000 ; contrib area
@@ -268,6 +269,11 @@ warnpc $B08000
 ;$3B reserved for downstream use
 ;$3F reserved for internal debugging
 ;$7F5700 - $7F57FF reserved for downstream use
+;================================================================================
+;SRAM Map
+;$70:0000 ( 4K) Game state
+;$70:1000 (20K) Log entries
+;$70:6000 ( 8K) Scratch buffers
 ;================================================================================
 ;org $0080DC ; <- 0xDC - Bank00.asm:179 - Kill Music
 ;db #$A9, #$00, #$EA

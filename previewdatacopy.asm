@@ -30,7 +30,7 @@ WriteStatusPreview:
 		LDA #$70 : STA $4304
 		
 		LDA #$80 : STA $4305 ; set transfer size to 0x180
-		LDA #$01 : STA $4306 ; STZ $4306
+		LDA #$01 : STA $4306 ; STZ $4307
 		
 		LDA #$01 : STA $420B ; begin DMA transfer
 		;--------------------------------------------------------------------------------

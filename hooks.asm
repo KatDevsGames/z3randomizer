@@ -73,6 +73,25 @@ JSL.l OnQuit
 ;--------------------------------------------------------------------------------
 
 ;================================================================================
+; Title Screen
+;--------------------------------------------------------------------------------
+org $0CCE41 ; <- 64E41 - Bank0C.asm : 1907 (DEC $C8 : BPL .done)
+LDA $C8 : EOR.b #$04  : STA $C8 : NOP #2 ; set cursor to only select first file and erase
+org $0CCE50 ; <- 64E50 - Bank0C.asm : 1918 (INC $C8)
+LDA $C8 : EOR.b #$04  : STA $C8 : NOP #4 ; set cursor to only select first file and erase
+org $0CCE0F ; < 64E0F - Bank0C.asm : 1880 (LDX $00 : INX #2 : CPX.w #$0006 : BCC .nextFile)
+NOP #9 ; don't draw the other two save files
+;--------------------------------------------------------------------------------
+;org $0CD527 ; <- 65527 : Bank0C.asm : 2913 (LDA.w #$0004 : STA $02) [LDA.w #$0006 : STA $02]
+;JSL.l DrawPlayerFile : NOP ; hijack hearts draw routine to draw a full inventory
+
+org $0ccdd5 ; Bank0C.asm:1881 (LDX.w #$00FD)
+JSL.l AltBufferTable : NOP #8 ; Selection screen
+org $0cd393 ; Bank0c.asm:2674 (LDX.w #$00FD)
+JSL.l AltBufferTable : NOP #8 ; Delete screen
+;--------------------------------------------------------------------------------
+
+;================================================================================
 ; Duck Map Load Hook
 ;--------------------------------------------------------------------------------
 org $0AB76E ; <- 5376E - Bank0A.asm : 30 (JSL OverworldMap_InitGfx)
