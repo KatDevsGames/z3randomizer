@@ -90,6 +90,25 @@ JSL.l AltBufferTable : NOP #8 ; Selection screen
 org $0cd393 ; Bank0c.asm:2674 (LDX.w #$00FD)
 JSL.l AltBufferTable : NOP #8 ; Delete screen
 ;--------------------------------------------------------------------------------
+org $0CCCCC ;<- 64CCC - Bank0C.asm : 1628 (JSL Intro_ValidateSram) / Bank02.asm : 75 (REP #$30)
+; Explanation: In JP 1.0 the code for Intro_ValidateSram was inline in Bank 0C
+JML.l Validate_SRAM ;(Return via RTL. Original code JML'd to Intro_LoadSpriteStats which returns with RTL, but we want to skip that)
+org $0CCD57 ;<- 64D57 - Bank0C.asm :
+RTL ;Just in case anybody ever removes the previous hook
+;--------------------------------------------------------------------------------
+
+;================================================================================
+; Damage table Relocation from WRAM
+;--------------------------------------------------------------------------------
+org $06EDB5 ;<- 36DBE - Bank06.asm : 4882 (LDA $7F6000, X : STA $02)
+JSL.l LookupDamageLevel
+;--------------------------------------------------------------------------------
+!StalfosBombDamage = "$7F509D"
+org $1eab5e ;<- F2B5E - sprite_stalfos_knight.asm : 135  (LDA.b #$00 : STA $7F6918)
+STA.l !StalfosBombDamage
+org $1eaad6 ;<- F2AB6 - sprite_stalfos_knight.asm : 32  (LDA.b #$02 : STA $7F6918)
+STA.l !StalfosBombDamage
+;--------------------------------------------------------------------------------
 
 ;================================================================================
 ; Duck Map Load Hook

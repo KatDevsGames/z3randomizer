@@ -226,6 +226,11 @@ IcePalaceFloorGfx:
 incbin ice_palace_floor.bin
 warnpc $31C801
 
+org $31C800
+Damage_Table:
+incbin damage_table.bin
+warnpc $31D801
+
 org $338000
 GFX_HUD_Palette:
 incbin hudpalette.pal
