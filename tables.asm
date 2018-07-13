@@ -1516,7 +1516,7 @@ dw #9999 ; Rupee Limit
 ; $7F50D0 - $7F50FF - Block Cypher Parameters
 ; $7F5100 - $7F51FF - Block Cypher Buffer
 ; $7F5200 - $7F52FF - RNG Pointer Block
-;
+
 ; $7F5700 - $7F57FF - Dialog Buffer
 ;================================================================================
 !BIGRAM = "$7EC900";
