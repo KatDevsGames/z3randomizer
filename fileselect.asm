@@ -59,5 +59,8 @@ AltBufferTable:
     ; Set last packet marker
     LDA.w #$00FF : STA $11f6
     SEP #$20
- 
+
+RTL
+;------------------------------------------------------------------------------
+Validate_SRAM:
 RTL

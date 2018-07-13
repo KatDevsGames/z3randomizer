@@ -39,6 +39,16 @@ LoadSwordForDamage:
 	JSR.w LoadModifiedSwordLevel ; load normal sword value
 RTL
 ;================================================================================
+;!StalfosBombDamage = "$7F509D"
+LookupDamageLevel:
+	CPX.w #$6918 : BNE +
+		LDA.l !StalfosBombDamage
+		BRA .done
+	+
+	LDA.l Damage_Table, X
+	.done
+RTL
+;================================================================================
 ; $7F50C0 - Sword Modifier
 LoadModifiedSwordLevel: ; returns short
 	LDA $7F50C0 : BEQ +
