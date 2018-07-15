@@ -595,11 +595,15 @@ LDA.w AddReceivedItemExpanded_x_offsets, Y
 
 org $08C6C8 ; 446C8 - ancilla_receive_item.asm:538 (LDA AddReceiveItem.properties, X)
 LDA.l AddReceivedItemExpanded_properties, X
-org $00C6F9 ; 446F9 - ancilla_receive_item.asm:570 (LDA AddReceiveItem.properties, X)
-LDA.l AddReceivedItemExpanded_properties, X
 
 org $08C6DE ; 446DE - ancilla_receive_item.asm:550 (LDA .wide_item_flag, X)
 LDA.l AddReceivedItemExpanded_wide_item_flag, X
+
+org $08C6F9 ; 446F9 - ancilla_receive_item.asm:570 (LDA AddReceiveItem.properties, X)
+LDA.l AddReceivedItemExpanded_properties, X
+
+org $08C70F ; 4470F - ancilla_receive_item.asm : 582 - (LDA.b #$00 : STA ($92), Y)
+JSL.l LoadNarrowObject
 
 org $0985ED ; 485ED - ancilla_init.asm:693 (LDA $02E9 : CMP.b #$01)
 JSL.l AddReceivedItemExpandedGetItem
@@ -832,9 +836,6 @@ JSL.l RaiseHudMenu : NOP #3
 org $0DDE3D ; <- 6DE3D equipment.asm:217 - BNE .equippedItemIsntBottle
 db $80 ; BRA
 ;--------------------------------------------------------------------------------
-org $0DE12D ; <- 6E12D - equipment.asm : 828
-JSL.l ProcessBottleMenu
-;--------------------------------------------------------------------------------
 org $0DDF9A ; <- 6DF9A - equipment.asm : 554
 JSL.l OpenBottleMenu
 NOP
@@ -897,14 +898,6 @@ _Bank07_5726:
 ;--------------------------------------------------------------------------------
 org $079A0E ; 39A0E - Bank07.asm : 4117 - JSL HUD.RefreshIconLong
 JSL.l Link_ReceiveItem_HUDRefresh
-;--------------------------------------------------------------------------------
-org $08C6F9 ; 446F9 - ancilla_receive_item.asm : 538 - (LDA AddReceiveItem.properties, X : BPL .valid_upper_properties)
-LDA AddReceivedItemExpanded_properties, X
-;--------------------------------------------------------------------------------
-org $08C70F ; 4470F - ancilla_receive_item.asm : 550 - (LDA .wide_item_flag, X : STA ($92), Y ; AddReceiveItem.wide_item_flag? ; LDA.b #$00 : STA ($92), Y in the japanese version)
-JML.l LoadNarrowObject
-NOP
-LoadNarrowObjectReturn:
 ;--------------------------------------------------------------------------------
 
 ;================================================================================
@@ -1342,9 +1335,6 @@ JSL.l OverworldMap_CheckObject : RTS
 org $0AC5D8 ; < 545D8 - Bank0A.asm:1885 - (LDA $7EF3C7 : CMP.b #$07 : BNE OverworldMap_CheckPendant_fail)
 JSL.l OverworldMap_CheckObject : RTS
 ;================================================================================
-org $0AC012 ; <- 54012 - Bank0A.asm:1039 - (LDA $7EF2DB)
-JSL.l OnLoadMap
-;================================================================================
 org $0AC53e ; <- 5453E - Bank0A.asm:1771 - (LDA $0AC50D, X : STA $0D)
 JSL.l GetCrystalNumber
 ;================================================================================
@@ -1416,6 +1406,8 @@ JSL.l GetMapMode
 ;================================================================================
 org $0AC012 ; <- 54012 - Bank0A.asm:1039 (LDA $7EF2DB : AND.b #$20 : BNE BRANCH_DELTA)
 NOP #8
+;org $0AC012 ; <- 54012 - Bank0A.asm:1039 - (LDA $7EF2DB)
+;JSL.l OnLoadMap
 ;================================================================================
 org $028B8F ; <- 10B8F - Bank02.asm:2236 (LDA $7EF374 : LSR A : BCS BRANCH_BETA)
 JSL.l CheckHeraObject : BNE + : NOP
@@ -1617,10 +1609,6 @@ JSL $1DE1AA ; Sprite_SpawnFlippersItem
 ;--------------------------------------------------------------------------------
 org $1DE1E4 ; <- EE1E4 - sprite_great_catfish.asm : 489
 JSL.l LoadZoraKingItemGFX
-NOP #2
-;--------------------------------------------------------------------------------
-org $1DE1A1 ; <- EE1A1 - sprite_great_catfish.asm : 45
-JSL.l LoadCatfishItemGFX
 NOP #2
 ;--------------------------------------------------------------------------------
 org $068D86 ; <- 30D86
