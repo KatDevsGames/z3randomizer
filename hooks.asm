@@ -1499,9 +1499,10 @@ org $08C3FD ; <- 443FD - ancilla_receive_item.asm : 89
 LDA #$40 : STA !MS_GOT
 ;;NOP #6 ; don't set master sword follower
 ;--------------------------------------------------------------------------------
-;-- Disable all vanilla items (since item message table does not include rando items)
 org $08C5E5 ; <- 445ED - ancilla_receive_item.asm:395 (LDA .item_messages, Y : CMP.w #$FFFF : BEQ .handleGraphics)
-LDA.w #$FFFF
+JSL.l DialogItemReceive : NOP #2
+org $08C301 ; <- 44301 - ancilla_receive_item.asm:8 (.item_messages)
+Ancilla_ReceiveItem_item_messages:
 ;--------------------------------------------------------------------------------
 ;-- Reset Dialog Selection index for each new message
 org $0EEE5D ; <- 76E5D - vwf.asm:84 (JSL Attract_DecompressStoryGfx)

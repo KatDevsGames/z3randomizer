@@ -255,6 +255,18 @@ DialogResetSelectionIndex:
     STZ $1CE8
 RTL
 ;--------------------------------------------------------------------------------
+DialogItemReceive:
+	BCS .noMessage ; if doubling the item value overflowed it must be a rando item
+	CPY #$98 : !BLT + ;if the item is $4C or greater it must be a rando item
+		.noMessage
+		LDA.w #$FFFF
+		BRA .done
+	+
+	LDA Ancilla_ReceiveItem_item_messages, Y
+	.done
+	CMP.w #$FFFF
+RTL
+;--------------------------------------------------------------------------------
 DialogFairyThrow:
 	LDA.l Restrict_Ponds : BEQ .normal
 	LDA $7EF35C : ORA $7EF35D : ORA $7EF35E : ORA $7EF35F : BNE .normal
