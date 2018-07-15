@@ -43,10 +43,20 @@ RTL
 LookupDamageLevel:
 	CPX.w #$0918 : BNE +
 		LDA.l !StalfosBombDamage
-		BRA .done
+		RTL
 	+
+	PHP
+		REP #$20 ; set 16-bit accumulator
+		TXA : LSR : TAX : BCS .lower
+.upper
+	PLP
 	LDA.l Damage_Table, X
-	.done
+	LSR #4
+RTL
+.lower
+	PLP
+	LDA.l Damage_Table, X
+	AND.b #$0F
 RTL
 ;================================================================================
 ; $7F50C0 - Sword Modifier

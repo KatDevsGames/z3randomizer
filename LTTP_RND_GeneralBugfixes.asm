@@ -229,7 +229,7 @@ warnpc $31C801
 org $31C800
 Damage_Table:
 incbin damage_table.bin
-warnpc $31D801
+warnpc $31D001
 
 org $338000
 GFX_HUD_Palette:
