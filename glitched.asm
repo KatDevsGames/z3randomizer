@@ -69,3 +69,15 @@ RTL
 	LDA $0112 : ORA $02E4 : ORA $0FFC
 RTL
 ;--------------------------------------------------------------------------------
+; add sign to EDM for OWG people to read
+;--------------------------------------------------------------------------------
+AddSignToEDMBridge:
+	LDA $040A : AND #$00FF : CMP #$0005 : BNE .no_changes
+		LDA #$0101 : STA $7E2D98 ;#$0101 is the sign tile16 id, $7E2D98 is the position of the tile16 on map
+	.no_changes
+
+	LDX.w #$001E ;Restore Previous Code
+	LDA.w #$0DBE ;Restore Previous Code
+RTL
+;--------------------------------------------------------------------------------
+

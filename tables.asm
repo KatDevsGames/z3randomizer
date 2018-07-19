@@ -503,43 +503,13 @@ db $16, $16
 org $02D592+$37
 Music_GTower:
 db $16
+
 ;--------------------------------------------------------------------------------
-; THIS ENTIRE TABLE IS DEPRECATED
-;Map Crystal Locations
-;org $0AC5B8 ; PC 0x545B8
-;PendantLoc_Eastern: ; Green/Courage/Eastern Palace
-;db $04 ; 04
-;PendantLoc_Hera: ; Red/Wisdom/Hera
-;db $01 ; 01
-;PendantLoc_Desert: ; Blue/Power/Desert
-;db $02 ; 02
-;
-;org $0AC5D1 ; PC 0x545D1
-;CrystalLoc_Darkness:
-;db $02
-;CrystalLoc_Skull:
-;db $40 ; 40
-;CrystalLoc_TRock:
-;db $08 ; 08
-;CrystalLoc_Thieves:
-;db $20
-;CrystalLoc_Mire:
-;db $01
-;CrystalLoc_Ice:
-;db $04
-;CrystalLoc_Swamp:
-;db $10
-;
-;Pendant 1: $04
-;Pendant 2: $02
-;Pendant 3: $01
-;Crystal 1: $02
-;Crystal 2: $10
-;Crystal 3: $40
-;Crystal 4: $20
-;Crystal 5: $04
-;Crystal 6: $01
-;Crystal 7: $08
+; OWG EDM bridge sign text pointer (Message id of the map05)
+;--------------------------------------------------------------------------------
+org $07F501
+dw #$018E
+
 ;--------------------------------------------------------------------------------
 ;Map Pendant / Crystal Indicators
 
