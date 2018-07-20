@@ -41,7 +41,7 @@ RTL
 ;================================================================================
 ;!StalfosBombDamage = "$7F509D"
 LookupDamageLevel:
-	CPX.w #$6918 : BNE +
+	CPX.w #$0918 : BNE +
 		LDA.l !StalfosBombDamage
 		BRA .done
 	+
