@@ -1481,6 +1481,10 @@ JSL.l DialogBombosTablet
 ;-- Ether tablet
 org $05F429 ; <- 2F429 sprite_medallion_tablet.asm : 317 (JSL Sprite_ShowMessageUnconditional)
 JSL.l DialogEtherTablet
+;----------------------------------------------------
+;-- Thrown fish (move to different text ID)
+org $1D82B2 ; <-  0xE82B2 low byte of message
+db #$8F
 ;================================================================================
 
 ;================================================================================
