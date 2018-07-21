@@ -165,6 +165,7 @@ incsrc retro.asm
 incsrc dpadinvert.asm
 incsrc boots.asm
 incsrc fileselect.asm
+incsrc playername.asm
 incsrc decryption.asm
 warnpc $A58000
 

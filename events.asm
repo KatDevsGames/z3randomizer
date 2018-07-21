@@ -74,7 +74,11 @@ RTL
 ;--------------------------------------------------------------------------------
 !RNG_ITEM_LOCK_IN = "$7F5090"
 OnFileLoad:
-	SEP #$20 ; set 8 bit accumulator
+	REP #$10 ; set 16 bit index registers
+	JSL.l EnableForceBlank ; what we wrote over
+
+	LDA.b #$07 : STA $210c ; Restore screen 3 to normal tile area
+
 	LDA !FRESH_FILE_MARKER : BNE +
 		JSL.l OnNewFile
 		LDA.b #$FF : STA !FRESH_FILE_MARKER
@@ -95,9 +99,7 @@ OnFileLoad:
 	LDA.l IsEncrypted : CMP.b #01 : BNE +
 		JSL LoadStaticDecryptionKey
 	+
-
-	REP #$20 ; restore 16 bit accumulator
-	LDA.w #$0007 : STA $7EC00D : STA $7EC013 ; thing we wrote over - sets up some graphics timers
+	SEP #$10 ; restore 8 bit index registers
 RTL
 ;--------------------------------------------------------------------------------
 !RNG_ITEM_LOCK_IN = "$7F5090"

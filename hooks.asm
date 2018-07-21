@@ -82,8 +82,8 @@ LDA $C8 : EOR.b #$04  : STA $C8 : NOP #4 ; set cursor to only select first file 
 org $0CCE0F ; < 64E0F - Bank0C.asm : 1880 (LDX $00 : INX #2 : CPX.w #$0006 : BCC .nextFile)
 NOP #9 ; don't draw the other two save files
 ;--------------------------------------------------------------------------------
-;org $0CD527 ; <- 65527 : Bank0C.asm : 2913 (LDA.w #$0004 : STA $02) [LDA.w #$0006 : STA $02]
-;JSL.l DrawPlayerFile : NOP ; hijack hearts draw routine to draw a full inventory
+org $0CD527 ; <- 65527 : Bank0C.asm : 2913 (LDA.w #$0004 : STA $02) [LDA.w #$0006 : STA $02]
+JSL.l DrawPlayerFile : NOP ; hijack hearts draw routine to draw a full inventory
 
 org $0ccdd5 ; Bank0C.asm:1881 (LDX.w #$00FD)
 JSL.l AltBufferTable : NOP #8 ; Selection screen
@@ -95,6 +95,68 @@ org $0CCCCC ;<- 64CCC - Bank0C.asm : 1628 (JSL Intro_ValidateSram) / Bank02.asm 
 JML.l Validate_SRAM ;(Return via RTL. Original code JML'd to Intro_LoadSpriteStats which returns with RTL, but we want to skip that)
 org $0CCD57 ;<- 64D57 - Bank0C.asm :
 RTL ;Just in case anybody ever removes the previous hook
+;--------------------------------------------------------------------------------
+org $00E55D ; <- 0655D - Bank00.asm : 5473 (LDA.w #$7000 : STA $2116)
+LDA.w #$2000 ; Load file select screen graphics to VRAM word addres 0x2000 instead of 0x7000
+;--------------------------------------------------------------------------------
+org $00833A ; <- 0033A - Bank00.asm : 481 (LDA.w #$007F)
+LDA.w #$0180 ; change which character is used as the blank character for the select screen
+;--------------------------------------------------------------------------------
+org $0CD50C ; <- 6550C  (Not in disassembly, would be in bank0c.asm if it were) Position table for Name and Hearts
+;dw $0012, $0112, $0212 ; vanilla-ish positions of file names
+;dw $0026, $0126, $0226 ; vanilla-ish positions of hearts names
+dw $00C8, $014A, $01CA ; repositioned, only the first value matters
+dw $0012, $0192, $0112
+org $0CD53B ; <- 6553B : Bank0c.asm : 2919 (ADD.w #$0010 : STA $102C, Y) [... : STA $1034, Y]
+STA.w $1042, Y ; Make 2nd half of names line up properly
+;org $0CD540 ; <- 65540 : Bank0c.asm : 2923 (INY #2) [INY #4]
+;NOP #2 ; Remove space between name characters
+org $0CD571 ; <- 65571 : Bank0c.asm : 2943 (LDA $04 : ADD.w #$002A : TAY) [... : ADD.w #$0032 : ...]
+ADC.w #$0040 ;make Hearts line up properly
+;--------------------------------------------------------------------------------
+
+;================================================================================
+; Name Entry Screen
+;--------------------------------------------------------------------------------
+org $0CD7BE ; <- 657BE : Bank0C.asm : 3353 (STA $7003D9, X)
+JSL.l WriteBlanksToPlayerName
+org $0CDB11 ; <- 65B11 : Bank0C.asm : 3605 (LDA $00 : AND.w #$FFF0 : ASL A : ORA $02 : STA $7003D9, X)
+JSL.l WriteCharacterToPlayerName
+org $0CDCA9 ; <- 65CA9 : Bank0C.asm : 3853 (LDA $7003D9, X)
+JSL.l ReadCharacterFromPlayerName
+org $0CDC90 ; <- 65C90 : Bank0C.asm : 3847 (ORA $DD24, Y) [ORA $DC82, Y]
+JSL.l GetCharacterPosition
+org $0CDA79 ; <- 65A79 : Bank0C.asm : 3518 (LDA $0CDA13, X : STA $0800, Y) [LDA $0CD98f, X : ...]
+LDA.l HeartCursorPositions, X
+org $0CDAEB ; <- 65AEB : Bank0C.asm : 3571-3575,3581-3587 (...) [LDA $0B12 : AND #$03]
+; JP here is different. Indicated line number implement the US version of the same functionality
+JSL.l WrapCharacterPosition : NOP
+;--------------------------------------------------------------------------------
+org $0CE43A ; No assembly source. Makes name entry box wider
+db $2C
+org $0CE448
+db $2D, $40, $1E
+org $0CE45C
+db $4D, $40, $1E
+org $0CE462
+db $6D, $40, $1E
+org $0CE468
+db $8D, $40, $1E
+org $0CE46E
+db $AD, $40, $1E
+;--------------------------------------------------------------------------------
+org $0CE41A ; No assembly source.
+; Fix name screen background to use the not-overwritten copy of its graphics
+db $09 : SKIP 5 : db $09 : SKIP 5 : db $09 : SKIP 5 : db $09 : SKIP 5 : db $09 : SKIP 5
+db $09 : SKIP 5 : db $49 : SKIP 1 : db $49 : SKIP 1 : db $49 : SKIP 1 : db $49 : SKIP 1
+db $c9 : SKIP 5 : db $09 : SKIP 5 : db $09 : SKIP 1 : db $09 : SKIP 1 : db $09 : SKIP 1
+db $09 : SKIP 1 : db $89 : SKIP 4 : db $80, $09 : SKIP 4 : db $80, $09 : SKIP 4
+db $80, $09 : SKIP 5 : db $89 : SKIP 5
+db $49 : SKIP 5 : db $09 : SKIP 5 : db $09 : SKIP 5 : db $49 : SKIP 5 : db $09 : SKIP 5
+db $C9 : SKIP 5 : db $89 : SKIP 5 : db $89 : SKIP 5 : db $09 : SKIP 1 : db $09 : SKIP 1
+db $09 : SKIP 1 : db $09 : SKIP 1 : db $09 : SKIP 1 : db $09 : SKIP 1 : db $09 : SKIP 1
+db $09 : SKIP 5 : db $09 : SKIP 1 : db $09 : SKIP 1 : db $09 : SKIP 1 : db $09 : SKIP 1
+db $09 : SKIP 1 : db $09 : SKIP 1 : db $09 : SKIP 1 : db $09 : SKIP 5 : db $05
 ;--------------------------------------------------------------------------------
 
 ;================================================================================
@@ -1566,9 +1628,8 @@ dw $05AC, $04FC, $0001, $0027, $00F0 ; Zelda in the water room
 org $00894A ; <- 94A
 PHB : JSL.l DarkWorldSaveFix
 ;--------------------------------------------------------------------------------
-org $0CCF05 ; <- 64F05
+org $028046 ; <- 10046 - Bank02.asm : 217 (JSL EnableForceBlank) (Start of Module_LoadFile)
 JSL.l OnFileLoad
-NOP #7
 ;--------------------------------------------------------------------------------
 org $09F520 ; <- 4F520 - module_death.asm : 401 (LDA $7EF3C5 : CMP.b #$03 : BCS BRANCH_THETA)
 JSL.l OnPlayerDead
