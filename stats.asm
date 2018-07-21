@@ -361,7 +361,6 @@ RTL
 RTL
 ;--------------------------------------------------------------------------------
 IndoorTileTransitionCounter:
-	JSL.l Dungeon_LoadRoom ; thing we wrote over
 JMP StatTransitionCounter
 ;--------------------------------------------------------------------------------
 !REDRAW = "$7F5000"
