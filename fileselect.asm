@@ -14,6 +14,9 @@
 !FS_COLOR_GREEN = "$1800"
 !FS_COLOR_BW = "$1C00"
 
+!FS_HFLIP = "$4000"
+!FS_VFLIP = "$8000"
+
 macro fs_draw8x8(screenrow,screencol)
 	;Note due to XKAS's screwy math this formula is misleading.
 	;in normal math we have $1004+2*col+$40*row
@@ -35,6 +38,27 @@ macro fs_draw16x16(screenrow,screencol)
 	%fs_draw16x8(<screenrow>+1,<screencol>)
 endmacro
 
+macro fs_drawItem(screenrow,screencol,tileAddress)
+	LDA.l <tileAddress> : %fs_draw8x8(<screenrow>,<screencol>)
+	LDA.l <tileAddress>+2 : %fs_draw8x8(<screenrow>,<screencol>+1)
+	LDA.l <tileAddress>+4 : %fs_draw8x8(<screenrow>+1,<screencol>)
+	LDA.l <tileAddress>+6 : %fs_draw8x8(<screenrow>+1,<screencol>+1)
+endmacro
+macro fs_drawItemGray(screenrow,screencol,tileAddress)
+	LDA.l <tileAddress> : AND.w #$E3FF : ORA.w #!FS_COLOR_GRAY : %fs_draw8x8(<screenrow>,<screencol>)
+	LDA.l <tileAddress>+2 : AND.w #$E3FF : ORA.w #!FS_COLOR_GRAY : %fs_draw8x8(<screenrow>,<screencol>+1)
+	LDA.l <tileAddress>+4 : AND.w #$E3FF : ORA.w #!FS_COLOR_GRAY : %fs_draw8x8(<screenrow>+1,<screencol>)
+	LDA.l <tileAddress>+6 : AND.w #$E3FF : ORA.w #!FS_COLOR_GRAY : %fs_draw8x8(<screenrow>+1,<screencol>+1)
+endmacro
+
+macro fs_drawItemBasic(address,screenrow,screencol,tileAddress)
+	LDA.l <address> : AND.w #$00FF : BEQ +
+		%fs_drawItem(<screenrow>,<screencol>,<tileAddress>)
+		BRA ++
+	+
+		%fs_drawItemGray(<screenrow>,<screencol>,<tileAddress>)
+	++
+endmacro
 
 DrawPlayerFile:
 	PHX : PHY
@@ -77,17 +101,84 @@ DrawPlayerFile:
 ;		LDA.w #$0201|!FS_COLOR_GRAY : %fs_draw16x16(2,12)
 ;	.bow_end
 ;
-;	;hookshot
-;	LDA.l $700342 : AND.w #$00FF : BEQ +
-;		LDA.w #$0215|!FS_COLOR_RED
-;		BRA .draw_hook
-;	+
-;	LDA.w #$0215|!FS_COLOR_GRAY
-;	.draw_hook
-;	%fs_draw8x8(2,17)
-;	!ADD.w #$0230-$0215 ;hookshot handle
-;	%fs_draw8x8(3,16)
-;
+	; Hookshot
+	%fs_drawItemBasic($700342,2,16,FileSelectItems_hookshot)
+	
+	; Powder
+	LDA.l !FS_INVENTORY_SWAP : AND.w #$0010 : BEQ +
+		%fs_drawItem(2,20,FileSelectItems_powder)
+		BRA ++
+	+
+		%fs_drawItemGray(2,20,FileSelectItems_powder)
+	++
+	
+	; Mushroom
+	LDA.l !FS_INVENTORY_SWAP : AND.w #$0020 : BEQ +
+		%fs_drawItem(2,22,FileSelectItems_mushroom)
+		BRA ++
+	+
+		%fs_drawItemGray(2,22,FileSelectItems_mushroom)
+	++
+
+	; Fire Rod
+	%fs_drawItemBasic($700345,4,12,FileSelectItems_fire_rod)
+
+	; Ice Rod
+	%fs_drawItemBasic($700346,4,14,FileSelectItems_ice_rod)
+
+	; Bombos Medallion
+	%fs_drawItemBasic($700347,4,16,FileSelectItems_bombos)
+
+	; Ether Medallion
+	%fs_drawItemBasic($700348,4,18,FileSelectItems_ether)
+
+	; Quake Medallion
+	%fs_drawItemBasic($700349,4,20,FileSelectItems_quake)
+
+	; Lamp
+	%fs_drawItemBasic($70034A,6,12,FileSelectItems_lamp)
+
+	; Hammer
+	%fs_drawItemBasic($70034B,6,14,FileSelectItems_hammer)
+
+	; Bug Net
+	%fs_drawItemBasic($70034D,6,18,FileSelectItems_bugnet)
+
+	; Book of Mudora
+	%fs_drawItemBasic($70034E,6,20,FileSelectItems_book)
+
+	; Red Cane
+	%fs_drawItemBasic($700350,8,14,FileSelectItems_redcane)
+
+	; Blue Cane
+	%fs_drawItemBasic($700351,8,16,FileSelectItems_bluecane)
+
+	; Cape
+	%fs_drawItemBasic($700352,8,18,FileSelectItems_cape)
+
+	; Mirror
+	%fs_drawItemBasic($700353,8,20,FileSelectItems_mirror)
+	
+	; Boots
+	%fs_drawItemBasic($700355,2,26,FileSelectItems_boots)
+	
+	; Gloves
+	LDA.l $700354 : AND.w #$00FF : BNE +
+		%fs_drawItemGray(4,26,FileSelectItems_gloves)
+		BRA ++
+	+ : DEC : BNE +
+		%fs_drawItem(4,26,FileSelectItems_gloves)
+		BRA ++
+	+
+		%fs_drawItem(4,26,FileSelectItems_mitts)
+	++
+	
+	; Flippers
+	%fs_drawItemBasic($700356,6,26,FileSelectItems_flippers)
+	
+	; Moon Pearl
+	%fs_drawItemBasic($700357,8,26,FileSelectItems_pearl)
+
 ;	;powder
 ;	LDA !FS_INVENTORY_SWAP : AND.w #$0010 : BEQ +
 ;		LDA.w #$020A|!FS_COLOR_BROWN
@@ -109,6 +200,67 @@ DrawPlayerFile:
 	PLY : PLX
 	LDA.w #$0004 : STA $02 ; thing we wrote over
 RTL
+;--------------------------------------------------------------------------------
+
+FileSelectItems:
+	.empty_bow
+	dw #$0201|!FS_COLOR_YELLOW, #$0204|!FS_COLOR_YELLOW, #$0203|!FS_COLOR_RED, #$0212|!FS_COLOR_YELLOW
+	.bow
+	dw #$0201|!FS_COLOR_YELLOW, #$0204|!FS_COLOR_YELLOW, #$0203|!FS_COLOR_RED, #$0212|!FS_COLOR_YELLOW
+	.silver_bow
+	dw #$0201|!FS_COLOR_YELLOW, #$0204|!FS_COLOR_YELLOW, #$0203|!FS_COLOR_RED, #$0212|!FS_COLOR_YELLOW
+	.blue_boomerang
+	dw #$0205|!FS_COLOR_BLUE, #$0206|!FS_COLOR_BLUE, #$0200|!FS_COLOR_BW, #$0216|!FS_COLOR_BLUE
+	.red_boomerang
+	dw #$0205|!FS_COLOR_RED, #$0206|!FS_COLOR_RED, #$0200|!FS_COLOR_BW, #$0216|!FS_COLOR_RED
+	.hookshot
+	dw #$0200|!FS_COLOR_RED, #$0215|!FS_COLOR_RED, #$0230|!FS_COLOR_RED, #$0200|!FS_COLOR_BW
+	.fire_rod
+	dw #$0220|!FS_COLOR_RED, #$0210|!FS_COLOR_RED, #$0230|!FS_COLOR_RED, #$0231|!FS_COLOR_RED
+	.ice_rod
+	dw #$0220|!FS_COLOR_BLUE, #$0221|!FS_COLOR_BLUE, #$0230|!FS_COLOR_BLUE, #$0231|!FS_COLOR_BLUE
+	.bombos
+	dw #$0207|!FS_COLOR_YELLOW, #$0217|!FS_COLOR_YELLOW|!FS_HFLIP|!FS_VFLIP, #$0217|!FS_COLOR_YELLOW, #$0207|!FS_COLOR_YELLOW|!FS_HFLIP|!FS_VFLIP
+	.ether
+	dw #$0208|!FS_COLOR_YELLOW, #$0218|!FS_COLOR_YELLOW|!FS_HFLIP|!FS_VFLIP, #$0218|!FS_COLOR_YELLOW, #$0208|!FS_COLOR_YELLOW|!FS_HFLIP|!FS_VFLIP
+	.quake
+	dw #$0209|!FS_COLOR_YELLOW, #$0219|!FS_COLOR_YELLOW|!FS_HFLIP|!FS_VFLIP, #$0219|!FS_COLOR_YELLOW, #$0209|!FS_COLOR_YELLOW|!FS_HFLIP|!FS_VFLIP
+	.lamp
+	dw #$022C|!FS_COLOR_RED, #$022C|!FS_COLOR_RED|!FS_HFLIP|, #$023C|!FS_COLOR_RED, #$023D|!FS_COLOR_RED
+	.hammer
+	dw #$0222|!FS_COLOR_BROWN, #$0223|!FS_COLOR_BROWN, #$0232|!FS_COLOR_BROWN, #$0233|!FS_COLOR_BROWN
+	.bugnet
+	dw #$0228|!FS_COLOR_YELLOW, #$0229|!FS_COLOR_YELLOW, #$0238|!FS_COLOR_YELLOW, #$0239|!FS_COLOR_YELLOW
+	.book
+	dw #$022A|!FS_COLOR_GREEN, #$022B|!FS_COLOR_GREEN, #$023A|!FS_COLOR_GREEN, #$023B|!FS_COLOR_GREEN
+	.redcane
+	dw #$021D|!FS_COLOR_RED, #$021E|!FS_COLOR_RED, #$022D|!FS_COLOR_RED, #$022E|!FS_COLOR_RED
+	.bluecane
+	dw #$021D|!FS_COLOR_BLUE, #$021E|!FS_COLOR_BLUE, #$022D|!FS_COLOR_BLUE, #$022E|!FS_COLOR_BLUE
+	.cape
+	dw #$0248|!FS_COLOR_RED, #$0249|!FS_COLOR_RED, #$0258|!FS_COLOR_RED, #$0259|!FS_COLOR_RED
+	.mirror
+	dw #$024A|!FS_COLOR_BLUE, #$024B|!FS_COLOR_BLUE, #$025A|!FS_COLOR_BLUE, #$025B|!FS_COLOR_BLUE
+
+	.flippers
+	dw #$020E|!FS_COLOR_BLUE, #$020F|!FS_COLOR_BLUE, #$021F|!FS_COLOR_BLUE|!FS_HFLIP, #$021F|!FS_COLOR_BLUE
+
+	.boots
+	dw #$024C|!FS_COLOR_BOOTS, #$024D|!FS_COLOR_BOOTS, #$025C|!FS_COLOR_BOOTS, #$025D|!FS_COLOR_BOOTS
+	
+	.pearl
+	dw #$0264|!FS_COLOR_RED, #$0265|!FS_COLOR_RED, #$0274|!FS_COLOR_RED, #$0275|!FS_COLOR_RED
+	
+	.gloves
+	dw #$024E|!FS_COLOR_BROWN, #$024F|!FS_COLOR_BROWN, #$025E|!FS_COLOR_BROWN, #$025F|!FS_COLOR_BROWN
+	.mitts
+	dw #$0260|!FS_COLOR_YELLOW, #$0261|!FS_COLOR_YELLOW, #$0270|!FS_COLOR_YELLOW, #$0271|!FS_COLOR_YELLOW
+	
+	.mushroom
+	dw #$0262|!FS_COLOR_RED, #$0263|!FS_COLOR_RED, #$0272|!FS_COLOR_RED, #$0273|!FS_COLOR_RED
+	.powder
+	dw #$020A|!FS_COLOR_BROWN, #$020B|!FS_COLOR_BROWN, #$021A|!FS_COLOR_BROWN, #$021B|!FS_COLOR_BROWN
+
 ;--------------------------------------------------------------------------------
 AltBufferTable:
     LDA.b #$02 : STA $210c ; Have Screen 3 use same tile area as screens 1
@@ -162,5 +314,45 @@ AltBufferTable:
 RTL
 ;--------------------------------------------------------------------------------
 Validate_SRAM:
+RTL
+;--------------------------------------------------------------------------------
+
+;--------------------------------------------------------------------------------
+LoadFullItemTiles:
+	PHA : PHX
+		LDA $4300 : PHA ; preserve DMA parameters
+		LDA $4301 : PHA ; preserve DMA parameters
+		LDA $4302 : PHA ; preserve DMA parameters
+		LDA $4303 : PHA ; preserve DMA parameters
+		LDA $4304 : PHA ; preserve DMA parameters
+		LDA $4305 : PHA ; preserve DMA parameters
+		LDA $4306 : PHA ; preserve DMA parameters
+		;--------------------------------------------------------------------------------
+		LDA.b #$80 : STA $2115 ; write read increment on $2119
+		LDA.b #$01 : STA $4300 ; set DMA transfer direction A -> B, bus A auto increment, double-byte mode
+		LDA.b #$18 : STA $4301 ; set bus B destination to VRAM register
+	
+		LDA.b #$00 : STA $2116 ; write VRAM destination address
+		LDA.b #$30 : STA $2117 ; write VRAM destination address
+
+		LDA.b #$31 : STA $4304 ; set bus A source bank
+		LDA.b #FileSelectNewGraphics : STA $4302 ; set bus A source address to SRAM
+		LDA.b #FileSelectNewGraphics>>8 : STA $4303 ; set bus A source address to SRAM
+	
+		LDA $2100 : PHA : LDA.b #$80 : STA $2100 ; save screen state & turn screen off
+		
+		STZ $4305 : LDA.b #$10 : STA $4306 ; set transfer size to 0x1000
+		LDA #$01 : STA $420B ; begin DMA transfer
+			
+		PLA : STA $2100 ; put screen back however it was before
+		;--------------------------------------------------------------------------------
+		PLA : STA $4306 ; restore DMA parameters
+		PLA : STA $4305 ; restore DMA parameters
+		PLA : STA $4304 ; restore DMA parameters
+		PLA : STA $4303 ; restore DMA parameters
+		PLA : STA $4302 ; restore DMA parameters
+		PLA : STA $4301 ; restore DMA parameters
+		PLA : STA $4300 ; restore DMA parameters
+	PLX : PLA
 RTL
 ;--------------------------------------------------------------------------------

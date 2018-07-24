@@ -5,6 +5,16 @@
 ;	LDA $7EF2DB ; thing we wrote over
 ;RTL
 ;--------------------------------------------------------------------------------
+OnPrepFileSelect:
+	LDA $11 : CMP.b #$03 : BNE +
+		LDA.b #$06 : STA $14 ; thing we wrote over
+		RTL
+	+
+	JSL.l LoadAlphabetTiles
+	JSL.l LoadAlphabetTilemap
+	JSL.l LoadFullItemTiles
+RTL
+;--------------------------------------------------------------------------------
 OnDrawHud:
 	JSL.l Draw4DigitRupees
 	JSL.l DrawChallengeTimer

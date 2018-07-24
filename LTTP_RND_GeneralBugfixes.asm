@@ -26,7 +26,7 @@ org $3FFFFF ; <- 1FFFFF
 db #$00 ; expand file to 2mb
 
 org $1FFFF8 ; <- FFFF8 timestamp rom
-db #$20, #$18, #$08, #$08 ; year/month/day
+db #$20, #$18, #$07, #$23 ; year/month/day
 
 ;================================================================================
 
@@ -231,6 +231,11 @@ org $31C800
 Damage_Table:
 incbin damage_table.bin
 warnpc $31D001
+
+org $31D000
+FileSelectNewGraphics:
+incbin fileselect.chr.gfx
+warnpc $31F001
 
 org $338000
 GFX_HUD_Palette:
