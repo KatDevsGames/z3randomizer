@@ -349,14 +349,10 @@ RTL
 ;--------------------------------------------------------------------------------
 DialogSahasrahla:
 	LDA.l $7EF374 : AND #$04 : BEQ + ;Check if player has green pendant
-		LDA.b #$35
+		LDA.b #$2F
         LDY.b #$00
 		JSL.l Sprite_ShowMessageUnconditional
-		RTL
 	+
-	LDA.b #$31
-    LDY.b #$00
-	JSL.l Sprite_ShowMessageUnconditional
 RTL
 ;--------------------------------------------------------------------------------
 DialogBombShopGuy:
