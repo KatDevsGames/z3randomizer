@@ -1565,6 +1565,10 @@ org $08C5E5 ; <- 445ED - ancilla_receive_item.asm:395 (LDA .item_messages, Y : C
 JSL.l DialogItemReceive : NOP #2
 org $08C301 ; <- 44301 - ancilla_receive_item.asm:8 (.item_messages)
 Ancilla_ReceiveItem_item_messages:
+;----------------------------------------------------------
+;-- Shopkeepers
+org $1EF379 ; <- F7379 sprite_shopkeeper.asm : 810 (JSL Sprite_ShowMessageUnconditional : JSL ShopKeeper_RapidTerminateReceiveItem)
+NOP #4 ;Just remove the rapid terminate call
 ;--------------------------------------------------------------------------------
 ;-- Reset Dialog Selection index for each new message
 org $0EEE5D ; <- 76E5D - vwf.asm:84 (JSL Attract_DecompressStoryGfx)
