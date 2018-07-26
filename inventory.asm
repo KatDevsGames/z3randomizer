@@ -1018,6 +1018,10 @@ RTL
 ;--------------------------------------------------------------------------------
 CollectPowder:
 	LDY $0DA0, X ; Retrieve stored item type
+	BNE +
+		; if for any reason the item value is 0 reload it, just in case
+		%GetPossiblyEncryptedItem(WitchItem, SpriteItemValues) : TAY
+	+
     STZ $02E9 ; item from NPC
     JSL.l Link_ReceiveItem
 	;JSL.l FullInventoryExternal

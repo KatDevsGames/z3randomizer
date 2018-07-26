@@ -33,6 +33,7 @@ SpawnTabletItem:
 ;	JSL.l HeartPieceGet
 ;RTL
 	JSL.l LoadOutdoorValue
+	PHA
 	JSL.l PrepDynamicTile
 	
 	LDA.b #$01 : STA !FORCE_HEART_SPAWN : STA !SKIP_HEART_SAVE
@@ -42,6 +43,7 @@ SpawnTabletItem:
 	STA $7FFE00
 	JSL Sprite_SpawnDynamically
 
+	PLA : STA $0DA0, Y ; Store item type
 	LDA $22 : STA $0D10, Y
 	LDA $23 : STA $0D30, Y
 

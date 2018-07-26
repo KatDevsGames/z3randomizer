@@ -4,12 +4,16 @@
 HeartPieceGet:
 	PHX : PHY
 	LDY $0DA0, X ; load item value into Y register
+	BNE +
+		; if for any reason the item value is 0 reload it, just in case
+		JSL.l LoadHeartPieceRoomValue : TAY
+	+
 	JSL.l MaybeMarkDigSpotCollected
 
 	.skipLoad
 
 	STZ $02E9 ; 0 = Receiving item from an NPC or message
-	
+
 	CPY.b #$26 : BNE .notHeart ; don't add a 1/4 heart if it's not a heart piece
 	LDA $7EF36B : INC A : AND.b #$03 : STA $7EF36B : BNE .unfinished_heart ; add up heart quarters
 	BRA .giveItem
@@ -35,6 +39,10 @@ HeartContainerGet:
 	PHX : PHY
 	JSL.l AddInventory_incrementBossSwordLong
 	LDY $0DA0, X ; load item value into Y register
+	BNE +
+		; if for any reason the item value is 0 reload it, just in case
+		JSL.l LoadHeartContainerRoomValue : TAY
+	+
 
 	BRA HeartPieceGet_skipLoad
 ;--------------------------------------------------------------------------------
