@@ -106,7 +106,7 @@ org $0CD50C ; <- 6550C  (Not in disassembly, would be in bank0c.asm if it were) 
 ;dw $0012, $0112, $0212 ; vanilla-ish positions of file names
 ;dw $0026, $0126, $0226 ; vanilla-ish positions of hearts names
 dw $00C8, $014A, $01CA ; repositioned, only the first value matters
-dw $0012, $0192, $0112
+dw $002A, $0192, $0112
 org $0CD53B ; <- 6553B : Bank0c.asm : 2919 (ADD.w #$0010 : STA $102C, Y) [... : STA $1034, Y]
 STA.w $1042, Y ; Make 2nd half of names line up properly
 ;org $0CD540 ; <- 65540 : Bank0c.asm : 2923 (INY #2) [INY #4]

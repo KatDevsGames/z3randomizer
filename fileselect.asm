@@ -103,6 +103,8 @@ DrawPlayerFile:
 	LDA !ExtendedPlayerName+$0E : ORA.w #!FS_COLOR_BW
 	%fs_draw8x16(9,9)
 
+	JSR FileSelectDrawHudBar
+
 ;	;bow
 ;	LDA.l !FS_INVENTORY_SWAP_2 : AND.w #$0040 : BEQ +
 ;		LDA.l $700340 : AND.w #$00FF : BEQ ++
@@ -265,6 +267,32 @@ FileSelectItems:
 	.powder
 	dw #$020A|!FS_COLOR_BROWN, #$020B|!FS_COLOR_BROWN, #$021A|!FS_COLOR_BROWN, #$021B|!FS_COLOR_BROWN
 
+;--------------------------------------------------------------------------------
+FileSelectDrawHudBar:
+	LDA #$029B|!FS_COLOR_GREEN : %fs_draw16x8(0,10)
+	LDA $700362
+	JSL.l HexToDec
+	LDA $7F5004 : AND.w #$00FF : !ADD.w #$210+!FS_COLOR_BW : %fs_draw8x8(1,9)
+	LDA $7F5005 : AND.w #$00FF : !ADD.w #$210+!FS_COLOR_BW : %fs_draw8x8(1,10)
+	LDA $7F5006 : AND.w #$00FF : !ADD.w #$210+!FS_COLOR_BW : %fs_draw8x8(1,11)
+	LDA $7F5007 : AND.w #$00FF : !ADD.w #$210+!FS_COLOR_BW : %fs_draw8x8(1,12)
+
+	LDA #$028B|!FS_COLOR_BLUE : %fs_draw16x8(0,14)
+	LDA $700343 : AND.w #$00FF
+	JSL.l HexToDec
+	LDA $7F5006 : AND.w #$00FF : !ADD.w #$210+!FS_COLOR_BW : %fs_draw8x8(1,14)
+	LDA $7F5007 : AND.w #$00FF : !ADD.w #$210+!FS_COLOR_BW : %fs_draw8x8(1,15)
+
+	LDA.l !FS_INVENTORY_SWAP_2 : AND.w #$0040 : BEQ +
+		LDA #$0299|!FS_COLOR_RED : %fs_draw16x8(0,17)
+	+
+	LDA #$0289|!FS_COLOR_BROWN : %fs_draw16x8(0,17)
+	++
+	LDA $700377 : AND.w #$00FF
+	JSL.l HexToDec
+	LDA $7F5006 : AND.w #$00FF : !ADD.w #$210+!FS_COLOR_BW : %fs_draw8x8(1,17)
+	LDA $7F5007 : AND.w #$00FF : !ADD.w #$210+!FS_COLOR_BW : %fs_draw8x8(1,18)
+RTS
 ;--------------------------------------------------------------------------------
 AltBufferTable:
     LDA.b #$02 : STA $210c ; Have Screen 3 use same tile area as screens 1
