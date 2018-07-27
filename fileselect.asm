@@ -38,30 +38,52 @@ macro fs_draw16x16(screenrow,screencol)
 	%fs_draw16x8(<screenrow>+1,<screencol>)
 endmacro
 
+macro fs_LDY_screenpos(screenrow,screencol)
+	LDY.w #<screenrow>*$20+<screencol>*2+$1004
+endmacro
+
 macro fs_drawItem(screenrow,screencol,tileAddress)
-	LDA.l <tileAddress> : %fs_draw8x8(<screenrow>,<screencol>)
-	LDA.l <tileAddress>+2 : %fs_draw8x8(<screenrow>,<screencol>+1)
-	LDA.l <tileAddress>+4 : %fs_draw8x8(<screenrow>+1,<screencol>)
-	LDA.l <tileAddress>+6 : %fs_draw8x8(<screenrow>+1,<screencol>+1)
+	LDX.w #<tileAddress>
+	%fs_LDY_screenpos(<screenrow>,<screencol>)
+	JSR DrawItem
 endmacro
 macro fs_drawItemGray(screenrow,screencol,tileAddress)
-	LDA.l <tileAddress> : AND.w #$E3FF : ORA.w #!FS_COLOR_GRAY : %fs_draw8x8(<screenrow>,<screencol>)
-	LDA.l <tileAddress>+2 : AND.w #$E3FF : ORA.w #!FS_COLOR_GRAY : %fs_draw8x8(<screenrow>,<screencol>+1)
-	LDA.l <tileAddress>+4 : AND.w #$E3FF : ORA.w #!FS_COLOR_GRAY : %fs_draw8x8(<screenrow>+1,<screencol>)
-	LDA.l <tileAddress>+6 : AND.w #$E3FF : ORA.w #!FS_COLOR_GRAY : %fs_draw8x8(<screenrow>+1,<screencol>+1)
+	LDX.w #<tileAddress>
+	%fs_LDY_screenpos(<screenrow>,<screencol>)
+	JSR DrawItemGray
 endmacro
 
 macro fs_drawItemBasic(address,screenrow,screencol,tileAddress)
-	LDA.l <address> : AND.w #$00FF : BEQ +
-		%fs_drawItem(<screenrow>,<screencol>,<tileAddress>)
-		BRA ++
-	+
-		%fs_drawItemGray(<screenrow>,<screencol>,<tileAddress>)
-	++
+	LDX.w #<tileAddress>
+	%fs_LDY_screenpos(<screenrow>,<screencol>)
+	LDA.l <address>
+	JSR DrawItemBasic
 endmacro
 
+DrawItem:
+	LDA.w $0000,X : STA.w $0000, Y
+	LDA.w $0002,X : STA.w $0002, Y
+	LDA.w $0004,X : STA.w $0040, Y
+	LDA.w $0006,X : STA.w $0042, Y
+RTS
+DrawItemGray:
+	LDA.w $0000,X : AND.w #$E3FF : ORA.w #!FS_COLOR_GRAY : STA.w $0000, Y
+	LDA.w $0002,X : AND.w #$E3FF : ORA.w #!FS_COLOR_GRAY : STA.w $0002, Y
+	LDA.w $0004,X : AND.w #$E3FF : ORA.w #!FS_COLOR_GRAY : STA.w $0040, Y
+	LDA.w $0006,X : AND.w #$E3FF : ORA.w #!FS_COLOR_GRAY : STA.w $0042, Y
+RTS
+DrawItemBasic:
+	AND.w #$00FF : BEQ +
+		JMP DrawItem
+	+
+JMP DrawItemGray
+
 DrawPlayerFile:
-	PHX : PHY
+	PHX : PHY : PHB
+
+	SEP #$20 ; set 8-bit accumulator
+	LDA.b #FileSelectItems>>16 : PHA : PLB
+	REP #$20 ; restore 16 bit accumulator
 
 	LDA !ExtendedPlayerName+$00 : ORA.w #!FS_COLOR_BW
 	%fs_draw8x16(6,3)
@@ -179,25 +201,7 @@ DrawPlayerFile:
 	; Moon Pearl
 	%fs_drawItemBasic($700357,8,26,FileSelectItems_pearl)
 
-;	;powder
-;	LDA !FS_INVENTORY_SWAP : AND.w #$0010 : BEQ +
-;		LDA.w #$020A|!FS_COLOR_BROWN
-;		BRA .draw_powder
-;	+
-;	LDA.w #$020A|!FS_COLOR_GRAY
-;    .draw_powder
-;	%fs_draw16x16(2,20)
-;
-;	;mushroom
-;	LDA !FS_INVENTORY_SWAP : AND.w #$0020 : BEQ +
-;		LDA.w #$0262|!FS_COLOR_RED
-;		BRA .draw_shroom
-;	+
-;	LDA.w #$0262|!FS_COLOR_GRAY
-;	.draw_shroom
-;	%fs_draw16x16(2,22)
-
-	PLY : PLX
+	PLB : PLY : PLX
 	LDA.w #$0004 : STA $02 ; thing we wrote over
 RTL
 ;--------------------------------------------------------------------------------
