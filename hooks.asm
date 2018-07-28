@@ -882,6 +882,12 @@ org $0DF789+6+16 ; blue bottle hud tile, lower right
 dw #$2C14 ; (Orig: #$2CD2)
 org $0DF789+6+40 ; good bee hud tile, lower right
 dw #$2815 ; (Orig: #$283A)
+org $0DF8A1+6 ; <- 6F8A1+6 (not in disassembly) - green mail tile, lower right
+dw #$3C4B ; (Orig: #$7C78)
+org $0DF8A1+6+8  ; blue mail tile tile, lower right
+dw #$2C4F ; (Orig: #$6C78)
+org $0DF8A1+6+16 ; red mail tile, lower right
+dw #$242F ; (Orig: #$6478)
 ;--------------------------------------------------------------------------------
 ;org $0DDE9B ; <- 6DE9B equipment.asm:296 - LDA $0202 : CMP.b #$10 : BNE .notOnBottleMenu (CMP instruction)
 ;CMP.b #$FF

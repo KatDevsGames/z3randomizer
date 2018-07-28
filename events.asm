@@ -138,6 +138,7 @@ RTL
 OnInitFileSelect:
 	; LDA.b #$10 : STA $BC ; init sprite pointer - does nothing unless spriteswap.asm is included
 	; JSL.l SpriteSwap_SetSprite
+	LDA.b #$51 : STA $0AA2 ;<-- Line missing from JP1.0, needed to ensure "extra" copy of naming screen graphics are loaded.
 	JSL.l EnableForceBlank
 RTL
 ;--------------------------------------------------------------------------------
