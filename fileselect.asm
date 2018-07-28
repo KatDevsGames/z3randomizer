@@ -60,6 +60,12 @@ macro fs_drawItemBasic(address,screenrow,screencol,tileAddress)
 	JSR DrawItemBasic
 endmacro
 
+macro fs_drawBottle(address,screenrow,screencol)
+	%fs_LDY_screenpos(<screenrow>,<screencol>)
+	LDA.l <address>
+	JSR DrawBottle
+endmacro
+
 DrawItem:
 	LDA.w $0000,X : STA.w $0000, Y
 	LDA.w $0002,X : STA.w $0002, Y
@@ -77,6 +83,33 @@ DrawItemBasic:
 		JMP DrawItem
 	+
 JMP DrawItemGray
+
+DrawBottle:
+	AND.w #$00FF : BNE +
+		LDX #FileSelectItems_emptyBottle
+		JMP DrawItemGray
+	+ : DEC #2 : BNE +
+		LDX #FileSelectItems_emptyBottle
+		JMP DrawItem
+	+ : DEC : BNE +
+		LDX #FileSelectItems_redPotion
+		JMP DrawItem
+	+ : DEC : BNE +
+		LDX #FileSelectItems_greenPotion
+		JMP DrawItem
+	+ : DEC : BNE +
+		LDX #FileSelectItems_bluePotion
+		JMP DrawItem
+	+ : DEC : BNE +
+		LDX #FileSelectItems_fairyBottle
+		JMP DrawItem
+	+ : DEC : BNE +
+		LDX #FileSelectItems_beeBottle
+		JMP DrawItem
+	+
+	LDX #FileSelectItems_goodBeeBottle
+JMP DrawItem
+
 
 DrawPlayerFile:
 	PHX : PHY : PHB
@@ -183,25 +216,31 @@ DrawPlayerFile:
 	; Mirror
 	%fs_drawItemBasic($700353,8,20,FileSelectItems_mirror)
 	
+	; Bottles
+	%fs_drawBottle($70035C,2,24)
+	%fs_drawBottle($70035D,4,24)
+	%fs_drawBottle($70035E,6,24)
+	%fs_drawBottle($70035F,8,24)
+
 	; Boots
-	%fs_drawItemBasic($700355,2,26,FileSelectItems_boots)
-	
+	%fs_drawItemBasic($700355,2,28,FileSelectItems_boots)
+
 	; Gloves
 	LDA.l $700354 : AND.w #$00FF : BNE +
-		%fs_drawItemGray(4,26,FileSelectItems_gloves)
+		%fs_drawItemGray(4,28,FileSelectItems_gloves)
 		BRA ++
 	+ : DEC : BNE +
-		%fs_drawItem(4,26,FileSelectItems_gloves)
+		%fs_drawItem(4,28,FileSelectItems_gloves)
 		BRA ++
 	+
-		%fs_drawItem(4,26,FileSelectItems_mitts)
+		%fs_drawItem(4,28,FileSelectItems_mitts)
 	++
 	
 	; Flippers
-	%fs_drawItemBasic($700356,6,26,FileSelectItems_flippers)
-	
+	%fs_drawItemBasic($700356,6,28,FileSelectItems_flippers)
+
 	; Moon Pearl
-	%fs_drawItemBasic($700357,8,26,FileSelectItems_pearl)
+	%fs_drawItemBasic($700357,8,28,FileSelectItems_pearl)
 
 	PLB : PLY : PLX
 	LDA.w #$0004 : STA $02 ; thing we wrote over
@@ -266,6 +305,15 @@ FileSelectItems:
 	dw #$0262|!FS_COLOR_RED, #$0263|!FS_COLOR_RED, #$0272|!FS_COLOR_RED, #$0273|!FS_COLOR_RED
 	.powder
 	dw #$020A|!FS_COLOR_BROWN, #$020B|!FS_COLOR_BROWN, #$021A|!FS_COLOR_BROWN, #$021B|!FS_COLOR_BROWN
+
+	.emptyBottle
+	.redPotion
+	.greenPotion
+	.bluePotion
+	.fairyBottle
+	.beeBottle
+	.goodBeeBottle
+	dw #$0240|!FS_COLOR_BW, #$0241|!FS_COLOR_BW, #$0250|!FS_COLOR_BW, #$0251|!FS_COLOR_BW
 
 ;--------------------------------------------------------------------------------
 FileSelectDrawHudBar:
