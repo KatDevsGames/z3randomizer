@@ -186,19 +186,21 @@ DMAAlphabetTilemap:
 		PLA : STA $2100 ; put screen back however it was before
 		;--------------------------------------------------------------------------------
 		LDA.b #$00 : STA $4300 ; set DMA transfer direction A -> B, bus A auto increment, single-byte mode
-		LDA.b #$22 : STA $4301 ; set bus B destination to CGRAM register
-		
-		STZ $2121 ; write CGRAM destination address
-		
+		LDA.b #$80 : STA $4301 ; set bus B destination to WRAM register
+
+		STZ $2181 ; set WRAM register source address
+		LDA.b #$C5 : STA $2182
+		LDA.b #$7E : STA $2183
+
 		LDA.b #GFX_HUD_Palette : STA $4302 ; set bus A source address to WRAM
 		LDA.b #GFX_HUD_Palette>>8 : STA $4303 ; set bus A source address to WRAM
 		LDA.b #GFX_HUD_Palette>>16 : STA $4304 ; set bus A source bank
-		
-		LDA.b #$80 : STA $4305 : STZ $4306 ; set transfer size to 0x40
-		
-		LDA $2100 : PHA : LDA.b #$80 : STA $2100 ; save screen state & turn screen off
-			LDA #$01 : STA $420B ; begin DMA transfer
-		PLA : STA $2100 ; put screen back however it was before
+
+		LDA.b #$40 : STA $4305 : STZ $4306 ; set transfer size to 0x40
+
+		LDA #$01 : STA $420B ; begin DMA transfer
+
+		INC $15 ; ensure CGRAM gets updated
 		;--------------------------------------------------------------------------------
 		PLA : STA $4306 ; restore DMA parameters
 		PLA : STA $4305 ; restore DMA parameters
