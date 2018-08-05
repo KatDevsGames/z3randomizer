@@ -1617,6 +1617,9 @@ org $06B4F3 ; <- 334F3 sprite_smithy_bros.asm : 556 (JSL Sprite_ShowMessageUncon
 JSL ItemSet_SmithSword
 ;NOP #4
 ;----------------------------------------------------------
+org $05FBC2 ; <- 2FBC3 - sprite_mad_batter.asm:195 - (JSL Sprite_ShowMessageUnconditional)
+NOP #4 ; removing this breaks animated received objects like rupees
+;----------------------------------------------------------
 
 ;===================================
 ;-- Escort Text
