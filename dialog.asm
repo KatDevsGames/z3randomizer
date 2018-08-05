@@ -296,7 +296,7 @@ DialogGanon2:
 		REP #$20 : LDA.w #$018D : STA $1CF0 : SEP #$20
 		BRA ++
 	+
-		REP #$20 : LDA.w #$016F : STA $1CF0 : SEP #$20
+		REP #$20 : LDA.w #$016E : STA $1CF0 : SEP #$20
 	++
 	JSL.l Sprite_ShowMessageMinimal
 RTL
