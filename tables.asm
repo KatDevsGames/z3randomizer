@@ -905,8 +905,36 @@ db $00, $01, $02, $03, $04
 ; $308220 (0x180220) - $30823F (0x18023F)
 ; Plandomizer Author Name (ASCII) - Leave unused chars as 0
 org $308220 ; PC 0x180220
+;================================================================================
+; $308240 (0x180420) - $308246 (0x180246)
+; For starting areas in single entrance caves, we specify which row in the StartingAreaExitTable
+; to use for exit information. Values are 1 based indexes, with 0 representing a multi-entrance cave
+; start position.
+; Position 0: Link's House
+; Position 1: sanctuary
+; Position 2: Zelda's cell
+; Position 3: Wounded Uncle
+; Position 4: Mantle
+; Position 5: Middle of Old Man Cave
+; Position 6: Old Man's House
+org $308240 ; PC 0x180240
+StartingAreaExitOffset:
+db $00, $00, $00, $00, $00, $00, $00
 ;--------------------------------------------------------------------------------
-; 0x180240 - 0x1814FF (unused)
+; 0x180246 - 0x18024F (unused)
+;-------------------------------------------------------------------------------
+; $308250 (0x180250) - $30829F (0x18029F)
+org $308250 ; PC 0x180250
+StartingAreaExitTable:
+; This has the same format as the main Exit table, except
+; is stored row major instead of column major
+; it lacks the last two columns and has 1 padding byte per row (the last byte)
+dw $0112 : db $53 : dw $001e, $0400, $06e2, $0446, $0758, $046d, $075f : db $00, $00, $00
+dw $0000 : db $00 : dw $0000, $0000, $0000, $0000, $0000, $0000, $0000 : db $00, $00, $00
+dw $0000 : db $00 : dw $0000, $0000, $0000, $0000, $0000, $0000, $0000 : db $00, $00, $00
+dw $0000 : db $00 : dw $0000, $0000, $0000, $0000, $0000, $0000, $0000 : db $00, $00, $00
+;================================================================================
+; 0x1802A0 - 0x1814FF (unused)
 ;================================================================================
 ; $309500 (0x181500) - $309FFF (0x181FFF) original 0x39C bytes
 ; Replacement Ending Sequence Text Data
