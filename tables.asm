@@ -178,6 +178,10 @@ org $308044 ; PC 0x180044
 AllowHammerTablets:
 db #$00 ; #$00 = Off (default) - #$01 = On
 ;--------------------------------------------------------------------------------
+org $30805D ; PC 0x18005D
+AllowHammerEvilBarrierWithFighterSword:
+db #$00 ; #$00 = Off (default) - #$01 = On
+;--------------------------------------------------------------------------------
 org $308045 ; PC 0x180045
 HUDDungeonItems:
 db #$00 ; display ----dcba a: Small Keys, b: Big Key, c: Map, d: Compass
@@ -251,7 +255,7 @@ CrystalPendantFlags_2:
 ;Pendant: $00
 ;Crystal: $40
 ;--------------------------------------------------------------------------------
-; 0x18005D - 0x18005F (unused)
+; 0x18005E - 0x18005F (unused)
 ;--------------------------------------------------------------------------------
 org $308060 ; PC 0x180060 - 0x18007E
 ProgrammableItemLogicJump_1:

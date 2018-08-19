@@ -1013,6 +1013,9 @@ JSL.l CheckTabletSword
 org $05F40A ; <- 2F40A - sprite_medallion_tablet.asm:303 (LDA $7EF359 : BMI .show_hylian_script)
 JSL.l CheckTabletSword
 ;--------------------------------------------------------------------------------
+org $1DF086 ; <- EF086 - sprite_evil_barrier.asm:303 (LDA $7EF359 : CMP.b #$02 : BCS .anozap_from_player_attack)
+JSL.l GetSwordLevelForEvilBarrier
+;--------------------------------------------------------------------------------
 
 ;================================================================================
 ; Medallion Tablets

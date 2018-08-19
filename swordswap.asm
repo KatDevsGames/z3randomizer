@@ -122,6 +122,13 @@ CheckTabletSword:
 	LDA $7EF359 ; get actual sword value
 RTL
 ;================================================================================
+GetSwordLevelForEvilBarrier:
+	LDA.l AllowHammerEvilBarrierWithFighterSword : BEQ +
+	LDA #$FF : RTL
+	+
+	LDA $7EF359
+RTL
+;================================================================================
 CheckGanonHammerDamage:
 	LDA.l HammerableGanon : BEQ +
 	LDA $0E20, X : CMP.b #$D8 ; original behavior except ganon
