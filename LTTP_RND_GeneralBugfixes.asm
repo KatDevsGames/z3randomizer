@@ -176,10 +176,10 @@ incsrc contrib.asm
 org $A38000
 incsrc stats/main.asm
 
-;incsrc sandbox.asm
-
 org $308000 ; bank #$30
 incsrc tables.asm
+
+;incsrc sandbox.asm
 
 org $318000 ; bank #$31
 GFX_Mire_Bombos:
