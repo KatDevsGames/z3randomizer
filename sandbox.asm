@@ -111,6 +111,12 @@ org $02DB8C+$00 : db $6C
 org $1BBB73+$00 : db $53
 org $1BBB73+$52 : db $01
 
+; swap AT and GT
+org $1BBB73+$23 : db $37
+org $1BBB73+$36 : db $24
+org $02DAEE+$38+$38 : dw $00e0
+org $02DAEE+$25+$25 : dw $000c
+
 ; Bumper Cave (Bottom) => Old Man Cave (West)
 org $1BBB73+$15 : db $06
 org $02DAEE+$17+$17 : dw $00f0
