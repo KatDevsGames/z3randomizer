@@ -138,28 +138,39 @@ DrawPlayerFile:
 
 	JSR FileSelectDrawHudBar
 
-;	;bow
-;	LDA.l !FS_INVENTORY_SWAP_2 : AND.w #$0040 : BEQ +
-;		LDA.l $700340 : AND.w #$00FF : BEQ ++
-;			LDA.w #$0201|!FS_COLOR_YELLOW :	%fs_draw8x8(2,12)
-;			LDA.w #$0204|!FS_COLOR_YELLOW :	%fs_draw8x8(2,13)
-;			LDA.w #$0203|!FS_COLOR_RED : %fs_draw8x8(3,12)
-;			LDA.w #$0212|!FS_COLOR_YELLOW : %fs_draw8x8(3,13)
-;			BRA .bow_end
-;		++
-;			LDA #$0214|!FS_COLOR_RED : %fs_draw8x8(2,13)
-;			LDA.w #$0213|!FS_COLOR_RED : %fs_draw8x8(3,12)
-;			BRA .bow_end
-;	+
-;		LDA.l $700340 : AND.w #$00FF : BEQ ++
-;			LDA.w #$0201|!FS_COLOR_YELLOW : %fs_draw16x16(2,12)
-;			BRA .bow_end
-;		++
-;		LDA.w #$0201|!FS_COLOR_GRAY : %fs_draw16x16(2,12)
-;	.bow_end
-;
+	; Bow
+	LDA.l !FS_INVENTORY_SWAP_2 : AND.w #$0040 : BEQ +
+		LDA $700340 : AND.w #$00FF : BEQ +
+			%fs_drawItem(2,12,FileSelectItems_silver_bow)
+			BRA .bow_end
+		+
+		%fs_drawItem(2,12,FileSelectItems_silver_arrow)
+		BRA .bow_end
+	+
+	LDA.l $700340 : AND.w #$00FF : BEQ +
+		%fs_drawItem(2,12,FileSelectItems_bow)
+		BRA .bow_end
+	+
+	%fs_drawItemGray(2,12,FileSelectItems_bow)
+	.bow_end
+	
+	; Boomerang
+	LDA.l !FS_INVENTORY_SWAP : AND.w #$0040 : BEQ +
+		%fs_drawItem(2,14,FileSelectItems_red_boomerang)
+		BRA .boomerang_end
+	+
+	LDA.l !FS_INVENTORY_SWAP : AND.w #$0080 : BEQ +
+		%fs_drawItem(2,14,FileSelectItems_blue_boomerang)
+		BRA .boomerang_end
+	+
+	%fs_drawItemGray(2,14,FileSelectItems_blue_boomerang)
+	.boomerang_end
+
 	; Hookshot
 	%fs_drawItemBasic($700342,2,16,FileSelectItems_hookshot)
+	
+	; Bombs
+	%fs_drawItemBasic($700343,2,18,FileSelectItems_bombs)
 	
 	; Powder
 	LDA.l !FS_INVENTORY_SWAP : AND.w #$0010 : BEQ +
@@ -175,6 +186,22 @@ DrawPlayerFile:
 		BRA ++
 	+
 		%fs_drawItemGray(2,22,FileSelectItems_mushroom)
+	++
+	
+	; Flute
+	LDA.l !FS_INVENTORY_SWAP : AND.w #$0003 : BEQ +
+		%fs_drawItem(6,16,FileSelectItems_flute)
+		BRA ++
+	+
+		%fs_drawItemGray(6,16,FileSelectItems_flute)
+	++
+	
+	; Shovel
+	LDA.l !FS_INVENTORY_SWAP : AND.w #$0004 : BEQ +
+		%fs_drawItem(8,12,FileSelectItems_shovel)
+		BRA ++
+	+
+		%fs_drawItemGray(8,12,FileSelectItems_shovel)
 	++
 
 	; Fire Rod
@@ -254,12 +281,16 @@ FileSelectItems:
 	dw #$0201|!FS_COLOR_YELLOW, #$0204|!FS_COLOR_YELLOW, #$0203|!FS_COLOR_RED, #$0212|!FS_COLOR_YELLOW
 	.silver_bow
 	dw #$0201|!FS_COLOR_YELLOW, #$0204|!FS_COLOR_YELLOW, #$0203|!FS_COLOR_RED, #$0212|!FS_COLOR_YELLOW
+	.silver_arrow
+	dw #$0200|!FS_COLOR_YELLOW, #$0214|!FS_COLOR_YELLOW, #$0213|!FS_COLOR_RED, #$0200|!FS_COLOR_YELLOW
 	.blue_boomerang
 	dw #$0205|!FS_COLOR_BLUE, #$0206|!FS_COLOR_BLUE, #$0200|!FS_COLOR_BW, #$0216|!FS_COLOR_BLUE
 	.red_boomerang
 	dw #$0205|!FS_COLOR_RED, #$0206|!FS_COLOR_RED, #$0200|!FS_COLOR_BW, #$0216|!FS_COLOR_RED
 	.hookshot
 	dw #$0200|!FS_COLOR_RED, #$0215|!FS_COLOR_RED, #$0230|!FS_COLOR_RED, #$0200|!FS_COLOR_BW
+	.bombs
+	dw #$020C|!FS_COLOR_BLUE, #$020D|!FS_COLOR_BLUE, #$021C|!FS_COLOR_BLUE, #$021C|!FS_COLOR_BLUE|!FS_HFLIP
 	.fire_rod
 	dw #$0220|!FS_COLOR_RED, #$0210|!FS_COLOR_RED, #$0230|!FS_COLOR_RED, #$0231|!FS_COLOR_RED
 	.ice_rod
@@ -276,6 +307,10 @@ FileSelectItems:
 	dw #$0222|!FS_COLOR_BROWN, #$0223|!FS_COLOR_BROWN, #$0232|!FS_COLOR_BROWN, #$0233|!FS_COLOR_BROWN
 	.bugnet
 	dw #$0228|!FS_COLOR_YELLOW, #$0229|!FS_COLOR_YELLOW, #$0238|!FS_COLOR_YELLOW, #$0239|!FS_COLOR_YELLOW
+	.shovel
+	dw #$0224|!FS_COLOR_YELLOW, #$0225|!FS_COLOR_YELLOW, #$0234|!FS_COLOR_YELLOW, #$0235|!FS_COLOR_YELLOW
+	.flute
+	dw #$0226|!FS_COLOR_BLUE, #$0227|!FS_COLOR_BLUE, #$0236|!FS_COLOR_BLUE, #$0237|!FS_COLOR_BLUE
 	.book
 	dw #$022A|!FS_COLOR_GREEN, #$022B|!FS_COLOR_GREEN, #$023A|!FS_COLOR_GREEN, #$023B|!FS_COLOR_GREEN
 	.redcane
