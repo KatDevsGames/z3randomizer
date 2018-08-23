@@ -381,7 +381,7 @@ AltBufferTable:
     LDA.b #$02 : STA $210c ; Have Screen 3 use same tile area as screens 1
 
     REP #$20
-    LDX.w #$0300 ; 12 rows with 64 bytes (30 tiles * 2 + 4 byte header)
+    LDX.w #$0380 ; 14 rows with 64 bytes (30 tiles * 2 + 4 byte header)
     ;fill with the blank character
     LDA.w #$0188
     -
@@ -407,6 +407,9 @@ AltBufferTable:
     LDA.w #$6162 : STA $1282 ;extra gap row top
     LDA.w #$8162 : STA $12c2 ;extra gap row bottom
 
+	LDA.w #$A162 : STA $1302 ;extra gap row top
+    LDA.w #$C162 : STA $1342 ;extra gap row bottom
+
     ; set lengths
     LDA.w #$3B00
     STA $1004 ;file 1 top row
@@ -421,6 +424,8 @@ AltBufferTable:
     STA $1244 ;file 3 bottom row
     STA $1284 ;extra gap row top
     STA $12c4 ;extra gap row bottom
+	STA $1302 ;extra gap row top
+    STA $1342 ;extra gap row bottom
 
     ; Set last packet marker
     LDA.w #$00FF : STA $1302
