@@ -433,11 +433,11 @@ AltBufferTable:
     STA $1244 ;file 3 bottom row
     STA $1284 ;extra gap row top
     STA $12c4 ;extra gap row bottom
-	STA $1302 ;extra gap row top
-    STA $1342 ;extra gap row bottom
+	STA $1304 ;extra gap row top
+    STA $1344 ;extra gap row bottom
 
     ; Set last packet marker
-    LDA.w #$00FF : STA $1302
+    LDA.w #$00FF : STA $1382
     SEP #$20
 
 RTL
