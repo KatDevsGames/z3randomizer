@@ -141,133 +141,142 @@ DrawPlayerFile:
 	; Bow
 	LDA.l !FS_INVENTORY_SWAP_2 : AND.w #$0040 : BEQ +
 		LDA $700340 : AND.w #$00FF : BEQ +
-			%fs_drawItem(2,12,FileSelectItems_silver_bow)
+			%fs_drawItem(3,12,FileSelectItems_silver_bow)
 			BRA .bow_end
 		+
-		%fs_drawItem(2,12,FileSelectItems_silver_arrow)
+		%fs_drawItem(3,12,FileSelectItems_silver_arrow)
 		BRA .bow_end
 	+
 	LDA.l $700340 : AND.w #$00FF : BEQ +
-		%fs_drawItem(2,12,FileSelectItems_bow)
+		%fs_drawItem(3,12,FileSelectItems_bow)
 		BRA .bow_end
 	+
-	%fs_drawItemGray(2,12,FileSelectItems_bow)
+	%fs_drawItemGray(3,12,FileSelectItems_bow)
 	.bow_end
 	
 	; Boomerang
 	LDA.l !FS_INVENTORY_SWAP : AND.w #$0040 : BEQ +
-		%fs_drawItem(2,14,FileSelectItems_red_boomerang)
+		%fs_drawItem(3,14,FileSelectItems_red_boomerang)
 		BRA .boomerang_end
 	+
 	LDA.l !FS_INVENTORY_SWAP : AND.w #$0080 : BEQ +
-		%fs_drawItem(2,14,FileSelectItems_blue_boomerang)
+		%fs_drawItem(3,14,FileSelectItems_blue_boomerang)
 		BRA .boomerang_end
 	+
-	%fs_drawItemGray(2,14,FileSelectItems_blue_boomerang)
+	%fs_drawItemGray(3,14,FileSelectItems_blue_boomerang)
 	.boomerang_end
 
 	; Hookshot
-	%fs_drawItemBasic($700342,2,16,FileSelectItems_hookshot)
+	%fs_drawItemBasic($700342,3,16,FileSelectItems_hookshot)
 	
 	; Bombs
-	%fs_drawItemBasic($700343,2,18,FileSelectItems_bombs)
+	; %fs_drawItemBasic($700343,3,18,FileSelectItems_bombs)
 	
 	; Powder
 	LDA.l !FS_INVENTORY_SWAP : AND.w #$0010 : BEQ +
-		%fs_drawItem(2,20,FileSelectItems_powder)
+		%fs_drawItem(3,20,FileSelectItems_powder)
 		BRA ++
 	+
-		%fs_drawItemGray(2,20,FileSelectItems_powder)
+		%fs_drawItemGray(3,20,FileSelectItems_powder)
 	++
 	
 	; Mushroom
 	LDA.l !FS_INVENTORY_SWAP : AND.w #$0020 : BEQ +
-		%fs_drawItem(2,22,FileSelectItems_mushroom)
+		%fs_drawItem(3,18,FileSelectItems_mushroom)
 		BRA ++
 	+
-		%fs_drawItemGray(2,22,FileSelectItems_mushroom)
+		%fs_drawItemGray(3,18,FileSelectItems_mushroom)
 	++
 	
 	; Flute
 	LDA.l !FS_INVENTORY_SWAP : AND.w #$0003 : BEQ +
-		%fs_drawItem(6,16,FileSelectItems_flute)
+		%fs_drawItem(7,16,FileSelectItems_flute)
 		BRA ++
 	+
-		%fs_drawItemGray(6,16,FileSelectItems_flute)
+		%fs_drawItemGray(7,16,FileSelectItems_flute)
 	++
 	
 	; Shovel
 	LDA.l !FS_INVENTORY_SWAP : AND.w #$0004 : BEQ +
-		%fs_drawItem(8,12,FileSelectItems_shovel)
+		%fs_drawItem(9,12,FileSelectItems_shovel)
 		BRA ++
 	+
-		%fs_drawItemGray(8,12,FileSelectItems_shovel)
+		%fs_drawItemGray(9,12,FileSelectItems_shovel)
 	++
 
 	; Fire Rod
-	%fs_drawItemBasic($700345,4,12,FileSelectItems_fire_rod)
+	%fs_drawItemBasic($700345,5,12,FileSelectItems_fire_rod)
 
 	; Ice Rod
-	%fs_drawItemBasic($700346,4,14,FileSelectItems_ice_rod)
+	%fs_drawItemBasic($700346,5,14,FileSelectItems_ice_rod)
 
 	; Bombos Medallion
-	%fs_drawItemBasic($700347,4,16,FileSelectItems_bombos)
+	%fs_drawItemBasic($700347,5,16,FileSelectItems_bombos)
 
 	; Ether Medallion
-	%fs_drawItemBasic($700348,4,18,FileSelectItems_ether)
+	%fs_drawItemBasic($700348,5,18,FileSelectItems_ether)
 
 	; Quake Medallion
-	%fs_drawItemBasic($700349,4,20,FileSelectItems_quake)
+	%fs_drawItemBasic($700349,5,20,FileSelectItems_quake)
 
 	; Lamp
-	%fs_drawItemBasic($70034A,6,12,FileSelectItems_lamp)
+	%fs_drawItemBasic($70034A,7,12,FileSelectItems_lamp)
 
 	; Hammer
-	%fs_drawItemBasic($70034B,6,14,FileSelectItems_hammer)
+	%fs_drawItemBasic($70034B,7,14,FileSelectItems_hammer)
 
 	; Bug Net
-	%fs_drawItemBasic($70034D,6,18,FileSelectItems_bugnet)
+	%fs_drawItemBasic($70034D,7,18,FileSelectItems_bugnet)
 
 	; Book of Mudora
-	%fs_drawItemBasic($70034E,6,20,FileSelectItems_book)
+	%fs_drawItemBasic($70034E,7,20,FileSelectItems_book)
 
 	; Red Cane
-	%fs_drawItemBasic($700350,8,14,FileSelectItems_redcane)
+	%fs_drawItemBasic($700350,9,14,FileSelectItems_redcane)
 
 	; Blue Cane
-	%fs_drawItemBasic($700351,8,16,FileSelectItems_bluecane)
+	%fs_drawItemBasic($700351,9,16,FileSelectItems_bluecane)
 
 	; Cape
-	%fs_drawItemBasic($700352,8,18,FileSelectItems_cape)
+	%fs_drawItemBasic($700352,9,18,FileSelectItems_cape)
 
 	; Mirror
-	%fs_drawItemBasic($700353,8,20,FileSelectItems_mirror)
+	%fs_drawItemBasic($700353,9,20,FileSelectItems_mirror)
 	
 	; Bottles
-	%fs_drawBottle($70035C,2,24)
-	%fs_drawBottle($70035D,4,24)
-	%fs_drawBottle($70035E,6,24)
-	%fs_drawBottle($70035F,8,24)
+	%fs_drawBottle($70035C,3,24)
+	%fs_drawBottle($70035D,5,24)
+	%fs_drawBottle($70035E,7,24)
+	%fs_drawBottle($70035F,9,24)
 
 	; Boots
-	%fs_drawItemBasic($700355,2,28,FileSelectItems_boots)
+	%fs_drawItemBasic($700355,3,28,FileSelectItems_boots)
 
 	; Gloves
 	LDA.l $700354 : AND.w #$00FF : BNE +
-		%fs_drawItemGray(4,28,FileSelectItems_gloves)
+		%fs_drawItemGray(5,28,FileSelectItems_gloves)
 		BRA ++
 	+ : DEC : BNE +
-		%fs_drawItem(4,28,FileSelectItems_gloves)
+		%fs_drawItem(5,28,FileSelectItems_gloves)
 		BRA ++
 	+
-		%fs_drawItem(4,28,FileSelectItems_mitts)
+		%fs_drawItem(5,28,FileSelectItems_mitts)
 	++
 	
 	; Flippers
-	%fs_drawItemBasic($700356,6,28,FileSelectItems_flippers)
+	%fs_drawItemBasic($700356,7,28,FileSelectItems_flippers)
 
 	; Moon Pearl
-	%fs_drawItemBasic($700357,8,28,FileSelectItems_pearl)
+	%fs_drawItemBasic($700357,9,28,FileSelectItems_pearl)
+	
+	; Crystals
+	LDA.w #$0287|!FS_COLOR_BW : %fs_draw16x8(12,7)
+	LDA.w #$0287|!FS_COLOR_BW : %fs_draw16x8(11,8)
+	LDA.w #$0287|!FS_COLOR_BW : %fs_draw16x8(12,9)
+	LDA.w #$0287|!FS_COLOR_BW : %fs_draw16x8(11,10)
+	LDA.w #$0287|!FS_COLOR_BW : %fs_draw16x8(12,11)
+	LDA.w #$0287|!FS_COLOR_BW : %fs_draw16x8(11,12)
+	LDA.w #$0287|!FS_COLOR_BW : %fs_draw16x8(12,13)
 
 	PLB : PLY : PLX
 	LDA.w #$0004 : STA $02 ; thing we wrote over
