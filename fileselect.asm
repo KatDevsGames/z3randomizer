@@ -269,14 +269,70 @@ DrawPlayerFile:
 	; Moon Pearl
 	%fs_drawItemBasic($700357,9,28,FileSelectItems_pearl)
 	
+	; Pendants
+	LDA $700374 : AND.w #$0004 : BEQ +
+		%fs_drawItem(12,16,FileSelectItems_green_pendant)
+		BEQ ++
+	+
+		%fs_drawItemGray(12,16,FileSelectItems_green_pendant)
+	++
+
+	LDA $700374 : AND.w #$0002 : BEQ +
+		%fs_drawItem(12,18,FileSelectItems_blue_pendant)
+		BEQ ++
+	+
+		%fs_drawItemGray(12,18,FileSelectItems_blue_pendant)
+	++
+
+	LDA $700374 : AND.w #$0001 : BEQ +
+		%fs_drawItem(12,20,FileSelectItems_red_pendant)
+		BEQ ++
+	+
+		%fs_drawItemGray(12,20,FileSelectItems_red_pendant)
+	++
+	
 	; Crystals
-	LDA.w #$0287|!FS_COLOR_BW : %fs_draw16x8(12,7)
-	LDA.w #$0287|!FS_COLOR_BW : %fs_draw16x8(11,8)
-	LDA.w #$0287|!FS_COLOR_BW : %fs_draw16x8(12,9)
-	LDA.w #$0287|!FS_COLOR_BW : %fs_draw16x8(11,10)
-	LDA.w #$0287|!FS_COLOR_BW : %fs_draw16x8(12,11)
-	LDA.w #$0287|!FS_COLOR_BW : %fs_draw16x8(11,12)
-	LDA.w #$0287|!FS_COLOR_BW : %fs_draw16x8(12,13)
+	LDA $70037A : AND.w #$0002 : BEQ +
+		LDA.w #$0297|!FS_COLOR_BLUE
+	+
+		LDA.w #$0287|!FS_COLOR_GRAY
+	++ : %fs_draw16x8(13,22)
+	
+	LDA $70037A : AND.w #$0010 : BEQ +
+		LDA.w #$0297|!FS_COLOR_BLUE
+	+
+		LDA.w #$0287|!FS_COLOR_GRAY
+	++ : %fs_draw16x8(12,23)
+	
+	LDA $70037A : AND.w #$0040 : BEQ +
+		LDA.w #$0297|!FS_COLOR_BLUE
+	+
+		LDA.w #$0287|!FS_COLOR_GRAY
+	++ : %fs_draw16x8(13,24)
+	
+	LDA $70037A : AND.w #$0020 : BEQ +
+		LDA.w #$0297|!FS_COLOR_BLUE
+	+
+		LDA.w #$0287|!FS_COLOR_GRAY
+	++ : %fs_draw16x8(12,25)
+	
+	LDA $70037A : AND.w #$0004 : BEQ +
+		LDA.w #$0297|!FS_COLOR_RED
+	+
+		LDA.w #$0287|!FS_COLOR_GRAY
+	++ : %fs_draw16x8(13,26)
+	
+	LDA $70037A : AND.w #$0001 : BEQ +
+		LDA.w #$0297|!FS_COLOR_RED
+	+
+		LDA.w #$0287|!FS_COLOR_GRAY
+	++ : %fs_draw16x8(12,27)
+	
+	LDA $70037A : AND.w #$0008 : BEQ +
+		LDA.w #$0297|!FS_COLOR_BLUE
+	+
+		LDA.w #$0287|!FS_COLOR_GRAY
+	++ : %fs_draw16x8(13,28)
 
 	PLB : PLY : PLX
 	LDA.w #$0004 : STA $02 ; thing we wrote over
@@ -339,6 +395,13 @@ FileSelectItems:
 	
 	.pearl
 	dw #$0264|!FS_COLOR_RED, #$0265|!FS_COLOR_RED, #$0274|!FS_COLOR_RED, #$0275|!FS_COLOR_RED
+	
+	.green_pendant
+	dw #$0285|!FS_COLOR_GREEN, #$0286|!FS_COLOR_GREEN, #$0295|!FS_COLOR_GREEN, #$0296|!FS_COLOR_GREEN
+	.blue_pendant
+	dw #$0285|!FS_COLOR_BLUE, #$0286|!FS_COLOR_BLUE, #$0295|!FS_COLOR_BLUE, #$0296|!FS_COLOR_BLUE
+	.red_pendant
+	dw #$0285|!FS_COLOR_RED, #$0286|!FS_COLOR_RED, #$0295|!FS_COLOR_RED, #$0296|!FS_COLOR_RED
 	
 	.gloves
 	dw #$024E|!FS_COLOR_BROWN, #$024F|!FS_COLOR_BROWN, #$025E|!FS_COLOR_BROWN, #$025F|!FS_COLOR_BROWN
