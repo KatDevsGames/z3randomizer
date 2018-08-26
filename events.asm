@@ -93,7 +93,9 @@ OnFileLoad:
 		JSL.l OnNewFile
 		LDA.b #$FF : STA !FRESH_FILE_MARKER
 	+
-	JSL.l DoWorldFix
+	LDA.w $010A : BNE + ; don't adjust the worlds for "continue" or "save-continue"
+		JSL.l DoWorldFix
+	+
 	JSL.l MasterSwordFollowerClear
 	JSL.l InitOpenMode
 	LDA #$FF : STA !RNG_ITEM_LOCK_IN ; reset rng item lock-in
