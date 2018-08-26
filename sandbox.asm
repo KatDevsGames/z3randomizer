@@ -1,4 +1,4 @@
-
+;Spawn location table cryptic documentation
 ;$A0      |$15B6E - $15B7B (2) Starting room
 ;$0601    |$15B7C - $15BB3 (8) scroll ranges
 ;$E2      |$15BB4 - $15BC1 (2) Location X? Scroll Data
@@ -164,7 +164,7 @@ org $05AF79 : db $F0 ; vortex
 org $0DB3C5 : db $C6 ; vortex
 org $07A3F4 : db $F0 ; duck
 org $07A3F4 : db $F0 ; duck
-org $02E849 : dw $0043, $0056, $0058, $006C, $006F, $0070, $007B, $007F ; Dark World Flute Spots
+org $02E849 : dw $0043, $0056, $0058, $006C, $006F, $0070, $007B, $007F, $001B ; Dark World Flute Spots
 org $02E8D5 : dw $07C8 ; nudge flute spot 3 out of gargoyle statue
 org $02E8F7 : dw $01F8 ; nudge flute spot 3 out of gargoyle statue
 org $07A943 : db $F0 ; Dark to light world mirror
@@ -183,6 +183,57 @@ org $1FED41 : db $0E ; pre-open open TR bomb door
 org $308247 ; PC 0x180247
 db $00, $5A, $00, $00, $00, $00, $00
 
+;Cryptic documentation of flute/whirlpool table format (all value 16 bit)
+;eae5 - Overworld area that the exit leads to
+;eb07 $0084 - VRAM locations to place Link at.
+;eb29 $e6/0122/0124 - Y Scroll Data
+;eb4b $e0/011e/0120 - X Scroll Data
+;eb6d $20 - Link's Y Coordinate
+;eb8f $22 - Link's X Coordinate
+;ebb1 $0618 - Camera Y Coordinate
+;ebd3 $061c - Camera X Coordinate
+;ebf5 $0624- Ukn1 in HM
+;ec17 $0628- Ukn2 in HM
+
+;adjust flute spot 9 position
+org $02E87B : dw $00ae
+org $02E89D : dw $0610
+org $02E8BF : dw $077e
+org $02E8E1 : dw $0672
+org $02E903 : dw $07f8
+org $02E925 : dw $067d
+org $02E947 : dw $0803
+org $02E969 : dw $0000
+org $02E98B : dw $FFF2
+
+; aga tower exit/ pyramid spawn (now hyrule castle ledge spawn)
+org $02DAEE+$06+$06 : dw $0020
+org $02DB8C+$06 : db $1B
+org $02DBDB+$06+$06 : dw $00ae
+org $02DC79+$06+$06 : dw $0610
+org $02DD17+$06+$06 : dw $077e
+org $02DDB5+$06+$06 : dw $0672
+org $02DE53+$06+$06 : dw $07f8
+org $02DEF1+$06+$06 : dw $067d
+org $02DF8F+$06+$06 : dw $0803
+org $02E02D+$06 : db $00
+org $02E07C+$06 : db $f2
+org $02E0CB+$06+$06 : dw $0000
+org $02E169+$06+$06 : dw $0000
+
+;(0x????,0x1B,0x0130,0x060a,0x0716,0x0672,0x07f8,0x0681,0x0803,0x0c,0x02,xx,xx)
+; Exit table cryptic documentation:
+;??|$15D8A-$15E27 - (0x4F entries, 2 bytes each) - Rooms that exit to overworld Areas ("Room" in HM)
+;??|$15E28-$15E76 - (0x4F entries, 1 byte each)  - Overworld area that the exit leads to. ("Map" in HM)
+;84|$15E77-$15F14 - (0x4F entries, 2 bytes each) - VRAM locations to place Link at. Gets fed to $7E0084 (???? in HM)
+;e6|$15F15-$15FB2 - (0x4F entries, 2 bytes each) - Y Scroll Data
+;e0|$15FB3-$16050 - (0x4F entries, 2 bytes each) - X Scroll Data
+;$20|$16051-$160EE - (0x4F entries, 2 bytes each) - Link's Y Coordinate
+;$22|$160EF-$1618C - (0x4F entries, 2 bytes each) - Link's X Coordinate
+;0618|$1618D-$1622A - (0x4F entries, 2 bytes each) - Camera Y Coordinate
+;061c|$1622B-$162C8 - (0x4F entries, 2 bytes each) - Camera X Coordinate
+;0624|$162C9-$16317 - (0x4F entries, 1 byte each)  - Ukn1 in HM
+;0628|$16318-$16366 - (0x4F entries, 1 byte each)  - Ukn2 in HM
 
 ;org $02E849 ; Fly 1 to Sanctuary
 ;db #$13, #$00, #$16, #$00, #$18, #$00, #$2C, #$00, #$2F, #$00, #$30, #$00, #$3B, #$00, #$3F, #$00, #$5B, #$00, #$35, #$00, #$0F, #$00, #$15, #$00, #$33, #$00, #$12, #$00, #$3F, #$00, #$55, #$00, #$7F, #$00, #$1A, #$00, #$88, #$08, #$30, #$0B, #$88, #$05, #$98, #$07, #$80, #$18, #$9E, #$06, #$10, #$08, #$2E, #$00, #$42, #$12, #$80, #$06, #$12, #$01, #$9E, #$05, #$8E, #$04, #$80, #$02, #$12, #$01, #$80, #$02, #$00, #$04, #$16, #$05, #$59, #$07, #$B9, #$0A, #$FA, #$0A, #$1E, #$0F, #$DF, #$0E, #$05, #$0F, #$00, #$06, #$46, #$0E, #$C6, #$02, #$2A, #$04, #$BA, #$0C, #$9A, #$04, #$56, #$0E, #$2A, #$04, #$56, #$0E, #$D6, #$06, #$4E, #$0C, #$7E, #$01, #$40, #$08, #$B2, #$0E, #$00, #$00, #$F2, #$06, #$75, #$0E, #$78, #$07, #$0A, #$0C, #$06, #$0E, #$8A, #$0A, #$EA, #$06, #$62, #$04, #$00, #$0E, #$8A, #$0A, #$00, #$0E, #$68, #$04, #$78, #$05, #$B7, #$07, #$17, #$0B, #$58, #$0B, #$A8, #$0F, #$3D, #$0F, #$67, #$0F, #$5C, #$06, #$A8, #$0E, #$28, #$03, #$88, #$04, #$18, #$0D, #$F8, #$04, #$B8, #$0E, #$88, #$04, #$B8, #$0E, #$56, #$07, #$C8, #$0C, #$00, #$02, #$B8, #$08, #$30, #$0F, #$78, #$00, #$78, #$07, #$F3, #$0E, #$F0, #$07, #$90, #$0C, #$80, #$0E, #$10, #$0B, #$70, #$07, #$E8, #$04, #$68, #$0E, #$10, #$0B, #$68, #$0E, #$70, #$04, #$83, #$05, #$C6, #$07, #$26, #$0B, #$67, #$0B, #$8D, #$0F, #$4C, #$0F, #$72, #$0F, #$6D, #$06, #$B3, #$0E, #$33, #$03, #$97, #$04, #$27, #$0D, #$07, #$05, #$C3, #$0E, #$97, #$04, #$C3, #$0E, #$56, #$07, #$D3, #$0C, #$0B, #$02, #$BF, #$08, #$37, #$0F, #$8D, #$00, #$7F, #$07, #$FA, #$0E, #$F7, #$07, #$97, #$0C, #$8B, #$0E, #$17, #$0B, #$77, #$07, #$EF, #$04, #$85, #$0E, #$17, #$0B, #$85, #$0E, #$F6, #$FF, #$FA, #$FF, #$07, #$00, #$F7, #$FF, #$F6, #$FF, #$00, #$00, #$F1, #$FF, #$FB, #$FF, #$00, #$00, #$FA, #$FF, #$0A, #$00, #$F6, #$FF, #$F6, #$FF, #$F6, #$FF, #$FA, #$FF, #$F6, #$FF, #$FA, #$FF, #$F2, #$FF, #$F2, #$FF, #$02, #$00, #$00, #$00, #$0E, #$00, #$00, #$00, #$FE, #$FF, #$0B, #$00, #$F8, #$FF, #$06, #$00, #$FA, #$FF, #$FA, #$FF, #$06, #$00, #$0E, #$00, #$00, #$00, #$FA, #$FF, #$00, #$00
