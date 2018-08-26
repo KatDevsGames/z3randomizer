@@ -140,10 +140,10 @@ DrawPlayerFile:
 
 	; Bow
 	LDA.l !FS_INVENTORY_SWAP_2 : AND.w #$0040 : BEQ +
-		LDA $700340 : AND.w #$00FF : BEQ +
+		LDA $700340 : AND.w #$00FF : BEQ ++
 			%fs_drawItem(3,12,FileSelectItems_silver_bow)
 			BRA .bow_end
-		+
+		++
 		%fs_drawItem(3,12,FileSelectItems_silver_arrow)
 		BRA .bow_end
 	+
