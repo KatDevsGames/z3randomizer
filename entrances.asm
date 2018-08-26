@@ -82,6 +82,11 @@ AllowStartFromSingleEntranceCave:
 		STA $7EC14C ; Cache the overworld area number
 		STA $7EC140 ; Cache the aux overworld area number
 
+		SEP #$20 ; set 8-bit accumulator
+		LDX $00
+		LDA.l StartingAreaOverworldDoor, X : STA.l $7F5099 ;Load overworld door
+		REP #$20 ; reset 16-bit accumulator
+
 		.done
 	PLA
 RTL

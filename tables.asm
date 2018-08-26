@@ -925,7 +925,14 @@ org $308240 ; PC 0x180240
 StartingAreaExitOffset:
 db $00, $00, $00, $00, $00, $00, $00
 ;--------------------------------------------------------------------------------
-; 0x180246 - 0x18024F (unused)
+org $308247 ; PC 0x180247
+; For any starting areas in single entrance caves you can specify the overworld door here
+; to enable drawing the doorframes These values should be the overworld door index+1.
+; A value of zero uses the vanilla door frame table.
+StartingAreaOverworldDoor:
+db $00, $00, $00, $00, $00, $00, $00
+;--------------------------------------------------------------------------------
+; 0x18024E - 0x18024F (unused)
 ;-------------------------------------------------------------------------------
 ; $308250 (0x180250) - $30829F (0x18029F)
 org $308250 ; PC 0x180250

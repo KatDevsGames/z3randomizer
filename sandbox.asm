@@ -175,6 +175,13 @@ org $07AA3A : db $D0 ; residual portal?
 org $08D40C : db $D0 ; morph poof
 org $308174 : db $01 ; ER's Fix fake worlds fix. Currently needed for inverted
 
+org $1FED31 : db $0E ; pre-open open TR bomb door
+org $1FED41 : db $0E ; pre-open open TR bomb door
+
+; Write to StartingAreaOverworldDoor table to indicate the overworld door being used for
+; the single entrance spawn point
+org $308247 ; PC 0x180247
+db $00, $5A, $00, $00, $00, $00, $00
 
 
 ;org $02E849 ; Fly 1 to Sanctuary
