@@ -243,6 +243,13 @@ JSL.l DecideIfBunnyByScreenIndex : db #$D0 ; BNE
 org $02D9B9 ; <- 159B9 - Bank02.asm : 11089  (LDA $7EF3C8)
 JSL AllowStartFromSingleEntranceCave
 ;--------------------------------------------------------------------------------
+org $1bc2a7 ; <- DC2A7 - Bank1B.asm : 1143 (Overworld_CreatePyramidHole:)
+JSL.l Overworld_DrawPyramidHoleModified
+RTL
+C9DE_LONG:
+JSR $C9DE ; surprisingly same address as US
+RTL
+;--------------------------------------------------------------------------------
 
 ;================================================================================
 ; Hash Key Display
@@ -1985,6 +1992,21 @@ org $0298AD ; <- Bank02.asm:4495 (LDA $010E : CMP.b #$43)
 JSL.l WalkDownIntoTavern
 NOP #1
 ;================================================================================
+
+;================================================================================
+; Hole fixes
+;--------------------------------------------------------------------------------
+org $1BB88E ; <- DB88E - Bank1B.asm:59 (LDX.w #$0024)
+JML.l CheckHole
+org $1BB8A4 ; <- DB8A4 - Bank1B.asm:78 (LDX.w #$0026)
+Overworld_Hole_GotoHoulihan:
+org $1BB8AF ; <- DB8AF - Bank1B.asm:85 (.matchedHole)
+Overworld_Hole_matchedHole:
+org $1BB8BD ; <- DB8BD - Bank1B.asm:85 (PLB)
+Overworld_Hole_End:
+
+;--------------------------------------------------------------------------------
+
 
 ;================================================================================
 ; Music fixes

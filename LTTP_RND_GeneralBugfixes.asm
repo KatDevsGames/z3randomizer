@@ -166,6 +166,8 @@ incsrc boots.asm
 incsrc fileselect.asm
 incsrc playername.asm
 incsrc decryption.asm
+incsrc inverted.asm
+incsrc invertedmaps.asm
 warnpc $A58000
 
 ;org $228000 ; contrib area
@@ -234,7 +236,12 @@ warnpc $31D001
 org $31D000
 FileSelectNewGraphics:
 incbin fileselect.chr.gfx
-warnpc $31F001
+warnpc $31E001
+
+org $31E000
+InvertedCastleHole: ;address used by front end. DO NOT MOVE!
+incbin sheet73.gfx
+warnpc $31E501
 
 org $338000
 GFX_HUD_Palette:
@@ -551,6 +558,9 @@ HUD_RebuildIndoor_Palace:
 
 org $0EEE10
 Messaging_Text:
+
+org $1BC97C:
+Overworld_DrawPersistentMap16:
 
 org $1BED03
 Palette_Sword:

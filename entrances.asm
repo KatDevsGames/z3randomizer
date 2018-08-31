@@ -91,3 +91,31 @@ AllowStartFromSingleEntranceCave:
 	PLA
 RTL
 ;--------------------------------------------------------------------------------
+CheckHole:
+	LDX.w #$0024
+	.nextHoleClassic
+		LDA.b $00   : CMP.l $1BB800, X
+		BNE .wrongMap16Classic
+		LDA.w $040A : CMP.l $1BB826, X
+		BEQ .matchedHoleClassic
+	.wrongMap16Classic
+		DEX #2 : BPL .nextHoleClassic
+
+	LDX.w #$001E
+	.nextHoleExtra
+		LDA.b $00   : CMP.l ExtraHole_Map16, X
+		BNE .wrongMap16Extra
+		LDA.w $040A : CMP.l ExtraHole_Area, X
+		BEQ .matchedHoleExtra
+	.wrongMap16Extra
+		DEX #2 : BPL .nextHoleExtra
+	JML Overworld_Hole_GotoHoulihan
+
+	.matchedHoleClassic
+		JML Overworld_Hole_matchedHole
+	.matchedHoleExtra
+		SEP #$30
+		TXA : LSR A : TAX
+		LDA.l ExtraHole_Entrance, X : STA.w $010E : STZ.w $010F
+JML Overworld_Hole_End
+;--------------------------------------------------------------------------------

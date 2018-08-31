@@ -183,6 +183,21 @@ org $1FED41 : db $0E ; pre-open open TR bomb door
 org $308247 ; PC 0x180247
 db $00, $5A, $00, $00, $00, $00, $00
 
+
+org $1AF696 : db #$F0 ;Bat X position (sprite_retreat_bat.asm:130)
+org $1AF6B2 : db #$33 ;Bat Delay (sprite_retreat_bat.asm:136)
+
+;New Hole Mask Position
+org $1AF730
+db $6A, $9E, $0C, $00
+db $7A, $9E, $0C, $00
+db $8A, $9E, $0C, $00
+db $6A, $AE, $0C, $00
+db $7A, $AE, $0C, $00
+db $8A, $AE, $0C, $00
+db $67, $97, $0C, $00
+db $8D, $97, $0C, $00
+
 ;Cryptic documentation of flute/whirlpool table format (all value 16 bit)
 ;eae5 - Overworld area that the exit leads to
 ;eb07 $0084 - VRAM locations to place Link at.
@@ -234,6 +249,62 @@ org $02E169+$06+$06 : dw $0000
 ;061c|$1622B-$162C8 - (0x4F entries, 2 bytes each) - Camera X Coordinate
 ;0624|$162C9-$16317 - (0x4F entries, 1 byte each)  - Ukn1 in HM
 ;0628|$16318-$16366 - (0x4F entries, 1 byte each)  - Ukn2 in HM
+
+; redefine some map16 tiles
+org $0FF1C8
+dw #$190F, #$190F, #$190F, #$194C
+dw #$190F, #$194B, #$190F, #$195C
+dw #$594B, #$194C, #$19EE, #$19EE
+dw #$194B, #$19EE, #$19EE, #$19EE
+dw #$594B, #$190F, #$595C, #$190F
+dw #$190F, #$195B, #$190F, #$190F
+dw #$19EE, #$19EE, #$195C, #$19EE
+dw #$19EE, #$19EE, #$19EE, #$595C
+dw #$595B, #$190F, #$190F, #$190F
+
+; Redefine more map16 tiles
+org $0FA480
+dw #$190F, #$196B, #$9D04, #$9D04
+dw #$196B, #$190F, #$9D04, #$9D04
+
+; update pyramid hole entrances
+org $1bb810 : dw $00BE, $00C0, $013E
+org $1bb836 : dw $001B, $001B, $001B
+; add an extra pyramid hole entrance
+; ExtraHole_Map16:
+org $308300 : dw $0140
+; ExtraHole_Area:
+org $308320 : dw $001B
+; ExtraHole_Entrance:
+org $308340 : db $7B
+
+;prioritize retreat Bat and use 3rd sprite section
+org $1af504 : dw $148B
+org $1af50c : dw $149B
+org $1af514 : dw $14A4
+org $1af51c : dw $1489
+org $1af524 : dw $14AC
+org $1af52c : dw $54AC
+org $1af534 : dw $148C
+org $1af53c : dw $548C
+org $1af544 : dw $1484
+org $1af54c : dw $5484
+org $1af554 : dw $14A2
+org $1af55c : dw $54A2
+org $1af564 : dw $14A0
+org $1af56c : dw $54A0
+org $1af574 : dw $148E
+org $1af57c : dw $548E
+org $1af584 : dw $14AE
+org $1af58c : dw $54AE
+
+;Make retreat bat gfx available in Hyrule castle.
+org $00DB9D : db $1A ;sprite set 1, section 3
+
+;use new castle hole graphics (The values are the SNES address of the graphics: 31e000)
+org $00D009 : db $31
+org $00D0e8 : db $E0
+org $00D1c7 : db $00
 
 ;org $02E849 ; Fly 1 to Sanctuary
 ;db #$13, #$00, #$16, #$00, #$18, #$00, #$2C, #$00, #$2F, #$00, #$30, #$00, #$3B, #$00, #$3F, #$00, #$5B, #$00, #$35, #$00, #$0F, #$00, #$15, #$00, #$33, #$00, #$12, #$00, #$3F, #$00, #$55, #$00, #$7F, #$00, #$1A, #$00, #$88, #$08, #$30, #$0B, #$88, #$05, #$98, #$07, #$80, #$18, #$9E, #$06, #$10, #$08, #$2E, #$00, #$42, #$12, #$80, #$06, #$12, #$01, #$9E, #$05, #$8E, #$04, #$80, #$02, #$12, #$01, #$80, #$02, #$00, #$04, #$16, #$05, #$59, #$07, #$B9, #$0A, #$FA, #$0A, #$1E, #$0F, #$DF, #$0E, #$05, #$0F, #$00, #$06, #$46, #$0E, #$C6, #$02, #$2A, #$04, #$BA, #$0C, #$9A, #$04, #$56, #$0E, #$2A, #$04, #$56, #$0E, #$D6, #$06, #$4E, #$0C, #$7E, #$01, #$40, #$08, #$B2, #$0E, #$00, #$00, #$F2, #$06, #$75, #$0E, #$78, #$07, #$0A, #$0C, #$06, #$0E, #$8A, #$0A, #$EA, #$06, #$62, #$04, #$00, #$0E, #$8A, #$0A, #$00, #$0E, #$68, #$04, #$78, #$05, #$B7, #$07, #$17, #$0B, #$58, #$0B, #$A8, #$0F, #$3D, #$0F, #$67, #$0F, #$5C, #$06, #$A8, #$0E, #$28, #$03, #$88, #$04, #$18, #$0D, #$F8, #$04, #$B8, #$0E, #$88, #$04, #$B8, #$0E, #$56, #$07, #$C8, #$0C, #$00, #$02, #$B8, #$08, #$30, #$0F, #$78, #$00, #$78, #$07, #$F3, #$0E, #$F0, #$07, #$90, #$0C, #$80, #$0E, #$10, #$0B, #$70, #$07, #$E8, #$04, #$68, #$0E, #$10, #$0B, #$68, #$0E, #$70, #$04, #$83, #$05, #$C6, #$07, #$26, #$0B, #$67, #$0B, #$8D, #$0F, #$4C, #$0F, #$72, #$0F, #$6D, #$06, #$B3, #$0E, #$33, #$03, #$97, #$04, #$27, #$0D, #$07, #$05, #$C3, #$0E, #$97, #$04, #$C3, #$0E, #$56, #$07, #$D3, #$0C, #$0B, #$02, #$BF, #$08, #$37, #$0F, #$8D, #$00, #$7F, #$07, #$FA, #$0E, #$F7, #$07, #$97, #$0C, #$8B, #$0E, #$17, #$0B, #$77, #$07, #$EF, #$04, #$85, #$0E, #$17, #$0B, #$85, #$0E, #$F6, #$FF, #$FA, #$FF, #$07, #$00, #$F7, #$FF, #$F6, #$FF, #$00, #$00, #$F1, #$FF, #$FB, #$FF, #$00, #$00, #$FA, #$FF, #$0A, #$00, #$F6, #$FF, #$F6, #$FF, #$F6, #$FF, #$FA, #$FF, #$F6, #$FF, #$FA, #$FF, #$F2, #$FF, #$F2, #$FF, #$02, #$00, #$00, #$00, #$0E, #$00, #$00, #$00, #$FE, #$FF, #$0B, #$00, #$F8, #$FF, #$06, #$00, #$FA, #$FF, #$FA, #$FF, #$06, #$00, #$0E, #$00, #$00, #$00, #$FA, #$FF, #$00, #$00
