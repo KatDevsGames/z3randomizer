@@ -1917,7 +1917,8 @@ JSL.l OnEnterWater : NOP
 org $0AB8E5 ; <- 538E5
 JSL.l FloodGateAndMasterSwordFollowerReset
 JSL.l IncrementFlute
-NOP #32
+STZ $1000 : STZ $1001
+NOP #26
 ;--------------------------------------------------------------------------------
 org $02AA87 ; <- 12A87
 JSL.l OnOWTransition

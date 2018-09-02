@@ -9,7 +9,12 @@ LockAgahnimDoors:
 		LDA.w #$0000 : RTL
 	+ : CMP.w #$0001 : BNE +
 		JSR.w OldLockAgahnimDoors : RTL
+	+ : CMP.w #$0002 : BNE +
+		LDA $7EF37A : AND.w #$007F : CMP.w #$007F : BEQ .unlock
+			LDA.w #$0001
+			RTL
 	+
+	.unlock
 	LDA.w #$0000 ; fallback to never locked
 RTL
 ;--------------------------------------------------------------------------------
