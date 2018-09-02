@@ -1923,7 +1923,65 @@ NOP #26
 org $02AA87 ; <- 12A87
 JSL.l OnOWTransition
 NOP #36
+
 ;================================================================================
+;Inverted mode tile map update (executed right after the original tile load)
+;--------------------------------------------------------------------------------
+org $02ED51 ; <- 16D51
+JSL.l Overworld_LoadNewTiles
+NOP #$02
+;--------------------------------------------------------------------------------
+;Same as above
+org $02EC2E ;<- 016C2E
+JSL.l Overworld_LoadNewTiles
+NOP #$02
+;================================================================================
+;THOSE MIGHT NEED TO BE ON OR OFF WHEN INVERTED MODE IS ON OR OFF :D
+;Note it doesn't really matter since if warps are not under rocks they can't appear
+;Inverted mode Items HOOKS
+org $1BC67A ;Replace a rupee under bush to add a warp on map 80 (top of kak)
+db #$2E, #$0B, #$82
+
+org $1BC81E ;Replace a heart under bush to add a warp on map 120 (mire)
+db #$94, #$1D, #$82
+
+org $1BC655 ;Replace a bomb :( under bush to add a warp on map 78 (DM)
+db #$4A, #$1D, #$82
+
+;MAP 111 NEED TO REMOVE THE HARCODED ROCK IN LW
+org $1BC80D
+db #$B2, #$0B, #$82
+
+;MAP 115 NEED TO REMOVE THE HARCODED ROCK IN LW
+;new pointer for map 115 no items to replace
+org $1BC3DF
+db #$D8, #$D1
+
+org $1BD1D8 ;new data for map115
+db #$A8, #$02, #$82, #$FF, #$FF
+
+org $1BC85A
+db #$50, #$0F, #$82
+
+;================================================================================
+;NEED TESTING Turtle Rock jump tail, might cause collision glitche with some others blocks
+;================================================================================
+;================================================================================
+;================================================================================
+org $0FFEA3 ;271
+db #$00
+org $0FFEB8 ;292 /0x124
+db #$00
+org $0FFEB4 ;288 /0x120
+db #$00
+org $0FFEC4 ;304 /0x130
+db #$00
+org $0FFEB9 ;293 /0x125
+db #$00
+org $0FFEB9 ;293 /0x125
+db #$00
+org $0FFEC9
+db #$29
 
 ;================================================================================
 ; Add SFX
