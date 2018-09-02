@@ -42,12 +42,12 @@ Overworld_DrawPyramidHoleModified:
 	REP #$30
 
 	LDX.w #$03BC
-	LDA.w #$0E3F
+	LDA.w #$0E39
 
 	JSL Overworld_DrawPersistentMap16
 
 	LDX.w #$03BE
-	LDA.w #$0E40
+	LDA.w #$0E3A
 
 	JSL C9DE_LONG
 	JSL C9DE_LONG
