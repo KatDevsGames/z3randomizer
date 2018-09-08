@@ -429,9 +429,6 @@ Sprite_ShowMessageFromPlayerContact:
 org $05E219
 Sprite_ShowMessageUnconditional:
 
-org $05FA8E
-Sprite_ShowMessageMinimal:
-
 org $05EC96
 Sprite_ZeldaLong:
 
@@ -579,9 +576,6 @@ ShopKeeper_RapidTerminateReceiveItem:
 
 org $1CF500
 Sprite_NullifyHookshotDrag:
-
-org $1CFD69
-Main_ShowTextMessage:
 
 org $1DE9B6
 Filter_MajorWhitenMain:

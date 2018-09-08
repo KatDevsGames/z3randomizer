@@ -237,7 +237,7 @@ FreeDungeonItemNotice:
 	PLB
 	PLP
 	PLY : PLX : PLA
-	;JSL.l Main_ShowTextMessage
+	;JSL.l Main_ShowTextMessage_Alt
 RTL
 
 	.skip
@@ -288,7 +288,7 @@ DialogGanon1:
 	+
 		REP #$20 : LDA.w #$016D : STA $1CF0 : SEP #$20
 	++
-	JSL.l Sprite_ShowMessageMinimal
+	JSL.l Sprite_ShowMessageMinimal_Alt
 RTL
 ;--------------------------------------------------------------------------------
 DialogGanon2:
@@ -298,7 +298,7 @@ DialogGanon2:
 	+
 		REP #$20 : LDA.w #$016E : STA $1CF0 : SEP #$20
 	++
-	JSL.l Sprite_ShowMessageMinimal
+	JSL.l Sprite_ShowMessageMinimal_Alt
 RTL
 ;--------------------------------------------------------------------------------
 DialogEtherTablet:
@@ -366,6 +366,56 @@ DialogBombShopGuy:
     LDY.b #$01
 	JSL.l Sprite_ShowMessageUnconditional
 RTL
+;--------------------------------------------------------------------------------
+Main_ShowTextMessage_Alt:
+	; Are we in text mode? If so then end the routine.
+	LDA $10 : CMP.b #$0E : BEQ .already_in_text_mode
+Sprite_ShowMessageMinimal_Alt:
+	STZ $11
+
+	PHX : PHY
+	LDA.b $00 : PHA
+	LDA.b $01 : PHA
+	LDA.b $02 : PHA
+
+	LDA.b #$1C : STA.b $02
+	REP #$30
+		LDA.w $1CF0 : ASL : TAX
+		LDA.l $7f71c0, X
+		STA.b $00
+	SEP #$30
+
+	LDY.b #$00
+	      LDA [$00], Y : CMP.b #$fe : BNE +
+	INY : LDA [$00], Y : CMP.b #$6e : BNE +
+	INY : LDA [$00], Y :            : BNE +
+	INY : LDA [$00], Y : CMP.b #$fe : BNE +
+	INY : LDA [$00], Y : CMP.b #$6b : BNE +
+	INY : LDA [$00], Y : CMP.b #$04 : BNE +
+
+		BRL .end
+	+
+
+	STZ $0223   ; Otherwise set it so we are in text mode.
+	STZ $1CD8   ; Initialize the step in the submodule
+
+	; Go to text display mode (as opposed to maps, etc)
+	LDA.b #$02 : STA $11
+
+	; Store the current module in the temporary location.
+	LDA $10 : STA $010C
+
+	; Switch the main module ($10) to text mode.
+	LDA.b #$0E : STA $10
+	.end
+	PLA : STA.b $02
+	PLA : STA.b $01
+	PLA : STA.b $00
+	PLY : PLX
+
+Main_ShowTextMessage_Alt_already_in_text_mode:
+RTL
+
 ;--------------------------------------------------------------------------------
 ; A0 - A9 - 0 - 9
 ; AA - C3 - A - Z

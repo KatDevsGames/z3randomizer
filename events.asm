@@ -202,7 +202,7 @@ PostItemAnimation:
 
 	LDA $7F50A0 : BEQ +
 		STZ $1CF0 : STZ $1CF1 ; reset decompression buffer
-		JSL.l Main_ShowTextMessage
+		JSL.l Main_ShowTextMessage_Alt
 		LDA.b #$00 : STA $7F50A0
 	+
 

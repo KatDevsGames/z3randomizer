@@ -1591,6 +1591,20 @@ db #$8F
 ;================================================================================
 ; Text Removal
 ;--------------------------------------------------------------------------------
+org $05FA8E
+Sprite_ShowMessageMinimal:
+JML.l Sprite_ShowMessageMinimal_Alt
+;--------------------------------------------------------------------------------
+org $1CFD69
+Main_ShowTextMessage:
+JML.l Main_ShowTextMessage_Alt
+;--------------------------------------------------------------------------------
+org $05E21F ; <- 2E21F - Bank05.asm : 2691 (STZ $0223)
+JSL.l Sprite_ShowMessageMinimal_Alt
+BRA Sprite_ShowMessageUnconditional_Rest
+org $05E232 ; <- 2E232 - Bank05.asm : 2700 (PHX)
+Sprite_ShowMessageUnconditional_Rest:
+;--------------------------------------------------------------------------------
 ;-- Music restarting at zelda fix
 org $05ED10 ; <- 2ED10 - sprite_zelda.asm : 233 - (LDA.b #$19 : STA $012C)
 NOP #5
@@ -1630,9 +1644,6 @@ JSL.l AddInventory_incrementBossSwordLong
 org $06B4F3 ; <- 334F3 sprite_smithy_bros.asm : 556 (JSL Sprite_ShowMessageUnconditional)
 JSL ItemSet_SmithSword
 ;NOP #4
-;----------------------------------------------------------
-org $05FBC2 ; <- 2FBC3 - sprite_mad_batter.asm:195 - (JSL Sprite_ShowMessageUnconditional)
-NOP #4 ; removing this breaks animated received objects like rupees
 ;----------------------------------------------------------
 
 ;===================================
