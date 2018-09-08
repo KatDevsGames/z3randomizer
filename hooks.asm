@@ -244,11 +244,15 @@ org $02D9B9 ; <- 159B9 - Bank02.asm : 11089  (LDA $7EF3C8)
 JSL AllowStartFromSingleEntranceCave
 ;--------------------------------------------------------------------------------
 org $1bc2a7 ; <- DC2A7 - Bank1B.asm : 1143 (Overworld_CreatePyramidHole:)
-JSL.l Overworld_DrawPyramidHoleModified
+JSL.l Overworld_CreatePyramidHoleModified
 RTL
 C9DE_LONG:
 JSR $C9DE ; surprisingly same address as US
 RTL
+;--------------------------------------------------------------------------------
+org $07ff5f ; <- 3ff5f - Bank0E.asm : 5252 (LDA.w #$0E3F : STA $23BC)
+JSL.l Draw_PyramidOverlay
+RTS
 ;--------------------------------------------------------------------------------
 
 ;================================================================================

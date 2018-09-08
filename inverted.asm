@@ -2,7 +2,7 @@
 
 ; Does tile modification for... the pyramid of power hole
 ; after Ganon slams into it in bat form?
-Overworld_DrawPyramidHoleModified:
+Overworld_CreatePyramidHoleModified:
 	LDA.l InvertedMode : BNE +
 		BRL .originalBehaviour
 +
@@ -77,4 +77,19 @@ Overworld_DrawPyramidHoleModified:
 
 	LDA.b #$01 : STA $14
 
+RTL
+;------------------------------------------------------------------------------
+Draw_PyramidOverlay:
+	LDA.l InvertedMode : BNE .done
+.normal
+	LDA.w #$0E39 : STA $23BC
+	INC A        : STA $23BE
+	INC A        : STA $23C0
+	INC A        : STA $243C
+	INC A        : STA $243E
+	INC A        : STA $2440
+	INC A        : STA $24BC
+	INC A        : STA $24BE
+	INC A        : STA $24C0
+.done
 RTL
