@@ -86,28 +86,28 @@ JMP DrawItemGray
 
 DrawBottle:
 	AND.w #$00FF : BNE +
-		LDX #FileSelectItems_emptyBottle
+		LDX #FileSelectItems_empty_bottle
 		JMP DrawItemGray
 	+ : DEC #2 : BNE +
-		LDX #FileSelectItems_emptyBottle
+		LDX #FileSelectItems_empty_bottle
 		JMP DrawItem
 	+ : DEC : BNE +
-		LDX #FileSelectItems_redPotion
+		LDX #FileSelectItems_red_potion
 		JMP DrawItem
 	+ : DEC : BNE +
-		LDX #FileSelectItems_greenPotion
+		LDX #FileSelectItems_green_potion
 		JMP DrawItem
 	+ : DEC : BNE +
-		LDX #FileSelectItems_bluePotion
+		LDX #FileSelectItems_blue_potion
 		JMP DrawItem
 	+ : DEC : BNE +
-		LDX #FileSelectItems_fairyBottle
+		LDX #FileSelectItems_fairy_bottle
 		JMP DrawItem
 	+ : DEC : BNE +
-		LDX #FileSelectItems_beeBottle
+		LDX #FileSelectItems_bee_bottle
 		JMP DrawItem
 	+
-	LDX #FileSelectItems_goodBeeBottle
+	LDX #FileSelectItems_good_bee_bottle
 JMP DrawItem
 
 
@@ -242,12 +242,68 @@ DrawPlayerFile:
 
 	; Mirror
 	%fs_drawItemBasic($700353,9,20,FileSelectItems_mirror)
-	
+
 	; Bottles
-	%fs_drawBottle($70035C,3,24)
-	%fs_drawBottle($70035D,5,24)
-	%fs_drawBottle($70035E,7,24)
-	%fs_drawBottle($70035F,9,24)
+	%fs_drawBottle($70035C,3,23)
+	%fs_drawBottle($70035D,5,23)
+	%fs_drawBottle($70035E,7,23)
+	%fs_drawBottle($70035F,9,23)
+
+	; Sword
+	LDA.l $700359 : AND.w #$00FF : BNE +
+		%fs_drawItemGray(3,26,FileSelectItems_fighters_sword)
+		BRA ++
+	+ : DEC : BNE +
+		%fs_drawItem(3,26,FileSelectItems_fighters_sword)
+		BRA ++
+	+ : DEC : BNE +
+		%fs_drawItem(3,26,FileSelectItems_master_sword)
+		BRA ++
+	+ : DEC : BNE +
+		%fs_drawItem(3,26,FileSelectItems_tempered_sword)
+		BRA ++
+	+
+		%fs_drawItem(3,26,FileSelectItems_gold_sword)
+	++
+
+	; Shield
+	LDA.l $70035A : AND.w #$00FF : BNE +
+		%fs_drawItemGray(5,26,FileSelectItems_fighters_shield)
+		BRA ++
+	+ : DEC : BNE +
+		%fs_drawItem(5,26,FileSelectItems_fighters_shield)
+		BRA ++
+	+ : DEC : BNE +
+		%fs_drawItem(5,26,FileSelectItems_fire_shield)
+		BRA ++
+	+
+		%fs_drawItem(5,26,FileSelectItems_mirror_shield)
+	++
+
+	; Mail
+	LDA.l $70035B : AND.w #$00FF : BNE +
+		%fs_drawItem(7,26,FileSelectItems_green_mail)
+		BRA ++
+	+ : DEC : BNE +
+		%fs_drawItem(7,26,FileSelectItems_blue_mail)
+		BRA ++
+	+
+		%fs_drawItem(7,26,FileSelectItems_red_mail)
+	++
+
+	; Heart Pieces
+	LDA.l $70036B : AND.w #$00FF : BNE +
+		%fs_drawItem(9,26,FileSelectItems_heart_piece_0_of_4)
+		BRA ++
+	+ : DEC : BNE +
+		%fs_drawItem(9,26,FileSelectItems_heart_piece_1_of_4)
+		BRA ++
+	+ : DEC : BNE +
+		%fs_drawItem(9,26,FileSelectItems_heart_piece_2_of_4)
+		BRA ++
+	+
+		%fs_drawItem(9,26,FileSelectItems_heart_piece_3_of_4)
+	++
 
 	; Boots
 	%fs_drawItemBasic($700355,3,28,FileSelectItems_boots)
@@ -272,21 +328,21 @@ DrawPlayerFile:
 	; Pendants
 	LDA $700374 : AND.w #$0004 : BEQ +
 		%fs_drawItem(12,16,FileSelectItems_green_pendant)
-		BEQ ++
+		BRA ++
 	+
 		%fs_drawItemGray(12,16,FileSelectItems_green_pendant)
 	++
 
 	LDA $700374 : AND.w #$0002 : BEQ +
 		%fs_drawItem(12,18,FileSelectItems_blue_pendant)
-		BEQ ++
+		BRA ++
 	+
 		%fs_drawItemGray(12,18,FileSelectItems_blue_pendant)
 	++
 
 	LDA $700374 : AND.w #$0001 : BEQ +
 		%fs_drawItem(12,20,FileSelectItems_red_pendant)
-		BEQ ++
+		BRA ++
 	+
 		%fs_drawItemGray(12,20,FileSelectItems_red_pendant)
 	++
@@ -294,42 +350,49 @@ DrawPlayerFile:
 	; Crystals
 	LDA $70037A : AND.w #$0002 : BEQ +
 		LDA.w #$0297|!FS_COLOR_BLUE
+		BRA ++
 	+
 		LDA.w #$0287|!FS_COLOR_GRAY
 	++ : %fs_draw16x8(13,22)
 	
 	LDA $70037A : AND.w #$0010 : BEQ +
 		LDA.w #$0297|!FS_COLOR_BLUE
+		BRA ++
 	+
 		LDA.w #$0287|!FS_COLOR_GRAY
 	++ : %fs_draw16x8(12,23)
 	
 	LDA $70037A : AND.w #$0040 : BEQ +
 		LDA.w #$0297|!FS_COLOR_BLUE
+		BRA ++
 	+
 		LDA.w #$0287|!FS_COLOR_GRAY
 	++ : %fs_draw16x8(13,24)
 	
 	LDA $70037A : AND.w #$0020 : BEQ +
 		LDA.w #$0297|!FS_COLOR_BLUE
+		BRA ++
 	+
 		LDA.w #$0287|!FS_COLOR_GRAY
 	++ : %fs_draw16x8(12,25)
 	
 	LDA $70037A : AND.w #$0004 : BEQ +
 		LDA.w #$0297|!FS_COLOR_RED
+		BRA ++
 	+
 		LDA.w #$0287|!FS_COLOR_GRAY
 	++ : %fs_draw16x8(13,26)
 	
 	LDA $70037A : AND.w #$0001 : BEQ +
 		LDA.w #$0297|!FS_COLOR_RED
+		BRA ++
 	+
 		LDA.w #$0287|!FS_COLOR_GRAY
 	++ : %fs_draw16x8(12,27)
 	
 	LDA $70037A : AND.w #$0008 : BEQ +
 		LDA.w #$0297|!FS_COLOR_BLUE
+		BRA ++
 	+
 		LDA.w #$0287|!FS_COLOR_GRAY
 	++ : %fs_draw16x8(13,28)
@@ -413,14 +476,52 @@ FileSelectItems:
 	.powder
 	dw #$020A|!FS_COLOR_BROWN, #$020B|!FS_COLOR_BROWN, #$021A|!FS_COLOR_BROWN, #$021B|!FS_COLOR_BROWN
 
-	.emptyBottle
-	.redPotion
-	.greenPotion
-	.bluePotion
-	.fairyBottle
-	.beeBottle
-	.goodBeeBottle
+	.fighters_sword
+	dw #$0266|!FS_COLOR_BLUE, #$0267|!FS_COLOR_BLUE, #$0276|!FS_COLOR_BLUE, #$0277|!FS_COLOR_BLUE
+	.master_sword
+	dw #$0268|!FS_COLOR_BLUE, #$0269|!FS_COLOR_BLUE, #$0278|!FS_COLOR_RED, #$0279|!FS_COLOR_BLUE
+	.tempered_sword
+	dw #$0268|!FS_COLOR_RED, #$0269|!FS_COLOR_RED, #$0278|!FS_COLOR_GREEN, #$026A|!FS_COLOR_RED
+	.gold_sword
+	dw #$0268|!FS_COLOR_YELLOW, #$0269|!FS_COLOR_YELLOW, #$0278|!FS_COLOR_BLUE, #$027A|!FS_COLOR_YELLOW
+
+	.fighters_shield
+	dw #$026B|!FS_COLOR_BLUE, #$026B|!FS_COLOR_BLUE|!FS_HFLIP, #$027B|!FS_COLOR_BLUE, #$027B|!FS_COLOR_BLUE|!FS_HFLIP
+	.fire_shield
+	dw #$026C|!FS_COLOR_BOOTS, #$026C|!FS_COLOR_BOOTS|!FS_HFLIP, #$027C|!FS_COLOR_BOOTS, #$027C|!FS_COLOR_BOOTS|!FS_HFLIP
+	.mirror_shield
+	dw #$026D|!FS_COLOR_YELLOW, #$026E|!FS_COLOR_YELLOW, #$027D|!FS_COLOR_YELLOW, #$027E|!FS_COLOR_YELLOW
+
+	.green_mail
+	dw #$026F|!FS_COLOR_GREEN, #$026F|!FS_COLOR_GREEN|!FS_HFLIP, #$027F|!FS_COLOR_GREEN, #$02B3|!FS_COLOR_GREEN
+	.blue_mail
+	dw #$026F|!FS_COLOR_BLUE, #$026F|!FS_COLOR_BLUE|!FS_HFLIP, #$027F|!FS_COLOR_BLUE, #$02B4|!FS_COLOR_BLUE
+	.red_mail
+	dw #$026F|!FS_COLOR_RED, #$026F|!FS_COLOR_RED|!FS_HFLIP, #$027F|!FS_COLOR_RED, #$02B5|!FS_COLOR_RED
+
+	.heart_piece_0_of_4
+	dw #$0280|!FS_COLOR_RED, #$0280|!FS_COLOR_RED|!FS_HFLIP, #$0290|!FS_COLOR_RED, #$0290|!FS_COLOR_RED|!FS_HFLIP
+	.heart_piece_1_of_4
+	dw #$0281|!FS_COLOR_RED, #$0280|!FS_COLOR_RED|!FS_HFLIP, #$0290|!FS_COLOR_RED, #$0290|!FS_COLOR_RED|!FS_HFLIP
+	.heart_piece_2_of_4
+	dw #$0281|!FS_COLOR_RED, #$0280|!FS_COLOR_RED|!FS_HFLIP, #$0291|!FS_COLOR_RED, #$0290|!FS_COLOR_RED|!FS_HFLIP
+	.heart_piece_3_of_4
+	dw #$0281|!FS_COLOR_RED, #$0281|!FS_COLOR_RED|!FS_HFLIP, #$0291|!FS_COLOR_RED, #$0290|!FS_COLOR_RED|!FS_HFLIP
+
+	.empty_bottle
 	dw #$0240|!FS_COLOR_BW, #$0241|!FS_COLOR_BW, #$0250|!FS_COLOR_BW, #$0251|!FS_COLOR_BW
+	.red_potion
+	dw #$0242|!FS_COLOR_RED, #$0242|!FS_COLOR_RED|!FS_HFLIP, #$0252|!FS_COLOR_RED, #$0243|!FS_COLOR_RED
+	.green_potion
+	dw #$0242|!FS_COLOR_GREEN, #$0242|!FS_COLOR_GREEN|!FS_HFLIP, #$0252|!FS_COLOR_GREEN, #$0244|!FS_COLOR_GREEN
+	.blue_potion
+	dw #$0242|!FS_COLOR_BLUE, #$0242|!FS_COLOR_BLUE|!FS_HFLIP, #$0252|!FS_COLOR_BLUE, #$0245|!FS_COLOR_BLUE
+	.fairy_bottle
+	dw #$0247|!FS_COLOR_YELLOW|!FS_HFLIP, #$0247|!FS_COLOR_YELLOW, #$0256|!FS_COLOR_BLUE, #$0257|!FS_COLOR_BLUE
+	.bee_bottle
+	dw #$0240|!FS_COLOR_BW, #$0241|!FS_COLOR_BW, #$0254|!FS_COLOR_YELLOW, #$0255|!FS_COLOR_YELLOW
+	.good_bee_bottle
+	dw #$0240|!FS_COLOR_BW, #$0241|!FS_COLOR_BW, #$0254|!FS_COLOR_YELLOW, #$0246|!FS_COLOR_YELLOW
 
 ;--------------------------------------------------------------------------------
 FileSelectDrawHudBar:
