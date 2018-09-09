@@ -555,6 +555,42 @@ LoadModifiedFont:
     DEX : BPL .nextWord
     
     SEP #$30
+	JSL LoadFullItemTilesCredits
+
+    RTL
+
+LoadFullItemTilesCredits:
+	; Based on CopyFontToVram(Bank00)
+	; copies font graphics to VRAM (for BG3)
+
+	; increment on writes to $2119
+	LDA.b #$80 : STA $2115
+
+	; set bank of the source address (see below)
+	LDA.b #FileSelectNewGraphics>>16 : STA $02
+
+	REP #$30
+
+	; vram target address is $8000 (word) (Wraps to start of VRAM on normal SNES, but using the correct address so it works on extended VRAM machines)
+	LDA.w #$8000 : STA $2116
+
+	; $00[3] = $0E8000 (offset for the font data)
+	LDA.w #FileSelectNewGraphics : STA $00
+
+	; going to write 0x1000 bytes (0x800 words)
+	LDX.w #$800-1
+
+	.nextWord
+
+	; read a word from the font data
+	LDA [$00] : STA $2118
+
+	; increment source address by 2
+	INC $00 : INC $00
+
+	DEX : BPL .nextWord
+
+	SEP #$30
     
     RTL
     
@@ -566,14 +602,44 @@ CheckFontTable:
     LDA.w FontTable,Y
     PLB
     RTL
-    
+
+NearEnding:
+	STZ.w $012A ; disable triforce helper thread
+	JSL LoadPaletteCredits
+	REP #$10
+	JSL AltBufferTable_credits
+	JSR DrawEndingItems
+JML.l $00ec03 ; PaletteFilter_InitTheEndSprite
+
+EndingItems:
+	; This function is not strictly needed, simply updating the tracker
+	; every frame, but it is useful for debuging, so should be left in.
+	REP #$10
+	JSR DrawEndingItems
+	REP #$20
+	LDX.b #$0e
+RTL
+
+DrawEndingItems:
+	JSL DrawPlayerFile_credits
+	JSL SetItemLayoutPriority
+	SEP #$30
+	LDA.b #$01 : STA $14
+RTS
+
 FontTable:
     incbin stats/fonttable.bin
 
 CreditsStats:
 incsrc stats/statConfig.asm
 dw $FFFF
-    
+
+org $0eedd9
+    JSL EndingItems
+
+org $0eedaf
+	JSL NearEnding
+
 org $0EE651
     JSL LoadModifiedFont
 

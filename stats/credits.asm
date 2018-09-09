@@ -565,8 +565,8 @@ CreditsLineTable:
     dw CreditsLine171, CreditsLine152, CreditsLine171, CreditsLine171, CreditsLine153, CreditsLine154, CreditsLine171, CreditsLine155
     dw CreditsLine156, CreditsLine171, CreditsLine157, CreditsLine158, CreditsLine171, CreditsLine159, CreditsLine160, CreditsLine171
     dw CreditsLine161, CreditsLine162, CreditsLine171, CreditsLine163, CreditsLine164, CreditsLine171, CreditsLine165, CreditsLine166
-    dw CreditsLine001, CreditsLine001, CreditsLine001, CreditsLine001, CreditsLine001, CreditsLine001, CreditsLine001, CreditsLine001
-    dw CreditsLine001, CreditsLine001, CreditsLine001, CreditsLine167, CreditsLine168, CreditsLine171, CreditsLine169, CreditsLine170
+    dw CreditsLine001, CreditsLine001, CreditsLine001, CreditsLine001, CreditsLine001, CreditsLine167, CreditsLine168, CreditsLine171
+    dw CreditsLine169, CreditsLine170, CreditsLine001, CreditsLine001, CreditsLine001, CreditsLine001, CreditsLine001, CreditsLine001
 
 !FIRST_SWORD_X = 19
 !FIRST_SWORD_Y = 319
@@ -601,6 +601,6 @@ CreditsLineTable:
 !TOTAL_LAG_TIME_X = 19
 !TOTAL_LAG_TIME_Y = 374
 !COLLECTION_RATE_X = 22
-!COLLECTION_RATE_Y = 387
+!COLLECTION_RATE_Y = 381
 !TOTAL_TIME_X = 19
-!TOTAL_TIME_Y = 390
+!TOTAL_TIME_Y = 384

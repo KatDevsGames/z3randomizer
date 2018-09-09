@@ -166,12 +166,12 @@ R	GAME STATS
 -
 -
 -
--
--
--
--
--
--
   COLLECTION RATE     $$$$/216
   TOTAL TIME       $$$$$$$$$$$
+-
+-
+-
+-
+-
+-
 

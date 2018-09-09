@@ -552,7 +552,7 @@ RTS
 ;--------------------------------------------------------------------------------
 AltBufferTable:
     LDA.b #$02 : STA $210c ; Have Screen 3 use same tile area as screens 1
-
+.noScreen3Change
     REP #$20
     LDX.w #$0380 ; 14 rows with 64 bytes (30 tiles * 2 + 4 byte header)
     ;fill with the blank character
@@ -606,6 +606,59 @@ AltBufferTable:
 
 RTL
 ;--------------------------------------------------------------------------------
+AltBufferTable_credits:
+	JSL AltBufferTable_noScreen3Change
+
+	REP #$20
+    LDA.w #$6168 : STA $1002 ;file 1 top row
+    LDA.w #$8168 : STA $1042 ;file 1 bottom row
+
+    LDA.w #$A168 : STA $1082 ;gap row top
+    LDA.w #$C168 : STA $10C2 ;gap row bottom
+
+    LDA.w #$E168 : STA $1102 ;file 2 top row
+    LDA.w #$0169 : STA $1142 ;file 2 bottom row
+
+    LDA.w #$2169 : STA $1182 ;gap row top
+    LDA.w #$4169 : STA $11c2 ;gap row bottom
+
+    LDA.w #$6169 : STA $1202 ;file 3 top row
+    LDA.w #$8169 : STA $1242 ;file 3 bottom row
+
+    LDA.w #$A169 : STA $1282 ;extra gap row top
+    LDA.w #$C169 : STA $12c2 ;extra gap row bottom
+
+	LDA.w #$E169 : STA $1302 ;extra gap row top
+    LDA.w #$016A : STA $1342 ;extra gap row bottom
+    SEP #$20
+RTL
+;--------------------------------------------------------------------------------
+macro LayoutPriority(address)
+LDX.w #$003C
+- : LDA.w <address>, X : ORA #$2000 : STA.w <address>, X
+DEX : DEX : BNE -
+endmacro
+
+SetItemLayoutPriority:
+  REP #$30
+  %LayoutPriority($1004)
+  %LayoutPriority($1044)
+  %LayoutPriority($1084)
+  %LayoutPriority($10C4)
+  %LayoutPriority($1104)
+  %LayoutPriority($1144)
+  %LayoutPriority($1184)
+  %LayoutPriority($11c4)
+  %LayoutPriority($1204)
+  %LayoutPriority($1244)
+  %LayoutPriority($1284)
+  %LayoutPriority($12c4)
+  %LayoutPriority($1304)
+  %LayoutPriority($1344)
+
+RTL
+
+;--------------------------------------------------------------------------------
 Validate_SRAM:
 RTL
 ;--------------------------------------------------------------------------------
@@ -629,9 +682,9 @@ LoadFullItemTiles:
 		LDA.b #$30 : STA $2117 ; write VRAM destination address
 
 		LDA.b #$31 : STA $4304 ; set bus A source bank
-		LDA.b #FileSelectNewGraphics : STA $4302 ; set bus A source address to SRAM
-		LDA.b #FileSelectNewGraphics>>8 : STA $4303 ; set bus A source address to SRAM
-	
+		LDA.b #FileSelectNewGraphics : STA $4302 ; set bus A source address to ROM
+		LDA.b #FileSelectNewGraphics>>8 : STA $4303 ; set bus A source address to ROM
+
 		LDA $2100 : PHA : LDA.b #$80 : STA $2100 ; save screen state & turn screen off
 		
 		STZ $4305 : LDA.b #$10 : STA $4306 ; set transfer size to 0x1000
@@ -647,5 +700,53 @@ LoadFullItemTiles:
 		PLA : STA $4301 ; restore DMA parameters
 		PLA : STA $4300 ; restore DMA parameters
 	PLX : PLA
+RTL
+;--------------------------------------------------------------------------------
+
+LoadPaletteCredits:
+	PHA : PHX
+		REP #$20
+		LDX.b #$40
+		-
+		LDA.l GFX_HUD_Palette, X
+			STA.l $7EC500, X
+			DEX : DEX
+		BPL -
+		SEP #$20
+
+		INC $15 ; ensure CGRAM gets updated
+	PLX : PLA
+RTL
+;--------------------------------------------------------------------------------
+DrawPlayerFile_credits:
+	; see $6563C for drawing first file name and hearts
+	REP #$20 ; set 16 bit accumulator
+
+	LDA $7003D9 : ORA.w #!FS_COLOR_BW
+	%fs_draw8x16(3,3)
+	LDA $7003DB : ORA.w #!FS_COLOR_BW
+	%fs_draw8x16(3,5)
+	LDA $7003DD : ORA.w #!FS_COLOR_BW
+	%fs_draw8x16(3,7)
+	LDA $7003DF : ORA.w #!FS_COLOR_BW
+	%fs_draw8x16(3,9)
+
+	LDA $70036C : AND.w #$00FF : LSR #3 : STA $02
+	%fs_LDY_screenpos(0,20)
+	LDA.w #$028F|!FS_COLOR_RED
+	LDX.w #$000A
+
+	.nextHeart
+
+	STA.w $0000, Y
+
+	INY #2 : DEX : BNE +
+		PHA
+		TYA : !ADD.w #$40-$14 : TAY
+		PLA
+	+
+	DEC $02 : BNE .nextHeart
+
+	JSL DrawPlayerFile
 RTL
 ;--------------------------------------------------------------------------------
