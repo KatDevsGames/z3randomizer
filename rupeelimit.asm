@@ -7,7 +7,7 @@ Draw4DigitRupees:
 		LDA $A0 : BNE .normal ; skip except for ganon's room
 			;LDA #$246E : STA $7EC712
 			;LDA #$246F : STA $7EC714
-			LDA $7EF423
+			LDA $7EF423 : AND #$00FF
 			BRA .print
 	.outdoors
     .normal
