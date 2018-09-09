@@ -1951,6 +1951,9 @@ org $02EC2E ;<- 016C2E
 JSL.l Overworld_LoadNewTiles
 NOP #$02
 ;================================================================================
+org $07A3E2 ;<- 3A3E2 Bank07.asm:5764 (LDA.b #$80 : STA $03F0)
+JSL.l FreeDuckCheck : NOP
+;================================================================================
 ;THOSE MIGHT NEED TO BE ON OR OFF WHEN INVERTED MODE IS ON OR OFF :D
 ;Note it doesn't really matter since if warps are not under rocks they can't appear
 ;Inverted mode Items HOOKS

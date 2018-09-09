@@ -486,6 +486,9 @@ AddReceivedItem:
 org $098BAD
 AddPendantOrCrystal:
 
+org $098CFD
+AddWeathervaneExplosion:
+
 org $0993DF
 AddDashTremor:
 
