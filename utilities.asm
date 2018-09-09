@@ -563,31 +563,72 @@ HexToDec:
 	PHA
 	PHA
 		LDA.w #$9090
-		STA $7F5003 : STA $7F5005 : STA $7F5006 ; clear digit storage
+		STA $04 : STA $06 ; temporarily store our decimal values here for speed
 	PLA
+; as far as i can tell we never convert a value larger than 9999, no point in wasting time on this?
+;	-
+;		CMP.w #10000 : !BLT +
+;		INC $03
+;		!SUB.w #10000 : BRA -
+;	+
 	-
-		CMP.w #10000 : !BLT +
-		PHA : SEP #$20 : LDA $7F5003 : INC : STA $7F5003 : REP #$20 : PLA
-		!SUB.w #10000 : BRA -
-	+ -
 		CMP.w #1000 : !BLT +
-		PHA : SEP #$20 : LDA $7F5004 : INC : STA $7F5004 : REP #$20 : PLA
+		INC $04
 		!SUB.w #1000 : BRA -
 	+ -
 		CMP.w #100 : !BLT +
-		PHA : SEP #$20 : LDA $7F5005 : INC : STA $7F5005 : REP #$20 : PLA
+		INC $05
 		!SUB.w #100 : BRA -
 	+ -
 		CMP.w #10 : !BLT +
-		PHA : SEP #$20 : LDA $7F5006 : INC : STA $7F5006 : REP #$20 : PLA
+		INC $06
 		!SUB.w #10 : BRA -
 	+ -
 		CMP.w #1 : !BLT +
-		PHA : SEP #$20 : LDA $7F5007 : INC : STA $7F5007 : REP #$20 : PLA
+		INC $07
 		!SUB.w #1 : BRA -
-	+ 
+	+
+	LDA.b $04 : STA $7F5004 ; move to digit storage
+	LDA.b $06 : STA $7F5006
 	PLA
 RTL
+
+;--------------------------------------------------------------------------------
+
+;--------------------------------------------------------------------------------
+; HexToDec
+; in:	A(w) - Word to Convert
+; out:	$7F5003 - $7F5007 (high - low)
+;--------------------------------------------------------------------------------
+;HexToDec:
+;	PHA
+;	PHA
+;		LDA.w #$9090
+;		STA $7F5003 : STA $7F5005 : STA $7F5006 ; clear digit storage
+;	PLA
+;	-
+;		CMP.w #10000 : !BLT +
+;		PHA : SEP #$20 : LDA $7F5003 : INC : STA $7F5003 : REP #$20 : PLA
+;		!SUB.w #10000 : BRA -
+;	+ -
+;		CMP.w #1000 : !BLT +
+;		PHA : SEP #$20 : LDA $7F5004 : INC : STA $7F5004 : REP #$20 : PLA
+;		!SUB.w #1000 : BRA -
+;	+ -
+;		CMP.w #100 : !BLT +
+;		PHA : SEP #$20 : LDA $7F5005 : INC : STA $7F5005 : REP #$20 : PLA
+;		!SUB.w #100 : BRA -
+;	+ -
+;		CMP.w #10 : !BLT +
+;		PHA : SEP #$20 : LDA $7F5006 : INC : STA $7F5006 : REP #$20 : PLA
+;		!SUB.w #10 : BRA -
+;	+ -
+;		CMP.w #1 : !BLT +
+;		PHA : SEP #$20 : LDA $7F5007 : INC : STA $7F5007 : REP #$20 : PLA
+;		!SUB.w #1 : BRA -
+;	+ 
+;	PLA
+;RTL
 ;--------------------------------------------------------------------------------
 
 
