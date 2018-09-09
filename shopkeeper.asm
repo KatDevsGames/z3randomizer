@@ -749,19 +749,22 @@ Shopkeeper_DrawNextPrice:
 		INY : LDA ($02), Y : STA !COLUMN_HIGH
 	PLY
 	LDA.l !SHOP_INVENTORY+1, X : STA $0C ; set value
-	JSR.w DrawPrice
-	SEP #$20 : STA $06 : STZ $07 ; set 8-bit accumulator & store result
-	PHA
-		LDA.b #!BIGRAM : STA $08
-		LDA.b #!BIGRAM>>8 : STA $09
-		LDA.b #$7E : PHA : PLB ; set data bank to $7E
+	
+	BEQ .free
+		JSR.w DrawPrice
+		SEP #$20 : STA $06 : STZ $07 ; set 8-bit accumulator & store result
+		PHA
+			LDA.b #!BIGRAM : STA $08
+			LDA.b #!BIGRAM>>8 : STA $09
+			LDA.b #$7E : PHA : PLB ; set data bank to $7E
 
-		PHX : PHA : LDA !SCRATCH_TEMP_X : TAX : PLA : JSL.l Sprite_DrawMultiple_quantity_preset : PLX
+			PHX : PHA : LDA !SCRATCH_TEMP_X : TAX : PLA : JSL.l Sprite_DrawMultiple_quantity_preset : PLX
 		
-		LDA 1,s
-		ASL #2 : !ADD $90 : STA $90 ; increment oam pointer
-	PLA
-	!ADD $92 : STA $92
+			LDA 1,s
+			ASL #2 : !ADD $90 : STA $90 ; increment oam pointer
+		PLA
+		!ADD $92 : STA $92
+	.free
 	PLP : PLY : PLX
 	PLB
 RTS

@@ -1490,27 +1490,10 @@ org $30C800 ; PC 0x184800 - 0x1848FF - max 32 shops ; do not exceed 36 tracked i
 ShopTable:
 ;db [id][roomID-low][roomID-high][doorID][zero][shop_config][shopkeeper_config][sram_index]
 db $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF
-;db $01, $FF, $00, $00, $00, $43, $A0, $00
-;db $02, $0F, $01, $60, $00, $03, $C1, $03
-;db $FF, $12, $01, $58, $00, $81, $E3, $06
-;db $02, $0F, $01, $57, $00, $03, $A0, $09
-;db $03, $0F, $01, $60, $00, $03, $A0, $0c
-;db $04, $0F, $01, $6F, $00, $03, $A0, $0f
-;db $05, $FF, $00, $00, $00, $03, $A0, $12
-;db $06, $1F, $01, $46, $00, $03, $A0, $15
-;db $FF, $12, $01, $58, $00, $03, $A0, $18
+
 org $30C900 ; PC 0x184900 - 0x184FFF - max 224 entries
 ShopContentsTable:
 ;db [id][item][price-low][price-high][max][repl_id][repl_price-low][repl_price-high]
-;db $01, $2E, $96, $00, $00, $FF, $00, $00
-;db $01, $AF, $50, $00, $00, $FF, $00, $00
-;db $01, $31, $32, $00, $00, $FF, $00, $00
-;db $02, $2E, $96, $00, $00, $FF, $00, $00
-;db $02, $AF, $50, $00, $00, $FF, $00, $00
-;db $02, $31, $32, $00, $00, $FF, $00, $00
-;db $FF, $5E, $96, $00, $00, $FF, $00, $00
-;db $FF, $30, $2C, $01, $00, $FF, $00, $00
-;db $FF, $31, $32, $00, $00, $FF, $00, $00
 db $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF
 ;================================================================================
 org $30D000 ; PC 0x185000 - 0x18503F
