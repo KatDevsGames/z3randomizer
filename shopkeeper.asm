@@ -409,6 +409,7 @@ Shopkeeper_DrawMerchant:
 	CMP.b #$01 : BNE + : BRL Shopkeeper_DrawMerchant_Type1 : +
 	CMP.b #$02 : BNE + : BRL Shopkeeper_DrawMerchant_Type2 : +
 	CMP.b #$03 : BNE + : BRL Shopkeeper_DrawMerchant_Type3 : +
+	CMP.b #$04 : BNE + : RTS : +
 ;--------------------------------------------------------------------------------
 Shopkeeper_DrawMerchant_Type0:
 %DrawMerchant(#$00, #$10, #$10)
