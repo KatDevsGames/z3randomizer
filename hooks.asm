@@ -1595,9 +1595,15 @@ org $05FA8E
 Sprite_ShowMessageMinimal:
 JML.l Sprite_ShowMessageMinimal_Alt
 ;--------------------------------------------------------------------------------
-org $1CFD69
-Main_ShowTextMessage:
-JML.l Main_ShowTextMessage_Alt
+;org $1CFD69
+;Main_ShowTextMessage:
+;JML.l Main_ShowTextMessage_Alt
+;--------------------------------------------------------------------------------
+org $07b0cc ; <- 3b0d0 - Bank 07.asm : 7767 (JSL Main_ShowTextMessage)
+JSL.l Main_ShowTextMessage_Alt
+;--------------------------------------------------------------------------------
+org $08c5fe ; <- 445FE - ancilla_receive_item.asm : 408 (JSL Main_ShowTextMessage)
+JSL.l Main_ShowTextMessage_Alt
 ;--------------------------------------------------------------------------------
 org $05E21F ; <- 2E21F - Bank05.asm : 2691 (STZ $0223)
 JSL.l Sprite_ShowMessageMinimal_Alt
