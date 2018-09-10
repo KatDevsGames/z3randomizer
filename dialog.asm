@@ -392,7 +392,7 @@ Sprite_ShowMessageMinimal_Alt:
 	INY : LDA [$00], Y : CMP.b #$fe : BNE +
 	INY : LDA [$00], Y : CMP.b #$6b : BNE +
 	INY : LDA [$00], Y : CMP.b #$04 : BNE +
-
+		STZ $1CE8
 		BRL .end
 	+
 
