@@ -1421,7 +1421,7 @@ org $0DEA15 ; <- 6EA15 - equipment.asm:1647 - (LDA.w #$13B2 : STA $00)
 org $00F97E ; <- 797E - Bank00.asm:8586 - (LDA $7EF3CA : EOR.b #$40 : STA $7EF3CA)
 JSL.l FlipLWDWFlag : NOP #6
 ;================================================================================
-org $02B162 ; <- 13162 - Bank02.asm:7672 - (LDA $7EF3CA : EOR.b #$40 : STA $7EF3CA)
+org $02B15C ; <- 1315C - Bank02.asm:7672 - (LDA $7EF3CA : EOR.b #$40 : STA $7EF3CA)
 JSL.l IncrementOWMirror
 JSL.l FlipLWDWFlag
 NOP #2
