@@ -242,53 +242,42 @@ RTL
 ;$388 = Turtle Rock
 ;$389 = Ganon's Tower
 ;--------------------------------------------------------------------------------
-!INFINITE_ARROWS = "$7F50C8"
-DrawArrowTens:
-	PHA : LDA.l ArrowMode : AND.w #$00FF : BNE +
-		LDA !INFINITE_ARROWS : AND.w #$00FF : BEQ .finite
-		.infinite
-		PLA : LDA.w #$2431 : STA $7EC760 : RTL
-		.finite
-		PLA : STA $7EC760 : RTL
-	+
-	PLA
-RTL
-;--------------------------------------------------------------------------------
-DrawArrowOnes:
-	PHA : LDA.l ArrowMode : AND.w #$00FF : BNE +
-		LDA !INFINITE_ARROWS : AND.w #$00FF : BEQ .finite
-		.infinite
-		PLA : LDA.w #$2432 : STA $7EC762 : RTL
-		.finite
-		PLA : STA $7EC762 : RTL
-	+
-	PLA
-RTL
-;--------------------------------------------------------------------------------
-;--------------------------------------------------------------------------------
 !INFINITE_BOMBS = "$7F50C9"
-DrawBombTens:
-	PHA ;;; LDA.l ArrowMode : AND.w #$00FF : BNE +
-		LDA !INFINITE_BOMBS : AND.w #$00FF : BEQ .finite
-		.infinite
-		PLA : LDA.w #$2431 : STA $7EC75A : RTL
-		.finite
-		PLA : STA $7EC75A : RTL
-	+
-	PLA
+DrawBombCount:
+	LDA !INFINITE_BOMBS : BNE .infinite
+	.finite 
+		REP #$30
+		; $04 & $05 are set by the game's own HexToDecimal code, immediately before this
+		LDA.b $04 : AND #$00FF : ORA #$2400 : STA $7EC75A ; Draw bombs 10 digit
+		LDA.b $05 : AND #$00FF : ORA #$2400 : STA $7EC75C ; Draw bombs  1 digit
+		RTL
+
+	.infinite
+		REP #$30
+		LDA.w #$2431 : STA $7EC75A ; infinity symbol (left half)
+		INC A        : STA $7EC75C ; infinity symbol (right half)
 RTL
-;--------------------------------------------------------------------------------
-DrawBombOnes:
-	PHA ;;; LDA.l ArrowMode : AND.w #$00FF : BNE +
-		LDA !INFINITE_BOMBS : AND.w #$00FF : BEQ .finite
-		.infinite
-		PLA : LDA.w #$2432 : STA $7EC75C : RTL
+
+!INFINITE_ARROWS = "$7F50C8"
+DrawArrowCount:
+	LDA.l ArrowMode : BNE +
+		LDA !INFINITE_ARROWS : BNE .infinite
 		.finite
-		PLA : STA $7EC75C : RTL
+			; $04 & $05 are set by the game's own HexToDecimal code, immediately before this
+			REP #$30
+			LDA.b $04 : AND #$00FF : ORA #$2400 : STA $7EC760 ; Draw arrows 10 digit
+			LDA.b $05 : AND #$00FF : ORA #$2400 : STA $7EC762 ; Draw arrows  1 digit
+			RTL
+		
+		.infinite
+			REP #$30
+			LDA.w #$2431 : STA $7EC760 ; infinity symbol (left half)
+			INC A        : STA $7EC762 ; infinity symbol (right half)
+	RTL
 	+
-	PLA
+	REP #$30
 RTL
-;--------------------------------------------------------------------------------
+
 DrawBootsInMenuLocation:
 	LDA.l HUDDungeonItems : BNE +
 		LDA.w #$1608 : STA $00

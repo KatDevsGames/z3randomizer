@@ -1188,17 +1188,17 @@ org $0DFC77 ; <- 6FC77 - yes these are both the correct address - kkat
 JSL.l OnDrawHud
 BRA $27
 
-org $0DFCB8 ; <- 6FCB8
-JSL.l DrawBombTens ; nudge bomb 10s digit right
 
-org $0DFCC4 ; <- 6FCC4
-JSL.l DrawBombOnes ; nudge bomb 1s digit right
+org $0DFCAE ; <- 6FCAE
+JSL.l DrawBombCount ; nudge bomb digits right
+BRA + 
+NOP #$14 : + ; #20
 
-org $0DFCDC ; <- 6FCDC
-JSL.l DrawArrowTens
+org $0DFCD2 ; <- 6FCD2
+JSL.l DrawArrowCount
+BRA +
+NOP #$14 : + ; #20
 
-org $0DFCE8 ; <- 6FCE8
-JSL.l DrawArrowOnes
 
 ;org $0DFD0A ; <- 6FD0A - headsup_display.asm : 900
 ;STA $7EC766 ; nudge key digit right
