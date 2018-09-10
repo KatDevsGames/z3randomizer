@@ -54,3 +54,35 @@ FairyPond_Init:
 	+ :	PLY
 RTL
 ;--------------------------------------------------------------------------------
+HappinessPond_Check:
+	LDA $A0 : CMP.b #$15 ;what we wrote over
+	PHP
+	BNE .done
+
+	LDA.b #$72
+	JSL Sprite_SpawnDynamically
+
+	LDA $0FD8 : STA $0D10, Y
+	LDA $0FD9 : STA $0D30, Y
+
+	LDA $0FDA : !SUB.b #$40 : STA $0D00, Y
+	LDA $0FDB : SBC.b #$00 : STA $0D20, Y
+
+	LDA.b #$01 : STA $0DA0, Y
+
+	LDA.b #$BB
+	JSL Sprite_SpawnDynamically
+
+	LDA.b #$08 : STA $0DD0, Y ; ensure we run prep for the shopkeeper
+
+	LDA $0FD8 : STA $0D10, Y
+	LDA $0FD9 : STA $0D30, Y
+
+	LDA $0FDA : !SUB.b #$20 : STA $0D00, Y
+	LDA $0FDB : SBC.b #$00 : STA $0D20, Y
+
+	STZ $0DD0, X ; self terminate
+
+	.done
+	PLP
+RTL

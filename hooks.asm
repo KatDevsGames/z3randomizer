@@ -1547,9 +1547,9 @@ JSL.l DialogGanon1
 org $1D9078 ; <- E9078 - sprite_ganon.asm:552 (LDA.b #$70 : STA $1CF0)
 JSL.l DialogGanon2 : RTS
 ;--------------------------------------------------------------------------------
-;-- Disable Capitalism fairy
-org $06C454 ; <- 34454 - sprite_ponds.asm:133 (LDA $0D80, X)
-LDA.b #$00 : NOP
+;-- Convert Capitalism fairy to shop
+org $06C4BD ; <- 34C4BD - sprite_ponds.asm:107 (LDA $A0 : CMP.b #$15 : BEQ Sprite_HappinessPond)
+JSL.l HappinessPond_Check
 ;--------------------------------------------------------------------------------
 ;-- Sahasrahla (no green pendant)
 org $05F16C ; <- 2F16C sprite_elder.asm:137 (JSL Sprite_ShowSolicitedMessageIfPlayerFacing)

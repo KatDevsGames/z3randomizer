@@ -1473,27 +1473,33 @@ org $30C000 ; PC 0x184000 - 0x184007
 ItemSubstitutionRules:
 ;db [item][quantity][substitution][pad] - CURRENT LIMIT 16 ENTRIES
 db $12, $01, $35, $FF
+db $51, $06, $52, $FF
+db $53, $06, $54, $FF
 db $FF, $FF, $FF, $FF
 ;--------------------------------------------------------------------------------
 ; 0x184008 - 0x1847FF (unused)
 ;================================================================================
-;shop_config - tda- --qq
+;shop_config - tdav --qq
 ; t - 0=Shop - 1=TakeAny
 ; d - 0=Check Door - 1=Skip Door Check
 ; a - 0=Shop/TakeAny - 1=TakeAll
+; v - 0=normal vram, 1= alt vram
 ; qq - # of items for sale
 
-;shopkeeper_config - ppp- --ss
+;shopkeeper_config - ppp- -sss
 ; ppp - palette
-; ss - sprite type
+; sss - sprite type
 org $30C800 ; PC 0x184800 - 0x1848FF - max 32 shops ; do not exceed 36 tracked items sram_index > ($24)
 ShopTable:
 ;db [id][roomID-low][roomID-high][doorID][zero][shop_config][shopkeeper_config][sram_index]
+db $01, $15, $01, $5D, $00, $12, $04, $00
 db $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF
 
 org $30C900 ; PC 0x184900 - 0x184FFF - max 224 entries
 ShopContentsTable:
 ;db [id][item][price-low][price-high][max][repl_id][repl_price-low][repl_price-high]
+db $01, $51, $64, $00, $07, $FF, $00, $00
+db $01, $53, $64, $00, $07, $FF, $00, $00
 db $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF
 ;================================================================================
 org $30D000 ; PC 0x185000 - 0x18503F
