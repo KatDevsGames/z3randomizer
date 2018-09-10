@@ -147,6 +147,10 @@ org $A18800 ; static mapping area
 incsrc zsnes.asm
 warnpc $A19000
 
+org $A1A000 ; static mapping area. Referenced by front end. Do not move.
+incsrc invertedstatic.asm
+warnpc $A1A100
+
 org $A1FF00 ; static mapping area
 incsrc init.asm
 

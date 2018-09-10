@@ -1311,6 +1311,10 @@ db $04
 ;;--------------------------------------------------------------------------------
 ;org $08D40C ; PC 0x4540C (ancilla_morph_poof.asm:48) (BEQ)
 ;db #$D0 ; #$F0 - Light Side (Default), #$D0 - Dark Side
+;;--------------------------------------------------------------------------------
+org $00886e ; <- Bank00.asm : 1050 (LDA Overworld_TileAttr, X)
+LDA Overworld_TileAttr, X ; use "JML InvertedTileAttributeLookup" for inverted
+Overworld_GetTileAttrAtLocation_continue:
 ;================================================================================
 org $0DDBEC ; <- 6DBEC
 dw #10000 ; Rupee Limit +1
