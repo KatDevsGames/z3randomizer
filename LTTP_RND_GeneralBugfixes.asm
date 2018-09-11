@@ -563,6 +563,9 @@ HUD_RebuildIndoor_Palace:
 org $0EEE10
 Messaging_Text:
 
+org $0FFD94
+Overworld_TileAttr:
+
 org $1BC97C:
 Overworld_DrawPersistentMap16:
 
