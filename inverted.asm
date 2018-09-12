@@ -128,3 +128,36 @@ db $02, $02, $18, $08, $08, $08, $09, $09, $08, $08, $29, $02, $02, $02, $1A, $0
 db $08, $08, $10, $08, $12, $00, $09, $09, $09, $09, $09, $48, $09, $29, $00, $4B
 db $02, $02, $02, $00, $08, $02, $02, $00, $00, $00, $00, $01, $00, $00, $20, $00
 db $02, $02, $02, $02, $02, $02, $02, $00, $00, $01, $01, $01, $02, $00, $08, $00
+
+Electric_Barrier:
+{
+	LDA InvertedMode : BEQ .done
+	LDA $7EF280, X : ORA #$40 : STA $7EF280, X ;set barrier dead
+	.done
+	LDA $7EF280, X ;original code to check if that sprite get damaged by link
+	RTL
+}
+
+GanonTowerAnimation:
+{
+	LDA InvertedMode : BEQ .done
+		LDA.b #$1B : STA $012F
+        STZ $04C6
+        STZ $B0
+        STZ $0710
+        STZ $02E4
+        
+        STZ $0FC1
+        
+        STZ $011A
+        STZ $011B
+        STZ $011C
+        STZ $011D
+		LDA.b #$02 : STA $012C
+        LDA.b #$09 : STA $012D
+		RTL
+	.done
+	    LDA.b #$05 : STA $04C6
+        STZ $B0
+	RTL
+}
