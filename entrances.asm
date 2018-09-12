@@ -15,7 +15,19 @@ LockAgahnimDoors:
 			JSR.w LockAgahnimDoorsCore : RTL
 	+
 	.unlock
+	LDA InvertedMode : BEQ .done
+
+	LDA $7EF2C3 : AND.w #$0020 : BNE .done ; Check if GT overlay is already on or not
+	SEP #$30
+	JSL $099B6F ;Add tower break seal
+	LDA $7EF2C3 : ORA #$20 : STA $7EF2C3 ; activate GT overlay
+	REP #$30
+	LDA #$0002 ;Prevent door from opening that frame otherwise it glitchy
+	RTL
+	.done
+
 	LDA.w #$0000 ; fallback to never locked
+
 RTL
 ;--------------------------------------------------------------------------------
 LockAgahnimDoorsCore:
