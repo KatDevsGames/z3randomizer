@@ -928,7 +928,7 @@ db $00, $00, $00, $00, $00, $00, $00
 org $308247 ; PC 0x180247
 ; For any starting areas in single entrance caves you can specify the overworld door here
 ; to enable drawing the doorframes These values should be the overworld door index+1.
-; A value of zero uses the vanilla door frame table.
+; A value of zero will draw no door frame.
 StartingAreaOverworldDoor:
 db $00, $00, $00, $00, $00, $00, $00
 ;--------------------------------------------------------------------------------

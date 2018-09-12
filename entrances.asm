@@ -86,9 +86,13 @@ AllowStartFromSingleEntranceCave:
 		STA $7EC14C ; Cache the overworld area number
 		STA $7EC140 ; Cache the aux overworld area number
 
+		STZ $0698 ;zero out door overlays in case starting overworld door is not set
+		STZ $0699 ;zero out door overlays in case starting overworld door is not set
+
 		SEP #$20 ; set 8-bit accumulator
 		LDX $00
 		LDA.l StartingAreaOverworldDoor, X : STA.l $7F5099 ;Load overworld door
+
 		REP #$20 ; reset 16-bit accumulator
 
 		.done
