@@ -130,16 +130,14 @@ db $02, $02, $02, $00, $08, $02, $02, $00, $00, $00, $00, $01, $00, $00, $20, $0
 db $02, $02, $02, $02, $02, $02, $02, $00, $00, $01, $01, $01, $02, $00, $08, $00
 
 Electric_Barrier:
-{
 	LDA InvertedMode : BEQ .done
-	LDA $7EF280, X : ORA #$40 : STA $7EF280, X ;set barrier dead
+		LDA $7EF280, X : ORA #$40 : STA $7EF280, X ;set barrier dead
 	.done
-	LDA $7EF280, X ;original code to check if that sprite get damaged by link
-	RTL
-}
+	LDA $7EF280, X ; what we wrote over
+RTL
+
 
 GanonTowerAnimation:
-{
 	LDA InvertedMode : BEQ .done
 		LDA.b #$1B : STA $012F
         STZ $04C6
@@ -157,7 +155,6 @@ GanonTowerAnimation:
         LDA.b #$09 : STA $012D
 		RTL
 	.done
-	    LDA.b #$05 : STA $04C6
-        STZ $B0
-	RTL
-}
+	    LDA.b #$05 : STA $04C6 ;what we wrote over
+        STZ $B0 ; (continued)
+RTL

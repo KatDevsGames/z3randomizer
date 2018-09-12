@@ -254,6 +254,14 @@ org $07ff5f ; <- 3ff5f - Bank0E.asm : 5252 (LDA.w #$0E3F : STA $23BC)
 JSL.l Draw_PyramidOverlay
 RTS
 ;--------------------------------------------------------------------------------
+;Remove Electric Barrier Hook
+org $06891E ; <- sprite_prep.asm : 537 (LDA $7EF280, X : PLX : AND.b #$40 : BEQ .not_dead)
+JSL Electric_Barrier
+;--------------------------------------------------------------------------------
+org $08CDAE ; <- ancilla_break_tower_seal.asm : 117 (LDA.b #$05 : STA $04C6)
+JSL GanonTowerAnimation
+NOP #03
+;--------------------------------------------------------------------------------
 
 ;================================================================================
 ; Hash Key Display
