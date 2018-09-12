@@ -8,6 +8,9 @@ DarkWorldSaveFix:
 RTL
 ;--------------------------------------------------------------------------------
 DoWorldFix:
+	LDA InvertedMode : BEQ +
+		JMP DoWorldFix_Inverted
+	+
 	LDA.l Bugfix_MirrorlessSQToLW : BEQ .skip_mirror_check
 		LDA $7EF353 : BEQ .noMirror ; check if we have the mirror
 	.skip_mirror_check ; alt entrance point
@@ -21,6 +24,9 @@ DoWorldFix:
 RTL
 ;--------------------------------------------------------------------------------
 SetDeathWorldChecked:
+	LDA InvertedMode : BEQ +
+		JMP SetDeathWorldChecked_Inverted
+	+
 	LDA $1B : BEQ .outdoors
 		LDA $040C : CMP #$FF : BNE .dungeon
 		LDA $A0 : BNE ++
@@ -38,6 +44,41 @@ JMP DoWorldFix_skip_mirror_check
 	LDA $7EF3CC : CMP #$08 : BNE + : LDA.b #$07 : STA $7EF3CC : + ; convert dwarf to frog
 	.done
 RTL
+;================================================================================
+DoWorldFix_Inverted:
+	LDA.l Bugfix_MirrorlessSQToLW : BEQ .skip_mirror_check
+		LDA $7EF353 : BEQ .noMirror ; check if we have the mirror
+	.skip_mirror_check ; alt entrance point
+	LDA $7EF3C5 : CMP.b #$03 : !BLT .aga1Alive ; check if agahnim 1 is alive
+	BRA .done
+	.noMirror
+	.aga1Alive
+	LDA #$40 : STA $7EF3CA ; set flag to dark world
+	LDA $7EF3CC : CMP #$08 : BNE + : LDA.b #$07 : STA $7EF3CC : + ; convert dwarf to frog
+	.done
+RTL
+;--------------------------------------------------------------------------------
+SetDeathWorldChecked_Inverted:
+	LDA $1B : BEQ .outdoors
+		LDA $040C : CMP #$FF : BNE .dungeon
+		LDA $A0 : BNE ++
+			LDA GanonPyramidRespawn : BNE .castle ; if flag is set, force respawn at pyramid on death to ganon
+		++
+	.outdoors
+JMP DoWorldFix
+
+	.dungeon
+	LDA Bugfix_PreAgaDWDungeonDeathToFakeDW : BNE .done ; if the bugfix is enabled, we do nothing on death in dungeon
+JMP DoWorldFix_Inverted_skip_mirror_check
+
+	.castle
+	LDA #$00 : STA $7EF3CA ; set flag to dark world
+	LDA $7EF3CC : CMP #$07 : BNE + : LDA.b #$08 : STA $7EF3CC : + ; convert frog to dwarf
+	.done
+RTL
+;================================================================================
+
+
 ;--------------------------------------------------------------------------------
 FakeWorldFix:
 	LDA FixFakeWorld : BEQ +

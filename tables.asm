@@ -1312,6 +1312,10 @@ db $04
 ;org $08D40C ; PC 0x4540C (ancilla_morph_poof.asm:48) (BEQ)
 ;db #$D0 ; #$F0 - Light Side (Default), #$D0 - Dark Side
 ;;--------------------------------------------------------------------------------
+;; Spawn
+; org $0280a6 ; <- Bank02.asm : 257 (LDA $7EF3CA : BEQ .inLightWorld)
+;db #$D0 ; #F0 - default to light (Default), #$D0 - Default to dark
+;;--------------------------------------------------------------------------------
 org $00886e ; <- Bank00.asm : 1050 (LDA Overworld_TileAttr, X)
 LDA Overworld_TileAttr, X ; use "JML InvertedTileAttributeLookup" for inverted
 Overworld_GetTileAttrAtLocation_continue:

@@ -94,7 +94,7 @@ OnFileLoad:
 		LDA.b #$FF : STA !FRESH_FILE_MARKER
 	+
 	LDA.w $010A : BNE + ; don't adjust the worlds for "continue" or "save-continue"
-	LDA.w $7EC011 : BNE + ; don't adjust worlds if mosiac is enabled (Read: mirroring in dungeon)
+	LDA.l $7EC011 : BNE + ; don't adjust worlds if mosiac is enabled (Read: mirroring in dungeon)
 		JSL.l DoWorldFix
 	+
 	JSL.l MasterSwordFollowerClear

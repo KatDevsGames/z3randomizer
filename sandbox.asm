@@ -175,6 +175,8 @@ org $07AA3A : db $D0 ; residual portal?
 org $08D40C : db $D0 ; morph poof
 org $308174 : db $01 ; ER's Fix fake worlds fix. Currently needed for inverted
 
+org $0280A6 : db $D0
+
 org $1FED31 : db $0E ; pre-open open TR bomb door
 org $1FED41 : db $0E ; pre-open open TR bomb door
 
@@ -341,7 +343,6 @@ org $02E02D+$37 : db $07
 org $02E07C+$37 : db $f9
 org $02E0CB+$37+$37 : dw $0000
 org $02E169+$37+$37 : dw $0000
-
 
 
 ;org $02E849 ; Fly 1 to Sanctuary
