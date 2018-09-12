@@ -175,7 +175,7 @@ org $07AA3A : db $D0 ; residual portal?
 org $08D40C : db $D0 ; morph poof
 org $308174 : db $01 ; ER's Fix fake worlds fix. Currently needed for inverted
 
-org $0280A6 : db $D0
+org $0280A6 : db $D0 ; Spawn logic
 
 org $1FED31 : db $0E ; pre-open open TR bomb door
 org $1FED41 : db $0E ; pre-open open TR bomb door
@@ -302,6 +302,7 @@ org $1af58c : dw $54AE
 
 ;Make retreat bat gfx available in Hyrule castle.
 org $00DB9D : db $1A ;sprite set 1, section 3
+org $00DC09 : db $1A ;sprite set 27, section 3
 
 ;use new castle hole graphics (The values are the SNES address of the graphics: 31e000)
 org $00D009 : db $31
