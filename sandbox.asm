@@ -332,8 +332,6 @@ org $1BD1DD : db #$A4, #$06, #$82, #$9E, #$06, #$82, #$FF, #$FF ;new data for ma
 
 
 ;;move pyramid exit overworld door
-;org $1BB8BF+$35+$35 : dw $0174
-;org $1BB917+$35+$35 : dw $000a
 org $1BB96F+$35+$35 : dw $001b
 org $1BBA71+$35+$35 : dw $06a4
 org $1BBB73+$35 : db $36
