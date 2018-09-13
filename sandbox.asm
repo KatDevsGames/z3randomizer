@@ -315,6 +315,9 @@ org $1BE8DA : dw $39AD
 ; TR tail jump
 org $00886e : db $5C, $00, $A0, $A1
 
+;Remove Hyrule Castle Gate warp
+org $09D436 : db $F3 ;replace whirlpool with (harmless) SpritePositionTarget Overlord
+
 ;Add warps under rocks, etc.
 org $1BC67A : db #$2E, #$0B, #$82 ; Replace a rupee under bush to add a warp on map 80 (top of kak)
 org $1BC81E : db #$94, #$1D, #$82 ; Replace a heart under bush to add a warp on map 120 (mire)
@@ -328,9 +331,9 @@ org $1BC387 : db #$DD, #$D1 ;New pointer for map 71 no items to replace
 org $1BD1DD : db #$A4, #$06, #$82, #$9E, #$06, #$82, #$FF, #$FF ;new data for map 71
 
 
-;move pyramid exit overworld door
-org $1BB8BF+$35+$35 : dw $0174
-org $1BB917+$35+$35 : dw $000a
+;;move pyramid exit overworld door
+;org $1BB8BF+$35+$35 : dw $0174
+;org $1BB917+$35+$35 : dw $000a
 org $1BB96F+$35+$35 : dw $001b
 org $1BBA71+$35+$35 : dw $06a4
 org $1BBB73+$35 : db $36
