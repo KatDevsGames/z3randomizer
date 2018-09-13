@@ -74,11 +74,11 @@ RTL
 ;--------------------------------------------------------------------------------
 CheckStunItemAction:
 	LDA.b #$40 : STA $0DF0, X
-	LDA $0303 : CMP #$02 : BNE + ; boomerang
+	LDA #$05 : JSR SearchAncilla : BEQ + ; boomerang
 		LDA.l StunItemAction : AND #$01 : CMP #$01 : BNE .no_stun
 		BRA .normal
 	+
-	LDA $0303 : CMP #$0E : BNE + ; hookshot
+	LDA #$1F : JSR SearchAncilla : BEQ + ; hookshot
 		LDA.l StunItemAction : AND #$02 : CMP #$02 : BNE .no_stun
 		BRA .normal
 	+
@@ -88,3 +88,21 @@ CheckStunItemAction:
 	.no_stun
 RTL
 ;--------------------------------------------------------------------------------
+;Argument : A = id we want to find return 00 if none found, 01 if found
+SearchAncilla:
+{
+	STA $05
+	PHX 
+	LDX #$00
+	.loop
+	LDA $0C4A, X 
+	INX : CPX #$0A : BEQ .notFound
+	CMP $05 : BNE .loop
+		LDA #$01
+		BRA .return
+	.notFound
+		LDA #$00
+	.return
+	PLX 
+	RTS
+}
