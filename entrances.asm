@@ -11,20 +11,22 @@ LockAgahnimDoors:
 		LDA $7EF3C5 : AND.w #$000F : CMP.w #$0002 : !BGE .unlock ; if we rescued zelda, skip
 			JSR.w LockAgahnimDoorsCore : RTL
 	+ : CMP.w #$0002 : BNE +
-		LDA $7EF37A : AND.w #$007F : CMP.w #$007F : BEQ .unlock
-			JSR.w LockAgahnimDoorsCore : RTL
+		JSR.w LockAgahnimDoorsCore : BEQ .unlock
+		LDA $7EF37A : AND.w #$007F : CMP.w #$007F : BEQ .crystalOrUnlock
+			LDA #$0001 : RTL
+		.crystalOrUnlock
+		LDA InvertedMode : BEQ .unlock
+
+		LDA $7EF2C3 : AND.w #$0020 : BNE .unlock ; Check if GT overlay is already on or not
+		SEP #$30
+		JSL $099B6F ;Add tower break seal
+		LDA $7EF2C3 : ORA #$20 : STA $7EF2C3 ; activate GT overlay
+		REP #$30
+		LDA #$0001 ;Prevent door from opening that frame otherwise it glitchy
+		RTL
+
 	+
 	.unlock
-	LDA InvertedMode : BEQ .done
-
-	LDA $7EF2C3 : AND.w #$0020 : BNE .done ; Check if GT overlay is already on or not
-	SEP #$30
-	JSL $099B6F ;Add tower break seal
-	LDA $7EF2C3 : ORA #$20 : STA $7EF2C3 ; activate GT overlay
-	REP #$30
-	LDA #$0002 ;Prevent door from opening that frame otherwise it glitchy
-	RTL
-	.done
 
 	LDA.w #$0000 ; fallback to never locked
 
