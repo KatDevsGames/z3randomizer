@@ -262,6 +262,11 @@ org $08CDAE ; <- ancilla_break_tower_seal.asm : 117 (LDA.b #$05 : STA $04C6)
 JSL GanonTowerAnimation
 NOP #03
 ;--------------------------------------------------------------------------------
+org $02EC8D ; <- bank02.asm : 11981 (LDA.w #$020F : LDX $8A : CPX.w #$0033 : BNE .noRock)
+JSL HardcodedRocks
+NOP #19 ;23 bytes removed with the JSL
+;--------------------------------------------------------------------------------
+
 
 ;================================================================================
 ; Hash Key Display

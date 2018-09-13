@@ -158,3 +158,17 @@ GanonTowerAnimation:
 	    LDA.b #$05 : STA $04C6 ;what we wrote over
         STZ $B0 ; (continued)
 RTL
+
+;Hard coded rock removed in LW for Inverted mode
+HardcodedRocks:
+
+    LDA InvertedMode : BEQ .normalrocks
+        BRA .noRock2
+    .normalrocks
+        LDA.w #$020F : LDX $8A : CPX.w #$0033 : BNE .noRock
+        STA $7E22A8
+    .noRock
+        CPX.w #$002F : BNE .noRock2
+        STA $7E2BB2
+    .noRock2
+RTL
