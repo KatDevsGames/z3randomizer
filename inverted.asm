@@ -172,3 +172,11 @@ HardcodedRocks:
         STA $7E2BB2
     .noRock2
 RTL
+
+TurtleRockPegSolved:
+	LDA.l InvertedMode : BNE +
+		LDA.l $7ef287 ; What we wrote over (reading flags for this screen)
+		RTL
+	+
+	LDA.w #$0020 ; We always treat puzzle as pre solved (overlay flag set) for inverted mode.
+RTL

@@ -27,7 +27,7 @@ Overworld_NewTilesTable:
 {
 ;LW
     ;00      01      02      03      04      05      06      07
-dw return, return, return, map003, return, map005, return, return
+dw return, return, return, map003, return, map005, return, map007
     ;08      09      10      11      12      13      14      15
 dw return, return, return, return, return, return, return, return 
     ;16      17      18      19      20      21      22      23
@@ -134,6 +134,21 @@ STA $2CEE
 .map014
 LDA #$0034 : STA $3D4A
 
+RTS
+}
+
+map007:
+{
+LDA #$0034 : STA $25A0
+STA $281A
+LDA #$021B : STA $261E
+STA $2620 : STA $2622
+STA $2624 : STA $269C
+STA $271C : STA $26A6
+STA $279C : STA $2726
+STA $281C : STA $27A6
+STA $28A0 : STA $289E
+STA $28A4 : STA $28A2
 RTS
 }
 
