@@ -133,9 +133,9 @@ DrawChallengeTimer:
 		RTL
 	+
     	LDA.w #$247F : STA $7EC790
-		LDA.w #$247F : STA $7EC792
-		LDA.w #$247F : STA $7EC794
-		LDA.w #$247F : STA $7EC796
+					   STA $7EC792
+					   STA $7EC794
+					   STA $7EC796
 	++
 	
 	LDA.l TimerStyle : BNE + : RTL : + ; Hud Timer

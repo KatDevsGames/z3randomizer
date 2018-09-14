@@ -1,128 +1,129 @@
 ;--------------------------------------------------------------------------------
-; $7F5010 - Scratch Space (Callee Preserved)
+; $7F5010 - Scratch Space
 ;--------------------------------------------------------------------------------
-!GOAL_COUNTER = "$7EF418"
+; The number of items in a dungeon never changes. use this macro instead of
+; HexToDec when drawing the "??/XX" item counter
+; %DrawConstantNumber(1,4) draws 14
+;--------------------------------------------------------------------------------
+macro DrawConstantNumber(digit1,digit2) 
+	LDA.w #$2490+<digit1> : STA $7EC79A
+	LDA.w #$2490+<digit2> : STA $7EC79C
+endmacro
+;--------------------------------------------------------------------------------
+
 DrawDungeonCompassCounts:
-	LDA $1B : AND.w #$00FF : BNE + : RTL : + ; Skip if outdoors
-	LDA $040C : CMP.w #$00FF : BNE + : RTL : + ; Skip if not in a dungeon
-	LDA.l CompassMode : AND.w #$00FF : BNE + : RTL : + ; Item Counts
-	PHX
-		LDX $040C ; Load dungeon ID to X
-		
-		CMP.w #$0002 : BEQ ++ ; if CompassMode==2, we don't check for the compass
-			LDA $7EF364 : AND .item_masks, X ; Load compass values to A, mask with dungeon item masks
-			BNE + : BRL .done : + ; skip if we don't have compass
-		++
-		
-		LDA $040C
-	    CMP.w #$0000 : BNE + ; Sewer Passage, use Hyrule Castle counts
-			LDA $7EF434 : AND.w #$00F0 : LSR #4
-			BRL ++
-	    + : CMP.w #$0002 : BNE + ; Hyrule Castle
-			LDA $7EF434 : AND.w #$00F0 : LSR #4
-			BRL ++
-	    + : CMP.w #$0004 : BNE + ; Eastern Palace
-			LDA $7EF436 : AND.w #$0007
-			BRL ++
-	    + : CMP.w #$0006 : BNE + ; Desert Palace
-			LDA $7EF435 : AND.w #$00E0 : LSR #5
-			BRL ++
-	    + : CMP.w #$0008 : BNE + ; Agahnim's Tower
-			LDA $7EF435 : AND.w #$0002
-			BRL ++
-	    + : CMP.w #$000A : BNE + ; Swamp Palace
-			LDA $7EF439 : AND.w #$000F
-			BRL ++
-	    + : CMP.w #$000C : BNE + ; Dark Palace
-			LDA $7EF434 : AND.w #$000F
-			BRA ++
-	    + : CMP.w #$000E : BNE + ; Misery Mire
-			LDA $7EF438 : AND.w #$000F
-			BRA ++
-	    + : CMP.w #$0010 : BNE + ; Skull Woods
-			LDA $7EF437 : AND.w #$00F0 : LSR #4
-			BRA ++
-	    + : CMP.w #$0012 : BNE + ; Ice Palace
-			LDA $7EF438 : AND.w #$00F0 : LSR #4
-			BRA ++
-	    + : CMP.w #$0014 : BNE + ; Tower of Hera
-			LDA $7EF435 : AND.w #$001C : LSR #2
-			BRA ++
-	    + : CMP.w #$0016 : BNE + ; Thieves' Town
-			LDA $7EF437 : AND.w #$000F
-			BRA ++
-	    + : CMP.w #$0018 : BNE + ; Turtle Rock
-			LDA $7EF439 : AND.w #$00F0 : LSR #4
-			BRA ++
-	    + : CMP.w #$001A : BNE + ; Ganon's Tower
-			LDA $7EF436 : AND.w #$00F8 : LSR #3
-			BRA ++
-		+ : ++
-		JSL.l HexToDec
-		
-		;LDX.b #$00 ; check the width on this
-		LDA $7F5006 : AND.w #$00FF : ORA #$2400 : STA $7EC794
-		LDA $7F5007 : AND.w #$00FF : ORA #$2400 : STA $7EC796
-		
-		LDA.w #$2830 : STA $7EC798
-		
-		LDA $040C
-	    CMP.w #$0000 : BNE + ; Sewer Passage, use Hyrule Castle counts
-			LDA.w #$0008
-			BRL ++
-	    + : CMP.w #$0002 : BNE + ; Hyrule Castle
-			LDA.w #$0008
-			BRL ++
-	    + : CMP.w #$0004 : BNE + ; Eastern Palace
-			LDA.w #$0006
-			BRL ++
-	    + : CMP.w #$0006 : BNE + ; Desert Palace
-			LDA.w #$0006
-			BRL ++
-	    + : CMP.w #$0008 : BNE + ; Agahnim's Tower
-			LDA.w #$0002
-			BRL ++
-	    + : CMP.w #$000A : BNE + ; Swamp Palace
-			LDA.w #$000A
-			BRL ++
-	    + : CMP.w #$000C : BNE + ; Dark Palace
-			LDA.w #$000E
-			BRA ++
-	    + : CMP.w #$000E : BNE + ; Misery Mire
-			LDA.w #$0008
-			BRA ++
-	    + : CMP.w #$0010 : BNE + ; Skull Woods
-			LDA.w #$0008
-			BRA ++
-	    + : CMP.w #$0012 : BNE + ; Ice Palace
-			LDA.w #$0008
-			BRA ++
-	    + : CMP.w #$0014 : BNE + ; Tower of Hera
-			LDA.w #$0006
-			BRA ++
-	    + : CMP.w #$0016 : BNE + ; Thieves' Town
-			LDA.w #$0008
-			BRA ++
-	    + : CMP.w #$0018 : BNE + ; Turtle Rock
-			LDA.w #$000C
-			BRA ++
-	    + : CMP.w #$001A : BNE + ; Ganon's Tower
-			LDA.w #$001B
-			BRA ++
-		+ : ++
-		JSL.l HexToDec
-		
-		LDA $7F5006 : AND.w #$00FF : ORA #$2400 : STA $7EC79A
-		LDA $7F5007 : AND.w #$00FF : ORA #$2400 : STA $7EC79C
-		
-		.done
-	PLX
+	LDX $1B : BNE + : RTL : + ; Skip if outdoors
+	LDX $040C : CPX.b #$FF : BNE + : RTL : + ; Skip if not in a dungeon
+
+	CMP.w #$0002 : BEQ ++ ; if CompassMode==2, we don't check for the compass
+		LDA $7EF364 : AND.l .item_masks, X ; Load compass values to A, mask with dungeon item masks
+		BNE + : RTL : + ; skip if we don't have compass
+	++
+	
+	JMP (CompassCountDungeonHandlers, X) : .return_spot
+	
+	; we switch to 8-bit A in the jump before this
+	JSR HudHexToDec2Digit
+	REP #$20
+	
+	LDX.b $06 : TXA : ORA #$2400 : STA $7EC794 ; Draw the item count
+	LDX.b $07 : TXA : ORA #$2400 : STA $7EC796
+	
+	LDA.w #$2830 : STA $7EC798 ; draw the slash
+
+	.done
 RTL
 
 .item_masks ; these are dungeon correlations to $7EF364 - $7EF369 so it knows where to store compasses, etc
     dw $8000, $4000, $2000, $1000, $0800, $0400, $0200, $0100
     dw $0080, $0040, $0020, $0010, $0008, $0004
+	
+CompassCountDungeonHandlers: ; pointers to functions that handle dungeon-specific code
+	dw CompassCount_Escape, 	CompassCount_Escape ; (hyrule castle, sewers)
+	dw CompassCount_Eastern,	CompassCount_Desert,	CompassCount_Agah
+	dw CompassCount_Swamp,		CompassCount_PoD,		CompassCount_Mire
+	dw CompassCount_Skull,		CompassCount_Ice,		CompassCount_Hera
+	dw CompassCount_Thieves,	CompassCount_Trock,		CompassCount_Gt
 }
+
+CompassCount_Escape:
+	%DrawConstantNumber(0,8)
+	SEP #$20
+	LDA $7EF434 : LSR #4
+	JMP DrawDungeonCompassCounts_return_spot
+	
+CompassCount_Eastern:
+	%DrawConstantNumber(0,6)
+	SEP #$20
+	LDA $7EF436 : AND.b #$07
+	JMP DrawDungeonCompassCounts_return_spot
+	
+CompassCount_Desert: 
+	%DrawConstantNumber(0,6)
+	SEP #$20
+	LDA $7EF435 : LSR #5
+	JMP DrawDungeonCompassCounts_return_spot
+
+CompassCount_Agah:
+	%DrawConstantNumber(0,2)
+	SEP #$20
+	LDA $7EF435 : AND.b #$02
+	JMP DrawDungeonCompassCounts_return_spot
+
+CompassCount_Swamp:
+	%DrawConstantNumber(1,0)
+	SEP #$20
+	LDA $7EF439 : AND.b #$0F
+	JMP DrawDungeonCompassCounts_return_spot
+
+CompassCount_PoD:
+	%DrawConstantNumber(1,4)
+	SEP #$20
+	LDA $7EF434 : AND.b #$0F
+	JMP DrawDungeonCompassCounts_return_spot
+
+CompassCount_Mire:
+	%DrawConstantNumber(0,8)
+	SEP #$20
+	LDA $7EF438 : AND.b #$0F
+	JMP DrawDungeonCompassCounts_return_spot
+	
+CompassCount_Skull:
+	%DrawConstantNumber(0,8)
+	SEP #$20
+	LDA $7EF437 : LSR #4 
+	JMP DrawDungeonCompassCounts_return_spot
+	
+CompassCount_Ice:
+	%DrawConstantNumber(0,8)
+	SEP #$20
+	LDA $7EF438 : LSR #4 
+	JMP DrawDungeonCompassCounts_return_spot
+
+CompassCount_Hera:
+	%DrawConstantNumber(0,6)
+	SEP #$20
+	LDA $7EF435 : AND.b #$1C : LSR #2
+	JMP DrawDungeonCompassCounts_return_spot
+	
+CompassCount_Thieves:
+	%DrawConstantNumber(0,8)
+	SEP #$20
+	LDA $7EF437 : AND.b #$0F
+	JMP DrawDungeonCompassCounts_return_spot
+	
+CompassCount_Trock:
+	%DrawConstantNumber(1,2)
+	SEP #$20
+	LDA $7EF439 : LSR #4
+	JMP DrawDungeonCompassCounts_return_spot
+	
+CompassCount_Gt:
+	%DrawConstantNumber(2,7)
+	SEP #$20
+	LDA $7EF436 : LSR #3
+	JMP DrawDungeonCompassCounts_return_spot
+
 ;--------------------------------------------------------------------------------
 ; $7EF434 - hhhhdddd - item locations checked
 ; h - hyrule castle/sewers

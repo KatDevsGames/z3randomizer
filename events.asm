@@ -16,12 +16,10 @@ OnPrepFileSelect:
 RTL
 ;--------------------------------------------------------------------------------
 OnDrawHud:
-	JSL.l Draw4DigitRupees
-	JSL.l DrawChallengeTimer
-	JSL.l DrawGoalIndicator
-	JSL.l DrawDungeonCompassCounts
+	JSL.l DrawChallengeTimer ; this has to come before NewDrawHud because the timer overwrites the compass counter
+	JSL.l NewDrawHud
 	JSL.l SwapSpriteIfNecissary
-RTL
+JML.l ReturnFromOnDrawHud
 ;--------------------------------------------------------------------------------
 ;OnDungeonEntrance:
 ;	STA $7EC172 ; thing we wrote over

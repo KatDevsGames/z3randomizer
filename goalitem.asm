@@ -2,39 +2,9 @@
 ; $7F5010 - Scratch Space (Callee Preserved)
 ;--------------------------------------------------------------------------------
 !GOAL_COUNTER = "$7EF418"
-!DRAW_ADDRESS = "$7EC72A"
-DrawGoalIndicator:
-	LDA.l GoalItemRequirement : AND.w #$00FF : BNE + : RTL : + ; Star Meter
-	PHX
-		LDX.w #$0000
-		
-		LDA.l GoalItemIcon : STA !DRAW_ADDRESS, X : INX #2 ; draw star icon and move the cursor
-		
-	    LDA.l !GOAL_COUNTER
-		AND.w #$00FF
-	    JSL.l HexToDec
-		LDA $7F5005 : AND.w #$00FF : ORA.w #$2400 : STA !DRAW_ADDRESS, X : INX #2 ; draw 100's digit and move the cursor
-		LDA $7F5006 : AND.w #$00FF : ORA.w #$2400 : STA !DRAW_ADDRESS, X : INX #2 ; draw 10's digit and move the cursor
-		LDA $7F5007 : AND.w #$00FF : ORA.w #$2400 : STA !DRAW_ADDRESS, X : INX #2 ; draw 1's and move the cursor
-		
-		LDA.l GoalItemRequirement : AND.w #$00FF : CMP.w #$00FF : BEQ .skip
-			LDA.w #$2830 : STA !DRAW_ADDRESS, X : INX #2 ; draw slash and move the cursor
-		
-			LDA.l GoalItemRequirement
-			AND.w #$00FF
-		    JSL.l HexToDec
-			LDA $7F5005 : AND.w #$00FF : ORA.w #$2400 : STA !DRAW_ADDRESS, X : INX #2 ; draw 100's digit and move the cursor
-			LDA $7F5006 : AND.w #$00FF : ORA.w #$2400 : STA !DRAW_ADDRESS, X : INX #2 ; draw 10's digit and move the cursor
-			LDA $7F5007 : AND.w #$00FF : ORA.w #$2400 : STA !DRAW_ADDRESS, X : INX #2 ; draw 1's and move the cursor
-			BRA .done
-		.skip
-			LDA.w #$207F
-			STA !DRAW_ADDRESS, X : INX #2
-			STA !DRAW_ADDRESS, X : INX #2
-			STA !DRAW_ADDRESS, X : INX #2
-		.done
-	PLX
-RTL
+!GOAL_DRAW_ADDRESS = "$7EC72A"
+;--------------------------------------------------------------------------------
+; DrawGoalIndicator moved to newhud.asm
 ;--------------------------------------------------------------------------------
 GoalItemGanonCheck:
 	LDA $0E20, X : CMP.b #$D6 : BNE .success ; skip if not ganon

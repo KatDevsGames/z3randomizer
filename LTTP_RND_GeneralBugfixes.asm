@@ -96,7 +96,6 @@ incsrc shopkeeper.asm
 incsrc bookofmudora.asm
 incsrc crypto.asm
 incsrc tablets.asm
-incsrc rupeelimit.asm
 incsrc fairyfixes.asm
 incsrc rngfixes.asm
 incsrc medallions.asm
@@ -158,7 +157,6 @@ org $A48000 ; code bank - PUT NEW CODE HERE
 incsrc glitched.asm
 incsrc hardmode.asm
 incsrc goalitem.asm
-incsrc compasses.asm
 incsrc openmode.asm
 incsrc quickswap.asm
 incsrc endingsequence.asm
@@ -172,6 +170,8 @@ incsrc playername.asm
 incsrc decryption.asm
 incsrc inverted.asm
 incsrc invertedmaps.asm
+incsrc newhud.asm
+incsrc compasses.asm
 warnpc $A58000
 
 ;org $228000 ; contrib area

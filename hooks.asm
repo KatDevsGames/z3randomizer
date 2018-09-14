@@ -225,9 +225,6 @@ JSL.l LoadBombCount16
 org $0DDEB3 ; <- 6DEB3 - equipment.asm : 328 (LDA $7EF33F, X)
 JSL.l IsItemAvailable
 ;--------------------------------------------------------------------------------
-org $0DFC5B ; <- 6FC5B - headsup_display.asm : 839 (LDA .mp_tilemap+0, X : STA $7EC746)
-JSL.l DrawMagicMeter : JMP.w + : NOP #21 : +
-;--------------------------------------------------------------------------------
 
 ;================================================================================
 ; Inverted Mode
@@ -1198,22 +1195,10 @@ JSL.l RNG_Trinexx
 ;================================================================================
 ; HUD Changes
 ;--------------------------------------------------------------------------------
-org $0DFC77 ; <- 6FC77 - headsup_display.asm : 845
-NOP #$2D ; #45
-org $0DFC77 ; <- 6FC77 - yes these are both the correct address - kkat
-JSL.l OnDrawHud
-BRA $27
-
-
-org $0DFCAE ; <- 6FCAE
-JSL.l DrawBombCount ; nudge bomb digits right
-BRA + 
-NOP #$14 : + ; #20
-
-org $0DFCD2 ; <- 6FCD2
-JSL.l DrawArrowCount
-BRA +
-NOP #$14 : + ; #20
+org $0DFC4C ; <- 6FC4C - headsup_display.asm : 836 (LDA $7EF36E : AND.w #$00FF : ADD.w #$0007 : AND.w #$FFF8 : TAX)
+JML.l OnDrawHud
+NOP #199
+ReturnFromOnDrawHud:
 
 
 ;org $0DFD0A ; <- 6FD0A - headsup_display.asm : 900
@@ -1224,7 +1209,7 @@ STA $7EC726 ; key icon blank
 
 org $0DFC37 ; <- 6FC37 - headsup_display.asm : 828 (LDA.w #$28F7)
 JSL.l DrawMagicHeader
-NOP #17
+BRA + : NOP #15 : +
 ;--------------------------------------------------------------------------------
 org $0DFB29 ; <- headsup_display.asm : 688 (LDA.b #$86 : STA $7EC71E)
 ;LDA.b #$86 : STA $7EC720 ; nudge silver arrow right - remember to update this in newit
@@ -1393,12 +1378,6 @@ JSL.l HUDRebuildIndoor : NOP #4
 ;--------------------------------------------------------------------------------
 org $029A35 ; <- 11A35 : Bank02.asm:4789 - (JSL HUD.RebuildIndoor.palace)
 JSL.l HUDRebuildIndoorHole
-;--------------------------------------------------------------------------------
-org $0DFCEC ; <- 6FCEC : headsup_display.asm:887 - (LDA.w #$007F : STA $05)
-LDA.w #$7F7F : STA $04 ; Have both key digits default to blank
-
-org $0DFD02 ; <- 6FD02 ; headsup_display.asm:900 - (LDA $05 : AND.w #$00FF : ORA.w #$2400 : STA $7EC764)
-JSL.l DrawKeyIcon : NOP #8
 ;--------------------------------------------------------------------------------
 
 ;================================================================================
