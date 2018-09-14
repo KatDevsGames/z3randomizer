@@ -932,7 +932,7 @@ RTL
 LoadPowder:
 	JSL.l Sprite_SpawnDynamically ; thing we wrote over
 	%GetPossiblyEncryptedItem(WitchItem, SpriteItemValues)
-	STA $0DA0, Y ; Store item type
+	STA $0E80, Y ; Store item type
 	JSL.l PrepDynamicTile
 RTL
 ;--------------------------------------------------------------------------------
@@ -958,12 +958,12 @@ RTL
 DrawPowder:
 	LDA $02DA : BNE .defer ; defer if link is buying a potion
 	LDA.l !REDRAW : BEQ +
-		LDA $0DA0, X ; Retrieve stored item type
+		LDA $0E80, X ; Retrieve stored item type
 		JSL.l PrepDynamicTile
 		LDA #$00 : STA.l !REDRAW ; reset redraw flag
 		BRA .defer
 	+
-	LDA $0DA0, X ; Retrieve stored item type
+	LDA $0E80, X ; Retrieve stored item type
 	JSL.l DrawDynamicTile
 	.defer
 RTL
@@ -985,7 +985,7 @@ LoadMushroom:
 
 	LDA #$00 : STA !REDRAW
 	%GetPossiblyEncryptedItem(MushroomItem, SpriteItemValues)
-	STA $0DA0, X ; Store item type
+	STA $0E80, X ; Store item type
 	JSL.l PrepDynamicTile
 
 	.skip
@@ -1005,7 +1005,7 @@ DrawMushroom:
 		BRA .done ; don't draw on the init frame
 
 		.skipInit
-		LDA $0DA0, X ; Retrieve stored item type
+		LDA $0E80, X ; Retrieve stored item type
 		JSL.l DrawDynamicTile
 
 		.done
@@ -1017,7 +1017,7 @@ RTL
 ; CollectPowder:
 ;--------------------------------------------------------------------------------
 CollectPowder:
-	LDY $0DA0, X ; Retrieve stored item type
+	LDY $0E80, X ; Retrieve stored item type
 	BNE +
 		; if for any reason the item value is 0 reload it, just in case
 		%GetPossiblyEncryptedItem(WitchItem, SpriteItemValues) : TAY

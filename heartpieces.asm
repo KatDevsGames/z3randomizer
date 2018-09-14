@@ -3,7 +3,7 @@
 ;--------------------------------------------------------------------------------
 HeartPieceGet:
 	PHX : PHY
-	LDY $0DA0, X ; load item value into Y register
+	LDY $0E80, X ; load item value into Y register
 	BNE +
 		; if for any reason the item value is 0 reload it, just in case
 		JSL.l LoadHeartPieceRoomValue : TAY
@@ -38,7 +38,7 @@ RTL
 HeartContainerGet:
 	PHX : PHY
 	JSL.l AddInventory_incrementBossSwordLong
-	LDY $0DA0, X ; load item value into Y register
+	LDY $0E80, X ; load item value into Y register
 	BNE +
 		; if for any reason the item value is 0 reload it, just in case
 		JSL.l LoadHeartContainerRoomValue : TAY
@@ -57,7 +57,7 @@ DrawHeartPieceGFX:
 	BRL .done ; don't draw on the init frame
 	
 	.skipInit
-	LDA $0DA0, X ; Retrieve stored item type
+	LDA $0E80, X ; Retrieve stored item type
 
 	.skipLoad
 	
@@ -89,7 +89,7 @@ DrawHeartContainerGFX:
 	BRA DrawHeartPieceGFX_done ; don't draw on the init frame
 	
 	.skipInit
-	LDA $0DA0, X ; Retrieve stored item type
+	LDA $0E80, X ; Retrieve stored item type
 
 	BRA DrawHeartPieceGFX_skipLoad
 ;--------------------------------------------------------------------------------
@@ -152,7 +152,7 @@ HeartPieceSpritePrep:
 
 	LDA #$00 : STA !REDRAW
 	JSL.l LoadHeartPieceRoomValue ; load item type
-	STA $0DA0, X ; Store item type
+	STA $0E80, X ; Store item type
 	JSL.l PrepDynamicTile
 	
 	.skip
@@ -165,7 +165,7 @@ HeartContainerSpritePrep:
 	
 	LDA #$00 : STA !REDRAW
 	JSL.l LoadHeartContainerRoomValue ; load item type
-	STA $0DA0, X ; Store item type
+	STA $0E80, X ; Store item type
 	JSL.l PrepDynamicTile
 	
 	PLA
