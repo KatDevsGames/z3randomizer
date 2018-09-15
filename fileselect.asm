@@ -155,6 +155,10 @@ DrawPlayerFile:
 	.bow_end
 	
 	; Boomerang
+	LDA.l !FS_INVENTORY_SWAP : AND.w #$00C0 : BEQ +
+		%fs_drawItem(3,14,FileSelectItems_both_boomerang)
+		BRA .boomerang_end
+	+
 	LDA.l !FS_INVENTORY_SWAP : AND.w #$0040 : BEQ +
 		%fs_drawItem(3,14,FileSelectItems_red_boomerang)
 		BRA .boomerang_end
@@ -415,6 +419,8 @@ FileSelectItems:
 	dw #$0205|!FS_COLOR_BLUE, #$0206|!FS_COLOR_BLUE, #$0200|!FS_COLOR_BW, #$0216|!FS_COLOR_BLUE
 	.red_boomerang
 	dw #$0205|!FS_COLOR_RED, #$0206|!FS_COLOR_RED, #$0200|!FS_COLOR_BW, #$0216|!FS_COLOR_RED
+	.both_boomerang
+	dw #$02B6|!FS_COLOR_BLUE, #$02B6|!FS_COLOR_RED, #$02B6|!FS_COLOR_BLUE|!FS_VFLIP, #$02B6|!FS_COLOR_RED|!FS_VFLIP
 	.hookshot
 	dw #$0200|!FS_COLOR_RED, #$0215|!FS_COLOR_RED, #$0230|!FS_COLOR_RED, #$0200|!FS_COLOR_BW
 	.bombs
