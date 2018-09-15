@@ -16,7 +16,7 @@ GetAgahnimDeath:
 	CMP.b #13 : BNE + ; Agahnim 2 room
 		LDA.l Bugfix_SetWorldOnAgahnimDeath : BEQ ++
 			LDA.l InvertedMode : BEQ +++
-				LDA.b #$00 : STA !DARK_WORLD ; Switch to dark world
+				LDA.b #$00 : STA !DARK_WORLD ; Switch to light world
 				BRA ++
 			+++
 			LDA.b #$40 : STA !DARK_WORLD ; Switch to dark world
