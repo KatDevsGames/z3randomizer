@@ -54,7 +54,12 @@ DoWorldFix_Inverted:
 	.noMirror
 	.aga1Alive
 	LDA #$40 : STA $7EF3CA ; set flag to dark world
-	LDA $7EF3CC : CMP #$08 : BNE + : LDA.b #$07 : STA $7EF3CC : + ; convert dwarf to frog
+	LDA $7EF3CC
+	CMP #$07 : BEQ .clear ; clear frog
+	CMP #$08 : BEQ .clear ; clear dwarf - consider flute implications
+	BRA .done
+	.clear
+	LDA.b #$00 : STA $7EF3CC ; clear follower
 	.done
 RTL
 ;--------------------------------------------------------------------------------
@@ -89,8 +94,6 @@ RTL
 MasterSwordFollowerClear:
 	LDA $7EF3CC
 	CMP #$0E : BEQ .clear ; clear master sword follower
-	;CMP #$07 : BEQ .clear ; clear frog
-	;CMP #$08 : BEQ .clear ; clear dwarf - consider flute implications
 RTL
 	.clear
 	LDA.b #$00 : STA $7EF3CC ; clear follower
