@@ -3,7 +3,7 @@
 ; Returns: 0=Unlocked - 1=Locked
 ;--------------------------------------------------------------------------------
 LockAgahnimDoors:
-	LDA.l AgahnimDoorStyle
+	LDA.l AgahnimDoorStyle : AND.w #$00FF
 	BNE +
 		;#$0 = Never Locked
 		LDA.w #$0000 : RTL
