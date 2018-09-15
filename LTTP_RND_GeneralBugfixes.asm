@@ -70,7 +70,7 @@ db #$20, #$18, #$07, #$23 ; year/month/day
 !INVENTORY_SWAP_2 = "$7EF38E"
 
 !ITEM_LIMIT_COUNTS = "$7EF390"
-!SHOP_PURCHASE_COUNTS = "$7EF3A0"
+!SHOP_PURCHASE_COUNTS = "$7EF302"
 ;================================================================================
 
 incsrc hooks.asm
