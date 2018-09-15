@@ -1302,12 +1302,6 @@ db $04
 ;;Residual Portal
 ;org $07A96D ; PC 0x3A96D (Bank07.asm:6578) (BEQ)
 ;db #$D0 ; #$F0 - Light Side (Default), #$D0 - Dark Side
-;org $07A9A7 ; PC 0x3A9A7 (Bank07.asm:6622) (BNE)
-;db #$F0 ; #$D0 - Light Side (Default), #$F0 - Dark Side
-;org $07A9F3 ; PC 0x3A9F3 (Bank07.asm:6677) (BNE)
-;db #$F0 ; #$D0 - Light Side (Default), #$F0 - Dark Side
-;org $07AA3A ; PC 0x3AA3A (Bank07.asm:6718) (BEQ)
-;db #$D0 ; #$F0 - Light Side (Default), #$D0 - Dark Side
 ;;--------------------------------------------------------------------------------
 ;org $08D40C ; PC 0x4540C (ancilla_morph_poof.asm:48) (BEQ)
 ;db #$D0 ; #$F0 - Light Side (Default), #$D0 - Dark Side

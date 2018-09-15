@@ -169,9 +169,7 @@ org $02E8D5 : dw $07C8 ; nudge flute spot 3 out of gargoyle statue
 org $02E8F7 : dw $01F8 ; nudge flute spot 3 out of gargoyle statue
 org $07A943 : db $F0 ; Dark to light world mirror
 org $07A96D : db $D0 ; residual portal?
-org $07A9A7 : db $F0 ; residual portal?
-org $07A9F3 : db $F0 ; residual portal?
-org $07AA3A : db $D0 ; residual portal?
+
 org $08D40C : db $D0 ; morph poof
 org $308174 : db $01 ; ER's Fix fake worlds fix. Currently needed for inverted
 
