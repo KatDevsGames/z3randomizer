@@ -1197,15 +1197,17 @@ JSL.l RNG_Trinexx
 ;--------------------------------------------------------------------------------
 org $0DFC4C ; <- 6FC4C - headsup_display.asm : 836 (LDA $7EF36E : AND.w #$00FF : ADD.w #$0007 : AND.w #$FFF8 : TAX)
 JML.l OnDrawHud
-NOP #199
+NOP #197
 ReturnFromOnDrawHud:
+SEP #$30
+LDX.b #$FF ; vanilla hud code ends with #$FF in X, and it's required for unknown reasons.
 
 
 ;org $0DFD0A ; <- 6FD0A - headsup_display.asm : 900
 ;STA $7EC766 ; nudge key digit right
 
-org $0DFD13 ; <- 6FD13 - headsup_display.asm : 905
-STA $7EC726 ; key icon blank
+;org $0DFD13 ; <- 6FD13 - headsup_display.asm : 905
+;STA $7EC726 ; key icon blank
 
 org $0DFC37 ; <- 6FC37 - headsup_display.asm : 828 (LDA.w #$28F7)
 JSL.l DrawMagicHeader
