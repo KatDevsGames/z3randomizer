@@ -255,9 +255,9 @@ RTS
 org $06891E ; <- sprite_prep.asm : 537 (LDA $7EF280, X : PLX : AND.b #$40 : BEQ .not_dead)
 JSL Electric_Barrier
 ;--------------------------------------------------------------------------------
-org $08CDAE ; <- ancilla_break_tower_seal.asm : 117 (LDA.b #$05 : STA $04C6)
+org $08CDAC ; <- ancilla_break_tower_seal.asm : 117 (LDA.b #$05 : STA $04C6)
 JSL GanonTowerAnimation
-NOP #03
+NOP #05
 ;--------------------------------------------------------------------------------
 org $02EC8D ; <- bank02.asm : 11981 (LDA.w #$020F : LDX $8A : CPX.w #$0033 : BNE .noRock)
 JSL HardcodedRocks
