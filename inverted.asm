@@ -157,6 +157,7 @@ GanonTowerAnimation:
 	.done
 	    LDA.b #$05 : STA $04C6 ;what we wrote over
         STZ $B0 ; (continued)
+	STZ $C8 ; (continued)
 RTL
 
 ;Hard coded rock removed in LW for Inverted mode
