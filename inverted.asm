@@ -157,7 +157,19 @@ GanonTowerAnimation:
 	.done
 	    LDA.b #$05 : STA $04C6 ;what we wrote over
         STZ $B0 ; (continued)
+	STZ $C8 ; (continued)
 RTL
+
+GanonTowerInvertedCheck:
+{
+	LDA InvertedMode : BEQ .done
+		LDA #$01 ; Load a random value so it doesn't BEQ
+	RTL
+	.done
+	LDA $8A : CMP.b #$43 ;what we wrote over
+	RTL
+}
+
 
 ;Hard coded rock removed in LW for Inverted mode
 HardcodedRocks:
