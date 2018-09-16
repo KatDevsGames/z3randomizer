@@ -75,17 +75,19 @@ SEP #$30
 	LDX.b $06 : TXA : ORA.w #$2400 : STA !GOAL_DRAW_ADDRESS+4 ; draw 10's digit
 	LDX.b $07 : TXA : ORA.w #$2400 : STA !GOAL_DRAW_ADDRESS+6 ; draw 1's digit
 	
-	LDA.l GoalItemRequirement : AND.w #$00FF : CMP.w #$00FF : BEQ .skip
-		LDA.w #$2830 : STA !GOAL_DRAW_ADDRESS+8 ; draw slash
+	SEP #$20
+	LDA.l GoalItemRequirement : CMP.b #$FF : BEQ .skip
 	
 		LDA.l GoalItemRequirement
-		AND.w #$00FF
-		JSR HudHexToDec4Digit
+		JSR HudHexToDec3Digit
+		REP #$20
+		LDA.w #$2830 : STA !GOAL_DRAW_ADDRESS+8 ; draw slash
 		LDX.b $05 : TXA : ORA.w #$2400 : STA !GOAL_DRAW_ADDRESS+10 ; draw 100's digit
 		LDX.b $06 : TXA : ORA.w #$2400 : STA !GOAL_DRAW_ADDRESS+12 ; draw 10's digit
 		LDX.b $07 : TXA : ORA.w #$2400 : STA !GOAL_DRAW_ADDRESS+14 ; draw 1's digit
 		BRA .done
 	.skip
+		REP #$20
 		LDA.w #$207F ; transparent tile
 		STA !GOAL_DRAW_ADDRESS+8
 		STA !GOAL_DRAW_ADDRESS+10
@@ -96,7 +98,7 @@ SEP #$30
 ; Draw Dungeon Compass Counts
 ;================================================================================
 	REP #$20
-	LDA.l CompassMode : AND #$00FF : BEQ + ; skip if CompassMode is 0. Saves 
+	LDA.l CompassMode : AND #$00FF : BEQ + ; skip if CompassMode is 0.
 		JSL.l DrawDungeonCompassCounts ; compasses.asm
 	+
 
@@ -180,18 +182,6 @@ SEP #$30
 	    LDA !DrawMagicMeter_mp_tilemap+6, X : STA $7EC806
 RTL
 
-
-
-
-
-
-
-
-
-
-
-
-
 ;================================================================================
 ; 16-bit A, 8-bit X
 ; in:	A(b) - Byte to Convert
@@ -202,23 +192,23 @@ HudHexToDec4Digit:
 	-
 		CMP.w #1000 : !BLT +
 		INY
-		!SUB.w #1000 : BRA -
+		SBC.w #1000 : BRA -
 	+
 	STY $04 : LDY #$90 ; Store 1000s digit & reset Y
 	-
 		CMP.w #100 : !BLT +
 		INY
-		!SUB.w #100 : BRA -
+		SBC.w #100 : BRA -
 	+
 	STY $05 : LDY #$90 ; Store 100s digit & reset Y
 	-
 		CMP.w #10 : !BLT +
 		INY
-		!SUB.w #10 : BRA -
+		SBC.w #10 : BRA -
 	+ 
 	STY $06 : LDY #$90 ; Store 10s digit & reset Y
+	CMP.w #1 : !BLT +
 	-
-		CMP.w #1 : !BLT +
 		INY
 		DEC : BNE -
 	+
@@ -235,17 +225,17 @@ HudHexToDec3Digit: ; this may be overkill, could have used the 4 digit one...
 	-
 		CMP.b #100 : !BLT +
 		INY
-		!SUB.b #100 : BRA -
+		SBC.b #100 : BRA -
 	+ 
 	STY $05 : LDY.b #$90 ; Store 100s digit and reset Y
 	-
 		CMP.b #10 : !BLT +
 		INY
-		!SUB.b #10 : BRA -
+		SBC.b #10 : BRA -
 	+ 
 	STY $06 : LDY #$90 ; Store 10s digit and reset Y
+	CMP.b #1 : !BLT +
 	-
-		CMP.b #1 : !BLT +
 		INY
 		DEC : BNE -
 	+
@@ -262,11 +252,11 @@ HudHexToDec2Digit:
 	-
 		CMP.b #10 : !BLT +
 		INY
-		!SUB.b #10 : BRA -
+		SBC.b #10 : BRA -
 	+ 
 	STY $06 : LDY #$90 ; Store 10s digit and reset Y
+	CMP.b #1 : !BLT +
 	-
-		CMP.b #1 : !BLT +
 		INY
 		DEC : BNE -
 	+
