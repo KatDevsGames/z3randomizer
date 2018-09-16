@@ -155,7 +155,7 @@ DrawPlayerFile:
 	.bow_end
 	
 	; Boomerang
-	LDA.l !FS_INVENTORY_SWAP : AND.w #$00C0 : BEQ +
+	LDA.l !FS_INVENTORY_SWAP : AND.w #$00C0 : CMP.w #$00C0 : BNE +
 		%fs_drawItem(3,14,FileSelectItems_both_boomerang)
 		BRA .boomerang_end
 	+
