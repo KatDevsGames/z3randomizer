@@ -200,12 +200,48 @@ MirrorBonk:
     ; Goal: use $20 and $22 to decide to force a bonk
 	; if we want to bonk branch to .forceBonk
 	; otherwise fall through to .normal
+		PHX : PHP
+		PHB : PHK : PLB
+		REP #$30
+		LDX #$0000
+		.loop
+			LDA .bonkRectanglesTable, X ;Load X1
+			CMP $22 : !BGE ++
+			;IF X > X1
+			LDA .bonkRectanglesTable+2, X ; Load X2
+			CMP $22 : !BLT ++ 
+			;IF X < X2
+			LDA .bonkRectanglesTable+4, X ;Load Y1
+			CMP $20 : !BGE ++
+			;IF Y > Y1
+			LDA .bonkRectanglesTable+6, X ; Load Y2
+			CMP $20 : !BLT ++ 
+			;IF Y < Y2
+			;Bonk Here
+			PLB : PLP : PLX
+			BRA .forceBonk
+		++
 
-	; PUT CODE HERE
+		TXA : !ADD #$0008 : CMP #$0038 : BEQ .endLoop
+		TAX
+		BRA .loop
+		.endbonkRectanglesTable
 
+	.endLoop
+	PLB : PLP : PLX
 .normal
     ;Not forcing a bonk, so the vanilla bonk detection run.
 	LDA $0C : ORA $0E
 JML.l MirrorBonk_NormalReturn
 .forceBonk
 JML.l MirrorBonk_BranchGamma
+
+.bonkRectanglesTable
+;X1     X2      Y1      Y2
+dw #$0876, #$09E4, #$0632, #$06C5 ;CastleTopRight
+dw #$062A, #$0769, #$0616, #$067C ;CastleTopLeft
+dw #$071C, #$082F, #$08D6, #$094D ;Castle Bridge
+dw #$02EF, #$0321, #$0C16, #$0CA2 ;Desert (Mazeblock cave)
+dw #$033B, #$041A, #$0E3E, #$0EE2 ;Desert1
+dw #$03B6, #$041A, #$0EB8, #$0FB0 ;Desert2
+dw #$0386, #$03C5, #$0EE5, #$0F2A ;Desert3
