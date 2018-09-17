@@ -202,6 +202,7 @@ MirrorBonk:
 	; otherwise fall through to .normal
 		PHX : PHP
 		PHB : PHK : PLB
+		LDA $8A : AND.b #$40 : BEQ .endLoop ;World we're in? branch if we are in LW we don't want bonks
 		REP #$30
 		LDX #$0000
 		.loop
@@ -222,7 +223,7 @@ MirrorBonk:
 			BRA .forceBonk
 		++
 
-		TXA : !ADD #$0008 : CMP #$0038 : BEQ .endLoop
+		TXA : !ADD #$0008 : CMP #$0080 : BEQ .endLoop
 		TAX
 		BRA .loop
 		.endbonkRectanglesTable
@@ -237,11 +238,19 @@ JML.l MirrorBonk_NormalReturn
 JML.l MirrorBonk_BranchGamma
 
 .bonkRectanglesTable
-;X1     X2      Y1      Y2
+   ;X1     X2      Y1      Y2
 dw #$0876, #$09E4, #$0632, #$06C5 ;CastleTopRight
 dw #$062A, #$0769, #$0616, #$067C ;CastleTopLeft
 dw #$071C, #$082F, #$08D6, #$094D ;Castle Bridge
 dw #$02EF, #$0321, #$0C16, #$0CA2 ;Desert (Mazeblock cave)
-dw #$033B, #$041A, #$0E3E, #$0EE2 ;Desert1
-dw #$03B6, #$041A, #$0EB8, #$0FB0 ;Desert2
-dw #$0386, #$03C5, #$0EE5, #$0F2A ;Desert3
+dw #$0048, #$008F, #$0B10, #$0B48 
+dw #$0358, #$0440, #$0E08, #$0ED0 
+dw #$03B8, #$0420, #$0ED0, #$0FE8 
+dw #$0360, #$03C8, #$0EC0, #$0F20 
+dw #$0C68, #$0D00, #$0D78, #$0DC8 
+dw #$0F30, #$0F80, #$0618, #$0660 
+dw #$0E28, #$0E78, #$0298, #$02E8 
+dw #$0F10, #$0F80, #$01F8, #$0238 
+dw #$0AA8, #$0B90, #$02C8, #$0320 
+dw #$0D18, #$0D80, #$0040, #$0070 
+dw #$0EF0, #$0F30, #$0120, #$0160 
