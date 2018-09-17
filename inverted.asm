@@ -192,3 +192,20 @@ TurtleRockPegSolved:
 	+
 	LDA.w #$0020 ; We always treat puzzle as pre solved (overlay flag set) for inverted mode.
 RTL
+
+MirrorBonk:
+	; must preserve X/Y, and must preserve $00-$0F
+	LDA.l InvertedMode : BEQ .normal
+
+    ; Goal: use $20 and $22 to decide to force a bonk
+	; if we want to bonk branch to .forceBonk
+	; otherwise fall through to .normal
+
+	; PUT CODE HERE
+
+.normal
+    ;Not forcing a bonk, so the vanilla bonk detection run.
+	LDA $0C : ORA $0E
+JML.l MirrorBonk_NormalReturn
+.forceBonk
+JML.l MirrorBonk_BranchGamma

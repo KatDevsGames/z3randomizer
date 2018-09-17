@@ -1960,6 +1960,12 @@ NOP #$02
 org $07A3E2 ;<- 3A3E2 Bank07.asm:5764 (LDA.b #$80 : STA $03F0)
 JSL.l FreeDuckCheck : NOP
 ;================================================================================
+org $07A9AC ; <- 3A9AC - Bank07.asm:6628 (LDA $0C : ORA $0E : STA $00 : AND.b #$0C : BEQ BRANCH_BETA)
+JML.l MirrorBonk
+MirrorBonk_NormalReturn:
+org $07A9D1 ; <- 3A9D1 - Bank07.asm:6649 (BRANCH_GAMMA:)
+MirrorBonk_BranchGamma:
+;================================================================================
 
 ;================================================================================
 ; Add SFX
