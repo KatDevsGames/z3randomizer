@@ -309,6 +309,11 @@ DrawPlayerFile:
 		%fs_drawItem(9,26,FileSelectItems_heart_piece_3_of_4)
 	++
 
+	LDA $700448
+	JSL.l HexToDec
+	LDA $7F5006 : AND.w #$00FF : !ADD.w #$210+!FS_COLOR_BW : %fs_draw8x8(11,26)
+	LDA $7F5007 : AND.w #$00FF : !ADD.w #$210+!FS_COLOR_BW : %fs_draw8x8(11,27)
+
 	; Boots
 	%fs_drawItemBasic($700355,3,28,FileSelectItems_boots)
 
@@ -331,24 +336,24 @@ DrawPlayerFile:
 	
 	; Pendants
 	LDA $700374 : AND.w #$0004 : BEQ +
-		%fs_drawItem(12,16,FileSelectItems_green_pendant)
+		%fs_drawItem(12,12,FileSelectItems_green_pendant)
 		BRA ++
 	+
-		%fs_drawItemGray(12,16,FileSelectItems_green_pendant)
+		%fs_drawItem(12,12,FileSelectItems_no_pendant)
 	++
 
 	LDA $700374 : AND.w #$0002 : BEQ +
-		%fs_drawItem(12,18,FileSelectItems_blue_pendant)
+		%fs_drawItem(12,14,FileSelectItems_blue_pendant)
 		BRA ++
 	+
-		%fs_drawItemGray(12,18,FileSelectItems_blue_pendant)
+		%fs_drawItem(12,14,FileSelectItems_no_pendant)
 	++
 
 	LDA $700374 : AND.w #$0001 : BEQ +
-		%fs_drawItem(12,20,FileSelectItems_red_pendant)
+		%fs_drawItem(12,16,FileSelectItems_red_pendant)
 		BRA ++
 	+
-		%fs_drawItemGray(12,20,FileSelectItems_red_pendant)
+		%fs_drawItem(12,16,FileSelectItems_no_pendant)
 	++
 	
 	; Crystals
@@ -357,49 +362,49 @@ DrawPlayerFile:
 		BRA ++
 	+
 		LDA.w #$0287|!FS_COLOR_GRAY
-	++ : %fs_draw16x8(13,22)
-	
+	++ : %fs_draw16x8(13,18)
+
 	LDA $70037A : AND.w #$0010 : BEQ +
 		LDA.w #$0297|!FS_COLOR_BLUE
 		BRA ++
 	+
 		LDA.w #$0287|!FS_COLOR_GRAY
-	++ : %fs_draw16x8(12,23)
-	
+	++ : %fs_draw16x8(12,19)
+
 	LDA $70037A : AND.w #$0040 : BEQ +
 		LDA.w #$0297|!FS_COLOR_BLUE
 		BRA ++
 	+
 		LDA.w #$0287|!FS_COLOR_GRAY
-	++ : %fs_draw16x8(13,24)
-	
+	++ : %fs_draw16x8(13,20)
+
 	LDA $70037A : AND.w #$0020 : BEQ +
 		LDA.w #$0297|!FS_COLOR_BLUE
 		BRA ++
 	+
 		LDA.w #$0287|!FS_COLOR_GRAY
-	++ : %fs_draw16x8(12,25)
-	
+	++ : %fs_draw16x8(12,21)
+
 	LDA $70037A : AND.w #$0004 : BEQ +
 		LDA.w #$0297|!FS_COLOR_RED
 		BRA ++
 	+
 		LDA.w #$0287|!FS_COLOR_GRAY
-	++ : %fs_draw16x8(13,26)
-	
+	++ : %fs_draw16x8(13,22)
+
 	LDA $70037A : AND.w #$0001 : BEQ +
 		LDA.w #$0297|!FS_COLOR_RED
 		BRA ++
 	+
 		LDA.w #$0287|!FS_COLOR_GRAY
-	++ : %fs_draw16x8(12,27)
-	
+	++ : %fs_draw16x8(12,23)
+
 	LDA $70037A : AND.w #$0008 : BEQ +
 		LDA.w #$0297|!FS_COLOR_BLUE
 		BRA ++
 	+
 		LDA.w #$0287|!FS_COLOR_GRAY
-	++ : %fs_draw16x8(13,28)
+	++ : %fs_draw16x8(13,24)
 
 	PLB : PLY : PLX
 	LDA.w #$0004 : STA $02 ; thing we wrote over
@@ -466,7 +471,9 @@ FileSelectItems:
 	
 	.pearl
 	dw #$0264|!FS_COLOR_RED, #$0265|!FS_COLOR_RED, #$0274|!FS_COLOR_RED, #$0275|!FS_COLOR_RED
-	
+
+	.no_pendant
+	dw #$0285|!FS_COLOR_GRAY, #$0286|!FS_COLOR_GRAY, #$02B2|!FS_COLOR_GRAY, #$0296|!FS_COLOR_GRAY
 	.green_pendant
 	dw #$0285|!FS_COLOR_GREEN, #$0286|!FS_COLOR_GREEN, #$0295|!FS_COLOR_GREEN, #$0296|!FS_COLOR_GREEN
 	.blue_pendant
