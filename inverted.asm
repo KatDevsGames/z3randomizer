@@ -80,7 +80,7 @@ Overworld_CreatePyramidHoleModified:
 RTL
 ;------------------------------------------------------------------------------
 Draw_PyramidOverlay:
-	LDA.l InvertedMode : BNE .done
+	LDA.l InvertedMode : AND.w #$00FF : BNE .done
 .normal
 	LDA.w #$0E39 : STA $23BC
 	INC A        : STA $23BE
@@ -174,7 +174,7 @@ GanonTowerInvertedCheck:
 ;Hard coded rock removed in LW for Inverted mode
 HardcodedRocks:
 
-    LDA InvertedMode : BEQ .normalrocks
+    LDA InvertedMode : AND.w #$00FF : BEQ .normalrocks
         BRA .noRock2
     .normalrocks
         LDA.w #$020F : LDX $8A : CPX.w #$0033 : BNE .noRock
@@ -186,7 +186,7 @@ HardcodedRocks:
 RTL
 
 TurtleRockPegSolved:
-	LDA.l InvertedMode : BNE +
+	LDA.l InvertedMode : AND.w #$00FF : BNE +
 		LDA.l $7ef287 ; What we wrote over (reading flags for this screen)
 		RTL
 	+

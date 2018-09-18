@@ -15,7 +15,7 @@ LockAgahnimDoors:
 		LDA $7EF37A : AND.w #$007F : CMP.w #$007F : BEQ .crystalOrUnlock
 			LDA #$0001 : RTL
 		.crystalOrUnlock
-		LDA InvertedMode : BEQ .unlock
+		LDA InvertedMode : AND.w #$00FF : BEQ .unlock
 
 		LDA $7EF2C3 : AND.w #$0020 : BNE .unlock ; Check if GT overlay is already on or not
 		SEP #$30
