@@ -269,6 +269,13 @@ NOP #19 ;23 bytes removed with the JSL
 org $04E7AE ; <- bank0E.asm : 4230 (LDA $7EF287 : AND.w #$0020)
 JSL.l TurtleRockPegSolved
 ;--------------------------------------------------------------------------------
+org $1BBD05 ; <- bank1B.asm : 261 (TYA : STA $00) ; hook starts at the STA
+JML.l PreventEnterOnBonk
+NOP
+PreventEnterOnBonk_return:
+org $1BBD77 ; <- bank1B.asm : 308 (SEP #$30)
+PreventEnterOnBonk_BRANCH_IX:
+;--------------------------------------------------------------------------------
 
 
 ;================================================================================

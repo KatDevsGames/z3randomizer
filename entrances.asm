@@ -141,3 +141,16 @@ CheckHole:
 		LDA.l ExtraHole_Entrance, X : STA.w $010E : STZ.w $010F
 JML Overworld_Hole_End
 ;--------------------------------------------------------------------------------
+PreventEnterOnBonk:
+	STA $00 ; part of what we wrote over
+	LDA.l InvertedMode : AND.w #$00FF : BEQ .done
+	LDA.l $5D : AND.w #$00FF : CMP.w #$0014 : BNE .done ;in mirror mode?
+	LDA.b $8A : AND.w #$0040 : CMP $7B : BEQ .done ; Are we bonking, or doing the superbunny glitch?
+
+		; If in inverted, are in mirror mode, and are bonking then do not enter
+		JML.l PreventEnterOnBonk_BRANCH_IX
+
+	.done
+	LDX.w #$0102 ; rest of what we wrote over
+JML.l PreventEnterOnBonk_return
+;--------------------------------------------------------------------------------
