@@ -407,12 +407,14 @@ RTL
 ;--------------------------------------------------------------------------------
 
 FileSelectItems:
-	.empty_bow
-	dw #$0201|!FS_COLOR_YELLOW, #$0204|!FS_COLOR_YELLOW, #$0203|!FS_COLOR_RED, #$0212|!FS_COLOR_YELLOW
+	.empty_bow ;for an eventual update for retro mode
+	dw #$0201|!FS_COLOR_YELLOW, #$02B8|!FS_COLOR_YELLOW, #$02B7|!FS_COLOR_YELLOW, #$0212|!FS_COLOR_YELLOW
 	.bow
-	dw #$0201|!FS_COLOR_YELLOW, #$0204|!FS_COLOR_YELLOW, #$0203|!FS_COLOR_RED, #$0212|!FS_COLOR_YELLOW
+	dw #$0201|!FS_COLOR_YELLOW, #$0202|!FS_COLOR_YELLOW, #$0211|!FS_COLOR_YELLOW, #$0212|!FS_COLOR_YELLOW
 	.silver_bow
 	dw #$0201|!FS_COLOR_YELLOW, #$0204|!FS_COLOR_YELLOW, #$0203|!FS_COLOR_RED, #$0212|!FS_COLOR_YELLOW
+	.regular_arrow ;for an eventual update for retro mode
+	dw #$0200|!FS_COLOR_YELLOW, #$02BA|!FS_COLOR_YELLOW, #$02B9|!FS_COLOR_RED, #$0200|!FS_COLOR_YELLOW
 	.silver_arrow
 	dw #$0200|!FS_COLOR_YELLOW, #$0214|!FS_COLOR_YELLOW, #$0213|!FS_COLOR_RED, #$0200|!FS_COLOR_YELLOW
 	.blue_boomerang
@@ -547,6 +549,7 @@ FileSelectDrawHudBar:
 
 	LDA.l !FS_INVENTORY_SWAP_2 : AND.w #$0040 : BEQ +
 		LDA #$0299|!FS_COLOR_RED : %fs_draw16x8(0,17)
+		BRA ++
 	+
 	LDA #$0289|!FS_COLOR_BROWN : %fs_draw16x8(0,17)
 	++
