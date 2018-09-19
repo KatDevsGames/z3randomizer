@@ -309,7 +309,7 @@ DrawPlayerFile:
 		%fs_drawItem(9,26,FileSelectItems_heart_piece_3_of_4)
 	++
 
-	LDA $700448
+	LDA $700448 : AND.w #$00FF
 	JSL.l HexToDec
 	LDA $7F5006 : AND.w #$00FF : !ADD.w #$210+!FS_COLOR_BW : %fs_draw8x8(11,26)
 	LDA $7F5007 : AND.w #$00FF : !ADD.w #$210+!FS_COLOR_BW : %fs_draw8x8(11,27)
