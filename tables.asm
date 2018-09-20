@@ -948,7 +948,7 @@ dw $0000 : db $00 : dw $0000, $0000, $0000, $0000, $0000, $0000, $0000 : db $00,
 ; 0x1802A0 - 0x1802FF (unused)
 ;--------------------------------------------------------------------------------
 ; $308300 (0x180300) - $30834F (0x18034F)
-org $308300 ; PC 0x180250
+org $308300 ; PC 0x180300
 ExtraHole_Map16:
 dw $FFFF, $FFFF, $FFFF, $FFFF, $FFFF, $FFFF, $FFFF, $FFFF
 dw $FFFF, $FFFF, $FFFF, $FFFF, $FFFF, $FFFF, $FFFF, $FFFF
@@ -958,6 +958,13 @@ dw $FFFF, $FFFF, $FFFF, $FFFF, $FFFF, $FFFF, $FFFF, $FFFF
 ExtraHole_Entrance:
 db $00, $00, $00, $00, $00, $00, $00, $00
 db $00, $00, $00, $00, $00, $00, $00, $00
+;--------------------------------------------------------------------------------
+; $308350 (0x180350) - $30834F (0x18034F)
+; Correspond to the three start options
+; do not set for a starting location that is using a single entrance cave
+org $308350 ; PC 0x180350
+ShouldStartatExit:
+db $00, $00, $00
 ;================================================================================
 ; 0x180350 - 0x1814FF (unused)
 ;================================================================================

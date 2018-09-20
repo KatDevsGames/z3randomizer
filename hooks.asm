@@ -240,6 +240,10 @@ JSL.l DecideIfBunnyByScreenIndex : db #$D0 ; BNE
 org $02D9B9 ; <- 159B9 - Bank02.asm : 11089  (LDA $7EF3C8)
 JSL AllowStartFromSingleEntranceCave
 ;--------------------------------------------------------------------------------
+org $028496 ; <- 15496 - Bank02.asm : 959  (LDA $7EF3C8 : PHA)
+JML.l AllowStartFromExit
+AllowStartFromExitReturn:
+;--------------------------------------------------------------------------------
 org $1bc2a7 ; <- DC2A7 - Bank1B.asm : 1143 (Overworld_CreatePyramidHole:)
 JSL.l Overworld_CreatePyramidHoleModified
 RTL

@@ -113,6 +113,32 @@ AllowStartFromSingleEntranceCave:
 	PLA
 RTL
 ;--------------------------------------------------------------------------------
+AllowStartFromExit:
+
+	LDX $1CE8
+	LDA.l ShouldStartatExit, X : BNE .doStart
+
+	LDA.l $7EF3C8 ; what we wrote over
+JML.l AllowStartFromExitReturn
+
+	.doStart
+
+	LDA.l $028481, X ;Module_LocationMenu_starting_points
+	ASL : TAX
+
+	LDA.l $02D8D2, X : STA $A0
+	LDA.l $02D8D3, X : STA $A1
+
+	; Go to pre-overworld mode
+	LDA.b #$08 : STA $10
+
+	STZ $11
+	STZ $B0
+
+	STZ $04AA
+RTL
+
+;--------------------------------------------------------------------------------
 CheckHole:
 	LDX.w #$0024
 	.nextHoleClassic

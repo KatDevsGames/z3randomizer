@@ -236,6 +236,9 @@ org $02E07C+$06 : db $f2
 org $02E0CB+$06+$06 : dw $0000
 org $02E169+$06+$06 : dw $0000
 
+
+org $308350 : db $00, $00, $01 ; Death mountain cave should start on overworld
+
 ;(0x????,0x1B,0x0130,0x060a,0x0716,0x0672,0x07f8,0x0681,0x0803,0x0c,0x02,xx,xx)
 ; Exit table cryptic documentation:
 ;??|$15D8A-$15E27 - (0x4F entries, 2 bytes each) - Rooms that exit to overworld Areas ("Room" in HM)
