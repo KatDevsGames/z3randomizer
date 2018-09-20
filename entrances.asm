@@ -136,6 +136,9 @@ JML.l AllowStartFromExitReturn
 	STZ $B0
 
 	STZ $04AA
+	JSL Equipment_SearchForEquippedItemLong
+	JSL HUD_RebuildLong2
+	JSL $0DDD32 ; Equipment_UpdateEquippedItemLong
 RTL
 
 ;--------------------------------------------------------------------------------

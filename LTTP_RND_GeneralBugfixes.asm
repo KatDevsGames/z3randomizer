@@ -542,11 +542,17 @@ Sound_SetSfx3PanLong:
 org $0DDB7F
 HUD_RefreshIconLong:
 
+org $0DDD32
+Equipment_UpdateEquippedItemLong:
+
 org $0DE01E ; 6E10E - equipment.asm : 787
 BottleMenu_movingOn:
 
 org $0DE346
 RestoreNormalMenu:
+
+org $0DE395
+Equipment_SearchForEquippedItemLong:
 
 org $0DE9C8
 DrawProgressIcons: ; this returns short
@@ -559,6 +565,9 @@ HUD_RebuildLong:
 
 org $0DFA88
 HUD_RebuildIndoor_Palace:
+
+org $0DFA88
+HUD_RebuildLong2:
 
 org $0EEE10
 Messaging_Text:
