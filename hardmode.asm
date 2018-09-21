@@ -72,20 +72,25 @@ ActivateInvulnerabilityOrDont:
 		LDA.l ByrnaInvulnerability : STA $037B
 RTL
 ;--------------------------------------------------------------------------------
-CheckStunItemAction:
-	LDA.b #$40 : STA $0DF0, X
-	LDA #$05 : JSR SearchAncilla : BEQ + ; boomerang
-		LDA.l StunItemAction : AND #$01 : CMP #$01 : BNE .no_stun
-		BRA .normal
-	+
-	LDA #$1F : JSR SearchAncilla : BEQ + ; hookshot
-		LDA.l StunItemAction : AND #$02 : CMP #$02 : BNE .no_stun
-		BRA .normal
-	+
-	LDA $0CF2 : BEQ .no_stun
+GetItemDamageValue:
+	CPX.b #$03 : BEQ .boomerang
+	CPX.b #$04 : BEQ .boomerang
+	CPX.b #$05 : BEQ .boomerang
+	CPX.b #$39 : BEQ .hookshot
+	CPX.b #$3b : BEQ .hookshot
+	CPX.b #$3c : BEQ .hookshot
+	CPX.b #$3d : BEQ .hookshot
+
 	.normal
-		LDA.b #$0B : STA $0DD0, X ; stun enemy
-	.no_stun
+	lda $0db8f1,x ;what we wrote over
+RTL
+	.boomerang
+		LDA.l StunItemAction : AND #$01 : BNE .normal
+		BRA .noDamage
+	.hookshot
+		LDA.l StunItemAction : AND #$02 : BNE .normal
+	.noDamage
+	LDA.b #$00
 RTL
 ;--------------------------------------------------------------------------------
 ;Argument : A = id we want to find return 00 if none found, 01 if found

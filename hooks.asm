@@ -490,8 +490,8 @@ JSL.l ActivateInvulnerabilityOrDont : NOP
 org $06EF1B ; <- 36F1B - Bank06.asm : 5100 (TYA : STA $7FFA3C, X : BEQ BRANCH_DELTA)
 db #$27
 ;--------------------------------------------------------------------------------
-org $06EF43 ; <- 36F43 - Bank06.asm : 5117 (LDA.b #$40 : STA $0DF0, X)
-JSL CheckStunItemAction : NOP
+ORG $06EDC6 ;  <- 36DC6 - Bank06.asm : 4890 (LDA $0DB8F1, X)
+JSL.l GetItemDamageValue
 ;--------------------------------------------------------------------------------
 
 ;================================================================================
