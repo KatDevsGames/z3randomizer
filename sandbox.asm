@@ -178,11 +178,12 @@ org $0280A6 : db $D0 ; Spawn logic
 org $1FED31 : db $0E ; pre-open open TR bomb door
 org $1FED41 : db $0E ; pre-open open TR bomb door
 
+org $0ABFBB : db $90 ; Show portal on dark world map
+
 ; Write to StartingAreaOverworldDoor table to indicate the overworld door being used for
 ; the single entrance spawn point
 org $308247 ; PC 0x180247
 db $00, $5A, $00, $00, $00, $00, $00
-
 
 org $1AF696 : db #$F0 ;Bat X position (sprite_retreat_bat.asm:130)
 org $1AF6B2 : db #$33 ;Bat Delay (sprite_retreat_bat.asm:136)

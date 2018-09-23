@@ -1284,6 +1284,9 @@ db $04
 ;db #$F0 ; #$D0 - Light Only (Default), #$F0 - Dark Only
 ;org $06DB78 ; PC 0x35B78 (Bank06.asm:2186) ($24)
 ;db #$8B ; #$24 - Light Style, #$8B - Dark Style
+;;Portal indicator in dark world map
+;org $0ABFBB ; Bank0a.asm:1005 (LDA $008A : CMP.b #$40 : BCS BRANCH_BETA)
+;db $90 ;$90 (BCC) - Show in Dark World, $B0 (BCS) normal
 ;;--------------------------------------------------------------------------------
 ;;Vortexes
 ;org $05AF79 ; PC 0x2AF79 (sprite_warp_vortex.asm:18) (BNE)
