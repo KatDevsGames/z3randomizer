@@ -91,8 +91,15 @@ FreeDuckCheck:
     LDA.b #$37
     
     JSL AddWeathervaneExplosion
+	BRA .skipSong
 	.done
     SEP #$20
 	LDA.b #$80 : STA $03F0 ; thing we wrote over, load flute timer
+	LDA.b #$13
+RTL
+	.skipSong
+	SEP #$20
+	LDA.b #$80 : STA $03F0 ; thing we wrote over, load flute timer
+	LDA.b #$00
 RTL
 ;--------------------------------------------------------------------------------
