@@ -359,7 +359,11 @@ org $308087 ; PC 0x180087
 IsEncrypted:
 dw #$0000 ; $0000 = not encrypted, $0001 = encrypted with static key, $0002 = Encrypted w/ passcode entry screen (Not implemented yet)
 ;--------------------------------------------------------------------------------
-; 0x180089 - 0x18008F (unused)
+org $308089 ; PC 0x180089
+TurtleRockAutoOpenFix:
+db #$00 ; #$00 - Normal, #$01 - Open TR Entrance if exiting from it
+;--------------------------------------------------------------------------------
+; 0x18008A - 0x18008F (unused)
 ;--------------------------------------------------------------------------------
 org $308090 ; PC 0x180090 - 0x180097
 ProgressiveSwordLimit:

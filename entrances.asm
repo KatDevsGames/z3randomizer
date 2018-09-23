@@ -183,3 +183,11 @@ PreventEnterOnBonk:
 	LDX.w #$0102 ; rest of what we wrote over
 JML.l PreventEnterOnBonk_return
 ;--------------------------------------------------------------------------------
+TurtleRockEntranceFix:
+	LDA TurtleRockAutoOpenFix : BEQ .done
+	LDA $8A : CMP.b #$47 : BNE .done
+		;If exiting to turtle rock ensure the entrance is open
+		LDA.l $7EF2C7 : ORA.b #$20 : STA.l $7EF2C7
+.done
+RTL
+;--------------------------------------------------------------------------------

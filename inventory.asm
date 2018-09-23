@@ -872,6 +872,8 @@ RTL
 ;--------------------------------------------------------------------------------
 ClearOWKeys:
 	PHA
+
+	JSL.l TurtleRockEntranceFix
 	JSL.l FakeWorldFix
 	JSR.w FixBunnyOnExitToLightWorld
 	LDA.l GenericKeys : BEQ +

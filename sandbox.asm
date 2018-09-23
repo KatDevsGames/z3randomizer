@@ -180,6 +180,8 @@ org $1FED41 : db $0E ; pre-open open TR bomb door
 
 org $0ABFBB : db $90 ; Show portal on dark world map
 
+org $308089 : db $01 ; Open TR Entrance if exiting from it
+
 ; Write to StartingAreaOverworldDoor table to indicate the overworld door being used for
 ; the single entrance spawn point
 org $308247 ; PC 0x180247
