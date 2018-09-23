@@ -487,9 +487,6 @@ JSL.l CalculateCapeUsage
 org $08DCA7 ; <- 45CA7 - ancilla_cane_spark.asm : 256 (LDA.b #$01 : STA $037B)
 JSL.l ActivateInvulnerabilityOrDont : NOP
 ;--------------------------------------------------------------------------------
-org $06EF1B ; <- 36F1B - Bank06.asm : 5100 (TYA : STA $7FFA3C, X : BEQ BRANCH_DELTA)
-db #$27
-;--------------------------------------------------------------------------------
 ORG $06EDC6 ;  <- 36DC6 - Bank06.asm : 4890 (LDA $0DB8F1, X)
 JSL.l GetItemDamageValue
 ;--------------------------------------------------------------------------------
