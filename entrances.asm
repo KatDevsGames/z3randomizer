@@ -13,7 +13,7 @@ LockAgahnimDoors:
 	+ : CMP.w #$0002 : BNE +
 		JSR.w LockAgahnimDoorsCore : BEQ .unlock
 		SEP #$30
-		JSL.l CheckEnoughCrystals : BEQ .crystalOrUnlock ; I think the registers might be wrong for this
+		JSL.l CheckEnoughCrystals : BEQ .crystalOrUnlock
 		REP #$30
 		LDA #$0001 : RTL
 		.crystalOrUnlock
