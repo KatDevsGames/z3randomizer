@@ -12,8 +12,10 @@ LockAgahnimDoors:
 			JSR.w LockAgahnimDoorsCore : RTL
 	+ : CMP.w #$0002 : BNE +
 		JSR.w LockAgahnimDoorsCore : BEQ .unlock
+		SEP #$30
 		JSL.l CheckEnoughCrystals : BEQ .crystalOrUnlock ; I think the registers might be wrong for this
-			LDA #$0001 : RTL
+		REP #$30
+		LDA #$0001 : RTL
 		.crystalOrUnlock
 		LDA InvertedMode : AND.w #$00FF : BEQ .unlock
 

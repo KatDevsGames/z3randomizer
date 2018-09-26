@@ -48,7 +48,7 @@ CheckGanonVulnerability:
 		BRA .success
 	+ : CMP #$06 : BNE +
 		;#$06 = Require "NumberOfCrystalsRequired" Crystals
-		JSR CheckEnoughCrystals : BNE .fail
+		JSR CheckEnoughCrystals : BCC .fail
 		BRA .success
 	+
 .fail : CLC : RTL
