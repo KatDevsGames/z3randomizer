@@ -13,8 +13,9 @@ LockAgahnimDoors:
 	+ : CMP.w #$0002 : BNE +
 		JSR.w LockAgahnimDoorsCore : BEQ .unlock
 		SEP #$30
-		JSL.l CheckEnoughCrystals : BEQ .crystalOrUnlock
+		JSL.l CheckEnoughCrystals
 		REP #$30
+		BEQ .crystalOrUnlock
 		LDA #$0001 : RTL
 		.crystalOrUnlock
 		LDA InvertedMode : AND.w #$00FF : BEQ .unlock
