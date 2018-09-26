@@ -45,6 +45,9 @@ RTL
 ;--------------------------------------------------------------------------------
 ;0 = Become (Perma)bunny
 DecideIfBunnyByScreenIndex:
+	; If indoors we don't have a screen index. Return non-bunny to make mirror-based
+	; superbunny work
+	LDA $1B : BEQ + : RTL : +
 	LDA $7EF357 : BEQ + : RTL : +
 	LDA $8A : AND.b #$40 : PHA
 	LDA.l InvertedMode : BNE .inverted
