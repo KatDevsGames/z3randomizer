@@ -46,7 +46,28 @@ CheckGanonVulnerability:
 		;#$05 = Require 100 Goal Items
 		LDA.l !GOAL_COUNTER : CMP.b #100 : !BLT .fail ; require 100 goal items
 		BRA .success
+	+ : CMP #$06 : BNE +
+		;#$06 = Require "NumberOfCrystalsRequired" Crystals
+		JSR CheckEnoughCrystals : BNE .fail
+		BRA .success
 	+
 .fail : CLC : RTL
 .success : SEC : RTL
 ;--------------------------------------------------------------------------------
+GetRequriedCrystals:
+	BEQ + : JSL.l BreakTowerSeal_ExecuteSparkles : + ; thing we wrote over
+	LDA.l NumberOfCrystalsRequired : DEC #2 : TAX
+RTL
+;--------------------------------------------------------------------------------
+CheckEnoughCrystals:
+	LDA InvincibleGanon : CMP #$06 : BNE .normal
+	.other
+	PHX : PHY
+	LDA $7EF37A : JSL CountBits ; the comparison is against 1 less
+	PLY : PLX
+	CMP.l NumberOfCrystalsRequired
+RTL
+
+	.normal
+	LDA $7EF37A : AND.b #$7F : CMP.b #$7F ; thing we wrote over
+RTL

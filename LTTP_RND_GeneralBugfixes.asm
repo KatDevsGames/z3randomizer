@@ -476,6 +476,9 @@ Sprite_CheckIfPlayerPreoccupied:
 org $08C3AE
 Ancilla_ReceiveItem:
 
+org $08CF59
+BreakTowerSeal_ExecuteSparkles:
+
 org $08F710
 Ancilla_SetOam_XY_Long:
 
