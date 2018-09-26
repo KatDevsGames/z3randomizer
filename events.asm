@@ -10,7 +10,6 @@ OnPrepFileSelect:
 		LDA.b #$06 : STA $14 ; thing we wrote over
 		RTL
 	+
-	JSL.l LoadAlphabetTiles
 	JSL.l LoadAlphabetTilemap
 	JSL.l LoadFullItemTiles
 RTL

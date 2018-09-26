@@ -222,11 +222,6 @@ GFX_HUD_Main:
 incbin c2e3e.gfx
 warnpc $31B800
 
-org $31B800
-GFX_Hash_Alphabet:
-incbin hashalphabet.chr.gfx
-warnpc $31C001
-
 org $31C000
 IcePalaceFloorGfx:
 incbin ice_palace_floor.bin
