@@ -1324,6 +1324,9 @@ db $04
 ; org $0280a6 ; <- Bank02.asm : 257 (LDA $7EF3CA : BEQ .inLightWorld)
 ;db #$D0 ; #F0 - default to light (Default), #$D0 - Default to dark
 ;;--------------------------------------------------------------------------------
+;org $06B2AA ; <- 332AA sprite_smithy_bros.asm : 152 (JSL Sprite_ShowSolicitedMessageIfPlayerFacing)
+;JSL Sprite_ShowMessageFromPlayerContact ; Inverted uses Sprite_ShowMessageFromPlayerContact
+;;---------------------------------------------------------------------------------
 org $00886e ; <- Bank00.asm : 1050 (LDA Overworld_TileAttr, X)
 LDA Overworld_TileAttr, X ; use "JML InvertedTileAttributeLookup" for inverted
 Overworld_GetTileAttrAtLocation_continue:

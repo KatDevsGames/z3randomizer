@@ -182,6 +182,9 @@ org $0ABFBB : db $90 ; Show portal on dark world map
 
 org $308089 : db $01 ; Open TR Entrance if exiting from it
 
+org $06B2AA : JSL Sprite_ShowMessageFromPlayerContact
+; front end will actually do `org $06B2AB : dl $05E1F0`
+
 ; Write to StartingAreaOverworldDoor table to indicate the overworld door being used for
 ; the single entrance spawn point
 org $308247 ; PC 0x180247
