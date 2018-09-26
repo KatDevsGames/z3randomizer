@@ -75,6 +75,9 @@ JSL.l OnQuit
 ;================================================================================
 ; Title Screen
 ;--------------------------------------------------------------------------------
+org $0CCDA5 ; <- Bank0C.asm : 1650 (JSL Palette_SelectScreen)
+JSL.l SetFileSelectPalette
+;--------------------------------------------------------------------------------
 org $0CCE41 ; <- 64E41 - Bank0C.asm : 1907 (DEC $C8 : BPL .done)
 LDA $C8 : EOR.b #$04  : STA $C8 : NOP #2 ; set cursor to only select first file and erase
 org $0CCE50 ; <- 64E50 - Bank0C.asm : 1918 (INC $C8)

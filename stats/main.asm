@@ -605,7 +605,7 @@ CheckFontTable:
 
 NearEnding:
 	STZ.w $012A ; disable triforce helper thread
-	JSL LoadPaletteCredits
+	JSL LoadCustomHudPalette
 	REP #$10
 	JSL AltBufferTable_credits
 	JSR DrawEndingItems

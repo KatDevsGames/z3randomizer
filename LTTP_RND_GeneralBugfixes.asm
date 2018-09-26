@@ -125,7 +125,6 @@ incsrc capacityupgrades.asm
 incsrc timer.asm
 incsrc doorframefixes.asm
 incsrc music.asm
-incsrc hashalphabet.asm
 incsrc roomloading.asm
 incsrc icepalacegraphics.asm
 warnpc $A18000
@@ -168,6 +167,7 @@ incsrc boots.asm
 incsrc fileselect.asm
 incsrc playername.asm
 incsrc decryption.asm
+incsrc hashalphabet.asm
 incsrc inverted.asm
 incsrc invertedmaps.asm
 incsrc newhud.asm
@@ -589,6 +589,9 @@ Palette_ArmorAndGloves:
 
 org $1BEE52
 Palette_Hud:
+
+org $1BEF96
+Palette_SelectScreen:
 
 org $1CFAAA
 ShopKeeper_RapidTerminateReceiveItem:

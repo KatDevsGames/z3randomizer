@@ -443,13 +443,13 @@ FileSelectItems:
 	.quake
 	dw #$0209|!FS_COLOR_YELLOW, #$0219|!FS_COLOR_YELLOW|!FS_HFLIP|!FS_VFLIP, #$0219|!FS_COLOR_YELLOW, #$0209|!FS_COLOR_YELLOW|!FS_HFLIP|!FS_VFLIP
 	.lamp
-	dw #$022C|!FS_COLOR_RED, #$022C|!FS_COLOR_RED|!FS_HFLIP|, #$023C|!FS_COLOR_RED, #$023D|!FS_COLOR_RED
+	dw #$022C|!FS_COLOR_RED, #$022C|!FS_COLOR_RED|!FS_HFLIP, #$023C|!FS_COLOR_RED, #$023D|!FS_COLOR_RED
 	.hammer
 	dw #$0222|!FS_COLOR_BROWN, #$0223|!FS_COLOR_BROWN, #$0232|!FS_COLOR_BROWN, #$0233|!FS_COLOR_BROWN
 	.bugnet
 	dw #$0228|!FS_COLOR_YELLOW, #$0229|!FS_COLOR_YELLOW, #$0238|!FS_COLOR_YELLOW, #$0239|!FS_COLOR_YELLOW
 	.shovel
-	dw #$0224|!FS_COLOR_YELLOW, #$0225|!FS_COLOR_YELLOW, #$0234|!FS_COLOR_YELLOW, #$0235|!FS_COLOR_YELLOW
+	dw #$0224|!FS_COLOR_BROWN, #$0225|!FS_COLOR_BROWN, #$0234|!FS_COLOR_BROWN, #$0235|!FS_COLOR_BROWN
 	.flute
 	dw #$0226|!FS_COLOR_BLUE, #$0227|!FS_COLOR_BLUE, #$0236|!FS_COLOR_BLUE, #$0237|!FS_COLOR_BLUE
 	.book
@@ -719,7 +719,20 @@ LoadFullItemTiles:
 RTL
 ;--------------------------------------------------------------------------------
 
-LoadPaletteCredits:
+SetFileSelectPalette:
+	LDA $10 : CMP.b #$04 : BNE +
+		; load the vanilla file select screen BG3 palette for naming screen
+		LDA.b #$01 : STA $0AB2
+		JSL.l Palette_Hud
+		BRA .done
+	+
+	JSL.l LoadCustomHudPalette
+	.done
+JML Palette_SelectScreen ; Jump to the subroutine whose call we wrote over
+
+;--------------------------------------------------------------------------------
+
+LoadCustomHudPalette:
 	PHA : PHX
 		REP #$20
 		LDX.b #$40
