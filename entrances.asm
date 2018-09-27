@@ -18,6 +18,9 @@ LockAgahnimDoors:
 		LDA InvertedMode : AND.w #$00FF : BEQ .unlock
 
 		LDA $7EF2C3 : AND.w #$0020 : BNE .unlock ; Check if GT overlay is already on or not
+		LDA $0308 : AND.w #$0080 : BEQ + ;If we are holding an item
+			LDA #$0001 : RTL ;Keep the door locked
+		+
 		SEP #$30
 		JSL $099B6F ;Add tower break seal
 		LDA $7EF2C3 : ORA #$20 : STA $7EF2C3 ; activate GT overlay
