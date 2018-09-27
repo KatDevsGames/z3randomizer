@@ -260,4 +260,5 @@ dw #$0EF0, #$0F30, #$0120, #$0160
 dw #$0AD0, #$0B00, #$0B50, #$0B70 ;Bridge Left
 dw #$0B30, #$0B60, #$0B50, #$0B70 ;Bridge Right
 dw #$0678, #$06F0, #$0010, #$0040 ;Ether Island
+dw #$02A8, #$02E8, #$0C90, #$0CC0 ;Desert Checkerboard Cave3
 .tableEnd
