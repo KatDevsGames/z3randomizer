@@ -222,8 +222,7 @@ MirrorBonk:
 			PLB : PLP : PLX
 			BRA .forceBonk
 		++
-
-		TXA : !ADD #$0008 : CMP #$00A0 : BEQ .endLoop
+		TXA : !ADD #$0008 : CMP #.tableEnd-.bonkRectanglesTable : BEQ .endLoop
 		TAX
 		BRA .loop
 		.endbonkRectanglesTable
@@ -261,3 +260,4 @@ dw #$0EF0, #$0F30, #$0120, #$0160
 dw #$0AD0, #$0B00, #$0B50, #$0B70 ;Bridge Left
 dw #$0B30, #$0B60, #$0B50, #$0B70 ;Bridge Right
 dw #$0678, #$06F0, #$0010, #$0040 ;Ether Island
+.tableEnd
