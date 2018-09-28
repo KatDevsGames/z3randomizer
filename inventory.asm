@@ -279,6 +279,7 @@ AddInventory:
 			CMP.w #287 : BNE + : BRL .shop : + ; kakariko shop
 			CMP.w #255 : BNE + : BRL .shop : + ; light world death mountain shop
 			CMP.w #276 : BNE + : BRL .shop : + ; waterfall fairy
+			CMP.w #277 : BNE + : BRL .shop : + ; upgrade fairy (shop)
 			CMP.w #278 : BNE + : BRL .shop : + ; pyramid fairy
 		PLP : BRA ++
 		.shop
