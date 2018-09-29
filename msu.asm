@@ -169,6 +169,39 @@ load_track:
     STX !REG_CURRENT_MSU_TRACK
     JML spc_continue
 
+pendant_fanfare:
+    REP #$20
+    LDA !TournamentSeed : BNE .spc
+    LDA !REG_MSU_ID_01 : CMP !VAL_MSU_ID_01 : BNE .spc
+    LDA !REG_MSU_ID_23 : CMP !VAL_MSU_ID_23 : BNE .spc
+    LDA !REG_MSU_ID_45 : CMP !VAL_MSU_ID_45 : BNE .spc
+    SEP #$20
+    LDA !REG_MSU_STATUS : BIT !FLAG_MSU_STATUS_AUDIO_PLAYING : BEQ .done
+.continue
+    jml pendant_continue
+.spc
+    SEP #$20
+    LDA !REG_SPC_CONTROL : BNE .continue
+.done
+    jml pendant_done
+
+
+crystal_fanfare:
+    REP #$20
+    LDA !TournamentSeed : BNE .spc
+    LDA !REG_MSU_ID_01 : CMP !VAL_MSU_ID_01 : BNE .spc
+    LDA !REG_MSU_ID_23 : CMP !VAL_MSU_ID_23 : BNE .spc
+    LDA !REG_MSU_ID_45 : CMP !VAL_MSU_ID_45 : BNE .spc
+    SEP #$20
+    LDA !REG_MSU_STATUS : BIT !FLAG_MSU_STATUS_AUDIO_PLAYING : BEQ .done
+.continue    
+    jml crystal_continue
+.spc
+    SEP #$20
+    LDA !REG_SPC_CONTROL : BNE .continue
+.done
+    jml crystal_done
+
 
 ending_wait:
     REP #$20
