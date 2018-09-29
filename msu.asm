@@ -171,7 +171,7 @@ load_track:
 
 pendant_fanfare:
     REP #$20
-    LDA !TournamentSeed : BNE .spc
+    LDA TournamentSeed : BNE .spc
     LDA !REG_MSU_ID_01 : CMP !VAL_MSU_ID_01 : BNE .spc
     LDA !REG_MSU_ID_23 : CMP !VAL_MSU_ID_23 : BNE .spc
     LDA !REG_MSU_ID_45 : CMP !VAL_MSU_ID_45 : BNE .spc
@@ -188,7 +188,7 @@ pendant_fanfare:
 
 crystal_fanfare:
     REP #$20
-    LDA !TournamentSeed : BNE .spc
+    LDA TournamentSeed : BNE .spc
     LDA !REG_MSU_ID_01 : CMP !VAL_MSU_ID_01 : BNE .spc
     LDA !REG_MSU_ID_23 : CMP !VAL_MSU_ID_23 : BNE .spc
     LDA !REG_MSU_ID_45 : CMP !VAL_MSU_ID_45 : BNE .spc
