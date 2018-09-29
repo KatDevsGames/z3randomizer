@@ -170,12 +170,13 @@ load_track:
     JML spc_continue
 
 pendant_fanfare:
-    REP #$20
     LDA TournamentSeed : BNE .spc
+    REP #$20
     LDA !REG_MSU_ID_01 : CMP !VAL_MSU_ID_01 : BNE .spc
     LDA !REG_MSU_ID_23 : CMP !VAL_MSU_ID_23 : BNE .spc
     LDA !REG_MSU_ID_45 : CMP !VAL_MSU_ID_45 : BNE .spc
     SEP #$20
+    LDA !REG_MSU_LOAD_FLAG : BNE .continue
     LDA !REG_MSU_STATUS : BIT !FLAG_MSU_STATUS_AUDIO_PLAYING : BEQ .done
 .continue
     jml pendant_continue
@@ -187,12 +188,13 @@ pendant_fanfare:
 
 
 crystal_fanfare:
-    REP #$20
     LDA TournamentSeed : BNE .spc
+    REP #$20
     LDA !REG_MSU_ID_01 : CMP !VAL_MSU_ID_01 : BNE .spc
     LDA !REG_MSU_ID_23 : CMP !VAL_MSU_ID_23 : BNE .spc
     LDA !REG_MSU_ID_45 : CMP !VAL_MSU_ID_45 : BNE .spc
     SEP #$20
+    LDA !REG_MSU_LOAD_FLAG : BNE .continue
     LDA !REG_MSU_STATUS : BIT !FLAG_MSU_STATUS_AUDIO_PLAYING : BEQ .done
 .continue    
     jml crystal_continue
