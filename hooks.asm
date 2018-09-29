@@ -1321,12 +1321,24 @@ JSL.l GetMagicBatItem
 ; MSU Music
 ;--------------------------------------------------------------------------------
 org $0080D7 ; <- D7 - Bank00.asm:172 (SEP #$30)
-spc_nmi:
-    JML msu_main
-    NOP
+JML msu_main : NOP
 spc_continue:
 
-org $0EE6EC ; <- E220 A922 - Bank0E.asm:2892 (SEP #$20)
+org $08C421 ; <- AD4021 F005 - ancilla_receive_item.asm:108 (LDA $2140 : BEQ .wait_for_music)
+JML pendant_fanfare : NOP
+pendant_continue:
+
+org $08C42B
+pendant_done:
+
+org $08C62A ; <- AD4021 D008 - ancilla_receive_item.asm:442 (LDA $2140 : BNE .waitForSilence)
+JML crystal_fanfare : NOP
+crystal_done:
+
+org $08C637
+crystal_done:
+
+org $0EE6EC ; <- E220 A922 - Bank0E.asm:2892 (SEP #$20 : LDA.b #$22 : STA $012C)
 JSL.l ending_wait
 ;--------------------------------------------------------------------------------
 
