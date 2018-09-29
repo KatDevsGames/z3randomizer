@@ -1336,7 +1336,7 @@ JML crystal_fanfare : NOP
 crystal_done:
 
 org $08C637
-crystal_done:
+crystal_continue:
 
 org $0EE6EC ; <- E220 A922 - Bank0E.asm:2892 (SEP #$20 : LDA.b #$22 : STA $012C)
 JSL.l ending_wait
