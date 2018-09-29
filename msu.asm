@@ -75,37 +75,25 @@
 !VAL_VOLUME_FULL = #$FF
 
 msu_main:
-    SEP #$20 ; set 8-bit accumulator
-    LDA $4210 ; thing we wrote over
-    REP #$20 ; set 16-bit accumulator
-    LDA !REG_MSU_ID_01
-    CMP !VAL_MSU_ID_01
-    BEQ .continue
+    SEP #$20    ; set 8-BIT accumulator
+    LDA $4210   ; thing we wrote over
+    REP #$20    ; set 16-BIT accumulator
+    LDA !REG_MSU_ID_01 : CMP !VAL_MSU_ID_01 : BEQ .continue
 .nomsu
     SEP #$30
     JML spc_continue
 .continue
-    LDA !REG_MSU_ID_23
-    CMP !VAL_MSU_ID_23
-    BNE .nomsu
-    LDA !REG_MSU_ID_45
-    CMP !VAL_MSU_ID_45
-    BNE .nomsu
+    LDA !REG_MSU_ID_23 : CMP !VAL_MSU_ID_23 : BNE .nomsu
+    LDA !REG_MSU_ID_45 : CMP !VAL_MSU_ID_45 : BNE .nomsu
     SEP #$30
-    LDX !REG_MUSIC_CONTROL
-    BNE command_ff
-    LDA !REG_MSU_LOAD_FLAG
-    BEQ do_fade
+    LDX !REG_MUSIC_CONTROL : BNE command_ff
+    LDA !REG_MSU_LOAD_FLAG : BEQ do_fade
 
 msu_check_busy:
-    LDA !REG_MSU_STATUS
-    BIT !FLAG_MSU_STATUS_AUDIO_BUSY
-    BEQ .ready
+    LDA !REG_MSU_STATUS : BIT !FLAG_MSU_STATUS_AUDIO_BUSY : BEQ .ready
     JML spc_continue
 .ready
-    LDA !REG_MSU_STATUS
-    BIT !FLAG_MSU_STATUS_TRACK_MISSING
-    BNE spc_fallback
+    LDA !REG_MSU_STATUS : BIT !FLAG_MSU_STATUS_TRACK_MISSING : BNE spc_fallback
     LDA !VAL_VOLUME_FULL
     STA !REG_TARGET_VOLUME
     STA !REG_CURRENT_VOLUME
@@ -125,23 +113,19 @@ spc_fallback:
     JML spc_continue
 
 do_fade:
-    LDA !REG_CURRENT_VOLUME
-    CMP !REG_TARGET_VOLUME
-    BNE .continue
+    LDA !REG_CURRENT_VOLUME : CMP !REG_TARGET_VOLUME : BNE .continue
     JML spc_continue
 .continue
     BCC .increment
 .decrement
-    SBC !VAL_VOLUME_DECREMENT
-    BCS .set
+    SBC !VAL_VOLUME_DECREMENT : BCS .set
 .mute
     STZ !REG_CURRENT_VOLUME
     STZ !REG_MSU_CONTROL
     STZ !REG_CURRENT_MSU_TRACK
     BRA .set
 .increment
-    ADC !VAL_VOLUME_INCREMENT
-    BCC .set
+    ADC !VAL_VOLUME_INCREMENT : BCC .set
     LDA !VAL_VOLUME_FULL
 .set
     STA !REG_CURRENT_VOLUME
@@ -149,38 +133,32 @@ do_fade:
     JML spc_continue
 
 command_ff:
-    CPX !VAL_COMMAND_LOAD_NEW_BANK
-    BNE command_f3
+    CPX !VAL_COMMAND_LOAD_NEW_BANK : BNE command_f3
     JML spc_continue
 
 command_f3:
-    CPX !VAL_COMMAND_FULL_VOLUME
-    BNE command_f2
+    CPX !VAL_COMMAND_FULL_VOLUME : BNE command_f2
     STX !REG_SPC_CONTROL
     LDA !VAL_VOLUME_FULL
     STA !REG_TARGET_VOLUME
     JML spc_continue
 
 command_f2:
-    CPX !VAL_COMMAND_FADE_HALF
-    BNE command_f1
+    CPX !VAL_COMMAND_FADE_HALF : BNE command_f1
     STX !REG_SPC_CONTROL
     LDA !VAL_VOLUME_HALF
     STA !REG_TARGET_VOLUME
     JML spc_continue
 
 command_f1:
-    CPX !VAL_COMMAND_FADE_OUT
-    BNE load_track
+    CPX !VAL_COMMAND_FADE_OUT : BNE load_track
     STX !REG_SPC_CONTROL
     STZ !REG_TARGET_VOLUME
     JML spc_continue
 
 load_track:
-    CPX !REG_CURRENT_MSU_TRACK
-    BNE .continue
-    CPX #$1B
-    BEQ .continue
+    CPX !REG_CURRENT_MSU_TRACK : BNE .continue
+    CPX #$1B : BEQ .continue
     JML spc_continue
 .continue
     STX !REG_MSU_TRACK_LO
@@ -193,22 +171,14 @@ load_track:
 
 
 ending_wait:
-    rep #$20
-    lda !REG_MSU_ID_01
-    cmp !VAL_MSU_ID_01
-    bne .done
-    lda !REG_MSU_ID_23
-    cmp !VAL_MSU_ID_23
-    bne .done
-    lda !REG_MSU_ID_45
-    cmp !VAL_MSU_ID_45
-    bne .done
-    sep #$20
+    REP #$20
+    LDA !REG_MSU_ID_01 : CMP !VAL_MSU_ID_01 : BNE .done
+    LDA !REG_MSU_ID_23 : CMP !VAL_MSU_ID_23 : BNE .done
+    LDA !REG_MSU_ID_45 : CMP !VAL_MSU_ID_45 : BNE .done
+    SEP #$20
 .wait
-    lda !REG_MSU_STATUS
-    bit !FLAG_MSU_STATUS_AUDIO_PLAYING
-    bne .wait
+    LDA !REG_MSU_STATUS : BIT !FLAG_MSU_STATUS_AUDIO_PLAYING : BNE .wait
 .done
-    sep #$20
-    lda #$22
-    rtl
+    SEP #$20
+    LDA #$22
+    RTL
