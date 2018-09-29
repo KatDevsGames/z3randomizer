@@ -41,7 +41,7 @@ dw return, map041, return, return, return, return, return, return
     ;48      49      50      51      52      53      54      55
 dw map049, return, map050, map051, return, map053, return, return
     ;56      57      58      59      60      61      62      63
-dw return, return, map058, return, return, return, return, return
+dw return, return, map058, return, map060, return, return, return
 ;DW
     ;64      65      66      67      68      69      70      71
 dw return, return, return, map068, return, map078, return, map071
@@ -361,6 +361,7 @@ STA $21E8
 STA $21EA
 STA $21EC
 STA $21EE
+STA $21F0
 LDA #$00D2 : STA $2060
 STA $20E2
 STA $2164
@@ -385,6 +386,7 @@ STA $2268
 STA $226A
 STA $226C
 STA $226E
+STA $2270
 STA $22CC
 LDA #$00D0 : STA $20E0
 STA $2162
@@ -445,6 +447,7 @@ STA $22E8
 STA $22EA
 STA $22EC
 STA $22EE
+STA $22F0
 STA $234C
 LDA #$00CE : STA $2362
 STA $23E2
@@ -464,6 +467,16 @@ STA $2466
 STA $24E4
 STA $24E6
 STA $2760
+LDA #$00AA : STA $2368
+LDA #$0384 : STA $236A
+STA $236E
+STA $23EC
+STA $246A
+STA $24E8
+STA $24EA
+STA $24EC
+STA $24EE
+LDA #$00AB : STA $236C
 LDA #$0759 : STA $23C8
 STA $244A
 STA $24CC
@@ -515,6 +528,7 @@ STA $2568
 STA $256A
 STA $256C
 STA $256E
+STA $2570
 LDA #$06E5 : STA $25D0
 STA $2650
 LDA #$00C4 : STA $25DA
@@ -528,6 +542,7 @@ STA $25E8
 STA $25EA
 STA $25EC
 STA $25EE
+STA $25F0
 LDA #$06E4 : STA $27D2
 STA $2852
 STA $2854
@@ -546,6 +561,7 @@ LDA #$06E7 : STA $28D8
 STA $295A
 STA $29DC
 
+
 LDA #$0769 : STA $38F8
 LDA #$06E1 : STA $38FA
 STA $38FC
@@ -563,6 +579,42 @@ STA $39FE
 .map056
 LDA #$0034 : STA $3D94
 
+RTS
+}
+
+map060:
+{
+LDA #$02E5 : STA $27AE
+STA $282C
+STA $282E
+STA $2832
+STA $28AC
+STA $28AE
+STA $2928
+STA $292C
+STA $29A8
+STA $29B0
+STA $2A28
+STA $2A30
+STA $2AAC
+STA $2AB2
+LDA #$078A : STA $28AA
+STA $28B0
+STA $2AAA
+STA $2B2A
+STA $2B30
+STA $2BAE
+LDA #$02EB : STA $28B4
+STA $2930
+STA $29AE
+STA $2A2C
+STA $2A32
+STA $2AAE
+LDA #$02EC : STA $2934
+STA $2B28
+STA $2B2C
+STA $2B2E
+STA $2B32
 RTS
 }
 
