@@ -37,7 +37,7 @@ dw return, return, return, map027, return, return, return, return
     ;32      33      34      35      36      37      38      39
 dw return, return, return, return, return, return, return, return
     ;40      41      42      43      44      45      46      47
-dw return, return, return, return, return, return, return, return
+dw return, map041, return, return, return, return, return, return
     ;48      49      50      51      52      53      54      55
 dw map049, return, map050, map051, return, map053, return, return
     ;56      57      58      59      60      61      62      63
@@ -150,13 +150,17 @@ STA $271A
 STA $2728
 STA $279A
 STA $27A8
+STA $281E
+STA $2820
+STA $2822
+STA $2824
 STA $2828
 STA $289C
 STA $28A6
 STA $291E
-STA $2920
-STA $2922
 STA $2924
+LDA #$0134 : STA $269E
+STA $26A4
 LDA #$0034 : STA $2826
 RTS
 }
@@ -326,6 +330,18 @@ LDA #$0E41 : STA $2542
 LDA #$0491 : STA $25C0
 .agahnim2Alive
 
+RTS
+}
+
+map041:
+{
+LDA #$0034 : STA $2288
+STA $2308
+STA $2388
+STA $2408
+STA $2488
+STA $248A
+LDA #$0036 : STA $2386
 RTS
 }
 
