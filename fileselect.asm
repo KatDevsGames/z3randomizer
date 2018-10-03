@@ -112,6 +112,23 @@ JMP DrawItem
 
 
 DrawPlayerFile:
+	LDA $1A : AND.w #$0001 : BEQ + : BRA .normal : +
+		JSR DrawPlayerFileShared
+		INC $0710 ; Suppress animated tile updates for this frame
+
+		; re-enable  Stripe Image format upload on this frame
+		; Value loaded must match what gets set by AltBufferTable
+		LDA.w #$2161 : STA $1002
+		BRA .done
+	.normal
+	STZ $0710 ; ensure core animated tile updates are not suppressed
+	LDA #$FFFF : STA.w $1002 ; Suppress Stripe Image format upload on this frame
+.done
+	LDA.w #$0004 : STA $02 ; thing we wrote over
+RTL
+
+
+DrawPlayerFileShared:
 	PHX : PHY : PHB
 
 	SEP #$20 ; set 8-bit accumulator
@@ -407,8 +424,7 @@ DrawPlayerFile:
 	++ : %fs_draw16x8(13,24)
 
 	PLB : PLY : PLX
-	LDA.w #$0004 : STA $02 ; thing we wrote over
-RTL
+RTS
 ;--------------------------------------------------------------------------------
 
 FileSelectItems:
@@ -776,6 +792,6 @@ DrawPlayerFile_credits:
 	+
 	DEC $02 : BNE .nextHeart
 
-	JSL DrawPlayerFile
+	JSR DrawPlayerFileShared
 RTL
 ;--------------------------------------------------------------------------------
