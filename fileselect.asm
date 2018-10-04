@@ -170,7 +170,7 @@ DrawPlayerFileShared:
 	+
 	%fs_drawItemGray(3,12,FileSelectItems_bow)
 	.bow_end
-	
+
 	; Boomerang
 	LDA.l !FS_INVENTORY_SWAP : AND.w #$00C0 : CMP.w #$00C0 : BNE +
 		%fs_drawItem(3,14,FileSelectItems_both_boomerang)
@@ -189,10 +189,10 @@ DrawPlayerFileShared:
 
 	; Hookshot
 	%fs_drawItemBasic($700342,3,16,FileSelectItems_hookshot)
-	
+
 	; Bombs
 	; %fs_drawItemBasic($700343,3,18,FileSelectItems_bombs)
-	
+
 	; Powder
 	LDA.l !FS_INVENTORY_SWAP : AND.w #$0010 : BEQ +
 		%fs_drawItem(3,20,FileSelectItems_powder)
@@ -200,7 +200,7 @@ DrawPlayerFileShared:
 	+
 		%fs_drawItemGray(3,20,FileSelectItems_powder)
 	++
-	
+
 	; Mushroom
 	LDA.l !FS_INVENTORY_SWAP : AND.w #$0020 : BEQ +
 		%fs_drawItem(3,18,FileSelectItems_mushroom)
@@ -208,7 +208,7 @@ DrawPlayerFileShared:
 	+
 		%fs_drawItemGray(3,18,FileSelectItems_mushroom)
 	++
-	
+
 	; Flute
 	LDA.l !FS_INVENTORY_SWAP : AND.w #$0003 : BEQ +
 		%fs_drawItem(7,16,FileSelectItems_flute)
@@ -216,7 +216,7 @@ DrawPlayerFileShared:
 	+
 		%fs_drawItemGray(7,16,FileSelectItems_flute)
 	++
-	
+
 	; Shovel
 	LDA.l !FS_INVENTORY_SWAP : AND.w #$0004 : BEQ +
 		%fs_drawItem(9,12,FileSelectItems_shovel)
@@ -283,8 +283,12 @@ DrawPlayerFileShared:
 	+ : DEC : BNE +
 		%fs_drawItem(3,26,FileSelectItems_tempered_sword)
 		BRA ++
-	+
+	+ : DEC : BNE +
 		%fs_drawItem(3,26,FileSelectItems_gold_sword)
+		BRA ++
+	+
+		; a sword value above 4 is either corrupted or 0xFF (a.k.a. swordless)
+		%fs_drawItemGray(3,26,FileSelectItems_fighters_sword)
 	++
 
 	; Shield
@@ -344,13 +348,13 @@ DrawPlayerFileShared:
 	+
 		%fs_drawItem(5,28,FileSelectItems_mitts)
 	++
-	
+
 	; Flippers
 	%fs_drawItemBasic($700356,7,28,FileSelectItems_flippers)
 
 	; Moon Pearl
 	%fs_drawItemBasic($700357,9,28,FileSelectItems_pearl)
-	
+
 	; Pendants
 	LDA $700374 : AND.w #$0004 : BEQ +
 		%fs_drawItem(12,12,FileSelectItems_green_pendant)
@@ -372,7 +376,7 @@ DrawPlayerFileShared:
 	+
 		%fs_drawItem(12,16,FileSelectItems_no_pendant)
 	++
-	
+
 	; Crystals
 	LDA $70037A : AND.w #$0002 : BEQ +
 		LDA.w #$0297|!FS_COLOR_BLUE
@@ -484,7 +488,7 @@ FileSelectItems:
 
 	.boots
 	dw #$024C|!FS_COLOR_BOOTS, #$024D|!FS_COLOR_BOOTS, #$025C|!FS_COLOR_BOOTS, #$025D|!FS_COLOR_BOOTS
-	
+
 	.pearl
 	dw #$0264|!FS_COLOR_RED, #$0265|!FS_COLOR_RED, #$0274|!FS_COLOR_RED, #$0275|!FS_COLOR_RED
 
@@ -496,12 +500,12 @@ FileSelectItems:
 	dw #$0285|!FS_COLOR_BLUE, #$0286|!FS_COLOR_BLUE, #$0295|!FS_COLOR_BLUE, #$0296|!FS_COLOR_BLUE
 	.red_pendant
 	dw #$0285|!FS_COLOR_RED, #$0286|!FS_COLOR_RED, #$0295|!FS_COLOR_RED, #$0296|!FS_COLOR_RED
-	
+
 	.gloves
 	dw #$024E|!FS_COLOR_BROWN, #$024F|!FS_COLOR_BROWN, #$025E|!FS_COLOR_BROWN, #$025F|!FS_COLOR_BROWN
 	.mitts
 	dw #$0260|!FS_COLOR_YELLOW, #$0261|!FS_COLOR_YELLOW, #$0270|!FS_COLOR_YELLOW, #$0271|!FS_COLOR_YELLOW
-	
+
 	.mushroom
 	dw #$0262|!FS_COLOR_RED, #$0263|!FS_COLOR_RED, #$0272|!FS_COLOR_RED, #$0273|!FS_COLOR_RED
 	.powder
@@ -709,7 +713,7 @@ LoadFullItemTiles:
 		LDA.b #$80 : STA $2115 ; write read increment on $2119
 		LDA.b #$01 : STA $4300 ; set DMA transfer direction A -> B, bus A auto increment, double-byte mode
 		LDA.b #$18 : STA $4301 ; set bus B destination to VRAM register
-	
+
 		LDA.b #$00 : STA $2116 ; write VRAM destination address
 		LDA.b #$30 : STA $2117 ; write VRAM destination address
 
@@ -718,10 +722,10 @@ LoadFullItemTiles:
 		LDA.b #FileSelectNewGraphics>>8 : STA $4303 ; set bus A source address to ROM
 
 		LDA $2100 : PHA : LDA.b #$80 : STA $2100 ; save screen state & turn screen off
-		
+
 		STZ $4305 : LDA.b #$10 : STA $4306 ; set transfer size to 0x1000
 		LDA #$01 : STA $420B ; begin DMA transfer
-			
+
 		PLA : STA $2100 ; put screen back however it was before
 		;--------------------------------------------------------------------------------
 		PLA : STA $4306 ; restore DMA parameters
