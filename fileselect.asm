@@ -1,4 +1,5 @@
 !ExtendedPlayerName = "$700500"
+!ValidKeyLoaded = "$7F509E"
 
 ;FS prefix means file_select, since these defines and macros are specific to this screen
 !FS_INVENTORY_SWAP = "$70038C"
@@ -118,7 +119,7 @@ DrawPlayerFile:
 
 		; re-enable  Stripe Image format upload on this frame
 		; Value loaded must match what gets set by AltBufferTable
-		LDA.w #$2161 : STA $1002
+		LDA.w #$0161 : STA $1002
 		BRA .done
 	.normal
 	STZ $0710 ; ensure core animated tile updates are not suppressed
@@ -136,22 +137,22 @@ DrawPlayerFileShared:
 	REP #$20 ; restore 16 bit accumulator
 
 	LDA !ExtendedPlayerName+$00 : ORA.w #!FS_COLOR_BW
-	%fs_draw8x16(6,3)
-	LDA !ExtendedPlayerName+$02 : ORA.w #!FS_COLOR_BW
 	%fs_draw8x16(6,5)
+	LDA !ExtendedPlayerName+$02 : ORA.w #!FS_COLOR_BW
+	%fs_draw8x16(6,6)
 	LDA !ExtendedPlayerName+$04 : ORA.w #!FS_COLOR_BW
 	%fs_draw8x16(6,7)
 	LDA !ExtendedPlayerName+$06 : ORA.w #!FS_COLOR_BW
-	%fs_draw8x16(6,9)
+	%fs_draw8x16(6,8)
 
 	LDA !ExtendedPlayerName+$08 : ORA.w #!FS_COLOR_BW
-	%fs_draw8x16(9,3)
-	LDA !ExtendedPlayerName+$0A : ORA.w #!FS_COLOR_BW
 	%fs_draw8x16(9,5)
+	LDA !ExtendedPlayerName+$0A : ORA.w #!FS_COLOR_BW
+	%fs_draw8x16(9,6)
 	LDA !ExtendedPlayerName+$0C : ORA.w #!FS_COLOR_BW
 	%fs_draw8x16(9,7)
 	LDA !ExtendedPlayerName+$0E : ORA.w #!FS_COLOR_BW
-	%fs_draw8x16(9,9)
+	%fs_draw8x16(9,8)
 
 	JSR FileSelectDrawHudBar
 
@@ -427,6 +428,7 @@ DrawPlayerFileShared:
 		LDA.w #$0287|!FS_COLOR_GRAY
 	++ : %fs_draw16x8(13,24)
 
+
 	PLB : PLY : PLX
 RTS
 ;--------------------------------------------------------------------------------
@@ -590,7 +592,7 @@ AltBufferTable:
     LDA.b #$02 : STA $210c ; Have Screen 3 use same tile area as screens 1
 .noScreen3Change
     REP #$20
-    LDX.w #$0380 ; 14 rows with 64 bytes (30 tiles * 2 + 4 byte header)
+    LDX.w #$0400 ; 14 rows with 64 bytes (30 tiles * 2 + 4 byte header)
     ;fill with the blank character
     LDA.w #$0188
     -
@@ -598,26 +600,29 @@ AltBufferTable:
         DEX : DEX : BNE -
 
     ; set vram offsets
-    LDA.w #$2161 : STA $1002 ;file 1 top row
-    LDA.w #$4161 : STA $1042 ;file 1 bottom row
+    LDA.w #$0161 : STA $1002 ;file 1 top row
+    LDA.w #$2161 : STA $1042 ;file 1 bottom row
 
-    LDA.w #$6161 : STA $1082 ;gap row top
-    LDA.w #$8161 : STA $10C2 ;gap row bottom
+    LDA.w #$4161 : STA $1082 ;gap row top
+    LDA.w #$6161 : STA $10C2 ;gap row bottom
 
-    LDA.w #$A161 : STA $1102 ;file 2 top row
-    LDA.w #$C161 : STA $1142 ;file 2 bottom row
+    LDA.w #$8161 : STA $1102 ;file 2 top row
+    LDA.w #$A161 : STA $1142 ;file 2 bottom row
 
-    LDA.w #$E161 : STA $1182 ;gap row top
-    LDA.w #$0162 : STA $11c2 ;gap row bottom
+    LDA.w #$C161 : STA $1182 ;gap row top
+    LDA.w #$E161 : STA $11c2 ;gap row bottom
 
-    LDA.w #$2162 : STA $1202 ;file 3 top row
-    LDA.w #$4162 : STA $1242 ;file 3 bottom row
+    LDA.w #$0162 : STA $1202 ;file 3 top row
+    LDA.w #$2162 : STA $1242 ;file 3 bottom row
 
-    LDA.w #$6162 : STA $1282 ;extra gap row top
-    LDA.w #$8162 : STA $12c2 ;extra gap row bottom
+    LDA.w #$4162 : STA $1282 ;extra gap row top
+    LDA.w #$6162 : STA $12c2 ;extra gap row bottom
 
-	LDA.w #$A162 : STA $1302 ;extra gap row top
-    LDA.w #$C162 : STA $1342 ;extra gap row bottom
+	LDA.w #$8162 : STA $1302 ;extra gap row top
+    LDA.w #$A162 : STA $1342 ;extra gap row bottom
+
+	LDA.w #$C162 : STA $1382 ;extra gap row top
+    LDA.w #$E162 : STA $13C2 ;extra gap row bottom
 
     ; set lengths
     LDA.w #$3B00
@@ -635,10 +640,26 @@ AltBufferTable:
     STA $12c4 ;extra gap row bottom
 	STA $1304 ;extra gap row top
     STA $1344 ;extra gap row bottom
+	STA $1384 ;extra gap row top
+    STA $13c4 ;extra gap row bottom
 
     ; Set last packet marker
-    LDA.w #$00FF : STA $1382
-    SEP #$20
+    LDA.w #$00FF : STA $1402
+
+    ; Draw Unlock option if applicable
+	LDA $10 : AND.w #$00FF : CMP.w #$0001 : BNE +
+	LDA.l IsEncrypted : AND.w #$00FF : CMP.w #$0002 : BNE +
+	PHP : SEP #$30 : PHX : PHY : JSL ValidatePassword : PLY : PLX : PLP
+	AND.w #$00FF : BNE +
+		LDA.w #!FSTILE_U_TOP : %fs_draw8x16(14,5)
+		LDA.w #!FSTILE_N_TOP : %fs_draw8x16(14,6)
+		LDA.w #!FSTILE_L_TOP : %fs_draw8x16(14,7)
+		LDA.w #!FSTILE_O_TOP : %fs_draw8x16(14,8)
+		LDA.w #!FSTILE_C_TOP : %fs_draw8x16(14,9)
+		LDA.w #!FSTILE_K_TOP : %fs_draw8x16(14,10)
+	+
+
+	SEP #$20
 
 RTL
 ;--------------------------------------------------------------------------------
@@ -666,6 +687,10 @@ AltBufferTable_credits:
 
 	LDA.w #$E169 : STA $1302 ;extra gap row top
     LDA.w #$016A : STA $1342 ;extra gap row bottom
+
+	LDA.w #$216A : STA $1382 ;extra gap row top
+    LDA.w #$416A : STA $13C2 ;extra gap row bottom
+
     SEP #$20
 RTL
 ;--------------------------------------------------------------------------------
@@ -772,13 +797,13 @@ DrawPlayerFile_credits:
 	REP #$20 ; set 16 bit accumulator
 
 	LDA $7003D9 : ORA.w #!FS_COLOR_BW
-	%fs_draw8x16(3,3)
-	LDA $7003DB : ORA.w #!FS_COLOR_BW
 	%fs_draw8x16(3,5)
+	LDA $7003DB : ORA.w #!FS_COLOR_BW
+	%fs_draw8x16(3,6)
 	LDA $7003DD : ORA.w #!FS_COLOR_BW
 	%fs_draw8x16(3,7)
 	LDA $7003DF : ORA.w #!FS_COLOR_BW
-	%fs_draw8x16(3,9)
+	%fs_draw8x16(3,8)
 
 	LDA $70036C : AND.w #$00FF : LSR #3 : STA $02
 	%fs_LDY_screenpos(0,20)
@@ -798,4 +823,55 @@ DrawPlayerFile_credits:
 
 	JSR DrawPlayerFileShared
 RTL
+;--------------------------------------------------------------------------------
+FSCursorUp:
+	LDA $C8 : BNE +
+		LDA #$04 ; up from file becomes delete
+		BRA .done
+	+ : CMP #$03 : BNE +
+		LDA #$00 ; up from unlock is the file
+		BRA .done
+	+
+	LDA.l IsEncrypted : CMP.b #$02 : BNE +
+	LDA.l !ValidKeyLoaded : BNE +
+		LDA #$03 ; up from delete is unlock for password protected seeds
+		BRA .done
+	+
+	LDA #$00 ;otherwise up from delete is file
+	.done
+	STA $C8
+RTL
+FSCursorDown:
+	LDA $C8 : BNE +
+		LDA.l IsEncrypted : CMP.b #$02 : BNE ++
+		LDA.l !ValidKeyLoaded : BNE ++
+			LDA #$03 ; down from file is unlock for password protected seeds
+			BRA .done
+		++
+		LDA #$04  ;otherwise down from file is delete
+		BRA .done
+	+ : CMP #$03 : BNE +
+		LDA #$04 ; down from unlock is delete
+		BRA .done
+	+
+	LDA #$00 ; down from delete is file
+	.done
+	STA $C8
+RTL
+;--------------------------------------------------------------------------------
+FSSelectFile:
+	LDA.l IsEncrypted : CMP.b #$02 : BNE .normal
+		STZ $012E ; temporarily cancel file screen selection sound
+		PHX : PHY
+			JSL ValidatePassword : BEQ .must_unlock
+		PLY : PLX
+		LDA.b #$2C : STA $012E ;file screen selection sound
+	.normal
+	LDA.b #$F1 : STA $012C
+JML FSSelectFile_continue
+	.must_unlock
+	PLY : PLX
+	LDA #$03 : STA $C8 ;set cursor to unlock
+	LDA.b #$3C : STA $012E ; play error sound
+JML FSSelectFile_return
 ;--------------------------------------------------------------------------------

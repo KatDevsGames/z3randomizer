@@ -32,8 +32,6 @@ RetrieveValueFromEncryptedTable:
 				LDA [$00], Y : STA.l !CryptoBuffer+4 : INY #2
 				LDA [$00], Y : STA.l !CryptoBuffer+6
 
-				; TODO: copy key into crypto Memory
-
 				LDA.w #$0002 : STA $04 ;set block size
 
 				JSL.l XXTEA_Decode

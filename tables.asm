@@ -357,7 +357,7 @@ db #$00 ; $00 = static rng, $01 = no extra blue balls/warps
 ;--------------------------------------------------------------------------------
 org $308087 ; PC 0x180087
 IsEncrypted:
-dw #$0000 ; $0000 = not encrypted, $0001 = encrypted with static key, $0002 = Encrypted w/ passcode entry screen (Not implemented yet)
+dw #$0000 ; $0000 = not encrypted, $0001 = encrypted with static key, $0002 = Encrypted w/ passcode entry screen
 ;--------------------------------------------------------------------------------
 org $308089 ; PC 0x180089
 TurtleRockAutoOpenFix:
@@ -403,7 +403,11 @@ org $3080B0 ; 0x1800B0-0x1800BF
 StaticDecryptionKey:
 dd $00000000, $00000000, $00000000, $00000000
 ;--------------------------------------------------------------------------------
-; 0x1800C0 - 0x1800FF (unused)
+org $3080C0 ; 0x1800C0-0x1800C7 [encrypted]
+KnownEncryptedValue:
+db $31, $41, $59, $26, $53, $58, $97, $93
+;--------------------------------------------------------------------------------
+; 0x1800C8 - 0x1800FF (unused)
 ;--------------------------------------------------------------------------------
 org $308100 ; PC 0x180100 (0x40 bytes)
 ShovelSpawnTable:
@@ -1403,7 +1407,7 @@ dw #9999 ; Rupee Limit
 ; $7F509B - MSU Flag
 ; $7F509C - Inverted Mode Duck Map Temporary
 ; $7F509D - Stalfos Bomb Damage Value
-
+; $7F509E - Valid Key Loaded
 ; $7F50A0 - Event Parameter 1
 
 ; $7F50B0 - $7F50BF - Downstream Reserved (Enemizer)

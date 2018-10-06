@@ -79,11 +79,33 @@ org $0CCDA5 ; <- Bank0C.asm : 1650 (JSL Palette_SelectScreen)
 JSL.l SetFileSelectPalette
 ;--------------------------------------------------------------------------------
 org $0CCE41 ; <- 64E41 - Bank0C.asm : 1907 (DEC $C8 : BPL .done)
-LDA $C8 : EOR.b #$04  : STA $C8 : NOP #2 ; set cursor to only select first file and erase
+JSL FSCursorUp : NOP #4 ; set cursor to only select first file and erase
 org $0CCE50 ; <- 64E50 - Bank0C.asm : 1918 (INC $C8)
-LDA $C8 : EOR.b #$04  : STA $C8 : NOP #4 ; set cursor to only select first file and erase
+JSL FSCursorDown : NOP #6 ; set cursor to only select first file and erase
 org $0CCE0F ; < 64E0F - Bank0C.asm : 1880 (LDX $00 : INX #2 : CPX.w #$0006 : BCC .nextFile)
 NOP #9 ; don't draw the other two save files
+;--------------------------------------------------------------------------------
+org $0CCE71 ; <- Bank0C.asm : 1941 (LDA.b #$F1 : STA $012C)
+JML.l FSSelectFile : NOP
+FSSelectFile_continue:
+org $0CCEB1 ; <- Bank0C.asm : 2001 (.return)
+FSSelectFile_return:
+;--------------------------------------------------------------------------------
+; Replace copy file module with a fully custom module
+org $008061+$02 ; <- Bank00.asm : 103 (dl Module_CopyFile)
+db Module_Password
+org $00807D+$02 ; <- Bank00.asm : 103 (dl Module_CopyFile)
+db Module_Password>>8
+org $008099+$02 ; <- Bank00.asm : 103 (dl Module_CopyFile)
+db Module_Password>>16
+
+; Hook up password screen tilemap
+org $00937a+$07
+db Password_Tilemap
+org $009383+$07
+db Password_Tilemap>>8
+org $00938c+$07
+db Password_Tilemap>>16
 ;--------------------------------------------------------------------------------
 org $0CD527 ; <- 65527 : Bank0C.asm : 2913 (LDA.w #$0004 : STA $02) [LDA.w #$0006 : STA $02]
 JSL.l DrawPlayerFile : NOP ; hijack hearts draw routine to draw a full inventory
@@ -108,14 +130,23 @@ LDA.w #$0180 ; change which character is used as the blank character for the sel
 org $0CD50C ; <- 6550C  (Not in disassembly, would be in bank0c.asm if it were) Position table for Name and Hearts
 ;dw $0012, $0112, $0212 ; vanilla-ish positions of file names
 ;dw $0026, $0126, $0226 ; vanilla-ish positions of hearts names
-dw $00C8, $014A, $01CA ; repositioned, only the first value matters
+dw $00CC, $014A, $01CA ; repositioned, only the first value matters
 dw $002A, $0192, $0112
 org $0CD53B ; <- 6553B : Bank0c.asm : 2919 (ADD.w #$0010 : STA $102C, Y) [... : STA $1034, Y]
 STA.w $1042, Y ; Make 2nd half of names line up properly
-;org $0CD540 ; <- 65540 : Bank0c.asm : 2923 (INY #2) [INY #4]
-;NOP #2 ; Remove space between name characters
+org $0CD540 ; <- 65540 : Bank0c.asm : 2923 (INY #2) [INY #4]
+NOP #2 ; Remove space between name characters
 org $0CD571 ; <- 65571 : Bank0c.asm : 2943 (LDA $04 : ADD.w #$002A : TAY) [... : ADD.w #$0032 : ...]
 ADC.w #$0040 ;make Hearts line up properly
+;--------------------------------------------------------------------------------
+org $0CCC67 ; <- (Not in disassembly, would be in bank0c.asm if it were) Y position table for File select fairy
+db $42, $00, $00, $AF, $C7
+org $0CD308 ; <- (Not in disassembly, would be in bank0c.asm if it were) Y position table for File Delete fairy
+db $42, $00, $00, $C7
+org $0CD57E ; <- Y position table for File select link sprite
+db $3d
+org $0CD6BD ; <- Y position table for Death Counts
+db $51
 ;--------------------------------------------------------------------------------
 
 ;================================================================================

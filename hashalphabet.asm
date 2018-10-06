@@ -55,10 +55,10 @@ LoadAlphabetTilemap:
 			AND.w #$001F ; mask to alphabet of 32
 
 			ASL #3 : PHY : TAY
-			LDA.w HashAlphabetTiles,Y : STA !BIGRAM+28, X
-			LDA.w HashAlphabetTiles+2,Y : STA !BIGRAM+28+2, X
-			LDA.w HashAlphabetTiles+4,Y : STA !BIGRAM+28+64, X
-			LDA.w HashAlphabetTiles+6,Y : STA !BIGRAM+28+64+2, X
+			LDA.w HashAlphabetTiles,Y : STA !BIGRAM+24, X
+			LDA.w HashAlphabetTiles+2,Y : STA !BIGRAM+24+2, X
+			LDA.w HashAlphabetTiles+4,Y : STA !BIGRAM+24+64, X
+			LDA.w HashAlphabetTiles+6,Y : STA !BIGRAM+24+64+2, X
 			PLY : INX #6 : INY
 		CPX #25 : !BLT -
 
@@ -178,37 +178,37 @@ dw #$022F|!FS_COLOR_YELLOW|!FS_HFLIP, #$022F|!FS_COLOR_YELLOW, #$023E|!FS_COLOR_
 ;--------------------------------------------------------------------------------
 FileSelect_PlayerSelectText_Top:
 ;db $60, $62, $00, $37
-dw !FSTILE_SPACE, !FSTILE_SPACE
+dw !FSTILE_SPACE, !FSTILE_SPACE, !FSTILE_SPACE, !FSTILE_SPACE
 dw !FSTILE_BRACKET_OPEN_TOP
 dw !FSTILE_SPACE, !FSTILE_C_TOP
-dw !FSTILE_SPACE, !FSTILE_O_TOP
-dw !FSTILE_SPACE, !FSTILE_D_TOP
-dw !FSTILE_SPACE, !FSTILE_E_TOP
+dw !FSTILE_O_TOP
+dw !FSTILE_D_TOP
+dw !FSTILE_E_TOP
 dw !FSTILE_SPACE, !FSTILE_SPACE
-dw !FSTILE_SPACE, $05A0, $05A1
+dw $05A0, $05A1
 dw !FSTILE_SPACE, $05A4, $05A5
 dw !FSTILE_SPACE, $05A8, $05A9
 dw !FSTILE_SPACE, $05AC, $05AD
 dw !FSTILE_SPACE, $05B0, $05B1
 dw !FSTILE_SPACE
 dw !FSTILE_BRACKET_CLOSE_TOP
-dw !FSTILE_SPACE, !FSTILE_SPACE
+dw !FSTILE_SPACE, !FSTILE_SPACE, !FSTILE_SPACE, !FSTILE_SPACE
 ;--------------------------------------------------------------------------------
 FileSelect_PlayerSelectText_Bottom:
 ;db $60, $82, $00, $37
-dw !FSTILE_SPACE, !FSTILE_SPACE
+dw !FSTILE_SPACE, !FSTILE_SPACE, !FSTILE_SPACE, !FSTILE_SPACE
 dw !FSTILE_BRACKET_OPEN_BOTTOM
 dw !FSTILE_SPACE, !FSTILE_C_BOTTOM
-dw !FSTILE_SPACE, !FSTILE_O_BOTTOM
-dw !FSTILE_SPACE, !FSTILE_D_BOTTOM
-dw !FSTILE_SPACE, !FSTILE_E_BOTTOM
+dw !FSTILE_O_BOTTOM
+dw !FSTILE_D_BOTTOM
+dw !FSTILE_E_BOTTOM
 dw !FSTILE_SPACE, !FSTILE_SPACE
-dw !FSTILE_SPACE, $05A2, $05A3
+dw $05A2, $05A3
 dw !FSTILE_SPACE, $05A6, $05A7
 dw !FSTILE_SPACE, $05AA, $05AB
 dw !FSTILE_SPACE, $05AE, $05AF
 dw !FSTILE_SPACE, $05B2, $05B3
 dw !FSTILE_SPACE
 dw !FSTILE_BRACKET_CLOSE_BOTTOM
-dw !FSTILE_SPACE, !FSTILE_SPACE
+dw !FSTILE_SPACE, !FSTILE_SPACE, !FSTILE_SPACE, !FSTILE_SPACE
 ;--------------------------------------------------------------------------------

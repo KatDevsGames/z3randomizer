@@ -172,6 +172,7 @@ incsrc inverted.asm
 incsrc invertedmaps.asm
 incsrc newhud.asm
 incsrc compasses.asm
+incsrc password.asm
 warnpc $A58000
 
 ;org $228000 ; contrib area
