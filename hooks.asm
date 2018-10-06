@@ -293,8 +293,12 @@ NOP #4
 db #$90 ; BCC
 ;--------------------------------------------------------------------------------
 org $08CE0C ; <- 44E0C - ancilla_break_tower_seal.asm : 168 (BEQ #$03 : JSR BreakTowerSeal_ExecuteSparkles : LDX.b #$06)
-JSL.l GetRequriedCrystals
+JML.l GetRequriedCrystals
 NOP #3
+GetRequriedCrystals_continue:
+;--------------------------------------------------------------------------------
+org $08CF19 ; <- 44F19 - ancilla_break_tower_seal.asm : 336 (TXA : AND.b #$07 : TAX)
+JSL.l GetRequriedCrystalsInX
 ;--------------------------------------------------------------------------------
 org $08CFC9 ; <- 44FC9 - ancilla_break_tower_seal.asm : 414 (RTS)
 db #$6B

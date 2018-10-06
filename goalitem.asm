@@ -56,7 +56,22 @@ CheckGanonVulnerability:
 ;--------------------------------------------------------------------------------
 GetRequriedCrystals:
 	BEQ + : JSL.l BreakTowerSeal_ExecuteSparkles : + ; thing we wrote over
+	LDA.l NumberOfCrystalsRequired : CMP.b #$00 : BNE + : JML.l Ancilla_BreakTowerSeal_stop_spawning_sparkles : +
+	LDA.l NumberOfCrystalsRequired : CMP.b #$01 : BNE + : JML.l Ancilla_BreakTowerSeal_draw_single_crystal : +
 	LDA.l NumberOfCrystalsRequired : DEC #2 : TAX
+JML.l GetRequriedCrystals_continue
+;--------------------------------------------------------------------------------
+GetRequriedCrystalsInX:
+	LDA.l NumberOfCrystalsRequired : CMP.b #$00 : BNE +
+		TAX
+		RTL
+	+
+	
+	TXA : - : CMP.l NumberOfCrystalsRequired : !BLT + : !SUB.l NumberOfCrystalsRequired : BRA - : +
+	
+	INC : CMP.l NumberOfCrystalsRequired : BNE +
+		LDA.b #$08
+	+ : DEC : TAX
 RTL
 ;--------------------------------------------------------------------------------
 CheckEnoughCrystals:
