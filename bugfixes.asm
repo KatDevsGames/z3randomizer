@@ -128,3 +128,13 @@ PodEGFix:
     .done
 RTL
 ;--------------------------------------------------------------------------------
+; Fix crystal not spawning when using somaria vs boss
+TryToSpawnCrystalUntilSuccess:
+	STX $02D8 ; what we overwrote
+	JSL AddAncillaLong : BCC .spawned ; a clear carry flag indicates success
+		.failed
+		RTL
+	.spawned
+	STZ $AE ; the "trying to spawn crystal" flag
+	STZ $AF ; the "trying to spawn pendant" flag
+RTL

@@ -492,6 +492,9 @@ AddWeathervaneExplosion:
 org $0993DF
 AddDashTremor:
 
+org $099D04
+AddAncillaLong:
+
 org $09AE64
 Sprite_SetSpawnedCoords:
 
@@ -594,6 +597,9 @@ ShopKeeper_RapidTerminateReceiveItem:
 
 org $1CF500
 Sprite_NullifyHookshotDrag:
+
+org $1CF537
+Ancilla_CheckForAvailableSlot:
 
 org $1DE9B6
 Filter_MajorWhitenMain:
