@@ -60,7 +60,9 @@ db #$20, #$19, #$06, #$17 ; year/month/day
 ;$7EF4A0 - $7EF4A7 - Service Request Block
 !FRESH_FILE_MARKER = "$7EF4F0" ; zero if fresh file
 ;$700500 - $70050F - Extended File Name
-;$700510 - $70051F - Password (eventually should be moved into non-mirrored area)
+;$701000 - $70100F - Password (incorporate into log header)
+;$702000 - $702014 - Rom title copy (incorporate into log header)
+
 
 !MS_GOT = "$7F5031"
 !DARK_WORLD = "$7EF3CA"
@@ -175,6 +177,7 @@ incsrc inverted.asm
 incsrc invertedmaps.asm
 incsrc newhud.asm
 incsrc compasses.asm
+incsrc save.asm
 incsrc password.asm
 incsrc enemy_adjustments.asm
 incsrc hudtext.asm
@@ -300,7 +303,7 @@ warnpc $B08000
 ;$7F5000[0x800]: Rando's main free ram region
 ;   See tables.asm for specific assignments
 ;$7F6000[0x500]: Free RAM (reclaimed from damage table) Not allocated yet
-;$7F6500[0xB00]: Reserved for SRAM mirror for last 0xB00 bytes of SRAM (extended sram)
+;$7F6500[0xB00]: SRAM mirror for last 0xB00 bytes of SRAM (extended sram)
 ;$7F7667[0x6719] - free ram
 ;================================================================================
 ;SRAM Map

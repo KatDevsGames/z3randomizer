@@ -215,9 +215,57 @@ SKIP 7 : NOP #3
 SKIP 7 : NOP #3
 SKIP 7 : NOP #3
 ;--------------------------------------------------------------------------------
-; Clearing mirrored copy on file erase
-org $0CD4E7 ; <- 654E7 - Bank0C.asm : 2282 (STA $700400, X : STA $700F00, X : STA $701000, X : STA $701100, X)
-NOP #20
+; remove Clearing mirrored copy on file erase, instead clearing the extended save file too
+org $0CD4E3 ; <- Bank0C.asm : 2282 (STA $700400, X : STA $700F00, X : STA $701000, X : STA $701100, X)
+JSL.l ClearExtendedSaveFile
+BRA +
+	NOP #18
++
+;--------------------------------------------------------------------------------
+
+;================================================================================
+; Extended SRAM Save file
+;--------------------------------------------------------------------------------
+org $0ccf08 ; <- Bank0C.asm : 2036 (LDA.w #$0007 : STA $7EC00D : STA $7EC013)
+JSL CopyExtendedSaveFileToWRAM
+;--------------------------------------------------------------------------------
+org $008998 ; <- Bank00.asm : 1296 (LDX.w #$0000)
+JSL CopyExtendedWRAMSaveFileToSRAM
+;--------------------------------------------------------------------------------
+org $0CD7AB ; <- Bank0C.asm : 3342 (STA $700400, X)
+JSL.l ClearExtendedSaveFile
+;--------------------------------------------------------------------------------
+org $0CC2EB ; <- Bank0C.asm : 348 (STA $7EF000, X : STA $7EF100, X : STA $7EF200, X : STA $7EF300, X : STA $7EF400, X)
+JSL.l ClearExtendedWRAMSaveFile
+;--------------------------------------------------------------------------------
+org $09F653 ; <- module_death.asm : 556 (STA $7EF400, X)
+JSL.l ClearExtendedWRAMSaveFile
+;--------------------------------------------------------------------------------
+
+;================================================================================
+; Remove storage of selected file index from end of vanilla SRAM
+;--------------------------------------------------------------------------------
+org $0087EB ; <- Bank00.asm : 986 (STA $7EC500 : STA $701FFE)
+BRA AfterFileWrittenChecks
+;Also skip totally redundant checking and clearing the "file written" marker,
+;since it is not even useful in the original code, much less with only one save slot
+org $00881f ; <- Bank00.asm : 1011 (STY $01FE)
+AfterFileWrittenChecks:
+;--------------------------------------------------------------------------------
+org $008951 ; <- Bank00.asm : 1278 (LDX $1FFE : LDA $00848A, X : TAY : PHY)
+LDX #$0002
+;--------------------------------------------------------------------------------
+org $0CCE85 ; <- Bank0C.asm : 1953 (LDA $C8 : ASL A : INC #2 : STA $701FFE)
+NOP #4
+;--------------------------------------------------------------------------------
+org $0CDB4C ; <- Bank0C.asm : 3655 (LDA $C8 : ASL A : INC #2 : STA $701FFE : TAX)
+NOP #4
+;--------------------------------------------------------------------------------
+org $09F5EA ; <- module_death.asm : 510 (LDA $701FFE : TAX : DEX #2)
+LDA.w #$0002 : NOP
+;--------------------------------------------------------------------------------
+org $0EEFEB ; <- vwf.asm : 310 (LDA $701FFE : TAX)
+LDA.w #$0002 : NOP
 ;--------------------------------------------------------------------------------
 
 ;================================================================================
