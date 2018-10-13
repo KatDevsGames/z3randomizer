@@ -40,12 +40,13 @@ RetrieveValueFromEncryptedTable:
 			PLA : STA $08 : PLA : STA $06 : PLA : STA $04
 		PLA : AND.w #$0007 : TAX
 		LDA.l !CryptoBuffer, X
-
-		STZ.l !CryptoBuffer
-		STZ.l !CryptoBuffer+2
-		STZ.l !CryptoBuffer+4
-		STZ.l !CryptoBuffer+6
-
+		PHA
+			LDA.w #$0000
+			STA.l !CryptoBuffer
+			STA.l !CryptoBuffer+2
+			STA.l !CryptoBuffer+4
+			STA.l !CryptoBuffer+6
+		PLA
 	PLY : PLX
 RTL
 ;--------------------------------------------------------------------------------
