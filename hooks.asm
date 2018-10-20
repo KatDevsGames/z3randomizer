@@ -2211,6 +2211,10 @@ org $0689AB ; <- 309AB - sprite_prep.asm: 647 (LDA $7EF3CC : CMP.b #$06 : BEQ .k
 ; Prevent followers from causing blind/maiden to despawn:
 CMP.b #$06 : db #$F0 ; BEQ
 ;--------------------------------------------------------------------------------
+; Fix old man purple chest issues using the same method as above
+org $1EE906 ; <- F6906 - sprite_old_mountain_man.asm : 31 (LDA $7EF3CC : CMP.b #$00 : BNE .already_have_tagalong)
+CMP.b #$04 : db #$F0 ; BEQ
+;--------------------------------------------------------------------------------
 ;Control which doors frog/smith can enter
 org $1BBCF0 ; <- DBCF0 - Bank1B.asm: 248 (LDA $04B8 : BNE BRANCH_MU)
 Overworld_Entrance_BRANCH_LAMBDA: ; Branch here to show Cannot Enter with Follower message
