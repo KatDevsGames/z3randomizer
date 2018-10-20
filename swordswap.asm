@@ -142,12 +142,27 @@ GetSmithSword:
 	LDA.l SmithItemMode : BNE +
 		JML.l Smithy_DoesntHaveSword ; Classic Smithy
 	+
-    LDA.l SmithItem : TAY
-    STZ $02E9 ; Item from NPC
-	PHX : JSL Link_ReceiveItem : PLX
-	REP #$20 : LDA $7EF360 : !SUB.w #$000A : STA $7EF360 : SEP #$20 ; Take 10 rupees
-	JSL ItemSet_SmithSword
-	JML.l Smithy_AlreadyGotSword
+
+	REP #$20 : LDA $7EF360 : CMP #$000A : SEP #$20 : !BGE .buy
+	.cant_afford
+		REP #$10
+	    LDA.b #$7A
+	    LDY.b #$01
+	    JSL.l Sprite_ShowMessageUnconditional
+		LDA.b #$3C : STA $012E ; error sound
+		SEP #$10
+		BRA .done
+
+	.buy
+	    LDA.l SmithItem : TAY
+	    STZ $02E9 ; Item from NPC
+		PHX : JSL Link_ReceiveItem : PLX
+
+		REP #$20 : LDA $7EF360 : !SUB.w #$000A : STA $7EF360 : SEP #$20 ; Take 10 rupees
+		JSL ItemSet_SmithSword
+	
+	.done
+		JML.l Smithy_AlreadyGotSword
 ;================================================================================
 CheckMedallionSword:
 	PHB : PHX : PHY
