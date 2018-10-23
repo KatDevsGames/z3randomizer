@@ -122,7 +122,6 @@ do_fade:
 .mute
     STZ !REG_CURRENT_VOLUME
     STZ !REG_MSU_CONTROL
-    STZ !REG_CURRENT_MSU_TRACK
     BRA .set
 .increment
     ADC !VAL_VOLUME_INCREMENT : BCC .set
@@ -154,6 +153,7 @@ command_f1:
     CPX !VAL_COMMAND_FADE_OUT : BNE load_track
     STX !REG_SPC_CONTROL
     STZ !REG_TARGET_VOLUME
+    STZ !REG_CURRENT_MSU_TRACK
     JML spc_continue
 
 load_track:
