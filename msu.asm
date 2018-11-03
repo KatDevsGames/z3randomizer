@@ -122,7 +122,6 @@ do_fade:
 .mute
     STZ !REG_CURRENT_VOLUME
     STZ !REG_MSU_CONTROL
-    STZ !REG_CURRENT_MSU_TRACK
     BRA .set
 .increment
     ADC !VAL_VOLUME_INCREMENT : BCC .set
@@ -154,6 +153,7 @@ command_f1:
     CPX !VAL_COMMAND_FADE_OUT : BNE load_track
     STX !REG_SPC_CONTROL
     STZ !REG_TARGET_VOLUME
+    STZ !REG_CURRENT_MSU_TRACK
     JML spc_continue
 
 load_track:
@@ -176,6 +176,7 @@ pendant_fanfare:
     LDA !REG_MSU_ID_23 : CMP !VAL_MSU_ID_23 : BNE .spc
     LDA !REG_MSU_ID_45 : CMP !VAL_MSU_ID_45 : BNE .spc
     SEP #$20
+    LDA !REG_MSU_STATUS : BIT !FLAG_MSU_STATUS_TRACK_MISSING : BNE .spc
     LDA !REG_MSU_LOAD_FLAG : BNE .continue
     LDA !REG_MSU_STATUS : BIT !FLAG_MSU_STATUS_AUDIO_PLAYING : BEQ .done
 .continue
@@ -194,6 +195,7 @@ crystal_fanfare:
     LDA !REG_MSU_ID_23 : CMP !VAL_MSU_ID_23 : BNE .spc
     LDA !REG_MSU_ID_45 : CMP !VAL_MSU_ID_45 : BNE .spc
     SEP #$20
+    LDA !REG_MSU_STATUS : BIT !FLAG_MSU_STATUS_TRACK_MISSING : BNE .spc
     LDA !REG_MSU_LOAD_FLAG : BNE .continue
     LDA !REG_MSU_STATUS : BIT !FLAG_MSU_STATUS_AUDIO_PLAYING : BEQ .done
 .continue    
