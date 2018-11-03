@@ -594,6 +594,29 @@ HexToDec:
 RTL
 
 ;--------------------------------------------------------------------------------
+; CountBits
+; in: A(b) - Byte to count bits in
+; out: A(b) - sum of bits
+; caller is responsible for setting 8-bit mode and preserving X and Y
+;--------------------------------------------------------------------------------
+CountBits:
+	PHB : PHK : PLB
+	TAX                     ; Save a copy of value
+	LSR #4                  ; Shift down hi nybble, Leave <3> in C
+	TAY                     ; And save <7:4> in Y
+	TXA                     ; Recover value
+	AND #$07                ; Put out <2:0> in X
+	TAX                     ; And save in X
+	LDA NybbleBitCounts, Y  ; Fetch count for Y
+	ADC NybbleBitCounts, X  ; Add count for X & C
+	PLB
+RTL
+
+; Look up table of bit counts in the values $00-$0F
+NybbleBitCounts:
+db #00, #01, #01, #02, #01, #02, #02, #03, #01, #02, #02, #03, #02, #03, #03, #04
+
+;--------------------------------------------------------------------------------
 
 ;--------------------------------------------------------------------------------
 ; HexToDec
