@@ -492,7 +492,7 @@ Music_Skull:
 db $16, $16, $16, $16
 
 org $02D592+$76
-Music_Skul_Drop:
+Music_Skull_Drop:
 db $16, $16, $16, $16
 
 org $02D592+$34
