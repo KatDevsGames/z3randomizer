@@ -128,7 +128,7 @@ OnNewFile:
 		LDA ArrowMode : BEQ .continue ; Customizer Rupee Bow Fix
 		LDA $7EF38E : BEQ .continue ; Anything but zero is good
 			LDA #$01, X : STA $7EF377, X ; Set Arrows to 1
-                .continue
+		.continue
 		
 		SEP #$20 ; set 8-bit accumulator
 		;LDA #$FF : STA !RNG_ITEM_LOCK_IN ; reset rng item lock-in
