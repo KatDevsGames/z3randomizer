@@ -54,11 +54,15 @@ PreOverworld_LoadProperties_ChooseMusic:
     ; if we are in the light world go ahead and set chosen selection
     LDA $7EF3CA : BEQ .checkInverted+4
 
-    LDX.b #$0D ; dark woods theme
+    LDX.b #$0F ; dark woods theme
 
-    ; This music is used in dark woods, and dark death mountain
+    ; This music is used in dark woods
     LDA $8A
-    CMP.b #$40 : BEQ + : CMP.b #$43 : BEQ + : CMP.b #$45 : BEQ + : CMP.b #$47 : BEQ +
+    CMP.b #$40 : BEQ +
+        LDX.b #$0D  ; dark death mountain theme
+
+    ; This music is used in dark death mountain
+    CMP.b #$43 : BEQ + : CMP.b #$45 : BEQ + : CMP.b #$47 : BEQ +
         LDX.b #$09 ; dark overworld theme
     +
 
@@ -133,18 +137,20 @@ Overworld_FinishMirrorWarp:
 .endOfLightWorldChecks
     STX $012C
 
-    LDA $8A : CMP.b #$40 : BEQ .darkWoods
+    LDA $8A : CMP.b #$40 : BNE +
+        LDX #$0F    ; dark woods theme
+        BRA .bunny
+    +
 
     CMP.b #$43 : BEQ .darkMountain
     CMP.b #$45 : BEQ .darkMountain
     CMP.b #$47 : BNE .notDarkMountain
 
 .darkMountain
-    LDA #$09 : STA $012D    ; set storm ambient SFX
+    LDA.b #$09 : STA $012D    ; set storm ambient SFX
+    LDX.b #$0D  ; dark mountain theme
 
-.darkWoods
-    LDX.b #$0D  ; dark mountain/woods theme
-
+.bunny
     LDA $7EF357 : ORA InvertedMode : BNE +
         LDA #$04    ; bunny theme
     +

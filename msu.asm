@@ -159,7 +159,7 @@ msu_check_busy:
     JML spc_continue
 .ready
     LDA !REG_MSU_STATUS : BIT !FLAG_MSU_STATUS_TRACK_MISSING : BEQ .start
-    BRL dungeon_fallback
+    BRL alternate_fallback
 .start
     LDA !VAL_VOLUME_FULL
     STA !REG_TARGET_VOLUME
@@ -238,16 +238,18 @@ load_track:
     STX !REG_CURRENT_MSU_TRACK
     JML spc_continue
 
-dungeon_fallback:
+alternate_fallback:
     LDA !REG_CURRENT_MSU_TRACK : AND #$3F
+    CMP #$0F : BEQ .woods           ;    15: dark woods
     CMP #$23 : !BLT spc_fallback    ;  < 35: normal tracks
     CMP #$2F : !BGE .boss           ;  > 46: boss-specific tracks
     CMP #$25 : BEQ .castle          ;    37: aga tower, fall back to hyrule castle
     BRA .dungeon                    ; 35-46: dungeon-specific tracks
 
+.woods
+    LDA #$0D : BRA .fallback
 .boss
     LDA #$15 : BRA .fallback
-
 .castle
     LDA #$10 : BRA .fallback
 
