@@ -6,7 +6,72 @@
 ;
 ; Author: qwertymodo
 ;
-; Free space used: 0x77DDD-0x77F8A
+; Track List:
+;
+;  1 - Title ~ Link to the Past
+;  2 - Hyrule Field
+;  3 - Time of Falling Rain
+;  4 - The Silly Pink Rabbit
+;  5 - Forest of Mystery
+;  6 - Seal of Seven Maidens
+;  7 - Kakariko Village
+;  8 - Dimensional Shift (Mirror)
+;  9 - Dark Golden Land
+; 10 - Unsealing the Master Sword
+; 11 - Beginning of th Journey
+; 12 - Soldiers of Kakariko Village
+; 13 - Black Mist
+; 14 - Guessing Game House
+; 15 - (Unused)
+; 16 - Majestic Castle
+; 17 - Lost Ancient Ruins
+; 18 - Dank Dungeons
+; 19 - Great Victory!
+; 20 - Safety in the Sanctuary
+; 21 - Anger of the Guardians
+; 22 - Dungeon of Shadows
+; 23 - Fortune Teller
+; 24 - Dank Dungeons (Copy)
+; 25 - Princess Zelda's Rescue
+; 26 - Meeting the Maidens
+; 27 - The Goddess Appears
+; 28 - Priest of the Dark Order
+; 29 - Release of Ganon
+; 30 - Ganon's Message
+; 31 - The Prince of Darkness
+; 32 - Power of the Gods
+; 33 - Epilogue ~ Beautiful Hyrule
+; 34 - Staff Roll
+;
+; Dungeon-specific tracks
+;
+; 35 - Eastern Palace
+; 36 - Desert Palace
+; 37 - Agahnim's Tower
+; 38 - Swamp Palace
+; 39 - Palace of Darkness
+; 40 - Misery Mire
+; 41 - Skull Woods
+; 42 - Ice Palace
+; 43 - Tower of Hera
+; 44 - Thieves' Town
+; 45 - Turtle Rock
+; 46 - Ganon's Tower
+;
+; Bosses
+;
+; 47 - Eastern Palace
+; 48 - Desert Palace
+; 49 - Agahnim's Tower
+; 50 - Swamp Palace
+; 51 - Palace of Darkness
+; 52 - Misery Mire
+; 53 - Skull Woods
+; 54 - Ice Palace
+; 55 - Tower of Hera
+; 56 - Thieves' Town
+; 57 - Turtle Rock
+; 58 - Ganon's Tower
 ;
 ;=======================================
 
@@ -93,7 +158,9 @@ msu_check_busy:
     LDA !REG_MSU_STATUS : BIT !FLAG_MSU_STATUS_AUDIO_BUSY : BEQ .ready
     JML spc_continue
 .ready
-    LDA !REG_MSU_STATUS : BIT !FLAG_MSU_STATUS_TRACK_MISSING : BNE spc_fallback
+    LDA !REG_MSU_STATUS : BIT !FLAG_MSU_STATUS_TRACK_MISSING : BEQ .start
+    BRL dungeon_fallback
+.start
     LDA !VAL_VOLUME_FULL
     STA !REG_TARGET_VOLUME
     STA !REG_CURRENT_VOLUME
@@ -102,14 +169,6 @@ msu_check_busy:
     STA !REG_MSU_CONTROL
     LDA #$00
     STA !REG_MSU_LOAD_FLAG
-    JML spc_continue
-
-spc_fallback:
-    STZ !REG_MSU_CONTROL
-    STZ !REG_CURRENT_MSU_TRACK
-    STZ !REG_TARGET_VOLUME
-    STZ !REG_CURRENT_VOLUME
-    STZ !REG_MSU_VOLUME
     JML spc_continue
 
 do_fade:
@@ -157,9 +216,19 @@ command_f1:
     JML spc_continue
 
 load_track:
-    CPX !REG_CURRENT_MSU_TRACK : BNE .continue
+    CPX !REG_CURRENT_MSU_TRACK : BNE .check_dungeon
     CPX #$1B : BEQ .continue
     JML spc_continue
+.check_dungeon
+    CPX #$11 : BEQ .dungeon
+    CPX #$16 : BEQ .dungeon
+    CPX #$15 : BNE .continue
+; boss
+    LDA $040C : LSR : !ADD #$2D
+    BRA .continue-1
+
+.dungeon
+    LDA $040C : LSR : !ADD #$21 : TAX
 .continue
     STX !REG_MSU_TRACK_LO
     STZ !REG_MSU_TRACK_HI
@@ -167,6 +236,44 @@ load_track:
     LDA.l MSUTrackList,x
     STA !REG_MSU_LOAD_FLAG
     STX !REG_CURRENT_MSU_TRACK
+    JML spc_continue
+
+dungeon_fallback:
+    LDA !REG_CURRENT_MSU_TRACK : AND #$3F
+    CMP #$23 : !BLT spc_fallback    ;  < 35: normal tracks
+    CMP #$2F : !BGE .boss           ;  > 46: boss-specific tracks
+    CMP #$25 : BEQ .castle          ;    37: aga tower, fall back to hyrule castle
+    BRA .dungeon                    ; 35-46: dungeon-specific tracks
+
+.boss
+    LDA #$15 : BRA .fallback
+
+.castle
+    LDA #$10 : BRA .fallback
+
+.dungeon
+    PHB : REP #$10
+        LDX $040C
+        LDA.b #Music_Eastern>>16 : PHA : PLB    ; Set bank to music pointers
+        LDY $00 : PHY
+        REP #$20
+            LDA MSUDungeonFallbackList,X : STA $00
+        SEP #$20
+        LDA ($00)
+    PLY : STY $00 : PLB
+
+.fallback
+    STA !REG_CURRENT_MSU_TRACK
+    STA !REG_MSU_TRACK_LO
+    STZ !REG_MSU_TRACK_HI
+    JML spc_continue
+
+spc_fallback:
+    STZ !REG_MSU_CONTROL
+    STZ !REG_CURRENT_MSU_TRACK
+    STZ !REG_TARGET_VOLUME
+    STZ !REG_CURRENT_VOLUME
+    STZ !REG_MSU_VOLUME
     JML spc_continue
 
 pendant_fanfare:

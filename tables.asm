@@ -1586,18 +1586,36 @@ LowHeartFix:
 	db $08, $08, $10
 
 ;================================================================================
-org $30D000 ; PC 0x185000 - 0x18503F
+org $30D000 ; PC 0x185000 - 0x18505F
 MSUTrackList:
 db $00,$01,$03,$03,$03,$03,$03,$03
 db $01,$03,$01,$03,$03,$03,$03,$03
 db $03,$03,$03,$01,$03,$03,$03,$03
 db $03,$03,$03,$03,$03,$01,$03,$03
-db $03,$01,$01,$FF,$FF,$FF,$FF,$FF
+db $03,$01,$01,$03,$03,$03,$03,$03
+db $03,$03,$03,$03,$03,$03,$03,$FF
 db $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
 db $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
-db $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
+
+MSUDungeonFallbackList:
+dw $0000	; Sewer Escape
+dw $0000	; Hyrule Castle
+dw Music_Eastern
+dw Music_Desert
+dw $0000	; Agahnim's Tower
+dw Music_Swamp
+dw Music_Darkness
+dw Music_Mire
+dw Music_Skull
+dw Music_Ice
+dw Music_Hera
+dw Music_Thieves
+dw Music_TRock
+dw Music_GTower
+dw $0000
+dw $0000
 ;--------------------------------------------------------------------------------
-; 0x185040 - 1850FF (unused)
+; 0x185060 - 1850FF (unused)
 ;--------------------------------------------------------------------------------
 org $30D100 ; PC 0x185100 - 0x18513F
 UnusedTable: ; please do not move this - kkat
