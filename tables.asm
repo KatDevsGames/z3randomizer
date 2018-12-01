@@ -1438,6 +1438,9 @@ dw #9999 ; Rupee Limit
 ; $7F5042 - Tile Upload Offset Override (Low)
 ; $7F5043 - Tile Upload Offset Override (High)
 ; $7F5044 - $7F5046 - NMI Auxiliary Function
+; $7F5047 - MSU-1 Delayed Load Command
+; $7F5048 - MSU-1 Pack Count
+; $7F5049 - MSU-1 Current Pack
 ; $7F5047 - $7F504F - Unused
 ; $7F5050 - $7F506F - Shop Block
 ; $7F5070 - Reserved for OneMind
@@ -1460,7 +1463,7 @@ dw #9999 ; Rupee Limit
 ; $7F5098 - Water Entry Index
 ; $7F5099 - Last Entered Overworld Door ID
 ; $7F509A - (Reserved)
-; $7F509B - MSU Flag
+; $7F509B - Unused
 ; $7F509C - Inverted Mode Duck Map Temporary
 ; $7F509D - Stalfos Bomb Damage Value
 ; $7F509E - Valid Key Loaded

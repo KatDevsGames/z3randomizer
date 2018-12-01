@@ -123,11 +123,13 @@
 !REG_MUSIC_CONTROL = $012C
 !REG_CURRENT_TRACK = $0130
 !REG_CURRENT_COMMAND = $0133
-!REG_MSU_LOAD_FLAG = $7F509B
 
 !REG_SPC_CONTROL = $2140
 !REG_NMI_FLAGS = $4210
 
+!REG_MSU_DELAYED_COMMAND = $7F5047
+!REG_MSU_PACK_COUNT = $7F5048
+!REG_MSU_PACK_CURRENT = $7F5049
 
 !VAL_COMMAND_FADE_OUT = #$F1
 !VAL_COMMAND_FADE_HALF = #$F2
@@ -138,6 +140,35 @@
 !VAL_VOLUME_DECREMENT = #$02
 !VAL_VOLUME_HALF = #$80
 !VAL_VOLUME_FULL = #$FF
+
+msu_init:
+    REP #$20 : SEP #$10
+        LDA #$0000
+        STA !REG_MSU_VOLUME
+        STA !REG_MSU_PACK_COUNT
+
+        LDA !REG_MSU_ID_01 : CMP !VAL_MSU_ID_01 : BNE .done
+        LDA !REG_MSU_ID_23 : CMP !VAL_MSU_ID_23 : BNE .done
+        LDA !REG_MSU_ID_45 : CMP !VAL_MSU_ID_45 : BNE .done
+
+        LDA.w #$0000
+        LDX.b #$FF
+        LDY.b #$01
+        SEP #$20
+.check
+            TYA
+        REP #$20
+        STA !REG_MSU_TRACK
+        !ADD.w #100
+        INX
+        SEP #$20
+            TAY
+.wait
+            LDA !REG_MSU_STATUS : BIT !FLAG_MSU_STATUS_AUDIO_BUSY : BNE .wait
+            LDA !REG_MSU_STATUS : BIT !FLAG_MSU_STATUS_TRACK_MISSING : BEQ .check
+            TXA : STA !REG_MSU_PACK_COUNT
+.done
+    RTL
 
 msu_main:
     SEP #$20    ; set 8-BIT accumulator
@@ -152,7 +183,7 @@ msu_main:
     LDA !REG_MSU_ID_45 : CMP !VAL_MSU_ID_45 : BNE .nomsu
     SEP #$30
     LDX !REG_MUSIC_CONTROL : BNE command_ff
-    LDA !REG_MSU_LOAD_FLAG : BEQ do_fade
+    LDA !REG_MSU_DELAYED_COMMAND : BEQ do_fade
 
 msu_check_busy:
     LDA !REG_MSU_STATUS : BIT !FLAG_MSU_STATUS_AUDIO_BUSY : BEQ .ready
@@ -165,10 +196,10 @@ msu_check_busy:
     STA !REG_TARGET_VOLUME
     STA !REG_CURRENT_VOLUME
     STA !REG_MSU_VOLUME
-    LDA !REG_MSU_LOAD_FLAG
+    LDA !REG_MSU_DELAYED_COMMAND
     STA !REG_MSU_CONTROL
     LDA #$00
-    STA !REG_MSU_LOAD_FLAG
+    STA !REG_MSU_DELAYED_COMMAND
     JML spc_continue
 
 do_fade:
@@ -230,11 +261,28 @@ load_track:
 .dungeon
     LDA $040C : LSR : !ADD #$21 : TAX
 .continue
-    STX !REG_MSU_TRACK_LO
-    STZ !REG_MSU_TRACK_HI
+    LDA #$00 : XBA
+    LDA !REG_MSU_PACK_CURRENT : BEQ +
+
+    -
+        CMP !REG_MSU_PACK_COUNT : !BLT +
+        !SUB !REG_MSU_PACK_COUNT : BRA -
+    +
+
+    PHX : PHA : TXA : PLX
+    REP #$20
+    BEQ +
+    -
+        !ADD.w #100
+        DEX : BNE -
+    +
+        STA !REG_MSU_TRACK
+    SEP #$20
+
     STZ !REG_MSU_CONTROL
+    PLX
     LDA.l MSUTrackList,x
-    STA !REG_MSU_LOAD_FLAG
+    STA !REG_MSU_DELAYED_COMMAND
     STX !REG_CURRENT_MSU_TRACK
     JML spc_continue
 
@@ -262,15 +310,34 @@ alternate_fallback:
             LDA MSUDungeonFallbackList,X : STA $00
         SEP #$20
         LDA ($00)
-    PLY : STY $00 : PLB
+    PLY : STY $00 : SEP #$10 : PLB
 
 .fallback
     STA !REG_CURRENT_MSU_TRACK
-    STA !REG_MSU_TRACK_LO
-    STZ !REG_MSU_TRACK_HI
+    TAX
+
+    LDA #$00 : XBA
+    LDA !REG_MSU_PACK_CURRENT : BEQ +
+
+    -
+        CMP !REG_MSU_PACK_COUNT : !BLT +
+        !SUB !REG_MSU_PACK_COUNT : BRA -
+    +
+
+    PHA : TXA : PLX
+    REP #$20
+    BEQ +
+    -
+        !ADD.w #100
+        DEX : BNE -
+    +
+        STA !REG_MSU_TRACK
+    SEP #$20
     JML spc_continue
 
 spc_fallback:
+    LDA #$00
+    STA !REG_MSU_DELAYED_COMMAND
     STZ !REG_MSU_CONTROL
     STZ !REG_CURRENT_MSU_TRACK
     STZ !REG_TARGET_VOLUME
@@ -286,7 +353,7 @@ pendant_fanfare:
     LDA !REG_MSU_ID_45 : CMP !VAL_MSU_ID_45 : BNE .spc
     SEP #$20
     LDA !REG_MSU_STATUS : BIT !FLAG_MSU_STATUS_TRACK_MISSING : BNE .spc
-    LDA !REG_MSU_LOAD_FLAG : BNE .continue
+    LDA !REG_MSU_DELAYED_COMMAND : BNE .continue
     LDA !REG_MSU_STATUS : BIT !FLAG_MSU_STATUS_AUDIO_PLAYING : BEQ .done
 .continue
     jml pendant_continue
@@ -305,7 +372,7 @@ crystal_fanfare:
     LDA !REG_MSU_ID_45 : CMP !VAL_MSU_ID_45 : BNE .spc
     SEP #$20
     LDA !REG_MSU_STATUS : BIT !FLAG_MSU_STATUS_TRACK_MISSING : BNE .spc
-    LDA !REG_MSU_LOAD_FLAG : BNE .continue
+    LDA !REG_MSU_DELAYED_COMMAND : BNE .continue
     LDA !REG_MSU_STATUS : BIT !FLAG_MSU_STATUS_AUDIO_PLAYING : BEQ .done
 .continue    
     jml crystal_continue
