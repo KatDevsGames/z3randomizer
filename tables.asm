@@ -600,6 +600,7 @@ CrystalPendantFlags:
 ;Crystal 5: $04
 ;Crystal 6: $01
 ;Crystal 7: $08
+;Crystal 8: $80
 ;--------------------------------------------------------------------------------
 ;Dungeons with no drops should match their respective world's normal vanilla prize ;xxx
 ;--------------------------------------------------------------------------------
