@@ -103,9 +103,10 @@ warnpc $A19000
 ;--------------------------------------------------------------------------------
 org $378000
 
-; the ZSNES binary data will cross over to the $38xxxx bank - but we expect this
-; and handle it above.
-check bankcross off
+; the ZSNES binary data will cross over to the $38xxxx bank ...
+; ... but we expect this and handle it above by splitting the dma into two
+; the following check should be active when using asar - the ";@" prefix can be dropped when xkas support is dropped
+;@ check bankcross off
 
 ZSNES_Tiles:
     incbin zsnes_tiles.bin
@@ -116,4 +117,4 @@ ZSNES_TileMap:
 ZSNES_Palette:
     incbin zsnes_pal.bin
 	
-check bankcross on
+;@ check bankcross on
