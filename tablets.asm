@@ -95,7 +95,7 @@ IsMedallion:
 RTL
 ;--------------------------------------------------------------------------------
 LoadNarrowObject:
-	LDA AddReceivedItemExpanded_wide_item_flag, X : STA ($92), Y ; AddReceiveItem.wide_item_flag?
+	LDA.l AddReceivedItemExpanded_wide_item_flag, X : STA ($92), Y ; AddReceiveItem.wide_item_flag?
 RTL
 ;--------------------------------------------------------------------------------
 DrawNarrowDroppedObject:
@@ -114,8 +114,8 @@ DrawNarrowDroppedObject:
     
     ; always use the same character graphic (0x34)
     LDA.b #$34 : STA ($90), Y : INY
-    
-    LDA AddReceivedItemExpanded_properties, X : BPL .valid_lower_properties
+
+    LDA.l AddReceivedItemExpanded_properties, X : BPL .valid_lower_properties
     
     LDA $74
 

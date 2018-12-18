@@ -262,13 +262,7 @@ DialogItemReceive:
 		LDA.w #$FFFF
 		BRA .done
 	+
-	; need to indicate to Asar that we know Ancilla_ReceiveItem_item_messages
-	; is in the $08 databank, so that it uses the lower 16 bits of the label
-	; for LDA {abs},Y
-	bank $08
-	LDA Ancilla_ReceiveItem_item_messages, Y
-	bank auto
-
+	LDA.w Ancilla_ReceiveItem_item_messages, Y
 	.done
 	CMP.w #$FFFF
 RTL
