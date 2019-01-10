@@ -1392,7 +1392,9 @@ dw #9999 ; Rupee Limit
 ; $7F5044 - $7F5046 - NMI Auxiliary Function
 ; $7F5047 - $7F504F - Unused
 ; $7F5050 - $7F506F - Shop Block
-; $7F5070 - $7F507D - Unused
+; $7F5070 - Reserved for OneMind
+; $7F5071 - Reserved for OneMind
+; $7F5072 - $7F507D - Unused
 ; $7F507E - Clock Status
 ; $7F507F - Always Zero
 ; $7F5080 - $7F5083 - Clock Hours
