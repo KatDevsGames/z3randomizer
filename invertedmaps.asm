@@ -811,7 +811,7 @@ RTS
 
 map051:
 {
-LDA #$037D : STA $22A8
+LDA #$0034 : STA $22A8
 RTS
 }
 
