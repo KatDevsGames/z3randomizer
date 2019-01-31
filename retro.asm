@@ -40,7 +40,7 @@ DecrementArrows:
 	.rupees
 		LDA $7EF340 : CMP.b #$01 : BNE .has_arrow
 			LDA.b #$00 : RTL
-		.has_arrow: 
+	.has_arrow
 		LDA $7EF340 : AND.b #$01 : BEQ +
 			LDA.b $0B99 : BNE + ; Arrow Game active and has credits left
 			LDA.b $0B9A : BNE + ; Arrow Game active and on last arrow
