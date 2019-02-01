@@ -120,17 +120,17 @@ OnNewFile:
 		LDA.l StartingTime : STA $7EF454
 		LDA.l StartingTime+2 : STA $7EF454+2
 
-		LDX.w #$00 : - ; copy over starting equipment
+		LDX.w #$004E : - ; copy over starting equipment
 			LDA StartingEquipment, X : STA $7EF340, X
-			INX : INX
-		CPX.w #$004F : !BLT -
-		
-		LDA ArrowMode : BEQ .continue ; Customizer Rupee Bow Fix
-		LDA $7EF38E : BEQ .continue ; Anything but zero is good
-			LDA #$01, X : STA $7EF377, X ; Set Arrows to 1
-		.continue
+			DEX : DEX
+		BPL -
 		
 		SEP #$20 ; set 8-bit accumulator
+		LDA.l ArrowMode : BEQ + ; Customizer Rupee Bow Fix
+		LDA.l !INVENTORY_SWAP_2 : AND.b #$C0 : BEQ + ; check if we're starting with bow and/or silvers
+			LDA.b #$01 : STA.l $7EF377 ; Set arrows to 1 so we can shoot
+		+
+		
 		;LDA #$FF : STA !RNG_ITEM_LOCK_IN ; reset rng item lock-in
 		LDA.l PreopenCurtains : BEQ +
 			LDA.b #$80 : STA $7EF061 ; open aga tower curtain

@@ -25,7 +25,7 @@ BgGraphicsLoading:
     ; We're loading the floor tiles in Ice Palace. Instead of the normal file,
     ; load another one that replaces the bridge tiles with the Bombos medallion
 
-    LDA $FFFFFF
+    ;LDA $FFFFFF
 
     LDA.b #IcePalaceFloorGfx>>16
     STA $02
