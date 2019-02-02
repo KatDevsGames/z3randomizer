@@ -795,7 +795,7 @@ db #$01 ; #00 = Fix Off (Default) - #$01 = Fix On
 ;================================================================================
 org $308175 ; PC 0x180175 - 0x180179
 ArrowMode:
-db #$01 ; #00 = Normal (Default) - #$01 = Rupees
+db #$00 ; #00 = Normal (Default) - #$01 = Rupees
 ArrowModeWoodArrowCost: ; keep these together
 dw #$000A ; #$000A = 10 (Default)
 ArrowModeSilverArrowCost: ; keep these together

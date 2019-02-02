@@ -38,14 +38,21 @@ DecrementArrows:
 		DEC : STA $7EF377 : INC
 		BRA .done
 	.rupees
-		LDA $7EF377 : BEQ .done ; don't have arrows, we're done
-		LDA $7EF340 : AND.b #$01 : BEQ +
-			LDA.b $0B99 : BNE + ; Arrow Game active and has credits left
-			LDA.b $0B9A : BNE + ; Arrow Game active and on last arrow
-			LDA.b #$00 : RTL
-		+
+		REP #$20
+		LDA.b $A0 : CMP #$0111 : BNE .not_archery_game
+			LDA.b $A2 : BNE .not_archery_game ; in overworld
+			SEP #$20
+			LDA.w $0B9A : BEQ .shoot_arrow ; arrow game active
+			LDA.b #$00 : BRA .done
+		
+		.not_archery_game
+		SEP #$20
+		LDA.l $7EF377 : BNE .shoot_arrow ; check if we have arrows
+			BRA .done
+		
+		.shoot_arrow
 		PHX
-		REP #$20 ; set 16-bit accumulator
+		REP #$20
 		LDA $7EF360 : BEQ +
 			PHA : LDA $7EF340 : DEC : AND #$0002 : TAX : PLA
 			!SUB.l ArrowModeWoodArrowCost, X ; CMP.w #$0000
