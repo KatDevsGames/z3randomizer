@@ -39,14 +39,12 @@ DecrementArrows:
 		BRA .done
 	.rupees
 		REP #$20
-		LDA.b $A0 : CMP #$0111 : BNE .not_archery_game
-			LDA.b $A2 : BNE .not_archery_game ; in overworld
-			SEP #$20
+		LDA.b $A0 : CMP #$0111 : SEP #$20 : BNE .not_archery_game
+			LDA.b $1B : BEQ .not_archery_game ; in overworld
 			LDA.w $0B9A : BEQ .shoot_arrow ; arrow game active
 			LDA.b #$00 : BRA .done
 		
 		.not_archery_game
-		SEP #$20
 		LDA.l $7EF377 : BNE .shoot_arrow ; check if we have arrows
 			BRA .done
 		
