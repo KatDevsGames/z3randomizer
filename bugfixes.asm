@@ -138,3 +138,13 @@ TryToSpawnCrystalUntilSuccess:
 	STZ $AE ; the "trying to spawn crystal" flag
 	STZ $AF ; the "trying to spawn pendant" flag
 RTL
+
+;--------------------------------------------------------------------------------
+; Fix crystal not spawning when using somaria vs boss
+WallmasterCameraFix:
+	STZ $A7    ; disable vertical camera scrolling for current room
+	REP #$20
+	STZ $0618  ; something about scrolling, setting these to 0 tricks the game 
+	STZ $061A  ; into thinking we're at the edge of the room so it doesn't scroll.
+	SEP #$20
+	JML Sound_SetSfx3PanLong ; what we wrote over, also this will RTL
