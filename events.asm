@@ -125,6 +125,7 @@ OnNewFile:
 			DEX : DEX
 		BPL -
 		
+		SEP #$20 ; set 8-bit accumulator
 		;LDA #$FF : STA !RNG_ITEM_LOCK_IN ; reset rng item lock-in
 		LDA.l PreopenCurtains : BEQ +
 			LDA.b #$80 : STA $7EF061 ; open aga tower curtain
