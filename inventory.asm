@@ -209,7 +209,6 @@ AddInventory:
 		BRL .incrementCounts
 	+ CPY.b #$29 : BNE + ; Mushroom
 		LDA !INVENTORY_SWAP : ORA #$28 : STA !INVENTORY_SWAP
-		LDA !INVENTORY_SWAP : ORA #$08 : STA !INVENTORY_SWAP
 		BRL .incrementCounts
 	+ CPY.b #$0D : BNE + ; Magic Powder
 		LDA !INVENTORY_SWAP : ORA #$10 : STA !INVENTORY_SWAP
