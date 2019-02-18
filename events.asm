@@ -125,12 +125,6 @@ OnNewFile:
 			DEX : DEX
 		BPL -
 		
-		SEP #$20 ; set 8-bit accumulator
-		LDA.l ArrowMode : BEQ + ; Customizer Rupee Bow Fix
-		LDA.l !INVENTORY_SWAP_2 : AND.b #$C0 : BEQ + ; check if we're starting with bow and/or silvers
-			LDA.b #$01 : STA.l $7EF377 ; Set arrows to 1 so we can shoot
-		+
-		
 		;LDA #$FF : STA !RNG_ITEM_LOCK_IN ; reset rng item lock-in
 		LDA.l PreopenCurtains : BEQ +
 			LDA.b #$80 : STA $7EF061 ; open aga tower curtain
