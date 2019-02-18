@@ -203,7 +203,7 @@ DrawPlayerFileShared:
 	++
 
 	; Mushroom
-	LDA.l !FS_INVENTORY_SWAP : AND.w #$0020 : BEQ +
+	LDA.l !FS_INVENTORY_SWAP : AND.w #$000F : BEQ +
 		%fs_drawItem(3,18,FileSelectItems_mushroom)
 		BRA ++
 	+
