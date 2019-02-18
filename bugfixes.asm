@@ -148,3 +148,10 @@ WallmasterCameraFix:
 	STZ $061A  ; into thinking we're at the edge of the room so it doesn't scroll.
 	SEP #$20
 	JML Sound_SetSfx3PanLong ; what we wrote over, also this will RTL
+
+;--------------------------------------------------------------------------------
+; Fix spawning with more hearts than capacity when less than 3 heart containers
+LowHeartFix:
+	org $09F4AC ; <- module_death.asm:331
+	db $08, $08, $10
+;--------------------------------------------------------------------------------
