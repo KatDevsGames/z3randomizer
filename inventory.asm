@@ -232,6 +232,9 @@ AddInventory:
 		BRL .incrementCounts
 	+ CPY.b #$3B : BNE + ; Bow & Silver Arrows
 		LDA !INVENTORY_SWAP_2 : ORA #$40 : STA !INVENTORY_SWAP_2
+		LDA ArrowMode : BNE +++
+			LDA !INVENTORY_SWAP_2 : ORA #$80 : STA !INVENTORY_SWAP_2 ; activate wood arrows when not in rupee bow
+		+++
 		BRL .incrementCounts
 	+ CPY.b #$43 : BNE + ; Single arrow
 		LDA ArrowMode : BEQ +++
