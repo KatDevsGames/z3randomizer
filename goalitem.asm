@@ -13,7 +13,7 @@ GoalItemGanonCheck:
 		
 		.fail
 		LDA $0D80, X : CMP.b #17 : !BLT .success ; decimal 17 because Acmlm's chart is decimal
-		LDA.b #$40 : STA $0E60, X ; make Ganon completely impervious to damage
+		LDA $0E60, X: AND.b #$40 : STA $0E60, X ; make Ganon completely impervious to damage
 		LDA.b #$00
 RTL
 		.success
