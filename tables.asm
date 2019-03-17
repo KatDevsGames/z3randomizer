@@ -1221,6 +1221,9 @@ db $04
 ;6A:Goal Item (Single/Triforce)
 ;6B:Goal Item (Multi/Power Star)
 
+;6C:Server Request Synchronous
+;6E:Server Request Asychronous
+
 ;DO NOT PLACE FREE DUNGEON ITEMS WITHIN THEIR OWN DUNGEONS - USE THE NORMAL VARIANTS
 
 ;70 - Map of Light World
