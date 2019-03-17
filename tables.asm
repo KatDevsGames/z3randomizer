@@ -1222,7 +1222,7 @@ db $04
 ;6B:Goal Item (Multi/Power Star)
 
 ;6C:Server Request Synchronous
-;6E:Server Request Asychronous
+;6D:Server Request Asychronous
 
 ;DO NOT PLACE FREE DUNGEON ITEMS WITHIN THEIR OWN DUNGEONS - USE THE NORMAL VARIANTS
 
