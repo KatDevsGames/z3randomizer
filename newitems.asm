@@ -29,6 +29,8 @@
 ; #$63 - RNG Pool Item (Multi)
 ; #$6A - Goal Item (Single/Triforce)
 ; #$6B - Goal Item (Multi/Power Star)
+; #$6C - Server Request Synchronous
+; #$6D - Server Request Asychronous
 ; #$70 - Maps
 ; #$80 - Compasses
 ; #$90 - Big Keys
