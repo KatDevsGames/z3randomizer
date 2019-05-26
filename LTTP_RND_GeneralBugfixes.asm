@@ -52,8 +52,10 @@ db #$20, #$18, #$07, #$23 ; year/month/day
 ;$7EF41C[w] - Programmable Item #2
 ;$7EF41E[w] - Programmable Item #3
 ;$7EF418 - Goal Item Counter
+;$7EF419 - Service Sequence
 ;$7EF420 - $7EF466 - Stat Tracking Bank 1
 ;$7EF450 - $7EF45F - RNG Item (Single) Flags
+;$7EF4A0 - $7EF4A7 - Service Request Block
 
 !MS_GOT = "$7F5031"
 !DARK_WORLD = "$7EF3CA"
@@ -175,6 +177,8 @@ incsrc newhud.asm
 incsrc compasses.asm
 incsrc password.asm
 incsrc enemy_adjustments.asm
+incsrc hudtext.asm
+incsrc servicerequest.asm
 warnpc $A58000
 
 ;org $228000 ; contrib area
@@ -211,7 +215,7 @@ warnpc $31A000
 
 org $31A000
 GFX_HUD_Items:
-incbin c2807_v3.gfx
+incbin c2807_v4.gfx
 warnpc $31A800
 
 org $31A800

@@ -1442,11 +1442,7 @@ dw #9999 ; Rupee Limit
 ; $7F50D0 - $7F50FF - Block Cypher Parameters
 ; $7F5100 - $7F51FF - Block Cypher Buffer
 ; $7F5200 - $7F52FF - RNG Pointer Block
-
 ; $7F5300 - $7F53FF - Multiworld Block
-;	$00 - $0F - RX Buffer
-;	$10 - $1F - TX Buffer
-;	$20 - $FF - Reserved
 
 ; $7F5700 - $7F57FF - Dialog Buffer
 ;
