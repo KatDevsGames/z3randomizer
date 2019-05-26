@@ -866,7 +866,11 @@ db #$00 ; #$00 = DNF (Default) - #$01 = Sign Change (Requires TimerRestart == 1)
 TimerRestart:
 db #$00 ; #$00 = Locked (Default) - #$01 = Restart
 ;--------------------------------------------------------------------------------
-; 0x180193 - 0x1801FF (unused)
+org $308193 ; PC 0x180193
+ServerRequestMode:
+db #$00 ; #$00 = Synchronous (Default) - #$01 = Asychronous
+;--------------------------------------------------------------------------------
+; 0x180194 - 0x1801FF (unused)
 ;================================================================================
 org $308200 ; PC 0x180200 - 0x18020F
 RedClockAmount:
@@ -1221,8 +1225,8 @@ db $04
 ;6A:Goal Item (Single/Triforce)
 ;6B:Goal Item (Multi/Power Star)
 
-;6C:Server Request Synchronous
-;6D:Server Request Asychronous
+;6C:Server Request Item
+;6D:Server Request Item (Dungeon Drop)
 
 ;DO NOT PLACE FREE DUNGEON ITEMS WITHIN THEIR OWN DUNGEONS - USE THE NORMAL VARIANTS
 
