@@ -13,7 +13,7 @@ LockAgahnimDoors:
 	+ : CMP.w #$0002 : BNE +
 		JSR.w LockAgahnimDoorsCore : BEQ .unlock
 		SEP #$30
-		JSL.l CheckEnoughCrystals
+		JSL.l CheckEnoughCrystalsForTower
 		REP #$30
 		BEQ .crystalOrUnlock
 		LDA #$0001 : RTL

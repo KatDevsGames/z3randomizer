@@ -153,7 +153,7 @@ db #$00
 ; #$03 = Require Crystals and Aga2
 ; #$04 = Require Crystals
 ; #$05 = Require 100 Goal Items
-; #$06 = Require "NumberOfCrystalsRequired"
+; #$06 = Require "NumberOfCrystalsRequiredForGanon"
 ;--------------------------------------------------------------------------------
 org $30803F ; PC 0x18003F
 HammerableGanon:
@@ -257,10 +257,11 @@ CrystalPendantFlags_2:
 ;Crystal: $40
 ;--------------------------------------------------------------------------------
 org $30805E ; PC 0x18005E - Number of crystals required to enter GT
-NumberOfCrystalsRequired:
+NumberOfCrystalsRequiredForTower:
 db #$07 ; #$07 = 7 Crystals
-;--------------------------------------------------------------------------------
-; 0x18005F - 0x18005F (unused)
+org $30805F ; PC 0x18005F - Number of crystals required to kill GT
+NumberOfCrystalsRequiredForGanon:
+db #$07 ; #$07 = 7 Crystals
 ;--------------------------------------------------------------------------------
 org $308060 ; PC 0x180060 - 0x18007E
 ProgrammableItemLogicJump_1:

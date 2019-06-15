@@ -327,14 +327,14 @@ PreventEnterOnBonk_BRANCH_IX:
 ; Crystals Mode
 ;--------------------------------------------------------------------------------
 org $099B7B ; <- ancilla_init.asm : 4136 (LDA $7EF37A : AND.b #$7F : CMP.b #$7F)
-JSL.l CheckEnoughCrystals
+JSL.l CheckEnoughCrystalsForTower
 NOP #4
 db #$90 ; BCC
 ;--------------------------------------------------------------------------------
 org $08CE0C ; <- 44E0C - ancilla_break_tower_seal.asm : 168 (BEQ #$03 : JSR BreakTowerSeal_ExecuteSparkles : LDX.b #$06)
-JML.l GetRequriedCrystals
+JML.l GetRequriedCrystalsForTower
 NOP #3
-GetRequriedCrystals_continue:
+GetRequriedCrystalsForTower_continue:
 ;--------------------------------------------------------------------------------
 org $08CF19 ; <- 44F19 - ancilla_break_tower_seal.asm : 336 (TXA : AND.b #$07 : TAX)
 JSL.l GetRequriedCrystalsInX
