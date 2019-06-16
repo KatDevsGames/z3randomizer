@@ -29,8 +29,8 @@
 ; #$63 - RNG Pool Item (Multi)
 ; #$6A - Goal Item (Single/Triforce)
 ; #$6B - Goal Item (Multi/Power Star)
-; #$6C - Server Request Synchronous
-; #$6D - Server Request Asychronous
+; #$6D- Server Request
+; #$6E - Server Request (Dungeon Drop)
 ; #$70 - Maps
 ; #$80 - Compasses
 ; #$90 - Big Keys
@@ -295,6 +295,12 @@ AddReceivedItemExpandedGetItem:
 		LDA GoalItemRequirement : BEQ ++
 		LDA !GOAL_COUNTER : INC : STA !GOAL_COUNTER
 		CMP GoalItemRequirement : !BLT ++ : JSL.l ActivateGoal : ++
+		BRL .done
+	+ CMP.b #$6D : BNE + ; Server Request
+		JSL ItemGetServiceRequest
+		BRL .done
+	+ CMP.b #$6E : BNE + ; Server Request (Dungeon Drop)
+		JSL ItemGetServiceRequest
 		BRL .done
 	+ CMP.b #$70 : !BLT + : CMP.b #$80 : !BGE + ; Free Map
 		AND #$0F : CMP #$08 : !BGE ++

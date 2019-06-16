@@ -147,6 +147,8 @@ RTL
 HeartPieceSpritePrep:
 	PHA
 	
+	LDA ServerRequestMode : BEQ + :  : +
+	
 	LDA #$01 : STA !REDRAW
 	LDA $5D : CMP #$14 : BEQ .skip ; skip if we're mid-mirror
 
