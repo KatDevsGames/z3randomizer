@@ -1545,6 +1545,12 @@ ShopContentsTable:
 db $01, $51, $64, $00, $07, $FF, $00, $00
 db $01, $53, $64, $00, $07, $FF, $00, $00
 db $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF
+
+; Fix spawning with more hearts than capacity when less than 3 heart containers
+LowHeartFix:
+	org $09F4AC ; <- module_death.asm:331
+	db $08, $08, $10
+
 ;================================================================================
 org $30D000 ; PC 0x185000 - 0x18503F
 MSUTrackList:
