@@ -27,6 +27,7 @@
 ; #$61 - Progressive Lifting Glove
 ; #$62 - RNG Pool Item (Single)
 ; #$63 - RNG Pool Item (Multi)
+; #$64 - Progressive Bow
 ; #$6A - Goal Item (Single/Triforce)
 ; #$6B - Goal Item (Multi/Power Star)
 ; #$6D- Server Request
@@ -191,6 +192,15 @@ AddReceivedItemExpandedGetItem:
 			LDA.b #03 : STA $7EF340 ; set bow to silver
 		++
 		BRL .done
+	+ CMP.b #$3B : BNE + ; Silver Bow
+		LDA $7EF376 : BNE + ; check arrows
+			LDA.b #$03 : BRA ++ ; bow without arrow
+		+
+			LDA.b #$04 ; bow with arrow
+		++
+		STA $7EF340
+		LDA !INVENTORY_SWAP_2 : ORA #$40 : STA !INVENTORY_SWAP_2 ; mark silver bow on y-toggle
+		BRL .done
 	+ CMP.b #$4C : BNE + ; 50 bombs
 		;LDA.b #$07 : STA $7EF370 ; upgrade bombs
 		LDA.b #50 : !SUB.l StartingMaxBombs : STA $7EF370 ; upgrade bombs
@@ -284,6 +294,8 @@ AddReceivedItemExpandedGetItem:
 	+ CMP.b #$62 : BNE + ; RNG Pool Item (Single)
 		BRL .done
 	+ CMP.b #$63 : BNE + ; RNG Pool Item (Multi)
+		BRL .done
+	+ CMP.b #$64 : BNE + ; Progressive Bow
 		BRL .done
 	+ CMP.b #$6A : BNE + ; Goal Collectable (Single/Triforce)
 		JSL.l ActivateGoal
@@ -441,13 +453,13 @@ AddReceivedItemExpanded:
 				LDA !PROGRESSIVE_SHIELD : !ADD.b #$40 : STA !PROGRESSIVE_SHIELD : BRL .done
 			+ : CMP.b #$40 : BNE + ; Fighter Shield
 				LDA.b #$05 : STA $02D8
-				LDA !PROGRESSIVE_SHIELD : !ADD.b #$40 : STA !PROGRESSIVE_SHIELD : BRA .done
+				LDA !PROGRESSIVE_SHIELD : !ADD.b #$40 : STA !PROGRESSIVE_SHIELD : BRL .done
 			+ ; Everything Else
 				LDA.b #$06 : STA $02D8
-				LDA !PROGRESSIVE_SHIELD : !ADD.b #$40 : STA !PROGRESSIVE_SHIELD : BRA .done
+				LDA !PROGRESSIVE_SHIELD : !ADD.b #$40 : STA !PROGRESSIVE_SHIELD : BRL .done
 		++ : CMP.b #$60 : BNE ++ ; Progressive Armor
 			LDA $7EF35B : CMP.l ProgressiveArmorLimit : !BLT +
-				LDA.l ProgressiveArmorReplacement : STA $02D8 : BRL .done
+				LDA.l ProgressiveArmorReplacement : STA $02D8 : BRA .done
 			+ : CMP.b #$00 : BNE + ; No Armor
 				LDA.b #$22 : STA $02D8 : BRA .done
 			+ ; Everything Else
@@ -457,6 +469,11 @@ AddReceivedItemExpanded:
 				LDA.b #$1B : STA $02D8 : BRA .done
 			+ ; Everything Else
 				LDA.b #$1C : STA $02D8 : BRA .done
+		++ : CMP.b #$64 : BNE ++ ; Progressive Bow
+			LDA $7EF340 : BNE + ; No Bow
+				LDA.b #$3A : STA $02D8 : BRA .done
+			+ ; Any Bow
+				LDA.b #$3B : STA $02D8 : BRA .done
 		++ : CMP.b #$62 : BNE ++ ; RNG Item (Single)
 			JSL.l GetRNGItemSingle : STA $02D8
 			XBA : JSR.w MarkRNGItemSingle
@@ -503,7 +520,8 @@ AddReceivedItemExpanded:
 	db -4, -4, -4 ; Red, Blue & Green Clocks
 	db -4, -4, -4, -4 ; Progressive Sword, Shield, Armor & Gloves
 	db -4, -4 ; RNG Single & Multi
-	db -4, -4, -4, -4, -4, -4 ; Unused
+	db -4 ; Progressive Bow
+	db -4, -4, -4, -4, -4 ; Unused
 	db -4, -4, -4 ; Goal Item Single, Multi & Alt Multi
 	db -4, -4, -4 ; Unused
 	db -4, -4, -4, -4, -4, -4, -4, -4, -4, -4, -4, -4, -4, -4, -4, -4 ; Free Map
@@ -541,7 +559,8 @@ AddReceivedItemExpanded:
 	db  0, 0, 0 ; Red, Blue & Green Clocks
 	db  0, 0, 0, 0 ; Progressive Sword, Shield, Armor & Gloves
 	db  0, 0 ; RNG Single & Multi
-	db  0, 0, 0, 0, 0, 0 ; Unused
+	db  0 ; Progressive Bow
+	db  0, 0, 0, 0, 0 ; Unused
 	db  0, 0, 0 ; Goal Item Single, Multi & Alt Multi
 	db  0, 0, 0 ; Unused
 	db  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ; Free Map
@@ -580,7 +599,8 @@ AddReceivedItemExpanded:
 	db $48, $48, $48 ; Red, Blue & Green Clocks
 	db $FF, $FF, $04, $0D ; Progressive Sword, Shield, Armor & Gloves
 	db $FF, $FF ; RNG Single & Multi
-	db $FF, $FF, $FF, $FF, $FF, $FF ; Unused
+	db $FF, ; Progressive Bow
+	db $FF, $FF, $FF, $FF, $FF ; Unused
 	db $49, $4A, $49 ; Goal Item Single, Multi & Alt Multi
 	db $FF, $FF, $FF ; Unused
 	db $21, $21, $21, $21, $21, $21, $21, $21, $21, $21, $21, $21, $21, $21, $21, $21 ; Free Map
@@ -623,7 +643,8 @@ AddReceivedItemExpanded:
 	db $02, $02, $02 ; Red, Blue & Green Clocks
 	db $02, $02, $02, $02 ; Progressive Sword, Shield, Armor & Gloves
 	db $02, $02 ; RNG Single & Multi
-	db $02, $02, $02, $02, $02, $02 ; Unused
+	db $02 ; Progressive Bow
+	db $02, $02, $02, $02, $02 ; Unused
 	db $02, $02, $02 ; Goal Item Single, Multi & Alt Multi
 	db $02, $02, $02 ; Unused
 	db $02, $02, $02, $02, $02, $02, $02, $02, $02, $02, $02, $02, $02, $02, $02, $02 ; Free Map
@@ -663,7 +684,8 @@ AddReceivedItemExpanded:
 	db  1, 2, 4 ; Red, Blue & Green Clocks
 	db  $FF, $FF, $FF, $FF ; Progressive Sword, Shield, Armor & Gloves
 	db  $FF, $FF ; RNG Single & Multi
-	db  0, 0, 0, 0, 0, 0 ; Unused
+	db  0 ; Progressive Bow
+	db  0, 0, 0, 0, 0 ; Unused
 	db  4, 4, 4 ; Goal Item Single, Multi & Alt Multi
 	db  0, 0, 0 ; Unused
 	db  4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4 ; Free Map
@@ -703,7 +725,8 @@ AddReceivedItemExpanded:
 	dw $F454, $F454, $F454 ; Red, Blue & Green Clocks
 	dw $F359, $F35A, $F35B, $F354 ; Progressive Sword, Shield, Armor & Gloves
 	dw $F36A, $F36A ; RNG Single & Multi
-	dw $F36A, $F36A, $F36A, $F36A, $F36A, $F36A ; Unused
+	dw $F340 ; Progressive Bow
+	dw $F36A, $F36A, $F36A, $F36A, $F36A ; Unused
 	dw $F36A, $F36A, $F36A ; Goal Item Single, Multi & Alt Multi
 	dw $F36A, $F36A, $F36A ; Unused
 	dw $F36A, $F36A, $F36A, $F36A, $F36A, $F36A, $F36A, $F36A, $F36A, $F36A, $F36A, $F36A, $F36A, $F36A, $F36A, $F36A ; Free Map
@@ -745,7 +768,8 @@ AddReceivedItemExpanded:
 	db $FF, $FF, $FF ; Red, Blue & Green Clocks
 	db $FF, $FF, $FF, $FF ; Progressive Sword, Shield, Armor & Gloves
 	db $FF, $FF ; RNG Single & Multi
-	db $FF, $FF, $FF, $FF, $FF, $FF ; Unused
+	db $FF ; Progressive Bow
+	db $FF, $FF, $FF, $FF, $FF ; Unused
 	db $FF, $FF, $FF ; Goal Item Single, Multi & Alt Multi
 	db $FF, $FF, $FF ; Unused
 	db $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF ; Free Map
@@ -829,7 +853,8 @@ Link_ReceiveItemAlternatesExpanded:
 	db -1, -1, -1 ; Red, Blue & Green Clocks
 	db -1, -1, -1, -1 ; Progressive Sword, Shield, Armor & Gloves
 	db -1, -1 ; RNG Single & Multi
-	db -1, -1, -1, -1, -1, -1 ; Unused
+	db -1 ; Progressive Bow
+	db -1, -1, -1, -1, -1 ; Unused
 	db -1, -1 ; Goal Item Single, Multi & Alt Multi
 	db -1, -1, -1, -1 ; Unused
 	db -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1 ; Free Map

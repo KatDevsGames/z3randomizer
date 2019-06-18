@@ -75,6 +75,12 @@ RTL
 			LDA.b #$20 : RTL
 		+ ; Everything Else
 			LDA.b #$2E : RTL
+	++ : CMP.b #$F8 : BNE ++ ; Progressive Bow
+		LDA $7EF340
+		CMP.b #$00 : BNE + ; No Bow
+			LDA.b #$29 : RTL
+		+ ; Any Bow
+			LDA.b #$2A : RTL
 	++
 RTL
 
@@ -110,7 +116,8 @@ RTL
 	;6x
 	db $FD, $0D ; Progressive Armor & Gloves
 	db $FA, $FB ; RNG Single & Multi
-	db $FF, $FF, $FF, $FF, $FF, $FF ; Unused
+	db $F8 ; Progressive Bow
+	db $FF, $FF, $FF, $FF, $FF ; Unused
 	db $49, $4A, $49 ; Goal Item Single, Multi & Alt Multi
 	db $FF, $FF, $FF ; Unused
 	
@@ -204,6 +211,11 @@ RTL
 			LDA.b #$02 : RTL
 		+ ; Everything Else
 			LDA.b #$08 : RTL
+	++ : CMP.b #$F8 : BNE ++ ; Progressive Bow
+		LDA $7EF354 : BNE + ; No Bow
+			LDA.b #$08 : RTL
+		+ ; Any Bow
+			LDA.b #$02 : RTL
 	++ : CMP.b #$FA : BNE ++ ; RNG Item (Single)
 		JSL.l GetRNGItemSingle : JMP GetSpritePalette
 	++ : CMP.b #$FB : BNE ++ ; RNG Item (Multi)
@@ -239,7 +251,8 @@ RTL
 	db $02, $04, $08 ; Red, Blue & Green Clocks
 	db $FD, $FE, $FF, $FC ; Progressive Sword, Shield, Armor & Gloves
 	db $FA, $FB ; RNG Single & Multi
-	db $00, $00, $00, $00, $00, $00 ; Unused
+	db $F8 ; Progressive Bow
+	db $00, $00, $00, $00, $00 ; Unused
 	db $08, $08, $08 ; Goal Item Single, Multi & Alt Multi
 	db $00, $00, $00 ; Unused
 	db $08, $08, $08, $08, $08, $08, $08, $08, $08, $08, $08, $08, $08, $08, $08, $08 ; Free Map
