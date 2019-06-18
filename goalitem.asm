@@ -75,15 +75,20 @@ GetRequriedCrystalsInX:
 	+ : DEC : TAX
 RTL
 ;--------------------------------------------------------------------------------
-CheckEnoughCrystals:
+CheckEnoughCrystalsForGanon:
 	LDA InvincibleGanon : CMP #$06 : BNE .normal
-	.other
 	PHX : PHY
 	LDA $7EF37A : JSL CountBits ; the comparison is against 1 less
 	PLY : PLX
-	CMP.l NumberOfCrystalsRequired
+	CMP.l NumberOfCrystalsRequiredForGanon
 RTL
-
 	.normal
 	LDA $7EF37A : AND.b #$7F : CMP.b #$7F ; thing we wrote over
+RTL
+;--------------------------------------------------------------------------------
+CheckEnoughCrystalsForTower:
+	PHX : PHY
+	LDA $7EF37A : JSL CountBits ; the comparison is against 1 less
+	PLY : PLX
+	CMP.l NumberOfCrystalsRequiredForTower
 RTL
