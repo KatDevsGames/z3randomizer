@@ -3,12 +3,12 @@
 ;================================================================================
 !INVENTORY_SWAP = "$7EF38C"
 ; Item Tracking Slot
-; brmp-skf
+; brmpnskf
 ; b = blue boomerang
 ; r = red boomerang
-; m = mushroom
+; m = mushroom current
 ; p = magic powder
-; -
+; n = mushroom past
 ; s = shovel
 ; k = fake flute
 ; f = working flute
@@ -208,7 +208,7 @@ AddInventory:
 		LDA !INVENTORY_SWAP : ORA #$40 : STA !INVENTORY_SWAP
 		BRL .incrementCounts
 	+ CPY.b #$29 : BNE + ; Mushroom
-		LDA !INVENTORY_SWAP : ORA #$20 : STA !INVENTORY_SWAP
+		LDA !INVENTORY_SWAP : ORA #$28 : STA !INVENTORY_SWAP
 		BRL .incrementCounts
 	+ CPY.b #$0D : BNE + ; Magic Powder
 		LDA !INVENTORY_SWAP : ORA #$10 : STA !INVENTORY_SWAP
