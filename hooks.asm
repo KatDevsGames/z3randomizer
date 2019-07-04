@@ -2275,3 +2275,11 @@ Dungeon_OpenKeyedObject_bigChest:
 org $01EC38 ; <- 0EC38 - bank01.asm : 13809 (.smallChest)
 Dungeon_OpenKeyedObject_smallChest:
 ;================================================================================
+
+;================================================================================
+; Bunny Palette/Overworld Map Bugfix
+;--------------------------------------------------------------------------------
+org $02fdf0 ; <- Not present in (U) disassembly. Consult bunnymapfix.asm for details
+JSL CachePalettesBeforeMapLoad
+RTS
+;================================================================================

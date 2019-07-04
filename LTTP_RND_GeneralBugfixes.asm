@@ -179,6 +179,7 @@ incsrc password.asm
 incsrc enemy_adjustments.asm
 incsrc hudtext.asm
 incsrc servicerequest.asm
+incsrc bunnymapfix.asm
 warnpc $A58000
 
 ;org $228000 ; contrib area
