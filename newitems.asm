@@ -162,7 +162,7 @@ ProcessEventItems:
 			LDA GoalItemRequirement : BEQ ++
 			LDA !GOAL_COUNTER : INC : STA !GOAL_COUNTER
 			CMP GoalItemRequirement : !BLT ++ : JSL.l ActivateGoal : ++
-			
+
 			LDX.b #$01 : BRA .done
 		+
 		LDX.b #$00
@@ -193,11 +193,11 @@ AddReceivedItemExpandedGetItem:
 		++
 		BRL .done
 	+ CMP.b #$3B : BNE + ; Silver Bow
-		LDA $7EF376 : BNE + ; check arrows
-			LDA.b #$03 : BRA ++ ; bow without arrow
-		+
-			LDA.b #$04 ; bow with arrow
+		LDA $7EF376 : BNE ++ ; check arrows
+			LDA.b #$03 : BRA +++ ; bow without arrow
 		++
+			LDA.b #$04 ; bow with arrow
+		+++
 		STA $7EF340
 		LDA !INVENTORY_SWAP_2 : ORA #$40 : STA !INVENTORY_SWAP_2 ; mark silver bow on y-toggle
 		BRL .done
@@ -350,13 +350,13 @@ AddReceivedItemExpandedGetItem:
 	+ CMP.b #$A0 : !BLT + : CMP.b #$B0 : !BGE + ; Free Small Key
 		AND #$0F : TAX
 		LDA $7EF37C, X : INC : STA $7EF37C, X ; Increment Key Count
-		
+
 		CPX.b #$00 : BNE ++
 			STA $7EF37D ; copy HC to sewers
 		++ : CPX.b #$01 : BNE ++
 			STA $7EF37C ; copy sewers to HC
 		++
-		
+
 		LDA.l GenericKeys : BEQ +
 		.generic
 			LDA $7EF36F : INC : STA $7EF36F
@@ -394,13 +394,13 @@ AddReceivedItemExpanded:
 {
 	PHA : PHX
 		JSL.l PreItemGet
-		
+
 		LDA $02D8 ; Item Value
 		JSR AttemptItemSubstitution
 		STA $02D8
-		
+
 		JSR IncrementItemCounters
-			
+
 		CMP.b #$16 : BNE ++ ; Bottle
 			JSR.w CountBottles : CMP.l BottleLimit : !BLT +++
 				LDA.l BottleLimitReplacement : STA $02D8
@@ -907,7 +907,7 @@ RTL
 DrawHUDArrows:
 LDA.l ArrowMode : BEQ .normal
 	.rupee_arrows
-	
+
 	LDA $7EF377 : BEQ .none ; assuming silvers will increment this. if we go with something else, reorder these checks
 	LDA $7EF340 : BNE +
 	LDA !INVENTORY_SWAP_2 : AND.b #$40 : BNE .silver
@@ -1055,7 +1055,7 @@ AttemptItemSubstitution:
 				CMP.l ItemSubstitutionRules+1, X : !BLT +
 					LDA.l ItemSubstitutionRules+2, X : STA 1,s
 				+
-				
+
 				BEQ .exit
 			.noMatch
 				INX #4
