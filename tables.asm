@@ -371,7 +371,11 @@ org $308089 ; PC 0x180089
 TurtleRockAutoOpenFix:
 db #$00 ; #$00 - Normal, #$01 - Open TR Entrance if exiting from it
 ;--------------------------------------------------------------------------------
-; 0x18008A - 0x18008F (unused)
+org $30808A ; PC 0x18008A
+BlockCastleDoorsInRain:
+db #$00 ; #$00 - Normal, $01 - Block them (Used by Entrance Rando in Standard Mode)
+;--------------------------------------------------------------------------------
+; 0x18008B - 0x18008F (unused)
 ;--------------------------------------------------------------------------------
 org $308090 ; PC 0x180090 - 0x180097
 ProgressiveSwordLimit:

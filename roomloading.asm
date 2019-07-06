@@ -13,6 +13,8 @@ LoadRoomHook:
     dl IcePalaceBombosSE ; 01
     dl IcePalaceBombosSW ; 02
     dl IcePalaceBombosNE ; 03
+    dl CastleEastEntrance ; 04
+    dl CastleWestEntrance ; 05
 
 NoCallback:
     RTL
@@ -28,6 +30,10 @@ endmacro
 macro writeTile()
     STA.l $7E2000,x
     INX #2
+endmacro
+
+macro writeTileAt(roomX, roomY, quadX, quadY)
+    STA.l <quadY>*32+<roomY>*2+<quadX>*32+<roomX>*2+$7E2000
 endmacro
 
 !BOMBOS_BORDER = #$08D0
@@ -77,6 +83,68 @@ IcePalaceBombosNE:
     %DrawBombosPlatform(14, 18, 1, 0)
     RTL
 
+CastleEastEntrance:
+    LDA $7EF3C5 : CMP.b #$02 : !BLT + : RTL : + ; only apply in rain states (0 or 1) 
+    LDA.l BlockCastleDoorsInRain : BNE + : RTL : +
+
+    REP #$20 ; 16 A
+    LDA.w #$08e1  ; square peg
+    %writeTileAt(11,21,0,1)
+    %writeTileAt(11,26,0,1)
+    %writeTileAt(20,21,0,1)
+    %writeTileAt(20,26,0,1)
+    INC ;horizontal rail
+    %writeTileAt(12,21,0,1)
+    %writeTileAt(13,21,0,1)
+    %writeTileAt(14,21,0,1)
+    %writeTileAt(15,21,0,1)
+    %writeTileAt(16,21,0,1)
+    %writeTileAt(17,21,0,1)
+    %writeTileAt(18,21,0,1)
+    %writeTileAt(19,21,0,1)
+    INC ;vertical rail
+    %writeTileAt(11,22,0,1)
+    %writeTileAt(11,23,0,1)
+    %writeTileAt(11,24,0,1)
+    %writeTileAt(11,25,0,1)
+    %writeTileAt(20,22,0,1)
+    %writeTileAt(20,23,0,1)
+    %writeTileAt(20,24,0,1)
+    %writeTileAt(20,25,0,1)
+    SEP #$20 ; 8 A
+    RTL
+
+CastleWestEntrance:
+    LDA $7EF3C5 : CMP.b #$02 : !BLT + : RTL : + ; only apply in rain states (0 or 1) 
+    LDA.l BlockCastleDoorsInRain : BNE + : RTL : +
+
+    REP #$20 ; 16 A
+    LDA.w #$08e1  ; square peg
+    %writeTileAt(11,21,1,1)
+    %writeTileAt(11,26,1,1)
+    %writeTileAt(20,21,1,1)
+    %writeTileAt(20,26,1,1)
+    INC ;horizontal rail
+    %writeTileAt(12,21,1,1)
+    %writeTileAt(13,21,1,1)
+    %writeTileAt(14,21,1,1)
+    %writeTileAt(15,21,1,1)
+    %writeTileAt(16,21,1,1)
+    %writeTileAt(17,21,1,1)
+    %writeTileAt(18,21,1,1)
+    %writeTileAt(19,21,1,1)
+    INC ;vertical rail
+    %writeTileAt(11,22,1,1)
+    %writeTileAt(11,23,1,1)
+    %writeTileAt(11,24,1,1)
+    %writeTileAt(11,25,1,1)
+    %writeTileAt(20,22,1,1)
+    %writeTileAt(20,23,1,1)
+    %writeTileAt(20,24,1,1)
+    %writeTileAt(20,25,1,1)
+    SEP #$20 ; 8 A
+    RTL
+
 RoomCallbackTable:
     db $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $01, $00 ; 00x
     db $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00 ; 01x
@@ -84,7 +152,7 @@ RoomCallbackTable:
     db $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00 ; 03x
     db $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00 ; 04x
     db $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00 ; 05x
-    db $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00 ; 06x
+    db $05, $00, $04, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00 ; 06x
     db $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $02, $00 ; 07x
     db $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00 ; 08x
     db $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00 ; 09x
