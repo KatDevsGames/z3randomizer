@@ -1,10 +1,26 @@
 Overworld_LoadNewTiles:
 {
+    ; add sign to EDM for OWG people to read
+    LDA $040A : AND #$00FF : CMP #$0005 : BNE +
+        LDA #$0101 : STA $7E2D98 ; #$0101 is the sign tile16 id, $7E2D98 is the position of the tile16 on map
+    +
+
+    ; GT sign
+    LDA InvertedMode : AND #$00FF : BNE +
+    LDA $040A : AND #$00FF : CMP #$0043 : BNE +
+        LDA #$0101 : STA $7E2550
+    +
+
+    ; Pyramid sign
+    LDA InvertedMode : AND #$00FF : BNE +
+    LDA $040A : AND #$00FF : CMP #$005B : BNE +
+        LDA #$0101 : STA $7E272E
+    +
 
     SEP #$30
     LDA InvertedMode : BEQ .notInverted
     PHB
-    
+
     ; Set the data bank to $7E.
     LDA.b #$7E : PHA : PLB
     REP #$30
@@ -18,7 +34,7 @@ Overworld_LoadNewTiles:
     .notInverted
     REP #$30
     LDX #$001E : LDA #$0DBE
-    
+
     RTL
 }
 
@@ -29,7 +45,7 @@ Overworld_NewTilesTable:
     ;00      01      02      03      04      05      06      07
 dw return, return, return, map003, return, map005, return, map007
     ;08      09      10      11      12      13      14      15
-dw return, return, return, return, return, return, return, return 
+dw return, return, return, return, return, return, return, return
     ;16      17      18      19      20      21      22      23
 dw map016, return, return, return, map020, return, return, return
     ;24      25      26      27      28      29      30      31
@@ -46,19 +62,19 @@ dw return, return, map058, return, map060, return, return, return
     ;64      65      66      67      68      69      70      71
 dw return, return, return, map068, return, map078, return, map071
     ;72      73      74      75      76      77      78      79
-dw return, return, return, return, return, return, return, return 
+dw return, return, return, return, return, return, return, return
     ;80      81      82      83      84      85      86      87
-dw map080, return, return, return, map084, return, return, return 
+dw map080, return, return, return, map084, return, return, return
     ;88      89      90      91      92      93      94      95
-dw return, return, return, map091, return, return, return, return 
+dw return, return, return, map091, return, return, return, return
     ;96      97      98      99     100     101     102     103
-dw return, return, return, return, return, return, return, return 
+dw return, return, return, return, return, return, return, return
     ;104     105    106     107     108     109     110     111
 dw return, return, return, return, return, return, return, map111
     ;112     113    114     115     116     117     118     119
-dw map120, return, return, map115, return, map117, return, return 
+dw map120, return, return, map115, return, map117, return, return
     ;120     121    122     123     124     125     126     127
-dw return, return, return, return, return, return, return, return 
+dw return, return, return, return, return, return, return, return
 
 return:
 RTS
@@ -329,6 +345,10 @@ LDA #$0E40 : STA $2540
 LDA #$0E41 : STA $2542
 LDA #$0491 : STA $25C0
 .agahnim2Alive
+
+; add sign for Tower Entry
+LDA #$0101 : STA $7E222C
+LDA #$0101 : STA $7E2252
 
 RTS
 }
@@ -907,7 +927,7 @@ RTS
 map080:
 {
 LDA #$020F : STA $2B2E
-RTS    
+RTS
 }
 
 map084:
