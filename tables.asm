@@ -1447,7 +1447,9 @@ dw #9999 ; Rupee Limit
 ; $7F509C - Inverted Mode Duck Map Temporary
 ; $7F509D - Stalfos Bomb Damage Value
 ; $7F509E - Valid Key Loaded
+; $7F509F - Unused
 ; $7F50A0 - Event Parameter 1
+; $7F50A1 - $7F50AF - Unused
 
 ; $7F50B0 - $7F50BF - Downstream Reserved (Enemizer)
 
@@ -1472,9 +1474,10 @@ dw #9999 ; Rupee Limit
 ; $7F5200 - $7F52FF - RNG Pointer Block
 ; $7F5300 - $7F53FF - Multiworld Block
 
+; $7F5400 - $7F56FF - Unused
+
 ; $7F5700 - $7F57FF - Dialog Buffer
 ;
-; $7F6000 - $7F6FFF - Free RAM (Reclaimed from Damage Table)
 ;================================================================================
 !BIGRAM = "$7EC900";
 ; $7EC900 - Big RAM Buffer ($1F00)

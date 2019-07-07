@@ -34,11 +34,14 @@ db #$20, #$19, #$06, #$17 ; year/month/day
 !BLT = "BCC"
 !BGE = "BCS"
 
-!INVENTORY_SWAP = "$7EF38C"
-!INVENTORY_SWAP_2 = "$7EF38E"
+; Rando Specific SRAM assignments
+!SHOP_PURCHASE_COUNTS = "$7EF302" ;$7EF302 - $7EF33F (temporary home)
+!INVENTORY_SWAP = "$7EF38C" ; [w]
+!INVENTORY_SWAP_2 = "$7EF38E" ; [w]
+!ITEM_LIMIT_COUNTS = "$7EF390" ; $7EF390 - ????
 !NPC_FLAGS   = "$7EF410"
 !NPC_FLAGS_2 = "$7EF411"
-!MAP_OVERLAY = "$7EF414" ; [2]
+!MAP_OVERLAY = "$7EF414" ; [w]
 !PROGRESSIVE_SHIELD = "$7EF416" ; ss-- ----
 !HUD_FLAG = "$7EF416" ; --h- ----
 !FORCE_PYRAMID = "$7EF416" ; ---- p---
@@ -46,16 +49,18 @@ db #$20, #$19, #$06, #$17 ; year/month/day
 !SHAME_CHEST = "$7EF416" ; ---s ----
 !HAS_GROVE_ITEM = "$7EF416" ; ---- ---g general flags, don't waste these
 !HIGHEST_SWORD_LEVEL = "$7EF417" ; --- -sss
-!SRAM_SINK = "$7EF41E" ; <- change this
-!FRESH_FILE_MARKER = "$7EF4F0" ; zero if fresh file
 ;$7EF41A[w] - Programmable Item #1
 ;$7EF41C[w] - Programmable Item #2
 ;$7EF41E[w] - Programmable Item #3
+!SRAM_SINK = "$7EF41E" ; <- change this (conflicts with Programmable item 3)
 ;$7EF418 - Goal Item Counter
 ;$7EF419 - Service Sequence
-;$7EF420 - $7EF466 - Stat Tracking Bank 1
+;$7EF420 - $7EF466 - Stat Tracking Bank 1 (overlaps with RNG Item Flags)
 ;$7EF450 - $7EF45F - RNG Item (Single) Flags
 ;$7EF4A0 - $7EF4A7 - Service Request Block
+!FRESH_FILE_MARKER = "$7EF4F0" ; zero if fresh file
+;$700500 - $70050F - Extended File Name
+;$700510 - $70051F - Password (eventually should be moved into non-mirrored area)
 
 !MS_GOT = "$7F5031"
 !DARK_WORLD = "$7EF3CA"
@@ -68,11 +73,6 @@ db #$20, #$19, #$06, #$17 ; year/month/day
 !FORCE_HEART_SPAWN = "$7F5033";
 !SKIP_HEART_SAVE = "$7F5034";
 
-!INVENTORY_SWAP = "$7EF38C"
-!INVENTORY_SWAP_2 = "$7EF38E"
-
-!ITEM_LIMIT_COUNTS = "$7EF390"
-!SHOP_PURCHASE_COUNTS = "$7EF302"
 ;================================================================================
 
 incsrc hooks.asm
@@ -293,10 +293,22 @@ warnpc $B08000
 ;$3A reserved for downstream use
 ;$3B reserved for downstream use
 ;$3F reserved for internal debugging
-;$7F5700 - $7F57FF reserved for downstream use
+;================================================================================
+;RAM 
+;$7EC900[0x1F00]: BIGRAM buffer
+;$7EF000[0x500]: SRAM mirror First 0x500 bytes of SRAM
+;$7F5000[0x800]: Rando's main free ram region
+;   See tables.asm for specific assignments
+;$7F6000[0x500]: Free RAM (reclaimed from damage table) Not allocated yet
+;$7F6500[0xB00]: Reserved for SRAM mirror for last 0xB00 bytes of SRAM (extended sram)
+;$7F7667[0x6719] - free ram
 ;================================================================================
 ;SRAM Map
 ;$70:0000 ( 4K) Game state
+;  0000-04FF Vanilla Slot 1 (mirrored at 0x7EF000)
+;    See earlier in this file for rando specific assignments
+;  0500-0FFF Ext Slot 1 (not yet mirrored)
+;    See earlier in this file for rando specific assignments
 ;$70:1000 (20K) Log entries
 ;$70:6000 ( 8K) Scratch buffers
 ;================================================================================
