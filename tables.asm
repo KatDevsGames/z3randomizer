@@ -130,7 +130,7 @@ org $308038 ; PC 0x180038 -0x18003A
 LampConeSewers:
 db #$01 ; #$00 = Off - #$01 = On (default)
 LampConeLightWorld:
-db #$01 ; #$00 = Off - #$01 = On (default)
+db #$01 ; #$00 = Off (default) - #$01 = On
 LampConeDarkWorld:
 db #$00 ; #$00 = Off (default) - #$01 = On
 ;--------------------------------------------------------------------------------
