@@ -261,9 +261,6 @@ db #$07 ; #$07 = 7 Crystals
 org $30805F ; PC 0x18005F - Number of crystals required to kill Ganon
 NumberOfCrystalsRequiredForGanon:
 db #$07 ; #$07 = 7 Crystals
-org $30805F:
-PreopenPyramid:
-db $00 ; #$00 = Off (default) - #$01 = On
 ;--------------------------------------------------------------------------------
 org $308060 ; PC 0x180060 - 0x18007E
 ProgrammableItemLogicJump_1:
@@ -375,7 +372,11 @@ org $30808A ; PC 0x18008A
 BlockCastleDoorsInRain:
 db #$00 ; #$00 - Normal, $01 - Block them (Used by Entrance Rando in Standard Mode)
 ;--------------------------------------------------------------------------------
-; 0x18008B - 0x18008F (unused)
+org $30805F ; PC 0x18008B
+PreopenPyramid:
+db $00 ; #$00 = Off (default) - #$01 = On
+;--------------------------------------------------------------------------------
+; 0x18008C - 0x18008F (unused)
 ;--------------------------------------------------------------------------------
 org $308090 ; PC 0x180090 - 0x180097
 ProgressiveSwordLimit:
