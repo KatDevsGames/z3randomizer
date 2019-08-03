@@ -131,6 +131,11 @@ OnNewFile:
 			LDA.b #$80 : STA $7EF061 ; open aga tower curtain
 			LDA.b #$80 : STA $7EF093 ; open skull woods curtain
 		+
+
+		LDA.l PreopenPyramid : BEQ +
+			LDA.b #$20 : STA $7EF2DB ; pyramid hole already open
+		+
+
 		LDA StartingSword : STA $7EF359 ; set starting sword type
 	PLP : PLX
 RTL

@@ -261,8 +261,9 @@ db #$07 ; #$07 = 7 Crystals
 org $30805F ; PC 0x18005F - Number of crystals required to kill Ganon
 NumberOfCrystalsRequiredForGanon:
 db #$07 ; #$07 = 7 Crystals
-;--------------------------------------------------------------------------------
-; 0x18005F - 0x18005F (unused)
+org $30805F:
+PreopenPyramid:
+db $00 ; #$00 = Off (default) - #$01 = On
 ;--------------------------------------------------------------------------------
 org $308060 ; PC 0x180060 - 0x18007E
 ProgrammableItemLogicJump_1:
