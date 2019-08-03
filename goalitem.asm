@@ -34,34 +34,30 @@ CheckGanonVulnerability:
 		LDA $7EF2DB : AND.b #$20 : CMP #$20 : BNE .fail ; require aga2 defeated (pyramid hole open)
 		BRA .success
 	+ : CMP #$04 : BNE +
-		;#$04 = Require All Crystals
-		LDA $7EF37A : AND.b #$7F : CMP #$7F : BNE .fail ; require all crystals
+		;#$04 = Require Crystals
+		JSL CheckEnoughCrystalsForGanon : !BLT .fail ; require specified number of crystals
 		BRA .success
 	+ : CMP #$03 : BNE +
-		;#$03 = Require All Crystals and Aga 2
-		LDA $7EF37A : AND.b #$7F : CMP #$7F : BNE .fail ; require all crystals
+		;#$03 = Require Crystals and Aga 2
+		JSL CheckEnoughCrystalsForGanon : !BLT .fail ; require specified number of crystals
 		LDA $7EF2DB : AND.b #$20 : CMP #$20 : BNE .fail ; require aga2 defeated (pyramid hole open)
 		BRA .success
 	+ : CMP #$05 : BNE +
 		;#$05 = Require 100 Goal Items
 		LDA.l !GOAL_COUNTER : CMP.b #100 : !BLT .fail ; require 100 goal items
 		BRA .success
-	+ : CMP #$06 : BNE +
-		;#$06 = Require "NumberOfCrystalsRequiredForGanon" Crystals
-		JSL CheckEnoughCrystalsForGanon : BCC .fail
-		BRA .success
-	+
+	+ 
 .fail : CLC : RTL
 .success : SEC : RTL
 ;--------------------------------------------------------------------------------
-GetRequriedCrystalsForTower:
+GetRequiredCrystalsForTower:
 	BEQ + : JSL.l BreakTowerSeal_ExecuteSparkles : + ; thing we wrote over
 	LDA.l NumberOfCrystalsRequiredForTower : CMP.b #$00 : BNE + : JML.l Ancilla_BreakTowerSeal_stop_spawning_sparkles : +
 	LDA.l NumberOfCrystalsRequiredForTower : CMP.b #$01 : BNE + : JML.l Ancilla_BreakTowerSeal_draw_single_crystal : +
 	LDA.l NumberOfCrystalsRequiredForTower : DEC #2 : TAX
-JML.l GetRequriedCrystalsForTower_continue
+JML.l GetRequiredCrystalsForTower_continue
 ;--------------------------------------------------------------------------------
-GetRequriedCrystalsInX:
+GetRequiredCrystalsInX:
 	LDA.l NumberOfCrystalsRequiredForTower : CMP.b #$00 : BNE +
 		TAX
 		RTL
@@ -75,15 +71,10 @@ GetRequriedCrystalsInX:
 RTL
 ;--------------------------------------------------------------------------------
 CheckEnoughCrystalsForGanon:
-	LDA InvincibleGanon : CMP #$06 : BNE .normal
 	PHX : PHY
 	LDA $7EF37A : JSL CountBits ; the comparison is against 1 less
 	PLY : PLX
 	CMP.l NumberOfCrystalsRequiredForGanon
-RTL
-
-	.normal
-	LDA $7EF37A : AND.b #$7F : CMP.b #$7F ; thing we wrote over
 RTL
 ;--------------------------------------------------------------------------------
 CheckEnoughCrystalsForTower:

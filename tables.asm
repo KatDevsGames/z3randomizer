@@ -150,10 +150,9 @@ db #$00
 ; #$00 = Off (default)
 ; #$01 = On
 ; #$02 = Require All Dungeons
-; #$03 = Require Crystals and Aga2
-; #$04 = Require Crystals
+; #$03 = Require "NumberOfCrystalsRequiredForGanon" Crystals and Aga2
+; #$04 = Require "NumberOfCrystalsRequiredForGanon" Crystals
 ; #$05 = Require 100 Goal Items
-; #$06 = Require "NumberOfCrystalsRequiredForGanon"
 ;--------------------------------------------------------------------------------
 org $30803F ; PC 0x18003F
 HammerableGanon:
