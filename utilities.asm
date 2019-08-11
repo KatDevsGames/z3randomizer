@@ -29,7 +29,7 @@ GetSpriteID:
 	;--------
 	TAX : LDA .gfxSlots, X ; look up item gfx
 	PLB : PLX
-	CMP.b #$F9 : !BGE .specialHandling
+	CMP.b #$F8 : !BGE .specialHandling
 RTL
 	.specialHandling
 	CMP.b #$F9 : BNE ++ ; Progressive Magic
@@ -168,7 +168,7 @@ GetSpritePalette:
 	;--------
 	TAX : LDA .gfxPalettes, X ; look up item gfx
 	PLB : PLX
-	CMP.b #$FA : !BGE .specialHandling
+	CMP.b #$F9 : !BGE .specialHandling
 RTL
 	.specialHandling
 	CMP.b #$FD : BNE ++ ; Progressive Sword

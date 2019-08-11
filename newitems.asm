@@ -590,6 +590,7 @@ AddReceivedItemExpanded:
     db $2C, $06, $0C, $38
 	;new
 	db $39, $3A, $3B, $3C
+	;5x
 	db $18 ; Master Sword (Safe)
 	db $3D, $3E, $3F, $40 ; +5/+10 Bomb Arrows
 	db $00, $00, $00 ; 3x Programmable Item
@@ -599,7 +600,7 @@ AddReceivedItemExpanded:
 	db $48, $48, $48 ; Red, Blue & Green Clocks
 	db $FF, $FF, $04, $0D ; Progressive Sword, Shield, Armor & Gloves
 	db $FF, $FF ; RNG Single & Multi
-	db $FF, ; Progressive Bow
+	db $FF ; Progressive Bow
 	db $FF, $FF, $FF, $FF, $FF ; Unused
 	db $49, $4A, $49 ; Goal Item Single, Multi & Alt Multi
 	db $FF, $FF, $FF ; Unused
