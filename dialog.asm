@@ -140,29 +140,32 @@ FreeDungeonItemNotice:
 	LDA.l FreeItemText : BNE + : BRL .skip : +
 
 	LDA #$00 : STA $7F5010 ; initialize scratch
-	LDA !ITEM_TEMPORARY
-	CMP.b #$24 : BNE + ; general small key
+	LDA.l FreeItemText : AND.b #$01 : CMP.b #$01 : BNE + ; show message for general small key
+	LDA !ITEM_TEMPORARY : CMP.b #$24 : BNE + ; general small key
 		%CopyDialog(Notice_SmallKeyOf)
 		LDA !OFFSET_RETURN : DEC #2 : STA !OFFSET_POINTER
 		%CopyDialog(Notice_Self)
 		BRL .done
-	+ : CMP.b #$25 : BNE + ; general compass
+	+ : LDA.l FreeItemText : AND.b #$02 : CMP.b #$02 : BNE + ; show message for general compass
+	LDA !ITEM_TEMPORARY : CMP.b #$25 : BNE + ; general compass
 		%CopyDialog(Notice_CompassOf)
 		LDA !OFFSET_RETURN : DEC #2 : STA !OFFSET_POINTER
 		%CopyDialog(Notice_Self)
 		BRL .done
-	+ : CMP.b #$33 : BNE + ; general map
+	+ : LDA.l FreeItemText : AND.b #$04 : CMP.b #$04 : BNE + ; show message for general map
+	LDA !ITEM_TEMPORARY : CMP.b #$33 : BNE + ; general map
 		%CopyDialog(Notice_MapOf)
 		LDA !OFFSET_RETURN : DEC #2 : STA !OFFSET_POINTER
 		%CopyDialog(Notice_Self)
 		BRL .done
-	+ : CMP.b #$32 : BNE + ; general big key
+	+ : LDA.l FreeItemText : AND.b #$08 : CMP.b #$08 : BNE + ; show message for general big key
+	LDA !ITEM_TEMPORARY : CMP.b #$32 : BNE + ; general big key
 		%CopyDialog(Notice_BigKeyOf)
 		LDA !OFFSET_RETURN : DEC #2 : STA !OFFSET_POINTER
 		%CopyDialog(Notice_Self)
 		BRL .done
 	+
-	AND.b #$F0 ; looking at high bits only
+	LDA !ITEM_TEMPORARY : AND.b #$F0 ; looking at high bits only
 	CMP.b #$70 : BNE + ; map of...
 		%CopyDialog(Notice_MapOf)
 		BRL .dungeon

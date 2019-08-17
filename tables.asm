@@ -788,7 +788,13 @@ db #$02 ; #00 = Never Locked - #$01 = Locked During Escape (default) - #$02 = Lo
 ;================================================================================
 org $30816A ; PC 0x18016A
 FreeItemText:
-db #$00 ; #00 = Off (default) - #$01 = On
+db #$00 ; #00 = Off (default)
+;---o bmcs
+;o - enabled for outside dungeon items
+;b - enabled for inside big key items
+;m - enabled for inside map items
+;c - enabled for inside compass items
+;s - enabled for inside small key items
 ;================================================================================
 org $30816B ; PC 0x18016B - 0x18016D
 HardModeExclusionCaneOfByrnaUsage:
