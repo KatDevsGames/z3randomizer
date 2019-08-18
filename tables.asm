@@ -372,7 +372,7 @@ org $30808A ; PC 0x18008A
 BlockCastleDoorsInRain:
 db #$00 ; #$00 - Normal, $01 - Block them (Used by Entrance Rando in Standard Mode)
 ;--------------------------------------------------------------------------------
-org $30805F ; PC 0x18008B
+org $30808B ; PC 0x18008B
 PreopenPyramid:
 db $00 ; #$00 = Off (default) - #$01 = On
 ;--------------------------------------------------------------------------------
