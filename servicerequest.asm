@@ -2,11 +2,11 @@
 ; Service Request Support Code
 ;--------------------------------------------------------------------------------
 ; $7F5300 - $7F53FF - Multiworld Block
-;	$00 - $1F - RX Buffer
-;	$20 - $7E - Reserved
+;	$00 - $5F - RX Buffer
+;	$60 - $7E - Reserved
 ;		  $7F - RX Status
-;	$80 - $9F - TX Buffer
-;	$A0 - $FE - Reserved
+;	$80 - $EF - TX Buffer
+;	$E0 - $FE - Reserved
 ;		  $FF - TX Status
 ;--------------------------------------------------------------------------------
 ; Status Codes
