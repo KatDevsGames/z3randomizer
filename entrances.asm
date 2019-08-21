@@ -77,7 +77,7 @@ AllowStartFromSingleEntranceCave:
 
 		DEC
 		STA $00
-		LSR #2 : !ADD $00 : LSR #2 ; mult by 20
+		ASL #2 : !ADD $00 : ASL #2 ; mult by 20
 		TAX
 
 		LDA #$0016 : STA $7EC142 ; Cache the main screen designation
