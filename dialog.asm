@@ -419,6 +419,29 @@ Sprite_ShowMessageMinimal_Alt:
 Main_ShowTextMessage_Alt_already_in_text_mode:
 RTL
 
+CalculateSignIndex:
+  ; for the big 1024x1024 screens we are calculating link's effective
+  ; screen area, as though the screen was 4 different 512x512 screens.
+  ; And we do this in a way that will likely give the right value even 
+  ; with major glitches.
+
+  LDA $8A : ASL A : TAY ;what we wrote over
+
+  LDA $0712 : BEQ .done ; If a small map, we can skip these calculations.
+
+  LDA $21 : AND.w #$0002 : ASL #2 : EOR $8A : AND.w #$0008 : BEQ +
+  	TYA : !ADD.w #$0010 : TAY  ;add 16 if we are in lower half of big screen.
+  + 
+
+  LDA $23 : AND.w #$0002 : LSR : EOR $8A : AND.w #$0001 : BEQ +
+  TYA : INC #2 : TAY  ;add 16 if we are in lower half of big screen.
+  +
+  ; ensure even if things go horribly wrong, we don't read the sign out of bounds and crash:
+  TYA : AND.w #$00FF : TAY 
+
+.done
+RTL
+
 ;--------------------------------------------------------------------------------
 ; A0 - A9 - 0 - 9
 ; AA - C3 - A - Z

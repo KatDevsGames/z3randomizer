@@ -1818,6 +1818,9 @@ dw $05AC, $04FC, $0001, $0027, $00F0 ; Zelda in the water room
 ; org $01CA66 ; <- CA66 Bank01.asm : 10864 - (LDA.w #$2200 : ADD $041C : STA $041C)
 ; LDA.w #$4400 ; #$2200 is the normal speed, $#FF00 is max.
 ;----------------------------------------------------------
+;-- New Sign table offet calculation
+org $07b4fe ; <- 3b4fe - bank07.asm : 8454 (LDA $8A : ASL A : TAY)
+JSL CalculateSignIndex
 
 ;================================================================================
 ; Ganon Fixes

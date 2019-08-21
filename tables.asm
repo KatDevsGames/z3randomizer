@@ -530,25 +530,30 @@ Music_GTower:
 db $16
 
 ;--------------------------------------------------------------------------------
-; OWG EDM bridge sign text pointer (Message id of the map05)
+; OWG EDM bridge sign text pointer (Message id of the upper left of map05 = map05)
 ;--------------------------------------------------------------------------------
 org $07F501
 dw #$018E
 ;--------------------------------------------------------------------------------
-; GT sign text pointer (Message id of the map43)
+; GT sign text pointer (Message id of the upper right of map43 = map44)
 ;--------------------------------------------------------------------------------
-org $07F57D
+org $07F57F
 dw #$0190
 ;--------------------------------------------------------------------------------
-; Pyramid sign text pointer (Message id of the map5B)
+; Pyramid sign text pointer (Message id of the upper left of map5B = map5B)
 ;--------------------------------------------------------------------------------
 org $07F5AD
 dw #$0191
 ;--------------------------------------------------------------------------------
-; HC (inverted) sign text pointer (Message id of the map1B)
+; HC (inverted) left sign text pointer (Message id of the upper left of map1B = map1B)
 ;--------------------------------------------------------------------------------
 org $07F52D
 dw #$0190
+;--------------------------------------------------------------------------------
+; HC (inverted) right sign text pointer (Message id of the upper right of map1B = map1C)
+;--------------------------------------------------------------------------------
+org $07F52F
+dw #$0191
 
 ;--------------------------------------------------------------------------------
 ;Map Pendant / Crystal Indicators
