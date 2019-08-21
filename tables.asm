@@ -1257,6 +1257,7 @@ db $04
 ;63:RNG Pool Item (Multi)
 
 ;64:Progressive Bow
+;65:Progressive Bow
 
 ;6A:Goal Item (Single/Triforce)
 ;6B:Goal Item (Multi/Power Star)

@@ -116,8 +116,8 @@ RTL
 	;6x
 	db $FD, $0D ; Progressive Armor & Gloves
 	db $FA, $FB ; RNG Single & Multi
-	db $F8 ; Progressive Bow
-	db $FF, $FF, $FF, $FF, $FF ; Unused
+	db $F8, $F8 ; Progressive Bow x2
+	db $FF, $FF, $FF, $FF ; Unused
 	db $49, $4A, $49 ; Goal Item Single, Multi & Alt Multi
 	db $FF, $FF, $FF ; Unused
 	
@@ -251,8 +251,8 @@ RTL
 	db $02, $04, $08 ; Red, Blue & Green Clocks
 	db $FD, $FE, $FF, $FC ; Progressive Sword, Shield, Armor & Gloves
 	db $FA, $FB ; RNG Single & Multi
-	db $F8 ; Progressive Bow
-	db $00, $00, $00, $00, $00 ; Unused
+	db $F8, $F8 ; Progressive Bow
+	db $00, $00, $00, $00 ; Unused
 	db $08, $08, $08 ; Goal Item Single, Multi & Alt Multi
 	db $00, $00, $00 ; Unused
 	db $08, $08, $08, $08, $08, $08, $08, $08, $08, $08, $08, $08, $08, $08, $08, $08 ; Free Map
