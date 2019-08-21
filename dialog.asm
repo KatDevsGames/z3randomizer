@@ -294,14 +294,38 @@ DialogGanon1:
 	JSL.l Sprite_ShowMessageMinimal_Alt
 RTL
 ;--------------------------------------------------------------------------------
+; #$0193 - no bow
+; #$0194 - no silvers
+; #$0195 - no silvers alternate
+; #$0196 - silvers
+; $7EF38E - bsp-- ---
+; b = bow
+; s = silver arrow bow
+; p = 2nd progressive bow
 DialogGanon2:
-	JSL.l CheckGanonVulnerability : BCS +
-		REP #$20 : LDA.w #$018D : STA $1CF0 : SEP #$20
-		BRA ++
-	+
-		REP #$20 : LDA.w #$016E : STA $1CF0 : SEP #$20
-	++
-	JSL.l Sprite_ShowMessageMinimal_Alt
+    JSL.l CheckGanonVulnerability : BCS +
+        REP #$20 : LDA.w #$018D : STA $1CF0 : SEP #$20
+        BRA ++
+    +
+        LDA.b $7EF38E : AND #$80 : BNE + ; branch if bow
+        REP #$20 : LDA.w #$0193 : STA $1CF0 : SEP #$20 ; no bow
+        BRA ++
+    +
+        LDA.b $7EF38E : AND #$40 : BEQ + ; branch if no silvers
+        REP #$20 : LDA.w #$0196 : STA $1CF0 : SEP #$20 ;has silvers
+        BRA ++
+    +
+        LDA.b $7EF38E : AND #$20 : BNE + ; branch if p bow
+        REP #$20 : LDA.w #$0195 : STA $1CF0 : SEP #$20  ; bow, no-silvers, no-p-bow
+        BRA ++
+    +
+        LDA.b $7EF38E : AND #$80 : BEQ + ; branch if no bow
+        REP #$20 : LDA.w #$0194 : STA $1CF0 : SEP #$20 ; bow, no-silvers, p-bow
+        BRA ++
+    +
+        REP #$20 : LDA.w #$016E : STA $1CF0 : SEP #$20 ; both bow and no bow. impossible.
+    ++
+    JSL.l Sprite_ShowMessageMinimal_Alt
 RTL
 ;--------------------------------------------------------------------------------
 DialogEtherTablet:
