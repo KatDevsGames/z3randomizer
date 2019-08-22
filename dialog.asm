@@ -294,10 +294,10 @@ DialogGanon1:
 	JSL.l Sprite_ShowMessageMinimal_Alt
 RTL
 ;--------------------------------------------------------------------------------
-; #$0193 - no bow
+; #$0192 - no bow
+; #$0193 - no silvers alternate
 ; #$0194 - no silvers
-; #$0195 - no silvers alternate
-; #$0196 - silvers
+; #$0195 - silvers
 ; $7EF38E - bsp-- ---
 ; b = bow
 ; s = silver arrow bow
@@ -307,20 +307,20 @@ DialogGanon2:
         REP #$20 : LDA.w #$018D : STA $1CF0 : SEP #$20
         BRA ++
     +
-        LDA.b $7EF38E : AND #$80 : BNE + ; branch if bow
-        REP #$20 : LDA.w #$0193 : STA $1CF0 : SEP #$20 ; no bow
+        LDA.l $7EF38E : AND #$80 : BNE + ; branch if bow
+        REP #$20 : LDA.w #$0192 : STA $1CF0 : SEP #$20 ; no bow
         BRA ++
     +
-        LDA.b $7EF38E : AND #$40 : BEQ + ; branch if no silvers
-        REP #$20 : LDA.w #$0196 : STA $1CF0 : SEP #$20 ;has silvers
+        LDA.l $7EF38E : AND #$40 : BEQ + ; branch if no silvers
+        REP #$20 : LDA.w #$0195 : STA $1CF0 : SEP #$20 ;has silvers
         BRA ++
     +
-        LDA.b $7EF38E : AND #$20 : BNE + ; branch if p bow
-        REP #$20 : LDA.w #$0195 : STA $1CF0 : SEP #$20  ; bow, no-silvers, no-p-bow
+        LDA.l $7EF38E : AND #$20 : BNE + ; branch if p bow
+        REP #$20 : LDA.w #$0194 : STA $1CF0 : SEP #$20  ; bow, no-silvers, no-p-bow
         BRA ++
     +
-        LDA.b $7EF38E : AND #$80 : BEQ + ; branch if no bow
-        REP #$20 : LDA.w #$0194 : STA $1CF0 : SEP #$20 ; bow, no-silvers, p-bow
+        LDA.l $7EF38E : AND #$80 : BEQ + ; branch if no bow
+        REP #$20 : LDA.w #$0193 : STA $1CF0 : SEP #$20 ; bow, no-silvers, p-bow
         BRA ++
     +
         REP #$20 : LDA.w #$016E : STA $1CF0 : SEP #$20 ; both bow and no bow. impossible.
