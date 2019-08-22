@@ -146,10 +146,15 @@
 !VAL_VOLUME_FULL = #$FF
 
 CheckMusicLoadRequest:
-    PHP : REP #$10 : PHA : PHX
-        LDA !REG_MUSIC_CONTROL_REQUEST : BEQ .done : BMI .done : CMP $0133 : BEQ .done
+    PHP : REP #$10 : PHA : PHX : PHY
+        LDA !REG_MUSIC_CONTROL_REQUEST : BEQ .skip : BMI .skip : CMP $0133 : BNE .continue
+.skip
+        STA !REG_MUSIC_CONTROL : STZ !REG_MUSIC_CONTROL_REQUEST
+    PLY : PLX : PLA : PLP
+    RTL
         
-    +;  ; Shut down NMI until music loads
+.continue
+        ; Shut down NMI until music loads
         STZ $4200
         
         ; Set SPC into loader mode
@@ -161,20 +166,30 @@ CheckMusicLoadRequest:
         LDX !REG_MSU_ID_45 : CPX !VAL_MSU_ID_45 : BNE .unmute
 
         ; TODO: actually look up the current track in the table
-        LDA !REG_MSU_FALLBACK_TABLE : BEQ .unmute
+        SEP #$10
+            LDA !REG_MUSIC_CONTROL_REQUEST : DEC : PHA
+                AND #$07 : TAY
+                PLA : LSR #3 : TAX
+            LDA !REG_MSU_FALLBACK_TABLE,X : BEQ .unmute : CMP #$FF : BEQ .mute
+            
+            - : CPY #$00 : BEQ +
+                LSR : DEY : BRA - : +
+            
+            AND #$01 : BEQ .unmute
 
 .mute
-        LDA.b #SPCMutePayload : STA $00
-        LDA.b #SPCMutePayload>>8 : STA $01
-        LDA.b #SPCMutePayload>>16
-        BRA .load
+            LDA.b #SPCMutePayload : STA $00
+            LDA.b #SPCMutePayload>>8 : STA $01
+            LDA.b #SPCMutePayload>>16
+            BRA .load
 
 .unmute
-        LDA.b #SPCUnmutePayload : STA $00
-        LDA.b #SPCUnmutePayload>>8 : STA $01
-        LDA.b #SPCUnmutePayload>>16
+            LDA.b #SPCUnmutePayload : STA $00
+            LDA.b #SPCUnmutePayload>>8 : STA $01
+            LDA.b #SPCUnmutePayload>>16
 
 .load
+        REP #$10
         JSL Sound_LoadLightWorldSongBank_do_load
     
         ; Re-enable NMI and joypad
@@ -195,12 +210,12 @@ CheckMusicLoadRequest:
 
 .done
         LDA !REG_MUSIC_CONTROL_REQUEST : STA !REG_MUSIC_CONTROL : STZ !REG_MUSIC_CONTROL_REQUEST
-    PLX : PLA : PLP
+    PLY : PLX : PLA : PLP
     RTL
 
 .sfx_indoors
         LDA !REG_MUSIC_CONTROL_REQUEST : STA !REG_MUSIC_CONTROL : STZ !REG_MUSIC_CONTROL_REQUEST
-    PLX : PLA : PLP
+    PLY : PLX : PLA : PLP
     JML Module_PreDungeon_setAmbientSfx
 
 msu_init:
@@ -213,25 +228,52 @@ msu_init:
         LDA !REG_MSU_ID_23 : CMP !VAL_MSU_ID_23 : BNE .done
         LDA !REG_MSU_ID_45 : CMP !VAL_MSU_ID_45 : BNE .done
 
+; Count the number of available MSU-1 packs
         LDA.w #$0000
         LDX.b #$FF
         LDY.b #$01
-        SEP #$20
+    SEP #$20
+
 .check_pack
-            TYA
-        REP #$20
+    TYA
+    REP #$20
         STA !REG_MSU_TRACK
         !ADD.w #100
         INX
-        SEP #$20
-            TAY
+    SEP #$20
+    TAY
 .wait_pack
-            LDA !REG_MSU_STATUS : BIT !FLAG_MSU_STATUS_AUDIO_BUSY : BNE .wait_pack
-            LDA !REG_MSU_STATUS : BIT !FLAG_MSU_STATUS_TRACK_MISSING : BEQ .check_pack
-            TXA : STA !REG_MSU_PACK_COUNT
+    LDA !REG_MSU_STATUS : BIT !FLAG_MSU_STATUS_AUDIO_BUSY : BNE .wait_pack
+    LDA !REG_MSU_STATUS : BIT !FLAG_MSU_STATUS_TRACK_MISSING : BEQ .check_pack
+    TXA : STA !REG_MSU_PACK_COUNT
+
+; Check the current MSU-1 pack for tracks that require SPC fallback
+    LDA.b #64
+    LDX.b #7
+    LDY.b #7
+
+.check_track
+    STA !REG_MSU_TRACK_LO
+    STZ !REG_MSU_TRACK_HI
+    PHA
+    CLC
+
+.wait_track
+    LDA !REG_MSU_STATUS : BIT !FLAG_MSU_STATUS_AUDIO_BUSY : BNE .wait_track
+    LDA !REG_MSU_STATUS : BIT !FLAG_MSU_STATUS_TRACK_MISSING : BNE +
+        SEC : +
+    LDA !REG_MSU_FALLBACK_TABLE,X : ROL : STA !REG_MSU_FALLBACK_TABLE,X
+
+    DEY : BPL .next_track
+        DEX : BPL +
+            PLA
 .done
-    PLP
-    RTL
+            PLP
+            RTL : +
+        LDY.b #7
+.next_track
+    PLA : DEC
+    BRA .check_track
 
 msu_main:
     SEP #$20    ; set 8-BIT accumulator
