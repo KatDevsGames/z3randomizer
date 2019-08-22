@@ -231,7 +231,7 @@ FreeDungeonItemNotice:
 
 	STZ $1CF0 : STZ $1CF1 ; reset decompression buffer
 	LDA.b #$01 : STA $7F5035 ; set alternate dialog flag
-	LDA.b #$01 : STA $7F50A0
+	LDA.b #$01 : STA $7F509F
 
 	;--------------------------------
 		PLA : STA $02

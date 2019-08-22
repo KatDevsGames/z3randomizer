@@ -181,7 +181,7 @@ AddReceivedItemExpandedGetItem:
 	;JSR.w ProcessEventItems : CPX.b #$00 : BEQ ++
 	;	;JSL.l Main_ShowTextMessage_Alt
 	;	LDA !GOAL_COUNTER : INC : STA !GOAL_COUNTER
-	;	LDA.b #$01 : STA $7F50A0
+	;	LDA.b #$01 : STA $7F50XX
 	;	BRL .done
 	;++
 	;STA $FFFFFF
