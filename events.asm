@@ -203,7 +203,7 @@ RTL
 PostItemAnimation:
 	LDA.b #$00 : STA !ITEM_BUSY ; mark item as finished
 
-	LDA $7F50A9F : BEQ +
+	LDA $7F509F : BEQ +
 		STZ $1CF0 : STZ $1CF1 ; reset decompression buffer
 		JSL.l Main_ShowTextMessage_Alt
 		LDA.b #$00 : STA $7F509F
