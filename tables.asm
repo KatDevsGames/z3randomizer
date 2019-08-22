@@ -1460,9 +1460,8 @@ dw #9999 ; Rupee Limit
 ; $7F509C - Inverted Mode Duck Map Temporary
 ; $7F509D - Stalfos Bomb Damage Value
 ; $7F509E - Valid Key Loaded
-; $7F509F - Unused
-; $7F50A0 - Event Parameter 1
-; $7F50A1 - $7F50AF - Unused
+; $7F509F - Event Parameter 1
+; $7F50A0 - $7F50AF - MSU Block
 
 ; $7F50B0 - $7F50BF - Downstream Reserved (Enemizer)
 
