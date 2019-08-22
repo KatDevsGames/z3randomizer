@@ -147,7 +147,7 @@
 
 CheckMusicLoadRequest:
     PHP : REP #$10 : PHA : PHX
-        LDA !REG_MUSIC_CONTROL_REQUEST : BEQ .done : BMI .done
+        LDA !REG_MUSIC_CONTROL_REQUEST : BEQ .done : BMI .done : CMP $0133 : BEQ .done
         
     +;  ; Shut down NMI until music loads
         STZ $4200
