@@ -1445,6 +1445,14 @@ crystal_continue:
 
 org $0EE6EC ; <- E220 A922 - Bank0E.asm:2892 (SEP #$20 : LDA.b #$22 : STA $012C)
 JSL.l ending_wait
+
+; Process music commands in NMI from new location after muting is processed
+!REG_MUSIC_CONTROL = "$012B"
+org $0080DD
+dw !REG_MUSIC_CONTROL
+
+org $008101
+dw !REG_MUSIC_CONTROL
 ;--------------------------------------------------------------------------------
 
 ;================================================================================

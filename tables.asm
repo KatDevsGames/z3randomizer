@@ -960,7 +960,11 @@ org $308215 ; PC 0x180215
 SeedHash:
 db $00, $01, $02, $03, $04
 ;--------------------------------------------------------------------------------
-; 0x18021A - 0x18021F (unused)
+org $30821A ; PC 0x18021A
+NoBGM:
+db $00 ; $00 = BGM enabled (default) $01 = BGM disabled
+;--------------------------------------------------------------------------------
+; 0x18021B - 0x18021F (unused)
 ;================================================================================
 ; $308220 (0x180220) - $30823F (0x18023F)
 ; Plandomizer Author Name (ASCII) - Leave unused chars as 0
@@ -1438,9 +1442,6 @@ dw #9999 ; Rupee Limit
 ; $7F5042 - Tile Upload Offset Override (Low)
 ; $7F5043 - Tile Upload Offset Override (High)
 ; $7F5044 - $7F5046 - NMI Auxiliary Function
-; $7F5047 - MSU-1 Delayed Load Command
-; $7F5048 - MSU-1 Pack Count
-; $7F5049 - MSU-1 Current Pack
 ; $7F5047 - $7F504F - Unused
 ; $7F5050 - $7F506F - Shop Block
 ; $7F5070 - Reserved for OneMind
@@ -1621,6 +1622,49 @@ dw Music_TRock
 dw Music_GTower
 dw $0000
 dw $0000
+
+SPCMutePayload:
+dw $0001	; Transfer size
+dw $0A4A    ; Transfer destination
+db $00      ; mov a,#$70 -> mov a,#$00
+
+dw $0001    ; Transfer size
+dw $0AF3    ; Transfer destination
+db $00      ; mov $059,#$c0 -> mov $059,#$00
+
+dw $0002    ; Transfer size
+dw $0C32    ; Transfer destination
+db $00, $00 ; movw $058,ya -> nop #2
+
+dw $0001    ; Transfer size
+dw $0D19    ; Transfer destination
+db $34      ; movw $058,ya -> mov $058,a
+
+dw $0000    ; Transfer size (end of transfer)
+dw $FFFF    ; Dummy destination
+db $FF, $FF, $FF, $FF, $FF, $FF, $FF	; Padding
+
+SPCUnmutePayload:
+dw $0001	; Transfer size
+dw $0A4A    ; Transfer destination
+db $70      ; mov a,#$70
+
+dw $0001    ; Transfer size
+dw $0AF3    ; Transfer destination
+db $C0      ; mov $059,#$c0
+
+dw $0002    ; Transfer size
+dw $0C32    ; Transfer destination
+db $da, $58 ; movw $058,ya
+
+dw $0001    ; Transfer size
+dw $0D19    ; Transfer destination
+db $34      ; movw $058,ya
+
+dw $0000    ; Transfer size (end of transfer)
+dw $FFFF    ; Dummy destination
+db $FF, $FF, $FF, $FF, $FF, $FF, $FF	; Padding
+
 ;--------------------------------------------------------------------------------
 ; 0x185060 - 1850FF (unused)
 ;--------------------------------------------------------------------------------

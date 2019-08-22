@@ -385,6 +385,11 @@ UseImplicitRegIndexedLongJumpTable:
 org $008333
 Vram_EraseTilemaps_triforce:
 
+org $008913
+Sound_LoadLightWorldSongBank:
+org $00891D
+    .do_load
+
 org $00893D
 EnableForceBlank:
 
@@ -417,6 +422,11 @@ Mirror_InitHdmaSettings:
 
 org $01873A
 Dungeon_LoadRoom:
+
+org $02821E
+Module_PreDungeon:
+org $028296
+    .setAmbientSfx
 
 org $02A0A8
 Dungeon_SaveRoomData:

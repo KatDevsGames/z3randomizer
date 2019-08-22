@@ -18,11 +18,11 @@
 ;  8 - Dimensional Shift (Mirror)
 ;  9 - Dark Golden Land
 ; 10 - Unsealing the Master Sword
-; 11 - Beginning of th Journey
+; 11 - Beginning of the Journey
 ; 12 - Soldiers of Kakariko Village
 ; 13 - Black Mist
 ; 14 - Guessing Game House
-; 15 - (Unused)
+; 15 - Dark Woods
 ; 16 - Majestic Castle
 ; 17 - Lost Ancient Ruins
 ; 18 - Dank Dungeons
@@ -117,19 +117,23 @@
 !FLAG_MSU_STATUS_DATA_BUSY = #$80
 
 
+!REG_CURRENT_MSU_TRACK = $010B
 !REG_CURRENT_VOLUME = $0127
 !REG_TARGET_VOLUME = $0129
-!REG_CURRENT_MSU_TRACK = $012B
-!REG_MUSIC_CONTROL = $012C
+!REG_MUSIC_CONTROL = $012B
+;!REG_MUSIC_CONTROL = $012C
+!REG_MUSIC_CONTROL_REQUEST = $012C
 !REG_CURRENT_TRACK = $0130
 !REG_CURRENT_COMMAND = $0133
 
 !REG_SPC_CONTROL = $2140
 !REG_NMI_FLAGS = $4210
 
-!REG_MSU_DELAYED_COMMAND = $7F5047
-!REG_MSU_PACK_COUNT = $7F5048
-!REG_MSU_PACK_CURRENT = $7F5049
+; $7EF50A0 - $7EF50AF Reserved block in main RAM
+!REG_MSU_FALLBACK_TABLE = $7F50A0   ; 8 bytes
+!REG_MSU_DELAYED_COMMAND = $7F50A9
+!REG_MSU_PACK_COUNT = $7F50AA
+!REG_MSU_PACK_CURRENT = $7F50AB
 
 !VAL_COMMAND_FADE_OUT = #$F1
 !VAL_COMMAND_FADE_HALF = #$F2
@@ -141,8 +145,66 @@
 !VAL_VOLUME_HALF = #$80
 !VAL_VOLUME_FULL = #$FF
 
+CheckMusicLoadRequest:
+    PHP : REP #$10 : PHA : PHX
+        LDA !REG_MUSIC_CONTROL_REQUEST : BEQ .done : BMI .done
+        
+    +;  ; Shut down NMI until music loads
+        STZ $4200
+        
+        ; Set SPC into loader mode
+        LDA.b #$FF : STA $2140
+
+        LDA NoBGM : BNE .mute
+        LDX !REG_MSU_ID_01 : CPX !VAL_MSU_ID_01 : BNE .unmute
+        LDX !REG_MSU_ID_23 : CPX !VAL_MSU_ID_23 : BNE .unmute
+        LDX !REG_MSU_ID_45 : CPX !VAL_MSU_ID_45 : BNE .unmute
+
+        ; TODO: actually look up the current track in the table
+        LDA !REG_MSU_FALLBACK_TABLE : BEQ .unmute
+
+.mute
+        LDA.b #SPCMutePayload : STA $00
+        LDA.b #SPCMutePayload>>8 : STA $01
+        LDA.b #SPCMutePayload>>16
+        BRA .load
+
+.unmute
+        LDA.b #SPCUnmutePayload : STA $00
+        LDA.b #SPCUnmutePayload>>8 : STA $01
+        LDA.b #SPCUnmutePayload>>16
+
+.load
+        JSL Sound_LoadLightWorldSongBank_do_load
+    
+        ; Re-enable NMI and joypad
+        LDA.b #$81 : STA $4200
+
+        LDA $10
+            CMP #$07 : BEQ .sfx_indoors : CMP #$0E : BEQ .sfx_indoors
+            CMP #$09 : BNE .done
+
+.sfx_outdoors
+        SEP #$10
+            ; PreOverworld_LoadProperties.noWarpVortex ; Bank02.asm:820
+            LDX.b #$05
+            LDA $7EF3C5 : CMP.b #$02 : BCS +
+                LDX.b #$01 : +
+            STX $012D
+        REP #$10
+
+.done
+        LDA !REG_MUSIC_CONTROL_REQUEST : STA !REG_MUSIC_CONTROL : STZ !REG_MUSIC_CONTROL_REQUEST
+    PLX : PLA : PLP
+    RTL
+
+.sfx_indoors
+        LDA !REG_MUSIC_CONTROL_REQUEST : STA !REG_MUSIC_CONTROL : STZ !REG_MUSIC_CONTROL_REQUEST
+    PLX : PLA : PLP
+    JML Module_PreDungeon_setAmbientSfx
+
 msu_init:
-    REP #$20 : SEP #$10
+    PHP : REP #$20
         LDA #$0000
         STA !REG_MSU_VOLUME
         STA !REG_MSU_PACK_COUNT
@@ -155,7 +217,7 @@ msu_init:
         LDX.b #$FF
         LDY.b #$01
         SEP #$20
-.check
+.check_pack
             TYA
         REP #$20
         STA !REG_MSU_TRACK
@@ -163,11 +225,12 @@ msu_init:
         INX
         SEP #$20
             TAY
-.wait
-            LDA !REG_MSU_STATUS : BIT !FLAG_MSU_STATUS_AUDIO_BUSY : BNE .wait
-            LDA !REG_MSU_STATUS : BIT !FLAG_MSU_STATUS_TRACK_MISSING : BEQ .check
+.wait_pack
+            LDA !REG_MSU_STATUS : BIT !FLAG_MSU_STATUS_AUDIO_BUSY : BNE .wait_pack
+            LDA !REG_MSU_STATUS : BIT !FLAG_MSU_STATUS_TRACK_MISSING : BEQ .check_pack
             TXA : STA !REG_MSU_PACK_COUNT
 .done
+    PLP
     RTL
 
 msu_main:
@@ -250,17 +313,24 @@ load_track:
     CPX !REG_CURRENT_MSU_TRACK : BNE .check_dungeon
     CPX #$1B : BEQ .continue
     JML spc_continue
+
 .check_dungeon
+    ;  Convert dungeon tracks to dungeon-specific ones
+    CPX #$10 : BEQ .castle
     CPX #$11 : BEQ .dungeon
     CPX #$16 : BEQ .dungeon
     CPX #$15 : BNE .continue
 ; boss
     LDA $040C : LSR : !ADD #$2D
     BRA .continue-1
-
+.castle
+    LDA $040C : CMP #$08 : BEQ .dungeon+3 : BRA .continue
 .dungeon
     LDA $040C : LSR : !ADD #$21 : TAX
 .continue
+    CPX !REG_CURRENT_MSU_TRACK : BNE +
+        JML spc_continue
+    +
     LDA #$00 : XBA
     LDA !REG_MSU_PACK_CURRENT : BEQ +
 
