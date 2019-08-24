@@ -2311,6 +2311,16 @@ org $0DA9C8 ; <- 06A9C8 - player_oam.asm: 1663 (AND.w #$00FF : CMP.w #$00F8 : BC
 ; to the link sprite).
 LDA $02 ; always zero! (this replaces the BCC)
 ADC.w #0000 ; put the carry bit into the accumulator instead of a hardcoded 1.
+;-------------------------------------------------------------------------------
+org $02fd6f ; <- 017d6f - bank0E.asm: 3694 (LoadActualGearPalettes:) Note: Overflow of bank02 moved to 0e in US Rom
+JSL LoadActualGearPalettesWithGloves
+RTL
+;--------------------------------------------------------------------------------
+; Bunny Palette/Overworld Map Bugfix
+;--------------------------------------------------------------------------------
+org $02fdf0 ; <- 017df0 - bank0E (LDA [$00] : STA $7EC300, X : STA $7EC500, X)
+JSL LoadGearPalette_safe_for_bunny
+RTS
 ;================================================================================
 
 ;================================================================================
