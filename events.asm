@@ -39,7 +39,7 @@ OnDungeonExit:
 	PLP : PLA
 
 	STA $040C : STZ $04AC ; thing we wrote over
-	
+
 	PHA : PHP
 		JSL.l HUD_RebuildLong
 		JSL.l FloodGateResetInner
@@ -55,7 +55,7 @@ RTL
 ;--------------------------------------------------------------------------------
 OnUncleItemGet:
 	JSL Link_ReceiveItem
-	
+
 	LDA.l EscapeAssist
 	BIT.b #$04 : BEQ + : STA !INFINITE_MAGIC : +
 	BIT.b #$02 : BEQ + : STA !INFINITE_BOMBS : +
@@ -64,14 +64,14 @@ OnUncleItemGet:
 	LDA.l UncleRefill : BIT.b #$04 : BEQ + : LDA.b #$80 : STA $7EF373 : + ; refill magic
 	LDA.l UncleRefill : BIT.b #$02 : BEQ + : LDA.b #50 : STA $7EF375 : + ; refill bombs
 	LDA.l UncleRefill : BIT.b #$01 : BEQ + ; refill arrows
-		LDA.b #70 : STA $7EF376 
-		
+		LDA.b #70 : STA $7EF376
+
 		LDA.l ArrowMode : BEQ +
 			LDA !INVENTORY_SWAP_2 : ORA #$80 : STA !INVENTORY_SWAP_2 ; enable bow toggle
 			REP #$20 ; set 16-bit accumulator
 			LDA $7EF360 : !ADD.l FreeUncleItemAmount : STA $7EF360 ; rupee arrows, so also give the player some money to start
 			SEP #$20 ; set 8-bit accumulator
-	+ 
+	+
 RTL
 ;--------------------------------------------------------------------------------
 OnAga2Defeated:
@@ -124,7 +124,7 @@ OnNewFile:
 			LDA StartingEquipment, X : STA $7EF340, X
 			DEX : DEX
 		BPL -
-		
+
 		SEP #$20 ; set 8-bit accumulator
 		;LDA #$FF : STA !RNG_ITEM_LOCK_IN ; reset rng item lock-in
 		LDA.l PreopenCurtains : BEQ +
@@ -134,6 +134,10 @@ OnNewFile:
 
 		LDA.l PreopenPyramid : BEQ +
 			LDA.b #$20 : STA $7EF2DB ; pyramid hole already open
+		+
+
+		LDA.l PreopenGanonsTower : BEQ +
+			LDA.b #$20 : STA $7EF2C3 ; Ganons Tower already open
 		+
 
 		LDA StartingSword : STA $7EF359 ; set starting sword type
@@ -185,7 +189,7 @@ OnLoadDuckMap:
 	BNE +
 		INC : STA !DARK_DUCK_TEMP
 		JSL OverworldMap_InitGfx : DEC $0200
-		
+
 		RTL
 	+
 	LDA.b #$00 : STA !DARK_DUCK_TEMP

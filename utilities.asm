@@ -89,20 +89,20 @@ RTL
 	.gfxSlots
     db $06, $44, $45, $46, $2D, $20, $2E, $09
     db $09, $0A, $08, $05, $10, $0B, $2C, $1B
-    
+
     db $1A, $1C, $14, $19, $0C, $07, $1D, $2F
     db $07, $15, $12, $0D, $0D, $0E, $11, $17
-    
+
     db $28, $27, $04, $04, $0F, $16, $03, $13
     db $01, $1E, $10, $00, $00, $00, $00, $00
 
     db $00, $30, $22, $21, $24, $24, $24, $23
     db $23, $23, $29, $2A, $2C, $2B, $03, $03
-    
+
     db $34, $35, $31, $33, $02, $32, $36, $37
 	db $2C, $43, $0C, $38, $39, $3A, $F9, $3C
 	; db $2C, $06, $0C, $38, $FF, $FF, $FF, $FF
-	
+
 	;5x
 	db $44 ; Safe Master Sword
 	db $3D, $3E, $3F, $40 ; Bomb & Arrow +5/+10
@@ -112,7 +112,7 @@ RTL
 	db $47 ; Null Item
 	db $48, $48, $48 ; Red, Blue & Green Clocks
 	db $FE, $FF ; Progressive Sword & Shield
-	
+
 	;6x
 	db $FD, $0D ; Progressive Armor & Gloves
 	db $FA, $FB ; RNG Single & Multi
@@ -120,19 +120,19 @@ RTL
 	db $FF, $FF, $FF, $FF ; Unused
 	db $49, $4A, $49 ; Goal Item Single, Multi & Alt Multi
 	db $FF, $FF, $FF ; Unused
-	
+
 	;7x
 	db $21, $21, $21, $21, $21, $21, $21, $21, $21, $21, $21, $21, $21, $21, $21, $21 ; Free Map
-	
+
 	;8x
 	db $16, $16, $16, $16, $16, $16, $16, $16, $16, $16, $16, $16, $16, $16, $16, $16 ; Free Compass
-	
+
 	;9x
 	db $22, $22, $22, $22, $22, $22, $22, $22, $22, $22, $22, $22, $22, $22, $22, $22 ; Free Big Key
-	
+
 	;Ax
 	db $0F, $0F, $0F, $0F, $0F, $0F, $0F, $0F, $0F, $0F, $0F, $0F, $0F, $0F, $0F, $0F ; Free Small Key
-	
+
 	db $49, $49, $49, $49, $49, $49, $49, $49, $49, $49, $49, $49, $49, $49, $49, $49 ; Unused
 	db $49, $49, $49, $49, $49, $49, $49, $49, $49, $49, $49, $49, $49, $49, $49, $49 ; Unused
 	db $49, $49, $49, $49, $49, $49, $49, $49, $49, $49, $49, $49, $49, $49, $49, $49 ; Unused
@@ -228,20 +228,20 @@ RTL
 	.gfxPalettes
 	db $00, $04, $02, $08, $04, $02, $08, $02
 	db $04, $02, $02, $02, $04, $04, $04, $08
-	
+
 	db $08, $08, $02, $02, $04, $02, $02, $02
 	db $04, $02, $04, $02, $08, $08, $04, $02
-	
+
 	db $0A, $02, $04, $02, $04, $04, $00, $04
 	db $04, $08, $02, $02, $08, $04, $02, $08
-	
+
 	db $04, $04, $08, $08, $08, $04, $02, $08
 	db $02, $04, $08, $02, $04, $04, $02, $02
-	
+
 	db $08, $08, $02, $04, $04, $08, $08, $08
 	db $04, $04, $04, $02, $08, $08, $08, $08
 	; db $04, $0A, $04, $02, $FF, $FF, $FF, $FF
-	
+
 	db $04 ; Safe Master Sword
 	db $08, $08, $08, $08 ; Bomb & Arrow +5/+10
 	db $04, $00, $00 ; Programmable Items 1-3
@@ -319,10 +319,10 @@ IsNarrowSprite:
 	++ CMP.b #$63 : BNE ++ ; RNG Item (Multi)
 		JSL.l GetRNGItemMulti
 	++
-	
+
 	.continue
 	;--------
-	
+
 	LDX.b #$00 ; set index counter to 0
 	;----
 	-
@@ -374,7 +374,7 @@ RTL
 ;--------------------------------------------------------------------------------
 LoadDynamicTileOAMTable:
 	PHA : PHP
-	
+
 	PHA
 		REP #$20 ; set 16-bit accumulator
 		LDA.w #$0000 : STA.l !SPRITE_OAM
@@ -382,23 +382,23 @@ LoadDynamicTileOAMTable:
 		LDA.w #$0200 : STA.l !SPRITE_OAM+6
 		SEP #$20 ; set 8-bit accumulator
 		LDA.b #$24 : STA.l !SPRITE_OAM+4
-	
+
 	LDA $01,s
-	
+
 		JSL.l GetSpritePalette
 		STA !SPRITE_OAM+5 : STA !SPRITE_OAM+13
 	PLA
 	JSL.l IsNarrowSprite : BCS .narrow
-	
+
 	BRA .done
-	
+
 	.narrow
 	REP #$20 ; set 16-bit accumulator
 	LDA.w #$0000 : STA.l !SPRITE_OAM+7
 	               STA.l !SPRITE_OAM+14
 	LDA.w #$0800 : STA.l !SPRITE_OAM+9
 	LDA.w #$3400 : STA.l !SPRITE_OAM+11
-	
+
 	.done
 	PLP : PLA
 RTS
@@ -416,18 +416,18 @@ RTS
 ;--------------------------------------------------------------------------------
 DrawDynamicTile:
 	JSL.l IsNarrowSprite : BCS .narrow
-	
+
 	.full
 	LDA.b #$01 : STA $06
 	LDA #$0C : JSL.l OAM_AllocateFromRegionC
 	LDA #$02 : PHA
 	BRA .draw
-	
+
 	.narrow
 	LDA.b #$02 : STA $06
 	LDA #$10 : JSL.l OAM_AllocateFromRegionC
 	LDA #$03 : PHA
-	
+
 	.draw
 	LDA.b #!SPRITE_OAM>>0 : STA $08
 	LDA.b #!SPRITE_OAM>>8 : STA $09
@@ -437,7 +437,7 @@ DrawDynamicTile:
 		JSL Sprite_DrawMultiple_quantity_preset
 		LDA.b #$00 : STA.l !SKIP_EOR
 	PLB
-	
+
 	LDA $90 : !ADD.b #$08 : STA $90 ; leave the pointer in the right spot to draw the shadow, if desired
 	LDA $92 : INC #2 : STA $92
 	PLA
@@ -445,16 +445,16 @@ RTL
 ;--------------------------------------------------------------------------------
 DrawDynamicTileNoShadow:
 	JSL.l IsNarrowSprite : BCS .narrow
-	
+
 	.full
 	LDA.b #$01 : STA $06
 	LDA #$04 : JSL.l OAM_AllocateFromRegionC
 	BRA .draw
-	
+
 	.narrow
 	LDA.b #$02 : STA $06
 	LDA #$08 : JSL.l OAM_AllocateFromRegionC
-	
+
 	.draw
 	LDA.b #!SPRITE_OAM>>0 : STA $08
 	LDA.b #!SPRITE_OAM>>8 : STA $09
@@ -464,7 +464,7 @@ DrawDynamicTileNoShadow:
 		JSL Sprite_DrawMultiple_quantity_preset
 		LDA Bob : BNE + : LDA.b #$00 : STA.l !SKIP_EOR : + ; Bob fix is conditional
 	PLB
-	
+
 	LDA $90 : !ADD.b #$08 : STA $90
 	LDA $92 : INC #2 : STA $92
 RTL
@@ -662,7 +662,7 @@ db #00, #01, #01, #02, #01, #02, #02, #03, #01, #02, #02, #03, #02, #03, #03, #0
 ;		CMP.w #1 : !BLT +
 ;		PHA : SEP #$20 : LDA $7F5007 : INC : STA $7F5007 : REP #$20 : PLA
 ;		!SUB.w #1 : BRA -
-;	+ 
+;	+
 ;	PLA
 ;RTL
 ;--------------------------------------------------------------------------------
@@ -677,7 +677,7 @@ WriteVRAMStripe:
 	PHX
 		LDX $1000 ; get pointer
 		AND.w #$7F : STA $1002, X : INX #2 ; set destination
-	PLA : ASL : AND.w #7FFF : ORA.w #7000 : STA $1002, X : INX #2 ; set length and enable RLE
+	PLA : ASL : AND.w #$7FFF : ORA.w #$7000 : STA $1002, X : INX #2 ; set length and enable RLE
 	TYA : STA $1002, X : INX #2 ; set tile
 	SEP #$20 ; set 8-bit accumulator
 		LDA.b #$FF : STA $1002, X
@@ -693,12 +693,12 @@ RTL
 ; in:	X(w) - Length in Tiles
 ; in:	Y(w) - Address of Data to Copy
 ;--------------------------------------------------------------------------------
-WriteVRAMStripe:
+WriteVRAMBlock:
 	PHX
 		LDX $1000 ; get pointer
 		AND.w #$7F : STA $1002, X : INX #2 ; set destination
-	PLA : ASL : AND.w #3FFF : STA $1002, X : INX #2 ; set length
-	
+	PLA : ASL : AND.w #$3FFF : STA $1002, X : INX #2 ; set length
+
 	PHX
 		TYX ; set X to source
 		PHA
@@ -706,7 +706,7 @@ WriteVRAMStripe:
 		PLA
 		;A is already the value we need for mvn
 		MVN $7F7E ; currently we transfer from our buffers in 7F to the vram buffer in 7E
-		
+
 		!ADD 1, s ; add the length in A to the stack pointer on the top of the stack
 	PLX : TAX ; pull and promptly ignore, copying the value we just got over it
 
