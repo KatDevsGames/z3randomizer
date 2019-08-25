@@ -399,8 +399,12 @@ BottleLimit:
 db #$04 ; #$04 - 4 Bottles (default)
 BottleLimitReplacement:
 db #$47 ; #$47 - 20 Rupees (default)
+ProgressiveBowLimit:
+db #$02 ; #$02 - 2 Bows (default)
+ProgressiveBowReplacement:
+db #$47 ; #$47 - 20 Rupees (default)
 ;--------------------------------------------------------------------------------
-; 0x180098 - 0x18009F (unused)
+; 0x18009A - 0x18009F (unused)
 ;--------------------------------------------------------------------------------
 org $3080A0 ; PC 0x1800A0 - 0x1800A4
 Bugfix_MirrorlessSQToLW:

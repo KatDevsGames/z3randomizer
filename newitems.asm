@@ -462,7 +462,7 @@ AddReceivedItemExpanded:
 				LDA !PROGRESSIVE_SHIELD : !ADD.b #$40 : STA !PROGRESSIVE_SHIELD : BRL .done
 		++ : CMP.b #$60 : BNE ++ ; Progressive Armor
 			LDA $7EF35B : CMP.l ProgressiveArmorLimit : !BLT +
-				LDA.l ProgressiveArmorReplacement : STA $02D8 : BRA .done
+				LDA.l ProgressiveArmorReplacement : STA $02D8 : BRL .done
 			+ : CMP.b #$00 : BNE + ; No Armor
 				LDA.b #$22 : STA $02D8 : BRA .done
 			+ ; Everything Else
@@ -473,7 +473,9 @@ AddReceivedItemExpanded:
 			+ ; Everything Else
 				LDA.b #$1C : STA $02D8 : BRA .done
 		++ : CMP.b #$64 : BNE ++ : -- ; Progressive Bow
-			LDA $7EF340 : BNE + ; No Bow
+			LDA $7EF340 : CMP.l ProgressiveBowLimit : !BLT +
+				LDA.l ProgressiveBowReplacement : STA $02D8 : BRL .done
+			+ : CMP.b #$00 : BNE + ; No Bow
 				LDA.b #$3A : STA $02D8 : BRA .done
 			+ ; Any Bow
 				LDA.b #$3B : STA $02D8 : BRA .done
