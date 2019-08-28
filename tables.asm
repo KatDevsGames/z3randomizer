@@ -914,7 +914,7 @@ db #$00 ; #$00 = Off (Default) - #$01 = Synchronous - #$02 = Asychronous
 ;---------------------------------------------------------------------------------
 org $308194 ; PC 0x180194
 TurnInGoalItems:
-db #$01 ; #$00 = Instant win if last goal item collected. $01 must turn in goal items
+db #$01 ; #$00 = Instant win if last goal item collected. $01 = (Default) must turn in goal items
 ;--------------------------------------------------------------------------------
 ; 0x180195 - 0x1801FF (unused)
 ;================================================================================

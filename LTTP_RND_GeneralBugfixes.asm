@@ -25,7 +25,7 @@ org $3FFFFF ; <- 1FFFFF
 db #$00 ; expand file to 2mb
 
 org $1FFFF8 ; <- FFFF8 timestamp rom
-db #$20, #$19, #$06, #$17 ; year/month/day
+db #$20, #$19, #$08, #$27 ; year/month/day
 
 ;================================================================================
 
@@ -182,6 +182,7 @@ incsrc password.asm
 incsrc enemy_adjustments.asm
 incsrc hudtext.asm
 incsrc servicerequest.asm
+incsrc elder.asm
 warnpc $A58000
 
 ;org $228000 ; contrib area
@@ -256,7 +257,11 @@ warnpc $31E501
 org $338000
 GFX_HUD_Palette:
 incbin hudpalette.pal
-warnpc $348000
+warnpc $338041
+
+org $339000
+incbin sheet178.gfx
+warnpc $339600
 
 org $328000
 Extra_Text_Table:
