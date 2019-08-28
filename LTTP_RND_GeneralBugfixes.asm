@@ -75,6 +75,15 @@ db #$20, #$19, #$06, #$17 ; year/month/day
 !FORCE_HEART_SPAWN = "$7F5033";
 !SKIP_HEART_SAVE = "$7F5034";
 
+; MSU-1
+!REG_MSU_FALLBACK_TABLE = $7F50A0   ; 8 bytes
+!REG_MSU_DELAYED_COMMAND = $7F50A9
+!REG_MSU_PACK_COUNT = $7F50AA
+!REG_MSU_PACK_CURRENT = $7F50AB
+!REG_MUSIC_CONTROL = $012B
+;!REG_MUSIC_CONTROL = $012C
+!REG_MUSIC_CONTROL_REQUEST = $012C
+
 ;================================================================================
 
 incsrc hooks.asm
