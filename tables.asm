@@ -911,8 +911,12 @@ db #$00 ; #$00 = Locked (Default) - #$01 = Restart
 org $308193 ; PC 0x180193
 ServerRequestMode:
 db #$00 ; #$00 = Off (Default) - #$01 = Synchronous - #$02 = Asychronous
+;---------------------------------------------------------------------------------
+org $308194 ; PC 0x180194
+TurnInGoalItems:
+db #$01 ; #$00 = Instant win if last goal item collected. $01 must turn in goal items
 ;--------------------------------------------------------------------------------
-; 0x180194 - 0x1801FF (unused)
+; 0x180195 - 0x1801FF (unused)
 ;================================================================================
 org $308200 ; PC 0x180200 - 0x18020F
 RedClockAmount:

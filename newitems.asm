@@ -31,6 +31,7 @@
 ; #$65 - Progressive Bow
 ; #$6A - Goal Item (Single/Triforce)
 ; #$6B - Goal Item (Multi/Power Star)
+; #$6C - Goal Item (Multi/Triforce Piece)
 ; #$6D- Server Request
 ; #$6E - Server Request (Dungeon Drop)
 ; #$70 - Maps
@@ -162,7 +163,10 @@ ProcessEventItems:
 
 			LDA GoalItemRequirement : BEQ ++
 			LDA !GOAL_COUNTER : INC : STA !GOAL_COUNTER
-			CMP GoalItemRequirement : !BLT ++ : JSL.l ActivateGoal : ++
+			CMP GoalItemRequirement : !BLT ++ 
+			LDA TurnInGoalItems : BNE ++
+				JSL.l ActivateGoal 
+			++
 
 			LDX.b #$01 : BRA .done
 		+
@@ -309,7 +313,10 @@ AddReceivedItemExpandedGetItem:
 		.multi_collect
 		LDA GoalItemRequirement : BEQ ++
 		LDA !GOAL_COUNTER : INC : STA !GOAL_COUNTER
-		CMP GoalItemRequirement : !BLT ++ : JSL.l ActivateGoal : ++
+		CMP GoalItemRequirement : !BLT ++ :
+		LDA TurnInGoalItems : BNE ++
+				JSL.l ActivateGoal
+		++
 		BRL .done
 	+ CMP.b #$6D : BNE + ; Server Request
 		JSL ItemGetServiceRequest

@@ -2349,3 +2349,88 @@ Dungeon_OpenKeyedObject_bigChest:
 org $01EC38 ; <- 0EC38 - bank01.asm : 13809 (.smallChest)
 Dungeon_OpenKeyedObject_smallChest:
 ;================================================================================
+
+;================================================================================
+; Murahdahla (The brother who re-assembles the triforce pieces)
+;--------------------------------------------------------------------------------
+org $06C092 ; bank06.asm:1864 (JSL Sprite_ElderLong) [22 CD F0 05]
+JSL NewElderCode
+;--------------------------------------------------------------------------------
+; Add him to Castle Map post-rain, and post aga1
+;--------------------------------------------------------------------------------
+org $09D0AC
+db #$18, #$0F, #$43, #$FF;remove heart from tree adjancent map [LW1]
+db #$12, #$19, #$16 ;add sahasrala in castle Y, X, Sprite ID
+org $09C937
+db #$B0, #$D0 ;change [LW1] map 01C pointers
+org $09D421
+db #$18, #$0F, #$45, #$FF;remove heart from tree adjancent map [LW2]
+db #$12, #$19, #$16 ;add sahasrala in castle Y, X, Sprite ID
+org $09CA57
+db #$25, #$D4 ;change [LW2] map 01C pointers
+;--------------------------------------------------------------------------------
+; Expanded trinexx sheet gfx.
+;--------------------------------------------------------------------------------
+org $00CFC0+178 : db #$33
+org $00D09F+178 : db #$90
+org $00D17E+178 : db #$00
+; Use above sheet in Hyrule castle courtyard after rain state.
+org $00DB9E ; Hyrule Castle GFX Sprite Sheet 4 on [LW1]
+db #$3F
+org $00DC0A ; Hyrule Castle GFX Sprite Sheet 4 on [LW2]
+db #$3F
+;--------------------------------------------------------------------------------
+; Updated evil barrier animation table
+;--------------------------------------------------------------------------------
+org $1DF0E1;Evil Barrier new draw code
+
+dw   0,  0 : db $CC, $00, $00, $02
+dw -29,  3 : db $EA, $00, $00, $00
+dw -29, 11 : db $FA, $00, $00, $00
+dw  37,  3 : db $EA, $40, $00, $00
+dw  37, 11 : db $FA, $40, $00, $00
+dw -24, -2 : db $CE, $00, $00, $02
+dw  -8, -2 : db $CE, $00, $00, $02
+dw   8, -2 : db $CE, $40, $00, $02
+dw  24, -2 : db $CE, $40, $00, $02
+
+dw   0,  0 : db $EC, $00, $00, $02
+dw -29,  3 : db $EB, $00, $00, $00
+dw -29, 11 : db $FB, $00, $00, $00
+dw  37,  3 : db $EB, $40, $00, $00
+dw  37, 11 : db $FB, $40, $00, $00
+dw   0,  0 : db $EC, $00, $00, $02
+dw   0,  0 : db $EC, $00, $00, $02
+dw   0,  0 : db $EC, $00, $00, $02
+dw   0,  0 : db $EC, $00, $00, $02
+
+dw   0,  0 : db $EC, $00, $00, $02
+dw -29,  3 : db $EB, $00, $00, $00
+dw -29, 11 : db $FB, $00, $00, $00
+dw  37,  3 : db $EB, $40, $00, $00
+dw  37, 11 : db $FB, $40, $00, $00
+dw -24, -2 : db $CE, $80, $00, $02
+dw  -8, -2 : db $CE, $80, $00, $02
+dw   8, -2 : db $CE, $C0, $00, $02
+dw  24, -2 : db $CE, $C0, $00, $02
+
+dw   0,  0 : db $CC, $00, $00, $02
+dw -29,  3 : db $EA, $00, $00, $00
+dw -29, 11 : db $FA, $00, $00, $00
+dw  37,  3 : db $EA, $40, $00, $00
+dw  37, 11 : db $FA, $40, $00, $00
+dw   0,  0 : db $CC, $00, $00, $02
+dw   0,  0 : db $CC, $00, $00, $02
+dw   0,  0 : db $CC, $00, $00, $02
+dw   0,  0 : db $CC, $00, $00, $02
+
+dw -29,  3 : db $EB, $00, $00, $00
+dw -29, 11 : db $FB, $00, $00, $00
+dw  37,  3 : db $EB, $40, $00, $00
+dw  37, 11 : db $FB, $40, $00, $00
+dw  37, 11 : db $FB, $40, $00, $00
+dw  37, 11 : db $FB, $40, $00, $00
+dw  37, 11 : db $FB, $40, $00, $00
+dw  37, 11 : db $FB, $40, $00, $00
+dw  37, 11 : db $FB, $40, $00, $00
+;================================================================================
