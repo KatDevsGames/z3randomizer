@@ -6,7 +6,78 @@
 ;
 ; Author: qwertymodo
 ;
-; Free space used: 0x77DDD-0x77F8A
+; Track List:
+;
+;  1 - Title ~ Link to the Past
+;  2 - Hyrule Field
+;  3 - Time of Falling Rain
+;  4 - The Silly Pink Rabbit
+;  5 - Forest of Mystery
+;  6 - Seal of Seven Maidens
+;  7 - Kakariko Village
+;  8 - Dimensional Shift (Mirror)
+;  9 - Dark Golden Land
+; 10 - Unsealing the Master Sword
+; 11 - Beginning of the Journey
+; 12 - Soldiers of Kakariko Village
+; 13 - Black Mist
+; 14 - Guessing Game House
+; 15 - Dark Woods
+; 16 - Majestic Castle
+; 17 - Lost Ancient Ruins
+; 18 - Dank Dungeons
+; 19 - Great Victory!
+; 20 - Safety in the Sanctuary
+; 21 - Anger of the Guardians
+; 22 - Dungeon of Shadows
+; 23 - Fortune Teller
+; 24 - Dank Dungeons (Copy)
+; 25 - Princess Zelda's Rescue
+; 26 - Meeting the Maidens
+; 27 - The Goddess Appears
+; 28 - Priest of the Dark Order
+; 29 - Release of Ganon
+; 30 - Ganon's Message
+; 31 - The Prince of Darkness
+; 32 - Power of the Gods
+; 33 - Epilogue ~ Beautiful Hyrule
+; 34 - Staff Roll
+;
+; Dungeon-specific tracks
+;
+; 35 - Eastern Palace
+; 36 - Desert Palace
+; 37 - Agahnim's Tower
+; 38 - Swamp Palace
+; 39 - Palace of Darkness
+; 40 - Misery Mire
+; 41 - Skull Woods
+; 42 - Ice Palace
+; 43 - Tower of Hera
+; 44 - Thieves' Town
+; 45 - Turtle Rock
+; 46 - Ganon's Tower
+; 59 - Ganon's Tower (Upstairs)
+;
+; Bosses
+;
+; 47 - Eastern Palace
+; 48 - Desert Palace
+; 49 - Agahnim's Tower
+; 50 - Swamp Palace
+; 51 - Palace of Darkness
+; 52 - Misery Mire
+; 53 - Skull Woods
+; 54 - Ice Palace
+; 55 - Tower of Hera
+; 56 - Thieves' Town
+; 57 - Turtle Rock
+; 58 - Ganon's Tower
+;
+; Additional tracks
+;
+; 60 - Light World OW (after ped pull)
+; 61 - Dark World OW (with all crystals)
 ;
 ;=======================================
 
@@ -52,17 +123,14 @@
 !FLAG_MSU_STATUS_DATA_BUSY = #$80
 
 
+!REG_CURRENT_MSU_TRACK = $010B
 !REG_CURRENT_VOLUME = $0127
 !REG_TARGET_VOLUME = $0129
-!REG_CURRENT_MSU_TRACK = $012B
-!REG_MUSIC_CONTROL = $012C
 !REG_CURRENT_TRACK = $0130
 !REG_CURRENT_COMMAND = $0133
-!REG_MSU_LOAD_FLAG = $7F509B
 
 !REG_SPC_CONTROL = $2140
 !REG_NMI_FLAGS = $4210
-
 
 !VAL_COMMAND_FADE_OUT = #$F1
 !VAL_COMMAND_FADE_HALF = #$F2
@@ -73,6 +141,218 @@
 !VAL_VOLUME_DECREMENT = #$02
 !VAL_VOLUME_HALF = #$80
 !VAL_VOLUME_FULL = #$FF
+
+CheckMusicLoadRequest:
+    PHP : REP #$10 : PHA : PHX : PHY
+        LDA !REG_MUSIC_CONTROL_REQUEST : BEQ .skip : BMI .skip : CMP !REG_CURRENT_COMMAND : BNE .continue
+.skip
+        STA !REG_MUSIC_CONTROL : STZ !REG_MUSIC_CONTROL_REQUEST
+    PLY : PLX : PLA : PLP
+    RTL
+        
+.continue
+        ; Shut down NMI until music loads
+        STZ $4200
+
+        LDA NoBGM : BEQ +
+            BRL .mute
+        +
+
+        LDX !REG_MSU_ID_01 : CPX !VAL_MSU_ID_01 : BEQ +
+            - : BRL .unmute
+        +
+        LDX !REG_MSU_ID_23 : CPX !VAL_MSU_ID_23 : BNE -
+        LDX !REG_MSU_ID_45 : CPX !VAL_MSU_ID_45 : BNE -
+
+        SEP #$10
+            ;  Load alternate or dungeon-specific tracks
+            LDA !REG_MUSIC_CONTROL_REQUEST
+
+            CMP.b #02 : BEQ .lightworld
+            CMP.b #09 : BEQ .darkworld
+            CMP.b #13 : BEQ .darkwoods
+            CMP.b #16 : BEQ .castle
+            CMP.b #17 : BEQ .dungeon
+            CMP.b #22 : BEQ .dungeon
+            CMP.b #21 : BNE .check_fallback
+
+;.boss
+            LDA $040C : LSR : !ADD.b #45
+            BRA .check_fallback-3
+.lightworld
+            PHA
+                LDA $7EF300 : AND.b #$40 : BEQ +
+                    LDA.b #60 : BRA .check_fallback-3
+                +
+            - : PLA : BRA .check_fallback-3
+.darkworld
+            PHA
+                LDA $7EF371 : CMP.b #$7F : BNE -
+            PLA
+            LDA.b #61 : BRA .check_fallback-3 
+.darkwoods
+            PHA
+                LDA $7EF3CA : BEQ -
+                LDA $8A : CMP #$40 : BNE -
+            PLA
+            LDA.b #15 : BRA .check_fallback-3
+.castle
+            LDA $040C
+            CMP.b #$08 : BNE .check_fallback  ; Hyrule Castle 2
+.dungeon
+            LDA $040C : LSR : !ADD.b #33 : STA !REG_MUSIC_CONTROL_REQUEST
+            CMP.b #46 : BNE .check_fallback
+    
+            ; Ganon's Tower
+            LDA $7EF366 : AND.b #$04 : BEQ .check_fallback                      ; Check if we have the GT big key
+            LDA !REG_MSU_FALLBACK_TABLE+7 : AND.b #$04 : BEQ .check_fallback    ; Check if the 2nd GT track exists
+            LDA.b #59
+            STA !REG_MUSIC_CONTROL_REQUEST
+
+.check_fallback
+            LDA !REG_MUSIC_CONTROL_REQUEST : DEC : PHA
+                AND.b #$07 : TAY
+                PLA : LSR #3 : TAX
+            LDA !REG_MSU_FALLBACK_TABLE,X : BEQ .secondary_fallback : CMP.b #$FF : BEQ .mute
+            
+            - : CPY #$00 : BEQ +
+                LSR : DEY : BRA -
+            +
+            
+            AND.b #$01 : BEQ .secondary_fallback
+
+.mute
+            LDA.b #$FF : STA $2140
+            LDA.b #SPCMutePayload : STA $00
+            LDA.b #SPCMutePayload>>8 : STA $01
+            LDA.b #SPCMutePayload>>16
+            BRA .load
+
+.secondary_fallback
+            LDX !REG_MUSIC_CONTROL_REQUEST : LDA MSUExtendedFallbackList-1,X
+            CMP !REG_MUSIC_CONTROL_REQUEST : BEQ .unmute
+            CPX #35 : !BLT +
+                CPX #47 : !BLT .dungeon_fallback
+            +
+
+            STA !REG_MUSIC_CONTROL_REQUEST
+            BRA .check_fallback
+
+.dungeon_fallback
+                PHB : REP #$10
+                    LDX $040C
+                    LDA.b #Music_Eastern>>16 : PHA : PLB    ; Set bank to music pointers
+                    LDY $00 : PHY
+                        REP #$20
+                            LDA MSUDungeonFallbackList,X : STA $00
+                        SEP #$20
+                        LDA ($00)
+                PLY : STY $00 : SEP #$10 : PLB
+                STA !REG_MUSIC_CONTROL_REQUEST
+                BRA .check_fallback
+
+.unmute
+            LDA.b #$FF : STA $2140
+            LDA.b #SPCUnmutePayload : STA $00
+            LDA.b #SPCUnmutePayload>>8 : STA $01
+            LDA.b #SPCUnmutePayload>>16
+
+.load
+        REP #$10
+        JSL Sound_LoadLightWorldSongBank_do_load
+    
+        ; Re-enable NMI and joypad
+        LDA.b #$81 : STA $4200
+
+        LDA !REG_MUSIC_CONTROL_REQUEST : CMP.b #08 : BEQ .done+3    ; No SFX during warp track
+
+        LDA $10
+            CMP.b #$07 : BEQ .sfx_indoors
+            CMP.b #$0E : BEQ .sfx_indoors
+            CMP.b #$09 : BNE .done
+
+.sfx_outdoors
+        SEP #$10
+            LDX.b #$05
+            LDA $8A : CMP.b #$70 : BNE +    ; Misery Mire
+                LDA $7EF2F0 : AND.b #$20 : BEQ .rain
+            +
+
+            LDA $7EF3C5 : CMP.b #$02 : BCS +
+.rain
+                LDX.b #$01
+            +
+            STX $012D
+        REP #$10
+
+.done
+        LDA !REG_MUSIC_CONTROL_REQUEST : STA !REG_MUSIC_CONTROL : STZ !REG_MUSIC_CONTROL_REQUEST
+    PLY : PLX : PLA : PLP
+    RTL
+
+.sfx_indoors
+        LDA !REG_MUSIC_CONTROL_REQUEST : STA !REG_MUSIC_CONTROL : STZ !REG_MUSIC_CONTROL_REQUEST
+    PLY : PLX : PLA : PLP
+    JML Module_PreDungeon_setAmbientSfx
+
+msu_init:
+    PHP : REP #$20
+        LDA.w #$0000
+        STA !REG_MSU_VOLUME
+        STA !REG_MSU_PACK_COUNT
+
+        LDA !REG_MSU_ID_01 : CMP !VAL_MSU_ID_01 : BNE .done
+        LDA !REG_MSU_ID_23 : CMP !VAL_MSU_ID_23 : BNE .done
+        LDA !REG_MSU_ID_45 : CMP !VAL_MSU_ID_45 : BNE .done
+
+; Count the number of available MSU-1 packs
+        LDA.w #$0000
+        LDX.b #$FF
+        LDY.b #$01
+    SEP #$20
+
+.check_pack
+    TYA
+    REP #$20
+        STA !REG_MSU_TRACK
+        !ADD.w #100
+        INX
+    SEP #$20
+    TAY
+.wait_pack
+    LDA !REG_MSU_STATUS : BIT !FLAG_MSU_STATUS_AUDIO_BUSY : BNE .wait_pack
+    LDA !REG_MSU_STATUS : BIT !FLAG_MSU_STATUS_TRACK_MISSING : BEQ .check_pack
+    TXA : STA !REG_MSU_PACK_COUNT
+
+; Check the current MSU-1 pack for tracks that require SPC fallback
+    LDA.b #64
+    LDX.b #7
+    LDY.b #7
+
+.check_track
+    STA !REG_MSU_TRACK_LO
+    STZ !REG_MSU_TRACK_HI
+    PHA
+    CLC
+
+.wait_track
+    LDA !REG_MSU_STATUS : BIT !FLAG_MSU_STATUS_AUDIO_BUSY : BNE .wait_track
+    LDA !REG_MSU_STATUS : BIT !FLAG_MSU_STATUS_TRACK_MISSING : BNE +
+        SEC
+    +
+    LDA !REG_MSU_FALLBACK_TABLE,X : ROL : STA !REG_MSU_FALLBACK_TABLE,X
+
+    DEY : BPL .next_track
+        DEX : BPL +
+            PLA
+.done
+            PLP
+            RTL
+        +
+        LDY.b #7
+.next_track
+    PLA : DEC
+    BRA .check_track
 
 msu_main:
     SEP #$20    ; set 8-BIT accumulator
@@ -87,29 +367,23 @@ msu_main:
     LDA !REG_MSU_ID_45 : CMP !VAL_MSU_ID_45 : BNE .nomsu
     SEP #$30
     LDX !REG_MUSIC_CONTROL : BNE command_ff
-    LDA !REG_MSU_LOAD_FLAG : BEQ do_fade
+    LDA !REG_MSU_DELAYED_COMMAND : BEQ do_fade
 
 msu_check_busy:
     LDA !REG_MSU_STATUS : BIT !FLAG_MSU_STATUS_AUDIO_BUSY : BEQ .ready
     JML spc_continue
 .ready
-    LDA !REG_MSU_STATUS : BIT !FLAG_MSU_STATUS_TRACK_MISSING : BNE spc_fallback
+    LDA !REG_MSU_STATUS : BIT !FLAG_MSU_STATUS_TRACK_MISSING : BEQ .start
+    JML spc_continue
+.start
     LDA !VAL_VOLUME_FULL
     STA !REG_TARGET_VOLUME
     STA !REG_CURRENT_VOLUME
     STA !REG_MSU_VOLUME
-    LDA !REG_MSU_LOAD_FLAG
+    LDA !REG_MSU_DELAYED_COMMAND
     STA !REG_MSU_CONTROL
-    LDA #$00
-    STA !REG_MSU_LOAD_FLAG
-    JML spc_continue
-
-spc_fallback:
-    STZ !REG_MSU_CONTROL
-    STZ !REG_CURRENT_MSU_TRACK
-    STZ !REG_TARGET_VOLUME
-    STZ !REG_CURRENT_VOLUME
-    STZ !REG_MSU_VOLUME
+    LDA.b #$00
+    STA !REG_MSU_DELAYED_COMMAND
     JML spc_continue
 
 do_fade:
@@ -157,16 +431,73 @@ command_f1:
     JML spc_continue
 
 load_track:
-    CPX !REG_CURRENT_MSU_TRACK : BNE .continue
-    CPX #$1B : BEQ .continue
-    JML spc_continue
-.continue
-    STX !REG_MSU_TRACK_LO
-    STZ !REG_MSU_TRACK_HI
+    CPX !REG_CURRENT_MSU_TRACK : BNE +
+    - : CPX #27 : BEQ +
+        JML spc_continue
+    +
+    CPX !REG_CURRENT_COMMAND : BEQ -
+    LDA.b #$00 : XBA
+    LDA !REG_MSU_PACK_CURRENT : BEQ +
+    - : CMP !REG_MSU_PACK_COUNT : !BLT +
+        !SUB !REG_MSU_PACK_COUNT : BRA -
+    +
+
+    PHX : PHA : TXA : PLX
+    REP #$20
+    BEQ +
+    -
+        !ADD.w #100
+        DEX : BNE -
+    +
+        STA !REG_MSU_TRACK
+    SEP #$20
+
     STZ !REG_MSU_CONTROL
-    LDA.l MSUTrackList,x
-    STA !REG_MSU_LOAD_FLAG
+    PLX
     STX !REG_CURRENT_MSU_TRACK
+    LDA MSUTrackList,X
+    STA !REG_MSU_DELAYED_COMMAND
+    LDA MSUExtendedFallbackList-1,X : CMP.b #35 : !BLT .done : CMP.b #47 : !BGE .done
+
+    PHB : REP #$10
+        LDX $040C
+        LDA.b #Music_Eastern>>16 : PHA : PLB    ; Set bank to music pointers
+        LDY $00 : PHY
+            REP #$20
+                LDA MSUDungeonFallbackList,X : STA $00
+            SEP #$20
+            LDA ($00)
+    PLY : STY $00 : SEP #$10 : PLB
+
+.done
+    STA !REG_MUSIC_CONTROL
+    JML spc_continue
+    
+
+; No longer used, keeping as a reference for
+; multi-pack fallback with the new lookup table
+; Delete this once lookup fallback supports multi-pack
+.fallback
+    STA !REG_CURRENT_MSU_TRACK
+    TAX
+
+    LDA.b #$00 : XBA
+    LDA !REG_MSU_PACK_CURRENT : BEQ +
+
+    -
+        CMP !REG_MSU_PACK_COUNT : !BLT +
+        !SUB !REG_MSU_PACK_COUNT : BRA -
+    +
+
+    PHA : TXA : PLX
+    REP #$20
+    BEQ +
+    -
+        !ADD.w #100
+        DEX : BNE -
+    +
+        STA !REG_MSU_TRACK
+    SEP #$20
     JML spc_continue
 
 pendant_fanfare:
@@ -177,12 +508,13 @@ pendant_fanfare:
     LDA !REG_MSU_ID_45 : CMP !VAL_MSU_ID_45 : BNE .spc
     SEP #$20
     LDA !REG_MSU_STATUS : BIT !FLAG_MSU_STATUS_TRACK_MISSING : BNE .spc
-    LDA !REG_MSU_LOAD_FLAG : BNE .continue
+    LDA !REG_MSU_DELAYED_COMMAND : BNE .continue
     LDA !REG_MSU_STATUS : BIT !FLAG_MSU_STATUS_AUDIO_PLAYING : BEQ .done
 .continue
     jml pendant_continue
 .spc
     SEP #$20
+    - : LDA !REG_SPC_CONTROL : BEQ -    ; Wait for the track to finish loading
     LDA !REG_SPC_CONTROL : BNE .continue
 .done
     jml pendant_done
@@ -196,12 +528,13 @@ crystal_fanfare:
     LDA !REG_MSU_ID_45 : CMP !VAL_MSU_ID_45 : BNE .spc
     SEP #$20
     LDA !REG_MSU_STATUS : BIT !FLAG_MSU_STATUS_TRACK_MISSING : BNE .spc
-    LDA !REG_MSU_LOAD_FLAG : BNE .continue
+    LDA !REG_MSU_DELAYED_COMMAND : BNE .continue
     LDA !REG_MSU_STATUS : BIT !FLAG_MSU_STATUS_AUDIO_PLAYING : BEQ .done
 .continue    
     jml crystal_continue
 .spc
     SEP #$20
+    - : LDA !REG_SPC_CONTROL : BEQ -    ; Wait for the track to finish loading
     LDA !REG_SPC_CONTROL : BNE .continue
 .done
     jml crystal_done
@@ -217,5 +550,5 @@ ending_wait:
     LDA !REG_MSU_STATUS : BIT !FLAG_MSU_STATUS_AUDIO_PLAYING : BNE .wait
 .done
     SEP #$20
-    LDA #$22
+    LDA.b #$22
     RTL

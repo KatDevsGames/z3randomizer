@@ -75,6 +75,15 @@ db #$20, #$19, #$08, #$31 ; year/month/day
 !FORCE_HEART_SPAWN = "$7F5033";
 !SKIP_HEART_SAVE = "$7F5034";
 
+; MSU-1
+!REG_MSU_FALLBACK_TABLE = $7F50A0   ; 8 bytes
+!REG_MSU_DELAYED_COMMAND = $7F50A9
+!REG_MSU_PACK_COUNT = $7F50AA
+!REG_MSU_PACK_CURRENT = $7F50AB
+!REG_MUSIC_CONTROL = $012B
+;!REG_MUSIC_CONTROL = $012C
+!REG_MUSIC_CONTROL_REQUEST = $012C
+
 ;================================================================================
 
 incsrc hooks.asm
@@ -390,6 +399,11 @@ UseImplicitRegIndexedLongJumpTable:
 org $008333
 Vram_EraseTilemaps_triforce:
 
+org $008913
+Sound_LoadLightWorldSongBank:
+org $00891D
+    .do_load
+
 org $00893D
 EnableForceBlank:
 
@@ -422,6 +436,11 @@ Mirror_InitHdmaSettings:
 
 org $01873A
 Dungeon_LoadRoom:
+
+org $02821E
+Module_PreDungeon:
+org $028296
+    .setAmbientSfx
 
 org $02A0A8
 Dungeon_SaveRoomData:

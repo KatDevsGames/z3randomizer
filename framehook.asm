@@ -22,6 +22,7 @@
 !LOCK_STATS = "$7EF443"
 FrameHookAction:
 	JSL $0080B5 ; Module_MainRouting
+	JSL CheckMusicLoadRequest
 	PHA : PHP
 		;LDA EnableSRAMTrace : AND.l TournamentSeedInverse : BEQ +
 		;	LDA $1A : BNE ++ : JSL.l WriteStatusPreview : ++ ; write every 256 frames

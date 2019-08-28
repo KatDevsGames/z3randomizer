@@ -721,6 +721,10 @@ org $06C93B ; PC 0x3493B
 PyramidPotion:
 	db #$2C ; #$2C = Green Potion
 ;--------------------------------------------------------------------------------
+; Change track 15 (unused) to point to 13 (Death Mountain) so dark woods can be track 15
+org $1A9F15 ; PC 0xD1F15
+	dw #$2B00	; Set track 15 pointer to track 13's data
+;--------------------------------------------------------------------------------
 org $308140 ; PC 0x180140 - 0x18014A [encrypted]
 HeartPieceOutdoorValues:
 HeartPiece_Spectacle:
@@ -968,7 +972,11 @@ org $308215 ; PC 0x180215
 SeedHash:
 db $00, $01, $02, $03, $04
 ;--------------------------------------------------------------------------------
-; 0x18021A - 0x18021F (unused)
+org $30821A ; PC 0x18021A
+NoBGM:
+db $00 ; $00 = BGM enabled (default) $01 = BGM disabled
+;--------------------------------------------------------------------------------
+; 0x18021B - 0x18021F (unused)
 ;================================================================================
 ; $308220 (0x180220) - $30823F (0x18023F)
 ; Plandomizer Author Name (ASCII) - Leave unused chars as 0
@@ -1468,7 +1476,7 @@ dw #9999 ; Rupee Limit
 ; $7F5098 - Water Entry Index
 ; $7F5099 - Last Entered Overworld Door ID
 ; $7F509A - (Reserved)
-; $7F509B - MSU Flag
+; $7F509B - Unused
 ; $7F509C - Inverted Mode Duck Map Temporary
 ; $7F509D - Stalfos Bomb Damage Value
 ; $7F509E - Valid Key Loaded
@@ -1598,18 +1606,89 @@ LowHeartFix:
 	db $08, $08, $10
 
 ;================================================================================
-org $30D000 ; PC 0x185000 - 0x18503F
+org $30D000 ; PC 0x185000 - 0x18505F
 MSUTrackList:
 db $00,$01,$03,$03,$03,$03,$03,$03
 db $01,$03,$01,$03,$03,$03,$03,$03
 db $03,$03,$03,$01,$03,$03,$03,$03
 db $03,$03,$03,$03,$03,$01,$03,$03
-db $03,$01,$01,$FF,$FF,$FF,$FF,$FF
-db $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
-db $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
-db $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
+db $03,$01,$01,$03,$03,$03,$03,$03
+db $03,$03,$03,$03,$03,$03,$03,$03
+db $03,$03,$03,$03,$03,$03,$03,$03
+db $03,$03,$03,$03,$03,$00,$00,$00
+
+MSUExtendedFallbackList:
+db $01,$02,$03,$04,$05,$06,$07,$08
+db $09,$0A,$0B,$0C,$0D,$0E,$0F,$0D
+db $11,$12,$13,$14,$15,$16,$17,$18
+db $19,$1A,$1B,$1C,$1D,$1E,$1F,$20
+db $21,$22,$11,$11,$10,$16,$16,$16
+db $16,$16,$11,$16,$16,$16,$15,$15
+db $15,$15,$15,$15,$15,$15,$15,$15
+db $15,$15,$16,$02,$09,$00,$00,$00
+
+MSUDungeonFallbackList:
+dw $0000	; Sewer Escape
+dw $0000	; Hyrule Castle
+dw Music_Eastern
+dw Music_Desert
+dw $0000	; Agahnim's Tower
+dw Music_Swamp
+dw Music_Darkness
+dw Music_Mire
+dw Music_Skull
+dw Music_Ice
+dw Music_Hera
+dw Music_Thieves
+dw Music_TRock
+dw Music_GTower
+dw $0000
+dw $0000
+
+SPCMutePayload:
+dw $0001	; Transfer size
+dw $0A4A    ; Transfer destination
+db $00      ; mov a,#$70 -> mov a,#$00
+
+dw $0001    ; Transfer size
+dw $0AF3    ; Transfer destination
+db $00      ; mov $059,#$c0 -> mov $059,#$00
+
+dw $0002    ; Transfer size
+dw $0C32    ; Transfer destination
+db $00, $00 ; movw $058,ya -> nop #2
+
+dw $0001    ; Transfer size
+dw $0D19    ; Transfer destination
+db $34      ; movw $058,ya -> mov $058,a
+
+dw $0000    ; Transfer size (end of transfer)
+dw $FFFF    ; Dummy destination
+db $FF, $FF, $FF, $FF, $FF, $FF, $FF	; Padding
+
+SPCUnmutePayload:
+dw $0001	; Transfer size
+dw $0A4A    ; Transfer destination
+db $70      ; mov a,#$70
+
+dw $0001    ; Transfer size
+dw $0AF3    ; Transfer destination
+db $C0      ; mov $059,#$c0
+
+dw $0002    ; Transfer size
+dw $0C32    ; Transfer destination
+db $da, $58 ; movw $058,ya
+
+dw $0001    ; Transfer size
+dw $0D19    ; Transfer destination
+db $34      ; movw $058,ya
+
+dw $0000    ; Transfer size (end of transfer)
+dw $FFFF    ; Dummy destination
+db $FF, $FF, $FF, $FF, $FF, $FF, $FF	; Padding
+
 ;--------------------------------------------------------------------------------
-; 0x185040 - 1850FF (unused)
+; 0x185060 - 1850FF (unused)
 ;--------------------------------------------------------------------------------
 org $30D100 ; PC 0x185100 - 0x18513F
 UnusedTable: ; please do not move this - kkat

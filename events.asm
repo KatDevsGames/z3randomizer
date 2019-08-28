@@ -207,6 +207,13 @@ RTL
 PostItemAnimation:
 	LDA.b #$00 : STA !ITEM_BUSY ; mark item as finished
 
+	LDA $02D8 : CMP #$32 : BNE +	; Big Key
+	LDA $1B : BEQ +					; Check that we're indoors
+	LDA $040C : CMP #$1A : BNE +	; Check that we're in Ganon's Tower
+		LDA !REG_MSU_FALLBACK_TABLE+7 : AND #$04 : BEQ +
+		LDA.b #59 : STA !REG_MUSIC_CONTROL_REQUEST
+	+
+
 	LDA $7F509F : BEQ +
 		STZ $1CF0 : STZ $1CF1 ; reset decompression buffer
 		JSL.l Main_ShowTextMessage_Alt

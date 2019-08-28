@@ -52,15 +52,23 @@ PreOverworld_LoadProperties_ChooseMusic:
 
     .endOfLightWorldChecks
     ; if we are in the light world go ahead and set chosen selection
-    LDA $7EF3CA : BEQ .lastCheck
+    LDA $7EF3CA : BEQ .checkInverted+4
 
-    LDX.b #$0D ; dark woods theme
+    LDX.b #$0F ; dark woods theme
 
-    ; This music is used in dark woods, and dark death mountain
+    ; This music is used in dark woods
     LDA $8A
-    CMP.b #$40 : BEQ + : CMP.b #$43 : BEQ + : CMP.b #$45 : BEQ + : CMP.b #$47 : BEQ +
+    CMP.b #$40 : BEQ +
+        LDX.b #$0D  ; dark death mountain theme
+
+    ; This music is used in dark death mountain
+    CMP.b #$43 : BEQ + : CMP.b #$45 : BEQ + : CMP.b #$47 : BEQ +
         LDX.b #$09 ; dark overworld theme
     +
+
+    ; if not inverted and light world, or inverted and dark world, skip moon pearl check
+    .checkInverted
+    LDA $7EF3CA : CLC : ROL #$03 : CMP InvertedMode : BEQ .lastCheck
 
     ; Does Link have a moon pearl?
     LDA $7EF357 : BNE +
@@ -77,6 +85,153 @@ PreOverworld_LoadProperties_ChooseMusic:
     +
 
     JML.l PreOverworld_LoadProperties_SetSong
+;--------------------------------------------------------------------------------
+
+;--------------------------------------------------------------------------------
+Overworld_FinishMirrorWarp:
+    REP #$20
+
+    LDA.w #$2641 : STA $4370
+
+    LDX.b #$3E
+
+    LDA.w #$FF00
+
+.clear_hdma_table
+
+    STA $1B00, X : STA $1B40, X
+    STA $1B80, X : STA $1BC0, X
+    STA $1C00, X : STA $1C40, X
+    STA $1C80, X
+
+    DEX #2 : BPL .clear_hdma_table
+
+    LDA.w #$0000 : STA $7EC007 : STA $7EC009
+
+    SEP #$20
+
+    JSL $00D7C8               ; $57C8 IN ROM
+
+    LDA.b #$80 : STA $9B
+
+    LDX.b #$04  ; bunny theme
+
+    ; if not inverted and light world, or inverted and dark world, skip moon pearl check
+    LDA $7EF3CA : CLC : ROL #$03 : CMP InvertedMode : BEQ +
+        LDA $7EF357 : BEQ .endOfLightWorldChecks
+    +
+
+    LDX.b #$09  ; default dark world theme
+
+    LDA $8A : CMP.b #$40 : !BGE .endOfLightWorldChecks
+
+    LDX.b #$02  ; hyrule field theme
+
+    ; Check if we're entering the village
+    CMP.b #$18 : BNE .endOfLightWorldChecks
+
+    ; Check what phase we're in
+    LDA $7EF3C5 : CMP.b #$03 : !BGE .endOfLightWorldChecks
+        LDX.b #$07 ; Default village theme (phase <3)
+
+.endOfLightWorldChecks
+    STX $012C
+
+    LDA $8A : CMP.b #$40 : BNE +
+        LDX #$0F    ; dark woods theme
+        BRA .bunny
+    +
+
+    CMP.b #$43 : BEQ .darkMountain
+    CMP.b #$45 : BEQ .darkMountain
+    CMP.b #$47 : BNE .notDarkMountain
+
+.darkMountain
+    LDA.b #$09 : STA $012D    ; set storm ambient SFX
+    LDX.b #$0D  ; dark mountain theme
+
+.bunny
+    LDA $7EF357 : ORA InvertedMode : BNE +
+        LDX #$04    ; bunny theme
+    +
+
+    STX $012C
+
+.notDarkMountain
+
+    LDA $11 : STA $010C
+
+    STZ $11
+    STZ $B0
+    STZ $0200
+    STZ $0710
+
+    RTL
+;--------------------------------------------------------------------------------
+
+;--------------------------------------------------------------------------------
+BirdTravel_LoadTargetAreaMusic:
+    ; Skip village and lost woods checks if entering dark world or a special area
+    LDA $8A : CMP.b #$40 : !BGE .notVillageOrWoods
+
+    LDX.b #$07 ; Default village theme
+
+    ; Check what phase we're in
+    LDA $7EF3C5 : CMP.b #$03 : !BLT +
+        LDX.b #$02 ; Default light world theme (phase >=3)
+    +
+
+    ; Check if we're entering the village
+    LDA $8A : CMP.b #$18 : BEQ .endOfLightWorldChecks
+    ; For NA release would we also branch on indexes #$22 #$28 #$29
+
+    LDX.b #$05 ; Lost woods theme
+
+    ; check if we've pulled from the master sword pedestal
+    LDA $7EF300 : AND.b #$40 : BEQ +
+        LDX.b #$02 ; Default light world theme
+    +
+
+    ; check if we are entering lost woods
+    LDA $8A : BEQ .endOfLightWorldChecks
+
+    .notVillageOrWoods
+    ; Use the normal overworld (light world) music
+    LDX.b #$02
+
+    ; Check phase        ; In phase >= 2
+    LDA $7EF3C5 : CMP.b #$02 : !BGE +
+        ; If phase < 2, play the legend music
+        LDX.b #$03
+    +
+
+    .endOfLightWorldChecks
+    ; if we are in the light world go ahead and set chosen selection
+    LDA $7EF3CA : BEQ .checkInverted+4
+
+    LDX.b #$0F ; dark woods theme
+
+    ; This music is used in dark woods
+    LDA $8A
+    CMP.b #$40 : BEQ +
+        LDX.b #$0D  ; dark death mountain theme
+
+    ; This music is used in dark death mountain
+    CMP.b #$43 : BEQ + : CMP.b #$45 : BEQ + : CMP.b #$47 : BEQ +
+        LDX.b #$09 ; dark overworld theme
+    +
+
+    ; if not inverted and light world, or inverted and dark world, skip moon pearl check
+    .checkInverted
+    LDA $7EF3CA : CLC : ROL #$03 : CMP InvertedMode : BEQ .lastCheck
+
+    ; Does Link have a moon pearl?
+    LDA $7EF357 : BNE +
+        LDX.b #$04 ; bunny theme
+    +
+
+    .lastCheck
+    RTL
 ;--------------------------------------------------------------------------------
 
 ;--------------------------------------------------------------------------------

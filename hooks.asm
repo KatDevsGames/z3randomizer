@@ -4,6 +4,8 @@
 org $00802F ; <- 2F - Bank00.asm : 45
 JSL.l Init_Primary
 NOP
+org $0CC1AC ; <- 63 D4 00 - Bank0C.asm:8 (dl Tagalong_LoadGfx)
+dl Init_PostRAMClear
 ;--------------------------------------------------------------------------------
 
 ;================================================================================
@@ -1455,6 +1457,13 @@ crystal_continue:
 
 org $0EE6EC ; <- E220 A922 - Bank0E.asm:2892 (SEP #$20 : LDA.b #$22 : STA $012C)
 JSL.l ending_wait
+
+; Process music commands in NMI from new location after muting is processed
+org $0080DD
+dw !REG_MUSIC_CONTROL
+
+org $008101
+dw !REG_MUSIC_CONTROL
 ;--------------------------------------------------------------------------------
 
 ;================================================================================
@@ -2225,6 +2234,13 @@ PreOverworld_LoadProperties_SetSong:
 org $05CC58 ; <- Bank05.asm:1307 (LDA $040A : CMP.b #$18)
 JSL PsychoSolder_MusicCheck
 NOP #1
+;--------------------------------------------------------------------------------
+org $02B13A ; <- Bank02.asm:7647
+dl Overworld_FinishMirrorWarp
+;--------------------------------------------------------------------------------
+org $0AB949 ; <- Bank0A.asm:270 (Different from US ROM)
+JSL BirdTravel_LoadTargetAreaMusic
+NOP #16
 ;================================================================================
 
 ;================================================================================

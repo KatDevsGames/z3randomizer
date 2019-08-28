@@ -48,3 +48,13 @@ Init_Primary:
 	LDA.b #$81 : STA $4200 ; thing we wrote over, turn on NMI & gamepad
 RTL
 ;--------------------------------------------------------------------------------
+; Init_PostRAMClear
+;--------------------------------------------------------------------------------
+; This gets called after banks $7E and $7F get cleared, so if we need to
+; initialize RAM in those banks, do it here
+;--------------------------------------------------------------------------------
+Init_PostRAMClear:
+
+	JSL msu_init
+
+JML $00D463	; The original target of the jump table that we hijacked
