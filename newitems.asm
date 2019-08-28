@@ -313,7 +313,7 @@ AddReceivedItemExpandedGetItem:
 		.multi_collect
 		LDA GoalItemRequirement : BEQ ++
 		LDA !GOAL_COUNTER : INC : STA !GOAL_COUNTER
-		CMP GoalItemRequirement : !BLT ++ :
+		CMP GoalItemRequirement : !BLT ++
 		LDA TurnInGoalItems : BNE ++
 				JSL.l ActivateGoal
 		++
