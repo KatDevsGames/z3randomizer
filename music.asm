@@ -152,7 +152,7 @@ Overworld_FinishMirrorWarp:
 
 .bunny
     LDA $7EF357 : ORA InvertedMode : BNE +
-        LDA #$04    ; bunny theme
+        LDX #$04    ; bunny theme
     +
 
     STX $012C
