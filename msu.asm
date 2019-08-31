@@ -182,6 +182,7 @@ CheckMusicLoadRequest:
 .lightworld
             PHA
                 LDA $7EF300 : AND.b #$40 : BEQ +
+                    PLA
                     LDA.b #60 : BRA .check_fallback-3
                 +
             - : PLA : BRA .check_fallback-3
@@ -472,6 +473,9 @@ load_track:
     PLY : STY $00 : SEP #$10 : PLB
 
 .done
+    - : TAX : CMP MSUExtendedFallbackList-1,X : BEQ +
+        LDA MSUExtendedFallbackList-1,X : BRA -
+    +
     STA !REG_MUSIC_CONTROL
     JML spc_continue
     
