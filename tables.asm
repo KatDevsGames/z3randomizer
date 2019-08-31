@@ -975,8 +975,11 @@ db $00, $01, $02, $03, $04
 org $30821A ; PC 0x18021A
 NoBGM:
 db $00 ; $00 = BGM enabled (default) $01 = BGM disabled
+org $30821B ; PC 0x18021B
+FastFanfare:
+db $00 ; $00 = Normal fanfare (default) $01 = Fast fanfare
 ;--------------------------------------------------------------------------------
-; 0x18021B - 0x18021F (unused)
+; 0x18021C - 0x18021F (unused)
 ;================================================================================
 ; $308220 (0x180220) - $30823F (0x18023F)
 ; Plandomizer Author Name (ASCII) - Leave unused chars as 0

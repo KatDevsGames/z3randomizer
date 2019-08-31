@@ -508,6 +508,7 @@ load_track:
 
 pendant_fanfare:
     LDA TournamentSeed : BNE .spc
+    LDA FastFanfare : BNE .done
     REP #$20
     LDA !REG_MSU_ID_01 : CMP !VAL_MSU_ID_01 : BNE .spc
     LDA !REG_MSU_ID_23 : CMP !VAL_MSU_ID_23 : BNE .spc
@@ -530,6 +531,7 @@ pendant_fanfare:
 
 crystal_fanfare:
     LDA TournamentSeed : BNE .spc
+    LDA FastFanfare : BNE .done
     REP #$20
     LDA !REG_MSU_ID_01 : CMP !VAL_MSU_ID_01 : BNE .spc
     LDA !REG_MSU_ID_23 : CMP !VAL_MSU_ID_23 : BNE .spc
