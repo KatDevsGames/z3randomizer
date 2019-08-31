@@ -260,6 +260,8 @@ CheckMusicLoadRequest:
 .load
         REP #$10
         JSL Sound_LoadLightWorldSongBank_do_load
+
+        LDA.b #$01 : STA !REG_SPC_LOADING
     
         ; Re-enable NMI and joypad
         LDA.b #$81 : STA $4200
@@ -510,12 +512,14 @@ pendant_fanfare:
     LDA !REG_MSU_STATUS : BIT !FLAG_MSU_STATUS_TRACK_MISSING : BNE .spc
     LDA !REG_MSU_DELAYED_COMMAND : BNE .continue
     LDA !REG_MSU_STATUS : BIT !FLAG_MSU_STATUS_AUDIO_PLAYING : BEQ .done
+.playing
+    LDA #$00 : STA !REG_SPC_LOADING
 .continue
     jml pendant_continue
 .spc
     SEP #$20
-    - : LDA !REG_SPC_CONTROL : BEQ -    ; Wait for the track to finish loading
-    LDA !REG_SPC_CONTROL : BNE .continue
+    LDA !REG_SPC_CONTROL : BNE .playing
+    LDA !REG_SPC_LOADING : BNE .continue
 .done
     jml pendant_done
 
@@ -530,12 +534,14 @@ crystal_fanfare:
     LDA !REG_MSU_STATUS : BIT !FLAG_MSU_STATUS_TRACK_MISSING : BNE .spc
     LDA !REG_MSU_DELAYED_COMMAND : BNE .continue
     LDA !REG_MSU_STATUS : BIT !FLAG_MSU_STATUS_AUDIO_PLAYING : BEQ .done
+.playing
+    LDA #$00 : STA !REG_SPC_LOADING
 .continue    
     jml crystal_continue
 .spc
     SEP #$20
-    - : LDA !REG_SPC_CONTROL : BEQ -    ; Wait for the track to finish loading
-    LDA !REG_SPC_CONTROL : BNE .continue
+    LDA !REG_SPC_CONTROL : BNE .playing
+    LDA !REG_SPC_LOADING : BNE .continue
 .done
     jml crystal_done
 
