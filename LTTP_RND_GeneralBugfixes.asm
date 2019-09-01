@@ -192,6 +192,7 @@ incsrc enemy_adjustments.asm
 incsrc hudtext.asm
 incsrc servicerequest.asm
 incsrc elder.asm
+incsrc toast.asm
 warnpc $A58000
 
 ;org $228000 ; contrib area
