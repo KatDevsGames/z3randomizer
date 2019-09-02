@@ -28,16 +28,25 @@
 !TX_SEQUENCE = "$7EF4A0"
 ;--------------------------------------------------------------------------------
 PollService:
-	LDA !RX_BUFFER : BNE + : RTL : + ; return if command is 0
+	LDA !RX_STATUS : BEQ + : SEC : RTL : + ; return fail if we don't have the lock
 	LDA #$01 : STA !RX_STATUS ; mark busy
 	LDA !RX_BUFFER+1 : STA !RX_SEQUENCE ; mark this as handled
 	LDA !RX_BUFFER+2 : STA !RX_SEQUENCE+1
-		; whatever
-	LDA #$00 : STA !RX_STATUS ; mark ready
+		LDA !RX_BUFFER : CMP.b #03 : BNE +
+			LDA !RX_BUFFER + 8 : TAX
+			LDA !RX_BUFFER + 9 : STA $7E012E, X ; set sound effect, could possibly make this STA not-long
+			REP #$30 ; set 16-bit accumulator and index registers
+				LDA !RX_BUFFER + 10 : TAX
+				LDA !RX_BUFFER + 12
+				JSL.L DoToast
+			SEP #$30 ; set 8-bit accumulator and index registers
+		+
+	LDA #$00 : STA !RX_STATUS ; release lock
+	CLC ; mark request as successful
 RTL
 ;--------------------------------------------------------------------------------
 macro ServiceRequest(type)
-	LDA !TX_STATUS : BEQ + : SEC : RTL : + ; return fail if status is anything but idle
+	LDA !TX_STATUS : BEQ + : SEC : RTL : + ; return fail if we don't have the lock
 	LDA #$01 : STA !TX_STATUS ; mark busy
 		LDA $7B : STA !TX_BUFFER+1 ; world
 		LDA $1B : STA !TX_BUFFER+2 ; indoor/outdoor
@@ -45,7 +54,7 @@ macro ServiceRequest(type)
 		LDA $A1 : STA !TX_BUFFER+4 ; roomid high
 		LDA $76 : STA !TX_BUFFER+5 ; object index (type 2 only)
 		LDA <type> : STA !TX_BUFFER ; item get
-	LDA #$02 : STA !TX_STATUS ; mark ready for tx
+	LDA #$00 : STA !TX_STATUS ; release lock
 	CLC ; mark request as successful
 RTL
 endmacro
