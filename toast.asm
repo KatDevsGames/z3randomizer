@@ -1,6 +1,5 @@
 !TOAST_BUFFER = "$7F5400" ; for now
 !TOAST_BUFFER_LOW = "$5400" ; for now
-!
 ;--------------------------------------------------------------------------------
 ; DoToast:
 ; in:	A(w) - VRAM Destination

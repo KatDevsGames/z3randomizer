@@ -33,12 +33,12 @@ PollService:
 	LDA !RX_BUFFER+1 : STA !RX_SEQUENCE ; mark this as handled
 	LDA !RX_BUFFER+2 : STA !RX_SEQUENCE+1
 		LDA !RX_BUFFER : CMP.b #03 : BNE +
-			LDA !RX_BUFFER + 8 : TAX
-			LDA !RX_BUFFER + 9 : STA $7E012E, X ; set sound effect, could possibly make this STA not-long
+			LDA.l !RX_BUFFER+8 : TAX
+			LDA.l !RX_BUFFER+9 : STA $7E012E, X ; set sound effect, could possibly make this STA not-long
 			REP #$30 ; set 16-bit accumulator and index registers
-				LDA !RX_BUFFER + 10 : TAX
-				LDA !RX_BUFFER + 12
-				JSL.L DoToast
+				LDA !RX_BUFFER+10 : TAX
+				LDA !RX_BUFFER+12
+				JSL.l DoToast
 			SEP #$30 ; set 8-bit accumulator and index registers
 		+
 	LDA #$00 : STA !RX_STATUS ; release lock
