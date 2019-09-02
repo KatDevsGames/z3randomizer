@@ -135,3 +135,49 @@ Sprite_ShowSolicitedMessageIfPlayerFacing_Alt:
 	RTL
 }
 ;================================================================
+Sprite_ShowSolicitedMessageIfPlayerFacing_PreserveMessage:
+{
+	PHY
+	PHA
+
+	JSL Sprite_CheckDamageToPlayerSameLayerLong : BCC .alpha
+	JSL Sprite_CheckIfPlayerPreoccupied : BCS .alpha
+
+	LDA $F6 : BPL .alpha
+	LDA $0F10, X : BNE .alpha
+	LDA $4D : CMP.b #$02 : BEQ .alpha
+
+	JSL Sprite_DirectionToFacePlayerLong : PHX : TYX
+
+	; Make sure that the sprite is facing towards the player, otherwise
+	; talking can't happen. (What sprites actually use this???)
+	LDA $05E1A3, X : PLX : CMP $2F : BNE .not_facing_each_other
+
+	PLA : XBA : PLA
+
+	PHY
+
+	TAY : XBA
+	
+	JSL Sprite_ShowMessageUnconditional
+
+	LDA.b #$40 : STA $0F10, X
+
+	PLA : EOR.b #$03
+
+	SEC
+
+	RTL
+
+.not_facing_each_other
+.alpha
+	PLY
+	PLA
+
+	LDA $0DE0, X
+
+	CLC
+
+	RTL
+}
+;================================================================
