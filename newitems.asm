@@ -480,7 +480,7 @@ AddReceivedItemExpanded:
 			+ ; Everything Else
 				LDA.b #$1C : STA $02D8 : BRA .done
 		++ : CMP.b #$64 : BNE ++ : -- ; Progressive Bow
-			LDA $7EF340 : CMP.l ProgressiveBowLimit : !BLT +
+			LDA $7EF340 : INC : LSR : CMP.l ProgressiveBowLimit : !BLT +
 				LDA.l ProgressiveBowReplacement : STA $02D8 : BRL .done
 			+ : CMP.b #$00 : BNE + ; No Bow
 				LDA.b #$3A : STA $02D8 : BRA .done
