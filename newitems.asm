@@ -471,7 +471,7 @@ AddReceivedItemExpanded:
 			LDA $7EF35B : CMP.l ProgressiveArmorLimit : !BLT +
 				LDA.l ProgressiveArmorReplacement : STA $02D8 : BRL .done
 			+ : CMP.b #$00 : BNE + ; No Armor
-				LDA.b #$22 : STA $02D8 : BRA .done
+				LDA.b #$22 : STA $02D8 : BRL .done
 			+ ; Everything Else
 				LDA.b #$23 : STA $02D8 : BRA .done
 		++ : CMP.b #$61 : BNE ++ ; Progressive Lifting Glove
