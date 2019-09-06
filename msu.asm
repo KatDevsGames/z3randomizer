@@ -151,8 +151,16 @@ CheckMusicLoadRequest:
     RTL
         
 .continue
+        LDA TournamentSeed : BNE ++
+        LDA !REG_MSU_PACK_REQUEST
+        CMP !REG_MSU_PACK_CURRENT : BEQ ++
+        CMP !REG_MSU_PACK_COUNT : !BLT +
+                LDA !REG_MSU_PACK_CURRENT : STA !REG_MSU_PACK_REQUEST
+            + : STA !REG_MSU_PACK_CURRENT
+            JSL msu_init_check_fallback
+
         ; Shut down NMI until music loads
-        STZ $4200
+        ++ : STZ $4200
 
         LDA NoBGM : BEQ +
             BRL .mute
@@ -326,9 +334,12 @@ msu_init:
     LDA !REG_MSU_STATUS : BIT !FLAG_MSU_STATUS_AUDIO_BUSY : BNE .wait_pack
     LDA !REG_MSU_STATUS : BIT !FLAG_MSU_STATUS_TRACK_MISSING : BEQ .check_pack
     TXA : STA !REG_MSU_PACK_COUNT
+    BRA +
 
 ; Check the current MSU-1 pack for tracks that require SPC fallback
-    LDA.b #64
+.check_fallback
+        PHP : SEP #$10
+    + : LDA.b #64
     LDX.b #7
     LDY.b #7
 
