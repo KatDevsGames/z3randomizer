@@ -471,9 +471,13 @@ load_track:
     STX !REG_CURRENT_MSU_TRACK
     LDA MSUTrackList,X
     STA !REG_MSU_DELAYED_COMMAND
-    LDA MSUExtendedFallbackList-1,X : CMP.b #35 : !BLT .done : CMP.b #47 : !BGE .done
+    LDA MSUExtendedFallbackList-1,X 
+    CMP.b #17 : BEQ +
+    CMP.b #22 : BEQ +
+    CMP.b #35 : !BLT .done
+    CMP.b #47 : !BGE .done
 
-    PHB : REP #$10
+    + : PHB : REP #$10
         LDX $040C
         LDA.b #Music_Eastern>>16 : PHA : PLB    ; Set bank to music pointers
         LDY $00 : PHY
