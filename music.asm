@@ -138,7 +138,7 @@ Overworld_FinishMirrorWarp:
     CMP.b #$18 : BNE .endOfLightWorldChecks
 
     ; Check what phase we're in
-    LDA $7EF3C5 : CMP.b #$03 : !BGE .endOfLightWorldChecks
+    ; LDA $7EF3C5 : CMP.b #$03 : !BGE .endOfLightWorldChecks
         LDX.b #$07 ; Default village theme (phase <3)
 
 .endOfLightWorldChecks
