@@ -151,8 +151,16 @@ CheckMusicLoadRequest:
     RTL
         
 .continue
+        LDA TournamentSeed : BNE ++
+        LDA !REG_MSU_PACK_REQUEST
+        CMP !REG_MSU_PACK_CURRENT : BEQ ++
+        CMP !REG_MSU_PACK_COUNT : !BLT +
+                LDA !REG_MSU_PACK_CURRENT : STA !REG_MSU_PACK_REQUEST
+            + : STA !REG_MSU_PACK_CURRENT
+            JSL msu_init_check_fallback
+
         ; Shut down NMI until music loads
-        STZ $4200
+        ++ : STZ $4200
 
         LDA NoBGM : BEQ +
             BRL .mute
@@ -182,6 +190,7 @@ CheckMusicLoadRequest:
 .lightworld
             PHA
                 LDA $7EF300 : AND.b #$40 : BEQ +
+                    PLA
                     LDA.b #60 : BRA .check_fallback-3
                 +
             - : PLA : BRA .check_fallback-3
@@ -260,6 +269,8 @@ CheckMusicLoadRequest:
 .load
         REP #$10
         JSL Sound_LoadLightWorldSongBank_do_load
+
+        LDA.b #$01 : STA !REG_SPC_LOADING
     
         ; Re-enable NMI and joypad
         LDA.b #$81 : STA $4200
@@ -323,9 +334,12 @@ msu_init:
     LDA !REG_MSU_STATUS : BIT !FLAG_MSU_STATUS_AUDIO_BUSY : BNE .wait_pack
     LDA !REG_MSU_STATUS : BIT !FLAG_MSU_STATUS_TRACK_MISSING : BEQ .check_pack
     TXA : STA !REG_MSU_PACK_COUNT
+    BRA +
 
 ; Check the current MSU-1 pack for tracks that require SPC fallback
-    LDA.b #64
+.check_fallback
+        PHP : SEP #$10
+    + : LDA.b #64
     LDX.b #7
     LDY.b #7
 
@@ -470,6 +484,9 @@ load_track:
     PLY : STY $00 : SEP #$10 : PLB
 
 .done
+    - : TAX : CMP MSUExtendedFallbackList-1,X : BEQ +
+        LDA MSUExtendedFallbackList-1,X : BRA -
+    +
     STA !REG_MUSIC_CONTROL
     JML spc_continue
     
@@ -502,6 +519,7 @@ load_track:
 
 pendant_fanfare:
     LDA TournamentSeed : BNE .spc
+    LDA FastFanfare : BNE .done
     REP #$20
     LDA !REG_MSU_ID_01 : CMP !VAL_MSU_ID_01 : BNE .spc
     LDA !REG_MSU_ID_23 : CMP !VAL_MSU_ID_23 : BNE .spc
@@ -510,18 +528,21 @@ pendant_fanfare:
     LDA !REG_MSU_STATUS : BIT !FLAG_MSU_STATUS_TRACK_MISSING : BNE .spc
     LDA !REG_MSU_DELAYED_COMMAND : BNE .continue
     LDA !REG_MSU_STATUS : BIT !FLAG_MSU_STATUS_AUDIO_PLAYING : BEQ .done
+.playing
+    LDA #$00 : STA !REG_SPC_LOADING
 .continue
     jml pendant_continue
 .spc
     SEP #$20
-    - : LDA !REG_SPC_CONTROL : BEQ -    ; Wait for the track to finish loading
-    LDA !REG_SPC_CONTROL : BNE .continue
+    LDA !REG_SPC_CONTROL : BNE .playing
+    LDA !REG_SPC_LOADING : BNE .continue
 .done
     jml pendant_done
 
 
 crystal_fanfare:
     LDA TournamentSeed : BNE .spc
+    LDA FastFanfare : BNE .done
     REP #$20
     LDA !REG_MSU_ID_01 : CMP !VAL_MSU_ID_01 : BNE .spc
     LDA !REG_MSU_ID_23 : CMP !VAL_MSU_ID_23 : BNE .spc
@@ -530,12 +551,14 @@ crystal_fanfare:
     LDA !REG_MSU_STATUS : BIT !FLAG_MSU_STATUS_TRACK_MISSING : BNE .spc
     LDA !REG_MSU_DELAYED_COMMAND : BNE .continue
     LDA !REG_MSU_STATUS : BIT !FLAG_MSU_STATUS_AUDIO_PLAYING : BEQ .done
+.playing
+    LDA #$00 : STA !REG_SPC_LOADING
 .continue    
     jml crystal_continue
 .spc
     SEP #$20
-    - : LDA !REG_SPC_CONTROL : BEQ -    ; Wait for the track to finish loading
-    LDA !REG_SPC_CONTROL : BNE .continue
+    LDA !REG_SPC_CONTROL : BNE .playing
+    LDA !REG_SPC_LOADING : BNE .continue
 .done
     jml crystal_done
 

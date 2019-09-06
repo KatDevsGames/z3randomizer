@@ -127,11 +127,18 @@ Overworld_FinishMirrorWarp:
 
     LDX.b #$02  ; hyrule field theme
 
+    ; Check if we're entering the lost woods
+    CMP.b #$00 : BNE +
+        LDA $7EF300 : AND.b #$40 : BNE .endOfLightWorldChecks
+        LDX.b #$05 ; lost woods theme
+        BRA .endOfLightWorldChecks
+    +
+
     ; Check if we're entering the village
     CMP.b #$18 : BNE .endOfLightWorldChecks
 
     ; Check what phase we're in
-    LDA $7EF3C5 : CMP.b #$03 : !BGE .endOfLightWorldChecks
+    ; LDA $7EF3C5 : CMP.b #$03 : !BGE .endOfLightWorldChecks
         LDX.b #$07 ; Default village theme (phase <3)
 
 .endOfLightWorldChecks
