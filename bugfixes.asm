@@ -184,3 +184,13 @@ RTL
 	dey
 	bpl -
 RTL
+
+;--------------------------------------------------------------------------------
+; Fix pedestal pull overlay
+PedestalPullOverlayFix:
+LDA.b #$09 : STA $039F, X	; the thing we wrote over
+LDA $1B : BNE +
+	LDA $8A : CMP.b #$80 : BNE +
+		LDA $8C : CMP.b #$97
++
+RTL
