@@ -151,20 +151,32 @@ CheckMusicLoadRequest:
     RTL
         
 .continue
-        LDA TournamentSeed : BNE ++
+        LDA TournamentSeed : BNE +++
         LDA !REG_MSU_PACK_REQUEST
-        CMP !REG_MSU_PACK_CURRENT : BEQ ++
-        CMP !REG_MSU_PACK_COUNT : !BLT +
-                LDA !REG_MSU_PACK_CURRENT : STA !REG_MSU_PACK_REQUEST
-            + : STA !REG_MSU_PACK_CURRENT
+        CMP !REG_MSU_PACK_CURRENT : BEQ +++
+        CMP !REG_MSU_PACK_COUNT : !BLT ++
+        CMP #$FE : !BLT +
+                    STA !REG_MSU_PACK_CURRENT
+                    SEP #$10
+                        LDA #$00
+                        LDX #$07
+                        -
+                            STA !REG_MSU_FALLBACK_TABLE,X
+                        DEX : BPL -
+                    REP #$10
+                    BRA +++
+                + : LDA !REG_MSU_PACK_CURRENT : STA !REG_MSU_PACK_REQUEST
+            ++ : STA !REG_MSU_PACK_CURRENT
             JSL msu_init_check_fallback
 
         ; Shut down NMI until music loads
-        ++ : STZ $4200
+        +++ : STZ $4200
 
-        LDA NoBGM : BEQ +
-            BRL .mute
-        +
+        LDA !REG_MUSIC_CONTROL_REQUEST : CMP #$08 : BEQ ++  ; Mirror SFX is not affected by NoBGM or pack $FE
+            LDA NoBGM : BNE +
+            LDA !REG_MSU_PACK_CURRENT : CMP #$FE : BNE ++
+                + : BRL .mute
+        ++
 
         LDX !REG_MSU_ID_01 : CPX !VAL_MSU_ID_01 : BEQ +
             - : BRL .unmute
@@ -469,8 +481,10 @@ load_track:
     STZ !REG_MSU_CONTROL
     PLX
     STX !REG_CURRENT_MSU_TRACK
-    LDA MSUTrackList,X
-    STA !REG_MSU_DELAYED_COMMAND
+    LDA !REG_MSU_PACK_CURRENT : CMP #$FE : !BLT +
+        LDA #$00 : BRA ++
+        + : LDA MSUTrackList,X
+    ++ : STA !REG_MSU_DELAYED_COMMAND
     LDA MSUExtendedFallbackList-1,X 
     CMP.b #17 : BEQ +
     CMP.b #22 : BEQ +
@@ -529,6 +543,7 @@ pendant_fanfare:
     LDA !REG_MSU_ID_23 : CMP !VAL_MSU_ID_23 : BNE .spc
     LDA !REG_MSU_ID_45 : CMP !VAL_MSU_ID_45 : BNE .spc
     SEP #$20
+    LDA !REG_MSU_PACK_CURRENT : CMP #$FE : !BGE .spc
     LDA !REG_MSU_STATUS : BIT !FLAG_MSU_STATUS_TRACK_MISSING : BNE .spc
     LDA !REG_MSU_DELAYED_COMMAND : BNE .continue
     LDA !REG_MSU_STATUS : BIT !FLAG_MSU_STATUS_AUDIO_PLAYING : BEQ .done
@@ -552,6 +567,7 @@ crystal_fanfare:
     LDA !REG_MSU_ID_23 : CMP !VAL_MSU_ID_23 : BNE .spc
     LDA !REG_MSU_ID_45 : CMP !VAL_MSU_ID_45 : BNE .spc
     SEP #$20
+    LDA !REG_MSU_PACK_CURRENT : CMP #$FE : !BGE .spc
     LDA !REG_MSU_STATUS : BIT !FLAG_MSU_STATUS_TRACK_MISSING : BNE .spc
     LDA !REG_MSU_DELAYED_COMMAND : BNE .continue
     LDA !REG_MSU_STATUS : BIT !FLAG_MSU_STATUS_AUDIO_PLAYING : BEQ .done
