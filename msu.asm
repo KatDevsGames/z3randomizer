@@ -319,10 +319,11 @@ CheckMusicLoadRequest:
     JML Module_PreDungeon_setAmbientSfx
 
 msu_init:
-    PHP : REP #$20
-        LDA.w #$0000
-        STA !REG_MSU_VOLUME
-        STA !REG_MSU_PACK_COUNT
+    PHP
+
+    LDA NoBGM : BNE .done
+
+    REP #$20
 
         LDA !REG_MSU_ID_01 : CMP !VAL_MSU_ID_01 : BNE .done
         LDA !REG_MSU_ID_23 : CMP !VAL_MSU_ID_23 : BNE .done
@@ -351,6 +352,7 @@ msu_init:
 ; Check the current MSU-1 pack for tracks that require SPC fallback
 .check_fallback
         PHP : SEP #$10
+        LDA NoBGM : BNE .done
     + : LDA.b #64
     LDX.b #7
     LDY.b #7
@@ -392,7 +394,9 @@ msu_main:
     LDA !REG_MSU_ID_23 : CMP !VAL_MSU_ID_23 : BNE .nomsu
     LDA !REG_MSU_ID_45 : CMP !VAL_MSU_ID_45 : BNE .nomsu
     SEP #$30
-    LDX !REG_MUSIC_CONTROL : BNE command_ff
+    LDX !REG_MUSIC_CONTROL : BEQ +
+        BRL command_ff
+    +
     LDA !REG_MSU_DELAYED_COMMAND : BEQ do_fade
 
 msu_check_busy:
@@ -406,8 +410,18 @@ msu_check_busy:
     STA !REG_TARGET_VOLUME
     STA !REG_CURRENT_VOLUME
     STA !REG_MSU_VOLUME
-    LDA !REG_MSU_DELAYED_COMMAND
-    STA !REG_MSU_CONTROL
+    LDA !REG_MUSIC_CONTROL_REQUEST : DEC : PHA
+        AND.b #$07 : TAY
+        PLA : LSR #3 : TAX
+    LDA !REG_MSU_FALLBACK_TABLE,X : BEQ +++ : CMP.b #$FF : BEQ ++
+
+    - : CPY #$00 : BEQ +
+        LSR : DEY : BRA -
+    +
+
+    AND.b #$01 : BEQ +++
+        ++ : LDA !REG_MSU_DELAYED_COMMAND
+    +++ : STA !REG_MSU_CONTROL
     LDA.b #$00
     STA !REG_MSU_DELAYED_COMMAND
     JML spc_continue
