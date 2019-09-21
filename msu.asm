@@ -146,8 +146,14 @@
 
 CheckMusicLoadRequest:
     PHP : REP #$10 : PHA : PHX : PHY
-        LDA !REG_MUSIC_CONTROL_REQUEST : BEQ .skip : BMI .skip : CMP !REG_CURRENT_COMMAND : BNE .continue
+        LDA !REG_MUSIC_CONTROL_REQUEST : BEQ .skip+3 : BMI .skip+3
+        CMP !REG_CURRENT_COMMAND : BNE .continue
+        CMP.b #22 : BNE .continue   ; Check GT when mirroring from upstairs
+        LDA !REG_CURRENT_MSU_TRACK : CMP.b #59 : BNE .skip
+        LDA.b #$00 : STA !REG_CURRENT_COMMAND
+        BRA .continue
 .skip
+        LDA !REG_MUSIC_CONTROL_REQUEST
         STA !REG_MUSIC_CONTROL : STZ !REG_MUSIC_CONTROL_REQUEST
     PLY : PLX : PLA : PLP
     RTL
@@ -170,9 +176,7 @@ CheckMusicLoadRequest:
                 + : LDA !REG_MSU_PACK_CURRENT : STA !REG_MSU_PACK_REQUEST
             ++ : STA !REG_MSU_PACK_CURRENT
             JSL msu_init_check_fallback
-
-        ; Shut down NMI until music loads
-        +++ : STZ $4200
+        +++
 
         LDA !REG_MUSIC_CONTROL_REQUEST : CMP #$08 : BEQ ++  ; Mirror SFX is not affected by NoBGM or pack $FE
             LDA NoBGM : BNE +
@@ -224,13 +228,6 @@ CheckMusicLoadRequest:
             CMP.b #$08 : BNE .check_fallback  ; Hyrule Castle 2
 .dungeon
             LDA $040C : LSR : !ADD.b #33 : STA !REG_MUSIC_CONTROL_REQUEST
-            CMP.b #46 : BNE .check_fallback
-    
-            ; Ganon's Tower
-            LDA $7EF366 : AND.b #$04 : BEQ .check_fallback                      ; Check if we have the GT big key
-            LDA !REG_MSU_FALLBACK_TABLE+7 : AND.b #$04 : BEQ .check_fallback    ; Check if the 2nd GT track exists
-            LDA.b #59
-            STA !REG_MUSIC_CONTROL_REQUEST
 
 .check_fallback
             LDA !REG_MUSIC_CONTROL_REQUEST : DEC : PHA

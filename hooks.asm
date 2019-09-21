@@ -1447,6 +1447,15 @@ org $0080D7 ; <- D7 - Bank00.asm:172 (SEP #$30)
 JML msu_main : NOP
 spc_continue:
 
+org $028B7A ; <- C220 A5A0 - Bank02.asm:2225 (REP #$20 : LDA $A0)
+JSL SpiralStairsPreCheck
+
+org $029069 ; <- A21C A5A0 - Bank02.asm:3081 (LDX.b #$1C : LDA $A0)
+JSL SpiralStairsPostCheck
+
+org $02D6E8 ; <- 9C0A01 - Bank02.asm:10811 (STZ $010A)
+NOP #3
+
 org $08C421 ; <- AD4021 F005 - ancilla_receive_item.asm:108 (LDA $2140 : BEQ .wait_for_music)
 JML pendant_fanfare : NOP
 pendant_continue:
