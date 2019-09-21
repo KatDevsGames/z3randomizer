@@ -135,6 +135,8 @@
 !VAL_COMMAND_FADE_OUT = #$F1
 !VAL_COMMAND_FADE_HALF = #$F2
 !VAL_COMMAND_FULL_VOLUME = #$F3
+!VAL_COMMAND_MUTE_SPC = #$FA
+!VAL_COMMAND_UNMUTE_SPC = #$FB
 !VAL_COMMAND_LOAD_NEW_BANK = #$FF
 
 !VAL_VOLUME_INCREMENT = #$10
@@ -243,10 +245,7 @@ CheckMusicLoadRequest:
             AND.b #$01 : BEQ .secondary_fallback
 
 .mute
-            LDA.b #$FF : STA $2140
-            LDA.b #SPCMutePayload : STA $00
-            LDA.b #SPCMutePayload>>8 : STA $01
-            LDA.b #SPCMutePayload>>16
+            LDA.b !VAL_COMMAND_MUTE_SPC
             BRA .load
 
 .secondary_fallback
@@ -273,19 +272,13 @@ CheckMusicLoadRequest:
                 BRA .check_fallback
 
 .unmute
-            LDA.b #$FF : STA $2140
-            LDA.b #SPCUnmutePayload : STA $00
-            LDA.b #SPCUnmutePayload>>8 : STA $01
-            LDA.b #SPCUnmutePayload>>16
+            LDA.b !VAL_COMMAND_UNMUTE_SPC
 
 .load
         REP #$10
-        JSL Sound_LoadLightWorldSongBank_do_load
-
-        LDA.b #$01 : STA !REG_SPC_LOADING
-    
-        ; Re-enable NMI and joypad
-        LDA.b #$81 : STA $4200
+        STA !REG_CURRENT_COMMAND
+        STA !REG_SPC_CONTROL
+        - : CMP !REG_SPC_CONTROL : BNE -
 
         LDA !REG_MUSIC_CONTROL_REQUEST : CMP.b #08 : BEQ .done+3    ; No SFX during warp track
 
@@ -318,8 +311,67 @@ CheckMusicLoadRequest:
     PLY : PLX : PLA : PLP
     JML Module_PreDungeon_setAmbientSfx
 
+SpiralStairsPreCheck:
+    REP #$20    ; thing we wrote over
+    LDA $A0
+    CMP.w #$000C : BNE +
+        LDA !REG_CURRENT_MSU_TRACK : AND.w #$00FF : CMP.w #59 : BNE .done
+        BRA .fade
+    +
+
+    CMP.w #$006B : BNE .done+2
+
+    LDA TournamentSeed : CMP.w #$0001 : BEQ +
+        LDA !REG_MSU_ID_01 : CMP !VAL_MSU_ID_01 : BNE .done
+        LDA !REG_MSU_ID_23 : CMP !VAL_MSU_ID_23 : BNE .done
+        LDA !REG_MSU_ID_45 : CMP !VAL_MSU_ID_45 : BNE .done
+    +
+
+    LDA $7EF366 : AND.w #$0004 : BEQ .done                      ; Check that we have the GT big key
+    LDA !REG_MSU_FALLBACK_TABLE+7 : AND.w #$0004 : BEQ .done    ; Check that we have the extended track
+
+.fade
+    LDX.b #$F1 : STX !REG_MUSIC_CONTROL_REQUEST
+
+.done
+    LDA $A0     ; thing we wrote over
+    RTL
+
+SpiralStairsPostCheck:
+    LDA $A0
+    CMP.w #$000C : BNE +
+        ; Ganon's tower entrance
+        LDX $0130 : CPX.b #$F1 : BNE .done  ; Check that we were fading out
+
+        LDX #22 : STX !REG_MUSIC_CONTROL_REQUEST
+        BRA .done
+    +
+
+    CMP.w #$006B : BNE .done
+
+    ; Ganon's tower upstairs (with big key)
+    LDX $0130 : CPX.b #$F1 : BNE .done  ; Check that we were fading out
+
+    LDX #59 : STX !REG_MUSIC_CONTROL_REQUEST
+
+.done
+    LDX.b #$1C : LDA $A0    ; thing we wrote over
+    RTL
+
 msu_init:
     PHP
+
+    STZ $4200
+
+    LDA.b #$FF : STA $2140
+
+    LDA.b #SPCEngineNewCode     : STA.b $00
+    LDA.b #SPCEngineNewCode>>8  : STA.b $01
+    LDA.b #SPCEngineNewCode>>16
+
+    JSL Sound_LoadLightWorldSongBank_do_load
+
+    LDA.b #$81 : STA $4200
 
     LDA NoBGM : BNE .done
 
@@ -561,14 +613,11 @@ pendant_fanfare:
     LDA !REG_MSU_STATUS : BIT !FLAG_MSU_STATUS_TRACK_MISSING : BNE .spc
     LDA !REG_MSU_DELAYED_COMMAND : BNE .continue
     LDA !REG_MSU_STATUS : BIT !FLAG_MSU_STATUS_AUDIO_PLAYING : BEQ .done
-.playing
-    LDA #$00 : STA !REG_SPC_LOADING
 .continue
     jml pendant_continue
 .spc
     SEP #$20
-    LDA !REG_SPC_CONTROL : BNE .playing
-    LDA !REG_SPC_LOADING : BNE .continue
+    LDA !REG_SPC_CONTROL : BNE .continue
 .done
     jml pendant_done
 
@@ -585,14 +634,11 @@ crystal_fanfare:
     LDA !REG_MSU_STATUS : BIT !FLAG_MSU_STATUS_TRACK_MISSING : BNE .spc
     LDA !REG_MSU_DELAYED_COMMAND : BNE .continue
     LDA !REG_MSU_STATUS : BIT !FLAG_MSU_STATUS_AUDIO_PLAYING : BEQ .done
-.playing
-    LDA #$00 : STA !REG_SPC_LOADING
 .continue    
     jml crystal_continue
 .spc
     SEP #$20
-    LDA !REG_SPC_CONTROL : BNE .playing
-    LDA !REG_SPC_LOADING : BNE .continue
+    LDA !REG_SPC_CONTROL : BNE .continue
 .done
     jml crystal_done
 
