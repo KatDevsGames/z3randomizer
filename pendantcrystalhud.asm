@@ -169,7 +169,7 @@ BringMenuDownEnhanced:
 
 		EOR.w #$FFFF : !ADD.w #$0001 ; negate menu speed
 
-		!ADD $EA : CMP.w #$FF18 : !BGE .noOvershoot
+		!SUB $EA : CMP.w #$FF18 : !BGE .noOvershoot
 			LDA.w #$FF18 ; if we went past the limit, go to the limit
 		.noOvershoot
 		STA $EA : CMP.w #$FF18
@@ -187,7 +187,7 @@ RaiseHudMenu:
 		LDA.l MenuSpeed : AND.w #$00FF
 	++
 
-	!ADD $EA : BMI .noOvershoot
+	!SUB $EA : BMI .noOvershoot
 		LDA.w #$0000 ; if we went past the limit, go to the limit
 	.noOvershoot
 	STA $EA
