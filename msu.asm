@@ -132,6 +132,7 @@
 !REG_SPC_CONTROL = $2140
 !REG_NMI_FLAGS = $4210
 
+!VAL_COMMAND_STOP_PLAYBACK = #$F0
 !VAL_COMMAND_FADE_OUT = #$F1
 !VAL_COMMAND_FADE_HALF = #$F2
 !VAL_COMMAND_FULL_VOLUME = #$F3
@@ -513,10 +514,14 @@ command_f2:
     JML spc_continue
 
 command_f1:
-    CPX !VAL_COMMAND_FADE_OUT : BNE load_track
+    CPX !VAL_COMMAND_FADE_OUT : BNE command_f0
     STX !REG_SPC_CONTROL
     STZ !REG_TARGET_VOLUME
     STZ !REG_CURRENT_MSU_TRACK
+    JML spc_continue
+
+command_f0:
+    CPX !VAL_COMMAND_STOP_PLAYBACK : !BLT load_track
     JML spc_continue
 
 load_track:
