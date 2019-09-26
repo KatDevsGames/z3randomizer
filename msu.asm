@@ -231,8 +231,8 @@ CheckMusicLoadRequest:
             LDA $040C : LSR : !ADD.b #33 : STA !REG_MUSIC_CONTROL_REQUEST
 
 .check_fallback
-            LDX !REG_MUSIC_CONTROL_REQUEST : DEX
-            LDA MusicShuffleTable,X : DEC : PHA
+            LDX !REG_MUSIC_CONTROL_REQUEST
+            LDA MusicShuffleTable-1,X : DEC : PHA
                 AND.b #$07 : TAY
                 PLA : LSR #3 : TAX
             LDA !REG_MSU_FALLBACK_TABLE,X : BEQ .secondary_fallback : CMP.b #$FF : BEQ .mute
@@ -270,7 +270,7 @@ CheckMusicLoadRequest:
                         SEP #$20
                         LDA ($00)
                 PLY : STY $00 : SEP #$10 : PLB
-                TAX : LDA MusicShuffleTable,X
+                TAX : LDA MusicShuffleTable-1,X
                 STA !REG_MUSIC_CONTROL_REQUEST
                 BRL .check_fallback
 
