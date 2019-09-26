@@ -655,6 +655,15 @@ crystal_fanfare:
     jml crystal_done
 
 
+startup_wait:
+    LDA $11 : CMP.b #$04 : BCC .done    ; thing we wrote over
+    LDA !REG_SPC_CONTROL : BEQ .done-1
+    CMP.b #$01 : BEQ .done
+    CLC
+.done
+    RTL
+
+
 ending_wait:
     REP #$20
     LDA !REG_MSU_ID_01 : CMP !VAL_MSU_ID_01 : BNE .done
