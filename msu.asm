@@ -556,7 +556,7 @@ load_track:
     STX !REG_CURRENT_MSU_TRACK
     LDA !REG_MSU_PACK_CURRENT : CMP #$FE : !BLT +
         LDA #$00 : BRA ++
-        + : LDA MSUTrackList,X
+        + : LDA MSUTrackList-1,X
     ++ : STA !REG_MSU_DELAYED_COMMAND
     LDA MSUExtendedFallbackList-1,X 
     CMP.b #17 : BEQ +
