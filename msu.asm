@@ -231,7 +231,8 @@ CheckMusicLoadRequest:
             LDA $040C : LSR : !ADD.b #33 : STA !REG_MUSIC_CONTROL_REQUEST
 
 .check_fallback
-            LDA !REG_MUSIC_CONTROL_REQUEST : DEC : PHA
+            LDX !REG_MUSIC_CONTROL_REQUEST : DEX
+            LDA MusicShuffleTable,X : DEC : PHA
                 AND.b #$07 : TAY
                 PLA : LSR #3 : TAX
             LDA !REG_MSU_FALLBACK_TABLE,X : BEQ .secondary_fallback : CMP.b #$FF : BEQ .mute
@@ -248,6 +249,9 @@ CheckMusicLoadRequest:
 
 .secondary_fallback
             LDX !REG_MUSIC_CONTROL_REQUEST : LDA MSUExtendedFallbackList-1,X
+            PHX
+                TAX : LDA MusicShuffleTable-1,X
+            PLX
             CMP !REG_MUSIC_CONTROL_REQUEST : BEQ .unmute
             CPX #35 : !BLT +
                 CPX #47 : !BLT .dungeon_fallback
@@ -266,8 +270,9 @@ CheckMusicLoadRequest:
                         SEP #$20
                         LDA ($00)
                 PLY : STY $00 : SEP #$10 : PLB
+                TAX : LDA MusicShuffleTable,X
                 STA !REG_MUSIC_CONTROL_REQUEST
-                BRA .check_fallback
+                BRL .check_fallback
 
 .unmute
             LDA.b !VAL_COMMAND_UNMUTE_SPC

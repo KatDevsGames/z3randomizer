@@ -477,6 +477,16 @@ db #$04, #$02, #$01 ; normal, 1/2, 1/4 magic
 ;11 - Pendant Dungeon
 ;16 - Crystal Dungeon
 
+org $02D592+$03
+Music_Castle:
+db $10,$10,$10
+org $02D592+$24
+Music_AgaTower:
+db $10
+org $02D592+$81
+Music_Sewer:
+db $10
+
 org $02D592+$08
 Music_Eastern:
 db $11
@@ -1608,46 +1618,22 @@ LowHeartFix:
 	org $09F4AC ; <- module_death.asm:331
 	db $08, $08, $10
 
+;--------------------------------------------------------------------------------
+; 0x185060 - 1850FF (unused)
+;--------------------------------------------------------------------------------
+org $30D100 ; PC 0x185100 - 0x18513F
+UnusedTable: ; please do not move this - kkat
+db $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
+db $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
+db $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
+db $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
+db $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
+db $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
+db $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
+db $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
+
 ;================================================================================
-org $30D000 ; PC 0x185000 - 0x18505F
-MSUTrackList:
-db $00,$01,$03,$03,$03,$03,$03,$03
-db $01,$03,$01,$03,$03,$03,$03,$03
-db $03,$03,$03,$01,$03,$03,$03,$03
-db $03,$03,$03,$03,$03,$01,$03,$03
-db $03,$01,$01,$03,$03,$03,$03,$03
-db $03,$03,$03,$03,$03,$03,$03,$03
-db $03,$03,$03,$03,$03,$03,$03,$03
-db $03,$03,$03,$03,$03,$00,$00,$00
-
-MSUExtendedFallbackList:
-db $01,$02,$03,$04,$05,$06,$07,$08
-db $09,$0A,$0B,$0C,$0D,$0E,$0D,$10
-db $11,$12,$13,$14,$15,$16,$17,$18
-db $19,$1A,$1B,$1C,$1D,$1E,$1F,$20
-db $21,$22,$11,$11,$10,$16,$16,$16
-db $16,$16,$11,$16,$16,$16,$15,$15
-db $15,$15,$15,$15,$15,$15,$15,$15
-db $15,$15,$16,$02,$09,$00,$00,$00
-
-MSUDungeonFallbackList:
-dw $0000	; Sewer Escape
-dw $0000	; Hyrule Castle
-dw Music_Eastern
-dw Music_Desert
-dw $0000	; Agahnim's Tower
-dw Music_Swamp
-dw Music_Darkness
-dw Music_Mire
-dw Music_Skull
-dw Music_Ice
-dw Music_Hera
-dw Music_Thieves
-dw Music_TRock
-dw Music_GTower
-dw $0000
-dw $0000
-
+org $30D800 ; PC 0x185800 - 0x18591F
 SPCMutePayload:
 dw $0001	; Transfer size
 dw $0A4A    ; Transfer destination
@@ -1690,19 +1676,58 @@ dw $0000    ; Transfer size (end of transfer)
 dw $FFFF    ; Dummy destination
 db $FF, $FF, $FF, $FF, $FF, $FF, $FF	; Padding
 
+MSUTrackList:
+db $00,$01,$03,$03,$03,$03,$03,$03
+db $01,$03,$01,$03,$03,$03,$03,$03
+db $03,$03,$03,$01,$03,$03,$03,$03
+db $03,$03,$03,$03,$03,$01,$03,$03
+db $03,$01,$01,$03,$03,$03,$03,$03
+db $03,$03,$03,$03,$03,$03,$03,$03
+db $03,$03,$03,$03,$03,$03,$03,$03
+db $03,$03,$03,$03,$03,$00,$00,$00
+
+MSUExtendedFallbackList:
+db $01,$02,$03,$04,$05,$06,$07,$08
+db $09,$0A,$0B,$0C,$0D,$0E,$0D,$10
+db $11,$12,$13,$14,$15,$16,$17,$18
+db $19,$1A,$1B,$1C,$1D,$1E,$1F,$20
+db $21,$22,$11,$11,$10,$16,$16,$16
+db $16,$16,$11,$16,$16,$16,$15,$15
+db $15,$15,$15,$15,$15,$15,$15,$15
+db $15,$15,$16,$02,$09,$00,$00,$00
+
+MusicShuffleTable:
+db $01,$02,$03,$04,$05,$06,$07,$08
+db $09,$0A,$0B,$0C,$0D,$0E,$0F,$10
+db $11,$12,$13,$14,$15,$16,$17,$18
+db $19,$1A,$1B,$1C,$1D,$1E,$1F,$20
+db $21,$22,$23,$24,$25,$26,$27,$28
+db $29,$2A,$2B,$2C,$2D,$2E,$2F,$30
+db $31,$32,$33,$34,$35,$36,$37,$38
+db $39,$3A,$3B,$3C,$3D,$3E,$3F,$40
+
+MSUDungeonFallbackList:
+dw Music_Sewer
+dw Music_Castle
+dw Music_Eastern
+dw Music_Desert
+dw Music_AgaTower
+dw Music_Swamp
+dw Music_Darkness
+dw Music_Mire
+dw Music_Skull
+dw Music_Ice
+dw Music_Hera
+dw Music_Thieves
+dw Music_TRock
+dw Music_GTower
+dw $0000
+dw $0000
+
 ;--------------------------------------------------------------------------------
-; 0x185060 - 1850FF (unused)
+; 0x185920 - 1859FF (Reserved)
 ;--------------------------------------------------------------------------------
-org $30D100 ; PC 0x185100 - 0x18513F
-UnusedTable: ; please do not move this - kkat
-db $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
-db $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
-db $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
-db $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
-db $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
-db $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
-db $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
-db $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
+
 ;--------------------------------------------------------------------------------
-; 0x185140 - 187FFF (unused)
+; 0x185A00 - 187FFF (unused)
 ;--------------------------------------------------------------------------------
