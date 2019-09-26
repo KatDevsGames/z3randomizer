@@ -282,6 +282,11 @@ CheckMusicLoadRequest:
         STA !REG_CURRENT_COMMAND
         STA !REG_SPC_CONTROL
         - : CMP !REG_SPC_CONTROL : BNE -
+        LDA.b !VAL_COMMAND_STOP_PLAYBACK
+        STA !REG_CURRENT_COMMAND
+        STA !REG_SPC_CONTROL
+        - : LDA !REG_SPC_CONTROL : BNE -
+        STZ !REG_CURRENT_COMMAND
 
         LDA !REG_MUSIC_CONTROL_REQUEST : CMP.b #08 : BEQ .done+3    ; No SFX during warp track
 
