@@ -12,7 +12,8 @@ db $68, $F0         ; CMP A,#$F0            ; the thing we overwrote
 db $D0, $03         ; BNE +
 db $5F, $81, $0A    ;   JMP SilenceSong     ; ($0A81)
 db $68, $FA         ; + : CMP A,#$FA        ; new mute command $FA
-db $D0, $1A         ; BNE +
+db $D0, $1C         ; BNE +
+db $C4, $F4         ;   MOV $F4,A
 db $E8, $00         ;   MOV A,#$00
 db $C5, $4A, $0A    ;   MOV $0A4A,A         ; $0A49: MOV A,#$70 -> MOV A,#$00
 db $C5, $F3, $0A    ;   MOV $0AF3,A         ; $0AF2: MOV $059,#$C0 -> MOV $059,#$00
@@ -22,11 +23,12 @@ db $E8, $C4         ;   MOV A,#$C4          ; $0D19: MOVW $058,YA -> MOV $058,A
 db $C5, $19, $0D    ;   MOV $0D19,A
 db $E8, $58         ;   MOV A,#$58
 db $C5, $1A, $0D    ;   MOV $0D1A,A
-db $2F, $21         ;   BRA ++
+db $2F, $23         ;   BRA ++
 db $68, $FB         ; + : CMP A,#$FB        ; new unmute command $FB
 db $F0, $03         ; BEQ +
 db $5F, $9D, $0A    ;   JMP NewSongInput    ; ($0A9D)
-db $E8, $70         ; + : MOV A,#$70
+db $C4, $F4         ; + :  MOV $F4,A
+db $E8, $70         ; MOV A,#$70
 db $C5, $4A, $0A    ; MOV $0A4A,A           ; $0A49: MOV A,#$70
 db $E8, $C0         ; MOV A,#$C0
 db $C5, $F3, $0A    ; MOV $0AF3,A           ; $0AF2: MOV $059,#$C0
@@ -36,6 +38,10 @@ db $C5, $19, $0D    ; MOV $0D19,A           ; $0D19: MOVW $058,YA
 db $E8, $58         ; MOV A,#$58
 db $C5, $33, $0C    ; MOV $0C33,A
 db $C5, $1A, $0D    ; MOV $0D1A,A
-db $3F, $81, $0A    ; ++ : CALL SilenceSong  ; ($0A81)
-db $FA, $00, $04    ; MOV $04, $00
+db $3F, $81, $0A    ; ++ : CALL SilenceSong ; ($0A81)
+db $E4, $F4         ; - : MOV A,$F4
+db $D0, $FC         ;       BNE -
+db $64, $F4         ;       CMP A,$F4
+db $D0, $F8         ;       BNE -
+db $FA, $00, $F4    ; MOV $F4,#$00
 db $6F              ; RET
