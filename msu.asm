@@ -530,7 +530,10 @@ command_f1:
 
 command_f0:
     CPX !VAL_COMMAND_STOP_PLAYBACK : !BLT load_track
-    JML spc_continue
+    CPX !VAL_COMMAND_MUTE_SPC : BEQ +       ; Don't allow executing the mute/umute
+    CPX !VAL_COMMAND_UNMUTE_SPC : BNE ++    ; commands during NMI like this
+        + : LDA.b #$00 : STA !REG_MUSIC_CONTROL
+    ++ : JML spc_continue
 
 load_track:
     CPX !REG_CURRENT_MSU_TRACK : BNE +
