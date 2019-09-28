@@ -583,33 +583,6 @@ load_track:
     +
     STA !REG_MUSIC_CONTROL
     JML spc_continue
-    
-
-; No longer used, keeping as a reference for
-; multi-pack fallback with the new lookup table
-; Delete this once lookup fallback supports multi-pack
-.fallback
-    STA !REG_CURRENT_MSU_TRACK
-    TAX
-
-    LDA.b #$00 : XBA
-    LDA !REG_MSU_PACK_CURRENT : BEQ +
-
-    -
-        CMP !REG_MSU_PACK_COUNT : !BLT +
-        !SUB !REG_MSU_PACK_COUNT : BRA -
-    +
-
-    PHA : TXA : PLX
-    REP #$20
-    BEQ +
-    -
-        !ADD.w #100
-        DEX : BNE -
-    +
-        STA !REG_MSU_TRACK
-    SEP #$20
-    JML spc_continue
 
 pendant_fanfare:
     LDA TournamentSeed : BNE .spc
