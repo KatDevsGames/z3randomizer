@@ -212,16 +212,21 @@ CheckMusicLoadRequest:
                     PLA
                     LDA.b #60 : BRA .check_fallback-3
                 +
-            - : PLA : BRA .check_fallback-3
+            -- : PLA : BRA .check_fallback-3
 .darkworld
             PHA
-                LDA $7EF371 : CMP.b #$7F : BNE -
-            PLA
+                LDA $7EF37A : CMP.b #$7F : BNE --
+            - : PLA
             LDA.b #61 : BRA .check_fallback-3 
 .darkwoods
             PHA
-                LDA $7EF3CA : BEQ -
-                LDA $8A : CMP #$40 : BNE -
+                LDA $7EF37A : CMP.b #$7F : BNE +
+                    LDA !REG_MSU_FALLBACK_TABLE+7 : BIT #$10 : BEQ +
+                    PLA : LDA.b #61 : STA !REG_MUSIC_CONTROL_REQUEST
+                    BRA .mute
+                +
+                LDA $7EF3CA : BEQ --
+                LDA $8A : CMP #$40 : BNE --
             PLA
             LDA.b #15 : BRA .check_fallback-3
 .castle
