@@ -149,7 +149,7 @@ CheckMusicLoadRequest:
     PHP : REP #$10 : PHA : PHX : PHY
         LDA !REG_MUSIC_CONTROL_REQUEST : BEQ .skip+3 : BMI .skip+3
         CMP !REG_CURRENT_COMMAND : BNE .continue
-        CMP.b #22 : BNE .continue   ; Check GT when mirroring from upstairs
+        CMP.b #22 : BNE .skip   ; Check GT when mirroring from upstairs
         LDA !REG_CURRENT_MSU_TRACK : CMP.b #59 : BNE .skip
         LDA.b #$00 : STA !REG_CURRENT_COMMAND
         BRA .continue
