@@ -592,6 +592,15 @@ load_track:
     STA !REG_MUSIC_CONTROL
     JML spc_continue
 
+fanfare_preload:
+    STA !REG_MUSIC_CONTROL_REQUEST  ; thing we wrote over
+    PHA
+        JSL CheckMusicLoadRequest
+        WAI
+    PLA
+    - : CMP !REG_SPC_CONTROL : BNE -
+    JML AddReceivedItem_doneWithSoundEffects
+
 pendant_fanfare:
     LDA TournamentSeed : BNE .spc
     LDA FastFanfare : BNE .done
