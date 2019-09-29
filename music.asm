@@ -22,9 +22,9 @@ PreOverworld_LoadProperties_ChooseMusic:
     LDX.b #$07 ; Default village theme
 
     ; Check what phase we're in
-    LDA $7EF3C5 : CMP.b #$03 : !BLT +
-        LDX.b #$02 ; Default light world theme (phase >=3)
-    +
+    ;LDA $7EF3C5 : CMP.b #$03 : !BLT +
+    ;    LDX.b #$02 ; Default light world theme (phase >=3)
+    ;+
 
     ; Check if we're entering the village
     LDA $8A : CMP.b #$18 : BEQ .endOfLightWorldChecks
@@ -184,9 +184,9 @@ BirdTravel_LoadTargetAreaMusic:
     LDX.b #$07 ; Default village theme
 
     ; Check what phase we're in
-    LDA $7EF3C5 : CMP.b #$03 : !BLT +
-        LDX.b #$02 ; Default light world theme (phase >=3)
-    +
+    ;LDA $7EF3C5 : CMP.b #$03 : !BLT +
+    ;    LDX.b #$02 ; Default light world theme (phase >=3)
+    ;+
 
     ; Check if we're entering the village
     LDA $8A : CMP.b #$18 : BEQ .endOfLightWorldChecks
