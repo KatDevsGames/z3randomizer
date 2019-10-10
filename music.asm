@@ -216,17 +216,25 @@ BirdTravel_LoadTargetAreaMusic:
     ; if we are in the light world go ahead and set chosen selection
     LDA $7EF3CA : BEQ .checkInverted+4
 
-    LDX.b #$0F ; dark woods theme
+    LDX.b #$09 ; dark overworld theme
 
-    ; This music is used in dark woods
     LDA $8A
-    CMP.b #$40 : BEQ +
-        LDX.b #$0D  ; dark death mountain theme
+    ; Misery Mire rain SFX
+    CMP.b #$70 : BNE ++
+        LDA $7EF2F0 : AND.b #$20 : BNE ++
+            LDA.b #$01 : CMP $0131 : BEQ +
+                STA $012D
+            + : BRA .checkInverted
+    ++
 
     ; This music is used in dark death mountain
     CMP.b #$43 : BEQ + : CMP.b #$45 : BEQ + : CMP.b #$47 : BEQ +
-        LDX.b #$09 ; dark overworld theme
+        LDA.b #$05 : STA $012D
+        BRA .checkInverted
     +
+
+    LDX.b #$0D  ; dark death mountain theme
+    LDA.b #$09 : STA $012D
 
     ; if not inverted and light world, or inverted and dark world, skip moon pearl check
     .checkInverted

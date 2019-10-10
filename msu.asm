@@ -300,8 +300,14 @@ CheckMusicLoadRequest:
 
 .sfx_outdoors
         SEP #$10
-            LDX.b #$05
-            LDA $8A : CMP.b #$70 : BNE +    ; Misery Mire
+            LDX.b #$09
+
+            LDA $8A             ; Dark Death Mountain
+            CMP.b #$43 : BEQ + : CMP.b #$45 : BEQ + : CMP.b #$47 : BEQ +
+                LDX.b #$05
+            +
+
+            CMP.b #$70 : BNE +    ; Misery Mire
                 LDA $7EF2F0 : AND.b #$20 : BEQ .rain
             +
 
