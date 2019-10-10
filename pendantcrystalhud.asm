@@ -139,16 +139,6 @@ RTL
 		LDA.b #03 ; light world - pendants
 RTL
 ;================================================================================
-CheckHeraObject:
-	LDA CrystalPendantFlags_2_hera : AND.w #$00FF : BNE .crystal
-	
-	.pendant
-	LDA $7EF374 : AND.l CrystalPendantFlags_hera : AND.w #$00FF
-RTL
-	.crystal
-	LDA $7EF37A : AND.l CrystalPendantFlags_hera : AND.w #$00FF
-RTL
-;================================================================================
 ;GetPendantCrystalWorld:
 ;	PHB : PHK : PLB
 ;	PHX

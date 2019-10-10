@@ -1710,12 +1710,12 @@ NOP #8
 ;JSL.l OnLoadMap
 ;================================================================================
 org $028B8F ; <- 10B8F - Bank02.asm:2236 (LDA $7EF374 : LSR A : BCS BRANCH_BETA)
-JSL.l CheckHeraObject : BNE + : NOP
+LDA $7EF00F : BNE + : NOP
 LDX.b #$F1 : STX $012C
 +
 ;================================================================================
 org $029090 ; <- 11090 - Bank02.asm:3099 (LDA $7EF374 : LSR A : BCS BRANCH_GAMMA)
-JSL.l CheckHeraObject : BNE + : NOP
+LDA $7EF00F : BNE + : NOP
 STX $012C ; DON'T MOVE THIS FORWARD OR MADNESS AWAITS
 +
 ;================================================================================
