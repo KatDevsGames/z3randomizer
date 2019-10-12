@@ -260,6 +260,27 @@ RTL
 ;--------------------------------------------------------------------------------
 
 ;--------------------------------------------------------------------------------
+; Additional dark world checks to determine whether or not to fade out music
+; on mosaic transitions
+; 
+; On entry, A = $8A (overworld area being loaded)
+Overworld_MosaicDarkWorldChecks:
+    CMP.b #$40 : beq .checkCrystals
+    CMP.b #$42 : beq .checkCrystals
+    CMP.b #$50 : beq .checkCrystals
+    CMP.b #$51 : bne .doFade
+
+.checkCrystals
+    LDA $7EF37A : CMP.b #$7F : BEQ .done
+
+.doFade
+    LDA.b #$F1 : STA $012C  ; thing we wrote over, fade out music
+
+.done
+    RTL
+;--------------------------------------------------------------------------------
+
+;--------------------------------------------------------------------------------
 !SPCFreeSpace = $0700
 
 SPCEngineNewCode:

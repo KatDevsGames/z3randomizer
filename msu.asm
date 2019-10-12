@@ -198,6 +198,7 @@ CheckMusicLoadRequest:
             CMP.b #02 : BEQ .lightworld
             CMP.b #09 : BEQ .darkworld
             CMP.b #13 : BEQ .darkwoods
+            CMP.b #15 : BEQ .darkwoods
             CMP.b #16 : BEQ .castle
             CMP.b #17 : BEQ .dungeon
             CMP.b #22 : BEQ .dungeon
@@ -220,11 +221,7 @@ CheckMusicLoadRequest:
             LDA.b #61 : BRA .check_fallback-3 
 .darkwoods
             PHA
-                LDA $7EF37A : CMP.b #$7F : BNE +
-                    LDA !REG_MSU_FALLBACK_TABLE+7 : BIT #$10 : BEQ +
-                    PLA : LDA.b #61 : STA !REG_MUSIC_CONTROL_REQUEST
-                    BRA .mute
-                +
+                LDA $7EF37A : CMP.b #$7F : BEQ -
                 LDA $7EF3CA : BEQ --
                 LDA $8A : CMP #$40 : BNE --
             PLA

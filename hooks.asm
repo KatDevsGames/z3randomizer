@@ -2265,6 +2265,9 @@ org $02A9B0 ; (BCS $A9B7)
 NOP #2
 org $02C1C8 ; (BCS $C1CC)
 NOP #2
+;
+org $02ADA0 ; (LDA.b #$F1 : STA $012C)
+JSL Overworld_MosaicDarkWorldChecks : NOP
 ;--------------------------------------------------------------------------------
 org $05CC58 ; <- Bank05.asm:1307 (LDA $040A : CMP.b #$18)
 JSL PsychoSolder_MusicCheck
