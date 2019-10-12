@@ -163,9 +163,9 @@ ProcessEventItems:
 
 			LDA GoalItemRequirement : BEQ ++
 			LDA !GOAL_COUNTER : INC : STA !GOAL_COUNTER
-			CMP GoalItemRequirement : !BLT ++ 
+			CMP GoalItemRequirement : !BLT ++
 			LDA TurnInGoalItems : BNE ++
-				JSL.l ActivateGoal 
+				JSL.l ActivateGoal
 			++
 
 			LDX.b #$01 : BRA .done
@@ -487,7 +487,7 @@ AddReceivedItemExpanded:
 			+ ; Any Bow
 				LDA.b #$3B : STA $02D8 : BRA .done
 		++ : CMP.b #$65 : BNE ++ ; Progressive Bow 2
-			LDA #$20 : TSB !INVENTORY_SWAP_2
+			LDA.l !INVENTORY_SWAP_2 : ORA #$20 : STA.l !INVENTORY_SWAP_2
 			BRA --
 		++ : CMP.b #$62 : BNE ++ ; RNG Item (Single)
 			JSL.l GetRNGItemSingle : STA $02D8
