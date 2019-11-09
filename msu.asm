@@ -323,6 +323,7 @@ CheckMusicLoadRequest:
 .sfx_indoors
         LDA !REG_MUSIC_CONTROL_REQUEST : STA !REG_MUSIC_CONTROL : STZ !REG_MUSIC_CONTROL_REQUEST
     PLY : PLX : PLA : PLP
+    LDA.b #$05 : STA $012D
     JML Module_PreDungeon_setAmbientSfx
 
 SpiralStairsPreCheck:
