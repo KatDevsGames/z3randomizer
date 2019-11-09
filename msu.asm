@@ -372,6 +372,13 @@ SpiralStairsPostCheck:
     LDX.b #$1C : LDA $A0    ; thing we wrote over
     RTL
 
+StoreMusicOnDeath:
+    STA.l $7EC227   ; thing we wrote over
+    LDA !REG_MSU_STATUS : BIT !FLAG_MSU_STATUS_AUDIO_PLAYING : BEQ .done
+    LDA !REG_CURRENT_MSU_TRACK : STA.l $7EC227
+.done
+    RTL
+
 msu_init:
     PHP
 

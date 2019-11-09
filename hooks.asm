@@ -1473,6 +1473,9 @@ crystal_continue:
 org $0988A0 ; <- 8D2C01 8009 - ancilla_init.asm:1179 (STA $012C : BRA .doneWithSoundEffects)
 JML fanfare_preload : NOP
 
+org $09F2A7 ; <- 8F27C27E - module_death.asm:56 (STA $7EC227)
+JSL.l StoreMusicOnDeath
+
 org $0CC100 ; <- A511 C904 - Bank0C.asm:07 (LDA $11 : CMP.b #$04)
 JSL.l startup_wait
 
