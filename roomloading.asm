@@ -5,7 +5,7 @@ LoadRoomHook:
     JSL Dungeon_LoadRoom
     REP #$10 ; 16 bit XY
         LDX $A0 ; Room ID
-        LDA RoomCallbackTable, X
+        LDA.l RoomCallbackTable, X
     SEP #$10 ; 8 bit XY
     JSL UseImplicitRegIndexedLongJumpTable
 ; Callback routines:

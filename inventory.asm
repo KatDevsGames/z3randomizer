@@ -1141,14 +1141,14 @@ SpawnShovelItem:
 		LDX.b #$00
 		LDA $2F : CMP.b #$04 : BEQ + : INX : +
 
-		LDA .x_speeds, X : STA $0D50, Y
+		LDA.l .x_speeds, X : STA $0D50, Y
 
 		LDA.b #$00 : STA $0D40, Y
 		LDA.b #$18 : STA $0F80, Y
 		LDA.b #$FF : STA $0B58, Y
 		LDA.b #$30 : STA $0F10, Y
 
-		LDA $22 : !ADD .x_offsets, X
+		LDA $22 : !ADD.l .x_offsets, X
 		                        AND.b #$F0 : STA $0D10, Y
 		LDA $23 : ADC.b #$00               : STA $0D30, Y
 

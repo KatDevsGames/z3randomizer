@@ -90,7 +90,7 @@ Password_Main:
 	+
 	LDA $F4 : ORA $F6 : AND.b #$C0 : BEQ + ; face button
 		LDX !PASSWORD_SELECTION_POSITION
-		LDA .selectionValues, X : BPL ++
+		LDA.l .selectionValues, X : BPL ++
 			CMP #$F0 :  BNE +++
 				INC $11
 				BRA .endOfButtonChecks
@@ -285,23 +285,23 @@ PasswordEraseOldCursors:
 
 	;Code Cursor
 	LDA !PASSWORD_CODE_POSITION : AND.w #$00FF : ASL : TAX
-	LDA .code_offsets, X
+	LDA.l .code_offsets, X
 	!ADD.w #$20*!PASSWORD_DISPLAY_START_Y+!PASSWORD_DISPLAY_START_X+$6000
 	XBA ; because big endian is needed
-	STA $1002+Password_StripeImageTemplate_CodeCursorErase-Password_StripeImageTemplate
+	STA.l $1002+Password_StripeImageTemplate_CodeCursorErase-Password_StripeImageTemplate
 
 	;selection cursor
 	LDA !PASSWORD_SELECTION_POSITION : AND.w #$00FF : ASL : TAX
-	LDA .selection_offsets, X
+	LDA.l .selection_offsets, X
 	!ADD.w #$20*!PASSWORD_INPUT_START_Y+!PASSWORD_INPUT_START_X+$6000
 	XBA ; because big endian is needed
-	STA $1002+Password_StripeImageTemplate_SelectionCursorErase-Password_StripeImageTemplate
+	STA.l $1002+Password_StripeImageTemplate_SelectionCursorErase-Password_StripeImageTemplate
 	XBA : !ADD.w #$0020 : XBA
-	STA $1002+$0C+Password_StripeImageTemplate_SelectionCursorErase-Password_StripeImageTemplate
+	STA.l $1002+$0C+Password_StripeImageTemplate_SelectionCursorErase-Password_StripeImageTemplate
 	XBA : !ADD.w #$0003 : XBA
-	STA $1002+$14+Password_StripeImageTemplate_SelectionCursorErase-Password_StripeImageTemplate
+	STA.l $1002+$14+Password_StripeImageTemplate_SelectionCursorErase-Password_StripeImageTemplate
 	XBA : !ADD.w #$0040-$0003 : XBA
-	STA $1002+$1C+Password_StripeImageTemplate_SelectionCursorErase-Password_StripeImageTemplate
+	STA.l $1002+$1C+Password_StripeImageTemplate_SelectionCursorErase-Password_StripeImageTemplate
 
 	SEP #$20 ; restore 8-bit accumulator
 RTS
@@ -318,23 +318,23 @@ PasswordSetNewCursors:
 	REP #$20 ; set 16-bit accumulator
 	;Code Cursor
 	LDA !PASSWORD_CODE_POSITION : AND.w #$00FF : ASL : TAX
-	LDA PasswordEraseOldCursors_code_offsets, X
+	LDA.l PasswordEraseOldCursors_code_offsets, X
 	!ADD.w #$20*!PASSWORD_DISPLAY_START_Y+!PASSWORD_DISPLAY_START_X+$6000
 	XBA ; because big endian is needed
-	STA $1002+Password_StripeImageTemplate_CodeCursorDraw-Password_StripeImageTemplate
+	STA.l $1002+Password_StripeImageTemplate_CodeCursorDraw-Password_StripeImageTemplate
 
 	;Selection cursor
 	LDA !PASSWORD_SELECTION_POSITION : AND.w #$00FF : ASL : TAX
-	LDA PasswordEraseOldCursors_selection_offsets, X
+	LDA.l PasswordEraseOldCursors_selection_offsets, X
 	!ADD.w #$20*!PASSWORD_INPUT_START_Y+!PASSWORD_INPUT_START_X+$6000
 	XBA ; because big endian is needed
-	STA $1002+Password_StripeImageTemplate_SelectionCursorDraw-Password_StripeImageTemplate
+	STA.l $1002+Password_StripeImageTemplate_SelectionCursorDraw-Password_StripeImageTemplate
 	XBA : !ADD.w #$0020 : XBA
-	STA $1002+$0C+Password_StripeImageTemplate_SelectionCursorDraw-Password_StripeImageTemplate
+	STA.l $1002+$0C+Password_StripeImageTemplate_SelectionCursorDraw-Password_StripeImageTemplate
 	XBA : !ADD.w #$0003 : XBA
-	STA $1002+$14+Password_StripeImageTemplate_SelectionCursorDraw-Password_StripeImageTemplate
+	STA.l $1002+$14+Password_StripeImageTemplate_SelectionCursorDraw-Password_StripeImageTemplate
 	XBA : !ADD.w #$0040-$0003 : XBA
-	STA $1002+$1C+Password_StripeImageTemplate_SelectionCursorDraw-Password_StripeImageTemplate
+	STA.l $1002+$1C+Password_StripeImageTemplate_SelectionCursorDraw-Password_StripeImageTemplate
 
 	SEP #$20 ; restore 8-bit accumulator
 RTS

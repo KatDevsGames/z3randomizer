@@ -27,7 +27,7 @@ GetSpriteID:
 	PHX
 	PHB : PHK : PLB
 	;--------
-	TAX : LDA .gfxSlots, X ; look up item gfx
+	TAX : LDA.l .gfxSlots, X ; look up item gfx
 	PLB : PLX
 	CMP.b #$F8 : !BGE .specialHandling
 RTL
@@ -166,7 +166,7 @@ GetSpritePalette:
 	PHX
 	PHB : PHK : PLB
 	;--------
-	TAX : LDA .gfxPalettes, X ; look up item gfx
+	TAX : LDA.l .gfxPalettes, X ; look up item gfx
 	PLB : PLX
 	CMP.b #$F8 : !BGE .specialHandling
 RTL
@@ -327,7 +327,7 @@ IsNarrowSprite:
 	;----
 	-
 	CPX.b #$24 : !BGE .false ; finish if we've done the whole list
-	CMP .smallSprites, X : BNE + ; skip to next if we don't match
+	CMP.l .smallSprites, X : BNE + ; skip to next if we don't match
 	;--
 	SEC ; set true state
 	BRA .done ; we're done
@@ -618,10 +618,10 @@ CountBits:
 	LSR #4                  ; Shift down hi nybble, Leave <3> in C
 	TAY                     ; And save <7:4> in Y
 	TXA                     ; Recover value
-	AND #$07                ; Put out <2:0> in X
+	AND.b #$07              ; Put out <2:0> in X
 	TAX                     ; And save in X
-	LDA NybbleBitCounts, Y  ; Fetch count for Y
-	ADC NybbleBitCounts, X  ; Add count for X & C
+	LDA   NybbleBitCounts, Y; Fetch count for Y
+	ADC.l NybbleBitCounts, X; Add count for X & C
 	PLB
 RTL
 

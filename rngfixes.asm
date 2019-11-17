@@ -114,10 +114,10 @@ InitRNGPointerTable:
 	REP #$30 ; set 16-bit accumulator & index registers
 	LDX.w #$0000
 	-
-		LDA .rngDefaults, X : STA !RNG_POINTERS, X : INX #2
-		LDA .rngDefaults, X : STA !RNG_POINTERS, X : INX #2
-		LDA .rngDefaults, X : STA !RNG_POINTERS, X : INX #2
-		LDA .rngDefaults, X : STA !RNG_POINTERS, X : INX #2
+		LDA.l .rngDefaults, X : STA !RNG_POINTERS, X : INX #2
+		LDA.l .rngDefaults, X : STA !RNG_POINTERS, X : INX #2
+		LDA.l .rngDefaults, X : STA !RNG_POINTERS, X : INX #2
+		LDA.l .rngDefaults, X : STA !RNG_POINTERS, X : INX #2
 	CPX.w #$007F : !BLT -
 	PLP : PLX
 RTL

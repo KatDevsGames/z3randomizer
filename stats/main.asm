@@ -289,7 +289,7 @@ RenderCreditsStatCounter:
 	LSR #3
 	AND.w #$001E
     TAX
-    LDA BitMasks,x
+    LDA.l BitMasks,x
     AND !ValueLow
     STA !ValueLow
     
@@ -299,7 +299,7 @@ RenderCreditsStatCounter:
     AND.w #$0007        ;   CCC
     BEQ +
     ASL : TAX
-    LDA ValueCaps,x
+    LDA.l ValueCaps,x
     CMP !ValueLow
     !BGE +
     STA !ValueLow
