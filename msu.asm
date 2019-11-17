@@ -383,18 +383,6 @@ StoreMusicOnDeath:
 msu_init:
     PHP
 
-    STZ $4200
-
-    LDA.b #$FF : STA $2140
-
-    LDA.b #SPCEngineNewCode     : STA.b $00
-    LDA.b #SPCEngineNewCode>>8  : STA.b $01
-    LDA.b #SPCEngineNewCode>>16
-
-    JSL Sound_LoadLightWorldSongBank_do_load
-
-    LDA.b #$81 : STA $4200
-
     LDA NoBGM : BNE .done
 
     REP #$20

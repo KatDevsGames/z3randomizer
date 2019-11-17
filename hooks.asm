@@ -1482,7 +1482,7 @@ org $09F2A7 ; <- 8F27C27E - module_death.asm:56 (STA $7EC227)
 JSL.l StoreMusicOnDeath
 
 org $0CC100 ; <- A511 C904 - Bank0C.asm:07 (LDA $11 : CMP.b #$04)
-JSL.l startup_wait
+;JSL.l startup_wait
 
 org $0EE6EC ; <- E220 A922 - Bank0E.asm:2892 (SEP #$20 : LDA.b #$22 : STA $012C)
 JSL.l ending_wait

@@ -279,22 +279,3 @@ Overworld_MosaicDarkWorldChecks:
 .done
     RTL
 ;--------------------------------------------------------------------------------
-
-;--------------------------------------------------------------------------------
-!SPCFreeSpace = $0700
-
-SPCEngineNewCode:
-dw .end-.start
-dw !SPCFreeSpace
-.start
-incsrc spc.asm
-.end
-
-dw $0004
-dw $0A73            ; $0A73: CMP A,#$F0
-db $5F              ; JMP SPCFreeSpace
-dw !SPCFreeSpace
-db $00              ; NOP
-
-dw $0000, $0000
-;--------------------------------------------------------------------------------
