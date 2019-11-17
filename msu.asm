@@ -554,7 +554,8 @@ command_f0:
 load_track:
     CPX !REG_CURRENT_MSU_TRACK : BNE +
     - : CPX #27 : BEQ +
-        JML spc_continue
+        TXA
+        BRA .done+1
     +
     CPX !REG_CURRENT_COMMAND : BEQ -
     LDA.b #$00 : XBA
