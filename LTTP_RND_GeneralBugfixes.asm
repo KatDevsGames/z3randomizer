@@ -207,6 +207,9 @@ incsrc stats/main.asm
 org $308000 ; bank #$30
 incsrc tables.asm
 
+org $348000
+incsrc spc.asm
+
 ; uncomment for inverted adjustments
 ;incsrc sandbox.asm
 

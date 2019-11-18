@@ -731,10 +731,6 @@ org $06C93B ; PC 0x3493B
 PyramidPotion:
 	db #$2C ; #$2C = Green Potion
 ;--------------------------------------------------------------------------------
-; Change track 15 (unused) to point to 13 (Death Mountain) so dark woods can be track 15
-org $1A9F15 ; PC 0xD1F15
-	dw #$2B00	; Set track 15 pointer to track 13's data
-;--------------------------------------------------------------------------------
 org $308140 ; PC 0x180140 - 0x18014A [encrypted]
 HeartPieceOutdoorValues:
 HeartPiece_Spectacle:
