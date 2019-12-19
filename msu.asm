@@ -145,6 +145,9 @@
 !VAL_VOLUME_HALF = #$80
 !VAL_VOLUME_FULL = #$FF
 
+;================================================================================
+; Extended OST/SPC fallback, decide which track to actually play
+;--------------------------------------------------------------------------------
 CheckMusicLoadRequest:
     PHP : REP #$10 : PHA : PHX : PHY
         LDA !REG_MUSIC_CONTROL_REQUEST : BEQ .skip+3 : BMI .skip+3
@@ -176,7 +179,7 @@ CheckMusicLoadRequest:
                     BRA +++
                 + : LDA !REG_MSU_PACK_CURRENT : STA !REG_MSU_PACK_REQUEST
             ++ : STA !REG_MSU_PACK_CURRENT
-            JSL msu_init_check_fallback
+            JSL MSUInit_check_fallback
         +++
 
         LDA !REG_MUSIC_CONTROL_REQUEST : CMP #$08 : BEQ ++  ; Mirror SFX is not affected by NoBGM or pack $FE
@@ -325,7 +328,11 @@ CheckMusicLoadRequest:
     PLY : PLX : PLA : PLP
     LDA.b #$05 : STA $012D
     JML Module_PreDungeon_setAmbientSfx
+;--------------------------------------------------------------------------------
 
+;================================================================================
+; Fade out music if we're changing tracks on a stair transition
+;--------------------------------------------------------------------------------
 SpiralStairsPreCheck:
     REP #$20    ; thing we wrote over
     LDA $A0
@@ -351,7 +358,11 @@ SpiralStairsPreCheck:
 .done
     LDA $A0     ; thing we wrote over
     RTL
+;--------------------------------------------------------------------------------
 
+;================================================================================
+; Change music on stair transition (ToH/GT)
+;--------------------------------------------------------------------------------
 SpiralStairsPostCheck:
     LDA $A0
     CMP.w #$000C : BNE +
@@ -372,15 +383,23 @@ SpiralStairsPostCheck:
 .done
     LDX.b #$1C : LDA $A0    ; thing we wrote over
     RTL
+;--------------------------------------------------------------------------------
 
+;================================================================================
+; Make sure expanded OST tracks load properly after death/fairy revival
+;--------------------------------------------------------------------------------
 StoreMusicOnDeath:
     STA.l $7EC227   ; thing we wrote over
     LDA !REG_MSU_STATUS : BIT !FLAG_MSU_STATUS_AUDIO_PLAYING : BEQ .done
     LDA !REG_CURRENT_MSU_TRACK : STA.l $7EC227
 .done
     RTL
+;--------------------------------------------------------------------------------
 
-msu_init:
+;================================================================================
+; Check if MSU-1 is enabled and scan for missing tracks
+;--------------------------------------------------------------------------------
+MSUInit:
     PHP
 
     LDA NoBGM : BNE .done
@@ -444,29 +463,34 @@ msu_init:
     PLA : DEC
     BRA .check_track
 
-msu_main:
+;--------------------------------------------------------------------------------
+
+;================================================================================
+; Play MSU-1 audio track
+;--------------------------------------------------------------------------------
+MSUMain:
     SEP #$20    ; set 8-BIT accumulator
     LDA $4210   ; thing we wrote over
     REP #$20    ; set 16-BIT accumulator
     LDA !REG_MSU_ID_01 : CMP !VAL_MSU_ID_01 : BEQ .continue
 .nomsu
     SEP #$30
-    JML spc_continue
+    JML SPCContinue
 .continue
     LDA !REG_MSU_ID_23 : CMP !VAL_MSU_ID_23 : BNE .nomsu
     LDA !REG_MSU_ID_45 : CMP !VAL_MSU_ID_45 : BNE .nomsu
     SEP #$30
     LDX !REG_MUSIC_CONTROL : BEQ +
-        BRL command_ff
+        BRL .command_ff
     +
-    LDA !REG_MSU_DELAYED_COMMAND : BEQ do_fade
+    LDA !REG_MSU_DELAYED_COMMAND : BEQ .do_fade
 
-msu_check_busy:
+.check_busy
     LDA !REG_MSU_STATUS : BIT !FLAG_MSU_STATUS_AUDIO_BUSY : BEQ .ready
-    JML spc_continue
+    JML SPCContinue
 .ready
     LDA !REG_MSU_STATUS : BIT !FLAG_MSU_STATUS_TRACK_MISSING : BEQ .start
-    JML spc_continue
+    JML SPCContinue
 .start
     LDA !VAL_VOLUME_FULL
     STA !REG_TARGET_VOLUME
@@ -486,13 +510,12 @@ msu_check_busy:
     +++ : STA !REG_MSU_CONTROL
     LDA.b #$00
     STA !REG_MSU_DELAYED_COMMAND
-    JML spc_continue
+    JML SPCContinue
 
-do_fade:
-    LDA !REG_CURRENT_VOLUME : CMP !REG_TARGET_VOLUME : BNE .continue
-    JML spc_continue
-.continue
-    BCC .increment
+.do_fade:
+    LDA !REG_CURRENT_VOLUME : CMP !REG_TARGET_VOLUME : BNE +
+        JML SPCContinue
+    + : BCC .increment
 .decrement
     SBC !VAL_VOLUME_DECREMENT : BCS .set
 .mute
@@ -505,41 +528,41 @@ do_fade:
 .set
     STA !REG_CURRENT_VOLUME
     STA !REG_MSU_VOLUME
-    JML spc_continue
+    JML SPCContinue
 
-command_ff:
-    CPX !VAL_COMMAND_LOAD_NEW_BANK : BNE command_f3
-    JML spc_continue
+.command_ff:
+    CPX !VAL_COMMAND_LOAD_NEW_BANK : BNE .command_f3
+    JML SPCContinue
 
-command_f3:
-    CPX !VAL_COMMAND_FULL_VOLUME : BNE command_f2
+.command_f3:
+    CPX !VAL_COMMAND_FULL_VOLUME : BNE .command_f2
     STX !REG_SPC_CONTROL
     LDA !VAL_VOLUME_FULL
     STA !REG_TARGET_VOLUME
-    JML spc_continue
+    JML SPCContinue
 
-command_f2:
-    CPX !VAL_COMMAND_FADE_HALF : BNE command_f1
+.command_f2:
+    CPX !VAL_COMMAND_FADE_HALF : BNE .command_f1
     STX !REG_SPC_CONTROL
     LDA !VAL_VOLUME_HALF
     STA !REG_TARGET_VOLUME
-    JML spc_continue
+    JML SPCContinue
 
-command_f1:
-    CPX !VAL_COMMAND_FADE_OUT : BNE command_f0
+.command_f1:
+    CPX !VAL_COMMAND_FADE_OUT : BNE .command_f0
     STX !REG_SPC_CONTROL
     STZ !REG_TARGET_VOLUME
     STZ !REG_CURRENT_MSU_TRACK
-    JML spc_continue
+    JML SPCContinue
 
-command_f0:
-    CPX !VAL_COMMAND_STOP_PLAYBACK : !BLT load_track
+.command_f0:
+    CPX !VAL_COMMAND_STOP_PLAYBACK : !BLT .load_track
     CPX !VAL_COMMAND_MUTE_SPC : BEQ +       ; Don't allow executing the mute/umute
     CPX !VAL_COMMAND_UNMUTE_SPC : BNE ++    ; commands during NMI like this
         + : LDA.b #$00 : STA !REG_MUSIC_CONTROL
-    ++ : JML spc_continue
+    ++ : JML SPCContinue
 
-load_track:
+.load_track:
     CPX !REG_CURRENT_MSU_TRACK : BNE +
     - : CPX #27 : BEQ +
         TXA
@@ -590,9 +613,14 @@ load_track:
         LDA MSUExtendedFallbackList-1,X : BRA -
     +
     STA !REG_MUSIC_CONTROL
-    JML spc_continue
+    JML SPCContinue
 
-fanfare_preload:
+;--------------------------------------------------------------------------------
+
+;================================================================================
+; Wait for the fanfare music to start, or else it can get skipped entirely
+;--------------------------------------------------------------------------------
+FanfarePreload:
     STA !REG_MUSIC_CONTROL_REQUEST  ; thing we wrote over
     PHA
         JSL CheckMusicLoadRequest
@@ -600,8 +628,12 @@ fanfare_preload:
     PLA
     - : CMP !REG_SPC_CONTROL : BNE -
     JML AddReceivedItem_doneWithSoundEffects
+;--------------------------------------------------------------------------------
 
-pendant_fanfare:
+;================================================================================
+; Wait for pendant fanfare to finish
+;--------------------------------------------------------------------------------
+PendantFanfareWait:
     LDA TournamentSeed : BNE .spc
     LDA FastFanfare : BNE .done
     REP #$20
@@ -614,15 +646,18 @@ pendant_fanfare:
     LDA !REG_MSU_DELAYED_COMMAND : BNE .continue
     LDA !REG_MSU_STATUS : BIT !FLAG_MSU_STATUS_AUDIO_PLAYING : BEQ .done
 .continue
-    jml pendant_continue
+    jml PendantFanfareContinue
 .spc
     SEP #$20
     LDA !REG_SPC_CONTROL : BNE .continue
 .done
-    jml pendant_done
+    jml PendantFanfareDone
+;--------------------------------------------------------------------------------
 
-
-crystal_fanfare:
+;================================================================================
+; Wait for crystal fanfare to finish
+;--------------------------------------------------------------------------------
+CrystalFanfareWait:
     LDA TournamentSeed : BNE .spc
     LDA FastFanfare : BNE .done
     REP #$20
@@ -635,24 +670,30 @@ crystal_fanfare:
     LDA !REG_MSU_DELAYED_COMMAND : BNE .continue
     LDA !REG_MSU_STATUS : BIT !FLAG_MSU_STATUS_AUDIO_PLAYING : BEQ .done
 .continue    
-    jml crystal_continue
+    jml CrystalFanfareContinue
 .spc
     SEP #$20
     LDA !REG_SPC_CONTROL : BNE .continue
 .done
-    jml crystal_done
+    jml CrystalFanfareDone
+;--------------------------------------------------------------------------------
 
-
-startup_wait:
+;================================================================================
+; Delay input scanning on startup/S&Q to avoid hard-lock from button mashing
+;--------------------------------------------------------------------------------
+StartupWait:
     LDA $11 : CMP.b #$04 : BCC .done    ; thing we wrote over
     LDA !REG_SPC_CONTROL : BEQ .done-1
     CMP.b #$01 : BEQ .done
     CLC
 .done
     RTL
+;--------------------------------------------------------------------------------
 
-
-ending_wait:
+;================================================================================
+; Wait for ending credits music to finish
+;--------------------------------------------------------------------------------
+EndingMusicWait:
     REP #$20
     LDA !REG_MSU_ID_01 : CMP !VAL_MSU_ID_01 : BNE .done
     LDA !REG_MSU_ID_23 : CMP !VAL_MSU_ID_23 : BNE .done
@@ -664,3 +705,4 @@ ending_wait:
     SEP #$20
     LDA.b #$22
     RTL
+;--------------------------------------------------------------------------------
