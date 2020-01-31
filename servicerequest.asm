@@ -15,11 +15,22 @@
 ; #$02 - Ready for External Read/Write
 ;--------------------------------------------------------------------------------
 ; Block Commands
-; #$00 - Wait
-; #$01 - Signal Item-Seen
-; #$02 - Signal Item-Get
-; #$03 - Prompt Text
-;--------------------------------------------------------------------------------
+; None = 0x00
+; ItemSeen = 0x01
+; ItemGet = 0x02
+; ShowPrompt = 0x03
+; AreaChange = 0x04
+; FinishDungeon = 0x05
+; Death = 0x06
+; SaveQuit = 0x07
+; CreateFile = 0x08
+; LoadFile = 0x09
+; DeleteFile = 0x0A
+; Spawn = 0x0B
+; Pause = 0x0C
+; 
+; Stall = 0x7F
+; ;--------------------------------------------------------------------------------
 !RX_BUFFER = "$7F5300"
 !RX_STATUS = "$7F537F"
 !RX_SEQUENCE = "$7EF4A0"
