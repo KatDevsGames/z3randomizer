@@ -15,21 +15,23 @@
 ; #$02 - Ready for External Read/Write
 ;--------------------------------------------------------------------------------
 ; Block Commands
-; None = 0x00
-; ItemSeen = 0x01
-; ItemGet = 0x02
-; ShowPrompt = 0x03
-; AreaChange = 0x04
-; FinishDungeon = 0x05
-; Death = 0x06
-; SaveQuit = 0x07
-; CreateFile = 0x08
-; LoadFile = 0x09
-; DeleteFile = 0x0A
-; Spawn = 0x0B
-; Pause = 0x0C
-; 
-; Stall = 0x7F
+!SCM_WAIT = "#$00"
+
+!SCM_SEEN = "#$01"
+!SCM_GET = "#$02"
+!SCM_PROMPT = "#$03"
+!SCM_AREACHG = "#$04"
+!SCM_DUNGEON = "#$05"
+!SCM_DEATH = "#$06"
+!SCM_SAVEQUIT = "#$07"
+!SCM_FCREATE = "#$08"
+!SCM_FLOAD = "#$09"
+!SCM_FCDELETE = "#$0A"
+!SCM_SPAWN = "#$0B"
+!SCM_PAUSE = "#$0C"
+
+!SCM_STALL = "#$7E"
+!SCM_RESUME = "#$7F"
 ; ;--------------------------------------------------------------------------------
 !RX_BUFFER = "$7F5300"
 !RX_STATUS = "$7F537F"
