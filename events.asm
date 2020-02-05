@@ -18,6 +18,7 @@ OnDrawHud:
 	JSL.l DrawChallengeTimer ; this has to come before NewDrawHud because the timer overwrites the compass counter
 	JSL.l NewDrawHud
 	JSL.l SwapSpriteIfNecissary
+	JSL.l PollService
 JML.l ReturnFromOnDrawHud
 ;--------------------------------------------------------------------------------
 ;OnDungeonEntrance:
