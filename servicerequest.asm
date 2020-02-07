@@ -72,9 +72,15 @@ RTL
 macro ServiceRequest(type)
 	LDA !TX_STATUS : BEQ + : SEC : RTL : + ; return fail if we don't have the lock
 		LDA $1B : STA !TX_BUFFER+8 ; indoor/outdoor
-		LDA $A0 : STA !TX_BUFFER+9 ; roomid low
-		LDA $A1 : STA !TX_BUFFER+10 ; roomid high
-		LDA $76 : STA !TX_BUFFER+11 ; object index (type 2 only)
+		BEQ +
+			LDA $A0 : STA !TX_BUFFER+9 ; roomid low
+			LDA $A1 : STA !TX_BUFFER+10 ; roomid high
+			BRA ++
+		+
+			LDA $040A : STA !TX_BUFFER+9 ; area id
+			LDA.b #$00 : STA !TX_BUFFER+10 ; protocol defines this as a ushort
+		++
+		LDA $76 : !SUB #$58 : STA !TX_BUFFER+11 ; object index (type 2 only)
 		LDA <type> : STA !TX_BUFFER ; item get
 	LDA #$01 : STA !TX_STATUS ; mark ready for reading
 	CLC ; mark request as successful
@@ -84,6 +90,7 @@ endmacro
 ItemVisualServiceRequest:
 %ServiceRequest(!SCM_SEEN)
 ;--------------------------------------------------------------------------------
+ChestItemServiceRequest:
 ItemGetServiceRequest:
 %ServiceRequest(!SCM_GET)
 ;--------------------------------------------------------------------------------

@@ -32,12 +32,14 @@
 ; #$6A - Goal Item (Single/Triforce)
 ; #$6B - Goal Item (Multi/Power Star)
 ; #$6C - Goal Item (Multi/Triforce Piece)
-; #$6D- Server Request
+; #$6D - Server Request
 ; #$6E - Server Request (Dungeon Drop)
 ; #$70 - Maps
 ; #$80 - Compasses
 ; #$90 - Big Keys
 ; #$A0 - Small Keys
+; #$FE - Server Request (Null Chest)
+; #$FF - Null Chest
 ;--------------------------------------------------------------------------------
 ;GetAnimatedSpriteGfxFile:
 ;    LDY.b #$32
@@ -321,6 +323,9 @@ AddReceivedItemExpandedGetItem:
 	+ CMP.b #$6D : BNE + ; Server Request
 		JSL ItemGetServiceRequest
 		BRL .done
+	;+ CMP.b #$FE : BNE + ; Server Request (Null Chest)
+	;	JSL ItemGetServiceRequest
+	;	BRL .done
 	+ CMP.b #$6E : BNE + ; Server Request (Dungeon Drop)
 		JSL ItemGetServiceRequest
 		BRL .done
@@ -473,7 +478,7 @@ AddReceivedItemExpanded:
 			+ : CMP.b #$00 : BNE + ; No Armor
 				LDA.b #$22 : STA $02D8 : BRL .done
 			+ ; Everything Else
-				LDA.b #$23 : STA $02D8 : BRA .done
+				LDA.b #$23 : STA $02D8 : BRL .done
 		++ : CMP.b #$61 : BNE ++ ; Progressive Lifting Glove
 			LDA $7EF354 : BNE + ; No Lift
 				LDA.b #$1B : STA $02D8 : BRA .done
@@ -489,6 +494,9 @@ AddReceivedItemExpanded:
 		++ : CMP.b #$65 : BNE ++ ; Progressive Bow 2
 			LDA.l !INVENTORY_SWAP_2 : ORA #$20 : STA.l !INVENTORY_SWAP_2
 			BRA --
+		++ : CMP.b #$FE : BNE ++ ; Server Request (Null Chest)
+			JSL ItemGetServiceRequest
+			BRA .done
 		++ : CMP.b #$62 : BNE ++ ; RNG Item (Single)
 			JSL.l GetRNGItemSingle : STA $02D8
 			XBA : JSR.w MarkRNGItemSingle
@@ -1071,7 +1079,6 @@ AttemptItemSubstitution:
 				CMP.l ItemSubstitutionRules+1, X : !BLT +
 					LDA.l ItemSubstitutionRules+2, X : STA 1,s
 				+
-
 				BEQ .exit
 			.noMatch
 				INX #4
@@ -1094,4 +1101,13 @@ ActivateGoal:
     STZ $11
     STZ $B0
 JML.l StatsFinalPrep
+;--------------------------------------------------------------------------------
+ChestPrep:
+	LDA.b #$01 : STA $02E9
+	LDA.l ServerRequestMode : BEQ +
+		JSL.l ChestItemServiceRequest
+	+
+    LDY $0C ; get item value
+	CMP #$F0
+RTL
 ;--------------------------------------------------------------------------------
