@@ -14,6 +14,12 @@
 ; #$01 - Ready to Read
 ; #$FF - Busy
 ;--------------------------------------------------------------------------------
+; Service Indexes
+; 0x00 - 0x04 - chests
+; 0xF0 - freestanding heart / powder / mushroom / bonkable
+; 0xF1 - freestanding heart 2 / boss heart / npc
+; 0xF2 - tablet/pedestal
+;--------------------------------------------------------------------------------
 ; Block Commands
 !SCM_WAIT = "#$00"
 
@@ -69,7 +75,7 @@ PollService:
 	CLC ; mark request as successful
 RTL
 ;--------------------------------------------------------------------------------
-macro ServiceRequest(type)
+macro ServiceRequestChest(type)
 	LDA !TX_STATUS : BEQ + : SEC : RTL : + ; return fail if we don't have the lock
 		LDA $1B : STA !TX_BUFFER+8 ; indoor/outdoor
 		BEQ +
@@ -87,10 +93,42 @@ macro ServiceRequest(type)
 RTL
 endmacro
 ;--------------------------------------------------------------------------------
-ItemVisualServiceRequest:
-%ServiceRequest(!SCM_SEEN)
+macro ServiceRequest(type,index)
+	LDA !TX_STATUS : BEQ + : SEC : RTL : + ; return fail if we don't have the lock
+		LDA $1B : STA !TX_BUFFER+8 ; indoor/outdoor
+		BEQ +
+			LDA $A0 : STA !TX_BUFFER+9 ; roomid low
+			LDA $A1 : STA !TX_BUFFER+10 ; roomid high
+			BRA ++
+		+
+			LDA $040A : STA !TX_BUFFER+9 ; area id
+			LDA.b #$00 : STA !TX_BUFFER+10 ; protocol defines this as a ushort
+		++
+		LDA <index> : STA !TX_BUFFER+11 ; object index (type 2 only)
+		LDA <type> : STA !TX_BUFFER ; item get
+	LDA #$01 : STA !TX_STATUS ; mark ready for reading
+	CLC ; mark request as successful
+RTL
+endmacro
+;--------------------------------------------------------------------------------
+ItemVisualServiceRequest_F0:
+%ServiceRequest(!SCM_SEEN, #$F0)
+;--------------------------------------------------------------------------------
+ItemVisualServiceRequest_F1:
+%ServiceRequest(!SCM_SEEN, #$F1)
+;--------------------------------------------------------------------------------
+ItemVisualServiceRequest_F2:
+%ServiceRequest(!SCM_SEEN, #$F2)
 ;--------------------------------------------------------------------------------
 ChestItemServiceRequest:
-ItemGetServiceRequest:
-%ServiceRequest(!SCM_GET)
+%ServiceRequestChest(!SCM_GET)
+;--------------------------------------------------------------------------------
+ItemGetServiceRequest_F0:
+%ServiceRequest(!SCM_GET, #$F0)
+;--------------------------------------------------------------------------------
+ItemGetServiceRequest_F1:
+%ServiceRequest(!SCM_GET, #$F1)
+;--------------------------------------------------------------------------------
+ItemGetServiceRequest_F2:
+%ServiceRequest(!SCM_GET, #$F2)
 ;--------------------------------------------------------------------------------

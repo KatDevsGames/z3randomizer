@@ -16,14 +16,31 @@ GetSpriteID:
 	CMP.b #$3C : BEQ .bottle ; Bee w/bottle
 	CMP.b #$3D : BEQ .bottle ; Fairy w/bottle
 	CMP.b #$48 : BEQ .bottle ; Gold Bee w/bottle
-		BRA .notBottle
+	CMP.b #$6D : BEQ .server ; Server Request F0
+	CMP.b #$6E : BEQ .server ; Server Request F1
+	CMP.b #$6F : BEQ .server ; Server Request F2
+	BRA .normal
 		.bottle
 			PHA : JSR.w CountBottles : CMP.l BottleLimit : !BLT +
 				PLA : LDA.l BottleLimitReplacement
 				JSL.l GetSpriteID
 				RTL
 			+
-		PLA : .notBottle
+			PLA : BRA .normal
+		.server_F0
+			ItemVisualServiceRequest_F0
+			LDA.b #$14
+			RTL
+		.server_F1
+			ItemVisualServiceRequest_F1
+			LDA.b #$14
+			RTL
+		.server_F2
+			ItemVisualServiceRequest_F2
+			LDA.b #$14
+			RTL
+	.normal
+		
 	PHX
 	PHB : PHK : PLB
 	;--------

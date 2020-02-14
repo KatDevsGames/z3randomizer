@@ -32,14 +32,21 @@
 ; #$6A - Goal Item (Single/Triforce)
 ; #$6B - Goal Item (Multi/Power Star)
 ; #$6C - Goal Item (Multi/Triforce Piece)
-; #$6D - Server Request
-; #$6E - Server Request (Dungeon Drop)
+; #$6D - Server Request F0 (Hearts / Powder / Mushroom / Bonkable)
+; #$6E - Server Request F1 (Hearts / Boss Heart / NPC)
+; #$6F - Server Request F2 (Tablets / Pedestal)
 ; #$70 - Maps
 ; #$80 - Compasses
 ; #$90 - Big Keys
 ; #$A0 - Small Keys
-; #$FE - Server Request (Null Chest)
+; #$FE - Server Request (Asychronous Chest)
 ; #$FF - Null Chest
+;--------------------------------------------------------------------------------
+; Service Indexes
+; 0x00 - 0x04 - chests
+; 0xF0 - freestanding heart / powder / mushroom / bonkable
+; 0xF1 - freestanding heart 2 / boss heart / npc
+; 0xF3 - tablet/pedestal
 ;--------------------------------------------------------------------------------
 ;GetAnimatedSpriteGfxFile:
 ;    LDY.b #$32
@@ -320,15 +327,18 @@ AddReceivedItemExpandedGetItem:
 				JSL.l ActivateGoal
 		++
 		BRL .done
-	+ CMP.b #$6D : BNE + ; Server Request
-		JSL ItemGetServiceRequest
+	+ CMP.b #$6D : BNE + ; Server Request F0
+		JSL.l ItemGetServiceRequest_F0
+		BRL .done
+	+ CMP.b #$6E : BNE + ; Server Request F1
+		JSL.l ItemGetServiceRequest_F1
+		BRL .done
+	+ CMP.b #$6F : BNE + ; Server Request F2
+		JSL.l ItemGetServiceRequest_F2
 		BRL .done
 	;+ CMP.b #$FE : BNE + ; Server Request (Null Chest)
-	;	JSL ItemGetServiceRequest
+	;	JSL.l ItemGetServiceRequest
 	;	BRL .done
-	+ CMP.b #$6E : BNE + ; Server Request (Dungeon Drop)
-		JSL ItemGetServiceRequest
-		BRL .done
 	+ CMP.b #$70 : !BLT + : CMP.b #$80 : !BGE + ; Free Map
 		AND #$0F : CMP #$08 : !BGE ++
 			%ValueShift()
@@ -494,9 +504,9 @@ AddReceivedItemExpanded:
 		++ : CMP.b #$65 : BNE ++ ; Progressive Bow 2
 			LDA.l !INVENTORY_SWAP_2 : ORA #$20 : STA.l !INVENTORY_SWAP_2
 			BRA --
-		++ : CMP.b #$FE : BNE ++ ; Server Request (Null Chest)
-			JSL ItemGetServiceRequest
-			BRA .done
+		; ++ : CMP.b #$FE : BNE ++ ; Server Request (Null Chest)
+		;	JSL ChestItemServiceRequest
+		;	BRA .done
 		++ : CMP.b #$62 : BNE ++ ; RNG Item (Single)
 			JSL.l GetRNGItemSingle : STA $02D8
 			XBA : JSR.w MarkRNGItemSingle
