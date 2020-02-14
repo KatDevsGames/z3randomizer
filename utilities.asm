@@ -29,16 +29,12 @@ GetSpriteID:
 			PLA : BRA .normal
 		.server_F0
 			ItemVisualServiceRequest_F0
-			LDA.b #$14
-			RTL
+			BRA .normal
 		.server_F1
 			ItemVisualServiceRequest_F1
-			LDA.b #$14
-			RTL
+			BRA .normal
 		.server_F2
 			ItemVisualServiceRequest_F2
-			LDA.b #$14
-			RTL
 	.normal
 		
 	PHX
