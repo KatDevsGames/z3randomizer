@@ -37,8 +37,10 @@
 !SCM_SPAWN = "#$0C"
 !SCM_PAUSE = "#$0D"
 
-!SCM_STALL = "#$7E"
-!SCM_RESUME = "#$7F"
+!SCM_STALL = "#$70"
+!SCM_RESUME = "#$71"
+
+!SCM_VERSION = "#$80"
 ; ;--------------------------------------------------------------------------------
 !RX_BUFFER = "$7F5300"
 !RX_STATUS = "$7F537F"
@@ -47,33 +49,17 @@
 !TX_STATUS = "$7F53FF"
 !TX_SEQUENCE = "$7EF4A0"
 ;--------------------------------------------------------------------------------
-PollService:
-	PHP
-	SEP #$20 ; set 8-bit accumulator
-	LDA !RX_STATUS : DEC : BEQ + : PLP : SEC : RTL : + ; return fail if there's nothing to read
-		LDA #$FF : STA !RX_STATUS ; stop calls from recursing in
-		LDA !RX_BUFFER : CMP.b !SCM_GIVE : BNE +
-			PHY : LDA.l !RX_BUFFER+8 : TAY
-			LDA.l !RX_BUFFER+9 : BNE ++
-				JSL.l Link_ReceiveItem ; do something else
-				PLY : BRA .done
-			++
-				JSL.l Link_ReceiveItem
-				PLY : BRA .done
-		+ : CMP.b !SCM_PROMPT : BNE +
-			LDA.l !RX_BUFFER+8 : TAX
-			LDA.l !RX_BUFFER+9 : STA $7E012E, X ; set sound effect, could possibly make this STA not-long
-			REP #$30 ; set 16-bit accumulator and index registers
-				LDA !RX_BUFFER+10 : TAX
-				LDA !RX_BUFFER+12
-				JSL.l DoToast
-			SEP #$30 ; set 8-bit accumulator and index registers
-		+
-	.done
-	LDA #$00 : STA !RX_STATUS ; release lock
-	PLP
+macro ServiceRequestVersion()
+	LDA !TX_STATUS : BEQ + : SEC : RTL : + ; return fail if we don't have the lock
+		LDA.b #$01 : STA !TX_BUFFER+8 ; version
+		LDA.b #$00 : STA !TX_BUFFER+9
+					STA !TX_BUFFER+10
+					STA !TX_BUFFER+11
+		LDA.b !SCM_VERSION : STA !TX_BUFFER
+	LDA #$01 : STA !TX_STATUS ; mark ready for reading
 	CLC ; mark request as successful
 RTL
+endmacro
 ;--------------------------------------------------------------------------------
 macro ServiceRequestChest(type)
 	LDA !TX_STATUS : BEQ + : SEC : RTL : + ; return fail if we don't have the lock
@@ -110,6 +96,36 @@ macro ServiceRequest(type,index)
 	CLC ; mark request as successful
 RTL
 endmacro
+;--------------------------------------------------------------------------------
+PollService:
+	PHP
+	SEP #$20 ; set 8-bit accumulator
+	LDA !RX_STATUS : DEC : BEQ + : PLP : SEC : RTL : + ; return fail if there's nothing to read
+		LDA #$FF : STA !RX_STATUS ; stop calls from recursing in
+		LDA !RX_BUFFER : CMP.b !SCM_GIVE : BNE + ; give item
+			PHY : LDA.l !RX_BUFFER+8 : TAY
+			LDA.l !RX_BUFFER+9 : BNE ++
+				JSL.l Link_ReceiveItem ; do something else
+				PLY : BRA .done
+			++
+				JSL.l Link_ReceiveItem
+				PLY : BRA .done
+		+ : CMP.b !SCM_PROMPT : BNE + ; item prompt
+			LDA.l !RX_BUFFER+8 : TAX
+			LDA.l !RX_BUFFER+9 : STA $7E012E, X ; set sound effect, could possibly make this STA not-long
+			REP #$30 ; set 16-bit accumulator and index registers
+				LDA !RX_BUFFER+10 : TAX
+				LDA !RX_BUFFER+12
+				JSL.l DoToast
+			SEP #$30 ; set 8-bit accumulator and index registers
+		+ : CMP.b !SCM_VERSION : BNE + ; version
+			%ServiceRequestVersion()
+		+
+	.done
+	LDA #$00 : STA !RX_STATUS ; release lock
+	PLP
+	CLC ; mark request as successful
+RTL
 ;--------------------------------------------------------------------------------
 ItemVisualServiceRequest_F0:
 %ServiceRequest(!SCM_SEEN, #$F0)
