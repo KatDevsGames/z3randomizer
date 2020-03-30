@@ -33,7 +33,7 @@
 ; #$6B - Goal Item (Multi/Power Star)
 ; #$6C - Goal Item (Multi/Triforce Piece)
 ; #$6D - Server Request F0 (Hearts / Powder / Mushroom / Bonkable)
-; #$6E - Server Request F1 (Hearts / Boss Heart / NPC)
+; #$6E - Server Request F1 (NPC)
 ; #$6F - Server Request F2 (Tablets / Pedestal)
 ; #$70 - Maps
 ; #$80 - Compasses
