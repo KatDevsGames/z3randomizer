@@ -52,19 +52,19 @@
 !TX_SEQUENCE = "$7EF4A0"
 ;--------------------------------------------------------------------------------
 macro ServiceRequestVersion()
-	LDA !TX_STATUS : BEQ + : SEC : RTL : + ; return fail if we don't have the lock
+	LDA !TX_STATUS : BEQ + : CLC : RTL : + ; return fail if we don't have the lock
 		LDA.b #$01 : STA !TX_BUFFER+8 ; version
 		LDA.b #$00 : STA !TX_BUFFER+9
 					STA !TX_BUFFER+10
 					STA !TX_BUFFER+11
 		LDA.b !SCM_VERSION : STA !TX_BUFFER
 	LDA #$01 : STA !TX_STATUS ; mark ready for reading
-	CLC ; mark request as successful
+	SEC ; mark request as successful
 RTL
 endmacro
 ;--------------------------------------------------------------------------------
 macro ServiceRequestChest(type)
-	LDA !TX_STATUS : BEQ + : SEC : RTL : + ; return fail if we don't have the lock
+	LDA !TX_STATUS : BEQ + : CLC : RTL : + ; return fail if we don't have the lock
 		LDA $1B : STA !TX_BUFFER+8 ; indoor/outdoor
 		BEQ +
 			LDA $A0 : STA !TX_BUFFER+9 ; roomid low
@@ -77,12 +77,12 @@ macro ServiceRequestChest(type)
 		LDA $76 : !SUB #$58 : STA !TX_BUFFER+11 ; object index (type 2 only)
 		LDA <type> : STA !TX_BUFFER ; item get
 	LDA #$01 : STA !TX_STATUS ; mark ready for reading
-	CLC ; mark request as successful
+	SEC ; mark request as successful
 RTL
 endmacro
 ;--------------------------------------------------------------------------------
 macro ServiceRequest(type,index)
-	LDA !TX_STATUS : BEQ + : SEC : RTL : + ; return fail if we don't have the lock
+	LDA !TX_STATUS : BEQ + : CLC : RTL : + ; return fail if we don't have the lock
 		LDA $1B : STA !TX_BUFFER+8 ; indoor/outdoor
 		BEQ +
 			LDA $A0 : STA !TX_BUFFER+9 ; roomid low
@@ -95,14 +95,14 @@ macro ServiceRequest(type,index)
 		LDA <index> : STA !TX_BUFFER+11 ; object index (type 2 only)
 		LDA <type> : STA !TX_BUFFER ; item get
 	LDA #$01 : STA !TX_STATUS ; mark ready for reading
-	CLC ; mark request as successful
+	SEC ; mark request as successful
 RTL
 endmacro
 ;--------------------------------------------------------------------------------
 PollService:
 	PHP
 	SEP #$20 ; set 8-bit accumulator
-	LDA !RX_STATUS : DEC : BEQ + : PLP : SEC : RTL : + ; return fail if there's nothing to read
+	LDA !RX_STATUS : DEC : BEQ + : PLP : CLC : RTL : + ; return fail if there's nothing to read
 		LDA #$FF : STA !RX_STATUS ; stop calls from recursing in
 		LDA !RX_BUFFER : CMP.b !SCM_GIVE : BNE + ; give item
 			PHY : LDA.l !RX_BUFFER+8 : TAY
@@ -130,7 +130,7 @@ PollService:
 	.done
 	LDA #$00 : STA !RX_STATUS ; release lock
 	PLP
-	CLC ; mark request as successful
+	SEC ; mark request as successful
 RTL
 ;--------------------------------------------------------------------------------
 ItemVisualServiceRequest_F0:

@@ -806,10 +806,10 @@ db $03 ; fade out speed. Should be power of 2 minus 1
 ;org $07B57B ; <- 3B57B - Bank07.asm : 8523 (BMI .cantOpen)
 ;NOP #2
 ;--------------------------------------------------------------------------------
-org $07B574 ; <- 3B574 - Bank07.asm : 8523 (BMI .cantOpen)
+org $07B574 ; <- 3B574 - Bank07.asm : 8519 (LDA.b #$01 : STA $02E9)
 JSL.l ChestPrep
 NOP #3
-db $90 ; !BLT .cantOpen
+db $90 ; !BCC .cantOpen
 ;--------------------------------------------------------------------------------
 org $00D531 ; 5531 - Bank00.asm:3451 (LDY.b #$5D)
 JML.l GetAnimatedSpriteGfxFile

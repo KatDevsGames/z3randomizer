@@ -1116,8 +1116,9 @@ ChestPrep:
 	LDA.b #$01 : STA $02E9
 	LDA.l ServerRequestMode : BEQ +
 		JSL.l ChestItemServiceRequest
+		RTL
 	+
     LDY $0C ; get item value
-	CMP #$F0
+	SEC
 RTL
 ;--------------------------------------------------------------------------------
