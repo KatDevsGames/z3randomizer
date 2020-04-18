@@ -132,7 +132,7 @@ RTL
 	db $F8, $F8 ; Progressive Bow x2
 	db $FF, $FF, $FF, $FF ; Unused
 	db $49, $4A, $49 ; Goal Item Single, Multi & Alt Multi
-	db $47, $47, $47 ; Server Request F0, F1, F2
+	db $39, $39, $39 ; Server Request F0, F1, F2
 
 	;7x
 	db $21, $21, $21, $21, $21, $21, $21, $21, $21, $21, $21, $21, $21, $21, $21, $21 ; Free Map

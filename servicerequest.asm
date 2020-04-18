@@ -24,18 +24,20 @@
 !SCM_WAIT = "#$00"
 
 !SCM_SEEN = "#$01"
-!SCM_GET = "#$02"
-!SCM_GIVE = "#$03"
-!SCM_PROMPT = "#$04"
-!SCM_AREACHG = "#$05"
-!SCM_DUNGEON = "#$06"
-!SCM_DEATH = "#$07"
-!SCM_SAVEQUIT = "#$08"
-!SCM_FCREATE = "#$09"
-!SCM_FLOAD = "#$0A"
-!SCM_FCDELETE = "#$0B"
-!SCM_SPAWN = "#$0C"
-!SCM_PAUSE = "#$0D"
+!SCM_SHOW = "#$02"
+!SCM_GET = "#$03"
+!SCM_GIVE = "#$04"
+!SCM_PROMPT = "#$05"
+
+!SCM_AREACHG = "#$10"
+!SCM_DUNGEON = "#$11"
+!SCM_DEATH = "#$12"
+!SCM_SAVEQUIT = "#$13"
+!SCM_FCREATE = "#$14"
+!SCM_FLOAD = "#$15"
+!SCM_FCDELETE = "#$16"
+!SCM_SPAWN = "#$17"
+!SCM_PAUSE = "#$18"
 
 !SCM_STALL = "#$70"
 !SCM_RESUME = "#$71"
@@ -110,6 +112,10 @@ PollService:
 			++
 				JSL.l Link_ReceiveItem
 				PLY : BRA .done
+		+ : CMP.b !SCM_SHOW : BNE + ; show item
+			; you could check here if you're on the right screen, etc
+			LDA.l !RX_BUFFER+12 : JSL.l PrepDynamicTile ; we could properly process the whole message but we're not going to
+			BRA .done
 		+ : CMP.b !SCM_PROMPT : BNE + ; item prompt
 			LDA.l !RX_BUFFER+8 : TAX
 			LDA.l !RX_BUFFER+9 : STA $7E012E, X ; set sound effect, could possibly make this STA not-long
