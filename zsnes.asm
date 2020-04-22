@@ -96,6 +96,9 @@ JML.l ReturnCheckZSNES
 	
 STP ; !
 ;--------------------------------------------------------------------------------
+;@ pushpc
+;@ check bankcross off
+
 org $378000
 
 ZSNES_Tiles:
@@ -107,3 +110,5 @@ ZSNES_TileMap:
 ZSNES_Palette:
     incbin zsnes_pal.bin
 	
+;@ check bankcross on
+;@ pullpc

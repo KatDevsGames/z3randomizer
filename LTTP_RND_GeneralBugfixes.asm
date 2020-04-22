@@ -635,7 +635,7 @@ Messaging_Text:
 org $0FFD94
 Overworld_TileAttr:
 
-org $1BC97C:
+org $1BC97C
 Overworld_DrawPersistentMap16:
 
 org $1BED03

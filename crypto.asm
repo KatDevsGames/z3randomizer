@@ -229,19 +229,19 @@ db 1  ; n is 2
 db 32 ; n is 2
 
 .initial_sums
-;dd 6*$9e3779b9  ; n > 52
-;dd 7*$9e3779b9  ; n is 27 to 52
-;dd 8*$9e3779b9  ; n is 18 to 26
-;dd 9*$9e3779b9  ; n is 14 to 17
-;dd 10*$9e3779b9 ; n is 11 to 13
-;dd 11*$9e3779b9 ; n is 9 to 10
-;dd 12*$9e3779b9 ; n is 8
-;dd 13*$9e3779b9 ; n is 7
-;dd 14*$9e3779b9 ; n is 6
-;dd 16*$9e3779b9 ; n is 5
-;dd 19*$9e3779b9 ; n is 4
-;dd 23*$9e3779b9 ; n is 3
-dd 32*$9e3779b9 ; n is 2
+;dd (6*$9e3779b9)&$ffffffff  ; n > 52
+;dd (7*$9e3779b9)&$ffffffff  ; n is 27 to 52
+;dd (8*$9e3779b9)&$ffffffff  ; n is 18 to 26
+;dd (9*$9e3779b9)&$ffffffff  ; n is 14 to 17
+;dd (10*$9e3779b9)&$ffffffff ; n is 11 to 13
+;dd (11*$9e3779b9)&$ffffffff ; n is 9 to 10
+;dd (12*$9e3779b9)&$ffffffff ; n is 8
+;dd (13*$9e3779b9)&$ffffffff ; n is 7
+;dd (14*$9e3779b9)&$ffffffff ; n is 6
+;dd (16*$9e3779b9)&$ffffffff ; n is 5
+;dd (19*$9e3779b9)&$ffffffff ; n is 4
+;dd (23*$9e3779b9)&$ffffffff ; n is 3
+dd (32*$9e3779b9)&$ffffffff	; n is 2
 
 ;void btea(uint32_t *v, int n, uint32_t const key[4]) {
 ;  uint32_t y, z, sum;

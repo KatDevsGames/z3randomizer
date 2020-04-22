@@ -206,16 +206,16 @@ MirrorBonk:
 		REP #$30
 		LDX #$0000
 		.loop
-			LDA .bonkRectanglesTable, X ;Load X1
+			LDA.l .bonkRectanglesTable, X ;Load X1
 			CMP $22 : !BGE ++
 			;IF X > X1
-			LDA .bonkRectanglesTable+2, X ; Load X2
+			LDA.l .bonkRectanglesTable+2, X ; Load X2
 			CMP $22 : !BLT ++ 
 			;IF X < X2
-			LDA .bonkRectanglesTable+4, X ;Load Y1
+			LDA.l .bonkRectanglesTable+4, X ;Load Y1
 			CMP $20 : !BGE ++
 			;IF Y > Y1
-			LDA .bonkRectanglesTable+6, X ; Load Y2
+			LDA.l .bonkRectanglesTable+6, X ; Load Y2
 			CMP $20 : !BLT ++ 
 			;IF Y < Y2
 			;Bonk Here

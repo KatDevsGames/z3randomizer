@@ -222,13 +222,13 @@ SpritePrep_ShopKeeper:
 
     ; If the item is $FF, make it not show (as if already taken)
 	LDA !SHOP_INVENTORY : CMP.b #$FF : BNE +
-		LDA !SHOP_STATE : ORA Shopkeeper_ItemMasks : STA !SHOP_STATE
+		LDA !SHOP_STATE : ORA.l Shopkeeper_ItemMasks : STA !SHOP_STATE
 	+
 	LDA !SHOP_INVENTORY+4 : CMP.b #$FF : BNE +
-		LDA !SHOP_STATE : ORA Shopkeeper_ItemMasks+1 : STA !SHOP_STATE
+		LDA !SHOP_STATE : ORA.l Shopkeeper_ItemMasks+1 : STA !SHOP_STATE
 	+
 	LDA !SHOP_INVENTORY+8 : CMP.b #$FF : BNE +
-		LDA !SHOP_STATE : ORA Shopkeeper_ItemMasks+2 : STA !SHOP_STATE
+		LDA !SHOP_STATE : ORA.l Shopkeeper_ItemMasks+2 : STA !SHOP_STATE
 	+
 
 	PLP : PLY : PLX

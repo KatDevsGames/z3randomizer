@@ -265,7 +265,7 @@ DialogItemReceive:
 		LDA.w #$FFFF
 		BRA .done
 	+
-	LDA Ancilla_ReceiveItem_item_messages, Y
+	LDA.w Ancilla_ReceiveItem_item_messages, Y
 	.done
 	CMP.w #$FFFF
 RTL
