@@ -11,9 +11,12 @@ FloodGateReset:
 		LDA $7EF051 : AND.b #$FE : STA $7EF051 ; clear water front room (room 40)
 	+
 FloodGateResetInner:
-	LDA.l Bugfix_SwampWaterLevel : BEQ +
-		; LDA $7EF06E : AND.b #$7F : STA $7EF06E ; clear water room 55 - outer room you shouldn't be able to softlock except in major glitches
-		LDA $7EF06A : AND.b #$7F : STA $7EF06A ; clear water room 53 - inner room with the easy key flood softlock
+	LDA.l Bugfix_SwampWaterLevel : BEQ ++
+		LDA $7EF06F : AND.b #$04 : BNE + ; Check if key in room 55 has been collected. 
+		LDA $7EF06E : AND.b #$7F : STA $7EF06E ; clear water room 55 - outer room you shouldn't be able to softlock except in major glitches
 	+
+		LDA $7EF06B : AND.b #$04 : BNE ++ ; Check if key in room 53 has been collected.
+		LDA $7EF06A : AND.b #$7F : STA $7EF06A ; clear water room 53 - inner room with the easy key flood softlock
+	++
 RTL
 ;================================================================================
