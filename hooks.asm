@@ -858,13 +858,13 @@ org $098908 ; 48908 - ancilla_init.asm:1258 (LDA .x_offsets, Y)
 LDA.w AddReceivedItemExpanded_x_offsets, Y
 
 org $08C6C8 ; 446C8 - ancilla_receive_item.asm:538 (LDA AddReceiveItem.properties, X)
-LDA.l AddReceivedItemExpanded_properties, X
+JSL CheckReceivedItemPropertiesBeforeLoad
 
 org $08C6DE ; 446DE - ancilla_receive_item.asm:550 (LDA .wide_item_flag, X)
 LDA.l AddReceivedItemExpanded_wide_item_flag, X
 
 org $08C6F9 ; 446F9 - ancilla_receive_item.asm:570 (LDA AddReceiveItem.properties, X)
-LDA.l AddReceivedItemExpanded_properties, X
+JSL CheckReceivedItemPropertiesBeforeLoad
 
 org $08C70F ; 4470F - ancilla_receive_item.asm : 582 - (LDA.b #$00 : STA ($92), Y)
 JSL.l LoadNarrowObject
