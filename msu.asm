@@ -541,21 +541,18 @@ MSUMain:
 
 .command_f3:
     CPX !VAL_COMMAND_FULL_VOLUME : BNE .command_f2
-    STX !REG_SPC_CONTROL
     LDA !VAL_VOLUME_FULL
     STA !REG_TARGET_VOLUME
     JML SPCContinue
 
 .command_f2:
     CPX !VAL_COMMAND_FADE_HALF : BNE .command_f1
-    STX !REG_SPC_CONTROL
     LDA !VAL_VOLUME_HALF
     STA !REG_TARGET_VOLUME
     JML SPCContinue
 
 .command_f1:
     CPX !VAL_COMMAND_FADE_OUT : BNE .command_f0
-    STX !REG_SPC_CONTROL
     STZ !REG_TARGET_VOLUME
     STZ !REG_CURRENT_MSU_TRACK
     JML SPCContinue
