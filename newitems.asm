@@ -207,12 +207,15 @@ AddReceivedItemExpandedGetItem:
 		++
 		BRL .done
 	+ CMP.b #$3B : BNE + ; Silver Bow
+		LDA.l SilverArrowsUseRestriction : BNE .noequip
+		LDA.l SilverArrowsAutoEquip : AND.b #$01 : BEQ .noequip
 		LDA $7EF376 : BNE ++ ; check arrows
 			LDA.b #$03 : BRA +++ ; bow without arrow
 		++
 			LDA.b #$04 ; bow with arrow
 		+++
 		STA $7EF340
+		.noequip
 		LDA !INVENTORY_SWAP_2 : ORA #$40 : STA !INVENTORY_SWAP_2 ; mark silver bow on y-toggle
 		BRL .done
 	+ CMP.b #$4C : BNE + ; 50 bombs
