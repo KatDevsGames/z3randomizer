@@ -55,6 +55,6 @@ RTL
 ;--------------------------------------------------------------------------------
 Init_PostRAMClear:
 
-	JSL msu_init
+	JSL MSUInit
 
 JML $00D463	; The original target of the jump table that we hijacked

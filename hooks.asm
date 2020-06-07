@@ -1449,8 +1449,8 @@ JSL.l GetMagicBatItem
 ; MSU Music
 ;--------------------------------------------------------------------------------
 org $0080D7 ; <- D7 - Bank00.asm:172 (SEP #$30)
-JML msu_main : NOP
-spc_continue:
+JML MSUMain : NOP
+SPCContinue:
 
 org $028B7A ; <- C220 A5A0 - Bank02.asm:2225 (REP #$20 : LDA $A0)
 JSL SpiralStairsPreCheck
@@ -1462,30 +1462,30 @@ org $02D6E8 ; <- 9C0A01 - Bank02.asm:10811 (STZ $010A)
 NOP #3
 
 org $08C421 ; <- AD4021 F005 - ancilla_receive_item.asm:108 (LDA $2140 : BEQ .wait_for_music)
-JML pendant_fanfare : NOP
-pendant_continue:
+JML PendantFanfareWait : NOP
+PendantFanfareContinue:
 
 org $08C42B
-pendant_done:
+PendantFanfareDone:
 
 org $08C62A ; <- AD4021 D008 - ancilla_receive_item.asm:442 (LDA $2140 : BNE .waitForSilence)
-JML crystal_fanfare : NOP
-crystal_done:
+JML CrystalFanfareWait : NOP
+CrystalFanfareDone:
 
 org $08C637
-crystal_continue:
+CrystalFanfareContinue:
 
 org $0988A0 ; <- 8D2C01 8009 - ancilla_init.asm:1179 (STA $012C : BRA .doneWithSoundEffects)
-JML fanfare_preload : NOP
+JML FanfarePreload : NOP
 
 org $09F2A7 ; <- 8F27C27E - module_death.asm:56 (STA $7EC227)
 JSL.l StoreMusicOnDeath
 
 org $0CC100 ; <- A511 C904 - Bank0C.asm:07 (LDA $11 : CMP.b #$04)
-JSL.l startup_wait
+;JSL.l StartupWait
 
 org $0EE6EC ; <- E220 A922 - Bank0E.asm:2892 (SEP #$20 : LDA.b #$22 : STA $012C)
-JSL.l ending_wait
+JSL.l EndingMusicWait
 
 ; Process music commands in NMI from new location after muting is processed
 org $0080DD

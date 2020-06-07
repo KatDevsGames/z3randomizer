@@ -731,10 +731,6 @@ org $06C93B ; PC 0x3493B
 PyramidPotion:
 	db #$2C ; #$2C = Green Potion
 ;--------------------------------------------------------------------------------
-; Change track 15 (unused) to point to 13 (Death Mountain) so dark woods can be track 15
-org $1A9F15 ; PC 0xD1F15
-	dw #$2B00	; Set track 15 pointer to track 13's data
-;--------------------------------------------------------------------------------
 org $308140 ; PC 0x180140 - 0x18014A [encrypted]
 HeartPieceOutdoorValues:
 HeartPiece_Spectacle:
@@ -1634,48 +1630,6 @@ db $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
 
 ;================================================================================
 org $30D800 ; PC 0x185800 - 0x18591F
-SPCMutePayload:
-dw $0001	; Transfer size
-dw $0A4A    ; Transfer destination
-db $00      ; mov a,#$70 -> mov a,#$00
-
-dw $0001    ; Transfer size
-dw $0AF3    ; Transfer destination
-db $00      ; mov $059,#$c0 -> mov $059,#$00
-
-dw $0002    ; Transfer size
-dw $0C32    ; Transfer destination
-db $00, $00 ; movw $058,ya -> nop #2
-
-dw $0001    ; Transfer size
-dw $0D19    ; Transfer destination
-db $34      ; movw $058,ya -> mov $058,a
-
-dw $0000    ; Transfer size (end of transfer)
-dw $FFFF    ; Dummy destination
-db $FF, $FF, $FF, $FF, $FF, $FF, $FF	; Padding
-
-SPCUnmutePayload:
-dw $0001	; Transfer size
-dw $0A4A    ; Transfer destination
-db $70      ; mov a,#$70
-
-dw $0001    ; Transfer size
-dw $0AF3    ; Transfer destination
-db $C0      ; mov $059,#$c0
-
-dw $0002    ; Transfer size
-dw $0C32    ; Transfer destination
-db $da, $58 ; movw $058,ya
-
-dw $0001    ; Transfer size
-dw $0D19    ; Transfer destination
-db $34      ; movw $058,ya
-
-dw $0000    ; Transfer size (end of transfer)
-dw $FFFF    ; Dummy destination
-db $FF, $FF, $FF, $FF, $FF, $FF, $FF	; Padding
-
 MSUTrackList:
 db $01,$03,$03,$03,$03,$03,$03,$01
 db $03,$01,$03,$03,$03,$03,$03,$03

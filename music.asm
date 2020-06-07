@@ -179,7 +179,8 @@ Overworld_FinishMirrorWarp:
 ;--------------------------------------------------------------------------------
 BirdTravel_LoadTargetAreaMusic:
     ; Skip village and lost woods checks if entering dark world or a special area
-    LDA $8A : CMP.b #$40 : !BGE .notVillageOrWoods
+    LDA $8A : CMP.b #$43 : BEQ .endOfLightWorldChecks
+    CMP.b #$40 : !BGE .notVillageOrWoods
 
     LDX.b #$07 ; Default village theme
 
@@ -192,12 +193,12 @@ BirdTravel_LoadTargetAreaMusic:
     LDA $8A : CMP.b #$18 : BEQ .endOfLightWorldChecks
     ; For NA release would we also branch on indexes #$22 #$28 #$29
 
-    LDX.b #$05 ; Lost woods theme
+    ;LDX.b #$05 ; Lost woods theme
 
     ; check if we've pulled from the master sword pedestal
-    LDA $7EF300 : AND.b #$40 : BEQ +
-        LDX.b #$02 ; Default light world theme
-    +
+    ;LDA $7EF300 : AND.b #$40 : BEQ +
+    ;    LDX.b #$02 ; Default light world theme
+    ;+
 
     ; check if we are entering lost woods
     LDA $8A : BEQ .endOfLightWorldChecks
@@ -228,13 +229,16 @@ BirdTravel_LoadTargetAreaMusic:
     ++
 
     ; This music is used in dark death mountain
-    CMP.b #$43 : BEQ + : CMP.b #$45 : BEQ + : CMP.b #$47 : BEQ +
+    CMP.b #$43 : BEQ .darkMountain
+    ; CMP.b #$45 : BEQ .darkMountain
+    ; CMP.b #$47 : BEQ .darkMountain
         LDA.b #$05 : STA $012D
         BRA .checkInverted
-    +
 
-    LDX.b #$0D  ; dark death mountain theme
-    LDA.b #$09 : STA $012D
+.darkMountain
+    LDA $7EF37A : CMP.b #$7F : BEQ +
+        LDX.b #$0D  ; dark death mountain theme
+    + : LDA.b #$09 : STA $012D
 
     ; if not inverted and light world, or inverted and dark world, skip moon pearl check
     .checkInverted
@@ -278,23 +282,4 @@ Overworld_MosaicDarkWorldChecks:
 
 .done
     RTL
-;--------------------------------------------------------------------------------
-
-;--------------------------------------------------------------------------------
-!SPCFreeSpace = $0700
-
-SPCEngineNewCode:
-dw .end-.start
-dw !SPCFreeSpace
-.start
-incsrc spc.asm
-.end
-
-dw $0004
-dw $0A73            ; $0A73: CMP A,#$F0
-db $5F              ; JMP SPCFreeSpace
-dw !SPCFreeSpace
-db $00              ; NOP
-
-dw $0000, $0000
 ;--------------------------------------------------------------------------------
