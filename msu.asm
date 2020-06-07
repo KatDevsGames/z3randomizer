@@ -517,13 +517,18 @@ MSUMain:
         JML SPCContinue
     + : BCC .increment
 .decrement
-    SBC !VAL_VOLUME_DECREMENT : BCS .set
+    SBC !VAL_VOLUME_DECREMENT : BCC .mute
+    CMP !REG_TARGET_VOLUME : !BGE .set
+    LDA !REG_TARGET_VOLUME : BRA .set
 .mute
     STZ !REG_CURRENT_VOLUME
     STZ !REG_MSU_CONTROL
     BRA .set
 .increment
-    ADC !VAL_VOLUME_INCREMENT : BCC .set
+    ADC !VAL_VOLUME_INCREMENT : BCS .max
+    CMP !REG_TARGET_VOLUME : !BLT .set
+    LDA !REG_TARGET_VOLUME : BRA .set
+.max
     LDA !VAL_VOLUME_FULL
 .set
     STA !REG_CURRENT_VOLUME
