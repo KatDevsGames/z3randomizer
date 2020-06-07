@@ -858,13 +858,13 @@ org $098908 ; 48908 - ancilla_init.asm:1258 (LDA .x_offsets, Y)
 LDA.w AddReceivedItemExpanded_x_offsets, Y
 
 org $08C6C8 ; 446C8 - ancilla_receive_item.asm:538 (LDA AddReceiveItem.properties, X)
-LDA.l AddReceivedItemExpanded_properties, X
+JSL CheckReceivedItemPropertiesBeforeLoad
 
 org $08C6DE ; 446DE - ancilla_receive_item.asm:550 (LDA .wide_item_flag, X)
 LDA.l AddReceivedItemExpanded_wide_item_flag, X
 
 org $08C6F9 ; 446F9 - ancilla_receive_item.asm:570 (LDA AddReceiveItem.properties, X)
-LDA.l AddReceivedItemExpanded_properties, X
+JSL CheckReceivedItemPropertiesBeforeLoad
 
 org $08C70F ; 4470F - ancilla_receive_item.asm : 582 - (LDA.b #$00 : STA ($92), Y)
 JSL.l LoadNarrowObject
@@ -2495,4 +2495,26 @@ dw  37, 11 : db $FB, $40, $00, $00
 dw  37, 11 : db $FB, $40, $00, $00
 dw  37, 11 : db $FB, $40, $00, $00
 dw  37, 11 : db $FB, $40, $00, $00
+;================================================================================
+
+;--------------------------------------------------------------------------------
+; Allow Bunny Link to Read Signposts
+;--------------------------------------------------------------------------------
+org $07839E ; bunny BAGE check
+BunnyRead:
+    JSR.w $07B5A9 ; check A button
+    BCC .noA
+    JSR.w CheckIfReading
+    BNE .noread
+    JSR.w $07B4DB
+    NOP
+.noread
+.noA
+
+org $07FFF4
+CheckIfReading:
+    JSR.w $07D36C ; check action
+    LDA #$80 : TRB $3B
+    CPX #$04
+    RTS
 ;================================================================================
