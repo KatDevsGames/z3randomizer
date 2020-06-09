@@ -41,6 +41,7 @@ RTL
     Elder_Code:
     {
         LDA GoalItemRequirement : BEQ .despawn
+        LDA InvincibleGanon : CMP #$05 : BEQ .despawn
         LDA TurnInGoalItems : BNE +
             .despawn
             STZ $0DD0, X ; despawn self
