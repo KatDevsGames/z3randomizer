@@ -82,6 +82,12 @@ RTS
 ; bunny on the pyramid
 FixAga2Bunny:
     LDA.l FixFakeWorld :  BEQ + ; Only use this fix is fakeworld fix is in use
+        LDA.l InvertedMode : BEQ +++
+            LDA.b #$00 : STA !DARK_WORLD ; Switch to light world
+            BRA ++
+        +++
+        LDA.b #$40 : STA !DARK_WORLD ; Switch to dark world
+    ++
 	JSL DecideIfBunny : BNE +
 		JSR MakeBunny
 		LDA.b #$04 : STA.w $012C ; play bunny music
