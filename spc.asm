@@ -63,7 +63,7 @@ BEQ +
 +
 MOV $F4,A
 MOV A,#$70
-MOV $0A49,A     ; $0A49: MOV A,#$70
+MOV $0A4A,A     ; $0A49: MOV A,#$70
 MOV A,#$C0
 MOV $0AF3,A     ; $0AF2: MOV $059,#$C0
 MOV A,#$DA
