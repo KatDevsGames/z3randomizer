@@ -2,4 +2,4 @@
 
 rm ../working.sfc
 cp ../alttp.sfc ../working.sfc
-./xkas LTTP_RND_GeneralBugfixes.asm ../working.sfc
+./asar LTTP_RND_GeneralBugfixes.asm ../working.sfc
