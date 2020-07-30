@@ -1,5 +1,7 @@
 CheckReceivedItemPropertiesBeforeLoad:
+    LDA $A0 : BEQ .normalCode
     LDA $7EC005 : BNE .lightOff
+    .normalCode
     LDA.l AddReceivedItemExpanded_properties, X ;Restore Rando Code
     RTL
 
