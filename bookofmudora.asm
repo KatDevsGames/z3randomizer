@@ -58,9 +58,11 @@ GiveBonkItem:
 		PHY : LDY.b #$24 : JSL.l AddInventory : PLY ; do inventory processing for a small key
 		LDA $7EF36F : INC A : STA $7EF36F
 		LDA.b #$2F : JSL.l Sound_SetSfx3PanLong
+		JSR CountBonkKey
 RTL
 	.notKey
 		PHY : TAY : JSL.l Link_ReceiveItem : PLY
+		JSR CountBonkKey
 RTL
 ;--------------------------------------------------------------------------------
 LoadBonkItem:
