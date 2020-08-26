@@ -3,9 +3,8 @@
 ;--------------------------------------------------------------------------------
 ItemDowngradeFix:
     JSR ItemDowngradeFixMain
-    JSR CountChestKey
+    JSL CountChestKeyLong
 RTL
-
 
 ItemDowngradeFixMain:
 	JSL.l AddInventory

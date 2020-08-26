@@ -257,7 +257,11 @@ DecrementSmallKeys:
 	JSL.l UpdateKeys
 RTL
 ;--------------------------------------------------------------------------------
-CountChestKey: ; called from ItemDowngradeFix in itemdowngrade.asm (also from CountBonkItem below)
+CountChestKeyLong: ; called from ItemDowngradeFix in itemdowngrade.asm
+    JSR CountChestKey
+RTL
+;--------------------------------------------------------------------------------
+CountChestKey: ; called by neighbor functions
     PHA : PHX
         CPY #$24 : BEQ +  ; small key for this dungeon - use $040C
         CPY #$A0 : !BLT .end ; Ignore most items
@@ -285,7 +289,7 @@ CountBonkItem: ; called from GetBonkItem in bookofmudora.asm
             TAY : JSR CountChestKey
         PLY
     +
-RTS
+RTL
 ;--------------------------------------------------------------------------------
 IncrementAgahnim2Sword:
 	PHA
