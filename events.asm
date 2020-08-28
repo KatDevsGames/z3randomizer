@@ -126,6 +126,11 @@ OnNewFile:
 			DEX : DEX
 		BPL -
 
+        LDX #$000E : -
+            LDA $7EF37C, X : STA $7EF4E0, X
+            DEX : DEX
+        BPL -
+
 		SEP #$20 ; set 8-bit accumulator
 		;LDA #$FF : STA !RNG_ITEM_LOCK_IN ; reset rng item lock-in
 		LDA.l PreopenCurtains : BEQ +
