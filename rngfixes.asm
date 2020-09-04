@@ -36,6 +36,11 @@ RTL
 	+
 RTL
 ;--------------------------------------------------------------------------------
+FixChestCounterForChestGame:
+	JSL.l DecrementItemCounter
+	JSL $0DBA71
+RTL
+;--------------------------------------------------------------------------------
 RNG_Lanmolas1:
 	LDA.b #$00 : BRA _rng_done
 RNG_Moldorm1:
