@@ -30,6 +30,7 @@ SetDeathWorldChecked:
 	LDA $1B : BEQ .outdoors
 		LDA $040C : CMP #$FF : BNE .dungeon
 		LDA $A0 : BNE ++
+		LDA $A1 : BNE ++	; Prevent cheesing your way to top of pyramid by bombing yourself at High stakes chest game.
 			LDA GanonPyramidRespawn : BNE .pyramid ; if flag is set, force respawn at pyramid on death to ganon
 	    ++
 	.outdoors
@@ -67,6 +68,7 @@ SetDeathWorldChecked_Inverted:
 	LDA $1B : BEQ .outdoors
 		LDA $040C : CMP #$FF : BNE .dungeon
 		LDA $A0 : BNE ++
+		LDA $A1 : BNE ++	; Prevent cheesing your way to top of castle by bombing yourself at High stakes chest game.
 			LDA GanonPyramidRespawn : BNE .castle ; if flag is set, force respawn at pyramid on death to ganon
 		++
 	.outdoors
