@@ -1270,6 +1270,10 @@ JSL.l RigDigRNG
 ;--------------------------------------------------------------------------------
 org $01EE94 ; <- EE94 - Bank01.asm : 14121
 JSL.l RigChestRNG
+org $01EEF5 ; <- EEF5 - Bank01.asm
+JSL.l FixChestCounterForChestGame
+org $01EEFD ; <- EEFD - Bank01.asm
+JSL.l FixChestCounterForChestGame
 ;--------------------------------------------------------------------------------
 org $1ED63E ; <- F563E - sprite_agahnim.asm
 JSL RNG_Agahnim1
