@@ -23,9 +23,9 @@ JML.l NMIHookAction
 org $0080D0 ; <- D0 - Bank00.asm : 164 (PHA : PHX : PHY : PHD : PHB)
 NMIHookReturn:
 ;--------------------------------------------------------------------------------
-;org $00821B ; <- 21B - Bank00.asm : 329 (LDA $13 : STA $2100)
-;JML.l PostNMIHookAction : NOP
-;PostNMIHookReturn:
+org $00821B ; <- 21B - Bank00.asm : 329 (LDA $13 : STA $2100)
+JML.l PostNMIHookAction : NOP
+PostNMIHookReturn:
 ;--------------------------------------------------------------------------------
 
 ;================================================================================
