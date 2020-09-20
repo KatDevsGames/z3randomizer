@@ -152,7 +152,7 @@ db #$00
 ; #$02 = Require All Dungeons
 ; #$03 = Require "NumberOfCrystalsRequiredForGanon" Crystals and Aga2
 ; #$04 = Require "NumberOfCrystalsRequiredForGanon" Crystals
-; #$05 = Require 100 Goal Items
+; #$05 = Require "GoalItemRequirement" Goal Items
 ;--------------------------------------------------------------------------------
 org $30803F ; PC 0x18003F
 HammerableGanon:
