@@ -1101,13 +1101,15 @@ AttemptItemSubstitution:
 RTS
 ;--------------------------------------------------------------------------------
 CountBottles:
-	LDX.b #$00
-	LDA $7EF35C : BEQ ++ : INX
-	++ : LDA $7EF35D : BEQ ++ : INX
-	++ : LDA $7EF35E : BEQ ++ : INX
-	++ : LDA $7EF35F : BEQ ++ : INX
-	++
-	TXA
+    PHX
+        LDX.b #$00
+        LDA $7EF35C : BEQ ++ : INX
+        ++ : LDA $7EF35D : BEQ ++ : INX
+        ++ : LDA $7EF35E : BEQ ++ : INX
+        ++ : LDA $7EF35F : BEQ ++ : INX
+        ++
+        TXA
+    PLX
 RTS
 ;--------------------------------------------------------------------------------
 ActivateGoal:
