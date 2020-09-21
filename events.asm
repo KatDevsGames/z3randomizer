@@ -147,6 +147,8 @@ OnNewFile:
 		+
 
 		LDA StartingSword : STA $7EF359 ; set starting sword type
+		LDA !INVENTORY_SWAP : STA $70038C ; copy starting equipment swaps to file select screen
+		LDA !INVENTORY_SWAP_2 : STA $70038E
 	PLP : PLX
 RTL
 ;--------------------------------------------------------------------------------
