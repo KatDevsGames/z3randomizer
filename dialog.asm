@@ -165,17 +165,21 @@ FreeDungeonItemNotice:
 		%CopyDialog(Notice_Self)
 		BRL .done
 	+
+	LDA.l FreeItemText : AND.b #$04 : CMP.b #$04 : BNE + ; show message for dungeon map
 	LDA !ITEM_TEMPORARY : AND.b #$F0 ; looking at high bits only
 	CMP.b #$70 : BNE + ; map of...
 		%CopyDialog(Notice_MapOf)
 		BRL .dungeon
-	+ : CMP.b #$80 : BNE + ; compass of...
+	+ : LDA.l FreeItemText : AND.b #$02 : CMP.b #$02 : BNE + ; show message for dungeon compass
+	LDA !ITEM_TEMPORARY : AND.b #$F0 : CMP.b #$80 : BNE + ; compass of...
 		%CopyDialog(Notice_CompassOf)
 		BRL .dungeon
-	+ : CMP.b #$90 : BNE + ; big key of...
+	+ : LDA.l FreeItemText : AND.b #$08 : CMP.b #$08 : BNE + ; show message for dungeon big key
+	LDA !ITEM_TEMPORARY : AND.b #$F0 : CMP.b #$90 : BNE + ; big key of...
 		%CopyDialog(Notice_BigKeyOf)
 		BRA .dungeon
-	+ : CMP.b #$A0 : BNE + ; small key of...
+	+ : LDA.l FreeItemText : AND.b #$01 : CMP.b #$01 : BNE + ; show message for dungeon small key
+	LDA !ITEM_TEMPORARY : AND.b #$F0 : CMP.b #$A0 : BNE + ; small key of...
 		LDA !ITEM_TEMPORARY : CMP.b #$AF : BNE ++ : BRL .skip : ++
 		%CopyDialog(Notice_SmallKeyOf)
 		PLA : AND.b #$0F : STA $7F5020 : LDA.b #$0F : !SUB $7F5020 : PHA
