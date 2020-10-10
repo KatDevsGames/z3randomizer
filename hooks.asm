@@ -364,6 +364,32 @@ NOP #19 ;23 bytes removed with the JSL
 ;--------------------------------------------------------------------------------
 org $04E7AE ; <- bank0E.asm : 4230 (LDA $7EF287 : AND.w #$0020)
 JSL.l TurtleRockPegSolved
+
+org $04E7B9 ; <- bank0E.asm : 4237 (LDX $04C8)
+JMP.w TurtleRockTrollPegs
+TurtleRockPegCheck:
+
+org $04E7C9
+TurtleRockPegSuccess:
+
+org $04E7F5
+TurtleRockPegFail:
+
+org $04E96F
+PegProbability:
+db $00  ; Probability out of 255.  0 = Vanilla behavior
+TurtleRockTrollPegs:
+SEP #$20
+    LDX.w $04C8 : CPX.w #$FFFF : BEQ .vanilla
+    JSL.l GetRandomInt
+    LDA.l PegProbability : BEQ .vanilla : CMP.l $7E0FA1
+REP #$20 : !BGE .succeed
+.fail
+JMP.w TurtleRockPegFail
+.succeed
+JMP.w TurtleRockPegSuccess
+.vanilla
+REP #$20 : JMP.w TurtleRockPegCheck
 ;--------------------------------------------------------------------------------
 org $1BBD05 ; <- bank1B.asm : 261 (TYA : STA $00) ; hook starts at the STA
 JML.l PreventEnterOnBonk
