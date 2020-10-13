@@ -67,7 +67,7 @@ CompassCount_Desert:
 CompassCount_Agah:
 	%DrawConstantNumber(0,2)
 	SEP #$20
-	LDA $7EF435 : AND.b #$02
+	LDA $7EF435 : AND.b #$03
 	JMP DrawDungeonCompassCounts_return_spot
 
 CompassCount_Swamp:
