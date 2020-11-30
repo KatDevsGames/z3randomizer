@@ -244,7 +244,8 @@ IncrementSmallKeysNoPrimary:
 		LDA $1B : BEQ + ; skip room check if outdoors
 			PHP : REP #$20 ; set 16-bit accumulator
 				LDA $048E : CMP.w #$0087 : BNE ++ ; hera basement
-					PLP : PHY : LDY.b #24 : JSL.l FullInventoryExternal : PLY : BRA +
+					PLP : PHY : LDY.b #24 : JSL.l FullInventoryExternal
+					JSR CountChestKey : PLY : BRA +
 				++
 			PLP
 		+
@@ -263,13 +264,17 @@ RTL
 ;--------------------------------------------------------------------------------
 CountChestKey: ; called by neighbor functions
 	PHA : PHX
+		CPY #24 : BEQ + ; hera basement key
 		CPY #$24 : BEQ +  ; small key for this dungeon - use $040C
-		CPY #$A0 : !BLT .end ; Ignore most items
-		CPY #$AE : !BGE .end ; Ignore reserved key and generic key
-		TYA : AND.B #$0F : BNE ++ ; If this is a sewers key, instead count it as an HC key
-			INC
-		++ TAX : BRA .count  ; use Key id instead of $040C (Keysanity)
-		+ LDA $040C : LSR : TAX
+			CPY #$A0 : !BLT .end ; Ignore most items
+			CPY #$AE : !BGE .end ; Ignore reserved key and generic key
+			TYA : AND.B #$0F : BNE ++ ; If this is a sewers key, instead count it as an HC key
+				INC
+			++ TAX : BRA .count  ; use Key id instead of $040C (Keysanity)
+		+ LDA $040C : LSR
+		BNE +
+			INC ; combines HC and Sewer counts
+		+ TAX
 		.count
 		LDA $7EF4E0, X : INC : STA $7EF4E0, X
    .end
