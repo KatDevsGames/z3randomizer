@@ -107,9 +107,9 @@ RTL
 !RNG_POINTERS = "$7F5200"
 GetStaticRNG:
 	PHX : PHP
-	REP #$20 ; set 16-bit accumulator and index registers
-	AND.w #$007F
-	ASL : TAX : LDA !RNG_POINTERS, X : INC : AND.w #$03FF : STA !RNG_POINTERS, X : TAX : ASL ; increment pointer and move value to X
+	REP #$30 ; set 16-bit accumulator and index registers
+	AND.w #$000F
+	ASL : TAX : LDA !RNG_POINTERS, X : INC : AND.w #$03FF : STA !RNG_POINTERS, X : TAX ; increment pointer and move value to X
 	LDA Static_RNG, X ; load RNG value
 	PLP : PLX
 RTL
@@ -123,7 +123,7 @@ InitRNGPointerTable:
 		LDA.l .rngDefaults, X : STA !RNG_POINTERS, X : INX #2
 		LDA.l .rngDefaults, X : STA !RNG_POINTERS, X : INX #2
 		LDA.l .rngDefaults, X : STA !RNG_POINTERS, X : INX #2
-	CPX.w #$007F : !BLT -
+	CPX.w #$001F : !BLT -
 	PLP : PLX
 RTL
 .rngDefaults

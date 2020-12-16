@@ -261,7 +261,9 @@ org $0CCE85 ; <- Bank0C.asm : 1953 (LDA $C8 : ASL A : INC #2 : STA $701FFE)
 NOP #4
 ;--------------------------------------------------------------------------------
 org $0CDB4C ; <- Bank0C.asm : 3655 (LDA $C8 : ASL A : INC #2 : STA $701FFE : TAX)
-NOP #4
+JSL OnFileCreation
+NOP
+;Additionally, display inventory swap starting equipment on file select
 ;--------------------------------------------------------------------------------
 org $09F5EA ; <- module_death.asm : 510 (LDA $701FFE : TAX : DEX #2)
 LDA.w #$0002 : NOP

@@ -1,5 +1,13 @@
 ;--------------------------------------------------------------------------------
 Validate_SRAM:
+	REP #$30 ; vanilla behavior from $0CCD45, includes prize pack reset after save and quit
+		LDX #$00FE : -
+			STZ $0D00, X
+			STZ $0E00, X
+			STZ $0F00, X
+			DEX #2
+		BPL -
+	SEP #$30
 RTL
 ;--------------------------------------------------------------------------------
 ClearExtendedSaveFile:
