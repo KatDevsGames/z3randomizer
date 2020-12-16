@@ -149,6 +149,16 @@ OnNewFile:
 		LDA StartingSword : STA $7EF359 ; set starting sword type
 		LDA !INVENTORY_SWAP : STA $70038C ; copy starting equipment swaps to file select screen
 		LDA !INVENTORY_SWAP_2 : STA $70038E
+
+		; reset some values on new file that are otherwise only reset on hard reset
+		STZ $03C4 ; ancilla slot index
+		STZ $047A ; EG
+		STZ $0B08 : STZ $0B09 ; arc variable
+		STZ $0CFB ; enemies killed (pull trees)
+		STZ $0CFC ; times taken damage (pull trees)
+		STZ $0FC7 : STZ $0FC8 : STZ $0FC9 : STZ $0FCA : STZ $0FCB : STZ $0FCC : STZ $0FCD ; prize packs
+		LDA #$00 : STA $7EC011 ; mosaic
+		JSL InitRNGPointerTable ; boss RNG
 	PLP : PLX
 RTL
 ;--------------------------------------------------------------------------------
