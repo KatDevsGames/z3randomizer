@@ -14,6 +14,7 @@ EndRainState:
 	LDA $7EF3C5 : CMP.b #$02 : !BGE + ; skip if past escape already
 		LDA.b #$00 : STA !INFINITE_ARROWS : STA !INFINITE_BOMBS : STA !INFINITE_MAGIC
 		LDA.b #$02 : STA $7EF3C5 ; end rain state
+		JSL MaybeSetPostAgaWorldState
 	+
 RTL
 ;--------------------------------------------------------------------------------
