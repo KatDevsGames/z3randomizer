@@ -167,7 +167,7 @@ ValidatePassword:
 	LDX #$0F
 	-
 		LDA.l !PASSWORD_SRAM, X : BNE +
-		 	BRL .incorrect
+		 	JMP .incorrect
 		+
 	DEX : BPL -
 

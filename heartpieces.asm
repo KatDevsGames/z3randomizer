@@ -24,7 +24,7 @@ HeartPieceGet:
 	JSL.l $0791B3 ; Player_HaltDashAttackLong
 	JSL.l Link_ReceiveItem
 	CLC ; return false
-	BRL .done ; finished
+	JMP .done ; finished
 
 	.unfinished_heart
 	SEC ; return true
@@ -54,7 +54,7 @@ DrawHeartPieceGFX:
 	PHA : PHY
 	LDA !REDRAW : BEQ .skipInit ; skip init if already ready
 	JSL.l HeartPieceSpritePrep
-	BRL .done ; don't draw on the init frame
+	JMP .done ; don't draw on the init frame
 	
 	.skipInit
 	LDA $0E80, X ; Retrieve stored item type
@@ -177,7 +177,7 @@ LoadHeartPieceRoomValue:
 	LDA $1B : BEQ .outdoors ; check if we're indoors or outdoors
 	.indoors
 	JSL.l LoadIndoorValue
-	BRL .done
+	JMP .done
 	.outdoors
 	JSL.l LoadOutdoorValue
 	.done
@@ -225,30 +225,30 @@ LoadIndoorValue:
 	LDA $A0 ; these are all decimal because i got them that way
 	CMP.w #225 : BNE +
 		%GetPossiblyEncryptedItem(HeartPiece_Forest_Thieves, HeartPieceIndoorValues)
-		BRL .done
+		JMP .done
 	+ CMP.w #226 : BNE +
 		%GetPossiblyEncryptedItem(HeartPiece_Lumberjack_Tree, HeartPieceIndoorValues)
-		BRL .done
+		JMP .done
 	+ CMP.w #234 : BNE +
 		%GetPossiblyEncryptedItem(HeartPiece_Spectacle_Cave, HeartPieceIndoorValues)
-		BRL .done
+		JMP .done
 	+ CMP.w #283 : BNE +
 		LDA $22 : XBA : AND.w #$0001 ; figure out where link is
 		BNE ++
 			%GetPossiblyEncryptedItem(HeartPiece_Circle_Bushes, HeartPieceIndoorValues)
-			BRL .done
+			JMP .done
 		++
 			%GetPossiblyEncryptedItem(HeartPiece_Graveyard_Warp, HeartPieceIndoorValues)
-			BRL .done
+			JMP .done
 	+ CMP.w #294 : BNE +
 		%GetPossiblyEncryptedItem(HeartPiece_Mire_Warp, HeartPieceIndoorValues)
-		BRL .done
+		JMP .done
 	+ CMP.w #295 : BNE +
 		%GetPossiblyEncryptedItem(HeartPiece_Smith_Pegs, HeartPieceIndoorValues)
-		BRL .done
+		JMP .done
 	+ CMP.w #135 : BNE +
 		LDA StandingKey_Hera
-		BRL .done
+		JMP .done
 	+
 	LDA.w #$0017 ; default to a normal hp
 	.done
@@ -271,47 +271,47 @@ LoadOutdoorValue:
 	CMP.w #$03 : BNE +
 		LDA $22 : CMP.w #1890 : !BLT ++
 			%GetPossiblyEncryptedItem(HeartPiece_Spectacle, HeartPieceOutdoorValues)
-			BRL .done
+			JMP .done
 		++
 			%GetPossiblyEncryptedItem(EtherItem, SpriteItemValues)
-			BRL .done
+			JMP .done
 	+ CMP.w #$05 : BNE +
 		%GetPossiblyEncryptedItem(HeartPiece_Mountain_Warp, HeartPieceOutdoorValues)
-		BRL .done
+		JMP .done
 	+ CMP.w #$28 : BNE +
 		%GetPossiblyEncryptedItem(HeartPiece_Maze, HeartPieceOutdoorValues)
-		BRL .done
+		JMP .done
 	+ CMP.w #$2A : BNE +
 		%GetPossiblyEncryptedItem(HauntedGroveItem, HeartPieceOutdoorValues)
-		BRL .done
+		JMP .done
 	+ CMP.w #$30 : BNE +
 		LDA $22 : CMP.w #512 : !BGE ++
 			%GetPossiblyEncryptedItem(HeartPiece_Desert, HeartPieceOutdoorValues)
-			BRL .done
+			JMP .done
 		++
 			%GetPossiblyEncryptedItem(BombosItem, SpriteItemValues)
-			BRL .done
+			JMP .done
 	+ CMP.w #$35 : BNE +
 		%GetPossiblyEncryptedItem(HeartPiece_Lake, HeartPieceOutdoorValues)
-		BRL .done
+		JMP .done
 	+ CMP.w #$3B : BNE +
 		%GetPossiblyEncryptedItem(HeartPiece_Swamp, HeartPieceOutdoorValues)
-		BRL .done
+		JMP .done
 	+ CMP.w #$42 : BNE +
 		%GetPossiblyEncryptedItem(HeartPiece_Cliffside, HeartPieceOutdoorValues)
-		BRL .done
+		JMP .done
 	+ CMP.w #$4A : BNE +
 		%GetPossiblyEncryptedItem(HeartPiece_Cliffside, HeartPieceOutdoorValues)
-		BRL .done
+		JMP .done
 	+ CMP.w #$5B : BNE +
 		%GetPossiblyEncryptedItem(HeartPiece_Pyramid, HeartPieceOutdoorValues)
-		BRL .done
+		JMP .done
 	+ CMP.w #$68 : BNE +
 		%GetPossiblyEncryptedItem(HeartPiece_Digging, HeartPieceOutdoorValues)
-		BRL .done
+		JMP .done
 	+ CMP.w #$81 : BNE +
 		%GetPossiblyEncryptedItem(HeartPiece_Zora, HeartPieceOutdoorValues)
-		BRL .done
+		JMP .done
 	+
 	LDA.w #$0017 ; default to a normal hp
 	.done
@@ -338,34 +338,34 @@ LoadBossValue:
 	LDA $A0 ; these are all decimal because i got them that way
 	CMP.w #200 : BNE +
 		%GetPossiblyEncryptedItem(HeartContainer_ArmosKnights, HeartContainerBossValues)
-		BRL .done
+		JMP .done
 	+ CMP.w #51 : BNE +
 		%GetPossiblyEncryptedItem(HeartContainer_Lanmolas, HeartContainerBossValues)
-		BRL .done
+		JMP .done
 	+ CMP.w #7 : BNE +
 		%GetPossiblyEncryptedItem(HeartContainer_Moldorm, HeartContainerBossValues)
-		BRL .done
+		JMP .done
 	+ CMP.w #90 : BNE +
 		%GetPossiblyEncryptedItem(HeartContainer_HelmasaurKing, HeartContainerBossValues)
-		BRL .done
+		JMP .done
 	+ CMP.w #6 : BNE +
 		%GetPossiblyEncryptedItem(HeartContainer_Arrghus, HeartContainerBossValues)
-		BRL .done
+		JMP .done
 	+ CMP.w #41 : BNE +
 		%GetPossiblyEncryptedItem(HeartContainer_Mothula, HeartContainerBossValues)
-		BRL .done
+		JMP .done
 	+ CMP.w #172 : BNE +
 		%GetPossiblyEncryptedItem(HeartContainer_Blind, HeartContainerBossValues)
-		BRL .done
+		JMP .done
 	+ CMP.w #222 : BNE +
 		%GetPossiblyEncryptedItem(HeartContainer_Kholdstare, HeartContainerBossValues)
-		BRL .done
+		JMP .done
 	+ CMP.w #144 : BNE +
 		%GetPossiblyEncryptedItem(HeartContainer_Vitreous, HeartContainerBossValues)
-		BRL .done
+		JMP .done
 	+ CMP.w #164 : BNE +
 		%GetPossiblyEncryptedItem(HeartContainer_Trinexx, HeartContainerBossValues)
-		BRL .done
+		JMP .done
 	+
 	LDA.w #$003E ; default to a normal boss heart
 	.done
@@ -380,25 +380,25 @@ CheckIfBossRoom:
 	REP #$20 ; set 16-bit accumulator
 	LDA $A0 ; these are all decimal because i got them that way
 	CMP.w #200 : BNE +
-		SEC : BRL .done
+		SEC : JMP .done
 	+ CMP.w #51 : BNE +
-		SEC : BRL .done
+		SEC : JMP .done
 	+ CMP.w #7 : BNE +
-		SEC : BRL .done
+		SEC : JMP .done
 	+ CMP.w #90 : BNE +
-		SEC : BRL .done
+		SEC : JMP .done
 	+ CMP.w #6 : BNE +
-		SEC : BRL .done
+		SEC : JMP .done
 	+ CMP.w #41 : BNE +
-		SEC : BRL .done
+		SEC : JMP .done
 	+ CMP.w #172 : BNE +
-		SEC : BRL .done
+		SEC : JMP .done
 	+ CMP.w #222 : BNE +
-		SEC : BRL .done
+		SEC : JMP .done
 	+ CMP.w #144 : BNE +
-		SEC : BRL .done
+		SEC : JMP .done
 	+ CMP.w #164 : BNE +
-		SEC : BRL .done
+		SEC : JMP .done
 	+
 	CLC
 	.done

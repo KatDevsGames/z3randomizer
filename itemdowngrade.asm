@@ -66,8 +66,8 @@ RTS
 		INC : CMP !HIGHEST_SWORD_LEVEL : !BGE + ; skip if highest is lower (this is an upgrade)
 			LDA !HIGHEST_SWORD_LEVEL : DEC ; convert to item id
 			TAY : PLA : LDA !HIGHEST_SWORD_LEVEL ; put sword id into the thing to write
-			BRL .done
+			JMP .done
 		+
 	PLA
-BRL .done
+JMP .done
 ;================================================================================

@@ -192,7 +192,7 @@ XXTEA_Decode:
 			LDA.w !sum : !SUB.l CryptoDelta : STA.w !sum
 			LDA.w !sum+2 : SBC.l CryptoDelta+2 : STA.w !sum+2
 
-		DEC !rounds : BEQ + : BRL --- : + ; } while (--rounds);
+		DEC !rounds : BEQ + : JMP --- : + ; } while (--rounds);
 	PLB : PLP
 RTL
 

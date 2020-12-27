@@ -72,7 +72,7 @@ AllowStartFromSingleEntranceCave:
 		LDA.l StartingAreaExitOffset, X
 
 		BNE +
-			BRL .done
+			JMP .done
 		+
 
 		DEC

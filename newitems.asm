@@ -195,7 +195,7 @@ AddReceivedItemExpandedGetItem:
 	;	;JSL.l Main_ShowTextMessage_Alt
 	;	LDA !GOAL_COUNTER : INC : STA !GOAL_COUNTER
 	;	LDA.b #$01 : STA $7F50XX
-	;	BRL .done
+	;	JMP .done
 	;++
 	;STA $FFFFFF
 	LDA $02D8 ; check inventory
@@ -205,7 +205,7 @@ AddReceivedItemExpandedGetItem:
 		LDA.l SilverArrowsUseRestriction : BNE ++
 			LDA.b #03 : STA $7EF340 ; set bow to silver
 		++
-		BRL .done
+		JMP .done
 	+ CMP.b #$3B : BNE + ; Silver Bow
 		LDA.l SilverArrowsUseRestriction : BNE .noequip
 		LDA.l SilverArrowsAutoEquip : AND.b #$01 : BEQ .noequip
@@ -217,56 +217,56 @@ AddReceivedItemExpandedGetItem:
 		STA $7EF340
 		.noequip
 		LDA !INVENTORY_SWAP_2 : ORA #$40 : STA !INVENTORY_SWAP_2 ; mark silver bow on y-toggle
-		BRL .done
+		JMP .done
 	+ CMP.b #$4C : BNE + ; 50 bombs
 		;LDA.b #$07 : STA $7EF370 ; upgrade bombs
 		LDA.b #50 : !SUB.l StartingMaxBombs : STA $7EF370 ; upgrade bombs
 		LDA.b #50 : STA $7EF375 ; fill bombs
-		BRL .done
+		JMP .done
 	+ CMP.b #$4D : BNE + ; 70 arrows
 		;LDA #$07 : STA $7EF371 ; upgrade arrows
 		LDA.b #70 : !SUB.l StartingMaxArrows : STA $7EF371 ; upgrade arrows
 		LDA.b #70 : STA $7EF376 ; fill arrows
-		BRL .done
+		JMP .done
 	+ CMP.b #$4E : BNE + ; 1/2 magic
 		LDA $7EF37B : CMP #$02 : !BGE ++
 			INC : STA $7EF37B ; upgrade magic
 		++
 		LDA.b #$80 : STA $7EF373 ; fill magic
-		BRL .done
+		JMP .done
 	+ CMP.b #$4F : BNE + ; 1/4 magic
 		LDA.b #$02 : STA $7EF37B ; upgrade magic
 		LDA.b #$80 : STA $7EF373 ; fill magic
-		BRL .done
+		JMP .done
 	+ CMP.b #$50 : BNE + ; Master Sword (Safe)
 		LDA $7EF359 : CMP.b #$02 : !BGE + ; skip if we have a better sword
 		LDA.b #$02 : STA $7EF359 ; set master sword
-		BRL .done
+		JMP .done
 	+ CMP.b #$51 : BNE + ; +5 Bombs
 		LDA $7EF370 : !ADD.b #$05 : STA $7EF370 ; upgrade bombs +5
 		LDA.l Upgrade5BombsRefill : STA $7EF375 ; fill bombs
-		BRL .done
+		JMP .done
 	+ CMP.b #$52 : BNE + ; +10 Bombs
 		LDA $7EF370 : !ADD.b #$0A : STA $7EF370 ; upgrade bombs +10
 		LDA.l Upgrade10BombsRefill : STA $7EF375 ; fill bombs
-		BRL .done
+		JMP .done
 	+ CMP.b #$53 : BNE + ; +5 Arrows
 		LDA $7EF371 : !ADD.b #$05 : STA $7EF371 ; upgrade arrows +5
 		LDA.l Upgrade5ArrowsRefill : STA $7EF376 ; fill arrows
-		BRL .done
+		JMP .done
 	+ CMP.b #$54 : BNE + ; +10 Arrows
 		LDA $7EF371 : !ADD.b #$0A : STA $7EF371 ; upgrade arrows +10
 		LDA.l Upgrade10ArrowsRefill : STA $7EF376 ; fill arrows
-		BRL .done
+		JMP .done
 	+ CMP.b #$55 : BNE + ; Programmable Object 1
 		%ProgrammableItemLogic(1)
-		BRL .done
+		JMP .done
 	+ CMP.b #$56 : BNE + ; Programmable Object 2
 		%ProgrammableItemLogic(2)
-		BRL .done
+		JMP .done
 	+ CMP.b #$57 : BNE + ; Programmable Object 3
 		%ProgrammableItemLogic(3)
-		BRL .done
+		JMP .done
 	+ CMP.b #$58 : BNE + ; Upgrade-Only Sivler Arrows
 		LDA.l SilverArrowsUseRestriction : BNE +++
 		LDA.l SilverArrowsAutoEquip : AND.b #$01 : BEQ +++
@@ -279,46 +279,46 @@ AddReceivedItemExpandedGetItem:
 		++
 	+ CMP.b #$59 : BNE + ; 1 Rupoor
 		REP #$20 : LDA $7EF360 : !SUB RupoorDeduction : STA $7EF360 : SEP #$20 ; Take 1 rupee
-		BRL .done
+		JMP .done
 	+ CMP.b #$5A : BNE + ; Null Item
-		BRL .done
+		JMP .done
 	+ CMP.b #$5B : BNE + ; Red Clock
 		REP #$20 ; set 16-bit accumulator
 		LDA !CHALLENGE_TIMER : !ADD.l RedClockAmount : STA !CHALLENGE_TIMER
 		LDA !CHALLENGE_TIMER+2 : ADC.l RedClockAmount+2 : STA !CHALLENGE_TIMER+2
 		SEP #$20 ; set 8-bit accumulator
-		BRL .done
+		JMP .done
 	+ CMP.b #$5C : BNE + ; Blue Clock
 		REP #$20 ; set 16-bit accumulator
 		LDA !CHALLENGE_TIMER : !ADD.l BlueClockAmount : STA !CHALLENGE_TIMER
 		LDA !CHALLENGE_TIMER+2 : ADC.l BlueClockAmount+2 : STA !CHALLENGE_TIMER+2
 		SEP #$20 ; set 8-bit accumulator
-		BRL .done
+		JMP .done
 	+ CMP.b #$5D : BNE + ; Green Clock
 		REP #$20 ; set 16-bit accumulator
 		LDA !CHALLENGE_TIMER : !ADD.l GreenClockAmount : STA !CHALLENGE_TIMER
 		LDA !CHALLENGE_TIMER+2 : ADC.l GreenClockAmount+2 : STA !CHALLENGE_TIMER+2
 		SEP #$20 ; set 8-bit accumulator
-		BRL .done
+		JMP .done
 	+ CMP.b #$5E : BNE + ; Progressive Sword
-		BRL .done
+		JMP .done
 	+ CMP.b #$5F : BNE + ; Progressive Shield
-		BRL .done
+		JMP .done
 	+ CMP.b #$60 : BNE + ; Progressive Armor
-		BRL .done
+		JMP .done
 	+ CMP.b #$61 : BNE + ; Progressive Lifting Glove
-		BRL .done
+		JMP .done
 	+ CMP.b #$62 : BNE + ; RNG Pool Item (Single)
-		BRL .done
+		JMP .done
 	+ CMP.b #$63 : BNE + ; RNG Pool Item (Multi)
-		BRL .done
+		JMP .done
 	+ CMP.b #$64 : BNE + ; Progressive Bow
-		BRL .done
+		JMP .done
 	+ CMP.b #$65 : BNE + ; Progressive Bow
-		BRL .done
+		JMP .done
 	+ CMP.b #$6A : BNE + ; Goal Collectable (Single/Triforce)
 		JSL.l ActivateGoal
-		BRL .done
+		JMP .done
 	+ CMP.b #$6B : BNE + ; Goal Collectable (Multi/Power Star)
 		BRA .multi_collect
 	+ CMP.b #$6C : BNE + ; Goal Collectable (Multi/Power Star) Alternate Graphic
@@ -329,52 +329,52 @@ AddReceivedItemExpandedGetItem:
 		LDA TurnInGoalItems : BNE ++
 				JSL.l ActivateGoal
 		++
-		BRL .done
+		JMP .done
 	+ CMP.b #$6D : BNE + ; Server Request F0
 		JSL.l ItemGetServiceRequest_F0
-		BRL .done
+		JMP .done
 	+ CMP.b #$6E : BNE + ; Server Request F1
 		JSL.l ItemGetServiceRequest_F1
-		BRL .done
+		JMP .done
 	+ CMP.b #$6F : BNE + ; Server Request F2
 		JSL.l ItemGetServiceRequest_F2
-		BRL .done
+		JMP .done
 	;+ CMP.b #$FE : BNE + ; Server Request (Null Chest)
 	;	JSL.l ItemGetServiceRequest
-	;	BRL .done
+	;	JMP .done
 	+ CMP.b #$70 : !BLT + : CMP.b #$80 : !BGE + ; Free Map
 		AND #$0F : CMP #$08 : !BGE ++
 			%ValueShift()
 			ORA $7EF368 : STA $7EF368 ; Map 1
-			BRL .done
+			JMP .done
 		++
 			!SUB #$08
 			%ValueShift()
 			BIT.b #$C0 : BEQ +++ : LDA.b #$C0 : +++ ; Make Hyrule Castle / Sewers Count for Both
 			ORA $7EF369 : STA $7EF369 ; Map 2
-		BRL .done
+		JMP .done
 	+ CMP.b #$80 : !BLT + : CMP.b #$90 : !BGE + ; Free Compass
 		AND #$0F : CMP #$08 : !BGE ++
 			%ValueShift()
 			ORA $7EF364 : STA $7EF364 ; Compass 1
-			BRL .done
+			JMP .done
 		++
 			!SUB #$08
 			%ValueShift()
 			BIT.b #$C0 : BEQ +++ : LDA.b #$C0 : +++ ; Make Hyrule Castle / Sewers Count for Both
 			ORA $7EF365 : STA $7EF365 ; Compass 2
-		BRL .done
+		JMP .done
 	+ CMP.b #$90 : !BLT + : CMP.b #$A0 : !BGE + ; Free Big Key
 		AND #$0F : CMP #$08 : !BGE ++
 			%ValueShift()
 			ORA $7EF366 : STA $7EF366 ; Big Key 1
-			BRL .done
+			JMP .done
 		++
 			!SUB #$08
 			%ValueShift()
 			BIT.b #$C0 : BEQ +++ : LDA.b #$C0 : +++ ; Make Hyrule Castle / Sewers Count for Both
 			ORA $7EF367 : STA $7EF367 ; Big Key 2
-		BRL .done
+		JMP .done
 	+ CMP.b #$A0 : !BLT + : CMP.b #$B0 : !BGE + ; Free Small Key
 		AND #$0F : TAX
 		LDA $7EF37C, X : INC : STA $7EF37C, X ; Increment Key Count
@@ -388,12 +388,12 @@ AddReceivedItemExpandedGetItem:
 		LDA.l GenericKeys : BEQ +
 		.generic
 			LDA $7EF36F : INC : STA $7EF36F
-			BRL .done
+			JMP .done
 		.normal
 			TXA : ASL : CMP $040C : BNE ++
 				LDA $7EF36F : INC : STA $7EF36F
 			++
-			BRL .done
+			JMP .done
 	+
 	.done
 	PLX
@@ -432,66 +432,66 @@ AddReceivedItemExpanded:
 		CMP.b #$16 : BNE ++ ; Bottle
 			JSR.w CountBottles : CMP.l BottleLimit : !BLT +++
 				LDA.l BottleLimitReplacement : STA $02D8
-			+++ : BRL .done
+			+++ : JMP .done
 		++ : CMP.b #$2B : BNE ++ ; Red Potion w/bottle
 			JSR.w CountBottles : CMP.l BottleLimit : !BLT +++
 				LDA.l BottleLimitReplacement : STA $02D8
-			+++ : BRL .done
+			+++ : JMP .done
 		++ : CMP.b #$2C : BNE ++ ; Green Potion w/bottle
 			JSR.w CountBottles : CMP.l BottleLimit : !BLT +++
 				LDA.l BottleLimitReplacement : STA $02D8
-			+++ : BRL .done
+			+++ : JMP .done
 		++ : CMP.b #$2D : BNE ++ ; Blue Potion w/bottle
 			JSR.w CountBottles : CMP.l BottleLimit : !BLT +++
 				LDA.l BottleLimitReplacement : STA $02D8
-			+++ : BRL .done
+			+++ : JMP .done
 		++ : CMP.b #$3C : BNE ++ ; Bee w/bottle
 			JSR.w CountBottles : CMP.l BottleLimit : !BLT +++
 				LDA.l BottleLimitReplacement : STA $02D8
-			+++ : BRL .done
+			+++ : JMP .done
 		++ : CMP.b #$3D : BNE ++ ; Fairy w/bottle
 			JSR.w CountBottles : CMP.l BottleLimit : !BLT +++
 				LDA.l BottleLimitReplacement : STA $02D8
-			+++ : BRL .done
+			+++ : JMP .done
 		++ : CMP.b #$48 : BNE ++ ; Gold Bee w/bottle
 			JSR.w CountBottles : CMP.l BottleLimit : !BLT +++
 				LDA.l BottleLimitReplacement : STA $02D8
-			+++ : BRL .done
+			+++ : JMP .done
 		++ : CMP.b #$4E : BNE ++ ; Progressive Magic
 			LDA $7EF37B : BEQ +++
 				LDA.b #$4F : STA $02D8
-			+++ : BRL .done
+			+++ : JMP .done
 		++ : CMP.b #$5E : BNE ++ ; Progressive Sword
 			LDA $7EF359 : CMP.l ProgressiveSwordLimit : !BLT +
-				LDA.l ProgressiveSwordReplacement : STA $02D8 : BRL .done
+				LDA.l ProgressiveSwordReplacement : STA $02D8 : JMP .done
 			+ : CMP.b #$00 : BNE + ; No Sword
-				LDA.b #$49 : STA $02D8 : BRL .done
+				LDA.b #$49 : STA $02D8 : JMP .done
 			+ : CMP.b #$01 : BNE + ; Fighter Sword
-				LDA.b #$50 : STA $02D8 : BRL .done
+				LDA.b #$50 : STA $02D8 : JMP .done
 			+ : CMP.b #$02 : BNE + ; Master Sword
-				LDA.b #$02 : STA $02D8 : BRL .done
+				LDA.b #$02 : STA $02D8 : JMP .done
 			+ ; Everything Else
-				LDA.b #$03 : STA $02D8 : BRL .done
+				LDA.b #$03 : STA $02D8 : JMP .done
 		++ : CMP.b #$5F : BNE ++ ; Progressive Shield
 			LDA !PROGRESSIVE_SHIELD : LSR #6 : CMP.l ProgressiveShieldLimit : !BLT +
-				LDA.l ProgressiveShieldReplacement : STA $02D8 : BRL .done
+				LDA.l ProgressiveShieldReplacement : STA $02D8 : JMP .done
 			+
 			LDA !PROGRESSIVE_SHIELD : AND.b #$C0 : BNE + ; No Shield
 				LDA.b #$04 : STA $02D8
-				LDA !PROGRESSIVE_SHIELD : !ADD.b #$40 : STA !PROGRESSIVE_SHIELD : BRL .done
+				LDA !PROGRESSIVE_SHIELD : !ADD.b #$40 : STA !PROGRESSIVE_SHIELD : JMP .done
 			+ : CMP.b #$40 : BNE + ; Fighter Shield
 				LDA.b #$05 : STA $02D8
-				LDA !PROGRESSIVE_SHIELD : !ADD.b #$40 : STA !PROGRESSIVE_SHIELD : BRL .done
+				LDA !PROGRESSIVE_SHIELD : !ADD.b #$40 : STA !PROGRESSIVE_SHIELD : JMP .done
 			+ ; Everything Else
 				LDA.b #$06 : STA $02D8
-				LDA !PROGRESSIVE_SHIELD : !ADD.b #$40 : STA !PROGRESSIVE_SHIELD : BRL .done
+				LDA !PROGRESSIVE_SHIELD : !ADD.b #$40 : STA !PROGRESSIVE_SHIELD : JMP .done
 		++ : CMP.b #$60 : BNE ++ ; Progressive Armor
 			LDA $7EF35B : CMP.l ProgressiveArmorLimit : !BLT +
-				LDA.l ProgressiveArmorReplacement : STA $02D8 : BRL .done
+				LDA.l ProgressiveArmorReplacement : STA $02D8 : JMP .done
 			+ : CMP.b #$00 : BNE + ; No Armor
-				LDA.b #$22 : STA $02D8 : BRL .done
+				LDA.b #$22 : STA $02D8 : JMP .done
 			+ ; Everything Else
-				LDA.b #$23 : STA $02D8 : BRL .done
+				LDA.b #$23 : STA $02D8 : JMP .done
 		++ : CMP.b #$61 : BNE ++ ; Progressive Lifting Glove
 			LDA $7EF354 : BNE + ; No Lift
 				LDA.b #$1B : STA $02D8 : BRA .done
@@ -499,7 +499,7 @@ AddReceivedItemExpanded:
 				LDA.b #$1C : STA $02D8 : BRA .done
 		++ : CMP.b #$64 : BNE ++ : -- ; Progressive Bow
 			LDA $7EF340 : INC : LSR : CMP.l ProgressiveBowLimit : !BLT +
-				LDA.l ProgressiveBowReplacement : STA $02D8 : BRL .done
+				LDA.l ProgressiveBowReplacement : STA $02D8 : JMP .done
 			+ : CMP.b #$00 : BNE + ; No Bow
 				LDA.b #$3A : STA $02D8 : BRA .done
 			+ ; Any Bow

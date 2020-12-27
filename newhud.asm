@@ -63,7 +63,7 @@ SEP #$30
 ;================================================================================
 
 	SEP #$20
-	LDA.l GoalItemRequirement : BNE + : BRL .done : + ; Star Meter
+	LDA.l GoalItemRequirement : BNE + : JMP .done : + ; Star Meter
 	
 	LDA.l !GOAL_COUNTER
 	JSR HudHexToDec3Digit
@@ -144,13 +144,13 @@ SEP #$30
 	AND #$FFF8
 	TAX						 ; end of crap
 	
-	LDA !INFINITE_MAGIC : AND.w #$00FF : BNE + : BRL .green : +
+	LDA !INFINITE_MAGIC : AND.w #$00FF : BNE + : JMP .green : +
 	SEP #$20 : LDA.b #$80 : STA $7EF36E : REP #$30 ; set magic to max
 	LDX.w #$0080 ; load full magic meter graphics
 	LDA $1A : AND.w #$000C : LSR #2
 	BEQ .red
 	CMP.w #0001 : BEQ .yellow
-	CMP.w #0002 : BNE + : BRL .green : +
+	CMP.w #0002 : BNE + : JMP .green : +
 	.blue
 	    LDA !DrawMagicMeter_mp_tilemap+0, X : AND.w #$EFFF : STA $7EC746
 	    LDA !DrawMagicMeter_mp_tilemap+2, X : AND.w #$EFFF : STA $7EC786

@@ -304,7 +304,7 @@ IsNarrowSprite:
 			JSR.w CountBottles : CMP.l BottleLimit : !BLT +
 				LDA.l BottleLimitReplacement
 				JSL.l IsNarrowSprite
-				BRL .done
+				JMP .done
 			+ : BRA .continue
 		.notBottle
 	CMP.b #$5E : BNE ++ ; Progressive Sword

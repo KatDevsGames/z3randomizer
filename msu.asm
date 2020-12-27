@@ -185,11 +185,11 @@ CheckMusicLoadRequest:
         LDA !REG_MUSIC_CONTROL_REQUEST : CMP #$08 : BEQ ++  ; Mirror SFX is not affected by NoBGM or pack $FE
             LDA NoBGM : BNE +
             LDA !REG_MSU_PACK_CURRENT : CMP #$FE : BNE ++
-                + : BRL .mute
+                + : JMP .mute
         ++
 
         LDX !REG_MSU_ID_01 : CPX !VAL_MSU_ID_01 : BEQ +
-            - : BRL .unmute
+            - : JMP .unmute
         +
         LDX !REG_MSU_ID_23 : CPX !VAL_MSU_ID_23 : BNE -
         LDX !REG_MSU_ID_45 : CPX !VAL_MSU_ID_45 : BNE -
@@ -277,7 +277,7 @@ CheckMusicLoadRequest:
                 PLY : STY $00 : SEP #$10 : PLB
                 TAX : LDA MusicShuffleTable-1,X
                 STA !REG_MUSIC_CONTROL_REQUEST
-                BRL .check_fallback
+                JMP .check_fallback
 
 .unmute
             LDA.b !VAL_COMMAND_UNMUTE_SPC
@@ -481,7 +481,7 @@ MSUMain:
     LDA !REG_MSU_ID_45 : CMP !VAL_MSU_ID_45 : BNE .nomsu
     SEP #$30
     LDX !REG_MUSIC_CONTROL : BEQ +
-        BRL .command_ff
+        JMP .command_ff
     +
     LDA !REG_MSU_DELAYED_COMMAND : BEQ .do_fade
 

@@ -56,7 +56,7 @@ RTL
 !MAP_OVERLAY = "$7EF414" ; [2]
 OverworldMap_CheckObject:
 	PHX
-		;CPX.b #$01 : BNE + : BRL ++ : + : BRL .fail
+		;CPX.b #$01 : BNE + : JMP ++ : + : JMP .fail
 		LDA $7EF3CA : AND.b #$40 : BNE +
 			;LW Map
 			LDA.l MapMode : BEQ +++
@@ -66,7 +66,7 @@ OverworldMap_CheckObject:
 					LDA !INVENTORY_MAP, X : ORA !MAP_OVERLAY, X
 				PLX
 				AND.l .lw_map_masks, X : BNE +++
-				BRL .fail
+				JMP .fail
 			+++
 			LDA.l .lw_offsets, X
 			BPL +++ : CLC : BRA .done : +++ ; don't display master sword
@@ -80,7 +80,7 @@ OverworldMap_CheckObject:
 					LDA.l !INVENTORY_MAP, X : ORA !MAP_OVERLAY, X
 				PLX
 				AND.l .dw_map_masks, X : BNE +++
-				BRL .fail
+				JMP .fail
 			+++
 			LDA.l .dw_offsets, X
 			TAX : BRA ++
@@ -294,8 +294,8 @@ DrawHUDDungeonItems:
 		LDA #$24F5 : STA $1686, X : STA $16C6, X
 	INX #2 : CPX.w #$0020 : BCC -
 
-	LDA !HUD_FLAG : AND.w #$0020 : BEQ + : BRL +++ : +
-	LDA HUDDungeonItems : AND.w #$0001 : BNE + : BRL ++ : +
+	LDA !HUD_FLAG : AND.w #$0020 : BEQ + : JMP +++ : +
+	LDA HUDDungeonItems : AND.w #$0001 : BNE + : JMP ++ : +
 		LDA.w #$2810 : STA $1684 ; small keys icon
 		SEP #$20 ; set 8-bit accumulator
 		; Small Keys
@@ -320,7 +320,7 @@ DrawHUDDungeonItems:
 	++
 
 	; Big Keys
-	LDA HUDDungeonItems : AND.w #$0002 : BNE + : BRL ++ : +
+	LDA HUDDungeonItems : AND.w #$0002 : BNE + : JMP ++ : +
 		LDA.w #$2811 : STA $16C4 ; big key icon
 		LDA $7EF367 : AND.w #$0040 : BEQ + ; Hyrule Castle
 			LDA.w #$2826 : STA $16C6
@@ -365,9 +365,9 @@ DrawHUDDungeonItems:
 
 	; This should only display if select is pressed in hud
 	+++
-	LDA !HUD_FLAG : AND.w #$0020 : BNE + : BRL +++ : +
+	LDA !HUD_FLAG : AND.w #$0020 : BNE + : JMP +++ : +
 	; Maps
-	LDA HUDDungeonItems : AND.w #$0004 : BNE + : BRL ++ : +
+	LDA HUDDungeonItems : AND.w #$0004 : BNE + : JMP ++ : +
 		LDA.w #$2821 : STA $1684 ; map icon
 		LDA $7EF369 : AND.w #$0040 : BEQ + ; Hyrule Castle
 			LDA.w #$2826 : STA $1686
@@ -411,7 +411,7 @@ DrawHUDDungeonItems:
 	++
 
 	; Compasses
-	LDA HUDDungeonItems : AND.w #$0008 : BNE + : BRL ++ : +
+	LDA HUDDungeonItems : AND.w #$0008 : BNE + : JMP ++ : +
 		LDA.w #$2C20 : STA $16C4 ; compass icon
 		LDA $7EF365 : AND.w #$0040 : BEQ + ; Hyrule Castle
 			LDA.w #$2C26 : STA $16C6

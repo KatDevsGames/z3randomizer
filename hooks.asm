@@ -1640,7 +1640,7 @@ JSL.l ShowDungeonItems : NOP #5
 ;================================================================================
 org $0DEA5F ; <- 6EA5F - equipment.asm:1679 - (SEP #$30)
 ;NOP #5
-;BRL .skipCrystalInit
+;JMP .skipCrystalInit
 ;org $0DEAA4 ; <- 6EAA4 - equipment.asm:1706 - (LDA $7EF37A : AND.w #$0001)
 ;.skipCrystalInit
 ;================================================================================

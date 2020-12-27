@@ -226,7 +226,7 @@ RenderCreditsStatCounter:
     
     JSR FindLine
     BCS +
-    BRL .endStats
+    JMP .endStats
 +   
     
     ;   XXXX X00L   LLLL LLLL   BBBB SSSS   CCC- ----   ---- ----   AAAA AAAA   AAAA AAAA   AAAA AAAA
@@ -237,7 +237,7 @@ RenderCreditsStatCounter:
     AND #$0003          ; TT
     CMP.w #$0000
     BEQ .normalStat
-    BRL .timeStat
+    JMP .timeStat
 
 .normalStat
     ; == Write Stripe header (VRAM address, i.e. tile coordinates) ==
@@ -491,7 +491,7 @@ RenderCreditsStatCounter:
     %StripeTile()
     
     %StripeEnd()
-    BRL .endStats
+    JMP .endStats
     
     
 RenderLineNumber:

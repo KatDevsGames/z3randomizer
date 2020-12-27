@@ -60,7 +60,7 @@ RTL
 		LDA !INVENTORY_SWAP : AND #$C0 : CMP #$C0 : BNE .errorJump ; make sure we have both boomerangs
 		LDA $7EF341 : EOR #$03 : STA $7EF341 ; swap blue & red boomerang
 		LDA.b #$20 : STA $012F ; menu select sound
-		BRL .captured
+		JMP .captured
 	+ CMP #$01 : BNE + ; bow
 		LDA !INVENTORY_SWAP_2 : AND #$C0 : CMP #$C0 : BNE .errorJump ; make sure we have both bows
 		PHX : LDX.b #$00 ; scan ancilla table for arrows
@@ -77,7 +77,7 @@ RTL
 		++
 		LDA $7EF340 : !SUB #$01 : EOR #$02 : !ADD #$01 : STA $7EF340 ; swap bows
 		LDA.b #$20 : STA $012F ; menu select sound
-		BRL .captured
+		JMP .captured
 	+ BRA +
 		.errorJump
 		BRA .errorJump2
@@ -85,7 +85,7 @@ RTL
 		LDA !INVENTORY_SWAP : AND #$30 : CMP #$30 : BNE .errorJump ; make sure we have mushroom & magic powder
 		LDA $7EF344 : EOR #$03 : STA $7EF344 ; swap mushroom & magic powder
 		LDA.b #$20 : STA $012F ; menu select sound
-		BRL .captured
+		JMP .captured
 	+ BRA +
 		.errorJump2
 		BRA .error
@@ -203,61 +203,61 @@ AddInventory:
 	PHA : PHX : PHP
 	CPY.b #$0C : BNE + ; Blue Boomerang
 		LDA !INVENTORY_SWAP : ORA #$80 : STA !INVENTORY_SWAP
-		BRL .incrementCounts
+		JMP .incrementCounts
 	+ CPY.b #$2A : BNE + ; Red Boomerang
 		LDA !INVENTORY_SWAP : ORA #$40 : STA !INVENTORY_SWAP
-		BRL .incrementCounts
+		JMP .incrementCounts
 	+ CPY.b #$29 : BNE + ; Mushroom
 		LDA !INVENTORY_SWAP : ORA #$28 : STA !INVENTORY_SWAP
-		BRL .incrementCounts
+		JMP .incrementCounts
 	+ CPY.b #$0D : BNE + ; Magic Powder
 		LDA !INVENTORY_SWAP : ORA #$10 : STA !INVENTORY_SWAP
-		BRL .incrementCounts
+		JMP .incrementCounts
 	+ CPY.b #$13 : BNE + ; Shovel
 		LDA !INVENTORY_SWAP : ORA #$04 : STA !INVENTORY_SWAP
-		BRL .incrementCounts
+		JMP .incrementCounts
 	+ CPY.b #$14 : BNE + ; Flute (Inactive)
 		LDA !INVENTORY_SWAP : ORA #$02 : STA !INVENTORY_SWAP
-		BRL .incrementCounts
+		JMP .incrementCounts
 	+ CPY.b #$4A : BNE + ; Flute (Active)
 		LDA !INVENTORY_SWAP : ORA #$01 : STA !INVENTORY_SWAP
-		BRL .incrementCounts
+		JMP .incrementCounts
 	+ CPY.b #$0B : BNE + ; Bow
 		LDA ArrowMode : BNE +++
 			LDA !INVENTORY_SWAP_2 : ORA #$80 : STA !INVENTORY_SWAP_2
 		+++
-		BRL .incrementCounts
+		JMP .incrementCounts
 	+ CPY.b #$3A : BNE + ; Bow & Arrows
 		LDA !INVENTORY_SWAP_2 : ORA #$80 : STA !INVENTORY_SWAP_2
-		BRL .incrementCounts
+		JMP .incrementCounts
 	+ CPY.b #$3B : BNE + ; Bow & Silver Arrows
 		LDA !INVENTORY_SWAP_2 : ORA #$40 : STA !INVENTORY_SWAP_2
 		LDA ArrowMode : BNE +++
 			LDA !INVENTORY_SWAP_2 : ORA #$80 : STA !INVENTORY_SWAP_2 ; activate wood arrows when not in rupee bow
 		+++
-		BRL .incrementCounts
+		JMP .incrementCounts
 	+ CPY.b #$43 : BNE + ; Single arrow
 		LDA ArrowMode : BEQ +++
 			LDA !INVENTORY_SWAP_2 : ORA #$80 : STA !INVENTORY_SWAP_2 ; activate wood arrows in quick-swap
 		+++
-		BRL .incrementCounts
+		JMP .incrementCounts
 	+ CPY.b #$58 : BNE + ; Upgrade-Only Silver Arrows
 		LDA !INVENTORY_SWAP_2 : ORA #$40 : STA !INVENTORY_SWAP_2
 	+
 
 	.incrementCounts
-	LDA !LOCK_STATS : BEQ + : BRL .done : +
+	LDA !LOCK_STATS : BEQ + : JMP .done : +
 
 	; don't count any of this stuff
-	CPY.b #$20 : BNE + : BRL .itemCounts : + ; Crystal
-	CPY.b #$26 : BNE + : BRL .itemCounts : + ; Heart Piece Completion Heart
-	CPY.b #$2E : BNE + : BRL .itemCounts : + ; Red Potion (Refill)
-	CPY.b #$2F : BNE + : BRL .itemCounts : + ; Green Potion (Refill)
-	CPY.b #$30 : BNE + : BRL .itemCounts : + ; Blue Potion (Refill)
-	CPY.b #$37 : BNE + : BRL .itemCounts : + ; Pendant
-	CPY.b #$38 : BNE + : BRL .itemCounts : + ; Pendant
-	CPY.b #$39 : BNE + : BRL .itemCounts : + ; Pendant
-	CPY.b #$00 : BNE + : BRL .itemCounts : + ; Uncle Sword & Shield
+	CPY.b #$20 : BNE + : JMP .itemCounts : + ; Crystal
+	CPY.b #$26 : BNE + : JMP .itemCounts : + ; Heart Piece Completion Heart
+	CPY.b #$2E : BNE + : JMP .itemCounts : + ; Red Potion (Refill)
+	CPY.b #$2F : BNE + : JMP .itemCounts : + ; Green Potion (Refill)
+	CPY.b #$30 : BNE + : JMP .itemCounts : + ; Blue Potion (Refill)
+	CPY.b #$37 : BNE + : JMP .itemCounts : + ; Pendant
+	CPY.b #$38 : BNE + : JMP .itemCounts : + ; Pendant
+	CPY.b #$39 : BNE + : JMP .itemCounts : + ; Pendant
+	CPY.b #$00 : BNE + : JMP .itemCounts : + ; Uncle Sword & Shield
 	
 	CPY.b #$04 : !BLT .isSword ; Swords - Skip Shop/Fairy Check for Swords
 	CPY.b #$49 : BEQ .isSword
@@ -265,32 +265,32 @@ AddInventory:
 	CPY.b #$5E : BEQ .isSword
 	BRA +
 		.isSword
-		BRL .dungeonCounts
+		JMP .dungeonCounts
 	+
-	CPY.b #$3B : BNE + : BRL .dungeonCounts : + ; Silver Arrow Bow - Skip Shop/Fairy Check for Silver Arrow Bow
+	CPY.b #$3B : BNE + : JMP .dungeonCounts : + ; Silver Arrow Bow - Skip Shop/Fairy Check for Silver Arrow Bow
 
 	LDA $1B : BEQ ++ ; skip shop check if outdoors
 	LDA $02E9 : CMP.b #$01 : BEQ ++ ; skip shop check for chests
 		PHP : REP #$20 ; set 16-bit accumulator
 			LDA $048E
-			CMP.w #274 : BNE + : BRL .shop : + ; dark world death mountain shop, ornamental shield shop
-			CMP.w #271 : BNE + : BRL .shop : + ; villiage of outcasts shop, lumberjack shop, lake hylia shop, dark world magic shop
-			CMP.w #272 : BNE + : BRL .shop : + ; red shield shop
-			CMP.w #284 : BNE + : BRL .shop : + ; bomb shop
-			;CMP.w #265 : BNE + : BRL .shop : + ; potion shop - commented this out because it's easier to just block potion refills because this one interferes with the powder item being counted
-			;CMP.w #271 : BNE + : BRL .shop : + ; lake hylia shop
-			CMP.w #287 : BNE + : BRL .shop : + ; kakariko shop
-			CMP.w #255 : BNE + : BRL .shop : + ; light world death mountain shop
-			CMP.w #276 : BNE + : BRL .shop : + ; waterfall fairy
-			CMP.w #277 : BNE + : BRL .shop : + ; upgrade fairy (shop)
-			CMP.w #278 : BNE + : BRL .shop : + ; pyramid fairy
+			CMP.w #274 : BNE + : JMP .shop : + ; dark world death mountain shop, ornamental shield shop
+			CMP.w #271 : BNE + : JMP .shop : + ; villiage of outcasts shop, lumberjack shop, lake hylia shop, dark world magic shop
+			CMP.w #272 : BNE + : JMP .shop : + ; red shield shop
+			CMP.w #284 : BNE + : JMP .shop : + ; bomb shop
+			;CMP.w #265 : BNE + : JMP .shop : + ; potion shop - commented this out because it's easier to just block potion refills because this one interferes with the powder item being counted
+			;CMP.w #271 : BNE + : JMP .shop : + ; lake hylia shop
+			CMP.w #287 : BNE + : JMP .shop : + ; kakariko shop
+			CMP.w #255 : BNE + : JMP .shop : + ; light world death mountain shop
+			CMP.w #276 : BNE + : JMP .shop : + ; waterfall fairy
+			CMP.w #277 : BNE + : JMP .shop : + ; upgrade fairy (shop)
+			CMP.w #278 : BNE + : JMP .shop : + ; pyramid fairy
 		PLP : BRA ++
 		.shop
-		PLP : BRL .done
+		PLP : JMP .done
 	++
 
 	.dungeonCounts
-	LDA $1B : BNE + : BRL .fullItemCounts : +
+	LDA $1B : BNE + : JMP .fullItemCounts : +
 	; ==BEGIN INDOOR-ONLY SECTION
 
 	;REP #$20 ; Set 16-bit Accumulator
@@ -307,54 +307,54 @@ AddInventory:
 		BRA ++
 	+ CMP.b #$02 : BNE + ; Hyrule Castle (Escape)
 		++
-		CPY.b #$32 : BNE ++ : BRL .itemCounts : ++ ; Ball & Chain Guard's Big Key
+		CPY.b #$32 : BNE ++ : JMP .itemCounts : ++ ; Ball & Chain Guard's Big Key
 		%TopHalf($7EF434)
-		BRL .fullItemCounts
+		JMP .fullItemCounts
 	+ CMP.b #$04 : BNE + ; Eastern Palace
 		LDA $7EF436 : INC : AND #$07 : TAX
 		LDA $7EF436 : AND #$F8 : STA $7EF436
 		TXA : ORA $7EF436 : STA $7EF436
-		BRL .fullItemCounts
+		JMP .fullItemCounts
 	+ CMP.b #$06 : BNE + ; Desert Palace
 		LDA $7EF435 : !ADD #$20 : STA $7EF435
-		BRL .fullItemCounts
+		JMP .fullItemCounts
 	+ CMP.b #$08 : BNE + ; Agahnim's Tower
 		LDA $7EF435 : INC : AND #$03 : TAX
 		LDA $7EF435 : AND #$FC : STA $7EF435
 		TXA : ORA $7EF435 : STA $7EF435
-		BRL .fullItemCounts
+		JMP .fullItemCounts
 	+ CMP.b #$0A : BNE + ; Swamp Palace
 		%BottomHalf($7EF439)
-		BRL .fullItemCounts
+		JMP .fullItemCounts
 	+ CMP.b #$0C : BNE + ; Palace of Darkness
 		%BottomHalf($7EF434)
-		BRL .fullItemCounts
+		JMP .fullItemCounts
 	+ CMP.b #$0E : BNE + ; Misery Mire
 		%BottomHalf($7EF438)
-		BRL .fullItemCounts
+		JMP .fullItemCounts
 	+ CMP.b #$10 : BNE + ; Skull Woods
 		%TopHalf($7EF437)
-		BRL .fullItemCounts
+		JMP .fullItemCounts
 	+ CMP.b #$12 : BNE + ; Ice Palace
 		%TopHalf($7EF438)
-		BRL .fullItemCounts
+		JMP .fullItemCounts
 	+ CMP.b #$14 : BNE + ; Tower of Hera
 		LDA $7EF435 : !ADD #$04 : AND #$1C : TAX
 		LDA $7EF435 : AND #$E3 : STA $7EF435
 		TXA : ORA $7EF435 : STA $7EF435
-		BRL .fullItemCounts
+		JMP .fullItemCounts
 	+ CMP.b #$16 : BNE + ; Thieves' Town
 		%BottomHalf($7EF437)
-		BRL .fullItemCounts
+		JMP .fullItemCounts
 	+ CMP.b #$18 : BNE + ; Turtle Rock
 		%TopHalf($7EF439)
-		BRL .fullItemCounts
+		JMP .fullItemCounts
 	+ CMP.b #$1A : BNE + ; Ganon's Tower
 		LDA $7EF436 : !ADD #$08 : STA $7EF436
 		LDA $7EF366 : AND #$04 : BNE ++
 			JSR .incrementGTowerPreBigKey
 		++
-		;BRL .fullItemCounts
+		;JMP .fullItemCounts
 	+
 
 	; == END INDOOR-ONLY SECTION
@@ -379,178 +379,178 @@ AddInventory:
 	CPY.b #$00 : BNE + ; Fighter's Sword & Fighter's Shield
 		JSR .incrementSword
 		JSR .incrementShield
-		BRL .done
+		JMP .done
 	+ CPY.b #$01 : BNE + ; Master Sword
 		JSR .incrementSword
-		BRL .done
+		JMP .done
 	+ CPY.b #$02 : BNE + ; Tempered Sword
 		JSR .incrementSword
-		BRL .done
+		JMP .done
 	+ CPY.b #$03 : BNE + ; Golden Sword
 		JSR .incrementSword
-		BRL .done
+		JMP .done
 	+ CPY.b #$04 : BNE + ; Fighter's Shield
 		JSR .incrementShield
-		BRL .done
+		JMP .done
 	+ CPY.b #$05 : BNE + ; Red Shield
 		JSR .incrementShield
-		BRL .done
+		JMP .done
 	+ CPY.b #$06 : BNE + ; Mirror Shield
 		JSR .incrementShield
-		BRL .done
+		JMP .done
 	+ CPY.b #$07 : !BLT + ; Items $07 - $0D
 	  CPY.b #$0E : !BGE +
 		JSR .incrementY
-		BRL .done
+		JMP .done
 	+ CPY.b #$14 : BNE + ; Flute (Inactive) - LEAVE THIS ABOVE THE 0F-16 CONDITION - kkat
 		JSR .stampFlute
 		JSR .incrementY
-		BRL .done
+		JMP .done
 	+ CPY.b #$0F : !BLT + ; Items $0F - $16
 	  CPY.b #$17 : !BGE +
 		JSR .incrementY
-		BRL .done
+		JMP .done
 	+ CPY.b #$17 : BNE + ; Heart Piece
 		JSR .incrementHeartPiece
-		BRL .done
+		JMP .done
 	+ CPY.b #$18 : !BLT + ; Items $18 - $19
 	  CPY.b #$1A : !BGE +
 		JSR .incrementY
-		BRL .done
+		JMP .done
 	+ CPY.b #$1A : BNE + ; Magic Mirror
 		JSR .stampMirror
 		JSR .incrementY
-		BRL .done
+		JMP .done
 	+ CPY.b #$1D : BNE + ; Book of Mudora - LEAVE THIS ABOVE THE 1B-1F CONDITION - kkat
 		JSR .incrementY
-		BRL .done
+		JMP .done
 	+ CPY.b #$1B : !BLT + ; Items $1B - $1F
 	  CPY.b #$20 : !BGE +
 		JSR .incrementA
-		BRL .done
+		JMP .done
 	+ CPY.b #$20 : BNE + ; Crystal
 		JSR .incrementCrystal
-		BRL .done
+		JMP .done
 	+ CPY.b #$21 : BNE + ; Bug Net
 		JSR .incrementY
-		BRL .done
+		JMP .done
 	+ CPY.b #$22 : !BLT + ; Items $22 - $23
 	  CPY.b #$24 : !BGE +
 		JSR .incrementMail
-		BRL .done
+		JMP .done
 	+ CPY.b #$24 : BNE + ; Small Key
 		JSR .incrementKey
-		BRL .done
+		JMP .done
 	+ CPY.b #$25 : BNE + ; Compass
 		JSR .incrementCompass
-		BRL .done
+		JMP .done
 	+ CPY.b #$26 : BNE + ; Liar Heart (Container)
 		;JSR .incrementHeartContainer
-		BRL .done
+		JMP .done
 	+ CPY.b #$27 : BNE + ; 1 Bomb
 		JSR .maybeIncrementBombs
-		BRL .done
+		JMP .done
 	+ CPY.b #$28 : BNE + ; 3 Bombs
 		JSR .maybeIncrementBombs
-		BRL .done
+		JMP .done
 	+ CPY.b #$29 : BNE + ; Musoroom
 		JSR .incrementY
-		BRL .done
+		JMP .done
 	+ CPY.b #$2A : !BLT + ; Items $2A - $2D
 	  CPY.b #$2E : !BGE +
 		JSR .incrementY
-		BRL .done
+		JMP .done
 	+ CPY.b #$31 : BNE + ; 10 Bombs
 		JSR .maybeIncrementBombs
-		BRL .done
+		JMP .done
 	+ CPY.b #$32 : BNE + ; Big Key
 		JSR .incrementBigKey
-		BRL .done
+		JMP .done
 	+ CPY.b #$33 : BNE + ; Map
 		JSR .incrementMap
-		BRL .done
+		JMP .done
 	+ CPY.b #$37 : !BLT + ; Items $37 - $39 - Pendants
 	  CPY.b #$3A : !BGE +
 		JSR .incrementPendant
-		BRL .done
+		JMP .done
 	+ CPY.b #$3A : !BLT + ; Items $3A - $3B - Bow & Silver Arrows
 	  CPY.b #$3C : !BGE +
 		JSR .incrementBow
-		BRL .done
+		JMP .done
 	+ CPY.b #$3C : BNE + ; Bottle w/Bee
 		JSR .incrementY
-		BRL .done
+		JMP .done
 	+ CPY.b #$3D : BNE + ; Bottle w/Fairy
 		JSR .incrementY
-		BRL .done
+		JMP .done
 	+ CPY.b #$3E : !BLT + ; Items $3E - $3F - Heart Containers
 	  CPY.b #$40 : !BGE +
 		JSR .incrementHeartContainer
-		BRL .done
+		JMP .done
 	+ CPY.b #$48 : BNE + ; Bottle w/Gold Bee
 		JSR .incrementY
-		BRL .done
+		JMP .done
 	+ CPY.b #$49 : BNE + ; Fighter's Sword
 		JSR .incrementSword
-		BRL .done
+		JMP .done
 	+ CPY.b #$4A : BNE + ; Flute (Active)
 		JSR .stampFlute
 		JSR .incrementY
-		BRL .done
+		JMP .done
 	+ CPY.b #$4B : BNE + ; Pegasus Boots
 		JSR .stampBoots
 		JSR .incrementA
-		BRL .done
+		JMP .done
 	+ CPY.b #$4C : BNE + ; Bomb Capacity Upgrade
 		JSR .incrementCapacity
 		JSR .maybeIncrementBombs
-		BRL .done
+		JMP .done
 	+ CPY.b #$4D : !BLT + ; Items $4D - $4F - Capacity Upgrades
 	  CPY.b #$50 : !BGE +
 		JSR .incrementCapacity
-		BRL .done
+		JMP .done
 	+ CPY.b #$50 : BNE + ; Master Sword (Safe)
 		JSR .incrementSword
-		BRL .done
+		JMP .done
 	+ CPY.b #$51 : !BLT + ; Items $51 - $54 - Capacity Upgrades
 	  CPY.b #$55 : !BGE +
 		JSR .incrementCapacity
-		BRL .done
+		JMP .done
 	+ CPY.b #$58 : BNE + ; Upgrade-Only Sivler Arrows
 		JSR .incrementBow
-		BRL .done
+		JMP .done
 	+ CPY.b #$5E : BNE + ; Progressive Sword
 		JSR .incrementSword
-		BRL .done
+		JMP .done
 	+ CPY.b #$5F : BNE + ; Progressive Shield
 		JSR .incrementShield
-		BRL .done
+		JMP .done
 	+ CPY.b #$60 : BNE + ; Progressive Armor
 		JSR .incrementMail
-		BRL .done
+		JMP .done
 	+ CPY.b #$61 : BNE + ; Progressive Lifting Glove
 		JSR .incrementA
-		BRL .done
+		JMP .done
 	+ CPY.b #$64 : !BLT + ; Items $64 & $65 - Progressive Bow
 	  CPY.b #$66 : !BGE +
 		JSR .incrementBow
-		BRL .done
+		JMP .done
 	+ CPY.b #$70 : !BLT + ; Items $70 - $7F - Free Maps
 	  CPY.b #$80 : !BGE +
 		JSR .incrementMap
-		BRL .done
+		JMP .done
 	+ CPY.b #$80 : !BLT + ; Items $80 - $8F - Free Compasses
 	  CPY.b #$90 : !BGE +
 		JSR .incrementCompass
-		BRL .done
+		JMP .done
 	+ CPY.b #$90 : !BLT + ; Items $90 - $9F - Free Big Keys
 	  CPY.b #$A0 : !BGE +
 		JSR .incrementBigKey
-		BRL .done
+		JMP .done
 	+ CPY.b #$A0 : !BLT + ; Items $A0 - $AF - Free Small Keys
 	  CPY.b #$B0 : !BGE +
 		JSR .incrementKey
-		BRL .done
+		JMP .done
 	+
 	.done
 	PLP : PLX : PLA
@@ -1113,10 +1113,10 @@ SpawnShovelItem:
 
     LDA $03FC : BEQ +
     	JSL DiggingGameGuy_AttemptPrizeSpawn
-		BRL .skip
+		JMP .skip
 	+
 
-	LDA $035B : AND.b #$01 : BNE + : BRL .skip : + ; corner dig fix
+	LDA $035B : AND.b #$01 : BNE + : JMP .skip : + ; corner dig fix
 
 	PHY : PHP
 	PHB : PHK : PLB
