@@ -265,194 +265,256 @@ DrawMoonPearlInMenuLocation:
 RTL
 ;--------------------------------------------------------------------------------
 DrawHUDDungeonItems:
-	LDA.l HUDDungeonItems : BNE + : RTL : +
-	
+	LDA.l HUDDungeonItems : BNE .continue
+
+	RTL
+
+.dungeon_positions
+		dw  0 ; Hyrule Castle
+		dw  2 ; Agahnims Tower
+		dw  6 ; Eastern
+		dw  8 ; Desert
+		dw 10 ; Hera
+		dw 14 ; PoD
+		dw 16 ; Swamp
+		dw 18 ; Skull Woods
+		dw 20 ; Thieves Town
+		dw 22 ; Ice
+		dw 24 ; Mire
+		dw 26 ; Turtle Rock
+		dw 30 ; Ganon's Tower
+
+.small_key_x_offset
+		dw $7EF37D-$7EF37D ; Hyrule Castle
+		dw $7EF380-$7EF37D ; Agahnims Tower
+		dw $7EF37E-$7EF37D ; Eastern
+		dw $7EF37F-$7EF37D ; Desert
+		dw $7EF386-$7EF37D ; Hera
+		dw $7EF382-$7EF37D ; PoD
+		dw $7EF381-$7EF37D ; Swamp
+		dw $7EF384-$7EF37D ; Skull Woods
+		dw $7EF387-$7EF37D ; Thieves Town
+		dw $7EF385-$7EF37D ; Ice
+		dw $7EF383-$7EF37D ; Mire
+		dw $7EF388-$7EF37D ; Turtle Rock
+		dw $7EF389-$7EF37D ; Ganon's Tower
+
+
+.dungeon_bitmasks
+		dw $4000 ; Hyrule Castle
+		dw $0800 ; Agahnims Tower
+		dw $2000 ; Eastern
+		dw $1000 ; Desert
+		dw $0020 ; Hera
+		dw $0200 ; PoD
+		dw $0400 ; Swamp
+		dw $0080 ; Skull Woods
+		dw $0010 ; Thieves Town
+		dw $0040 ; Ice
+		dw $0100 ; Mire
+		dw $0008 ; Turtle Rock
+		dw $0004 ; Ganon's Tower
+
+.boss_room_ids
+		dw $80*2 ; ; Hyrule Castle (BNC)
+		dw $20*2 ; ; Agahnim
+		dw $C8*2 ; ; Eastern
+		dw $33*2 ; ; Desert
+		dw $07*2 ; ; Hera
+		dw $5A*2 ; ; PoD
+		dw $06*2 ; ; Swamp
+		dw $29*2 ; ; Skull Woods
+		dw $AC*2 ; ; Thieves Town
+		dw $DE*2 ; ; Ice
+		dw $90*2 ; ; Mire
+		dw $A4*2 ; ; Turtle Rock
+		dw $0D*2 ; ; Ganon's Tower
+
+.continue
 	PHP
-	REP #$30 ; set 16-bit accumulator & index registers
-	
+
+	PHB
+	PHK
+	PLB
+
+	REP #$30
+
+;-------------------------------------------------------------------------------
 	; dungeon names
-	LDA.w #$2D50 : STA $1646 ; sewers
-	LDA.w #$2D54 : STA $1648 ; Agahnims Tower
+	LDA.w #$2D50
 
-	LDA.w #$2D51 : STA $164C ; Eastern
-	LDA.w #$2D52 : STA $164E ; Desert
-	LDA.w #$2D53 : STA $1650 ; Hera
+	LDY.w #0
 
-	LDA.w #$2D55 : STA $1654 ; PoD
-	LDA.w #$2D56 : STA $1656 ; Swamp
-	LDA.w #$2D57 : STA $1658 ; Skull Woods
-	LDA.w #$2D58 : STA $165A ; Thieves Town
-	LDA.w #$2D59 : STA $165C ; Ice
-	LDA.w #$2D5A : STA $165E ; Mire
-	LDA.w #$2D5B : STA $1660 ; Turtle Rock
- 
-	LDA.w #$2D5C : STA $1664 ; Ganon's Tower
+
+.next_dungeon_name
+	LDX.w .dungeon_positions,Y
+	STA.w $1646,X
+
+	INC
+
+	INY : INY
+	CPY.w #26 : BCC .next_dungeon_name
 
 	; write black
-	LDX.w #$0000 ; Paint entire box black & draw empty pendants and crystals
-	-
-		LDA #$24F5 : STA $1686, X : STA $16C6, X
-	INX #2 : CPX.w #$0020 : BCC -
+	LDX.w #$001E
+	LDA.w #$24F5
 
-	LDA !HUD_FLAG : AND.w #$0020 : BEQ + : JMP +++ : +
-	LDA HUDDungeonItems : AND.w #$0001 : BNE + : JMP ++ : +
+--	STA.w $1686,X
+	STA.w $16C6,X
+	STA.w $1706,X
+	
+	DEX : DEX : BPL --
+
+
+	LDA.l !HUD_FLAG : AND.w #$0020 : BEQ + : JMP +++ : +
+
+;-------------------------------------------------------------------------------
+
+	LDA HUDDungeonItems : AND.w #$0001 : BEQ .skip_small_keys
+
+.draw_small_keys
 		LDA.w #$2810 : STA $1684 ; small keys icon
-		SEP #$20 ; set 8-bit accumulator
-		; Small Keys
-		LDA.b #$16 : !ADD $7EF37D : STA $1686 : LDA.b #$28 : ADC #$00 : sta.w $1686+1 ; Hyrule Castle
-		LDA.b #$16 : !ADD $7EF380 : STA $1688 : LDA.b #$28 : ADC #$00 : sta.w $1688+1 ; Agahnims Tower
 
-		LDA.b #$16 : !ADD $7EF37E : STA $168C : LDA.b #$28 : ADC #$00 : sta.w $168C+1 ; Eastern
-		LDA.b #$16 : !ADD $7EF37F : STA $168E : LDA.b #$28 : ADC #$00 : sta.w $168E+1 ; Desert
-		LDA.b #$16 : !ADD $7EF386 : STA $1690 : LDA.b #$28 : ADC #$00 : sta.w $1690+1 ; Hera
+		LDY.w #0
 
-		LDA.b #$16 : !ADD $7EF382 : STA $1694 : LDA.b #$28 : ADC #$00 : sta.w $1694+1 ; PoD
-		LDA.b #$16 : !ADD $7EF381 : STA $1696 : LDA.b #$28 : ADC #$00 : sta.w $1696+1 ; Swamp
-		LDA.b #$16 : !ADD $7EF384 : STA $1698 : LDA.b #$28 : ADC #$00 : sta.w $1698+1 ; Skull Woods
-		LDA.b #$16 : !ADD $7EF387 : STA $169A : LDA.b #$28 : ADC #$00 : sta.w $169A+1 ; Thieves Town
-		LDA.b #$16 : !ADD $7EF385 : STA $169C : LDA.b #$28 : ADC #$00 : sta.w $169C+1 ; Ice
-		LDA.b #$16 : !ADD $7EF383 : STA $169E : LDA.b #$28 : ADC #$00 : sta.w $169E+1 ; Mire
-		LDA.b #$16 : !ADD $7EF388 : STA $16A0 : LDA.b #$28 : ADC #$00 : sta.w $16A0+1 ; Turtle Rock
+		; Clear the carry only once
+		; it will be cleared by looping condition afterwards
+		CLC
 
-		LDA.b #$16 : !ADD $7EF389 : STA $16A4 : LDA.b #$28 : ADC #$00 : sta.w $16A4+1 ; Ganon's Tower
+.next_small_key
+		LDX.w .small_key_x_offset,Y
+		LDA.l $7EF37D,X
+		AND.w #$00FF
 
-		REP #$20 ; set 16-bit accumulator
-	++
+		LDX.w .dungeon_positions,Y
+		ADC.w #$2816
+		STA.w $1686,X
+
+		INY : INY
+		CPY.w #26 : BCC .next_small_key
+
+;-------------------------------------------------------------------------------
+
+.skip_small_keys
 
 	; Big Keys
-	LDA HUDDungeonItems : AND.w #$0002 : BNE + : JMP ++ : +
+	LDA HUDDungeonItems : AND.w #$0002 : BEQ .skip_big_keys
+
+
 		LDA.w #$2811 : STA $16C4 ; big key icon
-		LDA $7EF367 : AND.w #$0040 : BEQ + ; Hyrule Castle
-			LDA.w #$2826 : STA $16C6
-		+
-		LDA $7EF367 : AND.w #$0008 : BEQ + ; Agahnims Tower
-			LDA.w #$2826 : STA $16C8
-		+
-		LDA $7EF367 : AND.w #$0020 : BEQ + ; Eastern
-			LDA.w #$2826 : STA $16CC
-		+
-		LDA $7EF367 : AND.w #$0010 : BEQ + ; Desert
-			LDA.w #$2826 : STA $16CE
-		+
-		LDA $7EF366 : AND.w #$0020 : BEQ + ; Hera
-			LDA.w #$2826 : STA $16D0
-		+
-		LDA $7EF367 : AND.w #$0002 : BEQ + ; PoD
-			LDA.w #$2826 : STA $16D4
-		+
-		LDA $7EF367 : AND.w #$0004 : BEQ + ; Swamp
-			LDA.w #$2826 : STA $16D6
-		+
-		LDA $7EF366 : AND.w #$0080 : BEQ + ; Skull Woods
-			LDA.w #$2826 : STA $16D8
-		+
-		LDA $7EF366 : AND.w #$0010 : BEQ + ; Thieves Town
-			LDA.w #$2826 : STA $16DA
-		+
-		LDA $7EF366 : AND.w #$0040 : BEQ + ; Ice
-			LDA.w #$2826 : STA $16DC
-		+
-		LDA $7EF367 : AND.w #$0001 : BEQ + ; Mire
-			LDA.w #$2826 : STA $16DE
-		+
-		LDA $7EF366 : AND.w #$0008 : BEQ + ; Turtle Rock
-			LDA.w #$2826 : STA $16E0
-		+
-		LDA $7EF366 : AND.w #$0004 : BEQ + ; Ganon's Tower
-			LDA.w #$2826 : STA $16E4
-		+
-	++
+
+		; use X so we can BIT
+		LDX.w #0
+
+		; load once and test multiple times
+		LDA.l $7EF366
+
+.next_big_key
+		BIT.w .dungeon_bitmasks,X
+		BEQ ..skip_key
+
+		LDY.w .dungeon_positions,X
+		LDA.w #$2826
+		STA.w $16C6,Y
+
+		; reload
+		LDA.l $7EF366
+
+..skip_key
+		INX : INX
+		CPX.w #26 : BCC .next_big_key
+
+;-------------------------------------------------------------------------------
+
+.skip_big_keys
+
+	LDA HUDDungeonItems : AND.w #$0010 : BEQ .skip_boss_kills
+
+		LDA.w #$0000 : STA $1704 ; skull icon TODO
+
+		LDY.w #0
+
+.next_boss_kill
+		LDX.w .boss_room_ids,Y
+		LDA.l $7EF000,X
+		AND.w #$0400
+		BEQ ..skip_boss_kill
+
+		LDA.w #$2826
+		LDX.w .dungeon_positions,Y
+		STA.w $1706,Y
+
+..skip_boss_kill
+		INY : INY
+		CPY.w #26 : BCC .next_boss_kill
+
+;-------------------------------------------------------------------------------
+
+.skip_boss_kills
 
 	; This should only display if select is pressed in hud
 	+++
 	LDA !HUD_FLAG : AND.w #$0020 : BNE + : JMP +++ : +
 	; Maps
-	LDA HUDDungeonItems : AND.w #$0004 : BNE + : JMP ++ : +
+	LDA HUDDungeonItems : AND.w #$0004 : BEQ .skip_maps
 		LDA.w #$2821 : STA $1684 ; map icon
-		LDA $7EF369 : AND.w #$0040 : BEQ + ; Hyrule Castle
-			LDA.w #$2826 : STA $1686
-		+
-		LDA $7EF369 : AND.w #$0008 : BEQ + ; Agahnims Tower
-			LDA.w #$2826 : STA $1688
-		+
-		LDA $7EF369 : AND.w #$0020 : BEQ + ; Eastern
-			LDA.w #$2826 : STA $168C
-		+
-		LDA $7EF369 : AND.w #$0010 : BEQ + ; Desert
-			LDA.w #$2826 : STA $168E
-		+
-		LDA $7EF368 : AND.w #$0020 : BEQ + ; Hera
-			LDA.w #$2826 : STA $1690
-		+
-		LDA $7EF369 : AND.w #$0002 : BEQ + ; PoD
-			LDA.w #$2826 : STA $1694
-		+
-		LDA $7EF369 : AND.w #$0004 : BEQ + ; Swamp
-			LDA.w #$2826 : STA $1696
-		+
-		LDA $7EF368 : AND.w #$0080 : BEQ + ; Skull Woods
-			LDA.w #$2826 : STA $1698
-		+
-		LDA $7EF368 : AND.w #$0010 : BEQ + ; Thieves Town
-			LDA.w #$2826 : STA $169A
-		+
-		LDA $7EF368 : AND.w #$0040 : BEQ + ; Ice
-			LDA.w #$2826 : STA $169C
-		+
-		LDA $7EF369 : AND.w #$0001 : BEQ + ; Mire
-			LDA.w #$2826 : STA $169E
-		+
-		LDA $7EF368 : AND.w #$0008 : BEQ + ; Turtle Rock
-			LDA.w #$2826 : STA $16A0
-		+
-		LDA $7EF368 : AND.w #$0004 : BEQ + ; Ganon's Tower
-			LDA.w #$2826 : STA $16A4
-		+
-	++
+
+		; use X so we can BIT
+		LDX.w #0
+
+		; load once and test multiple times
+		LDA.l $7EF368
+
+.next_map
+		BIT.w .dungeon_bitmasks,X
+		BEQ ..skip_map
+
+		LDY.w .dungeon_positions,X
+		LDA.w #$2826
+		STA.w $1686,Y
+
+		; reload
+		LDA.l $7EF368
+
+..skip_map
+		INX : INX
+		CPX.w #26 : BCC .next_map
+
+;-------------------------------------------------------------------------------
+
+.skip_maps
 
 	; Compasses
-	LDA HUDDungeonItems : AND.w #$0008 : BNE + : JMP ++ : +
+	LDA HUDDungeonItems : AND.w #$0008 : BEQ .skip_compasses
 		LDA.w #$2C20 : STA $16C4 ; compass icon
-		LDA $7EF365 : AND.w #$0040 : BEQ + ; Hyrule Castle
-			LDA.w #$2C26 : STA $16C6
-		+
-		LDA $7EF365 : AND.w #$0008 : BEQ + ; Agahnims Tower
-			LDA.w #$2C26 : STA $16C8
-		+
-		LDA $7EF365 : AND.w #$0020 : BEQ + ; Eastern
-			LDA.w #$2C26 : STA $16CC
-		+
-		LDA $7EF365 : AND.w #$0010 : BEQ + ; Desert
-			LDA.w #$2C26 : STA $16CE
-		+
-		LDA $7EF364 : AND.w #$0020 : BEQ + ; Hera
-			LDA.w #$2C26 : STA $16D0
-		+
-		LDA $7EF365 : AND.w #$0002 : BEQ + ; PoD
-			LDA.w #$2C26 : STA $16D4
-		+
-		LDA $7EF365 : AND.w #$0004 : BEQ + ; Swamp
-			LDA.w #$2C26 : STA $16D6
-		+
-		LDA $7EF364 : AND.w #$0080 : BEQ + ; Skull Woods
-			LDA.w #$2C26 : STA $16D8
-		+
-		LDA $7EF364 : AND.w #$0010 : BEQ + ; Thieves Town
-			LDA.w #$2C26 : STA $16DA
-		+
-		LDA $7EF364 : AND.w #$0040 : BEQ + ; Ice
-			LDA.w #$2C26 : STA $16DC
-		+
-		LDA $7EF365 : AND.w #$0001 : BEQ + ; Mire
-			LDA.w #$2C26 : STA $16DE
-		+
-		LDA $7EF364 : AND.w #$0008 : BEQ + ; Turtle Rock
-			LDA.w #$2C26 : STA $16E0
-		+
-		LDA $7EF364 : AND.w #$0004 : BEQ + ; Ganon's Tower
-			LDA.w #$2C26 : STA $16E4
-		+
-	++ : +++
+
+		; use X so we can BIT
+		LDX.w #0
+
+		; load once and test multiple times
+		LDA.l $7EF364
+
+.next_compass
+		BIT.w .dungeon_bitmasks,X
+		BEQ ..skip_compass
+
+		LDY.w .dungeon_positions,X
+		LDA.w #$2826
+		STA.w $16C6,Y
+
+		; reload
+		LDA.l $7EF364
+
+..skip_compass
+		INX : INX
+		CPX.w #26 : BCC .next_compass
+
+;-------------------------------------------------------------------------------
+
+.skip_compasses
+
++++
+	PLB
 	PLP
 RTL
 ;--------------------------------------------------------------------------------
