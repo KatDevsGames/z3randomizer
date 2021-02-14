@@ -524,58 +524,77 @@ DrawPendantCrystalDiagram:
 		REP #$30 ; Set 16-bit accumulator & index registers
 		LDX.w #$0000 ; Paint entire box black & draw empty pendants and crystals
 		-
-	        LDA.l .row0, X : STA $12EA, X
-	        LDA.l .row1, X : STA $132A, X
-	        LDA.l .row2, X : STA $136A, X
-	        LDA.l .row3, X : STA $13AA, X
-	        LDA.l .row4, X : STA $13EA, X
-	        LDA.l .row5, X : STA $142A, X
-	        LDA.l .row6, X : STA $146A, X
-	        LDA.l .row7, X : STA $14AA, X
-	        LDA.l .row8, X : STA $14EA, X
+		LDA.l .row0, X : STA $12EA, X
+		LDA.l .row1, X : STA $132A, X
+		LDA.l .row2, X : STA $136A, X
+		LDA.l .row3, X : STA $13AA, X
+		LDA.l .row4, X : STA $13EA, X
+		LDA.l .row5, X : STA $142A, X
+		LDA.l .row6, X : STA $146A, X
+		LDA.l .row7, X : STA $14AA, X
+		LDA.l .row8, X : STA $14EA, X
 		INX #2 : CPX.w #$0014 : BCC -
 		
-		;pendants
-		LDA $7EF374 : AND.w #$0004 : BEQ + ; pendant of courage (green)
-			LDA.w #$3D2B : STA $1332
-			LDA.w #$3D2C : STA $1334
-			LDA.w #$3D2D : STA $1372
-			LDA.w #$3D2E : STA $1374
-		+ LDA $7EF374 : AND.w #$0002 : BEQ + ; pendant of power (blue)
-			LDA.w #$2D2B : STA $13AE
-			LDA.w #$2D2C : STA $13B0
-			LDA.w #$2D2D : STA $13EE
-			LDA.w #$2D2E : STA $13F0
-		+ LDA $7EF374 : AND.w #$0001 : BEQ + ; pendant of wisdom (red)
-			LDA.w #$252B : STA $13B6
-			LDA.w #$252C : STA $13B8
-			LDA.w #$252D : STA $13F6
-			LDA.w #$252E : STA $13F8
+		; pendants
+		LDA $7EF374
+
+		  LSR : BCC + ; pendant of wisdom (red)
+			LDX.w #$252B
+			STX.w $13B6
+			INX : STX.w $13B8
+			INX : STX.w $13F6
+			INX : STX.w $13F8
+
+		+ LSR : BCC + ; pendant of power (blue)
+			LDX.w #$2D2B
+			STX.w $13AE
+			INX : STX.w $13B0
+			INX : STX.w $13EE
+			INX : STX.w $13F0
+
+		+ LSR : BCC + ; pendant of courage (green)
+			LDX.w #$3D2B
+			STX.w $1332
+			INX : STX.w $1334
+			INX : STX.w $1372
+			INX : STX.w $1374
 		+
-		
-		;crystals
-		LDA $7EF37A : AND.w #$0002 : BEQ + ; crystal 1
-			LDA.w #$2D44 : STA $14AC
-			LDA.w #$2D45 : STA $14AE
-		+ LDA $7EF37A : AND.w #$0010 : BEQ + ; crystal 2
-			LDA.w #$2D44 : STA $146E
-			LDA.w #$2D45 : STA $1470
-		+ LDA $7EF37A : AND.w #$0040 : BEQ + ; crystal 3
-			LDA.w #$2D44 : STA $14B0
-			LDA.w #$2D45 : STA $14B2
-		+ LDA $7EF37A : AND.w #$0020 : BEQ + ; crystal 4
-			LDA.w #$2D44 : STA $1472
-			LDA.w #$2D45 : STA $1474
-		+ LDA $7EF37A : AND.w #$0004 : BEQ + ; crystal 5
-			LDA.w #$2544 : STA $14B4
-			LDA.w #$2545 : STA $14B6
-		+ LDA $7EF37A : AND.w #$0001 : BEQ + ; crystal 6
-			LDA.w #$2544 : STA $1476
-			LDA.w #$2545 : STA $1478
-		+ LDA $7EF37A : AND.w #$0008 : BEQ + ; crystal 7
-			LDA.w #$2D44 : STA $14B8
-			LDA.w #$2D45 : STA $14BA
+
+
+
+		; crystals
+		LDA $7EF37A
+		LDX.w #$2D44
+		LDY.w #$2D45
+
+		  BIT.w #$0002 : BEQ + ; crystal 1
+			STX.w $14AC
+			STY.w $14AE
+		+ BIT.w #$0010 : BEQ + ; crystal 2
+			STX.w $146E
+			STY.w $1470
+		+ BIT.w #$0040 : BEQ + ; crystal 3
+			STX.w $14B0
+			STY.w $14B2
+		+ BIT.w #$0020 : BEQ + ; crystal 4
+			STX.w $1472
+			STY.w $1474
+		+ BIT.w #$0008 : BEQ + ; crystal 7
+			STX.w $14B8
+			STY.w $14BA
 		+ 
+
+		LDX.w #$2544
+		LDY.w #$2545
+
+		  BIT.w #$0004 : BEQ + ; crystal 5
+			STX.w $14B4
+			STY.w $14B6
+		+ BIT.w #$0001 : BEQ + ; crystal 6
+			STX.w $1476
+			STY.w $1478
+		+
+
 	PLB : PLP
 RTL
 ;================================================================================
