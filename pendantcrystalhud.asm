@@ -366,8 +366,11 @@ DrawHUDDungeonItems:
 	DEX : DEX : BPL --
 
 
-	LDA.l !HUD_FLAG : AND.w #$0020 : BEQ + : JMP +++ : +
+	LDA.l !HUD_FLAG : AND.w #$0020 : BEQ + 
 
+	JMP .maps_and_compasses
+
++
 ;-------------------------------------------------------------------------------
 
 	LDA HUDDungeonItems : AND.w #$0001 : BEQ .skip_small_keys
@@ -430,7 +433,7 @@ DrawHUDDungeonItems:
 
 	LDA HUDDungeonItems : AND.w #$0010 : BEQ .skip_boss_kills
 
-		LDA.w #$0000 : STA $1704 ; skull icon TODO
+		LDA.w #$280F : STA $1704 ; skull icon
 
 		LDY.w #0
 
@@ -451,10 +454,13 @@ DrawHUDDungeonItems:
 ;-------------------------------------------------------------------------------
 
 .skip_boss_kills
+	JMP .exit
+
+;-------------------------------------------------------------------------------
 
 	; This should only display if select is pressed in hud
-	+++
-	LDA !HUD_FLAG : AND.w #$0020 : BNE + : JMP +++ : +
+ .maps_and_compasses
+
 	; Maps
 	LDA HUDDungeonItems : AND.w #$0004 : BEQ .skip_maps
 		LDA.w #$2821 : STA $1684 ; map icon
@@ -513,7 +519,7 @@ DrawHUDDungeonItems:
 
 .skip_compasses
 
-+++
+.exit
 	PLB
 	PLP
 RTL
