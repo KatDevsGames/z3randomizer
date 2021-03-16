@@ -38,6 +38,7 @@ QuickSwap:
 	CPX.b #$01 : BEQ + ; bow
 	CPX.b #$05 : BEQ + ; powder
 	CPX.b #$0D : BEQ + ; flute
+	CPX.b #$10 : BEQ + ; bottle
 	BRA .store
 	+ STX $0202 : JSL ProcessMenuButtons_y_pressed
 
@@ -54,20 +55,20 @@ RTL
 RCode:
 	LDA.w $0202 : TAX
 	-
-		CPX.b #$0F : BNE + ; incrementing into bottle
-			LDX.b #$00 : BRA ++
-		+ CPX.b #$10 : BNE + ; incrementing bottle
-			LDA.l $7EF34F : TAX
-			-- : ++
-				CPX.b #$04 : BEQ .noMoreBottles
-				INX
-				LDA.l $7EF35B,X : BEQ --
-			TXA : STA.l $7EF34F
-			LDX #$10
-			RTS
-			.noMoreBottles
-			LDX #$11
-			BRA .nextItem
+;		CPX.b #$0F : BNE + ; incrementing into bottle
+;			LDX.b #$00 : BRA ++
+;		+ CPX.b #$10 : BNE + ; incrementing bottle
+;			LDA.l $7EF34F : TAX
+;			-- : ++
+;				CPX.b #$04 : BEQ .noMoreBottles
+;				INX
+;				LDA.l $7EF35B,X : BEQ --
+;			TXA : STA.l $7EF34F
+;			LDX #$10
+;			RTS
+;			.noMoreBottles
+;			LDX #$11
+;			BRA .nextItem
 		+ CPX.b #$14 : BNE + : LDX.b #$00 ;will wrap around to 1
 		+ INX
 	.nextItem
@@ -77,19 +78,19 @@ RTS
 LCode:
 	LDA.w $0202 : TAX
 	-
-		CPX.b #$11 : BNE + ; decrementing into bottle
-			LDX.b #$05 : BRA ++
-		+ CPX.b #$10 : BNE +	; decrementing bottle
-			LDA.l $7EF34F : TAX
-			-- : ++
-				CPX.b #$01 : BEQ .noMoreBottles
-				DEX
-				LDA.l $7EF35B,X : BEQ --
-			TXA : STA.l $7EF34F
-			LDX.b #$10
-			RTS
-			.noMoreBottles
-			LDX.b #$0F : BRA .nextItem
+;		CPX.b #$11 : BNE + ; decrementing into bottle
+;			LDX.b #$05 : BRA ++
+;		+ CPX.b #$10 : BNE +	; decrementing bottle
+;			LDA.l $7EF34F : TAX
+;			-- : ++
+;				CPX.b #$01 : BEQ .noMoreBottles
+;				DEX
+;				LDA.l $7EF35B,X : BEQ --
+;			TXA : STA.l $7EF34F
+;			LDX.b #$10
+;			RTS
+;			.noMoreBottles
+;			LDX.b #$0F : BRA .nextItem
 		+ CPX.b #$01 : BNE + : LDX.b #$15 ; will wrap around to $14
 		+ DEX
 	.nextItem
