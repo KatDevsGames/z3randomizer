@@ -8,16 +8,17 @@
 macro DrawConstantNumber(digit1,digit2) 
 	LDA.w #$2490+<digit1> : STA $7EC79A
 	LDA.w #$2490+<digit2> : STA $7EC79C
+	SEP #$20
 endmacro
 ;--------------------------------------------------------------------------------
 
 DrawDungeonCompassCounts:
 	LDX $1B : BNE + : RTL : + ; Skip if outdoors
-	LDX $040C : CPX.b #$FF : BNE + : RTL : + ; Skip if not in a dungeon
+	LDX $040C : CPX.b #$FF : BEQ .done ; Skip if not in a dungeon
 
 	CMP.w #$0002 : BEQ ++ ; if CompassMode==2, we don't check for the compass
 		LDA $7EF364 : AND.l .item_masks, X ; Load compass values to A, mask with dungeon item masks
-		BNE + : RTL : + ; skip if we don't have compass
+		BEQ .done ; skip if we don't have compass
 	++
 	
 	JMP (CompassCountDungeonHandlers, X) : .return_spot
@@ -48,79 +49,66 @@ CompassCountDungeonHandlers: ; pointers to functions that handle dungeon-specifi
 
 CompassCount_Escape:
 	%DrawConstantNumber(0,8)
-	SEP #$20
 	LDA $7EF434 : LSR #4
 	JMP DrawDungeonCompassCounts_return_spot
 	
 CompassCount_Eastern:
 	%DrawConstantNumber(0,6)
-	SEP #$20
 	LDA $7EF436 : AND.b #$07
 	JMP DrawDungeonCompassCounts_return_spot
 	
 CompassCount_Desert: 
 	%DrawConstantNumber(0,6)
-	SEP #$20
 	LDA $7EF435 : LSR #5
 	JMP DrawDungeonCompassCounts_return_spot
 
 CompassCount_Agah:
 	%DrawConstantNumber(0,2)
-	SEP #$20
 	LDA $7EF435 : AND.b #$02
 	JMP DrawDungeonCompassCounts_return_spot
 
 CompassCount_Swamp:
 	%DrawConstantNumber(1,0)
-	SEP #$20
 	LDA $7EF439 : AND.b #$0F
 	JMP DrawDungeonCompassCounts_return_spot
 
 CompassCount_PoD:
 	%DrawConstantNumber(1,4)
-	SEP #$20
 	LDA $7EF434 : AND.b #$0F
 	JMP DrawDungeonCompassCounts_return_spot
 
 CompassCount_Mire:
 	%DrawConstantNumber(0,8)
-	SEP #$20
 	LDA $7EF438 : AND.b #$0F
 	JMP DrawDungeonCompassCounts_return_spot
 	
 CompassCount_Skull:
 	%DrawConstantNumber(0,8)
-	SEP #$20
 	LDA $7EF437 : LSR #4 
 	JMP DrawDungeonCompassCounts_return_spot
 	
 CompassCount_Ice:
 	%DrawConstantNumber(0,8)
-	SEP #$20
 	LDA $7EF438 : LSR #4 
 	JMP DrawDungeonCompassCounts_return_spot
 
 CompassCount_Hera:
 	%DrawConstantNumber(0,6)
-	SEP #$20
 	LDA $7EF435 : AND.b #$1C : LSR #2
 	JMP DrawDungeonCompassCounts_return_spot
 	
 CompassCount_Thieves:
 	%DrawConstantNumber(0,8)
-	SEP #$20
 	LDA $7EF437 : AND.b #$0F
 	JMP DrawDungeonCompassCounts_return_spot
 	
 CompassCount_Trock:
 	%DrawConstantNumber(1,2)
-	SEP #$20
 	LDA $7EF439 : LSR #4
 	JMP DrawDungeonCompassCounts_return_spot
 	
 CompassCount_Gt:
 	%DrawConstantNumber(2,7)
-	SEP #$20
 	LDA $7EF436 : LSR #3
 	JMP DrawDungeonCompassCounts_return_spot
 
