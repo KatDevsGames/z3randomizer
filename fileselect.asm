@@ -113,7 +113,7 @@ JMP DrawItem
 
 
 DrawPlayerFile:
-	LDA $1A : AND.w #$0001 : BEQ + : BRA .normal : +
+	LDA $1A : AND.w #$0001 : BNE .normal
 		JSR DrawPlayerFileShared
 		INC $0710 ; Suppress animated tile updates for this frame
 
