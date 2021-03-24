@@ -11,8 +11,7 @@ OnPrepFileSelect:
 		RTL
 	+
 	JSL.l LoadAlphabetTilemap
-	JSL.l LoadFullItemTiles
-RTL
+	JML.l LoadFullItemTiles
 ;--------------------------------------------------------------------------------
 OnDrawHud:
 	JSL.l DrawChallengeTimer ; this has to come before NewDrawHud because the timer overwrites the compass counter
@@ -77,15 +76,14 @@ RTL
 ;--------------------------------------------------------------------------------
 OnAga2Defeated:
 	JSL.l Dungeon_SaveRoomData_justKeys ; thing we wrote over, make sure this is first
-	JSL.l IncrementAgahnim2Sword
-RTL
+	JML.l IncrementAgahnim2Sword
 ;--------------------------------------------------------------------------------
 !RNG_ITEM_LOCK_IN = "$7F5090"
 OnFileLoad:
 	REP #$10 ; set 16 bit index registers
 	JSL.l EnableForceBlank ; what we wrote over
 
-	LDA.b #$07 : STA $210c ; Restore screen 3 to normal tile area
+	LDA.b #$07 : STA $210C ; Restore screen 3 to normal tile area
 
 	LDA !FRESH_FILE_MARKER : BNE +
 		JSL.l OnNewFile
@@ -161,8 +159,8 @@ RTL
 ;--------------------------------------------------------------------------------
 OnLinkDamaged:
 	JSL.l FlipperKill
-	JSL.l OHKOTimer
-RTL
+	JML.l OHKOTimer
+
 ;--------------------------------------------------------------------------------
 OnEnterWater:
 	JSL.l RegisterWaterEntryScreen
@@ -177,8 +175,8 @@ OnLinkDamagedFromPit:
 RTL
 ;--------------------------------------------------------------------------------
 OnLinkDamagedFromPitOutdoors:
-	JSL.l OHKOTimer ; make sure this is last
-RTL
+	JML.l OHKOTimer ; make sure this is last
+
 ;--------------------------------------------------------------------------------
 !RNG_ITEM_LOCK_IN = "$7F5090"
 OnOWTransition:
@@ -201,16 +199,16 @@ OnLoadDuckMap:
 		RTL
 	+
 	LDA.b #$00 : STA !DARK_DUCK_TEMP
-	JSL OverworldMap_DarkWorldTilemap
-RTL
+	JML OverworldMap_DarkWorldTilemap
+
 ;--------------------------------------------------------------------------------
 PreItemGet:
 	LDA.b #$01 : STA !ITEM_BUSY ; mark item as busy
 RTL
 ;--------------------------------------------------------------------------------
 PostItemGet:
-	JSL.l MaybeWriteSRAMTrace
-RTL
+	JML.l MaybeWriteSRAMTrace
+
 ;--------------------------------------------------------------------------------
 PostItemAnimation:
 	LDA.b #$00 : STA !ITEM_BUSY ; mark item as finished
