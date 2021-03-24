@@ -4,18 +4,10 @@
 ;--------------------------------------------------------------------------------
 NewBatInit:
 	;check if map id == 240 or 241
-	LDA $A0 : CMP #$F0 : BNE + ;oldman cave1
-		BRA .light_world
-	+
-	CMP #$F1 : BNE + ;oldman cave2
-		BRA .light_world
-	+
-	CMP #$B0 : BNE + ;agahnim statue keese
-		BRA .light_world
-	+
-	CMP #$D0 : BNE + ;agahnim darkmaze
-		BRA .light_world
-	+
+	LDA $A0 : CMP #$F0 : BEQ .light_world ;oldman cave1
+	CMP #$F1 : BEQ .light_world ;oldman cave2
+	CMP #$B0 : BEQ .light_world ;agahnim statue keese
+	CMP #$D0 : BEQ .light_world ;agahnim darkmaze
 
 	CPY #$00 : BEQ .light_world
 	LDA.b #$85 : STA $0CD2, X
