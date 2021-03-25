@@ -379,30 +379,19 @@ CheckIfBossRoom:
 ;--------------------------------------------------------------------------------
 	REP #$20 ; set 16-bit accumulator
 	LDA $A0 ; these are all decimal because i got them that way
-	CMP.w #200 : BNE +
-		SEC : JMP .done
-	+ CMP.w #51 : BNE +
-		SEC : JMP .done
-	+ CMP.w #7 : BNE +
-		SEC : JMP .done
-	+ CMP.w #90 : BNE +
-		SEC : JMP .done
-	+ CMP.w #6 : BNE +
-		SEC : JMP .done
-	+ CMP.w #41 : BNE +
-		SEC : JMP .done
-	+ CMP.w #172 : BNE +
-		SEC : JMP .done
-	+ CMP.w #222 : BNE +
-		SEC : JMP .done
-	+ CMP.w #144 : BNE +
-		SEC : JMP .done
-	+ CMP.w #164 : BNE +
-		SEC : JMP .done
-	+
+	CMP.w #200 : BEQ .done
+	CMP.w #51 : BEQ .done
+	CMP.w #7 : BEQ .done
+	CMP.w #90 : BEQ .done
+	CMP.w #6 : BEQ .done
+	CMP.w #41 : BEQ .done
+	CMP.w #172 : BEQ .done
+	CMP.w #222 : BEQ .done
+	CMP.w #144 : BEQ .done
+	CMP.w #164 : BEQ .done
 	CLC
 	.done
-	SEP #$20 ; set 8-bit accumulator
++	SEP #$20 ; set 8-bit accumulator
 RTL
 ;--------------------------------------------------------------------------------
 ;#200 - Eastern Palace - Armos Knights
