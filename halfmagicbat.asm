@@ -7,8 +7,7 @@ GetMagicBatItem:
 	CMP.b #$FF : BEQ .normalLogic
 	TAY
 	STZ $02E9 ; 0 = Receiving item from an NPC or message
-	JSL.l Link_ReceiveItem
-RTL
+	JML.l Link_ReceiveItem
 .normalLogic
 	LDA HalfMagic
 	STA $7EF37B
