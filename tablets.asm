@@ -79,13 +79,13 @@ IsMedallion:
 	CMP.w #$03 : BNE + ; Death Mountain
 		LDA $22 : CMP.w #1890 : !BGE ++
 			SEC
-			BRL .done
+			JMP .done
 		++
 		BRA .false
 	+ CMP.w #$30 : BNE + ; Desert
 		LDA $22 : CMP.w #512 : !BLT ++
 			SEC
-			BRL .done
+			JMP .done
 		++
 	+
 	.false

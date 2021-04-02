@@ -166,7 +166,7 @@ GetSmithSword:
 ;================================================================================
 CheckMedallionSword:
 	PHB : PHX : PHY
-		LDA.l AllowSwordlessMedallionUse : BNE +++ : BRL + : +++
+		LDA.l AllowSwordlessMedallionUse : BNE +++ : JMP + : +++
 			LDA $1B : BEQ .outdoors
 			.indoors
 				REP #$20 ; set 16-bit accumulator
@@ -174,11 +174,11 @@ CheckMedallionSword:
 				CMP.w #$000E : BNE ++ : .freezor1
 					LDA $22 : AND.w #$01FF : CMP.w #368-8 : !BLT .normal : CMP.w #368+32-8 : !BGE .normal ; check x-coord
 					LDA $20 : AND.w #$01FF : CMP.w #400-22 : !BLT .normal : CMP.w #400+32-22 : !BGE .normal ; check y-coord
-					BRL .permit
+					JMP .permit
 				++ : CMP.w #$007E : BNE ++ : .freezor2
 					LDA $22 : AND.w #$01FF : CMP.w #112-8 : !BLT .normal : CMP.w #112+32-8 : !BGE .normal ; check x-coord
 					LDA $20 : AND.w #$01FF : CMP.w #400-22 : !BLT .normal : CMP.w #400+32-22 : !BGE .normal ; check y-coord
-					BRL .permit
+					JMP .permit
 				++ : CMP.w #$00DE : BNE ++ : .kholdstare
 					LDA $22 : AND.w #$01FF : CMP.w #368-8 : !BLT .normal : CMP.w #368+32-8 : !BGE .normal ; check x-coord
 					LDA $20 : AND.w #$01FF : CMP.w #144-22 : !BLT .normal : CMP.w #144+32-22 : !BGE .normal ; check y-coord

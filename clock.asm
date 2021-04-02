@@ -144,7 +144,7 @@ Clock_QuickStamp:
 		LDX #$00;
 		-
 			LDA $002800 : AND.b #$0F : CMP #$0F : BEQ .ready ; check for clock chip ready signal
-			CPX.b #$0E : !BLT ++ : CLC : BRL .done : ++ ; if we've read 14 bytes with no success, unset carry and exit
+			CPX.b #$0E : !BLT ++ : CLC : JMP .done : ++ ; if we've read 14 bytes with no success, unset carry and exit
 			INX
 		BRA -
 		SEC ; indicate success
@@ -226,7 +226,7 @@ Clock_GetTime:
 		LDX #$00;
 		-
 			LDA $002800 : AND.b #$0F : CMP #$0F : BEQ .ready ; check for clock chip ready signal
-			CPX.b #$0E : !BLT ++ : CLC : BRL .done : ++ ; if we've read 14 bytes with no success, unset carry and exit
+			CPX.b #$0E : !BLT ++ : CLC : JMP .done : ++ ; if we've read 14 bytes with no success, unset carry and exit
 			INX
 		BRA -
 		SEC ; indicate success

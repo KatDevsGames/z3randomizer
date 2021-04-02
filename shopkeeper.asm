@@ -70,10 +70,10 @@ DrawPrice:
 		LDY.b #$FF
 		LDX #$00 ; clear bigram pointer
 
-		LDA $0C : CMP.w #1000 : !BLT + : BRL .len4 : +
-				  CMP.w #100 : !BLT + : BRL .len3 : +
-				  CMP.w #10 : !BLT + : BRL .len2 : +
-				  CMP.w #1 : !BLT + : BRL .len1 : +
+		LDA $0C : CMP.w #1000 : !BLT + : JMP .len4 : +
+				  CMP.w #100 : !BLT + : JMP .len3 : +
+				  CMP.w #10 : !BLT + : JMP .len2 : +
+				  CMP.w #1 : !BLT + : JMP .len1 : +
 
 			.len4
 				%DrawDigit(#1000,#6)
@@ -149,7 +149,7 @@ SpritePrep_ShopKeeper:
 	.fail
 	SEP #$20 ; set 8-bit accumulator
 	LDA.b #$FF : STA !SHOP_TYPE ; $FF = error condition
-	BRL .done
+	JMP .done
 	
 	.success
 	SEP #$20 ; set 8-bit accumulator
@@ -157,10 +157,10 @@ SpritePrep_ShopKeeper:
 	LDX.w #$0000
 	LDY.w #$0000
 	-
-		TYA : CMP !SHOP_CAPACITY : !BLT ++ : BRL .stop : ++
-		LDA.l ShopContentsTable+1, X : CMP.b #$FF : BNE ++ : BRL .stop : ++
+		TYA : CMP !SHOP_CAPACITY : !BLT ++ : JMP .stop : ++
+		LDA.l ShopContentsTable+1, X : CMP.b #$FF : BNE ++ : JMP .stop : ++
 		
-		LDA.l ShopContentsTable, X : CMP !SHOP_ID : BEQ ++ : BRL .next : ++
+		LDA.l ShopContentsTable, X : CMP !SHOP_ID : BEQ ++ : JMP .next : ++
 			LDA.l ShopContentsTable+1, X : PHX : TYX : STA.l !SHOP_INVENTORY, X : PLX
 			LDA.l ShopContentsTable+2, X : PHX : TYX : STA.l !SHOP_INVENTORY+1, X : PLX
 			LDA.l ShopContentsTable+3, X : PHX : TYX : STA.l !SHOP_INVENTORY+2, X : PLX
@@ -191,7 +191,7 @@ SpritePrep_ShopKeeper:
 		
 		.next
 		INX #8
-	BRL -
+	JMP -
 	.stop
 	
 	;LDA $A0 : CMP.b #$FF : BNE .normal
@@ -289,7 +289,7 @@ Shopkeeper_UploadVRAMTiles:
 		LDA #$7E : STA $4304
 
 		LDA !SHOP_TYPE : AND.b #$10 : BNE .special
-		BRL .normal
+		JMP .normal
 
 	.special
 
@@ -322,7 +322,7 @@ Shopkeeper_UploadVRAMTiles:
 		LDA #$80 : STA $2116 ; set VRAM register destination address
 		LDA #$5B : STA $2117
 		LDA #$01 : STA $420B ; begin DMA transfer
-		BRL .end
+		JMP .end
 
 	.normal
 		LDA #$40 : STA $4305 : STZ $4306 ; set transfer size to 0x40
@@ -456,9 +456,9 @@ endmacro
 Shopkeeper_DrawMerchant:
 	LDA.l !SHOP_MERCHANT : AND.b #$07
 	BEQ Shopkeeper_DrawMerchant_Type0
-	CMP.b #$01 : BNE + : BRL Shopkeeper_DrawMerchant_Type1 : +
-	CMP.b #$02 : BNE + : BRL Shopkeeper_DrawMerchant_Type2 : +
-	CMP.b #$03 : BNE + : BRL Shopkeeper_DrawMerchant_Type3 : +
+	CMP.b #$01 : BNE + : JMP Shopkeeper_DrawMerchant_Type1 : +
+	CMP.b #$02 : BNE + : JMP Shopkeeper_DrawMerchant_Type2 : +
+	CMP.b #$03 : BNE + : JMP Shopkeeper_DrawMerchant_Type3 : +
 	CMP.b #$04 : BNE + : RTS : +
 ;--------------------------------------------------------------------------------
 Shopkeeper_DrawMerchant_Type0:
@@ -546,13 +546,13 @@ Shopkeeper_BuyItem:
 	        LDY.b #$01
 	        JSL.l Sprite_ShowMessageUnconditional
 			LDA.b #$3C : STA $012E ; error sound
-			BRL .done
+			JMP .done
 		.full_bottles
 	        LDA.b #$6B
 	        LDY.b #$01
 	        JSL.l Sprite_ShowMessageUnconditional
 			LDA.b #$3C : STA $012E ; error sound
-			BRL .done
+			JMP .done
 		.buy
 			LDA !SHOP_TYPE : AND.b #$80 : BNE ++ ; don't charge if this is a take-any
 				REP #$20 : LDA $7EF360 : !SUB !SHOP_INVENTORY+1, X : STA $7EF360 : SEP #$20 ; Take price away
@@ -707,7 +707,7 @@ RTS
 
 ;--------------------------------------------------------------------------------
 Shopkeeper_DrawNextItem:
-	LDA.l !SHOP_STATE : AND.w Shopkeeper_ItemMasks, Y : BEQ + : BRL .next : +
+	LDA.l !SHOP_STATE : AND.w Shopkeeper_ItemMasks, Y : BEQ + : JMP .next : +
 	
 	PHY
 	

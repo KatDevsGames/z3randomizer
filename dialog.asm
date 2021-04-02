@@ -137,7 +137,7 @@ FreeDungeonItemNotice:
 		LDA $02 : PHA
 	;--------------------------------
 
-	LDA.l FreeItemText : BNE + : BRL .skip : +
+	LDA.l FreeItemText : BNE + : JMP .skip : +
 
 	LDA #$00 : STA $7F5010 ; initialize scratch
 	LDA.l FreeItemText : AND.b #$01 : CMP.b #$01 : BNE + ; show message for general small key
@@ -145,48 +145,48 @@ FreeDungeonItemNotice:
 		%CopyDialog(Notice_SmallKeyOf)
 		LDA !OFFSET_RETURN : DEC #2 : STA !OFFSET_POINTER
 		%CopyDialog(Notice_Self)
-		BRL .done
+		JMP .done
 	+ : LDA.l FreeItemText : AND.b #$02 : CMP.b #$02 : BNE + ; show message for general compass
 	LDA !ITEM_TEMPORARY : CMP.b #$25 : BNE + ; general compass
 		%CopyDialog(Notice_CompassOf)
 		LDA !OFFSET_RETURN : DEC #2 : STA !OFFSET_POINTER
 		%CopyDialog(Notice_Self)
-		BRL .done
+		JMP .done
 	+ : LDA.l FreeItemText : AND.b #$04 : CMP.b #$04 : BNE + ; show message for general map
 	LDA !ITEM_TEMPORARY : CMP.b #$33 : BNE + ; general map
 		%CopyDialog(Notice_MapOf)
 		LDA !OFFSET_RETURN : DEC #2 : STA !OFFSET_POINTER
 		%CopyDialog(Notice_Self)
-		BRL .done
+		JMP .done
 	+ : LDA.l FreeItemText : AND.b #$08 : CMP.b #$08 : BNE + ; show message for general big key
 	LDA !ITEM_TEMPORARY : CMP.b #$32 : BNE + ; general big key
 		%CopyDialog(Notice_BigKeyOf)
 		LDA !OFFSET_RETURN : DEC #2 : STA !OFFSET_POINTER
 		%CopyDialog(Notice_Self)
-		BRL .done
+		JMP .done
 	+
 	LDA.l FreeItemText : AND.b #$04 : CMP.b #$04 : BNE + ; show message for dungeon map
 	LDA !ITEM_TEMPORARY : AND.b #$F0 ; looking at high bits only
 	CMP.b #$70 : BNE + ; map of...
 		%CopyDialog(Notice_MapOf)
-		BRL .dungeon
+		JMP .dungeon
 	+ : LDA.l FreeItemText : AND.b #$02 : CMP.b #$02 : BNE + ; show message for dungeon compass
 	LDA !ITEM_TEMPORARY : AND.b #$F0 : CMP.b #$80 : BNE + ; compass of...
 		%CopyDialog(Notice_CompassOf)
-		BRL .dungeon
+		JMP .dungeon
 	+ : LDA.l FreeItemText : AND.b #$08 : CMP.b #$08 : BNE + ; show message for dungeon big key
 	LDA !ITEM_TEMPORARY : AND.b #$F0 : CMP.b #$90 : BNE + ; big key of...
 		%CopyDialog(Notice_BigKeyOf)
 		BRA .dungeon
 	+ : LDA.l FreeItemText : AND.b #$01 : CMP.b #$01 : BNE + ; show message for dungeon small key
 	LDA !ITEM_TEMPORARY : AND.b #$F0 : CMP.b #$A0 : BNE + ; small key of...
-		LDA !ITEM_TEMPORARY : CMP.b #$AF : BNE ++ : BRL .skip : ++
+		LDA !ITEM_TEMPORARY : CMP.b #$AF : BNE ++ : JMP .skip : ++
 		%CopyDialog(Notice_SmallKeyOf)
 		PLA : AND.b #$0F : STA $7F5020 : LDA.b #$0F : !SUB $7F5020 : PHA
 		LDA #$01 : STA $7F5010 ; set up a flip for small keys
 		BRA .dungeon
 	+
-	BRL .skip ; it's not something we are going to give a notice for
+	JMP .skip ; it's not something we are going to give a notice for
 
 	.dungeon
 	LDA !OFFSET_RETURN : DEC #2 : STA !OFFSET_POINTER
@@ -199,31 +199,31 @@ FreeDungeonItemNotice:
 	+
 	LDA $7F5011
 	CMP.b #$00 : BNE + ; ...light world
-		%CopyDialog(Notice_LightWorld) : BRL .done
+		%CopyDialog(Notice_LightWorld) : JMP .done
 	+ : CMP.b #$01 : BNE + ; ...dark world
-		%CopyDialog(Notice_DarkWorld) : BRL .done
+		%CopyDialog(Notice_DarkWorld) : JMP .done
 	+ : CMP.b #$02 : BNE + ; ...ganon's tower
-		%CopyDialog(Notice_GTower) : BRL .done
+		%CopyDialog(Notice_GTower) : JMP .done
 	+ : CMP.b #$03 : BNE + ; ...turtle rock
-		%CopyDialog(Notice_TRock) : BRL .done
+		%CopyDialog(Notice_TRock) : JMP .done
 	+ : CMP.b #$04 : BNE + ; ...thieves' town
-		%CopyDialog(Notice_Thieves) : BRL .done
+		%CopyDialog(Notice_Thieves) : JMP .done
 	+ : CMP.b #$05 : BNE + ; ...tower of hera
-		%CopyDialog(Notice_Hera) : BRL .done
+		%CopyDialog(Notice_Hera) : JMP .done
 	+ : CMP.b #$06 : BNE + ; ...ice palace
-		%CopyDialog(Notice_Ice) : BRL .done
+		%CopyDialog(Notice_Ice) : JMP .done
 	+ : CMP.b #$07 : BNE + ; ...skull woods
-		%CopyDialog(Notice_Skull) : BRL .done
+		%CopyDialog(Notice_Skull) : JMP .done
 	+ : CMP.b #$08 : BNE + ; ...misery mire
-		%CopyDialog(Notice_Mire) : BRL .done
+		%CopyDialog(Notice_Mire) : JMP .done
 	+ : CMP.b #$09 : BNE + ; ...dark palace
-		%CopyDialog(Notice_PoD) : BRL .done
+		%CopyDialog(Notice_PoD) : JMP .done
 	+ : CMP.b #$0A : BNE + ; ...swamp palace
-		%CopyDialog(Notice_Swamp) : BRL .done
+		%CopyDialog(Notice_Swamp) : JMP .done
 	+ : CMP.b #$0B : BNE + ; ...agahnim's tower
-		%CopyDialog(Notice_AgaTower) : BRL .done
+		%CopyDialog(Notice_AgaTower) : JMP .done
 	+ : CMP.b #$0C : BNE + ; ...desert palace
-		%CopyDialog(Notice_Desert) : BRL .done
+		%CopyDialog(Notice_Desert) : JMP .done
 	+ : CMP.b #$0D : BNE + ; ...eastern palace
 		%CopyDialog(Notice_Eastern) : BRA .done
 	+ : CMP.b #$0E : BNE + ; ...hyrule castle
@@ -424,7 +424,7 @@ Sprite_ShowMessageMinimal_Alt:
 	INY : LDA [$00], Y : CMP.b #$6b : BNE +
 	INY : LDA [$00], Y : CMP.b #$04 : BNE +
 		STZ $1CE8
-		BRL .end
+		JMP .end
 	+
 
 	STZ $0223   ; Otherwise set it so we are in text mode.
