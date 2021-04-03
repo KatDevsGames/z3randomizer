@@ -124,7 +124,9 @@ RTL
 ;ProcessBottleMenu:
 ;--------------------------------------------------------------------------------
 ProcessBottleMenu:
-	LDA $F4 : AND #$40 : BEQ .y_not_pressed ; skip if Y is not down
+;	LDA $F6 : AND #$30 : CMP.b #$30 : BEQ .double_shoulder_pressed
+;	LDA $F4 : AND #$40 : BEQ .y_not_pressed ; skip if Y is not down
+;	.double_shoulder_pressed
 	LDA $7EF34F ; check bottle state
 	BEQ .no_bottles ; skip if we have no bottles
 	PHX
@@ -137,9 +139,9 @@ ProcessBottleMenu:
 	.no_bottles
 	LDA #$00 ; pretend like the controller state was 0 from the overridden load
 RTL
-	.y_not_pressed
-	LDA $F4 : AND.b #$0C ; thing we wrote over - load controller state
-RTL
+;	.y_not_pressed
+;	LDA $F4 : AND.b #$0C ; thing we wrote over - load controller state
+;RTL
 ;--------------------------------------------------------------------------------
 
 ;--------------------------------------------------------------------------------
@@ -738,6 +740,7 @@ RTS
 Link_ReceiveItem_HUDRefresh:
 	LDA $7EF343 : BNE + ; skip if we have bombs
 	LDA $7EF375 : BEQ + ; skip if we are filling no bombs
+	LDA $7EF370 : !ADD.l StartingMaxBombs : BEQ + ; skip if we can't have bombs
 		DEC : STA $7EF375 ; decrease bomb fill count
 		LDA.b #$01 : STA $7EF343 ; increase actual bomb count
 	+
@@ -753,6 +756,7 @@ RTL
 HandleBombAbsorbtion:
 	STA $7EF375 ; thing we wrote over
 	LDA $0303 : BNE + ; skip if we already have some item selected
+	LDA $7EF370 : !ADD.l StartingMaxBombs : BEQ + ; skip if we can't have bombs
 		LDA.b #$04 : STA $0202 ; set selected item to bombs
 		LDA.b #$01 : STA $0303 ; set selected item to bombs
 		JSL.l HUD_RebuildLong

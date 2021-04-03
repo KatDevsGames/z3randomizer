@@ -6,7 +6,8 @@
 ;--------------------------------------------------------------------------------
 IncrementBombs:
     LDA !BOMB_UPGRADES ; get bomb upgrades
-	!ADD.l StartingMaxBombs : DEC
+	!ADD.l StartingMaxBombs : BEQ + ; Skip if we can't have bombs
+	DEC
 
     CMP !BOMB_CURRENT
 	
