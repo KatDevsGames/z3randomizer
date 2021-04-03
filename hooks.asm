@@ -2550,3 +2550,8 @@ CheckIfReading:
     CPX #$04
     RTS
 ;================================================================================
+org $0DB4CA : db $40, $40 ; fire bar statis
+org $0DB4A9 : db $50, $50, $6E, $6E ; roller statis
+org $0DB4B2 : db $40, $40, $40, $40 ; cannon statis
+org $0DB4C3 : db $C0 ; anti fairy statis
+org $0DB516 : db $40 ; chain chomp statis

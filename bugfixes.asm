@@ -32,7 +32,7 @@ RTL
 ;--------------------------------------------------------------------------------
 ;0 = Become (Perma)bunny
 DecideIfBunny:
-	LDA $7EF357 : BEQ + : RTL : +
+	LDA $7EF357 : BNE .done
 	LDA $7EF3CA : AND.b #$40
 	PHA : LDA.l InvertedMode : BNE .inverted
 	.normal
@@ -47,8 +47,8 @@ RTL
 DecideIfBunnyByScreenIndex:
 	; If indoors we don't have a screen index. Return non-bunny to make mirror-based
 	; superbunny work
-	LDA $1B : BEQ + : RTL : +
-	LDA $7EF357 : BEQ + : RTL : +
+	LDA $1B : BNE .done
+	LDA $7EF357 : BNE .done
 	LDA $8A : AND.b #$40 : PHA
 	LDA.l InvertedMode : BNE .inverted
 	.normal
@@ -114,12 +114,13 @@ RTS
 FixFrogSmith:
 	LDA.l $7EF3CA : BNE .darkWorld
 		LDA.l $7EF3CC : CMP.b #$07 : BNE .done
-		LDA.b #$08 : STA.l $7EF3CC ; make frog into smith in light world
+		LDA.b #$08 :  ; make frog into smith in light world
 		BRA .loadgfx
 	.darkWorld
 		LDA.l $7EF3CC : CMP.b #$08 : BNE .done
-		LDA.b #$07 : STA.l $7EF3CC ; make smith into frog in dark world
+		LDA.b #$07 ; make smith into frog in dark world
 	.loadgfx
+		STA.l $7EF3CC
 		JSL Tagalong_LoadGfx
 	.done
 RTS
@@ -137,12 +138,11 @@ RTL
 ; Fix crystal not spawning when using somaria vs boss
 TryToSpawnCrystalUntilSuccess:
 	STX $02D8 ; what we overwrote
-	JSL AddAncillaLong : BCC .spawned ; a clear carry flag indicates success
-		.failed
-		RTL
-	.spawned
+	JSL AddAncillaLong : BCS .failed ; a clear carry flag indicates success
+.spawned
 	STZ $AE ; the "trying to spawn crystal" flag
 	STZ $AF ; the "trying to spawn pendant" flag
+.failed
 RTL
 
 ;--------------------------------------------------------------------------------
@@ -173,22 +173,22 @@ CMP.w #$030E : BEQ .new ; opening dungeon map
 CMP.w #$070E : BEQ .new ; opening overworld map
 .original
 -
-	lda [$00]
-	sta $7ec300, x
-	sta $7ec500, x
-	inc $00 : inc $00
-	inx #2
-	dey
-	bpl -
+	LDA [$00]
+	STA $7EC300, X
+	STA $7EC500, X
+	INC $00 : INC $00
+	INX #2
+	DEY
+	BPL -
 RTL
 .new
 -
-	lda [$00]
-	sta $7ec500, x
-	inc $00 : inc $00
-	inx #2
-	dey
-	bpl -
+	LDA [$00]
+	STA $7EC500, X
+	INC $00 : INC $00
+	INX #2
+	DEY
+	BPL -
 RTL
 
 ;--------------------------------------------------------------------------------

@@ -113,7 +113,7 @@ JMP DrawItem
 
 
 DrawPlayerFile:
-	LDA $1A : AND.w #$0001 : BEQ + : BRA .normal : +
+	LDA $1A : AND.w #$0001 : BNE .normal
 		JSR DrawPlayerFileShared
 		INC $0710 ; Suppress animated tile updates for this frame
 
@@ -633,15 +633,15 @@ AltBufferTable:
     STA $1104 ;file 2 top row
     STA $1144 ;file 2 bottom row
     STA $1184 ;gap row top
-    STA $11c4 ;gap row bottom
+    STA $11C4 ;gap row bottom
     STA $1204 ;file 3 top row
     STA $1244 ;file 3 bottom row
     STA $1284 ;extra gap row top
-    STA $12c4 ;extra gap row bottom
+    STA $12C4 ;extra gap row bottom
 	STA $1304 ;extra gap row top
     STA $1344 ;extra gap row bottom
 	STA $1384 ;extra gap row top
-    STA $13c4 ;extra gap row bottom
+    STA $13C4 ;extra gap row bottom
 
     ; Set last packet marker
     LDA.w #$00FF : STA $1402

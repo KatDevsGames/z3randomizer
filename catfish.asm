@@ -4,8 +4,7 @@
 !HEART_REDRAW = "$7F5000"
 LoadCatfishItemGFX:
     LDA.l $1DE185 ; location randomizer writes catfish item to
-	JSL.l PrepDynamicTile
-RTL
+	JML PrepDynamicTile
 ;--------------------------------------------------------------------------------
 DrawThrownItem:
 	LDA $8A : CMP.b #$81 : BNE .catfish
@@ -19,8 +18,7 @@ DrawThrownItem:
     LDA.l $1DE185 ; location randomizer writes catfish item to
 	
 	.draw
-	JSL.l DrawDynamicTile
-RTL
+	JML DrawDynamicTile
 ;--------------------------------------------------------------------------------
 MarkThrownItem:
 	JSL Link_ReceiveItem ; thing we wrote over
@@ -28,12 +26,9 @@ MarkThrownItem:
 	LDA $8A : CMP.b #$81 : BNE .catfish
 	
 	.zora
-    JSL.l ItemSet_ZoraKing
-	BRA .done
-	
+    JML ItemSet_ZoraKing
+
 	.catfish
-    JSL.l ItemSet_Catfish
-	
-	.done
-RTL
+    JML ItemSet_Catfish
+
 ;--------------------------------------------------------------------------------
