@@ -3,7 +3,7 @@
 ;--------------------------------------------------------------------------------
 DropSafeDungeon:
 	LDA $040C : CMP #$08 : BEQ +
-		LDA $01C6FC, X : JSL Sprite_SpawnFallingItem
+		LDA $01C6FC, X : JML Sprite_SpawnFallingItem
 	+
 RTL
 ;--------------------------------------------------------------------------------

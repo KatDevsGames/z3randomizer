@@ -4,8 +4,7 @@
 DarkWorldSaveFix:
 	LDA.b #$70 : PHA : PLB ; thing we wrote over - data bank change
 	JSL.l MasterSwordFollowerClear
-	JSL.l StatSaveCounter
-RTL
+	JML.l StatSaveCounter
 ;--------------------------------------------------------------------------------
 DoWorldFix:
 	LDA InvertedMode : BEQ +
@@ -14,12 +13,12 @@ DoWorldFix:
 	LDA.l Bugfix_MirrorlessSQToLW : BEQ .skip_mirror_check
 		LDA $7EF353 : BEQ .noMirror ; check if we have the mirror
 	.skip_mirror_check ; alt entrance point
-	LDA $7EF3C5 : CMP.b #$03 : !BLT .aga1Alive ; check if agahnim 1 is alive
-	BRA .done
-	.noMirror
+	LDA $7EF3C5 : CMP.b #$03 : BCS .done ; check if agahnim 1 is alive
 	.aga1Alive
-	LDA #$00 : STA $7EF3CA ; set flag to light world
-	LDA $7EF3CC : CMP #$07 : BNE + : LDA.b #$08 : STA $7EF3CC : + ; convert frog to dwarf
+	LDA #$00
+	.noMirror
+	STA $7EF3CA ; set flag to light world
+	LDA $7EF3CC : CMP #$07 : BNE .done : INC : STA $7EF3CC ; convert frog to dwarf
 	.done
 RTL
 ;--------------------------------------------------------------------------------
@@ -29,8 +28,7 @@ SetDeathWorldChecked:
 	+
 	LDA $1B : BEQ .outdoors
 		LDA $040C : CMP #$FF : BNE .dungeon
-		LDA $A0 : BNE ++
-		LDA $A1 : BNE ++
+		LDA $A0 : ORA $A1 : BNE ++
 			LDA GanonPyramidRespawn : BNE .pyramid ; if flag is set, force respawn at pyramid on death to ganon
 	    ++
 	.outdoors
@@ -42,7 +40,7 @@ JMP DoWorldFix_skip_mirror_check
 
 	.pyramid
 	LDA #$40 : STA $7EF3CA ; set flag to dark world
-	LDA $7EF3CC : CMP #$08 : BNE + : LDA.b #$07 : STA $7EF3CC : + ; convert dwarf to frog
+	LDA $7EF3CC : CMP #$08 : BNE .done : DEC : STA $7EF3CC : + ; convert dwarf to frog
 	.done
 RTL
 ;================================================================================
@@ -50,15 +48,13 @@ DoWorldFix_Inverted:
 	LDA.l Bugfix_MirrorlessSQToLW : BEQ .skip_mirror_check
 		LDA $7EF353 : BEQ .noMirror ; check if we have the mirror
 	.skip_mirror_check ; alt entrance point
-	LDA $7EF3C5 : CMP.b #$03 : !BLT .aga1Alive ; check if agahnim 1 is alive
-	BRA .done
+	LDA $7EF3C5 : CMP.b #$03 : BCS .done ; check if agahnim 1 is alive
 	.noMirror
 	.aga1Alive
 	LDA #$40 : STA $7EF3CA ; set flag to dark world
 	LDA $7EF3CC
-	CMP #$07 : BEQ .clear ; clear frog
-	CMP #$08 : BEQ .clear ; clear dwarf - consider flute implications
-	BRA .done
+	CMP #$07 : BNE .done ; clear frog
+	CMP #$08 : BNE .done ; clear dwarf - consider flute implications
 	.clear
 	LDA.b #$00 : STA $7EF3CC ; clear follower
 	.done
@@ -67,8 +63,7 @@ RTL
 SetDeathWorldChecked_Inverted:
 	LDA $1B : BEQ .outdoors
 		LDA $040C : CMP #$FF : BNE .dungeon
-		LDA $A0 : BNE ++
-		LDA $A1 : BNE ++
+		LDA $A0 : ORA $A1 : BNE ++
 			LDA GanonPyramidRespawn : BNE .castle ; if flag is set, force respawn at pyramid on death to ganon
 		++
 	.outdoors
@@ -95,16 +90,15 @@ RTL
 ;--------------------------------------------------------------------------------
 MasterSwordFollowerClear:
 	LDA $7EF3CC
-	CMP #$0E : BEQ .clear ; clear master sword follower
-RTL
-	.clear
+	CMP #$0E : BNE .exit ; clear master sword follower
 	LDA.b #$00 : STA $7EF3CC ; clear follower
-RTL
+.exit
+	RTL
 ;--------------------------------------------------------------------------------
 FixAgahnimFollowers:
 	LDA.b #$00 : STA $7EF3CC ; clear follower
-	JSL PrepDungeonExit ; thing we wrote over
-RTL
+	JML PrepDungeonExit ; thing we wrote over
+
 ;--------------------------------------------------------------------------------
 macro SetMinimum(base,filler,compare)
 	LDA.l <compare> : !SUB.l <base> : !BLT ?done
@@ -112,7 +106,7 @@ macro SetMinimum(base,filler,compare)
 	?done:
 endmacro
 RefreshRainAmmo:
-	LDA $7EF3C5 : CMP.b #$01 : BEQ + : RTL : + ; check if we're in rain state
+	LDA $7EF3C5 : CMP.b #$01 : BNE .done ; check if we're in rain state
 	.rain
 		LDA $7EF3C8
 		+ CMP.b #$03 : BNE + ; Uncle
@@ -137,14 +131,14 @@ RTL
 !INFINITE_BOMBS = "$7F50C9"
 !INFINITE_MAGIC = "$7F50CA"
 SetEscapeAssist:
-	LDA $7EF3C5 : CMP.b #$01 : BNE .notrain ; check if we're in rain state
+	LDA $7EF3C5 : CMP.b #$01 : BNE .no_train ; check if we're in rain state
 	.rain
 		LDA.l EscapeAssist
 		BIT.b #$04 : BEQ + : STA !INFINITE_MAGIC : +
 		BIT.b #$02 : BEQ + : STA !INFINITE_BOMBS : +
 		BIT.b #$01 : BEQ + : STA !INFINITE_ARROWS : +
 		BRA ++
-	.notrain
+	.no_train ; choo choo
 		LDA.l EscapeAssist : BIT.b #$04 : BEQ + : LDA.b #$00 : STA !INFINITE_MAGIC : +
 		LDA.l EscapeAssist : BIT.b #$02 : BEQ + : LDA.b #$00 : STA !INFINITE_BOMBS : +
 		LDA.l EscapeAssist : BIT.b #$01 : BEQ + : LDA.b #$00 : STA !INFINITE_ARROWS : +
@@ -153,8 +147,8 @@ RTL
 ;--------------------------------------------------------------------------------
 SetSilverBowMode:
 	LDA SilverArrowsUseRestriction : BEQ + ; fix bow type for restricted arrow mode
-		LDA $7EF340 : CMP.b #$3 : !BLT +
-		!SUB.b #$02 : STA $7EF340
+		LDA $7EF340 : CMP.b #$3 : BCC +
+		SBC.b #$02 : STA $7EF340
 	+
 RTL
 ;================================================================================

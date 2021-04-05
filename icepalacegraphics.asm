@@ -9,7 +9,7 @@ ShouldOverrideFileLoad:
     .no
     CLC : RTS
     .yes
-    SEC : RTS
+    RTS
 
 BgGraphicsLoading:
     ; Instructions overwritten

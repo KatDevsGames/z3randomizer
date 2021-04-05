@@ -6,7 +6,7 @@
 ; Filtered Joypad 1 Register: [BYST | udlr] [AXLR | ????]
 !INVERT_DPAD = "$7F50CB"
 InvertDPad:
-	LDA !INVERT_DPAD : BNE + : BRL .normal : +
+	LDA !INVERT_DPAD : BNE + : JMP .normal : +
 	DEC : BEQ .dpadOnly
 	DEC : BEQ .buttonsOnly
 	DEC : BEQ .invertBoth

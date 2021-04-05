@@ -82,14 +82,13 @@ macro LoadDialogAddress(address)
 	PHB : PHK : PLB
 		SEP #$20 ; set 8-bit accumulator
 		REP #$10 ; set 16-bit index registers
-		LDA $00 : PHA
-		LDA $01 : PHA
+		PEI ($00)
 		LDA $02 : PHA
 			STZ $1CF0 : STZ $1CF1 ; reset decompression buffer
 			LDA.b #$01 : STA $7F5035 ; set flag
 			%CopyDialog(<address>)
 		PLA : STA $02
-		PLA : STA $01
+		REP #$20
 		PLA : STA $00
 	PLB
 	PLP
@@ -132,61 +131,60 @@ FreeDungeonItemNotice:
 	PHB : PHK : PLB
 		SEP #$20 ; set 8-bit accumulator
 		REP #$10 ; set 16-bit index registers
-		LDA $00 : PHA
-		LDA $01 : PHA
+		PEI ($00)
 		LDA $02 : PHA
 	;--------------------------------
 
-	LDA.l FreeItemText : BNE + : BRL .skip : +
+	LDA.l FreeItemText : BNE + : JMP .skip : +
 
 	LDA #$00 : STA $7F5010 ; initialize scratch
-	LDA.l FreeItemText : AND.b #$01 : CMP.b #$01 : BNE + ; show message for general small key
+	LDA.l FreeItemText : AND.b #$01 : BEQ + ; show message for general small key
 	LDA !ITEM_TEMPORARY : CMP.b #$24 : BNE + ; general small key
 		%CopyDialog(Notice_SmallKeyOf)
 		LDA !OFFSET_RETURN : DEC #2 : STA !OFFSET_POINTER
 		%CopyDialog(Notice_Self)
-		BRL .done
-	+ : LDA.l FreeItemText : AND.b #$02 : CMP.b #$02 : BNE + ; show message for general compass
+		JMP .done
+	+ : LDA.l FreeItemText : AND.b #$02 : BEQ + ; show message for general compass
 	LDA !ITEM_TEMPORARY : CMP.b #$25 : BNE + ; general compass
 		%CopyDialog(Notice_CompassOf)
 		LDA !OFFSET_RETURN : DEC #2 : STA !OFFSET_POINTER
 		%CopyDialog(Notice_Self)
-		BRL .done
-	+ : LDA.l FreeItemText : AND.b #$04 : CMP.b #$04 : BNE + ; show message for general map
+		JMP .done
+	+ : LDA.l FreeItemText : AND.b #$04 : BEQ + ; show message for general map
 	LDA !ITEM_TEMPORARY : CMP.b #$33 : BNE + ; general map
 		%CopyDialog(Notice_MapOf)
 		LDA !OFFSET_RETURN : DEC #2 : STA !OFFSET_POINTER
 		%CopyDialog(Notice_Self)
-		BRL .done
-	+ : LDA.l FreeItemText : AND.b #$08 : CMP.b #$08 : BNE + ; show message for general big key
+		JMP .done
+	+ : LDA.l FreeItemText : AND.b #$08 : BEQ + ; show message for general big key
 	LDA !ITEM_TEMPORARY : CMP.b #$32 : BNE + ; general big key
 		%CopyDialog(Notice_BigKeyOf)
 		LDA !OFFSET_RETURN : DEC #2 : STA !OFFSET_POINTER
 		%CopyDialog(Notice_Self)
-		BRL .done
+		JMP .done
 	+
-	LDA.l FreeItemText : AND.b #$04 : CMP.b #$04 : BNE + ; show message for dungeon map
+	LDA.l FreeItemText : AND.b #$04 : BEQ + ; show message for dungeon map
 	LDA !ITEM_TEMPORARY : AND.b #$F0 ; looking at high bits only
 	CMP.b #$70 : BNE + ; map of...
 		%CopyDialog(Notice_MapOf)
-		BRL .dungeon
-	+ : LDA.l FreeItemText : AND.b #$02 : CMP.b #$02 : BNE + ; show message for dungeon compass
+		JMP .dungeon
+	+ : LDA.l FreeItemText : AND.b #$02 : BEQ + ; show message for dungeon compass
 	LDA !ITEM_TEMPORARY : AND.b #$F0 : CMP.b #$80 : BNE + ; compass of...
 		%CopyDialog(Notice_CompassOf)
-		BRL .dungeon
-	+ : LDA.l FreeItemText : AND.b #$08 : CMP.b #$08 : BNE + ; show message for dungeon big key
+		JMP .dungeon
+	+ : LDA.l FreeItemText : AND.b #$08 : BEQ + ; show message for dungeon big key
 	LDA !ITEM_TEMPORARY : AND.b #$F0 : CMP.b #$90 : BNE + ; big key of...
 		%CopyDialog(Notice_BigKeyOf)
 		BRA .dungeon
-	+ : LDA.l FreeItemText : AND.b #$01 : CMP.b #$01 : BNE + ; show message for dungeon small key
+	+ : LDA.l FreeItemText : AND.b #$01 : BEQ + ; show message for dungeon small key
 	LDA !ITEM_TEMPORARY : AND.b #$F0 : CMP.b #$A0 : BNE + ; small key of...
-		LDA !ITEM_TEMPORARY : CMP.b #$AF : BNE ++ : BRL .skip : ++
+		LDA !ITEM_TEMPORARY : CMP.b #$AF : BNE ++ : JMP .skip : ++
 		%CopyDialog(Notice_SmallKeyOf)
 		PLA : AND.b #$0F : STA $7F5020 : LDA.b #$0F : !SUB $7F5020 : PHA
 		LDA #$01 : STA $7F5010 ; set up a flip for small keys
 		BRA .dungeon
 	+
-	BRL .skip ; it's not something we are going to give a notice for
+	JMP .skip ; it's not something we are going to give a notice for
 
 	.dungeon
 	LDA !OFFSET_RETURN : DEC #2 : STA !OFFSET_POINTER
@@ -199,31 +197,31 @@ FreeDungeonItemNotice:
 	+
 	LDA $7F5011
 	CMP.b #$00 : BNE + ; ...light world
-		%CopyDialog(Notice_LightWorld) : BRL .done
+		%CopyDialog(Notice_LightWorld) : JMP .done
 	+ : CMP.b #$01 : BNE + ; ...dark world
-		%CopyDialog(Notice_DarkWorld) : BRL .done
+		%CopyDialog(Notice_DarkWorld) : JMP .done
 	+ : CMP.b #$02 : BNE + ; ...ganon's tower
-		%CopyDialog(Notice_GTower) : BRL .done
+		%CopyDialog(Notice_GTower) : JMP .done
 	+ : CMP.b #$03 : BNE + ; ...turtle rock
-		%CopyDialog(Notice_TRock) : BRL .done
+		%CopyDialog(Notice_TRock) : JMP .done
 	+ : CMP.b #$04 : BNE + ; ...thieves' town
-		%CopyDialog(Notice_Thieves) : BRL .done
+		%CopyDialog(Notice_Thieves) : JMP .done
 	+ : CMP.b #$05 : BNE + ; ...tower of hera
-		%CopyDialog(Notice_Hera) : BRL .done
+		%CopyDialog(Notice_Hera) : JMP .done
 	+ : CMP.b #$06 : BNE + ; ...ice palace
-		%CopyDialog(Notice_Ice) : BRL .done
+		%CopyDialog(Notice_Ice) : JMP .done
 	+ : CMP.b #$07 : BNE + ; ...skull woods
-		%CopyDialog(Notice_Skull) : BRL .done
+		%CopyDialog(Notice_Skull) : JMP .done
 	+ : CMP.b #$08 : BNE + ; ...misery mire
-		%CopyDialog(Notice_Mire) : BRL .done
+		%CopyDialog(Notice_Mire) : JMP .done
 	+ : CMP.b #$09 : BNE + ; ...dark palace
-		%CopyDialog(Notice_PoD) : BRL .done
+		%CopyDialog(Notice_PoD) : JMP .done
 	+ : CMP.b #$0A : BNE + ; ...swamp palace
-		%CopyDialog(Notice_Swamp) : BRL .done
+		%CopyDialog(Notice_Swamp) : JMP .done
 	+ : CMP.b #$0B : BNE + ; ...agahnim's tower
-		%CopyDialog(Notice_AgaTower) : BRL .done
+		%CopyDialog(Notice_AgaTower) : JMP .done
 	+ : CMP.b #$0C : BNE + ; ...desert palace
-		%CopyDialog(Notice_Desert) : BRL .done
+		%CopyDialog(Notice_Desert) : JMP .done
 	+ : CMP.b #$0D : BNE + ; ...eastern palace
 		%CopyDialog(Notice_Eastern) : BRA .done
 	+ : CMP.b #$0E : BNE + ; ...hyrule castle
@@ -235,27 +233,19 @@ FreeDungeonItemNotice:
 
 	STZ $1CF0 : STZ $1CF1 ; reset decompression buffer
 	LDA.b #$01 : STA $7F5035 ; set alternate dialog flag
-	LDA.b #$01 : STA $7F509F
+	STA $7F509F
 
 	;--------------------------------
-		PLA : STA $02
-		PLA : STA $01
-		PLA : STA $00
-	PLB
-	PLP
-	PLY : PLX : PLA
-	;JSL.l Main_ShowTextMessage_Alt
-RTL
-
 	.skip
-	;--------------------------------
 		PLA : STA $02
-		PLA : STA $01
+		REP #$20
 		PLA : STA $00
 	PLB
 	PLP
 	PLY : PLX : PLA
+	;JSL.l Main_ShowTextMessage_Alt ; .skip can be here so long as this line remains commented out
 RTL
+
 ;--------------------------------------------------------------------------------
 DialogResetSelectionIndex:
     JSL.l Attract_DecompressStoryGfx ; what we wrote over
@@ -264,11 +254,9 @@ RTL
 ;--------------------------------------------------------------------------------
 DialogItemReceive:
 	BCS .noMessage ; if doubling the item value overflowed it must be a rando item
-	CPY #$98 : !BLT + ;if the item is $4C or greater it must be a rando item
-		.noMessage
-		LDA.w #$FFFF
-		BRA .done
-	+
+	LDA.w #$FFFF
+	CPY #$98 : BCS .done ;if the item is $4C or greater it must be a rando item
+
 	LDA.w Ancilla_ReceiveItem_item_messages, Y
 	.done
 	CMP.w #$FFFF
@@ -289,12 +277,13 @@ RTL
 RTL
 ;--------------------------------------------------------------------------------
 DialogGanon1:
-	JSL.l CheckGanonVulnerability : BCS +
-		REP #$20 : LDA.w #$018C : STA $1CF0 : SEP #$20
-		BRA ++
-	+
-		REP #$20 : LDA.w #$016D : STA $1CF0 : SEP #$20
-	++
+	JSL.l CheckGanonVulnerability
+	REP #$20
+	LDA.w #$018C
+	BCC +
+	LDA.w #$016D
++	STA $1CF0
+	SEP #$20
 	JSL.l Sprite_ShowMessageMinimal_Alt
 RTL
 ;--------------------------------------------------------------------------------
@@ -307,28 +296,30 @@ RTL
 ; s = silver arrow bow
 ; p = 2nd progressive bow
 DialogGanon2:
-    JSL.l CheckGanonVulnerability : BCS +
-        REP #$20 : LDA.w #$018D : STA $1CF0 : SEP #$20
-        BRA ++
+    JSL.l CheckGanonVulnerability
+	
+	REP #$20
+	BCS +
+        LDA.w #$018D : BRA ++
     +
-        LDA.l $7EF38E : AND #$80 : BNE + ; branch if bow
-        REP #$20 : LDA.w #$0192 : STA $1CF0 : SEP #$20 ; no bow
-        BRA ++
+		LDA.l $7EF38E
+
+        BIT.w #$0080 : BNE + ; branch if bow
+        LDA.w #$0192 : BRA ++
     +
-        LDA.l $7EF38E : AND #$40 : BEQ + ; branch if no silvers
-        REP #$20 : LDA.w #$0195 : STA $1CF0 : SEP #$20 ;has silvers
-        BRA ++
+        BIT.w #$0040 : BEQ + ; branch if no silvers
+        LDA.w #$0195 : BRA ++
     +
-        LDA.l $7EF38E : AND #$20 : BNE + ; branch if p bow
-        REP #$20 : LDA.w #$0194 : STA $1CF0 : SEP #$20  ; bow, no-silvers, no-p-bow
-        BRA ++
+        BIT.w #$0020 : BNE + ; branch if p bow
+        LDA.w #$0194 : BRA ++
     +
-        LDA.l $7EF38E : AND #$80 : BEQ + ; branch if no bow
-        REP #$20 : LDA.w #$0193 : STA $1CF0 : SEP #$20 ; bow, no-silvers, p-bow
-        BRA ++
+        BIT.w #$0080 : BEQ + ; branch if no bow
+        LDA.w #$0193 : BRA ++
     +
-        REP #$20 : LDA.w #$016E : STA $1CF0 : SEP #$20 ; both bow and no bow. impossible.
+        LDA.w #$016E
     ++
+	STA $1CF0
+	SEP #$20
     JSL.l Sprite_ShowMessageMinimal_Alt
 RTL
 ;--------------------------------------------------------------------------------
@@ -336,21 +327,20 @@ DialogEtherTablet:
 	PHA
 	LDA $0202 : CMP.b #$0F : BEQ + ; Show normal text if book is not equipped
 	-
-	PLA : JSL Sprite_ShowMessageUnconditional ; Wacky Hylian Text
-RTL
+	PLA : JML Sprite_ShowMessageUnconditional ; Wacky Hylian Text
 	+
 	BIT $F4 : BVC - ; Show normal text if Y is not pressed
 	LDA.l AllowHammerTablets : BEQ ++
 		LDA $7EF34B : BEQ .yesText : BRA .noText
 	++
-		LDA $7EF359 : CMP.b #$FF : BEQ .yesText : CMP.b #$02 : !BGE .noText
+		LDA $7EF359 : CMP.b #$FF : BEQ .yesText : CMP.b #$02 : BCS .noText
 	;++
 	.yesText
 	PLA
-	LDA.b #$0c
+	LDA.b #$0C
 	LDY.b #$01
-	JSL Sprite_ShowMessageUnconditional ; Text From MSPedestalText (tables.asm)
-RTL
+	JML Sprite_ShowMessageUnconditional ; Text From MSPedestalText (tables.asm)
+
 	.noText
 	PLA
 RTL
@@ -359,8 +349,7 @@ DialogBombosTablet:
 	PHA
 	LDA $0202 : CMP.b #$0F : BEQ + ; Show normal text if book is not equipped
 	-
-	PLA : JSL Sprite_ShowMessageUnconditional ; Wacky Hylian Text
-RTL
+	PLA : JML Sprite_ShowMessageUnconditional ; Wacky Hylian Text
 	+
 	BIT $F4 : BVC - ; Show normal text if Y is not pressed
 	LDA.l AllowHammerTablets : BEQ ++
@@ -372,8 +361,8 @@ RTL
 	PLA 
 	LDA.b #$0D
 	LDY.b #$01
-	JSL Sprite_ShowMessageUnconditional ; Text From MSPedestalText (tables.asm)
-RTL
+	JML Sprite_ShowMessageUnconditional ; Text From MSPedestalText (tables.asm)
+
 	.noText
 	PLA
 RTL
@@ -382,19 +371,17 @@ DialogSahasrahla:
 	LDA.l $7EF374 : AND #$04 : BEQ + ;Check if player has green pendant
 		LDA.b #$2F
         LDY.b #$00
-		JSL.l Sprite_ShowMessageUnconditional
+		JML Sprite_ShowMessageUnconditional
 	+
 RTL
 ;--------------------------------------------------------------------------------
 DialogBombShopGuy:
-	LDA.l $7EF37A : AND #$05 : CMP #$05 : BEQ + ;Check if player has crystals 5 & 6
-		LDA.b #$15
-        LDY.b #$01
-		JSL.l Sprite_ShowMessageUnconditional
-		RTL
+	LDY.b #$15
+	LDA.l $7EF37A : AND #$05 : CMP #$05 : BNE + ;Check if player has crystals 5 & 6
+		INY ; from 15 to 16
 	+
-	LDA.b #$16
-    LDY.b #$01
+	TYA
+	LDY.b #$01
 	JSL.l Sprite_ShowMessageUnconditional
 RTL
 ;--------------------------------------------------------------------------------
@@ -405,26 +392,25 @@ Sprite_ShowMessageMinimal_Alt:
 	STZ $11
 
 	PHX : PHY
-	LDA.b $00 : PHA
-	LDA.b $01 : PHA
+	PEA ($00)
 	LDA.b $02 : PHA
 
 	LDA.b #$1C : STA.b $02
 	REP #$30
 		LDA.w $1CF0 : ASL : TAX
-		LDA.l $7f71c0, X
+		LDA.l $7F71C0, X
 		STA.b $00
 	SEP #$30
 
 	LDY.b #$00
-	      LDA [$00], Y : CMP.b #$fe : BNE +
-	INY : LDA [$00], Y : CMP.b #$6e : BNE +
+	      LDA [$00], Y : CMP.b #$FE : BNE +
+	INY : LDA [$00], Y : CMP.b #$6E : BNE +
 	INY : LDA [$00], Y :            : BNE +
-	INY : LDA [$00], Y : CMP.b #$fe : BNE +
-	INY : LDA [$00], Y : CMP.b #$6b : BNE +
+	INY : LDA [$00], Y : CMP.b #$FE : BNE +
+	INY : LDA [$00], Y : CMP.b #$6B : BNE +
 	INY : LDA [$00], Y : CMP.b #$04 : BNE +
 		STZ $1CE8
-		BRL .end
+		JMP .end
 	+
 
 	STZ $0223   ; Otherwise set it so we are in text mode.

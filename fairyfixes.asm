@@ -27,8 +27,7 @@ RTL
 FairyPond_Init:
 	LDA.l Restrict_Ponds : BNE +
 		LDA.b #$48
-		JSL.l Sprite_ShowMessageFromPlayerContact
-		RTL
+		JML.l Sprite_ShowMessageFromPlayerContact
 	+
 	PHY : JSL.l Sprite_CheckDamageToPlayerSameLayerLong : BCC +
 		LDA $7EF35C : CMP.b #$02 : BNE ++ : LDA.b #$1C : PHA : BRA .emptyBottle : ++
@@ -56,8 +55,8 @@ RTL
 ;--------------------------------------------------------------------------------
 HappinessPond_Check:
 	LDA $A0 : CMP.b #$15 ;what we wrote over
-	PHP
 	BNE .done
+	PHP
 
 	LDA.b #$72
 	JSL Sprite_SpawnDynamically
@@ -83,6 +82,6 @@ HappinessPond_Check:
 
 	STZ $0DD0, X ; self terminate
 
-	.done
 	PLP
+	.done
 RTL

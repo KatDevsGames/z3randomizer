@@ -66,8 +66,7 @@ endmacro
 
 Clock_Test:
 	JSL.l Clock_Init
-	JSL.l Clock_IsSupported
-RTL
+	JML.l Clock_IsSupported
 
 ;--------------------------------------------------------------------------------
 ; Clock_Init
@@ -112,11 +111,10 @@ Clock_IsSupported:
 	PHA : PHX
 		LDX #$00;
 		-
-			LDA $002800 : AND.b #$0F : CMP #$0F : BEQ + ; check for clock chip ready signal
-			CPX.b #$0E : !BLT ++ : CLC : BRA .done : ++ ; if we've read 14 bytes with no success, unset carry and exit
-			INX
-		BRA - : +
-		SEC ; found a clock chip
+			LDA $002800 : AND.b #$0F : CMP #$0F : BEQ .done ; check for clock chip ready signal
+			CPX.b #$0E : BCC ++ : CLC : BRA .done ; if we've read 14 bytes with no success, unset carry and exit
+		++	INX
+		BRA -
 	.done
 	PLX : PLA
 RTL
@@ -144,7 +142,7 @@ Clock_QuickStamp:
 		LDX #$00;
 		-
 			LDA $002800 : AND.b #$0F : CMP #$0F : BEQ .ready ; check for clock chip ready signal
-			CPX.b #$0E : !BLT ++ : CLC : BRL .done : ++ ; if we've read 14 bytes with no success, unset carry and exit
+			CPX.b #$0E : !BLT ++ : CLC : JMP .done : ++ ; if we've read 14 bytes with no success, unset carry and exit
 			INX
 		BRA -
 		SEC ; indicate success
@@ -197,9 +195,9 @@ Multiply_A16Y8:
 	CLC
 	ADC $4216
 	LDY $4217
-	BCC carry_bit
+	BCC .carry_bit
 	INY
-	carry_bit:
+.carry_bit:
 	XBA
 	REP #$20 ; set 16-bit accumulator
 RTL
@@ -226,7 +224,7 @@ Clock_GetTime:
 		LDX #$00;
 		-
 			LDA $002800 : AND.b #$0F : CMP #$0F : BEQ .ready ; check for clock chip ready signal
-			CPX.b #$0E : !BLT ++ : CLC : BRL .done : ++ ; if we've read 14 bytes with no success, unset carry and exit
+			CPX.b #$0E : !BLT ++ : CLC : JMP .done : ++ ; if we've read 14 bytes with no success, unset carry and exit
 			INX
 		BRA -
 		SEC ; indicate success

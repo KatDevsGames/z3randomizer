@@ -4,9 +4,7 @@
 ;--------------------------------------------------------------------------------
 LockAgahnimDoors:
 	LDA.l AgahnimDoorStyle : AND.w #$00FF
-	BNE +
-		;#$0 = Never Locked
-		LDA.w #$0000 : RTL
+	BEQ .exit ; don't need to load 0, because we'd have it if we reached here
 	+ : CMP.w #$0001 : BNE +
 		LDA $7EF3C5 : AND.w #$000F : CMP.w #$0002 : !BGE .unlock ; if we rescued zelda, skip
 			JSR.w LockAgahnimDoorsCore : RTL
@@ -37,7 +35,7 @@ LockAgahnimDoors:
 	.unlock
 
 	LDA.w #$0000 ; fallback to never locked
-
+.exit
 RTL
 ;--------------------------------------------------------------------------------
 LockAgahnimDoorsCore:
@@ -72,7 +70,7 @@ AllowStartFromSingleEntranceCave:
 		LDA.l StartingAreaExitOffset, X
 
 		BNE +
-			BRL .done
+			JMP .done
 		+
 
 		DEC
@@ -204,14 +202,14 @@ RTL
 AnimatedEntranceFix: ;when an entrance animation tries to start
 	PHA
 	LDA.l InvertedMode : BEQ + ;If we are in inverted mode
-	LDA $8A : AND.b #$40 : BNE + ;and in the light world
-		PLA
+	PLA
+	BIT $8A : BVS ++ ; and in the light world
 		STZ $04C6 ; skip it.
 		LDA #$00
 		RTL
 	+
 	PLA
-	STA $02E4 ;what we wrote over
+++	STA $02E4 ;what we wrote over
 	STA $0FC1 ;what we wrote over
 	STA $0710 ;what we wrote over
 RTL

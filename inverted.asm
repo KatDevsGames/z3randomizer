@@ -4,7 +4,7 @@
 ; after Ganon slams into it in bat form?
 Overworld_CreatePyramidHoleModified:
 	LDA.l InvertedMode : BNE +
-		BRL .originalBehaviour
+		JMP .originalBehaviour
 +
 .invertedBehavior
 	REP #$30
@@ -37,7 +37,7 @@ Overworld_CreatePyramidHoleModified:
 
 	LDA.w #$FFFF : STA $1012, Y
 
-	BRL .ending
+	JMP .ending
 .originalBehaviour
 	REP #$30
 

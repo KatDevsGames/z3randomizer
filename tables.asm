@@ -184,7 +184,8 @@ db #$00 ; #$00 = Off (default) - #$01 = On
 ;--------------------------------------------------------------------------------
 org $308045 ; PC 0x180045
 HUDDungeonItems:
-db #$00 ; display ----dcba a: Small Keys, b: Big Key, c: Map, d: Compass
+ ; display ---edcba a: Small Keys, b: Big Key, c: Map, d: Compass, e: Bosses
+db #$00
 ;--------------------------------------------------------------------------------
 org $308046 ; PC 0x180046 Link's starting equipment
 LinkStartingRupees:
@@ -380,7 +381,11 @@ org $30808C ; PC 0x18008C
 PreopenGanonsTower:
 db $00 ; #$00 = Off (default) - #$01 = On
 ;--------------------------------------------------------------------------------
-; 0x18008D - 0x18008F (unused)
+org $30808D ; PC 0x18008D
+InstantPostAgaWorldState:
+db $00 ; #$00 = Off (default) - #$01 = On
+;--------------------------------------------------------------------------------
+; 0x18008E - 0x18008F (unused)
 ;--------------------------------------------------------------------------------
 org $308090 ; PC 0x180090 - 0x180097
 ProgressiveSwordLimit:

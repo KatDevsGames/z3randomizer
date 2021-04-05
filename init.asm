@@ -56,5 +56,6 @@ RTL
 Init_PostRAMClear:
 
 	JSL MSUInit
+	JSL InitRNGPointerTable
 
 JML $00D463	; The original target of the jump table that we hijacked

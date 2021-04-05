@@ -15,9 +15,7 @@ DrawLibraryItemGFX:
 RTL
 ;--------------------------------------------------------------------------------
 SetLibraryItem:
-    PHA
 	LDY $0E80, X ; Retrieve stored item type
-	PLA
 	JSL.l ItemSet_Library ; contains thing we wrote over
 RTL
 ;--------------------------------------------------------------------------------

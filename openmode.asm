@@ -12,11 +12,18 @@ RTL
 InitOpenMode:
 	LDA.l OpenMode : BEQ + ; Skip if not open mode
 		LDA $7EF3C5 : CMP #$02 : !BGE + ; Skip if already past escape
-		LDA.b #02 : STA $7EF3C5 ; Go to post-escape phase (pre aga1)
+		LDA.b #$02 : STA $7EF3C5 ; Go to post-escape phase (pre aga1)
 		LDA $7EF3C6 : ORA #$14 : STA $7EF3C6 ; remove uncle
 		LDA $7EF3C8 : CMP #$05 : BEQ ++ : LDA.b #$01 : ++ : STA $7EF3C8 ; set spawn points to house+sanc unless already house+sanc+mountain
 		LDA $7EF29B : ORA.b #$20 : STA $7EF29B ; open castle gate
-		RTL
+		JSL MaybeSetPostAgaWorldState
+	+
+RTL
+;--------------------------------------------------------------------------------
+MaybeSetPostAgaWorldState:
+	LDA.l InstantPostAgaWorldState : BEQ + ; Skip if not enabled
+		LDA.b #$03 : STA $7EF3C5 ; Go to post-aga phase
+		LDA $7EF282 : ORA.b #$20 : STA $7EF282 ; make lumberjack tree accessible
 	+
 RTL
 ;--------------------------------------------------------------------------------

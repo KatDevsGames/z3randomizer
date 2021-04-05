@@ -261,7 +261,9 @@ org $0CCE85 ; <- Bank0C.asm : 1953 (LDA $C8 : ASL A : INC #2 : STA $701FFE)
 NOP #4
 ;--------------------------------------------------------------------------------
 org $0CDB4C ; <- Bank0C.asm : 3655 (LDA $C8 : ASL A : INC #2 : STA $701FFE : TAX)
-NOP #4
+JSL OnFileCreation
+NOP
+;Additionally, display inventory swap starting equipment on file select
 ;--------------------------------------------------------------------------------
 org $09F5EA ; <- module_death.asm : 510 (LDA $701FFE : TAX : DEX #2)
 LDA.w #$0002 : NOP
@@ -364,6 +366,32 @@ NOP #19 ;23 bytes removed with the JSL
 ;--------------------------------------------------------------------------------
 org $04E7AE ; <- bank0E.asm : 4230 (LDA $7EF287 : AND.w #$0020)
 JSL.l TurtleRockPegSolved
+
+org $04E7B9 ; <- bank0E.asm : 4237 (LDX $04C8)
+JMP.w TurtleRockTrollPegs
+TurtleRockPegCheck:
+
+org $04E7C9
+TurtleRockPegSuccess:
+
+org $04E7F5
+TurtleRockPegFail:
+
+org $04E96F
+PegProbability:
+db $00  ; Probability out of 255.  0 = Vanilla behavior
+TurtleRockTrollPegs:
+SEP #$20
+    LDX.w $04C8 : CPX.w #$FFFF : BEQ .vanilla
+    JSL.l GetRandomInt
+    LDA.l PegProbability : BEQ .vanilla : CMP.l $7E0FA1
+REP #$20 : !BGE .succeed
+.fail
+JMP.w TurtleRockPegFail
+.succeed
+JMP.w TurtleRockPegSuccess
+.vanilla
+REP #$20 : JMP.w TurtleRockPegCheck
 ;--------------------------------------------------------------------------------
 org $1BBD05 ; <- bank1B.asm : 261 (TYA : STA $00) ; hook starts at the STA
 JML.l PreventEnterOnBonk
@@ -1614,7 +1642,7 @@ JSL.l ShowDungeonItems : NOP #5
 ;================================================================================
 org $0DEA5F ; <- 6EA5F - equipment.asm:1679 - (SEP #$30)
 ;NOP #5
-;BRL .skipCrystalInit
+;JMP .skipCrystalInit
 ;org $0DEAA4 ; <- 6EAA4 - equipment.asm:1706 - (LDA $7EF37A : AND.w #$0001)
 ;.skipCrystalInit
 ;================================================================================
@@ -2522,6 +2550,12 @@ CheckIfReading:
     CPX #$04
     RTS
 ;================================================================================
+
+org $0DB4CA : db $40, $40 ; fire bar statis
+org $0DB4A9 : db $50, $50, $6E, $6E ; roller statis
+org $0DB4B2 : db $40, $40, $40, $40 ; cannon statis
+org $0DB4C3 : db $C0 ; anti fairy statis
+org $0DB516 : db $40 ; chain chomp statis
 
 ;--------------------------------------------------------------------------------
 ; Keep Firebar Damage on Same Layer
