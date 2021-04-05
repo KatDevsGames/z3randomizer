@@ -106,7 +106,8 @@ macro SetMinimum(base,filler,compare)
 	?done:
 endmacro
 RefreshRainAmmo:
-	LDA $7EF3C5 : CMP.b #$01 : BNE .done ; check if we're in rain state
+	LDA $7EF3C5 : CMP.b #$01 : BEQ .rain ; check if we're in rain state
+	RTL
 	.rain
 		LDA $7EF3C8
 		+ CMP.b #$03 : BNE + ; Uncle
