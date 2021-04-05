@@ -142,6 +142,7 @@ incsrc doorframefixes.asm
 incsrc music.asm
 incsrc roomloading.asm
 incsrc icepalacegraphics.asm
+incsrc firebarlayer.asm
 warnpc $A18000
 
 org $1C8000 ; text tables for translation
