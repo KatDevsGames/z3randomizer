@@ -114,7 +114,7 @@ RTS
 FixFrogSmith:
 	LDA.l $7EF3CA : BNE .darkWorld
 		LDA.l $7EF3CC : CMP.b #$07 : BNE .done
-		LDA.b #$08 :  ; make frog into smith in light world
+		LDA.b #$08 ; make frog into smith in light world
 		BRA .loadgfx
 	.darkWorld
 		LDA.l $7EF3CC : CMP.b #$08 : BNE .done

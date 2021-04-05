@@ -253,11 +253,14 @@ DialogResetSelectionIndex:
 RTL
 ;--------------------------------------------------------------------------------
 DialogItemReceive:
-	BCS .noMessage ; if doubling the item value overflowed it must be a rando item
+	BCS .nomessage ; if doubling the item value overflowed it must be a rando item
+	CPY #$98 : BCC ++ ;if the item is $4C or greater it must be a rando item
+.nomessage
 	LDA.w #$FFFF
-	CPY #$98 : BCS .done ;if the item is $4C or greater it must be a rando item
 
-	LDA.w Ancilla_ReceiveItem_item_messages, Y
+	BRA .done
+
+++	LDA.w Ancilla_ReceiveItem_item_messages, Y
 	.done
 	CMP.w #$FFFF
 RTL
@@ -392,7 +395,7 @@ Sprite_ShowMessageMinimal_Alt:
 	STZ $11
 
 	PHX : PHY
-	PEA ($00)
+	PEI ($00)
 	LDA.b $02 : PHA
 
 	LDA.b #$1C : STA.b $02
