@@ -387,6 +387,21 @@ DialogBombShopGuy:
 	LDY.b #$01
 	JSL.l Sprite_ShowMessageUnconditional
 RTL
+
+;---------------------------------------------------------------------------------------------------
+AgahnimAsksAboutPed:
+	LDA.l InvincibleGanon
+	CMP.b #$06 : BNE .vanilla
+
+	LDA.l $7EF300 ; check ped flag
+	AND.b #$40
+	BNE .vanilla
+
+	LDA.b #$8C ; message 018C for no ped
+	STA.w $1CF0
+
+.vanilla
+	JML $05FA8E ; Sprite_ShowMessageMinimal
 ;--------------------------------------------------------------------------------
 Main_ShowTextMessage_Alt:
 	; Are we in text mode? If so then end the routine.
