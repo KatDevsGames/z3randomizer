@@ -153,6 +153,9 @@ db #$00
 ; #$03 = Require "NumberOfCrystalsRequiredForGanon" Crystals and Aga2
 ; #$04 = Require "NumberOfCrystalsRequiredForGanon" Crystals
 ; #$05 = Require "GoalItemRequirement" Goal Items
+; #$06 = Light Speed
+; #$07 = Require All Crystals and Crystal Bosses
+; #$08 = Require All Crystal Bosses only
 ;--------------------------------------------------------------------------------
 org $30803F ; PC 0x18003F
 HammerableGanon:
