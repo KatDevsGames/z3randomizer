@@ -22,33 +22,79 @@ RTL
 ;Carry clear = ganon invincible
 ;Carry set = ganon vulnerable
 CheckGanonVulnerability:
-	LDA InvincibleGanon : BEQ .success
-		;#$00 = Off
-	+ : CMP #$01 : BEQ .fail
-		;#$01 = On
-	+ : CMP #$02 : BNE +
-		;#$02 = Require All Dungeons
-		LDA $7EF374 : AND.b #$07 : CMP #$07 : BNE .fail ; require all pendants
-		LDA $7EF37A : AND.b #$7F : CMP #$7F : BNE .fail ; require all crystals
-		LDA $7EF3C5 : CMP.b #$03 : !BLT .fail ; require post-aga world state
-		LDA $7EF2DB : AND.b #$20 : CMP #$20 : BNE .fail ; require aga2 defeated (pyramid hole open)
-		BRA .success
-	+ : CMP #$04 : BNE +
-		;#$04 = Require Crystals
-		JSL CheckEnoughCrystalsForGanon : !BLT .fail ; require specified number of crystals
-		BRA .success
-	+ : CMP #$03 : BNE +
-		;#$03 = Require Crystals and Aga 2
-		JSL CheckEnoughCrystalsForGanon : !BLT .fail ; require specified number of crystals
-		LDA $7EF2DB : AND.b #$20 : CMP #$20 : BNE .fail ; require aga2 defeated (pyramid hole open)
-		BRA .success
-	+ : CMP #$05 : BNE +
-		;#$05 = Require Goal Items
-		LDA.l !GOAL_COUNTER : CMP GoalItemRequirement : !BLT .fail ; require specified number of goal items
-		BRA .success
-	+ 
-.fail : CLC : RTL
-.success : SEC : RTL
+	PHX
+	LDA.l InvincibleGanon
+	ASL
+	TAX
+
+	; Carry
+	;  0 - invulnerable
+	;  1 - vulnerable
+	JSR (.goals, X)
+
+	PLX
+	RTL
+
+
+.goals
+	dw .vulnerable
+	dw .invulnerable
+	dw .all_dungeons
+	dw .crystals_and_aga
+	dw .crystals
+	dw .goal_item
+	dw .light_speed
+	dw .crystals_and_bosses
+	dw .bosses_only
+
+; 00 = always vulnerable
+.vulnerable
+.success
+	SEC
+	RTS
+
+; 01 = always invulnerable
+.invulnerable
+.fail
+	CLC
+	RTS
+
+; 02 = All dungeons
+.all_dungeons
+	LDA.l $7EF374 : AND.b #$07 : CMP.b #$07 : BNE .fail ; require all pendants
+	LDA.l $7EF37A : AND.b #$7F : CMP.b #$7F : BNE .fail ; require all crystals
+	LDA.l $7EF3C5 : CMP.b #$03 : BCC .fail ; require post-aga world state
+	LDA.l $7EF2DB : AND.b #$20 : CMP.b #$20 : BNE .fail ; require aga2 defeated (pyramid hole open)
+	BRA .success
+
+; 03 = crystals and aga 2
+.crystals_and_aga
+	LDA.l $7EF2DDB : AND.b #$20 : BEQ .fail ; check aga2 first then bleed in
+
+; 04 = crystals only
+.crystals
+	JSL CheckEnoughCrystalsForGanon
+	RTS
+
+; 05 = require goal item
+.goal_item
+	LDA.l !GOAL_COUNTER : CMP GoalItemRequirement
+	RTS
+
+; 06 = light speed
+.light_speed
+	BRA .fail
+
+; 07 = Crystals and bosses
+.crystals_and_bosses
+	JSL CheckEnoughCrystalsForGanon ; check crystals first then bleed in to next
+	BCC .fail
+
+; 08 = Crystal bosses but no crystals
+.bosses_only
+	;LDA.l $7EF2DDB : AND.b #$20 : BEQ .fail ; check aga2
+	JMP CheckForCrystalBossesDefeated
+
 ;--------------------------------------------------------------------------------
 GetRequiredCrystalsForTower:
 	BEQ + : JSL.l BreakTowerSeal_ExecuteSparkles : + ; thing we wrote over
@@ -63,23 +109,105 @@ GetRequiredCrystalsInX:
 		RTL
 	+
 
-	TXA : - : CMP.l NumberOfCrystalsRequiredForTower : !BLT + : !SUB.l NumberOfCrystalsRequiredForTower : BRA - : +
+	TXA
 
-	INC : CMP.l NumberOfCrystalsRequiredForTower : BNE +
+- 	CMP.l NumberOfCrystalsRequiredForTower : BCC +
+	SBC.l NumberOfCrystalsRequiredForTower ; carry guaranteed set
+	BRA -
+
+	+ INC : CMP.l NumberOfCrystalsRequiredForTower : BNE +
 		LDA.b #$08
 	+ : DEC : TAX
 RTL
 ;--------------------------------------------------------------------------------
 CheckEnoughCrystalsForGanon:
-	PHX : PHY
 	LDA $7EF37A : JSL CountBits ; the comparison is against 1 less
-	PLY : PLX
 	CMP.l NumberOfCrystalsRequiredForGanon
 RTL
 ;--------------------------------------------------------------------------------
 CheckEnoughCrystalsForTower:
-	PHX : PHY
 	LDA $7EF37A : JSL CountBits ; the comparison is against 1 less
-	PLY : PLX
 	CMP.l NumberOfCrystalsRequiredForTower
 RTL
+
+;---------------------------------------------------------------------------------------------------
+CheckAgaForPed:
+	LDA.l InvincibleGanon
+	CMP.b #$06 : BNE .vanilla
+
+.light_speed
+	LDA.l $7EF300 ; check ped flag
+	AND.b #$40
+	BEQ .force_blue_ball
+
+.vanilla ; run vanilla check for phase
+	LDA.w $0E30, X
+	CMP.b #$02
+	RTL
+
+.force_blue_ball
+	LDA.b #$01 : STA.w $0DA0, Y
+	LDA.b #$20 : STA.w $0DF0, Y
+	CLC ; skip the RNG check
+	RTL
+
+;---------------------------------------------------------------------------------------------------
+
+KillGanon:
+	STA.l $7EF3C5 ; vanilla game state stuff we overwrote
+
+	LDA.l InvincibleGanon
+	CMP.b #$06 : BNE .exit
+
+.light_speed
+	LDA.l $7EF2DB : ORA.b #$20 : STA.l $7EF2DB ; pyramid hole
+	LDA.b #$08 : STA.l $7EF001 ; kill ganon
+	LDA.b #$02 : STA.l $7EF357 ; pearl but invisible in menu
+
+.exit
+	RTL
+
+;---------------------------------------------------------------------------------------------------
+
+CheckForCrystalBossesDefeated:
+	PHB : PHX : PHY
+
+	LDA.b #CrystalPendantFlags_2>>16
+	PHA : PLB
+
+	REP #$30
+
+	; count of number of bosses killed
+	STZ.b $00
+
+	LDY.w #10
+
+.next_check
+	LDA.w CrystalPendantFlags_2-2,Y
+	BIT.w #$0040
+	BEQ ++
+
+	TYA
+	ASL
+	TAX
+
+	LDA.l DrawHUDDungeonItems_boss_room_ids-4,X
+	TAX
+	LDA.l $7EF000,X
+
+	AND.w #$0800
+	BEQ ++
+
+	INC.b $00
+
+++	DEY
+	BPL .next_check
+
+	SEP #$30
+	PLY : PLX : PLB
+
+	LDA.b $00 : CMP.l NumberOfCrystalsRequiredForGanon
+
+
+	RTS
+

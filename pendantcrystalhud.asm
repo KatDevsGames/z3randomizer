@@ -440,7 +440,7 @@ DrawHUDDungeonItems:
 .next_boss_kill
 		LDX.w .boss_room_ids,Y
 		LDA.l $7EF000,X
-		AND.w #$0400
+		AND.w #$0800
 		BEQ ..skip_boss_kill
 
 		LDA.w #$2826
