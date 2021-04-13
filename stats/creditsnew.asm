@@ -41,12 +41,12 @@ endmacro
 
 ;---------------------------------------------------------------------------------------------------
 
-macro bigcredits(text)
+macro addbigcredits(text, padding)
 	!CLINE #= !CLINE+1
 	table "creditscharmapbighi.txt"
 
 	?line_top:
-		db (32-(?end-?text))/2
+		db <padding>
 		db 2*(?end-?text)-1
 	?text:
 		db "<text>"
@@ -59,7 +59,7 @@ macro bigcredits(text)
 
 	table "creditscharmapbiglo.txt"
 	?line_bottom:
-		db (32-(?end-?text))/2
+		db <padding>
 		db 2*(?end-?text)-1
 		db "<text>"
 
@@ -69,6 +69,16 @@ macro bigcredits(text)
 	org CreditsLineTable+!CLINE+!CLINE : dw ?line_bottom
 	pullpc
 
+endmacro
+
+macro bigcredits(text)
+	addbigcredits("<text>", (32-(?end-?text))/2)
+endmacro
+
+;---------------------------------------------------------------------------------------------------
+
+macro bigcreditsleft(text)
+	addbigcredits("<text>", 2)
 endmacro
 
 ;---------------------------------------------------------------------------------------------------
@@ -546,19 +556,19 @@ print "Line number: !CLINE | Expected: 302"
 %blankline()
 %blankline()
 
-%bigcredits("FIRST SWORD")
+%bigcreditsleft("FIRST SWORD")
 
 %blankline()
 
-%bigcredits("PEGASUS BOOTS")
+%bigcreditsleft("PEGASUS BOOTS")
 
 %blankline()
 
-%bigcredits("FLUTE")
+%bigcreditsleft("FLUTE")
 
 %blankline()
 
-%bigcredits("MIRROR")
+%bigcreditsleft("MIRROR")
 
 %blankline()
 %blankline()
@@ -569,23 +579,23 @@ print "Line number: !CLINE | Expected: 302"
 %blankline()
 %blankline()
 
-%bigcredits("SWORDLESS                /13")
+%bigcreditsleft("SWORDLESS                /13")
 
 %blankline()
 
-%bigcredits("FIGHTER'S SWORD          /13")
+%bigcreditsleft("FIGHTER'S SWORD          /13")
 
 %blankline()
 
-%bigcredits("MASTER SWORD             /13")
+%bigcreditsleft("MASTER SWORD             /13")
 
 %blankline()
 
-%bigcredits("TEMPERED SWORD           /13")
+%bigcreditsleft("TEMPERED SWORD           /13")
 
 %blankline()
 
-%bigcredits("GOLD SWORD               /13")
+%bigcreditsleft("GOLD SWORD               /13")
 
 %blankline()
 %blankline()
@@ -595,31 +605,31 @@ print "Line number: !CLINE | Expected: 302"
 %blankline()
 %blankline()
 
-%bigcredits("GT BIG KEY               /22")
+%bigcreditsleft("GT BIG KEY               /22")
 
 %blankline()
 
-%bigcredits("BONKS")
+%bigcreditsleft("BONKS")
 
 %blankline()
 
-%bigcredits("SAVE AND QUITS")
+%bigcreditsleft("SAVE AND QUITS")
 
 %blankline()
 
-%bigcredits("DEATHS")
+%bigcreditsleft("DEATHS")
 
 %blankline()
 
-%bigcredits("FAERIE REVIVALS")
+%bigcreditsleft("FAERIE REVIVALS")
 
 %blankline()
 
-%bigcredits("TOTAL MENU TIME")
+%bigcreditsleft("TOTAL MENU TIME")
 
 %blankline()
 
-%bigcredits("TOTAL LAG TIME")
+%bigcreditsleft("TOTAL LAG TIME")
 
 %blankline()
 %blankline()
@@ -644,11 +654,11 @@ print "Line number: !CLINE | Expected: 302"
 %preline()
 %preline()
 %preline()
-%bigcredits("COLLECTION RATE         /216")
+%bigcreditsleft("COLLECTION RATE         /216")
 
 %blankline()
 
-%bigcredits("TOTAL TIME")
+%bigcreditsleft("TOTAL TIME")
 
 %blankline()
 
