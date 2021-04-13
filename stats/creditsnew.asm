@@ -40,13 +40,12 @@ macro smallcredits(text)
 endmacro
 
 ;---------------------------------------------------------------------------------------------------
-
-macro addbigcredits(text, padding)
+macro bigcredits(text)
 	!CLINE #= !CLINE+1
 	table "creditscharmapbighi.txt"
 
 	?line_top:
-		db <padding>
+		db (32-(?end-?text))/2
 		db 2*(?end-?text)-1
 	?text:
 		db "<text>"
@@ -59,7 +58,7 @@ macro addbigcredits(text, padding)
 
 	table "creditscharmapbiglo.txt"
 	?line_bottom:
-		db <padding>
+		db (32-(?end-?text))/2
 		db 2*(?end-?text)-1
 		db "<text>"
 
@@ -71,14 +70,36 @@ macro addbigcredits(text, padding)
 
 endmacro
 
-macro bigcredits(text)
-	addbigcredits("<text>", (32-(?end-?text))/2)
-endmacro
-
 ;---------------------------------------------------------------------------------------------------
 
 macro bigcreditsleft(text)
-	addbigcredits("<text>", 2)
+	!CLINE #= !CLINE+1
+	table "creditscharmapbighi.txt"
+
+	?line_top:
+		db 2
+		db 2*(?end-?text)-1
+	?text:
+		db "<text>"
+	?end:
+
+	pushpc
+	org CreditsLineTable+!CLINE+!CLINE : dw ?line_top
+	pullpc
+
+
+	table "creditscharmapbiglo.txt"
+	?line_bottom:
+		db 2
+		db 2*(?end-?text)-1
+		db "<text>"
+
+
+	!CLINE #= !CLINE+1
+	pushpc
+	org CreditsLineTable+!CLINE+!CLINE : dw ?line_bottom
+	pullpc
+
 endmacro
 
 ;---------------------------------------------------------------------------------------------------
