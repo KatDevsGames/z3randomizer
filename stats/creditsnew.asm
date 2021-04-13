@@ -22,12 +22,12 @@ CreditsLineTable:
 
 ;---------------------------------------------------------------------------------------------------
 
-macro smallcredits(space, text)
+macro smallcredits(text)
 	!CLINE #= !CLINE+1
 	table "creditscharmapsmall.txt"
 
 	?line:
-		db <space>
+		db (32-(?end-?text))/2
 		db 2*(?end-?text)-1
 	?text:
 		db "<text>"
@@ -41,16 +41,16 @@ endmacro
 
 ;---------------------------------------------------------------------------------------------------
 
-macro bigcredits(space, text)
+macro bigcredits(text)
 	!CLINE #= !CLINE+1
 	table "creditscharmapbighi.txt"
 
 	?line_top:
-		db <space>
-		db 2*(?endA-?textA)-1
-	?textA:
+		db (32-(?end-?text))/2
+		db 2*(?end-?text)-1
+	?text:
 		db "<text>"
-	?endA:
+	?end:
 
 	pushpc
 	org CreditsLineTable+!CLINE+!CLINE : dw ?line_top
@@ -59,11 +59,9 @@ macro bigcredits(space, text)
 
 	table "creditscharmapbiglo.txt"
 	?line_bottom:
-		db <space>
-		db 2*(?endB-?textB)-1
-	?textB:
+		db (32-(?end-?text))/2
+		db 2*(?end-?text)-1
 		db "<text>"
-	?endB:
 
 
 	!CLINE #= !CLINE+1
@@ -107,236 +105,236 @@ CreditsLineBlank:
 ;---------------------------------------------------------------------------------------------------
 
 %preline()
-%smallcredits(6, "ORIGINAL GAME STAFF")
+%smallcredits("ORIGINAL GAME STAFF")
 
 %blankline()
 
 %preline()
-%smallcredits(7, "EXECUTIVE PRODUCER")
+%smallcredits("EXECUTIVE PRODUCER")
 
 %blankline()
 
-%bigcredits(8, "HIROSHI YAMAUCHI")
-
-%blankline()
-%blankline()
-
-%preline()
-
-%smallcredits(12, "PRODUCER")
-
-%blankline()
-
-%bigcredits(8, "SHIGERU MIYAMOTO")
-
-%blankline()
-%blankline()
-
-%smallcredits(12, "DIRECTOR")
-
-%blankline()
-
-%bigcredits(9, "TAKASHI TEZUKA")
-
-%blankline()
-%blankline()
-
-%smallcredits(9, "SCRIPT WRITER")
-
-%blankline()
-
-%bigcredits(9, "KENSUKE TANABE")
-
-%blankline()
-%blankline()
-
-%preline()
-%smallcredits(6, "ASSISTANT DIRECTORS")
-
-%blankline()
-%blankline()
-
-%bigcredits(7, "YASUHISA YAMAMURA")
-
-%blankline()
-
-%bigcredits(9, "YOICHI YAMADA")
-
-%blankline()
-%blankline()
-
-%smallcredits(3, "SCREEN GRAPHICS DESIGNERS")
-
-
-%preline()
-%preline()
-%smallcredits(8, "OBJECT DESIGNERS")
-
-%blankline()
-
-%bigcredits(8, "SOICHIRO TOMITA")
-
-%blankline()
-
-%bigcredits(9, "TAKAYA IMAMURA")
-
-%blankline()
-%blankline()
-
-%preline()
-%smallcredits(5, "BACK GROUND DESIGNERS")
-
-%blankline()
-%blankline()
-
-%bigcredits(8, "MASANAO ARIMOTO")
-
-%blankline()
-
-%bigcredits(7, "TSUYOSHI WATANABE")
-
-%blankline()
-%blankline()
-
-%smallcredits(8, "PROGRAM DIRECTOR")
-
-%blankline()
-
-%bigcredits(8, "TOSHIHIKO NAKAGO")
-
-%blankline()
-%blankline()
-
-%smallcredits(8, "MAIN PROGRAMMER")
-
-%blankline()
-
-%bigcredits(8, "YASUNARI SOEJIMA")
-
-%blankline()
-%blankline()
-
-%smallcredits(7, "OBJECT PROGRAMMER")
-
-%blankline()
-
-%bigcredits(9, "KAZUAKI MORITA")
+%bigcredits("HIROSHI YAMAUCHI")
 
 %blankline()
 %blankline()
 
 %preline()
 
-%smallcredits(10, "PROGRAMMERS")
+%smallcredits("PRODUCER")
 
 %blankline()
 
-%bigcredits(8, "TATSUO NISHIYAMA")
-
-%blankline()
-
-%bigcredits(8, "YUICHI YAMAMOTO")
-
-%blankline()
-
-%bigcredits(8, "YOSHIHIRO NOMOTO")
-
-%blankline()
-
-%bigcredits(11, "EIJI NOTO")
-
-%blankline()
-
-%bigcredits(8, "SATORU TAKAHATA")
-
-%blankline()
-
-%bigcredits(9, "TOSHIO IWAWAKI")
-
-%blankline()
-
-%bigcredits(6, "SHIGEHIRO KASAMATSU")
-
-%blankline()
-
-%bigcredits(8, "YASUNARI NISHIDA")
+%bigcredits("SHIGERU MIYAMOTO")
 
 %blankline()
 %blankline()
 
-%smallcredits(9, "SOUND COMPOSER")
+%smallcredits("DIRECTOR")
 
 %blankline()
 
-%bigcredits(11, "KOJI KONDO")
+%bigcredits("TAKASHI TEZUKA")
 
 %blankline()
 %blankline()
 
-%smallcredits(10, "COORDINATORS")
+%smallcredits("SCRIPT WRITER")
 
 %blankline()
 
-%bigcredits(11, "KEIZO KATO")
-
-%blankline()
-
-%bigcredits(9, "TAKAO SHIMIZU")
+%bigcredits("KENSUKE TANABE")
 
 %blankline()
 %blankline()
 
 %preline()
-%smallcredits(8, "PRINTED ART WORK")
-
-%blankline()
-
-%bigcredits(9, "YOICHI KOTABE")
-
-%blankline()
-
-%bigcredits(10, "HIDEKI FUJII")
-
-%blankline()
-
-%bigcredits(8, "YOSHIAKI KOIZUMI")
-
-%blankline()
-
-%bigcredits(9, "YASUHIRO SAKAI")
-
-%blankline()
-
-%bigcredits(8, "TOMOAKI KUROUME")
+%smallcredits("ASSISTANT DIRECTORS")
 
 %blankline()
 %blankline()
 
-%smallcredits(7, "SPECIAL THANKS TO")
+%bigcredits("YASUHISA YAMAMURA")
 
 %blankline()
 
-%bigcredits(9, "NOBUO OKAJIMA")
+%bigcredits("YOICHI YAMADA")
+
+%blankline()
+%blankline()
+
+%smallcredits("SCREEN GRAPHICS DESIGNERS")
+
+
+%preline()
+%preline()
+%smallcredits("OBJECT DESIGNERS")
 
 %blankline()
 
-%bigcredits(7, "YASUNORI TAKETANI")
+%bigcredits("SOICHIRO TOMITA")
 
 %blankline()
 
-%bigcredits(10, "KIYOSHI KODA")
+%bigcredits("TAKAYA IMAMURA")
+
+%blankline()
+%blankline()
+
+%preline()
+%smallcredits("BACK GROUND DESIGNERS")
+
+%blankline()
+%blankline()
+
+%bigcredits("MASANAO ARIMOTO")
 
 %blankline()
 
-%bigcredits(7, "TAKAMITSU KUZUHARA")
+%bigcredits("TSUYOSHI WATANABE")
+
+%blankline()
+%blankline()
+
+%smallcredits("PROGRAM DIRECTOR")
 
 %blankline()
 
-%bigcredits(9, "HIRONOBU KAKUI")
+%bigcredits("TOSHIHIKO NAKAGO")
+
+%blankline()
+%blankline()
+
+%smallcredits("MAIN PROGRAMMER")
 
 %blankline()
 
-%bigcredits(7, "SHIGEKI YAMASHIRO")
+%bigcredits("YASUNARI SOEJIMA")
+
+%blankline()
+%blankline()
+
+%smallcredits("OBJECT PROGRAMMER")
+
+%blankline()
+
+%bigcredits("KAZUAKI MORITA")
+
+%blankline()
+%blankline()
+
+%preline()
+
+%smallcredits("PROGRAMMERS")
+
+%blankline()
+
+%bigcredits("TATSUO NISHIYAMA")
+
+%blankline()
+
+%bigcredits("YUICHI YAMAMOTO")
+
+%blankline()
+
+%bigcredits("YOSHIHIRO NOMOTO")
+
+%blankline()
+
+%bigcredits("EIJI NOTO")
+
+%blankline()
+
+%bigcredits("SATORU TAKAHATA")
+
+%blankline()
+
+%bigcredits("TOSHIO IWAWAKI")
+
+%blankline()
+
+%bigcredits("SHIGEHIRO KASAMATSU")
+
+%blankline()
+
+%bigcredits("YASUNARI NISHIDA")
+
+%blankline()
+%blankline()
+
+%smallcredits("SOUND COMPOSER")
+
+%blankline()
+
+%bigcredits("KOJI KONDO")
+
+%blankline()
+%blankline()
+
+%smallcredits("COORDINATORS")
+
+%blankline()
+
+%bigcredits("KEIZO KATO")
+
+%blankline()
+
+%bigcredits("TAKAO SHIMIZU")
+
+%blankline()
+%blankline()
+
+%preline()
+%smallcredits("PRINTED ART WORK")
+
+%blankline()
+
+%bigcredits("YOICHI KOTABE")
+
+%blankline()
+
+%bigcredits("HIDEKI FUJII")
+
+%blankline()
+
+%bigcredits("YOSHIAKI KOIZUMI")
+
+%blankline()
+
+%bigcredits("YASUHIRO SAKAI")
+
+%blankline()
+
+%bigcredits("TOMOAKI KUROUME")
+
+%blankline()
+%blankline()
+
+%smallcredits("SPECIAL THANKS TO")
+
+%blankline()
+
+%bigcredits("NOBUO OKAJIMA")
+
+%blankline()
+
+%bigcredits("YASUNORI TAKETANI")
+
+%blankline()
+
+%bigcredits("KIYOSHI KODA")
+
+%blankline()
+
+%bigcredits("TAKAMITSU KUZUHARA")
+
+%blankline()
+
+%bigcredits("HIRONOBU KAKUI")
+
+%blankline()
+
+%bigcredits("SHIGEKI YAMASHIRO")
 
 %blankline()
 
@@ -347,100 +345,100 @@ CreditsLineBlank:
 
 ;---------------------------------------------------------------------------------------------------
 
-%smallcredits(4, "RANDOMIZER CONTRIBUTORS")
+%smallcredits("RANDOMIZER CONTRIBUTORS")
 
 %blankline()
 %blankline()
 
 %preline()
 %preline()
-%smallcredits(8, "ITEM RANDOMIZER")
+%smallcredits("ITEM RANDOMIZER")
 
 %blankline()
 
-%bigcredits(2, "KATDEVSGAMES         VEETORP")
+%bigcredits("KATDEVSGAMES         VEETORP")
 
 %blankline()
 
-%bigcredits(2, "CHRISTOSOWEN       DESSYREQT")
+%bigcredits("CHRISTOSOWEN       DESSYREQT")
 
 %blankline()
 
-%bigcredits(2, "SMALLHACKER           SYNACK")
+%bigcredits("SMALLHACKER           SYNACK")
 
 %blankline()
 %blankline()
 
-%smallcredits(6, "ENTRANCE RANDOMIZER")
+%smallcredits("ENTRANCE RANDOMIZER")
 
 %blankline()
 
-%bigcredits(2, "AMAZINGAMPHAROS   LLCOOLDAVE")
+%bigcredits("AMAZINGAMPHAROS   LLCOOLDAVE")
 
 %blankline()
 
-%bigcredits(9, "KEVINCATHCART")
+%bigcredits("KEVINCATHCART")
 
 %blankline()
 %blankline()
 
 %preline()
-%smallcredits(8, "ENEMY RANDOMIZER")
+%smallcredits("ENEMY RANDOMIZER")
 
 %blankline()
 
-%bigcredits(2, "ZARBY89              SOSUKE3")
+%bigcredits("ZARBY89              SOSUKE3")
 
 %blankline()
 
-%bigcredits(10, "ENDEROFGAMES")
-
-%blankline()
-%blankline()
-
-%smallcredits(8, "DOOR RANDOMIZER")
-
-%blankline()
-
-%bigcredits(2, "AERINON             COMPILING")
+%bigcredits("ENDEROFGAMES")
 
 %blankline()
 %blankline()
 
-%smallcredits(6, "FESTIVE RANDOMIZER")
+%smallcredits("DOOR RANDOMIZER")
 
 %blankline()
 
-%bigcredits(2, "KAN                    TOTAL")
-
-%blankline()
-
-%bigcredits(2, "CATOBAT            DINSAPHIR")
+%bigcredits("AERINON             COMPILING")
 
 %blankline()
 %blankline()
 
-%smallcredits(7, "SPRITE DEVELOPMENT")
+%smallcredits("FESTIVE RANDOMIZER")
+
+%blankline()
+
+%bigcredits("KAN                    TOTAL")
+
+%blankline()
+
+%bigcredits("CATOBAT            DINSAPHIR")
 
 %blankline()
 %blankline()
 
-%bigcredits(2, "MIKETRETHEWEY         IBAZLY")
+%smallcredits("SPRITE DEVELOPMENT")
 
 %blankline()
-%bigcredits(2, "FISH_WAFFLE64        KRELBEL")
-
 %blankline()
 
-%bigcredits(2, "TWROXAS              ARTHEAU")
+%bigcredits("MIKETRETHEWEY         IBAZLY")
 
 %blankline()
-
-%bigcredits(2, "GLAN               TARTHORON")
+%bigcredits("FISH_WAFFLE64        KRELBEL")
 
 %blankline()
 
-%smallcredits(9, "YOUR SPRITE BY")
+%bigcredits("TWROXAS              ARTHEAU")
+
+%blankline()
+
+%bigcredits("GLAN               TARTHORON")
+
+%blankline()
+
+%smallcredits("YOUR SPRITE BY")
 
 %addarbline(YourSpriteCreditsHi)
 %addarbline(YourSpriteCreditsLo)
@@ -448,60 +446,60 @@ CreditsLineBlank:
 %blankline()
 %blankline()
 
-%smallcredits(10, "MSU1 SUPPORT")
+%smallcredits("MSU1 SUPPORT")
 
 %blankline()
 
-%bigcredits(2, "QWERTYMODO")
-
-%blankline()
-%blankline()
-
-%smallcredits(7, "PALETTE SHUFFLER")
-
-%blankline()
-
-%bigcredits(9, "NELSON AKA SWR")
+%bigcredits("QWERTYMODO")
 
 %blankline()
 %blankline()
 
-%smallcredits(9, "SPECIAL THANKS")
+%smallcredits("PALETTE SHUFFLER")
+
+%blankline()
+
+%bigcredits("NELSON AKA SWR")
 
 %blankline()
 %blankline()
 
-%bigcredits(2, "SUPERSKUJ          EVILASH25")
-
-%blankline()
-
-%bigcredits(2, "MYRAMONG             JOSHRTA")
-
-%blankline()
-
-%bigcredits(2, "WALKINGEYE     MATHONNAPKINS")
-
-%blankline()
-
-%bigcredits(9, "SAKURATSUBASA")
-
-%blankline()
-
-%bigcredits(13, "AND...")
-
-%blankline()
-
-%bigcredits(1, "THE ALTTP RANDOMIZER COMMUNITY")
+%smallcredits("SPECIAL THANKS")
 
 %blankline()
 %blankline()
 
-%smallcredits(7, "COMMUNITY DISCORD")
+%bigcredits("SUPERSKUJ          EVILASH25")
+
+%blankline()
+
+%bigcredits("MYRAMONG             JOSHRTA")
+
+%blankline()
+
+%bigcredits("WALKINGEYE     MATHONNAPKINS")
+
+%blankline()
+
+%bigcredits("SAKURATSUBASA")
+
+%blankline()
+
+%bigcredits("AND...")
+
+%blankline()
+
+%bigcredits("THE ALTTP RANDOMIZER COMMUNITY")
 
 %blankline()
 %blankline()
 
-%bigcredits(3, "HTTPS://ALTTPR.COM/DISCORD")
+%smallcredits("COMMUNITY DISCORD")
+
+%blankline()
+%blankline()
+
+%bigcredits("HTTPS://ALTTPR.COM/DISCORD")
 
 %blankline()
 
@@ -537,91 +535,91 @@ print "Line number: !CLINE | Expected: 302"
 
 ;===================================================================================================
 
-%smallcredits(6, "THE IMPORTANT STUFF")
+%smallcredits("THE IMPORTANT STUFF")
 
 %blankline()
 %blankline()
 
 %preline()
-%smallcredits(11, "TIME FOUND")
+%smallcredits("TIME FOUND")
 
 %blankline()
 %blankline()
 
-%bigcredits(2, "FIRST SWORD")
+%bigcredits("FIRST SWORD")
 
 %blankline()
 
-%bigcredits(2, "PEGASUS BOOTS")
+%bigcredits("PEGASUS BOOTS")
 
 %blankline()
 
-%bigcredits(2, "FLUTE")
+%bigcredits("FLUTE")
 
 %blankline()
 
-%bigcredits(2, "MIRROR")
+%bigcredits("MIRROR")
 
 %blankline()
 %blankline()
 
 %preline()
-%smallcredits(11, "BOSS KILLS")
+%smallcredits("BOSS KILLS")
 
 %blankline()
 %blankline()
 
-%bigcredits(2, "SWORDLESS                /13")
+%bigcredits("SWORDLESS                /13")
 
 %blankline()
 
-%bigcredits(2, "FIGHTER'S SWORD          /13")
+%bigcredits("FIGHTER'S SWORD          /13")
 
 %blankline()
 
-%bigcredits(2, "MASTER SWORD             /13")
+%bigcredits("MASTER SWORD             /13")
 
 %blankline()
 
-%bigcredits(2, "TEMPERED SWORD           /13")
+%bigcredits("TEMPERED SWORD           /13")
 
 %blankline()
 
-%bigcredits(2, "GOLD SWORD               /13")
-
-%blankline()
-%blankline()
-
-%smallcredits(11, "GAME STATS")
+%bigcredits("GOLD SWORD               /13")
 
 %blankline()
 %blankline()
 
-%bigcredits(2, "GT BIG KEY               /22")
+%smallcredits("GAME STATS")
+
+%blankline()
+%blankline()
+
+%bigcredits("GT BIG KEY               /22")
 
 %blankline()
 
-%bigcredits(2, "BONKS")
+%bigcredits("BONKS")
 
 %blankline()
 
-%bigcredits(2, "SAVE AND QUITS")
+%bigcredits("SAVE AND QUITS")
 
 %blankline()
 
-%bigcredits(2, "DEATHS")
+%bigcredits("DEATHS")
 
 %blankline()
 
-%bigcredits(2, "FAERIE REVIVALS")
+%bigcredits("FAERIE REVIVALS")
 
 %blankline()
 
-%bigcredits(2, "TOTAL MENU TIME")
+%bigcredits("TOTAL MENU TIME")
 
 %blankline()
 
-%bigcredits(2, "TOTAL LAG TIME")
+%bigcredits("TOTAL LAG TIME")
 
 %blankline()
 %blankline()
@@ -646,11 +644,11 @@ print "Line number: !CLINE | Expected: 302"
 %preline()
 %preline()
 %preline()
-%bigcredits(2, "COLLECTION RATE         /216")
+%bigcredits("COLLECTION RATE         /216")
 
 %blankline()
 
-%bigcredits(2, "TOTAL TIME")
+%bigcredits("TOTAL TIME")
 
 %blankline()
 
