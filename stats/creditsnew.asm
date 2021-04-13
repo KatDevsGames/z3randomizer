@@ -1,7 +1,15 @@
-YourSpriteCredits:
+;===================================================================================================
+; LEAVE THIS HERE FOR PHP WRITES
+;===================================================================================================
+YourSpriteCreditsHi:
 db 2
 db 55
-db "                            "
+db "                            " ; $238002
+
+YourSpriteCreditsLo:
+db 2
+db 55
+db "                            " ; $238020
 
 ;===================================================================================================
 
@@ -336,7 +344,8 @@ CreditsLineBlank:
 %preline()
 %preline()
 %preline()
-%preline()
+
+;---------------------------------------------------------------------------------------------------
 
 %smallcredits(4, "RANDOMIZER CONTRIBUTORS")
 
@@ -433,7 +442,8 @@ CreditsLineBlank:
 
 %smallcredits(9, "YOUR SPRITE BY")
 
-%addarbline(YourSpriteCredits)
+%addarbline(YourSpriteCreditsHi)
+%addarbline(YourSpriteCreditsLo)
 
 %blankline()
 %blankline()
