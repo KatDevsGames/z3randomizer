@@ -22,9 +22,9 @@ CreditsLineTable:
 
 ;---------------------------------------------------------------------------------------------------
 
-macro smallcredits(text)
+macro smallcredits(text, color)
 	!CLINE #= !CLINE+1
-	table "creditscharmapsmall.txt"
+	table "creditscharmapsmall_<color>.txt"
 
 	?line:
 		db (32-(?end-?text))/2
@@ -104,10 +104,10 @@ endmacro
 
 ;---------------------------------------------------------------------------------------------------
 
-macro preline()
+macro emptyline()
 	!CLINE #= !CLINE+1
 	pushpc
-	org CreditsLineTable+!CLINE+!CLINE : dw CreditsPreLine
+	org CreditsLineTable+!CLINE+!CLINE : dw CreditsEmptyLine
 	pullpc
 endmacro
 
@@ -127,7 +127,7 @@ endmacro
 
 ;===================================================================================================
 
-CreditsPreLine:
+CreditsEmptyLine:
 	db $00, $01, $9F
 
 CreditsLineBlank:
@@ -135,13 +135,13 @@ CreditsLineBlank:
 
 ;---------------------------------------------------------------------------------------------------
 
-%preline()
-%smallcredits("ORIGINAL GAME STAFF")
+%emptyline()
+%smallcredits("ORIGINAL GAME STAFF", "yellow")
 
 %blankline()
 
-%preline()
-%smallcredits("EXECUTIVE PRODUCER")
+%emptyline()
+%smallcredits("EXECUTIVE PRODUCER", "green")
 
 %blankline()
 
@@ -150,9 +150,9 @@ CreditsLineBlank:
 %blankline()
 %blankline()
 
-%preline()
+%emptyline()
 
-%smallcredits("PRODUCER")
+%smallcredits("PRODUCER", "yellow")
 
 %blankline()
 
@@ -161,7 +161,7 @@ CreditsLineBlank:
 %blankline()
 %blankline()
 
-%smallcredits("DIRECTOR")
+%smallcredits("DIRECTOR", "red")
 
 %blankline()
 
@@ -170,7 +170,7 @@ CreditsLineBlank:
 %blankline()
 %blankline()
 
-%smallcredits("SCRIPT WRITER")
+%smallcredits("SCRIPT WRITER", "green")
 
 %blankline()
 
@@ -179,8 +179,8 @@ CreditsLineBlank:
 %blankline()
 %blankline()
 
-%preline()
-%smallcredits("ASSISTANT DIRECTORS")
+%emptyline()
+%smallcredits("ASSISTANT DIRECTORS", "yellow")
 
 %blankline()
 %blankline()
@@ -194,12 +194,12 @@ CreditsLineBlank:
 %blankline()
 %blankline()
 
-%smallcredits("SCREEN GRAPHICS DESIGNERS")
+%smallcredits("SCREEN GRAPHICS DESIGNERS", "green")
 
 
-%preline()
-%preline()
-%smallcredits("OBJECT DESIGNERS")
+%emptyline()
+%emptyline()
+%smallcredits("OBJECT DESIGNERS", "yellow")
 
 %blankline()
 
@@ -212,8 +212,8 @@ CreditsLineBlank:
 %blankline()
 %blankline()
 
-%preline()
-%smallcredits("BACK GROUND DESIGNERS")
+%emptyline()
+%smallcredits("BACK GROUND DESIGNERS", "yellow")
 
 %blankline()
 %blankline()
@@ -227,7 +227,7 @@ CreditsLineBlank:
 %blankline()
 %blankline()
 
-%smallcredits("PROGRAM DIRECTOR")
+%smallcredits("PROGRAM DIRECTOR", "red")
 
 %blankline()
 
@@ -236,7 +236,7 @@ CreditsLineBlank:
 %blankline()
 %blankline()
 
-%smallcredits("MAIN PROGRAMMER")
+%smallcredits("MAIN PROGRAMMER", "yellow")
 
 %blankline()
 
@@ -245,7 +245,7 @@ CreditsLineBlank:
 %blankline()
 %blankline()
 
-%smallcredits("OBJECT PROGRAMMER")
+%smallcredits("OBJECT PROGRAMMER", "green")
 
 %blankline()
 
@@ -254,9 +254,9 @@ CreditsLineBlank:
 %blankline()
 %blankline()
 
-%preline()
+%emptyline()
 
-%smallcredits("PROGRAMMERS")
+%smallcredits("PROGRAMMERS", "yellow")
 
 %blankline()
 
@@ -293,7 +293,7 @@ CreditsLineBlank:
 %blankline()
 %blankline()
 
-%smallcredits("SOUND COMPOSER")
+%smallcredits("SOUND COMPOSER", "red")
 
 %blankline()
 
@@ -302,7 +302,7 @@ CreditsLineBlank:
 %blankline()
 %blankline()
 
-%smallcredits("COORDINATORS")
+%smallcredits("COORDINATORS", "green")
 
 %blankline()
 
@@ -315,8 +315,8 @@ CreditsLineBlank:
 %blankline()
 %blankline()
 
-%preline()
-%smallcredits("PRINTED ART WORK")
+%emptyline()
+%smallcredits("PRINTED ART WORK", "yellow")
 
 %blankline()
 
@@ -341,7 +341,7 @@ CreditsLineBlank:
 %blankline()
 %blankline()
 
-%smallcredits("SPECIAL THANKS TO")
+%smallcredits("SPECIAL THANKS TO", "red")
 
 %blankline()
 
@@ -369,21 +369,21 @@ CreditsLineBlank:
 
 %blankline()
 
-%preline()
-%preline()
-%preline()
-%preline()
+%emptyline()
+%emptyline()
+%emptyline()
+%emptyline()
 
 ;---------------------------------------------------------------------------------------------------
 
-%smallcredits("RANDOMIZER CONTRIBUTORS")
+%smallcredits("RANDOMIZER CONTRIBUTORS", "red")
 
 %blankline()
 %blankline()
 
-%preline()
-%preline()
-%smallcredits("ITEM RANDOMIZER")
+%emptyline()
+%emptyline()
+%smallcredits("ITEM RANDOMIZER", "yellow")
 
 %blankline()
 
@@ -400,7 +400,7 @@ CreditsLineBlank:
 %blankline()
 %blankline()
 
-%smallcredits("ENTRANCE RANDOMIZER")
+%smallcredits("ENTRANCE RANDOMIZER", "green")
 
 %blankline()
 
@@ -413,8 +413,8 @@ CreditsLineBlank:
 %blankline()
 %blankline()
 
-%preline()
-%smallcredits("ENEMY RANDOMIZER")
+%emptyline()
+%smallcredits("ENEMY RANDOMIZER", "yellow")
 
 %blankline()
 
@@ -427,7 +427,7 @@ CreditsLineBlank:
 %blankline()
 %blankline()
 
-%smallcredits("DOOR RANDOMIZER")
+%smallcredits("DOOR RANDOMIZER", "green")
 
 %blankline()
 
@@ -436,7 +436,7 @@ CreditsLineBlank:
 %blankline()
 %blankline()
 
-%smallcredits("FESTIVE RANDOMIZER")
+%smallcredits("FESTIVE RANDOMIZER", "yellow")
 
 %blankline()
 
@@ -449,7 +449,7 @@ CreditsLineBlank:
 %blankline()
 %blankline()
 
-%smallcredits("SPRITE DEVELOPMENT")
+%smallcredits("SPRITE DEVELOPMENT", "green")
 
 %blankline()
 %blankline()
@@ -469,7 +469,7 @@ CreditsLineBlank:
 
 %blankline()
 
-%smallcredits("YOUR SPRITE BY")
+%smallcredits("YOUR SPRITE BY", "yellow")
 
 %addarbline(YourSpriteCreditsHi)
 %addarbline(YourSpriteCreditsLo)
@@ -477,7 +477,7 @@ CreditsLineBlank:
 %blankline()
 %blankline()
 
-%smallcredits("MSU1 SUPPORT")
+%smallcredits("MSU1 SUPPORT", "green")
 
 %blankline()
 
@@ -486,7 +486,7 @@ CreditsLineBlank:
 %blankline()
 %blankline()
 
-%smallcredits("PALETTE SHUFFLER")
+%smallcredits("PALETTE SHUFFLER", "YELLOW")
 
 %blankline()
 
@@ -495,7 +495,7 @@ CreditsLineBlank:
 %blankline()
 %blankline()
 
-%smallcredits("SPECIAL THANKS")
+%smallcredits("SPECIAL THANKS", "red")
 
 %blankline()
 %blankline()
@@ -525,7 +525,7 @@ CreditsLineBlank:
 %blankline()
 %blankline()
 
-%smallcredits("COMMUNITY DISCORD")
+%smallcredits("COMMUNITY DISCORD", "green")
 
 %blankline()
 %blankline()
@@ -534,45 +534,57 @@ CreditsLineBlank:
 
 %blankline()
 
-%preline()
-%preline()
-%preline()
-%preline()
-%preline()
-%preline()
-%preline()
-%preline()
-%preline()
-%preline()
-%preline()
-%preline()
-%preline()
-%preline()
-%preline()
-%preline()
-%preline()
-%preline()
-%preline()
-%preline()
-%preline()
-%preline()
-%preline()
-%preline()
-%preline()
+%emptyline()
+%emptyline()
+%emptyline()
+%emptyline()
+%emptyline()
+%emptyline()
+%emptyline()
+%emptyline()
+%emptyline()
+%emptyline()
+%emptyline()
+%emptyline()
+%emptyline()
+%emptyline()
+%emptyline()
+%emptyline()
+%emptyline()
+%emptyline()
+%emptyline()
+%emptyline()
+%emptyline()
+%emptyline()
+%emptyline()
+%emptyline()
+%emptyline()
 
 ;===================================================================================================
 
 print "Line number: !CLINE | Expected: 302"
 
+if !CLINE > 302
+	error "Too many credits lines. !CLINE > 302"
+
+elseif !CLINE < 302
+	warn "Too few credits lines. !CLINE < 302; Adding additional empties for alignment."
+
+endif
+
+
+; Set line always to line up with stats
+!CLINE #= 302
+
 ;===================================================================================================
 
-%smallcredits("THE IMPORTANT STUFF")
+%smallcredits("THE IMPORTANT STUFF", "yellow")
 
 %blankline()
 %blankline()
 
-%preline()
-%smallcredits("TIME FOUND")
+%emptyline()
+%smallcredits("TIME FOUND", "green")
 
 %blankline()
 %blankline()
@@ -594,8 +606,8 @@ print "Line number: !CLINE | Expected: 302"
 %blankline()
 %blankline()
 
-%preline()
-%smallcredits("BOSS KILLS")
+%emptyline()
+%smallcredits("BOSS KILLS", "yellow")
 
 %blankline()
 %blankline()
@@ -621,7 +633,7 @@ print "Line number: !CLINE | Expected: 302"
 %blankline()
 %blankline()
 
-%smallcredits("GAME STATS")
+%smallcredits("GAME STATS", "red")
 
 %blankline()
 %blankline()
@@ -670,11 +682,11 @@ print "Line number: !CLINE | Expected: 302"
 
 %blankline()
 
-%preline()
-%preline()
-%preline()
-%preline()
-%preline()
+%emptyline()
+%emptyline()
+%emptyline()
+%emptyline()
+%emptyline()
 %bigcreditsleft("COLLECTION RATE         /216")
 
 %blankline()
@@ -683,12 +695,12 @@ print "Line number: !CLINE | Expected: 302"
 
 %blankline()
 
-%preline()
-%preline()
-%preline()
-%preline()
-%preline()
-%preline()
+%emptyline()
+%emptyline()
+%emptyline()
+%emptyline()
+%emptyline()
+%emptyline()
 
 ;---------------------------------------------------------------------------------------------------
 
