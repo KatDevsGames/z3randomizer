@@ -529,6 +529,8 @@ AddReceivedItemExpanded:
 ;--------------------------------------------------------------------------------
 ;DATA AddReceivedItemExpanded
 {
+; This is a temporary measure for Fish to have consistent addresses
+org $A08800
 
 .y_offsets
     db -5, -5, -5, -5, -5, -4, -4, -5
