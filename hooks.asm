@@ -431,6 +431,11 @@ JSL.l OnPrepFileSelect
 ;================================================================================
 ; Light speed
 ;--------------------------------------------------------------------------------
+
+; Message
+org $1ED4FF
+JSL AgahnimAsksAboutPed
+
 ; Spam blue balls if ped not pulled
 org $1ED6E8
 JSL CheckAgaForPed : NOP
@@ -439,6 +444,8 @@ JSL CheckAgaForPed : NOP
 ; kill ganon when aga dies in light speed
 org $00F970
 JSL KillGanon
+
+
 
 ;--------------------------------------------------------------------------------
 

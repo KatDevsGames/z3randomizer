@@ -6,7 +6,7 @@ lorom
 !BGE = "BCS"
 
 org $238000
-incsrc stats/credits.asm
+incsrc stats/creditsnew.asm
 
 FontGfx:
 incbin stats/font.gb
