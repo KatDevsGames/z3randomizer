@@ -134,7 +134,7 @@ incsrc msu.asm
 incsrc dialog.asm
 incsrc entrances.asm
 incsrc clock.asm
-incsrc accessability.asm
+incsrc accessibility.asm
 incsrc heartbeep.asm
 incsrc capacityupgrades.asm
 incsrc timer.asm
