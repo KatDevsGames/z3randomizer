@@ -106,3 +106,20 @@ ConditionalGTFlash:
             INY #2
             INX #2 : CPX.b #$10 : BNE --
 RTL
+;================================================================================
+ConditionalRedFlash:
+        REP #$20
+        LDA.l DisableFlashing : BEQ +
+            LDA $00,X
+            LDA.w #$1D59 : LDA $7EC5DA
+            LDA.w #$25FF : LDA $7EC5DC
+            LDA.w #$0000
+            RTL
+
+        +
+            LDA $00
+            LDA.w #$1D59 : STA $7EC5DA
+            LDA.w #$25FF : STA $7EC5DC
+            LDA.w #$001A
+
+RTL
