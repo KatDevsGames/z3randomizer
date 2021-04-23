@@ -465,6 +465,9 @@ LoadGearPalettes_bunny:
 org $02FD95 ; 17D95 - Bank0E.asm: 3742 Note: Different bank
 LoadGearPalettes_variable:
 
+org $02FEAB
+Filter_Majorly_Whiten_Color:
+
 org $05A51D
 Sprite_SpawnFallingItem:
 

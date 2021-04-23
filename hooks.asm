@@ -741,12 +741,18 @@ org $08AAE1 ; <- 42AE1 - ancilla_ether_spell.asm : 28 (LDA $031D : CMP.b #$0B)
 JSL.l SetEtherFlicker : NOP
 ;--------------------------------------------------------------------------------
 org $02A3F4 ; <- 123F4 - Bank02.asm : 6222 (LDA.b #$72 : BRA .setBrightness)
-BRA + : NOP #2
+BRA + : NOP #2 : +
 org $02A3FD ; <- 123FD - Bank02.asm : 6233 (LDA.b #$32 : STA $9a)
-+ : JSL.l ConditionalLightning
+JSL.l ConditionalLightning
 ;--------------------------------------------------------------------------------
-org $02FEAB ; <- 17EAB - Bank0E.asm : 3826 (REP #$20 : LDX.b #$00)
-JSL.l ConditionalWhitenColor : RTS
+org $1DE9CD ; <- EE9CD - Bank1D.asm : 568 (JSL Filter_Majorly_Whiten_Bg)
+JSL.l ConditionalWhitenBg
+;--------------------------------------------------------------------------------
+org $08AAED ; <- 42AED - ancilla_ether_spell.asm : 35 (JSL Filter_Majorly_Whiten_Bg)
+JSL.l ConditionalWhitenBg
+;--------------------------------------------------------------------------------
+org $02FEE6 ; <- 17EE6 - Bank0E.asm : 3907 (RTS)
+RTL         ; the whiten color routine is only JSL-ed to
 ;--------------------------------------------------------------------------------
 org $07FA7B ; <- 3FA7B - Bank0E.asm : 4735 (REP #$20 : LDX.b #$02)  
 JML DDMConditionalLightning
