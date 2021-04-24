@@ -128,7 +128,7 @@ DDMConditionalLightning:
 
 ;================================================================================
 ConditionalGTFlash:
-        LDA.l DisableFlashing : BNE +
+        LDA.l DisableFlashing
             REP #$20
             BNE +
                 LDA $0000
@@ -139,10 +139,10 @@ ConditionalGTFlash:
             RTL
         +
             LDA $00
-        --
+        -
             LDA $F9C1, Y : LDA $7EC5D0, X
             INY #2
-            INX #2 : CPX.b #$10 : BNE --
+            INX #2 : CPX.b #$10 : BNE -
 RTL
 ;================================================================================
 ConditionalRedFlash:
