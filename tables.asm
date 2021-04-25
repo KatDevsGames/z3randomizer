@@ -873,8 +873,8 @@ Restrict_Ponds:
 db #$01 ; #$00 = Original Behavior - #$01 - Restrict to Bottles (Default)
 ;================================================================================
 org $30817F ; PC 0x18017F
-Seizure_Safety:
-db #$00 ; #$00 = Off (Default) - #$xx = Limit Certain Effects
+DisableFlashing:
+db #$00 ; #$00 = Flashing Enabled (Default) - #$01 = Flashing Disabled
 ;================================================================================
 ;---- --hb
 ;h - Hookshot
@@ -916,11 +916,7 @@ db #$00
 RainDeathRefillArrows_Mantle:
 db #$00
 ;================================================================================
-org $30818E ; PC 0x18018E
-DisableFlashing:
-db $00 ; $00 = Flashing enabled (default) $01 = Flashing disabled
-;================================================================================
-; 0x18018F (unused)
+; 0x18018E - 0x18018F (unused)
 ;================================================================================
 org $308190 ; PC 0x180190 - 0x180192
 TimerStyle:
