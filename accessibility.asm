@@ -13,7 +13,7 @@ RTL
 !WHITEN_TIMER = "$7F5041"
 SetEtherFlicker:
 	LDA DisableFlashing : BNE +
-                ;LDA $00,X
+                LDA $00,X
 		LDA !WHITEN_TIMER : INC : STA !WHITEN_TIMER
 
 		LDA.b #$FF : CMP !WHITEN_TIMER : BNE +++
@@ -26,7 +26,7 @@ SetEtherFlicker:
 		LDA $031D : CMP.b #$0B
                 RTL
 	+
-                ;LDA $00
+                LDA $00
 		LDA !WHITEN_TIMER : INC : STA !WHITEN_TIMER
 		
 		LDA.b #$FF : CMP !WHITEN_TIMER : BNE +++
