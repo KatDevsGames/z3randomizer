@@ -737,8 +737,8 @@ dw $0000, $0002, $0004, $0032, $0004, $0006, $0030
 ;JSL FlipGreenPendant
 ;NOP #6
 ;--------------------------------------------------------------------------------
-org $08AAE1 ; <- 42AE1 - ancilla_ether_spell.asm : 28 (LDA $031D : CMP.b #$0B)
-JSL.l SetEtherFlicker : NOP
+org $08AAF9 ; -< 42AF9 - ancilla_ether_spell.asm : 46 (JSL Palette_Restore_BG_From_Flash)
+JSL.l RestoreBgEther
 ;--------------------------------------------------------------------------------
 org $02A3F4 ; <- 123F4 - Bank02.asm : 6222 (LDA.b #$72 : BRA .setBrightness)
 BRA + : NOP #2 : +

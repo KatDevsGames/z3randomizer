@@ -10,36 +10,6 @@ FlipGreenPendant:
     LDA $0C : STA $0803, X
 RTL
 ;================================================================================
-!WHITEN_TIMER = "$7F5041"
-SetEtherFlicker:
-	LDA DisableFlashing : BNE +
-                LDA $00,X
-		LDA !WHITEN_TIMER : INC : STA !WHITEN_TIMER
-
-		LDA.b #$FF : CMP !WHITEN_TIMER : BNE +++
-			LDA.b #$00 : STA !WHITEN_TIMER : BRA ++
-		+++
-			LSR : CMP !WHITEN_TIMER : !BLT ++
-				LDA $031D : CMP.b #$0B
-                                RTL
-		++
-		LDA $031D : CMP.b #$0B
-                RTL
-	+
-                LDA $00
-		LDA !WHITEN_TIMER : INC : STA !WHITEN_TIMER
-		
-		LDA.b #$FF : CMP !WHITEN_TIMER : BNE +++
-			LDA.b #$00 : STA !WHITEN_TIMER : BRA ++
-		+++
-			LSR : CMP !WHITEN_TIMER : !BLT ++
-				LDA $031D : SEP #$02
-                                RTL
-		++
-		LDA $031D : REP #$02
-
-RTL
-;================================================================================
 ConditionalLightning:
         CMP.b #$05 : BEQ ++
         CMP.b #$2C : BEQ ++
@@ -159,6 +129,72 @@ WhitenLoopDummy:
             TYA : STA $7EC500
             SEP #$30
 RTS
+;================================================================================
+RestoreBgEther:
+        LDX.b #$00
+        LDA.l DisableFlashing : REP #$20 : BNE +
+        -
+            LDA $00,X
+            LDA $7EC340, X : STA $7EC540, X
+            LDA $7EC350, X : STA $7EC550, X
+            LDA $7EC360, X : STA $7EC560, X
+            LDA $7EC370, X : STA $7EC570, X
+            LDA $7EC380, X : STA $7EC580, X
+            LDA $7EC390, X : STA $7EC590, X
+            LDA $7EC3A0, X : STA $7EC5A0, X
+            LDA $7EC3B0, X : STA $7EC5B0, X
+            LDA $7EC3C0, X : STA $7EC5C0, X
+            LDA $7EC3D0, X : STA $7EC5D0, X
+            LDA $7EC3E0, X : STA $7EC5E0, X
+            LDA $7EC3F0, X : STA $7EC5F0, X
+            INX #2 : CPX.b #$10 : BNE -
+            BRA ++
+        +
+        -
+            LDA $00
+            LDA $7EC340, X : LDA $7EC540, X
+            LDA $7EC350, X : LDA $7EC550, X
+            LDA $7EC360, X : LDA $7EC560, X
+            LDA $7EC370, X : LDA $7EC570, X
+            LDA $7EC380, X : LDA $7EC580, X
+            LDA $7EC390, X : LDA $7EC590, X
+            LDA $7EC3A0, X : LDA $7EC5A0, X
+            LDA $7EC3B0, X : LDA $7EC5B0, X
+            LDA $7EC3C0, X : LDA $7EC5C0, X
+            LDA $7EC3D0, X : LDA $7EC5D0, X
+            LDA $7EC3E0, X : LDA $7EC5E0, X
+            LDA $7EC3F0, X : LDA $7EC5F0, X
+            INX #2 : CPX.b #$10 : BNE -
+            BRA ++
+        ++
+        LDA $7EC540 : STA $7EC500
+
+        SEP #$30
+        LDA $1B : BNE ++
+        REP #$10
+        LDX.w #$4020 : STX $9C
+        LDX.w #$8040 : STX $9D
+        LDX.w #$4F33
+        LDY.w #$894F
+        LDA $8A    : BEQ ++
+        CMP.b #$40 : BEQ ++
+        CMP.b #$5B : BEQ +
+        LDX.w #$4C26
+        LDY.w #$8C4C
+        CMP.b #$03 : BEQ +
+        CMP.b #$05 : BEQ +
+        CMP.b #$07 : BEQ +
+        LDX.w #$4A26
+        LDY.w #$874A
+        CMP.b #$43 : BEQ +
+        CMP.b #$45 : BEQ +
+        CMP.b #$47 : BNE ++
+    +
+        STX $9C
+        STY $9D
+    ++
+        SEP #$10
+RTL
 ;================================================================================
 DDMConditionalLightning:
         LDA.l DisableFlashing 
