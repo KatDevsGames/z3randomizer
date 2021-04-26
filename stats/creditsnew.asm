@@ -139,8 +139,8 @@ CreditsLineBlank:
 %smallcredits("ORIGINAL GAME STAFF", "yellow")
 
 %blankline()
+%blankline()
 
-%emptyline()
 %smallcredits("EXECUTIVE PRODUCER", "green")
 
 %blankline()
@@ -149,8 +149,6 @@ CreditsLineBlank:
 
 %blankline()
 %blankline()
-
-%emptyline()
 
 %smallcredits("PRODUCER", "yellow")
 
@@ -179,10 +177,8 @@ CreditsLineBlank:
 %blankline()
 %blankline()
 
-%emptyline()
 %smallcredits("ASSISTANT DIRECTORS", "yellow")
 
-%blankline()
 %blankline()
 
 %bigcredits("YASUHISA YAMAMURA")
@@ -196,9 +192,9 @@ CreditsLineBlank:
 
 %smallcredits("SCREEN GRAPHICS DESIGNERS", "green")
 
+%emptyline()
+%emptyline()
 
-%emptyline()
-%emptyline()
 %smallcredits("OBJECT DESIGNERS", "yellow")
 
 %blankline()
@@ -212,10 +208,8 @@ CreditsLineBlank:
 %blankline()
 %blankline()
 
-%emptyline()
 %smallcredits("BACK GROUND DESIGNERS", "yellow")
 
-%blankline()
 %blankline()
 
 %bigcredits("MASANAO ARIMOTO")
@@ -253,8 +247,6 @@ CreditsLineBlank:
 
 %blankline()
 %blankline()
-
-%emptyline()
 
 %smallcredits("PROGRAMMERS", "yellow")
 
@@ -315,7 +307,6 @@ CreditsLineBlank:
 %blankline()
 %blankline()
 
-%emptyline()
 %smallcredits("PRINTED ART WORK", "yellow")
 
 %blankline()
@@ -381,8 +372,6 @@ CreditsLineBlank:
 %blankline()
 %blankline()
 
-%emptyline()
-%emptyline()
 %smallcredits("ITEM RANDOMIZER", "yellow")
 
 %blankline()
@@ -408,12 +397,11 @@ CreditsLineBlank:
 
 %blankline()
 
-%bigcredits("KEVINCATHCART")
+%bigcredits("KEVINCATHCART    CASSIDYMOEM")
 
 %blankline()
 %blankline()
 
-%emptyline()
 %smallcredits("ENEMY RANDOMIZER", "yellow")
 
 %blankline()
@@ -452,7 +440,6 @@ CreditsLineBlank:
 %smallcredits("SPRITE DEVELOPMENT", "green")
 
 %blankline()
-%blankline()
 
 %bigcredits("MIKETRETHEWEY         IBAZLY")
 
@@ -461,12 +448,17 @@ CreditsLineBlank:
 
 %blankline()
 
-%bigcredits("TWROXAS              ARTHEAU")
+%bigcredits("ACHY                 ARTHEAU")
 
 %blankline()
 
-%bigcredits("GLAN               TARTHORON")
+%bigcredits("GLAN                 TWROXAS")
 
+%blankline()
+
+%bigcredits("PLAGUEDONE         TARTHORON")
+
+%blankline()
 %blankline()
 
 %smallcredits("YOUR SPRITE BY", "yellow")
@@ -486,7 +478,7 @@ CreditsLineBlank:
 %blankline()
 %blankline()
 
-%smallcredits("PALETTE SHUFFLER", "YELLOW")
+%smallcredits("PALETTE SHUFFLER", "yellow")
 
 %blankline()
 
@@ -498,7 +490,6 @@ CreditsLineBlank:
 %smallcredits("SPECIAL THANKS", "red")
 
 %blankline()
-%blankline()
 
 %bigcredits("SUPERSKUJ          EVILASH25")
 
@@ -509,6 +500,10 @@ CreditsLineBlank:
 %blankline()
 
 %bigcredits("WALKINGEYE     MATHONNAPKINS")
+
+%blankline()
+
+%bigcredits("MICHAELK              FOUTON")
 
 %blankline()
 
@@ -528,12 +523,17 @@ CreditsLineBlank:
 %smallcredits("COMMUNITY DISCORD", "green")
 
 %blankline()
-%blankline()
 
 %bigcredits("HTTPS://ALTTPR.COM/DISCORD")
 
 %blankline()
 
+%emptyline()
+%emptyline()
+%emptyline()
+%emptyline()
+%emptyline()
+%emptyline()
 %emptyline()
 %emptyline()
 %emptyline()
