@@ -397,7 +397,7 @@ CreditsLineBlank:
 
 %blankline()
 
-%bigcredits("KEVINCATHCART    CASSIDYMOEM")
+%bigcredits("KEVINCATHCART    CASSIDYMOEN")
 
 %blankline()
 %blankline()
