@@ -167,34 +167,8 @@ RestoreBgEther:
             INX #2 : CPX.b #$10 : BNE -
             BRA ++
         ++
-        LDA $7EC540 : STA $7EC500
+            JML $02FF51 
 
-        SEP #$30
-        LDA $1B : BNE ++
-        REP #$10
-        LDX.w #$4020 : STX $9C
-        LDX.w #$8040 : STX $9D
-        LDX.w #$4F33
-        LDY.w #$894F
-        LDA $8A    : BEQ ++
-        CMP.b #$40 : BEQ ++
-        CMP.b #$5B : BEQ +
-        LDX.w #$4C26
-        LDY.w #$8C4C
-        CMP.b #$03 : BEQ +
-        CMP.b #$05 : BEQ +
-        CMP.b #$07 : BEQ +
-        LDX.w #$4A26
-        LDY.w #$874A
-        CMP.b #$43 : BEQ +
-        CMP.b #$45 : BEQ +
-        CMP.b #$47 : BNE ++
-    +
-        STX $9C
-        STY $9D
-    ++
-        SEP #$10
-RTL
 ;================================================================================
 DDMConditionalLightning:
         LDA.l DisableFlashing 
