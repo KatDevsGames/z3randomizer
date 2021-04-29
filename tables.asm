@@ -873,8 +873,8 @@ Restrict_Ponds:
 db #$01 ; #$00 = Original Behavior - #$01 - Restrict to Bottles (Default)
 ;================================================================================
 org $30817F ; PC 0x18017F
-Seizure_Safety:
-db #$00 ; #$00 = Off (Default) - #$xx = Limit Certain Effects
+DisableFlashing:
+db #$00 ; #$00 = Flashing Enabled (Default) - #$01 = Flashing Disabled
 ;================================================================================
 ;---- --hb
 ;h - Hookshot
