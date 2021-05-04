@@ -837,7 +837,8 @@ org $A08800
     ;0x1A - Ganon's Tower
 
 .item_masks ; these are dungeon correlations to $7EF364 - $7EF369 so it knows where to store compasses, etc
-    dw $8000, $4000, $2000, $1000, $0800, $0400, $0200, $0100
+    ; sewers and castle get 2 bits active so that they can share their items elegantly
+    dw $C000, $C000, $2000, $1000, $0800, $0400, $0200, $0100
     dw $0080, $0040, $0020, $0010, $0008, $0004, $0000, $0000
 
 	dw $0000, $0000, $0000, $0000, $0000, $0000, $0000, $0000
