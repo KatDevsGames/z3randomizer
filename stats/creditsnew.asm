@@ -469,7 +469,7 @@ CreditsLineBlank:
 %blankline()
 %blankline()
 
-%smallcredits("MSU1 SUPPORT", "green")
+%smallcredits("MSU SUPPORT", "green")
 
 %blankline()
 
