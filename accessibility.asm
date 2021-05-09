@@ -175,7 +175,7 @@ DDMConditionalLightning:
             LDX.b #$02
             JML $07FA7F
         +
-            LDA.b $00
+            LDA.b $00 : LDX.b #$02 : LDY #$00
         -
             LDA $F4EB, Y : LDA $7EC560, X
             LDA $F4F9, Y : LDA $7EC570, X
@@ -185,8 +185,7 @@ DDMConditionalLightning:
             INY #2
             INX #2 : CPX.b #$10 : BNE -
 
-                LDX.b #$02
-                JML $07FAAC
+JML $07FAAC
 ;================================================================================
 ConditionalGTFlash:
         LDA.l DisableFlashing
