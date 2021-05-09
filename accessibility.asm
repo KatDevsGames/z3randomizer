@@ -257,9 +257,8 @@ ConditionalChangeGearPalette:
         BRA ++
     ++
     PLY ; use what was in Y register to determine which p flags to set
-    CPY #$000E : BEQ + 
-        SEP #$10
-        RTL
+    CPY #$000E : BNE + 
+        SEP #$20
     +
-        SEP #$30
+        SEP #$10
 RTL
