@@ -1,5 +1,5 @@
 ;================================================================================
-; Accessability Fixes
+; Accessibility Fixes
 ;================================================================================
 FlipGreenPendant:
 	LDA $0C : CMP #$38 : BNE + ; check if we have green pendant
@@ -20,7 +20,6 @@ ConditionalLightning:
         ++
                 LDA.b #$72
         STA $9A
-
 RTL
 ;================================================================================
 ConditionalWhitenBg:
@@ -34,7 +33,6 @@ ConditionalWhitenBg:
             LDA $00
             JSR WhitenLoopDummy
             RTL
-
 ;================================================================================
 WhitenLoopReal:
         -
@@ -168,7 +166,6 @@ RestoreBgEther:
             BRA ++
         ++
             JML $02FF51 
-
 ;================================================================================
 DDMConditionalLightning:
         LDA.l DisableFlashing 
@@ -190,7 +187,6 @@ DDMConditionalLightning:
 
                 LDX.b #$02
                 JML $07FAAC
-
 ;================================================================================
 ConditionalGTFlash:
         LDA.l DisableFlashing
@@ -224,5 +220,45 @@ ConditionalRedFlash:
             LDA.w #$1D59 : LDA $7EC5DA
             LDA.w #$25FF : LDA $7EC5DC
             LDA.w #$0000
-
+RTL
+;================================================================================
+ConditionalPedAncilla:
+        LDA.l DisableFlashing
+        REP #$20 : BNE +
+            LDA $00,X
+            LDA $00 : STA $04
+            LDA $02 : STA $06
+            RTL
+        +
+            LDA $00
+            LDA $00 : LDA $04
+            LDA $02 : LDA $06
+RTL
+;================================================================================
+ConditionalChangeGearPalette:
+    PHY
+    STA $00
+    SEP #$20
+    LDA.l DisableFlashing : REP #$20 : BNE +
+    LDA $00,X
+    -
+        LDA [$00] : STA $7EC300, X : STA $7EC500, X
+        INC $00 : INC $00
+        INX #2
+        DEY : BPL -
+        BRA ++
+    +
+    LDA $00
+    -
+        LDA [$00] : LDA $7EC300, X : LDA $7EC500, X
+        INC $00 : INC $00
+        INX #2
+        DEY : BPL -
+        BRA ++
+    ++
+    PLY ; use what was in Y register to determine which p flags to set
+    CPY #$000E : BNE + 
+        SEP #$20
+    +
+        SEP #$10
 RTL
