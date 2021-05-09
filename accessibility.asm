@@ -1,5 +1,5 @@
 ;================================================================================
-; Accessability Fixes
+; Accessibility Fixes
 ;================================================================================
 FlipGreenPendant:
 	LDA $0C : CMP #$38 : BNE + ; check if we have green pendant
@@ -225,4 +225,17 @@ ConditionalRedFlash:
             LDA.w #$25FF : LDA $7EC5DC
             LDA.w #$0000
 
+RTL
+;================================================================================
+ConditionalPedAncilla:
+        LDA.l DisableFlashing
+        REP #$20 : BNE +
+            LDA $00,X
+            LDA $00 : STA $04
+            LDA $02 : STA $06
+            RTL
+        +
+            LDA $00
+            LDA $00 : LDA $04
+            LDA $02 : LDA $06
 RTL
