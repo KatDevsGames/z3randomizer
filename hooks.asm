@@ -765,6 +765,15 @@ JSL.l ConditionalRedFlash : BRA + : NOP #13 : +
 ;--------------------------------------------------------------------------------
 org $08C2A1 ; <- 442A3 - ancilla_sword_ceremony.asm : 54 (REP #$20)
 JSL.l ConditionalPedAncilla : BRA + : NOP #4 : +
+;--------------------------------------------------------------------------------
+org $02FDB1 ; <- 17DB1 - Bank0E.asm : 3760 (JSL LoadGearPalette)
+JSL.l ConditionalChangeGearPalette : NOP
+;--------------------------------------------------------------------------------
+org $02FDCB ; <- 17DCB - Bank0E.asm : 3775 (JSL LoadGearPalette)
+JSL.l ConditionalChangeGearPalette : NOP
+;--------------------------------------------------------------------------------
+org $02FDE6 ; <- 17DE6 - Bank0E.asm : 3789 (JSL LoadGearPalette)
+JSL.l ConditionalChangeGearPalette : NOP
 ;================================================================================
 ; Ice Floor Toggle
 ;--------------------------------------------------------------------------------
