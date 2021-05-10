@@ -150,6 +150,7 @@
 ;--------------------------------------------------------------------------------
 CheckMusicLoadRequest:
     PHP : REP #$10 : PHA : PHX : PHY
+    PHB : PHK : PLB ; ensure SPC registers are reachable
         LDA !REG_MUSIC_CONTROL_REQUEST : BEQ .skip+3 : BMI .skip+3
         CMP !REG_CURRENT_COMMAND : BNE .continue
         CMP.b #22 : BNE .skip   ; Check GT when mirroring from upstairs
@@ -159,7 +160,7 @@ CheckMusicLoadRequest:
 .skip
         LDA !REG_MUSIC_CONTROL_REQUEST
         STA !REG_MUSIC_CONTROL : STZ !REG_MUSIC_CONTROL_REQUEST
-    PLY : PLX : PLA : PLP
+    PLB : PLY : PLX : PLA : PLP
     RTL
         
 .continue
@@ -320,12 +321,12 @@ CheckMusicLoadRequest:
 
 .done
         LDA !REG_MUSIC_CONTROL_REQUEST : STA !REG_MUSIC_CONTROL : STZ !REG_MUSIC_CONTROL_REQUEST
-    PLY : PLX : PLA : PLP
+    PLB : PLY : PLX : PLA : PLP
     RTL
 
 .sfx_indoors
         LDA !REG_MUSIC_CONTROL_REQUEST : STA !REG_MUSIC_CONTROL : STZ !REG_MUSIC_CONTROL_REQUEST
-    PLY : PLX : PLA : PLP
+    PLB : PLY : PLX : PLA : PLP
     PHP : SEP #$20 : LDA.b #$05 : STA $012D : PLP
     JML Module_PreDungeon_setAmbientSfx
 ;--------------------------------------------------------------------------------
