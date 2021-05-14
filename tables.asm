@@ -1507,7 +1507,7 @@ dw #9999 ; Rupee Limit
 ; $7F50C2 - Armor Modifier
 ; $7F50C3 - Magic Modifier
 ; $7F50C4 - Light Cone Modifier
-; $7F50C5 - Unused
+; $7F50C5 - Cucco Storm
 ; $7F50C6 - Old Man Dash Modifier
 ; $7F50C7 - Ice Physics Modifier
 ; $7F50C8 - Infinite Arrows Modifier
