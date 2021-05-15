@@ -69,7 +69,7 @@ CheckGanonVulnerability:
 
 ; 03 = crystals and aga 2
 .crystals_and_aga
-	LDA.l $7EF2DDB : AND.b #$20 : BEQ .fail ; check aga2 first then bleed in
+	LDA.l $7EF2DB : AND.b #$20 : BEQ .fail ; check aga2 first then bleed in
 
 ; 04 = crystals only
 .crystals
