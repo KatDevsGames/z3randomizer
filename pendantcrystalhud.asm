@@ -271,10 +271,10 @@ DrawHUDDungeonItems:
 
 .dungeon_positions
 		dw  0 ; Hyrule Castle
-		dw  2 ; Agahnims Tower
 		dw  6 ; Eastern
 		dw  8 ; Desert
 		dw 10 ; Hera
+		dw  2 ; Agahnims Tower
 		dw 14 ; PoD
 		dw 16 ; Swamp
 		dw 18 ; Skull Woods
@@ -286,10 +286,10 @@ DrawHUDDungeonItems:
 
 .small_key_x_offset
 		dw $7EF37D-$7EF37D ; Hyrule Castle
-		dw $7EF380-$7EF37D ; Agahnims Tower
 		dw $7EF37E-$7EF37D ; Eastern
 		dw $7EF37F-$7EF37D ; Desert
 		dw $7EF386-$7EF37D ; Hera
+		dw $7EF380-$7EF37D ; Agahnims Tower
 		dw $7EF382-$7EF37D ; PoD
 		dw $7EF381-$7EF37D ; Swamp
 		dw $7EF384-$7EF37D ; Skull Woods
@@ -302,10 +302,10 @@ DrawHUDDungeonItems:
 
 .dungeon_bitmasks
 		dw $4000 ; Hyrule Castle
-		dw $0800 ; Agahnims Tower
 		dw $2000 ; Eastern
 		dw $1000 ; Desert
 		dw $0020 ; Hera
+		dw $0800 ; Agahnims Tower
 		dw $0200 ; PoD
 		dw $0400 ; Swamp
 		dw $0080 ; Skull Woods
@@ -317,10 +317,10 @@ DrawHUDDungeonItems:
 
 .boss_room_ids
 		dw $80*2 ; ; Hyrule Castle (BNC)
-		dw $20*2 ; ; Agahnim
 		dw $C8*2 ; ; Eastern
 		dw $33*2 ; ; Desert
 		dw $07*2 ; ; Hera
+		dw $20*2 ; ; Agahnim
 		dw $5A*2 ; ; PoD
 		dw $06*2 ; ; Swamp
 		dw $29*2 ; ; Skull Woods
@@ -362,7 +362,7 @@ DrawHUDDungeonItems:
 --	STA.w $1686,X
 	STA.w $16C6,X
 	STA.w $1706,X
-	
+
 	DEX : DEX : BPL --
 
 
@@ -445,7 +445,7 @@ DrawHUDDungeonItems:
 
 		LDA.w #$2826
 		LDX.w .dungeon_positions,Y
-		STA.w $1706,Y
+		STA.w $1706,X
 
 ..skip_boss_kill
 		INY : INY
