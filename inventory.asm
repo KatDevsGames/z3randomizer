@@ -739,8 +739,8 @@ RTS
 ;--------------------------------------------------------------------------------
 Link_ReceiveItem_HUDRefresh:
 	LDA $7EF343 : BNE + ; skip if we have bombs
-	LDA $7EF375 : BEQ + ; skip if we are filling no bombs
 	LDA $7EF370 : !ADD.l StartingMaxBombs : BEQ + ; skip if we can't have bombs
+	LDA $7EF375 : BEQ + ; skip if we are filling no bombs
 		DEC : STA $7EF375 ; decrease bomb fill count
 		LDA.b #$01 : STA $7EF343 ; increase actual bomb count
 	+
