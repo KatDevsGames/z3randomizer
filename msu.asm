@@ -116,6 +116,7 @@
 
 !FLAG_MSU_PLAY = #$01
 !FLAG_MSU_REPEAT = #$02
+!FLAG_MSU_RESUME = #$04
 !FLAG_MSU_STATUS_TRACK_MISSING = #$08
 !FLAG_MSU_STATUS_AUDIO_PLAYING = #$10
 !FLAG_MSU_STATUS_AUDIO_REPEATING = #$20
@@ -144,6 +145,25 @@
 !VAL_VOLUME_DECREMENT = #$02
 !VAL_VOLUME_HALF = #$80
 !VAL_VOLUME_FULL = #$FF
+
+;================================================================================
+; Check if A has an overworld track
+;--------------------------------------------------------------------------------
+IsOverworldTrack:
+    CMP #02 : BEQ .yes ;  2 - Hyrule Field
+    CMP #03 : BEQ .yes ;  3 - Time of Falling Rain
+    CMP #04 : BEQ .yes ;  4 - The Silly Pink Rabbit
+    CMP #05 : BEQ .yes ;  5 - Forest of Mystery
+    CMP #07 : BEQ .yes ;  7 - Kakariko Village
+    CMP #09 : BEQ .yes ;  9 - Dark Golden Land
+    CMP #15 : BEQ .yes ; 15 - Dark Woods
+    CMP #60 : BEQ .yes ; 60 - Light World OW (after ped pull)
+    CMP #61 : BEQ .yes ; 61 - Dark World OW (with all crystals)
+    .no
+    CLC : RTS
+.yes
+SEC : RTS
+;--------------------------------------------------------------------------------
 
 ;================================================================================
 ; Extended OST/SPC fallback, decide which track to actually play
@@ -402,6 +422,12 @@ StoreMusicOnDeath:
 MSUInit:
     PHP
 
+    LDA #$00
+    STA !MSU_LOADED_TRACK
+    STA !MSU_RESUME_TRACK
+    STA !MSU_RESUME_TIME : STA !MSU_RESUME_TIME+1 : STA !MSU_RESUME_TIME+2 : STA !MSU_RESUME_TIME+3
+    STA !MSU_RESUME_CANCEL
+
     LDA NoBGM : BNE .done
 
     REP #$20
@@ -466,6 +492,41 @@ MSUInit:
 ;--------------------------------------------------------------------------------
 
 ;================================================================================
+; Stop MSU-1 audio track and save the current position when approriate
+;--------------------------------------------------------------------------------
+MSUStopPlaying:
+PHA : XBA : PHA
+    LDA !MSU_LOADED_TRACK
+    JSR IsOverworldTrack : BCC + ; dont save if this isnt an overworld track
+        ; dont save if we already saved recently
+        REP #$20
+        LDA !MSU_RESUME_TRACK : AND #$00FF : BEQ ++
+            LDA !NMI_COUNTER : !SUB !MSU_RESUME_TIME : PHA
+            LDA !NMI_COUNTER+2 : SBC !MSU_RESUME_TIME+2 : BNE +++
+                PLA : CMP MSUResumeDelay : !BLT .too_early
+                BRA ++
+            +++
+            PLA
+        ++
+        ; saving
+        LDA !NMI_COUNTER : STA !MSU_RESUME_TIME
+        LDA !NMI_COUNTER+2 : STA !MSU_RESUME_TIME+2
+        SEP #$20
+
+        LDA !MSU_LOADED_TRACK : STA !MSU_RESUME_TRACK
+        LDA #$00 : STA !MSU_LOADED_TRACK ; dont take this path if we're calling again
+        LDA !FLAG_MSU_RESUME : STA !REG_MSU_CONTROL ; save this track's position
+        PLA : XBA : PLA
+        RTS
+        .too_early
+        SEP #$20
+    +
+    LDA #$00 : STA !REG_MSU_CONTROL
+PLA : XBA : PLA
+RTS
+;--------------------------------------------------------------------------------
+
+;================================================================================
 ; Play MSU-1 audio track
 ;--------------------------------------------------------------------------------
 MSUMain:
@@ -492,6 +553,11 @@ MSUMain:
     LDA !REG_MSU_STATUS : BIT !FLAG_MSU_STATUS_TRACK_MISSING : BEQ .start
     JML SPCContinue
 .start
+    LDA !MSU_RESUME_CANCEL : BEQ +
+        REP #$20 : LDA !REG_MSU_LOADED_TRACK : STA !REG_MSU_TRACK : SEP #$20
+        LDA #$00 : STA !MSU_RESUME_CANCEL
+        JML SPCContinue
+    +
     LDA !VAL_VOLUME_FULL
     STA !REG_TARGET_VOLUME
     STA !REG_CURRENT_VOLUME
@@ -522,7 +588,7 @@ MSUMain:
     LDA !REG_TARGET_VOLUME : BRA .set
 .mute
     STZ !REG_CURRENT_VOLUME
-    STZ !REG_MSU_CONTROL
+    JSR MSUStopPlaying
     BRA .set
 .increment
     ADC !VAL_VOLUME_INCREMENT : BCS .max
@@ -568,7 +634,7 @@ MSUMain:
     CPX !REG_CURRENT_MSU_TRACK : BNE +
     - : CPX #27 : BEQ +
         TXA
-        BRA .done+1
+        JMP .done+1
     +
     CPX !REG_CURRENT_COMMAND : BEQ -
     LDA.b #$00 : XBA
@@ -576,6 +642,8 @@ MSUMain:
     - : CMP !REG_MSU_PACK_COUNT : !BLT +
         !SUB !REG_MSU_PACK_COUNT : BRA -
     +
+
+    JSR MSUStopPlaying
 
     PHX : PHA : TXA : PLX
     REP #$20
@@ -585,10 +653,25 @@ MSUMain:
         DEX : BNE -
     +
         STA !REG_MSU_TRACK
+        STA !REG_MSU_LOADED_TRACK
     SEP #$20
 
-    STZ !REG_MSU_CONTROL
     PLX
+    TXA : CMP !MSU_RESUME_TRACK : BNE + ; dont resume if too late
+        REP #$20
+            LDA !NMI_COUNTER : !SUB !MSU_RESUME_TIME : PHA
+            LDA !NMI_COUNTER+2 : SBC !MSU_RESUME_TIME+2 : BNE ++
+                PLA : CMP MSUResumeDelay : !BGE +++
+                SEP #$20 : BRA .done_resume
+            ++
+            PLA
+        +++
+        SEP #$20
+        LDA #$01 : STA !MSU_RESUME_CANCEL
+        .done_resume:
+        LDA #$00 : STA !MSU_RESUME_TRACK
+    +
+    TXA : STA !MSU_LOADED_TRACK
     STX !REG_CURRENT_MSU_TRACK
     LDA !REG_MSU_PACK_CURRENT : CMP #$FE : !BLT +
         LDA #$00 : BRA ++
