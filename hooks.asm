@@ -2618,3 +2618,24 @@ db $00, $00
 
 
 ;================================================================================
+; Fast credits
+org $0EC45A
+;JSL FastCreditsCutsceneScrollOverworld
+
+
+org $0EC3AF
+JSL FastCreditsScrollOW
+JMP.w $0EC3C7
+
+org $0EC41F
+JSL FastCreditsCutsceneUnderworldY
+
+org $0EC42C
+JSL FastCreditsCutsceneUnderworldX
+
+
+org $0EC488
+JSL FastCreditsCutsceneTimer
+
+org $0EE773
+JSL FastTextScroll : NOP
