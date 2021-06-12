@@ -3,6 +3,8 @@
 FastCreditsCutsceneTimer:
 	BIT.b $F2-1 : BVC .slow
 
+	LDA.w #$0001 : STA.b $50
+
 	LDA.b $C8
 	CLC
 	ADC.w #$0004
@@ -113,3 +115,10 @@ FastTextScroll:
 .slow
 	AND.w #$0003
 	RTL
+
+DumbFlagForMSU:
+	STA.l $7EF3CA
+	STZ.b $50
+	RTL
+
+

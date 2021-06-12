@@ -2620,6 +2620,9 @@ db $00, $00
 ;================================================================================
 ; Fast credits
 
+org $02A096
+JSL DumbFlagForMSU
+
 org $0EC3AF
 JSL FastCreditsScrollOW
 JMP.w $0EC3C7
