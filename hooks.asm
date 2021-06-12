@@ -2609,4 +2609,11 @@ Sprite_AttemptDamageToPlayerPlusRecoilLong:
 
 org $1ED1B6
 JSL NewFireBarDamage
+
+;================================================================================
+; Remove heart beeps from 1/2 max HP
+org $0DDB60
+db $00, $00
+
+
 ;================================================================================
