@@ -86,8 +86,7 @@ FastCreditsCutsceneScroll:
 
 
 FastCreditsCutsceneUnderworldX:
-	LDA.l $0EC368,X
-	JSR QuadrupleCreditsSpeedUW
+	JSR FastCreditsCutsceneScrollX
 	CLC
 	ADC.b $E2
 	STA.b $E2
@@ -96,41 +95,12 @@ FastCreditsCutsceneUnderworldX:
 
 
 FastCreditsCutsceneUnderworldY:
-	LDA.l $0EC348,X
-	JSR QuadrupleCreditsSpeedUW
+	JSR FastCreditsCutsceneScrollY
 	CLC
 	ADC.b $E8
 	STA.b $E8
 
 	RTL
-
-QuadrupleCreditsSpeedUW:
-	BIT.b $F2-1 : BVC .slow
-
-	AND.w #$FFFF
-	BPL .positive
-
-	EOR.w #$FFFF
-	INC
-
-	ASL
-	ASL
-
-	EOR.w #$FFFF
-	INC
-
-	RTS
-
-
-.positive
-	ASL
-	ASL
-
-.slow
-	RTS
-
-
-
 
 FastCreditsCutsceneOverworld:
 	BIT.b $F2 : BVC .slow
