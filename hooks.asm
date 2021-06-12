@@ -2619,9 +2619,6 @@ db $00, $00
 
 ;================================================================================
 ; Fast credits
-org $0EC45A
-;JSL FastCreditsCutsceneScrollOverworld
-
 
 org $0EC3AF
 JSL FastCreditsScrollOW

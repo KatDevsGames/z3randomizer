@@ -102,38 +102,6 @@ FastCreditsCutsceneUnderworldY:
 
 	RTL
 
-FastCreditsCutsceneOverworld:
-	BIT.b $F2 : BVC .slow
-
-	LDA.b $30
-	JSR .quad
-	STA.b $30
-
-	LDA.b $31
-	JSR .quad
-	STA.b $31
-
-.slow
-	JML $0285B5
-
-.quad
-	BPL .fine
-
-	EOR.b #$FF
-	INC
-	ASL
-	ASL
-	EOR.b #$FF
-	INC
-	RTS
-
-
-.fine
-	ASL
-	ASL
-
-	RTS
-
 
 FastTextScroll:
 	LDA.b $1A
