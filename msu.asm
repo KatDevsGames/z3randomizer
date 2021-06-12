@@ -702,6 +702,7 @@ EndingMusicWait:
     LDA !REG_MSU_ID_45 : CMP !VAL_MSU_ID_45 : BNE .done
     SEP #$20
 .wait
+    LDA.b $50 : BNE .done
     LDA !REG_MSU_STATUS : BIT !FLAG_MSU_STATUS_AUDIO_PLAYING : BNE .wait
 .done
     SEP #$20
