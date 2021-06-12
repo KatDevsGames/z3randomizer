@@ -123,6 +123,8 @@
 !FLAG_MSU_STATUS_AUDIO_BUSY = #$40
 !FLAG_MSU_STATUS_DATA_BUSY = #$80
 
+!FLAG_RESUME_CANCEL = #$01
+!FLAG_RESUME_FADEIN = #$02
 
 !REG_CURRENT_MSU_TRACK = $010B
 !REG_CURRENT_VOLUME = $0127
@@ -441,7 +443,7 @@ MSUInit:
     STA !MSU_LOADED_TRACK
     STA !MSU_RESUME_TRACK
     STA !MSU_RESUME_TIME : STA !MSU_RESUME_TIME+1 : STA !MSU_RESUME_TIME+2 : STA !MSU_RESUME_TIME+3
-    STA !MSU_RESUME_CANCEL
+    STA !MSU_RESUME_CONTROL
 
     LDA NoBGM : BNE .done
 
@@ -559,7 +561,7 @@ MSUMain:
     LDX !REG_MUSIC_CONTROL : BEQ +
         JMP .command_ff
     +
-    LDA !REG_MSU_DELAYED_COMMAND : BEQ .do_fade
+    LDA !REG_MSU_DELAYED_COMMAND : BNE + : JMP .do_fade : +
 
 .check_busy
     LDA !REG_MSU_STATUS : BIT !FLAG_MSU_STATUS_AUDIO_BUSY : BEQ .ready
@@ -568,15 +570,24 @@ MSUMain:
     LDA !REG_MSU_STATUS : BIT !FLAG_MSU_STATUS_TRACK_MISSING : BEQ .start
     JML SPCContinue
 .start
-    LDA !MSU_RESUME_CANCEL : BEQ +
+    LDA !MSU_RESUME_CONTROL : AND !FLAG_RESUME_CANCEL : BEQ +
         REP #$20 : LDA !REG_MSU_LOADED_TRACK : STA !REG_MSU_TRACK : SEP #$20
-        LDA #$00 : STA !MSU_RESUME_CANCEL
+        LDA !MSU_RESUME_CONTROL : EOR !FLAG_RESUME_CANCEL : STA !MSU_RESUME_CONTROL
         JML SPCContinue
     +
     LDA !VAL_VOLUME_FULL
     STA !REG_TARGET_VOLUME
+    
+    LDA !MSU_RESUME_CONTROL : AND !FLAG_RESUME_FADEIN : BEQ +
+        LDA !MSU_RESUME_CONTROL : EOR !FLAG_RESUME_FADEIN : STA !MSU_RESUME_CONTROL
+        LDA #$00
+        BRA ++
+    +
+    LDA !VAL_VOLUME_FULL
+    ++
     STA !REG_CURRENT_VOLUME
     STA !REG_MSU_VOLUME
+    
     LDA !REG_CURRENT_MSU_TRACK : DEC : PHA
         AND.b #$07 : TAY
         PLA : LSR #3 : TAX
@@ -677,13 +688,15 @@ MSUMain:
             LDA !NMI_COUNTER : !SUB !MSU_RESUME_TIME : PHA
             LDA !NMI_COUNTER+2 : SBC !MSU_RESUME_TIME+2 : BNE ++
                 PLA : CMP MSUResumeTimer : !BGE +++
-                SEP #$20 : BRA .done_resume
+                SEP #$20
+                LDA !FLAG_RESUME_FADEIN : BRA .done_resume
             ++
             PLA
         +++
         SEP #$20
-        LDA #$01 : STA !MSU_RESUME_CANCEL
+        LDA !FLAG_RESUME_CANCEL
         .done_resume:
+        STA !MSU_RESUME_CONTROL
         LDA #$00 : STA !MSU_RESUME_TRACK
     +
     CPX #07 : BNE + ; Kakariko Village
