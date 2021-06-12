@@ -46,6 +46,7 @@ CheckGanonVulnerability:
 	dw .light_speed
 	dw .crystals_and_bosses
 	dw .bosses_only
+	dw .all_dungeons_no_agahnim
 
 ; 00 = always vulnerable
 .vulnerable
@@ -61,10 +62,13 @@ CheckGanonVulnerability:
 
 ; 02 = All dungeons
 .all_dungeons
+	LDA.l $7EF3C5 : CMP.b #$03 : BCC .fail ; require post-aga world state
+
+; 09 = All dungeons except agahnim
+.all_dungeons_no_agahnim
 	LDA.l $7EF374 : AND.b #$07 : CMP.b #$07 : BNE .fail ; require all pendants
 	LDA.l $7EF37A : AND.b #$7F : CMP.b #$7F : BNE .fail ; require all crystals
-	LDA.l $7EF3C5 : CMP.b #$03 : BCC .fail ; require post-aga world state
-	LDA.l $7EF2DB : AND.b #$20 : CMP.b #$20 : BNE .fail ; require aga2 defeated (pyramid hole open)
+	LDA.l $7EF2DB : AND.b #$20 : BEQ .fail ; require aga2 defeated (pyramid hole open)
 	BRA .success
 
 ; 03 = crystals and aga 2

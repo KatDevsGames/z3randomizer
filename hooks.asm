@@ -2578,21 +2578,22 @@ dw  37, 11 : db $FB, $40, $00, $00
 ;--------------------------------------------------------------------------------
 org $07839E ; bunny BAGE check
 BunnyRead:
-    JSR.w $07B5A9 ; check A button
-    BCC .noA
-    JSR.w CheckIfReading
-    BNE .noread
-    JSR.w $07B4DB
-    NOP
+	JSR.w $07B5A9 ; check A button
+	BCC .noA
+	JSR.w CheckIfReading
+	BNE .noread
+	JSR.w $07B4DB
+	NOP
 .noread
 .noA
 
 org $07FFF4
 CheckIfReading:
-    JSR.w $07D36C ; check action
-    LDA #$80 : TRB $3B
-    CPX #$04
-    RTS
+	JSR.w $07D36C ; check action
+	LDA #$80 : TRB $3B
+	CPX #$04
+	RTS
+
 ;================================================================================
 
 org $0DB4CA : db $40, $40 ; fire bar statis
