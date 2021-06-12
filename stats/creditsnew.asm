@@ -507,6 +507,10 @@ CreditsLineBlank:
 
 %blankline()
 
+%bigcredits("BONTA                EMOSARU")
+
+%blankline()
+
 %bigcredits("SAKURATSUBASA")
 
 %blankline()
@@ -528,9 +532,6 @@ CreditsLineBlank:
 
 %blankline()
 
-%emptyline()
-%emptyline()
-%emptyline()
 %emptyline()
 %emptyline()
 %emptyline()
