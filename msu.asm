@@ -686,7 +686,15 @@ MSUMain:
         .done_resume:
         LDA #$00 : STA !MSU_RESUME_TRACK
     +
-    TXA : STA !MSU_LOADED_TRACK
+    CPX #07 : BNE + ; Kakariko Village
+        LDA $10 : CMP #$07 : BNE +
+        ; we're in link's house -> ignore
+        LDA #$00
+        BRA ++
+    +
+    TXA
+    ++
+    STA !MSU_LOADED_TRACK
     STX !REG_CURRENT_MSU_TRACK
     LDA !REG_MSU_PACK_CURRENT : CMP #$FE : !BLT +
         LDA #$00 : BRA ++
