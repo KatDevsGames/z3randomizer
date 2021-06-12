@@ -135,7 +135,6 @@ incsrc swordswap.asm
 incsrc stats.asm
 incsrc scratchpad.asm
 incsrc map.asm
-incsrc msu.asm
 incsrc dialog.asm
 incsrc entrances.asm
 incsrc clock.asm
@@ -203,6 +202,7 @@ incsrc elder.asm
 incsrc toast.asm
 incsrc darkroomitems.asm
 incsrc fastcredits.asm
+incsrc msu.asm
 warnpc $A58000
 
 ;org $228000 ; contrib area
