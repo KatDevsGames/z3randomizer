@@ -166,6 +166,21 @@ SEC : RTS
 ;--------------------------------------------------------------------------------
 
 ;================================================================================
+; Check if the track in A should be resumed
+;--------------------------------------------------------------------------------
+IsResumableTrack:
+    PHA
+    LDA MSUResumeType : BEQ +
+        PLA
+        JSR IsOverworldTrack
+        RTS
+    +
+    PLA
+    SEC
+RTS
+;--------------------------------------------------------------------------------
+
+;================================================================================
 ; Extended OST/SPC fallback, decide which track to actually play
 ;--------------------------------------------------------------------------------
 CheckMusicLoadRequest:
@@ -497,13 +512,13 @@ MSUInit:
 MSUStopPlaying:
 PHA : XBA : PHA
     LDA !MSU_LOADED_TRACK
-    JSR IsOverworldTrack : BCC + ; dont save if this isnt an overworld track
+    JSR IsResumableTrack : BCC +
         ; dont save if we already saved recently
         REP #$20
         LDA !MSU_RESUME_TRACK : AND #$00FF : BEQ ++
             LDA !NMI_COUNTER : !SUB !MSU_RESUME_TIME : PHA
             LDA !NMI_COUNTER+2 : SBC !MSU_RESUME_TIME+2 : BNE +++
-                PLA : CMP MSUResumeDelay : !BLT .too_early
+                PLA : CMP MSUResumeTimer : !BLT .too_early
                 BRA ++
             +++
             PLA
@@ -661,7 +676,7 @@ MSUMain:
         REP #$20
             LDA !NMI_COUNTER : !SUB !MSU_RESUME_TIME : PHA
             LDA !NMI_COUNTER+2 : SBC !MSU_RESUME_TIME+2 : BNE ++
-                PLA : CMP MSUResumeDelay : !BGE +++
+                PLA : CMP MSUResumeTimer : !BGE +++
                 SEP #$20 : BRA .done_resume
             ++
             PLA

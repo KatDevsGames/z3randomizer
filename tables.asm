@@ -993,10 +993,13 @@ org $30821B ; PC 0x18021B
 FastFanfare:
 db $00 ; $00 = Normal fanfare (default) $01 = Fast fanfare
 org $30821C ; PC 0x18021C
-MSUResumeDelay:
+MSUResumeType:
+db $01 ; Type of tracks to resume #$00 = Everything - #$01 = Overworld (default)
+org $30821D ; PC 0x18021D
+MSUResumeTimer:
 dw $0708 ; Number of frames on a different track until we no longer resume (0x708 = 1800 = ~30s)
 ;--------------------------------------------------------------------------------
-; 0x18021E - 0x18021F (unused)
+; 0x18021F - 0x18021F (unused)
 ;================================================================================
 ; $308220 (0x180220) - $30823F (0x18023F)
 ; Plandomizer Author Name (ASCII) - Leave unused chars as 0
