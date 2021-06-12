@@ -5,7 +5,6 @@ FlipGreenPendant:
 	LDA $0C : CMP #$38 : BNE + ; check if we have green pendant
 		ORA #$40 : STA $0C ; flip it
 	+
-	
     LDA $0D : STA $0802, X ; stuff we wrote over "Set CHR, palette, and priority of the sprite"
     LDA $0C : STA $0803, X
 RTL
@@ -68,7 +67,6 @@ WhitenLoopReal:
                 LDA $7EC3F8 : JSL Filter_Majorly_Whiten_Color : STA $7EC5F8
                 BRA +++
             +++
-
             LDA $7EC3FA : JSL Filter_Majorly_Whiten_Color : STA $7EC5FA
             LDA $7EC3FC : JSL Filter_Majorly_Whiten_Color : STA $7EC5FC
             LDA $7EC3FE : JSL Filter_Majorly_Whiten_Color : STA $7EC5FE
@@ -165,7 +163,7 @@ RestoreBgEther:
             INX #2 : CPX.b #$10 : BNE -
             BRA ++
         ++
-            JML $02FF51 
+JML $02FF51
 ;================================================================================
 DDMConditionalLightning:
         LDA.l DisableFlashing 
@@ -184,7 +182,6 @@ DDMConditionalLightning:
             LDA $F523, Y : LDA $7EC5F0, X
             INY #2
             INX #2 : CPX.b #$10 : BNE -
-
 JML $07FAAC
 ;================================================================================
 ConditionalGTFlash:
@@ -213,7 +210,6 @@ ConditionalRedFlash:
             LDA.w #$25FF : STA $7EC5DC
             LDA.w #$001A
             RTL
-
         +
             LDA $00
             LDA.w #$1D59 : LDA $7EC5DA
@@ -237,23 +233,33 @@ RTL
 ConditionalChangeGearPalette:
     PHY
     STA $00
-    SEP #$20
-    LDA.l DisableFlashing : REP #$20 : BNE +
-    LDA $00,X
-    -
-        LDA [$00] : STA $7EC300, X : STA $7EC500, X
-        INC $00 : INC $00
-        INX #2
-        DEY : BPL -
-        BRA ++
-    +
-    LDA $00
-    -
-        LDA [$00] : LDA $7EC300, X : LDA $7EC500, X
-        INC $00 : INC $00
-        INX #2
-        DEY : BPL -
-        BRA ++
+    LDA.w $02E0 : SEP #$20 : BNE .bunny ; if non-zero, link is a bunny or poofing/unpoofing
+    .checkflashing
+    LDA.l DisableFlashing : BNE .dummypalette
+    .newpalette
+        LDA $00,X
+        REP #$20
+        -
+            LDA [$00] : STA $7EC300, X : STA $7EC500, X
+            INC $00 : INC $00
+            INX #2
+            DEY : BPL -
+            BRA ++
+    .dummypalette
+        LDA $00
+        REP #$20
+        -
+            LDA [$00] : LDA $7EC300, X : LDA $7EC500, X
+            INC $00 : INC $00
+            INX #2
+            DEY : BPL -
+            BRA ++
+    .bunny
+        LDA $5D
+        CMP.b #$07 : BEQ .checkflashing ; check if the bunny is being electrocuted
+        CMP.b #$09 : BEQ .checkflashing ; check for ether animation
+        CMP.b #$19 : BEQ .checkflashing
+        BRA .newpalette ; if we're a bunny but not being electrocuted, always update palette
     ++
     PLY ; use what was in Y register to determine which p flags to set
     CPY #$000E : BNE + 
