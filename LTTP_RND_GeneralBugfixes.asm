@@ -81,7 +81,12 @@ db #$20, #$19, #$08, #$31 ; year/month/day
 !REG_MSU_PACK_COUNT = $7F50AA
 !REG_MSU_PACK_CURRENT = $7F50AB
 !REG_MSU_PACK_REQUEST = $7F50AC
-!REG_SPC_LOADING = $7F50AD
+!REG_MSU_LOADED_TRACK = $7F50AD     ; 2 bytes
+!REG_SPC_LOADING = $7F50AF
+!MSU_LOADED_TRACK = $7F5400
+!MSU_RESUME_TRACK = $7F5401
+!MSU_RESUME_TIME = $7F5402          ; 4 bytes
+!MSU_RESUME_CONTROL = $7F5406
 !REG_MUSIC_CONTROL = $012B
 ;!REG_MUSIC_CONTROL = $012C
 !REG_MUSIC_CONTROL_REQUEST = $012C
@@ -130,7 +135,6 @@ incsrc swordswap.asm
 incsrc stats.asm
 incsrc scratchpad.asm
 incsrc map.asm
-incsrc msu.asm
 incsrc dialog.asm
 incsrc entrances.asm
 incsrc clock.asm
@@ -198,6 +202,7 @@ incsrc elder.asm
 incsrc toast.asm
 incsrc darkroomitems.asm
 incsrc fastcredits.asm
+incsrc msu.asm
 warnpc $A58000
 
 ;org $228000 ; contrib area
