@@ -737,9 +737,6 @@ dw $0000, $0002, $0004, $0032, $0004, $0006, $0030
 ;JSL FlipGreenPendant
 ;NOP #6
 ;--------------------------------------------------------------------------------
-org $08AAF9 ; -< 42AF9 - ancilla_ether_spell.asm : 46 (JSL Palette_Restore_BG_From_Flash)
-JSL.l RestoreBgEther
-;--------------------------------------------------------------------------------
 org $02A3F4 ; <- 123F4 - Bank02.asm : 6222 (LDA.b #$72 : BRA .setBrightness)
 BRA + : NOP #2 : +
 org $02A3FD ; <- 123FD - Bank02.asm : 6233 (LDA.b #$32 : STA $9a)
@@ -747,6 +744,15 @@ JSL.l ConditionalLightning
 ;--------------------------------------------------------------------------------
 org $1DE9CD ; <- EE9CD - Bank1D.asm : 568 (JSL Filter_Majorly_Whiten_Bg)
 JSL.l ConditionalWhitenBg
+;--------------------------------------------------------------------------------
+org $08AAE9 ; <- 042AE9 - ancilla_ether_spell.asm : 34 (JSL Palette_ElectroThemedGear)
+JSL.l LoadElectroPalette
+;--------------------------------------------------------------------------------
+org $08AAF5 ; <- 042AF5 - ancilla_ether_spell.asm : 45 (JSL LoadActualGearPalettes)
+JSL.l RestoreElectroPalette
+;--------------------------------------------------------------------------------
+org $08AAF9 ; -< 42AF9 - ancilla_ether_spell.asm : 46 (JSL Palette_Restore_BG_From_Flash)
+JSL.l RestoreBgEther
 ;--------------------------------------------------------------------------------
 org $08AAED ; <- 42AED - ancilla_ether_spell.asm : 35 (JSL Filter_Majorly_Whiten_Bg)
 JSL.l ConditionalWhitenBg
@@ -766,14 +772,13 @@ JSL.l ConditionalRedFlash : BRA + : NOP #13 : +
 org $08C2A1 ; <- 442A3 - ancilla_sword_ceremony.asm : 54 (REP #$20)
 JSL.l ConditionalPedAncilla : BRA + : NOP #4 : +
 ;--------------------------------------------------------------------------------
-org $02FDB1 ; <- 17DB1 - Bank0E.asm : 3760 (JSL LoadGearPalette)
-JSL.l ConditionalChangeGearPalette : NOP
+org $079976 ; <- 039976 - Bank07.asm : 4009 (JSL Palette_ElectroThemedGear)
+JSL.l LoadElectroPalette
 ;--------------------------------------------------------------------------------
-org $02FDCB ; <- 17DCB - Bank0E.asm : 3775 (JSL LoadGearPalette)
-JSL.l ConditionalChangeGearPalette : NOP
+org $07997C ; <- 03997C - Bank07.asm : 4015 (JSL LoadActualGearPalettes) 
+JSL.l RestoreElectroPalette
 ;--------------------------------------------------------------------------------
-org $02FDE6 ; <- 17DE6 - Bank0E.asm : 3789 (JSL LoadGearPalette)
-JSL.l ConditionalChangeGearPalette : NOP
+
 ;================================================================================
 ; Ice Floor Toggle
 ;--------------------------------------------------------------------------------

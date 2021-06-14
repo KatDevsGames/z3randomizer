@@ -24,8 +24,7 @@ RTL
 ;================================================================================
 ConditionalWhitenBg:
         LDX.b #$00
-        LDA.l DisableFlashing
-        REP #$20 : BNE +
+        LDA.l DisableFlashing : REP #$20 : BNE +
             LDA $00,X
             JSR WhitenLoopReal
             RTL
@@ -55,10 +54,10 @@ WhitenLoopReal:
             LDA $7EC3F4 : JSL Filter_Majorly_Whiten_Color : STA $7EC5F4
             LDA $10 : CMP.w #$07 : BNE +
             LDA $048E
-            CMP.w #$3C : BEQ ++ ; hookshot cave
-            CMP.w #$9D : BEQ ++ ; gt right
-            CMP.w #$9C : BEQ ++ ; gt big room
-            CMP.w #$A5 : BEQ ++ ; wizzrobes 1
+            CMP.w #$3C : BEQ ++
+            CMP.w #$9D : BEQ ++
+            CMP.w #$9C : BEQ ++
+            CMP.w #$A5 : BEQ ++
             +
                 LDA $7EC3F6 : JSL Filter_Majorly_Whiten_Color : STA $7EC5F6
                 LDA $7EC3F8 : JSL Filter_Majorly_Whiten_Color : STA $7EC5F8
@@ -68,7 +67,6 @@ WhitenLoopReal:
                 LDA $7EC3F8 : JSL Filter_Majorly_Whiten_Color : STA $7EC5F8
                 BRA +++
             +++
-
             LDA $7EC3FA : JSL Filter_Majorly_Whiten_Color : STA $7EC5FA
             LDA $7EC3FC : JSL Filter_Majorly_Whiten_Color : STA $7EC5FC
             LDA $7EC3FE : JSL Filter_Majorly_Whiten_Color : STA $7EC5FE
@@ -97,7 +95,6 @@ WhitenLoopDummy:
             INX #2 : CPX.b #$10 : BEQ +
                 JMP -
         +
-
             LDA $7EC3F0 : JSL Filter_Majorly_Whiten_Color : LDA $7EC5F0
             LDA $7EC3F2 : JSL Filter_Majorly_Whiten_Color : LDA $7EC5F2
             LDA $7EC3F4 : JSL Filter_Majorly_Whiten_Color : LDA $7EC5F4
@@ -165,7 +162,7 @@ RestoreBgEther:
             INX #2 : CPX.b #$10 : BNE -
             BRA ++
         ++
-            JML $02FF51 
+JML $02FF51
 ;================================================================================
 DDMConditionalLightning:
         LDA.l DisableFlashing 
@@ -184,7 +181,6 @@ DDMConditionalLightning:
             LDA $F523, Y : LDA $7EC5F0, X
             INY #2
             INX #2 : CPX.b #$10 : BNE -
-
 JML $07FAAC
 ;================================================================================
 ConditionalGTFlash:
@@ -213,17 +209,15 @@ ConditionalRedFlash:
             LDA.w #$25FF : STA $7EC5DC
             LDA.w #$001A
             RTL
-
         +
             LDA $00
             LDA.w #$1D59 : LDA $7EC5DA
             LDA.w #$25FF : LDA $7EC5DC
             LDA.w #$0000
-RTL
+            RTL
 ;================================================================================
 ConditionalPedAncilla:
-        LDA.l DisableFlashing
-        REP #$20 : BNE +
+        LDA.l DisableFlashing : REP #$20 : BNE +
             LDA $00,X
             LDA $00 : STA $04
             LDA $02 : STA $06
@@ -232,32 +226,74 @@ ConditionalPedAncilla:
             LDA $00
             LDA $00 : LDA $04
             LDA $02 : LDA $06
+            RTL
+;================================================================================
+LoadElectroPalette:
+        REP #$20
+        LDA.w #$0202 : STA $0C
+        LDA.w #$0404 : STA $0E
+        LDA.w #$001B : STA $02
+        SEP #$10
+        LDX $0C : LDA $1BEBB4, X : AND.w #$00FF : ADC #$D630
+        REP #$10 : LDX.w #$01B2 : LDY.w #$0002
+        JSR ConditionalLoadGearPalette
+        SEP #$10
+        LDX $0D
+        LDA $1BEBC1, X : AND.w #$00FF : ADC #$D648
+        REP #$10
+        LDX.w #$01B8 : LDY.w #$0003
+        JSR ConditionalLoadGearPalette
+        SEP #$10
+        LDX $0E
+        LDA $1BEC06, X : AND.w #$00FF : ASL A : ADC #$D308
+        REP #$10
+        LDX.w #$01E2 : LDY.w #$000E
+        JSR ConditionalLoadGearPalette
+        SEP #$30
+        INC $15
 RTL
 ;================================================================================
-ConditionalChangeGearPalette:
-    PHY
-    STA $00
-    SEP #$20
-    LDA.l DisableFlashing : REP #$20 : BNE +
-    LDA $00,X
-    -
-        LDA [$00] : STA $7EC300, X : STA $7EC500, X
-        INC $00 : INC $00
-        INX #2
-        DEY : BPL -
-        BRA ++
-    +
-    LDA $00
-    -
-        LDA [$00] : LDA $7EC300, X : LDA $7EC500, X
-        INC $00 : INC $00
-        INX #2
-        DEY : BPL -
-        BRA ++
-    ++
-    PLY ; use what was in Y register to determine which p flags to set
-    CPY #$000E : BNE + 
+ConditionalLoadGearPalette:
+        STA $00
         SEP #$20
-    +
-        SEP #$10
+        LDA.l DisableFlashing : REP #$20 : BNE +
+                LDA $00,X
+        -
+                LDA [$00]
+                STA $7EC500, X
+                INC $00 : INC $00
+                INX #2
+                DEY
+                BPL -
+        RTS
+        +
+                LDA $00
+        -
+                LDA [$00]
+                LDA $7EC500, X
+                INC $00 : INC $00
+                INX #2
+                DEY
+                BPL -
+RTS
+;================================================================================
+RestoreElectroPalette:
+        REP #$30
+        LDX.w #$01B2 : LDY.w #$0002
+        JSR FillPaletteBufferFromAux
+        LDX.w #$01B8 : LDY.w #$0003
+        JSR FillPaletteBufferFromAux
+        LDX.w #$01E2 : LDY.w #$000E
+        JSR FillPaletteBufferFromAux
+        SEP #$30
+        INC $15
 RTL
+;================================================================================
+FillPaletteBufferFromAux:
+        -
+            LDA $7EC300, X
+            STA $7EC500, X
+            INX #2
+            DEY
+            BPL -
+RTS
