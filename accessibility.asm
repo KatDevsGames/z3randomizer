@@ -162,7 +162,7 @@ RestoreBgEther:
             INX #2 : CPX.b #$10 : BNE -
             BRA ++
         ++
-JML $02FF51
+JML $02FF51 ; Bank0E.asm : 3936 vanilla restore routine after loop which RTLs
 ;================================================================================
 DDMConditionalLightning:
         LDA.l DisableFlashing 
@@ -170,7 +170,7 @@ DDMConditionalLightning:
         BNE +
             LDA.w $0000
             LDX.b #$02
-            JML $07FA7F
+            JML $07FA7F ; Bank0E.asm : 4738 vanilla loop equivalent to below beginning at LDY #$00
         +
             LDA.b $00 : LDX.b #$02 : LDY #$00
         -
@@ -181,13 +181,11 @@ DDMConditionalLightning:
             LDA $F523, Y : LDA $7EC5F0, X
             INY #2
             INX #2 : CPX.b #$10 : BNE -
-JML $07FAAC
+            JML $07FAAC ; Bank0E.asm : 4754 both branches converge here
 ;================================================================================
 ConditionalGTFlash:
-        LDA.l DisableFlashing
-            REP #$20
-            BNE +
-                LDA $0000
+        LDA.l DisableFlashing : REP #$20 : BNE +
+            LDA $0000
         -
             LDA $F9C1, Y : STA $7EC5D0, X
             INY #2
@@ -199,11 +197,10 @@ ConditionalGTFlash:
             LDA $F9C1, Y : LDA $7EC5D0, X
             INY #2
             INX #2 : CPX.b #$10 : BNE -
-RTL
+            RTL
 ;================================================================================
 ConditionalRedFlash:
-        LDA.l DisableFlashing
-        REP #$20 : BNE +
+        LDA.l DisableFlashing : REP #$20 : BNE +
             LDA $00,X
             LDA.w #$1D59 : STA $7EC5DA
             LDA.w #$25FF : STA $7EC5DC
@@ -240,14 +237,12 @@ LoadElectroPalette:
         SEP #$10
         LDX $0D
         LDA $1BEBC1, X : AND.w #$00FF : ADC #$D648
-        REP #$10
-        LDX.w #$01B8 : LDY.w #$0003
+        REP #$10 : LDX.w #$01B8 : LDY.w #$0003
         JSR ConditionalLoadGearPalette
         SEP #$10
         LDX $0E
         LDA $1BEC06, X : AND.w #$00FF : ASL A : ADC #$D308
-        REP #$10
-        LDX.w #$01E2 : LDY.w #$000E
+        REP #$10 : LDX.w #$01E2 : LDY.w #$000E
         JSR ConditionalLoadGearPalette
         SEP #$30
         INC $15
@@ -275,7 +270,7 @@ ConditionalLoadGearPalette:
                 INX #2
                 DEY
                 BPL -
-RTS
+        RTS
 ;================================================================================
 RestoreElectroPalette:
         REP #$30
