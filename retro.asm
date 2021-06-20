@@ -26,6 +26,12 @@ StoreBombCount:
 	.finite
 		PLA : STA $7EF343
 RTL
+SearchForEquippedItem:
+	LDA !INFINITE_BOMBS : BEQ +
+		LDA.b #$01 : LDX.b #$00 : RTL
+	+
+	LDA $7EF340 ; thing we wrote over
+RTL
 
 !INFINITE_ARROWS = "$7F50C8"
 DecrementArrows:

@@ -319,6 +319,15 @@ JSL.l LoadBombCount16
 org $0DDEB3 ; <- 6DEB3 - equipment.asm : 328 (LDA $7EF33F, X)
 JSL.l IsItemAvailable
 ;--------------------------------------------------------------------------------
+org $0DDDE8 ; <- 6DDE8 - equipment.asm : 148 (LDA $7EF340)
+JSL.l SearchForEquippedItem
+;--------------------------------------------------------------------------------
+org $0DDE70 ; <- 6DE70 - equipment.asm : 273 (LDA $7EF340)
+JSL.l SearchForEquippedItem
+;--------------------------------------------------------------------------------
+org $0DE39D ; <- 6E39D - equipment.asm : 1109 (LDA $7EF340)
+JSL.l SearchForEquippedItem
+;--------------------------------------------------------------------------------
 
 ;================================================================================
 ; Inverted Mode
