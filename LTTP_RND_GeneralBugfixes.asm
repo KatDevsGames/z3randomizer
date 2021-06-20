@@ -570,6 +570,9 @@ AddDashTremor:
 org $099D04
 AddAncillaLong:
 
+org $099D1A
+Ancilla_CheckIfAlreadyExistsLong:
+
 org $09AE64
 Sprite_SetSpawnedCoords:
 

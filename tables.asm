@@ -1471,7 +1471,7 @@ dw #9999 ; Rupee Limit
 ; $7F503C - Stats Rupee Total
 ; $7F503D - Stats Rupee Total
 ; $7F503E - Stats Item Total
-; $7F503F - Bonk Repeat
+; $7F503F - Unused
 ; $7F5040 - Free Item Dialog Temporary
 ; $7F5041 - Epilepsy Safety Timer
 ; $7F5042 - Tile Upload Offset Override (Low)
