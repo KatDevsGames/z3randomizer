@@ -40,8 +40,13 @@ Init_Primary:
 			INX
 			CPX #$15 : !BLT -
 	.done
-	
+
+	REP #$20
+	LDA.l OneMindTimer : STA.l !ONEMIND_TIMER
+	SEP #$20
+
 	LDA.b #$01 : STA $420D ; enable fastrom access on upper banks
+	STA.l !ONEMIND_ID
 	
 	LDA.b #$10 : STA $BC ; set default player sprite bank
 	

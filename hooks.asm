@@ -14,6 +14,8 @@ dl Init_PostRAMClear
 org $008056 ; <- 56 - Bank00.asm : 77
 JSL.l FrameHookAction
 ;--------------------------------------------------------------------------------
+org $00805D
+JML HandleOneMindController
 
 ;================================================================================
 ; NMI Hook
@@ -48,8 +50,8 @@ ReturnCheckZSNES:
 ;--------------------------------------------------------------------------------
 ;org $0083D9 ; <- 3D9 - Bank00.asm : 611 (LDA $4219 : STA $01)
 ;JSL.l InvertDPad : NOP
-org $0083D4 ; <- 3D4 - Bank00.asm : 610 (LDA $4218 : STA $00)
-JML.l InvertDPad : SKIP 6
+org $0083D1 ; <- 3D1 - Bank00.asm (STZ.w JOYPAD - useless instruction here)
+JML.l InvertDPad : SKIP 9
 InvertDPadReturn:
 ;--------------------------------------------------------------------------------
 
