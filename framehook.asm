@@ -22,9 +22,10 @@
 !LOCK_STATS = "$7EF443"
 FrameHookAction:
 	JSL $0080B5 ; Module_MainRouting
-	PHP : PHB : PHD : REP #$30 : PHA : PHX : PHY
-		LDA #$0000 : TCD : SEP #$20 : PHA : PLB
-		JSL CheckMusicLoadRequest
+	JSL CheckMusicLoadRequest
+	PHP : REP #$30 : PHA
+	
+		SEP #$20
 
 		;LDA EnableSRAMTrace : AND.l TournamentSeedInverse : BEQ +
 		;	LDA $1A : BNE ++ : JSL.l WriteStatusPreview : ++ ; write every 256 frames
@@ -39,9 +40,9 @@ FrameHookAction:
 				LDA !ITEM_FRAMES_LOW : INC : STA !ITEM_FRAMES_LOW : BNE +
 					LDA !ITEM_FRAMES_HIGH : INC : STA !ITEM_FRAMES_HIGH
 				+
-			SEP #$20 ; set 8-bit accumulator ?? check this
+			;SEP #$20 ; set 8-bit accumulator ?? check this
 		++
-	REP #$30 : PLY : PLX : PLA : PLD : PLB : PLP
+	REP #$30 : PLA : PLP
 RTL
 ;--------------------------------------------------------------------------------
 NMIHookAction:

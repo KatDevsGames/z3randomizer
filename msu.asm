@@ -186,6 +186,8 @@ RTS
 ; Extended OST/SPC fallback, decide which track to actually play
 ;--------------------------------------------------------------------------------
 CheckMusicLoadRequest:
+    PHP : PHB : PHD : REP #$30 : PHA : PHX : PHY
+    LDA #$0000 : TCD : SEP #$20 : PHA : PLB
         LDA !REG_MUSIC_CONTROL_REQUEST : BEQ .skip+3 : BMI .skip+3
         CMP !REG_CURRENT_COMMAND : BNE .continue
         CMP.b #22 : BNE .skip   ; Check GT when mirroring from upstairs
@@ -195,6 +197,7 @@ CheckMusicLoadRequest:
 .skip
         LDA !REG_MUSIC_CONTROL_REQUEST
         STA !REG_MUSIC_CONTROL : STZ !REG_MUSIC_CONTROL_REQUEST
+    REP #$30 : PLY : PLX : PLA : PLD : PLB : PLP
     RTL
         
 .continue
@@ -355,11 +358,13 @@ CheckMusicLoadRequest:
 
 .done
         LDA !REG_MUSIC_CONTROL_REQUEST : STA !REG_MUSIC_CONTROL : STZ !REG_MUSIC_CONTROL_REQUEST
+        REP #$30 : PLY : PLX : PLA : PLD : PLB : PLP
     RTL
 
 .sfx_indoors
         LDA !REG_MUSIC_CONTROL_REQUEST : STA !REG_MUSIC_CONTROL : STZ !REG_MUSIC_CONTROL_REQUEST
-    SEP #$20 : LDA.b #$05 : STA $012D ; Vanilla subroutine expects 8-bit A, doesn't use X/Y
+    SEP #$20 : LDA.b #$05 : STA $012D
+    REP #$30 : PLY : PLX : PLA : PLD : PLB : PLP
     JML Module_PreDungeon_setAmbientSfx
 ;--------------------------------------------------------------------------------
 
@@ -737,12 +742,12 @@ MSUMain:
 ; Wait for the fanfare music to start, or else it can get skipped entirely
 ;--------------------------------------------------------------------------------
 FanfarePreload:
-    STA !REG_MUSIC_CONTROL_REQUEST  ; thing we wrote over
+    STA.l !REG_MUSIC_CONTROL_REQUEST  ; thing we wrote over
     PHA
         JSL CheckMusicLoadRequest
         WAI
     PLA
-    - : CMP !REG_SPC_CONTROL : BNE -
+    - : CMP.l !REG_SPC_CONTROL : BNE -
     JML AddReceivedItem_doneWithSoundEffects
 ;--------------------------------------------------------------------------------
 
@@ -765,7 +770,7 @@ PendantFanfareWait:
     jml PendantFanfareContinue
 .spc
     SEP #$20
-    LDA !REG_SPC_CONTROL : BNE .continue
+    LDA.l !REG_SPC_CONTROL : BNE .continue
 .done
     jml PendantFanfareDone
 ;--------------------------------------------------------------------------------
@@ -789,7 +794,7 @@ CrystalFanfareWait:
     jml CrystalFanfareContinue
 .spc
     SEP #$20
-    LDA !REG_SPC_CONTROL : BNE .continue
+    LDA.l !REG_SPC_CONTROL : BNE .continue
 .done
     jml CrystalFanfareDone
 ;--------------------------------------------------------------------------------
