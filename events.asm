@@ -234,6 +234,11 @@ PostItemAnimation:
 		LDA.b #$00 : STA $7F509F
 	+
 
+	LDA.w $02E9 : CMP.b #$01 : BNE +
+		LDA.b $2F : BEQ +
+			JSL.l IncrementChestTurnCounter
+	+
+
     STZ $02E9 : LDA $0C5E, X ; thing we wrote over to get here
 RTL
 ;--------------------------------------------------------------------------------
