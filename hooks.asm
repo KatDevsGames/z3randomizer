@@ -2646,3 +2646,11 @@ JSL FastCreditsCutsceneTimer
 
 org $0EE773
 JSL FastTextScroll : NOP
+
+;================================================================================
+org $01FFEE : JSL IncrementDamageTakenCounter_Eight ; overworld pit
+org $079506 : JSL IncrementDamageTakenCounter_Eight ; underworld pit
+
+org $0780C6 : JSL IncrementDamageTakenCounter_Arb
+
+org $07B0B1 : JSL IncrementMagicUseCounter
