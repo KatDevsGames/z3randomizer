@@ -91,6 +91,9 @@ db #$20, #$19, #$08, #$31 ; year/month/day
 ;!REG_MUSIC_CONTROL = $012C
 !REG_MUSIC_CONTROL_REQUEST = $012C
 
+!ONEMIND_ID = $7F5072
+!ONEMIND_TIMER = $7F5073
+
 ;================================================================================
 
 incsrc hooks.asm
@@ -182,7 +185,7 @@ incsrc endingsequence.asm
 incsrc cuccostorm.asm
 incsrc compression.asm
 incsrc retro.asm
-incsrc dpadinvert.asm
+incsrc controllerjank.asm
 incsrc boots.asm
 incsrc events.asm
 incsrc fileselect.asm

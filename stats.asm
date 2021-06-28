@@ -358,6 +358,45 @@ IncrementBigChestCounter:
 	PLA
 RTL
 ;--------------------------------------------------------------------------------
+IncrementDamageTakenCounter_Eight:
+	STA.l $7EF36D
+	PHA : PHP
+	LDA !LOCK_STATS : BNE +
+	REP #$21
+	LDA.l !DAMAGE_COUNTER
+	ADC.w #$0008
+	STA.l !DAMAGECOUNTER
++	PLP
+	PLA
+RTL
+
+IncrementDamageTakenCounter_Arb:
+	PHP
+	LDA !LOCK_STATS : BNE +
+	REP #$21
+	LDA.b $00
+	AND.b #$00FF
+	ADC.l !DAMAGE_COUNTER
+	STA.l !DAMAGE_COUNTER
++	PLP
+
+	LDA.l $7EF36D
+RTL
+
+IncrementMagicUseCounter:
+	STA.l $7EF36E
+	PHA : PHP
+	LDA !LOCK_STATS : BNE +
+	REP #$21
+	LDA.b $00
+	AND.b #$00FF
+	ADC.l !MAGIC_COUNTER
+	STA.l !MAGIC_COUNTER
++	PLP : PLA
+
+RTL
+
+;--------------------------------------------------------------------------------
 !OW_MIRROR_COUNTER = "$7EF43A"
 IncrementOWMirror:
 	PHA
