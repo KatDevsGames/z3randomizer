@@ -23,7 +23,7 @@
 ; -
 ; -
 ; -
-; -
+; q = quickswap lock
 ;--------------------------------------------------------------------------------
 ; ProcessMenuButtons:
 ; out:	Carry - 0 = No Button, 1 = Yes Button

@@ -28,6 +28,7 @@ QuickSwap:
 	BRA .store
 
 	.special_swap
+	LDA !INVENTORY_SWAP_2 : ORA #$01 : STA !INVENTORY_SWAP_2
 	CPX.b #$02 : BEQ + ; boomerang
 	CPX.b #$01 : BEQ + ; bow
 	CPX.b #$05 : BEQ + ; powder
@@ -47,22 +48,14 @@ QuickSwap:
 	LDA.b $F6 : AND.b #$40 ;what we wrote over
 RTL
 RCode:
-	LDA.w $0202 : TAX
+	LDX.w $0202
+	LDA.b $F2 : BIT #$20 : BNE ++ ; Still holding L from a previous frame
+		LDA !INVENTORY_SWAP_2 : AND #$FE : STA !INVENTORY_SWAP_2
+		BRA +
+	++
+	LDA !INVENTORY_SWAP_2 : BIT #$01 : BEQ +
+	RTS
 	-
-;		CPX.b #$0F : BNE + ; incrementing into bottle
-;			LDX.b #$00 : BRA ++
-;		+ CPX.b #$10 : BNE + ; incrementing bottle
-;			LDA.l $7EF34F : TAX
-;			-- : ++
-;				CPX.b #$04 : BEQ .noMoreBottles
-;				INX
-;				LDA.l $7EF35B,X : BEQ --
-;			TXA : STA.l $7EF34F
-;			LDX #$10
-;			RTS
-;			.noMoreBottles
-;			LDX #$11
-;			BRA .nextItem
 		+ CPX.b #$14 : BNE + : LDX.b #$00 ;will wrap around to 1
 		+ INX
 	.nextItem
@@ -70,21 +63,14 @@ RCode:
 RTS
 
 LCode:
-	LDA.w $0202 : TAX
+	LDX.w $0202
+	LDA.b $F2 : BIT #$10 : BNE ++ ; Still holding R from a previous frame
+		LDA !INVENTORY_SWAP_2 : AND #$FE : STA !INVENTORY_SWAP_2
+		BRA +
+	++
+	LDA !INVENTORY_SWAP_2 : BIT #$01 : BEQ +
+	RTS
 	-
-;		CPX.b #$11 : BNE + ; decrementing into bottle
-;			LDX.b #$05 : BRA ++
-;		+ CPX.b #$10 : BNE +	; decrementing bottle
-;			LDA.l $7EF34F : TAX
-;			-- : ++
-;				CPX.b #$01 : BEQ .noMoreBottles
-;				DEX
-;				LDA.l $7EF35B,X : BEQ --
-;			TXA : STA.l $7EF34F
-;			LDX.b #$10
-;			RTS
-;			.noMoreBottles
-;			LDX.b #$0F : BRA .nextItem
 		+ CPX.b #$01 : BNE + : LDX.b #$15 ; will wrap around to $14
 		+ DEX
 	.nextItem
