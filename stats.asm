@@ -142,17 +142,14 @@
 !LOCK_STATS = "$7EF443"
 ;--------------------------------------------------------------------------------
 !BONK_COUNTER = "$7EF420"
-!BONK_REPEAT = "$7F503F"
-!LOOP_FRAMES_LOW = "$7EF42E"
 StatBonkCounter:
 	PHA
+	JSL Ancilla_CheckIfAlreadyExistsLong : BCS +
 		LDA !LOCK_STATS : BNE +
-		LDA !LOOP_FRAMES_LOW : !SUB !BONK_REPEAT : CMP #30 : !BLT +
-			LDA !LOOP_FRAMES_LOW : STA !BONK_REPEAT
 			LDA !BONK_COUNTER : INC
 			CMP.b #100 : BEQ + ; decimal 100
 				STA !BONK_COUNTER
-		+
+	+
 	PLA
 	JSL.l AddDashTremor ; thing we wrote over
 RTL
