@@ -643,6 +643,10 @@ endif
 
 %blankline()
 
+%bigcreditsleft("CHEST TURNS")
+
+%blankline()
+
 %bigcreditsleft("BONKS")
 
 %blankline()
@@ -685,9 +689,6 @@ endif
 
 %emptyline()
 %emptyline()
-%emptyline()
-%emptyline()
-%emptyline()
 %bigcreditsleft("COLLECTION RATE         /216")
 
 %blankline()
@@ -725,18 +726,20 @@ endif
 !GOLD_SWORD_Y = 339
 !GT_BIG_KEY_X = 23
 !GT_BIG_KEY_Y = 346
+!CHEST_TURNS_X = 26
+!CHEST_TURNS_Y = 349
 !BONKS_X = 26
-!BONKS_Y = 349
+!BONKS_Y = 352
 !SAVE_AND_QUITS_X = 26
-!SAVE_AND_QUITS_Y = 352
+!SAVE_AND_QUITS_Y = 355
 !DEATHS_X = 26
-!DEATHS_Y = 355
+!DEATHS_Y = 358
 !FAERIE_REVIVALS_X = 26
-!FAERIE_REVIVALS_Y = 358
+!FAERIE_REVIVALS_Y = 361
 !TOTAL_MENU_TIME_X = 19
-!TOTAL_MENU_TIME_Y = 361
+!TOTAL_MENU_TIME_Y = 364
 !TOTAL_LAG_TIME_X = 19
-!TOTAL_LAG_TIME_Y = 364
+!TOTAL_LAG_TIME_Y = 367
 !COLLECTION_RATE_X = 22
 !COLLECTION_RATE_Y = 380
 !TOTAL_TIME_X = 19
