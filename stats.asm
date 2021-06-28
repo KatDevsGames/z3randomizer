@@ -267,7 +267,7 @@ CountChestKey: ; called by neighbor functions
 		CPY #$24 : BEQ +  ; small key for this dungeon - use $040C
 			CPY #$A0 : !BLT .end ; Ignore most items
 			CPY #$AE : !BGE .end ; Ignore reserved key and generic key
-			TYA : AND.B #$0F : BNE ++ ; If this is a sewers key, instead count it as an HC key
+			TYA : AND.B #$0F : BNE ++ ; If this is an HC key, instead count it as a sewers key
 				INC
 			++ TAX : BRA .count  ; use Key id instead of $040C (Keysanity)
 		+ LDA $040C : LSR
