@@ -369,6 +369,8 @@ IncrementBigChestCounter:
 	PLA
 RTL
 ;--------------------------------------------------------------------------------
+!DAMAGE_COUNTER = "$FFFFFF"
+!MAGIC_COUNTER = "$FFFFFF"
 IncrementDamageTakenCounter_Eight:
 	STA.l $7EF36D
 	PHA : PHP
@@ -376,7 +378,7 @@ IncrementDamageTakenCounter_Eight:
 	REP #$21
 	LDA.l !DAMAGE_COUNTER
 	ADC.w #$0008
-	STA.l !DAMAGECOUNTER
+	STA.l !DAMAGE_COUNTER
 +	PLP
 	PLA
 RTL
@@ -386,7 +388,7 @@ IncrementDamageTakenCounter_Arb:
 	LDA !LOCK_STATS : BNE +
 	REP #$21
 	LDA.b $00
-	AND.b #$00FF
+	AND.w #$00FF
 	ADC.l !DAMAGE_COUNTER
 	STA.l !DAMAGE_COUNTER
 +	PLP
@@ -400,7 +402,7 @@ IncrementMagicUseCounter:
 	LDA !LOCK_STATS : BNE +
 	REP #$21
 	LDA.b $00
-	AND.b #$00FF
+	AND.w #$00FF
 	ADC.l !MAGIC_COUNTER
 	STA.l !MAGIC_COUNTER
 +	PLP : PLA
