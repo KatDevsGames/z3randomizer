@@ -563,7 +563,7 @@ CreditsLineBlank:
 
 ;===================================================================================================
 
-print "Line number: !CLINE | Expected: 302"
+print "Credits line number: !CLINE | Expected: 302"
 
 if !CLINE > 302
 	error "Too many credits lines. !CLINE > 302"
