@@ -107,15 +107,14 @@ DoDungeonMapBossIcon:
 	LDX.b #$02
 	STX.w $420B
 
+	STA.w $4315
 	LDA.w #$A260>>1
 	STA.w $2116
-	LDA.w #$0040
-	STA.w $4315
 
 	STX.w $420B
 
 	; done
-	SEP #$32
+	SEP #$30
 	RTL
 
 .boss_id

@@ -17,7 +17,7 @@ DrawDungeonCompassCounts:
 	LDX $040C : CPX.b #$FF : BEQ .done ; Skip if not in a dungeon
 
 	CMP.w #$0002 : BEQ ++ ; if CompassMode==2, we don't check for the compass
-		LDA $7EF364 : AND.l .item_masks, X ; Load compass values to A, mask with dungeon item masks
+		LDA $7EF364 : AND.l DungeonItemMasks, X ; Load compass values to A, mask with dungeon item masks
 		BEQ .done ; skip if we don't have compass
 	++
 	
@@ -35,7 +35,7 @@ DrawDungeonCompassCounts:
 	.done
 RTL
 
-.item_masks ; these are dungeon correlations to $7EF364 - $7EF369 so it knows where to store compasses, etc
+DungeonItemMasks: ; these are dungeon correlations to $7EF364 - $7EF369 so it knows where to store compasses, etc
     dw $8000, $4000, $2000, $1000, $0800, $0400, $0200, $0100
     dw $0080, $0040, $0020, $0010, $0008, $0004
 	

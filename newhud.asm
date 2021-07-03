@@ -131,9 +131,51 @@ SEP #$30
 	STA !KEY_ICON_ADDRESS
 	
 	.done_keys
-	
-	
-	
+
+
+
+
+;--------------------------------------------------------------------------------
+; Draw pendant/crystal icon
+;--------------------------------------------------------------------------------
+!PRIZE_ICON = $7EC742
+!P_ICON = $296C
+!C_ICON = $295F
+
+	SEP #$20
+	LDA.b $1B : BEQ .noprize
+
+
+
+	LDX.w $040C : BMI .noprize
+
+	REP #$20
+
+	LDA.l MapMode
+	BEQ .drawprize
+
+	LDA.l $7EF368
+	AND.l DungeonItemMasks,X
+	BEQ .doneprize
+
+.drawprize
+	LDA.l CrystalPendantFlags_2, X
+	AND.w #$0040 : BNE .is_crystal
+
+	LDA.w #!P_ICON
+	BRA .doneprize
+
+.is_crystal
+	LDA.w #!C_ICON
+	BRA .doneprize
+
+.noprize
+	REP #$20
+	LDA.w #$207F
+
+.doneprize
+	STA.l !PRIZE_ICON
+
 ;--------------------------------------------------------------------------------
 ; Draw Magic Meter
 !INFINITE_MAGIC = "$7F50CA"
