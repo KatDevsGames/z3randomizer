@@ -55,7 +55,7 @@ db #$20, #$19, #$08, #$31 ; year/month/day
 !SRAM_SINK = "$7EF41E" ; <- change this (conflicts with Programmable item 3)
 ;$7EF418 - Goal Item Counter
 ;$7EF419 - Service Sequence
-;$7EF420 - $7EF468 - Stat Tracking Bank 1 (overlaps with RNG Item Flags)
+;$7EF420 - $7EF46D - Stat Tracking Bank 1 (overlaps with RNG Item Flags)
 ;$7EF450 - $7EF45F - RNG Item (Single) Flags
 ;$7EF4A0 - $7EF4A7 - Service Request Block
 !FRESH_FILE_MARKER = "$7EF4F0" ; zero if fresh file

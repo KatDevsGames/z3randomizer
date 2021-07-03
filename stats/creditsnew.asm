@@ -639,11 +639,11 @@ endif
 %blankline()
 %blankline()
 
-%bigcreditsleft("GT BIG KEY               /22")
+%bigcreditsleft("DAMAGE TAKEN")
 
 %blankline()
 
-%bigcreditsleft("CHEST TURNS")
+%bigcreditsleft("MAGIC USED")
 
 %blankline()
 
@@ -724,10 +724,10 @@ endif
 !TEMPERED_SWORD_Y = 336
 !GOLD_SWORD_X = 23
 !GOLD_SWORD_Y = 339
-!GT_BIG_KEY_X = 23
-!GT_BIG_KEY_Y = 346
-!CHEST_TURNS_X = 26
-!CHEST_TURNS_Y = 349
+!DAMAGETAKEN_X = 26
+!DAMAGETAKEN_Y = 346
+!MAGICUSED_X = 26
+!MAGICUSED_Y = 349
 !BONKS_X = 26
 !BONKS_Y = 352
 !SAVE_AND_QUITS_X = 26
