@@ -33,7 +33,7 @@ CalculateByrnaUsage:
 		PLX
 	++
 	LDA $7EF36E ; thing we wrote over
-RTL
+	JML IncrementMagicUseCounterByrna
 ;--------------------------------------------------------------------------------
 CalculateCapeUsage:
 	LDA $1B : BEQ ++
@@ -51,8 +51,7 @@ CalculateCapeUsage:
 		LDA.l HardModeExclusionCapeUsage, X : STA $4C ; set cape decrement timer
 		PLX
 	++
-	LDA $7EF36E ; thing we wrote over
-RTL
+	JML IncrementMagicUseCounterOne
 ;--------------------------------------------------------------------------------
 ActivateInvulnerabilityOrDont:
 	LDA $1B : BEQ .nowhere_special

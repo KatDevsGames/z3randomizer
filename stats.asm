@@ -383,7 +383,7 @@ IncrementDamageTakenCounter_Eight:
 ++	STA.l !DAMAGE_COUNTER
 +	PLP
 	PLA
-RTL
+	RTL
 
 IncrementDamageTakenCounter_Arb:
 	PHP
@@ -398,10 +398,12 @@ IncrementDamageTakenCounter_Arb:
 +	PLP
 
 	LDA.l $7EF36D
-RTL
+	RTL
 
 IncrementMagicUseCounter:
 	STA.l $7EF36E
+
+IncrementMagicUseCounterByrna:
 	PHA : PHP
 	LDA !LOCK_STATS : BNE +
 	REP #$21
@@ -413,7 +415,18 @@ IncrementMagicUseCounter:
 ++	STA.l !MAGIC_COUNTER
 +	PLP : PLA
 
-RTL
+	RTL
+
+IncrementMagicUseCounterOne:
+	LDA !LOCK_STATS : BNE +
+	REP #$20
+	LDA.l !MAGIC_COUNTER
+	INC
+	BEQ ++
+	STA.l !MAGIC_COUNTER
+++	SEP #$20
++	LDA.l $7EF36E
+	RTL
 
 ;--------------------------------------------------------------------------------
 !OW_MIRROR_COUNTER = "$7EF43A"
