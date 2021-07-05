@@ -501,6 +501,9 @@ Sprite_ShowMessageUnconditional:
 org $05EC96
 Sprite_ZeldaLong:
 
+org $0680FA
+Player_ApplyRumbleToSprites:
+
 org $0683E6
 Utility_CheckIfHitBoxesOverlapLong:
 
