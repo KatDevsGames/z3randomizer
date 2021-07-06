@@ -167,7 +167,7 @@ db #$00 ; #$00 = Off (default) - #$01 = On
 ;--------------------------------------------------------------------------------
 org $308041 ; PC 0x180041
 AllowSwordlessMedallionUse:
-db #$00 ; #$00 = Off (default) - #$01 = Medallion Pads - #$02 = Always (Not Implemented)
+db #$00 ; #$00 = Off (default) - #$01 = Medallion Pads - #$02 = Always
 ;--------------------------------------------------------------------------------
 org $308042 ; PC 0x180042
 PermitSQFromBosses:
