@@ -55,7 +55,7 @@ db #$20, #$19, #$08, #$31 ; year/month/day
 !SRAM_SINK = "$7EF41E" ; <- change this (conflicts with Programmable item 3)
 ;$7EF418 - Goal Item Counter
 ;$7EF419 - Service Sequence
-;$7EF420 - $7EF468 - Stat Tracking Bank 1 (overlaps with RNG Item Flags)
+;$7EF420 - $7EF46D - Stat Tracking Bank 1 (overlaps with RNG Item Flags)
 ;$7EF450 - $7EF45F - RNG Item (Single) Flags
 ;$7EF4A0 - $7EF4A7 - Service Request Block
 !FRESH_FILE_MARKER = "$7EF4F0" ; zero if fresh file
@@ -93,6 +93,8 @@ db #$20, #$19, #$08, #$31 ; year/month/day
 
 !ONEMIND_ID = $7F5072
 !ONEMIND_TIMER = $7F5073
+
+function hexto555(h) = ((((h&$FF)/8)<<10)|(((h>>8&$FF)/8)<<5)|(((h>>16&$FF)/8)<<0))
 
 ;================================================================================
 
@@ -206,6 +208,7 @@ incsrc toast.asm
 incsrc darkroomitems.asm
 incsrc fastcredits.asm
 incsrc msu.asm
+incsrc dungeonmap.asm
 warnpc $A58000
 
 ;org $228000 ; contrib area
@@ -288,6 +291,10 @@ warnpc $338041
 org $339000
 incbin sheet178.gfx
 warnpc $339600
+
+org $339600
+BossMapIconGFX:
+incbin bossicons.4bpp
 
 org $328000
 Extra_Text_Table:

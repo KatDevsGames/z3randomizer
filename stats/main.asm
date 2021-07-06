@@ -60,6 +60,7 @@ ValueCaps:
     dw 99
     dw 999
     dw 9999
+    dw 9999 ; TODO - 5 digits need to be fixed at a later date
 
 BitMasks:
     dw $FFFF
