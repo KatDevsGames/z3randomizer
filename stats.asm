@@ -144,16 +144,12 @@
 !LOCK_STATS = "$7EF443"
 ;--------------------------------------------------------------------------------
 !BONK_COUNTER = "$7EF420"
-StatBonkCounter:
-	PHA
-	JSL Ancilla_CheckIfAlreadyExistsLong : BCS +
-		LDA !LOCK_STATS : BNE +
-			LDA !BONK_COUNTER : INC
-			CMP.b #100 : BEQ + ; decimal 100
-				STA !BONK_COUNTER
+IncrementBonkCounter:
+	LDA !LOCK_STATS : BNE +
+		LDA !BONK_COUNTER : INC
+		CMP.b #100 : BEQ + ; decimal 100
+			STA !BONK_COUNTER
 	+
-	PLA
-	JSL.l AddDashTremor ; thing we wrote over
 RTL
 ;--------------------------------------------------------------------------------
 !SAVE_COUNTER = "$7EF42D"
