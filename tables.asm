@@ -837,7 +837,7 @@ db #$08 ; #$08 = 1 Heart (default) - #$02 = 1/4 Heart
 ;================================================================================
 org $308169 ; PC 0x180169
 AgahnimDoorStyle:
-db #$02 ; #00 = Never Locked - #$01 = Locked During Escape (default) - #$02 = Locked Without 7 Crystals
+db #$01 ; #00 = Never Locked - #$01 = Locked During Escape (default) - #$02 = Locked Without 7 Crystals
 ;================================================================================
 org $30816A ; PC 0x18016A
 FreeItemText:
