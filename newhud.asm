@@ -150,6 +150,8 @@ SEP #$30
 	CPX #$04 : !BLT .noprize
 	CPX #$08 : BEQ .noprize
 
+	LDA $10 : CMP #$12 : BEQ .noprize
+
 	REP #$20
 
 	LDA.l MapMode
