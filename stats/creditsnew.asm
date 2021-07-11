@@ -419,7 +419,7 @@ CreditsLineBlank:
 
 %blankline()
 
-%bigcredits("AERINON             COMPILING")
+%bigcredits("AERINON            COMPILING")
 
 %blankline()
 %blankline()
