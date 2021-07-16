@@ -218,7 +218,7 @@ endmacro
 
 !ColonOffset = $83
 !PeriodOffset = $80
-!BlankTile = $883D
+!BlankTile = #$883D
 
 RenderCreditsStatCounter:
     PHB
