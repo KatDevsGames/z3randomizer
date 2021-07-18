@@ -145,9 +145,12 @@ SEP #$30
 	SEP #$20
 	LDA.b $1B : BEQ .noprize
 
+	LDX.w $040C
+	CPX #$1A : !BGE .noprize
+	CPX #$04 : !BLT .noprize
+	CPX #$08 : BEQ .noprize
 
-
-	LDX.w $040C : BMI .noprize
+	LDA $10 : CMP #$12 : BEQ .noprize
 
 	REP #$20
 
@@ -156,9 +159,10 @@ SEP #$30
 
 	LDA.l $7EF368
 	AND.l DungeonItemMasks,X
-	BEQ .doneprize
+	BEQ .noprize
 
 .drawprize
+	TXA : LSR : TAX
 	LDA.l CrystalPendantFlags_2, X
 	AND.w #$0040 : BNE .is_crystal
 
