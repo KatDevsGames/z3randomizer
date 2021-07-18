@@ -1068,6 +1068,9 @@ JSL.l InitializeBottles
 ;================================================================================
 ; Agahnim Doors Fix
 ;--------------------------------------------------------------------------------
+org $099BBA
+JSL FlagAgahnimDoor
+
 org $1BBC94 ; <- DBC94 - Bank1B.asm : 201 (LDA $7EF3C5 : AND.w #$000F : CMP.w #$0003 : BCS BRANCH_EPSILON)
 JSL.l LockAgahnimDoors : BNE Overworld_Entrance_BRANCH_EPSILON : NOP #6
 

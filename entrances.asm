@@ -24,11 +24,12 @@ LockAgahnimDoors:
 
 		LDA $7EF2C3 : AND.w #$0020 : BNE .unlock ; Check if GT overlay is already on or not
 		LDA $0308 : AND.w #$0080 : BEQ ++ ;If we are holding an item
+
+	.locked
 			LDA #$0001 : RTL ;Keep the door locked
 		++
 		SEP #$30
 		JSL $099B6F ;Add tower break seal
-		LDA $7EF2C3 : ORA #$20 : STA $7EF2C3 ; activate GT overlay
 		REP #$30
 		LDA #$0001 ;Prevent door from opening that frame otherwise it glitchy
 		RTL
@@ -39,6 +40,17 @@ LockAgahnimDoors:
 	LDA.w #$0000 ; fallback to never locked
 
 RTL
+;---------------------------------------------------------------------------------
+FlagAgahnimDoor:
+	LDA.l InvertedMode : BEQ .vanilla
+
+	LDA $7EF2C3 : ORA #$20 : STA $7EF2C3 ; activate GT overlay
+
+.vanilla
+	LDA.b #$28 : STA.b $72
+	RTL
+
+
 ;--------------------------------------------------------------------------------
 LockAgahnimDoorsCore:
 	LDA $22 : CMP.w #1992 : !BLT + ; door too far left, skip
