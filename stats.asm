@@ -438,6 +438,7 @@ JMP StatTransitionCounter
 !UW_MIRROR_COUNTER = "$7EF43B"
 IncrementUWMirror:
 	PHA
+		LDA.b #$00 : STA $7F5035 ; bandaid patch bug with mirroring away from text
 		LDA !LOCK_STATS : BNE +
 		LDA $040C : CMP #$FF : BEQ + ; skip if we're in a cave or house
 			LDA !UW_MIRROR_COUNTER : INC : STA !UW_MIRROR_COUNTER

@@ -50,7 +50,7 @@ RTL
 ;--------------------------------------------------------------------------------
 OnQuit:
 	JSL.l PodEGFix
-
+	LDA.b #$00 : STA $7F5035 ; bandaid patch bug with mirroring away from text
 	LDA.b #$10 : STA $1C ; thing we wrote over
 RTL
 ;--------------------------------------------------------------------------------
