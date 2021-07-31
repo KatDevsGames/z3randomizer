@@ -36,7 +36,7 @@ RTL
 OnDungeonExit:
 	PHA : PHP
 		SEP #$20 ; set 8-bit accumulator
-		JSL.l PodEGFix
+		JSL.l SQEGFix
 	PLP : PLA
 
 	STA $040C : STZ $04AC ; thing we wrote over
@@ -49,8 +49,8 @@ OnDungeonExit:
 RTL
 ;--------------------------------------------------------------------------------
 OnQuit:
-	JSL.l PodEGFix
-
+	JSL.l SQEGFix
+	LDA.b #$00 : STA $7F5035 ; bandaid patch bug with mirroring away from text
 	LDA.b #$10 : STA $1C ; thing we wrote over
 RTL
 ;--------------------------------------------------------------------------------
