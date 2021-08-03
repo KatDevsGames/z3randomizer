@@ -1491,6 +1491,9 @@ org $1DBAB1 ; <- EBAB1 - sprite_sidenexx.asm : 314 (JSL GetRandomInt : AND.b #$0
 JSL.l RNG_Trinexx
 org $1DBAC3 ; <- EBAC3 - sprite_sidenexx.asm : 323 (JSL GetRandomInt : AND.b #$0F : ADD.b #$0C : STA $02 : STZ $03)
 JSL.l RNG_Trinexx
+;--------------------------------------------------------------------------------
+org $6F9B8 ; <- 379B8 - bank06.asm : 6693 (JSL GetRandomInt : PLY  : AND $FA5C, Y : BNE BRANCH_MU)
+JSL.l RNG_Enemy_Drops
 ;================================================================================
 ; HUD Changes
 ;--------------------------------------------------------------------------------
