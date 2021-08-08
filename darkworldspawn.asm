@@ -53,8 +53,9 @@ DoWorldFix_Inverted:
 	.aga1Alive
 	LDA #$40 : STA $7EF3CA ; set flag to dark world
 	LDA $7EF3CC
-	CMP #$07 : BNE .done ; clear frog
-	CMP #$08 : BNE .done ; clear dwarf - consider flute implications
+	CMP #$07 : BEQ .clear ; clear frog
+	CMP #$08 : BEQ .clear ; clear dwarf - consider flute implications
+	BRA .done
 	.clear
 	LDA.b #$00 : STA $7EF3CC ; clear follower
 	.done
