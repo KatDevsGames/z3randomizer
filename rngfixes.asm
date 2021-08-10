@@ -4,8 +4,7 @@
 RigDigRNG:
 	LDA $7FFE01 : CMP.l DiggingGameRNG : !BGE .forceHeart
 	.normalItem
-	JSL $0DBA71 ; GetRandomInt
-RTL
+	JML GetRandomInt
 	.forceHeart
 	LDA $7FFE00 : BNE .normalItem
 	LDA #$04
@@ -15,7 +14,7 @@ RigChestRNG:
 	JSL.l DecrementChestCounter
 	LDA $04C4 : CMP.l ChestGameRNG : BEQ .forceHeart
 	.normalItem
-	JSL $0DBA71 ; GetRandomInt
+	JSL GetRandomInt
 	AND.b #$07 ; restrict values to 0-7
 	CMP #$07 : BEQ .notHeart
 	JSL.l DecrementItemCounter
@@ -29,7 +28,7 @@ RTL
 	JSL.l DecrementItemCounter
 	;LDA #$00 ; bullshit rupee farming in chest game
 	
-	JSL $0DBA71 ; GetRandomInt ; spam RNG until we stop getting the prize item
+	JSL GetRandomInt ; spam RNG until we stop getting the prize item
 	AND.b #$07 ; restrict values to 0-7
 	CMP #$07 : BNE + ; player got prize item AGAIN
 		LDA.b #$00 ; give them money instead
@@ -97,6 +96,11 @@ RNG_Ganon_Extra_Warp:
 	+
 	PLA
 	RTL
+RNG_Enemy_Drops:
+        LDA.l $7EF3C5 : CMP #$01 : BEQ + ; drops are static after uncle pickup & before rescuing zelda
+            JML GetRandomInt
+        +
+            LDA.b #$0F
 	_rng_done:
 	JSL.l GetStaticRNG
 RTL
@@ -142,5 +146,5 @@ dw #$02C0 ; 11 = Agahnim 2
 dw #$0300 ; 12 = Agahnim 2 Phantoms
 dw #$0340 ; 13 = Ganon
 dw #$0380 ; 14 = Ganon Extra Warp
-dw #$03C0 ; 15 = Unused
+dw #$03C0 ; 15 = Standard Escape Enemy Drops
 ;--------------------------------------------------------------------------------
