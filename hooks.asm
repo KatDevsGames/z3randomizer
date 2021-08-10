@@ -2725,3 +2725,16 @@ org $0AEEF2
 
 org $008BE5 ; hijack stripes for boss GFX transfer
 	JSL DoDungeonMapBossIcon
+
+;================================================================================
+; Fix quadrant glitch
+org $07A879
+	JSR SwordSpinQuadrantFix
+
+org $07F877 ; free rom
+SwordSpinQuadrantFix:
+	LDA.l AllowQuadrantGlitch
+	BEQ ++
+	JMP.w $07E8D9 ; HandleIndoorCameraAndDoors
+
+++	RTS
