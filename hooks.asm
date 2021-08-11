@@ -2733,8 +2733,15 @@ org $07A879
 
 org $07F877 ; free rom
 SwordSpinQuadrantFix:
-	LDA.l AllowQuadrantGlitch
+	LDA.l AllowAccidentalMajorGlitch
 	BEQ ++
 	JMP.w $07E8D9 ; HandleIndoorCameraAndDoors
 
 ++	RTS
+
+;================================================================================
+
+org $01C4B8 : JSL FixJingleGlitch
+org $01C536 : JSL FixJingleGlitch
+org $01C592 : JSL FixJingleGlitch
+org $01C65F : JSL FixJingleGlitch

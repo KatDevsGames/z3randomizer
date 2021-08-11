@@ -199,3 +199,18 @@ LDA $1B : BNE +
 		LDA $8C : CMP.b #$97
 +
 RTL
+
+;--------------------------------------------------------------------------------
+FixJingleGlitch:
+	LDA.b $11
+	BEQ .set_doors
+
+	LDA.l AllowAccidentalMajorGlitch
+	BEQ .exit
+
+.set_doors
+	LDA.b #$05
+	STA.b $11
+
+.exit
+	RTL
