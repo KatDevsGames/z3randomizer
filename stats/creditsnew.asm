@@ -489,6 +489,15 @@ CreditsLineBlank:
 %blankline()
 %blankline()
 
+%smallcredits("WEBSITE LOGO", "green")
+
+%blankline()
+
+%bigcredits("PLEASURE")
+
+%blankline()
+%blankline()
+
 %smallcredits("SPECIAL THANKS", "red")
 
 %blankline()
@@ -534,12 +543,6 @@ CreditsLineBlank:
 
 %blankline()
 
-%emptyline()
-%emptyline()
-%emptyline()
-%emptyline()
-%emptyline()
-%emptyline()
 %emptyline()
 %emptyline()
 %emptyline()
