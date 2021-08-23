@@ -323,10 +323,8 @@ CheckMusicLoadRequest:
 .load
         REP #$10
         STZ $4200
-        STA !REG_SPC_CONTROL
-        - : CMP !REG_SPC_CONTROL : BNE -    ; Wait until mute/unmute command is ACK'ed
-        STZ !REG_SPC_CONTROL
-        - : LDA !REG_SPC_CONTROL : BNE -    ; Wait until mute/unmute command is completed
+        - : STA !REG_SPC_CONTROL : CMP !REG_SPC_CONTROL : BNE - ; Wait until mute/unmute command is ACK'ed
+        - : STZ !REG_SPC_CONTROL : LDA !REG_SPC_CONTROL : BNE - ; Wait until mute/unmute command is completed
         LDA.b #$81 : STA $4200
 
         LDA !REG_MUSIC_CONTROL_REQUEST : CMP.b #08 : BEQ .done+3    ; No SFX during warp track
