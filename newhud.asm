@@ -152,9 +152,8 @@ SEP #$30
 
 	LDA $10 : CMP #$12 : BEQ .noprize
 
-	REP #$20
-
 	LDA.l MapMode
+	REP #$20
 	BEQ .drawprize
 
 	LDA.l $7EF368
