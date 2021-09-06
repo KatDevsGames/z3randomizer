@@ -324,13 +324,10 @@ IsNarrowSprite:
 		+ : BRA .continue
 	++ : CMP.b #$5F : BNE ++ ; Progressive Shield
 		LDA !PROGRESSIVE_SHIELD : AND #$C0 : BNE + : SEC : BRA .done ; No Shield
-		LSR #6 : CMP.l ProgressiveShieldLimit : !BLT + ; Progressive Shield Limit
+		+ : LSR #6 : CMP.l ProgressiveShieldLimit : !BLT + ; Progressive Shield Limit
 			LDA.l ProgressiveShieldReplacement
 			JSL.l IsNarrowSprite
 			BRA .done
-		+
-		;LDA $7EF35A : BNE + : SEC : BRA .done : +; No Shield
-		BRA .false ; Everything Else
 	++ CMP.b #$60 : BNE ++ ; Progressive Armor
 		LDA $7EF35B : CMP.l ProgressiveArmorLimit : !BLT + ; Progressive Armor Limit
 			LDA.l ProgressiveArmorReplacement
