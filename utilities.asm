@@ -314,32 +314,44 @@ IsNarrowSprite:
 				LDA.l BottleLimitReplacement
 				JSL.l IsNarrowSprite
 				JMP .done
-			+ : BRA .continue
+			+ : JMP .continue
 		.notBottle
 	CMP.b #$5E : BNE ++ ; Progressive Sword
 		LDA $7EF359 : CMP.l ProgressiveSwordLimit : !BLT + ; Progressive Sword Limit
 			LDA.l ProgressiveSwordReplacement
 			JSL.l IsNarrowSprite
-			BRA .done
-		+ : BRA .continue
-	++ : CMP.b #$5F : BNE ++ ; Progressive Shield
-		LDA !PROGRESSIVE_SHIELD : AND #$C0 : BNE + : SEC : BRA .done ; No Shield
-		+ : LSR #6 : CMP.l ProgressiveShieldLimit : !BLT + ; Progressive Shield Limit
+			JMP .done
+		+ : JMP .continue
+	++ CMP.b #$5F : BNE ++ ; Progressive Shield
+		LDA !PROGRESSIVE_SHIELD : AND #$C0 : BNE + : SEC : JMP .done ; No Shield
+		+ : LSR #6 : CMP.l ProgressiveShieldLimit : !BLT .continue
 			LDA.l ProgressiveShieldReplacement
 			JSL.l IsNarrowSprite
-			BRA .done
+			JMP .done
 	++ CMP.b #$60 : BNE ++ ; Progressive Armor
-		LDA $7EF35B : CMP.l ProgressiveArmorLimit : !BLT + ; Progressive Armor Limit
+		LDA $7EF35B : CMP.l ProgressiveArmorLimit : !BLT .continue
 			LDA.l ProgressiveArmorReplacement
 			JSL.l IsNarrowSprite
-			BRA .done
+			JMP .done
 		+
 	++ CMP.b #$62 : BNE ++ ; RNG Item (Single)
-		JSL.l GetRNGItemSingle : BRA .continue
+		JSL.l GetRNGItemSingle : JMP .continue
 	++ CMP.b #$63 : BNE ++ ; RNG Item (Multi)
 		JSL.l GetRNGItemMulti
-	++
-
+	++ CMP.b #$64 : BEQ .progressivebow ; Progressive Bow
+           CMP.b #$65 : BNE .continue       ; Progressive Bow (alt)
+                .progressivebow
+                LDA $7EF38E : BIT #$A0 : BEQ .continue ; No Progressive Bows
+                LDX.b #$0                              ; Bow counter
+                CMP #$80 : BEQ +                       ; We have only one of two
+                CMP #$20 : BEQ +                       ; progressive bows
+                        INX
+                +
+                        INX
+                        TXA : CMP.l ProgressiveBowLimit : !BLT .continue
+                            LDA.l ProgressiveBowReplacement
+                            JSL.l IsNarrowSprite
+                            JMP .done
 	.continue
 	;--------
 
