@@ -23,8 +23,7 @@ GetSpriteID:
 		.bottle
 			PHA : JSR.w CountBottles : CMP.l BottleLimit : !BLT +
 				PLA : LDA.l BottleLimitReplacement
-				JSL.l GetSpriteID
-				RTL
+				JMP GetSpriteID
 			+
 			PLA : BRA .normal
 		.server_F0
@@ -57,16 +56,14 @@ RTL
 	++ CMP.b #$FD : BNE ++ ; Progressive Armor
 		LDA $7EF35B : CMP.l ProgressiveArmorLimit : !BLT + ; Progressive Armor Limit
 			LDA.l ProgressiveArmorReplacement
-			JSL.l GetSpriteID
-			RTL
+			JMP GetSpriteID
 		+
 		LDA.b #$04 : RTL
 	++ CMP.b #$FE : BNE ++ ; Progressive Sword
 		LDA $7EF359
 		CMP.l ProgressiveSwordLimit : !BLT + ; Progressive Sword Limit
 			LDA.l ProgressiveSwordReplacement
-			JSL.l GetSpriteID
-			RTL
+			JMP GetSpriteID
 		+ : CMP.b #$00 : BNE + ; No Sword
 			LDA.b #$43 : RTL
 		+ : CMP.b #$01 : BNE + ; Fighter Sword
@@ -80,8 +77,7 @@ RTL
 		LDA !PROGRESSIVE_SHIELD : AND #$C0 : LSR #6
 		CMP.l ProgressiveShieldLimit : !BLT + ; Progressive Shield Limit
 			LDA.l ProgressiveShieldReplacement
-			JSL.l GetSpriteID
-			RTL
+			JMP GetSpriteID
 		+ : CMP.b #$00 : BNE + ; No Shield
 			LDA.b #$2D : RTL
 		+ : CMP.b #$01 : BNE + ; Fighter Shield
@@ -92,8 +88,7 @@ RTL
 		LDA $7EF340 : INC : LSR
 		CMP.l ProgressiveBowLimit : !BLT +
 			LDA.l ProgressiveBowReplacement
-			JSL.l GetSpriteID
-			RTL
+			JMP GetSpriteID
 		+ : CMP.b #$00 : BNE + ; No Bow
 			LDA.b #$29 : RTL
 		+ ; Any Bow
@@ -176,8 +171,7 @@ GetSpritePalette:
 		.bottle
 			PHA : JSR.w CountBottles : CMP.l BottleLimit : !BLT +
 				PLA : LDA.l BottleLimitReplacement
-				JSL.l GetSpritePalette
-				RTL
+				JMP GetSpritePalette
 			+
 		PLA : .notBottle
 	PHX
@@ -192,8 +186,7 @@ RTL
 		LDA $7EF359
 		CMP.l ProgressiveSwordLimit : !BLT + ; Progressive Sword Limit
 			LDA.l ProgressiveSwordReplacement
-			JSL.l GetSpritePalette
-			RTL
+			JMP GetSpritePalette
 		+ : CMP.b #$00 : BNE + ; No Sword
 			LDA.b #$04 : RTL
 		+ : CMP.b #$01 : BNE + ; Fighter Sword
@@ -206,8 +199,7 @@ RTL
 		LDA !PROGRESSIVE_SHIELD : AND #$C0 : LSR #6
 		CMP.l ProgressiveShieldLimit : !BLT + ; Progressive Shield Limit
 			LDA.l ProgressiveShieldReplacement
-			JSL.l GetSpritePalette
-			RTL
+			JMP GetSpritePalette
 		+ : CMP.b #$00 : BNE + ; No Shield
 			LDA.b #$04 : RTL
 		+ : CMP.b #$01 : BNE + ; Fighter Shield
@@ -217,8 +209,7 @@ RTL
 	++ : CMP.b #$FF : BNE ++ ; Progressive Armor
 		LDA $7EF35B : CMP.l ProgressiveArmorLimit : !BLT + ; Progressive Armor Limit
 			LDA.l ProgressiveArmorReplacement
-			JSL.l GetSpritePalette
-			RTL
+			JMP GetSpritePalette
 		+ : CMP.b #$00 : BNE + ; Green Tunic
 			LDA.b #$04 : RTL
 		+ ; Everything Else
@@ -232,8 +223,7 @@ RTL
 		LDA $7EF340 : INC : LSR
 		CMP.l ProgressiveBowLimit : !BLT +
 			LDA.l ProgressiveBowReplacement
-			JSL.l GetSpritePalette
-			RTL
+			JMP GetSpritePalette
 		+ : CMP.b #$00 : BNE + ; No Bow
 			LDA.b #$08 : RTL
 		+ ; Any Bow
