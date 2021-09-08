@@ -328,20 +328,13 @@ IsNarrowSprite:
 		JSL.l GetRNGItemSingle : JMP .continue
 	++ CMP.b #$63 : BNE ++ ; RNG Item (Multi)
 		JSL.l GetRNGItemMulti
-	++ CMP.b #$64 : BEQ .progressivebow ; Progressive Bow
+	++ CMP.b #$64 : BEQ +               ; Progressive Bow
            CMP.b #$65 : BNE .continue       ; Progressive Bow (alt)
-                .progressivebow
-                LDA $7EF38E : BIT #$A0 : BEQ .continue ; No Progressive Bows
-                LDX.b #$0                              ; Bow counter
-                CMP #$80 : BEQ +                       ; We have only one of two
-                CMP #$20 : BEQ +                       ; progressive bows
-                        INX
-                +
-                        INX
-                        TXA : CMP.l ProgressiveBowLimit : !BLT .continue
-                            LDA.l ProgressiveBowReplacement
-                            JSL.l IsNarrowSprite
-                            JMP .done
+                + : LDA $7EF340 : INC : LSR
+                CMP.l ProgressiveBowLimit : !BLT +
+			LDA.l ProgressiveBowReplacement
+			JSL.l IsNarrowSprite
+                        JMP .done
 	.continue
 	;--------
 
