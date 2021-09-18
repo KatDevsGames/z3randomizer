@@ -190,8 +190,17 @@ RTL
 ;--------------------------------------------------------------------------------
 OnLinkDamagedFromPit:
 	JSL.l OHKOTimer
-	LDA.b #$14 : STA $11 ; thing we wrote over
-RTL
+
+	LDA.l AllowAccidentalMajorGlitch
+	BEQ ++
+--	LDA.b #$14 : STA $11 ; thing we wrote over
+
+	RTL
+
+++	LDA.b $10 : CMP.b #$12 : BNE --
+
+	STZ.b $11
+	RTL
 ;--------------------------------------------------------------------------------
 OnLinkDamagedFromPitOutdoors:
 	JML.l OHKOTimer ; make sure this is last
