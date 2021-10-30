@@ -329,8 +329,7 @@ warnpc $B08000
 ;$31 Graphics Bank
 ;$32 Text Bank
 ;$33 Graphics Bank
-;$37 Don't Use ZSNES Graphics
-;$38 Don't Use ZSNES Graphics (continued)
+;$36 reserved for Enemizer
 ;$3A reserved for downstream use
 ;$3B reserved for downstream use
 ;$3F reserved for internal debugging
