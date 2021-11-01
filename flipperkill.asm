@@ -115,6 +115,7 @@ protectff:
 	STA.b $5D
 
 	STZ.b $2E
+	STZ.b $67
 
 	LDA.b #$02
 	STA.b $2F
