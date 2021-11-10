@@ -68,3 +68,70 @@ MysteryWaterFunction: ; *$3AE54 ALTERNATE ENTRY POINT
     STZ $0360
 RTL
 ;--------------------------------------------------------------------------------
+
+
+;===================================================================================================
+; More elegant solution
+;===================================================================================================
+
+protectff:
+	LDA.l AllowAccidentalMajorGlitch
+	BEQ .yes_protect
+
+	RTL
+
+.yes_protect
+	REP #$30
+
+	LDA.b $20
+	AND.w #$1E00
+	ASL
+	ASL
+	ASL
+	STA.b $06
+
+	LDA.b $22
+	AND.w #$1E00
+	ORA.b $06
+
+	XBA
+	LSR
+	TAX
+
+	SEP #$30
+
+	; Remove dark world bit
+	; in game table that converts coordinates to actual screen ID
+	; special case for other areas
+	LDA.b $8A
+	BMI .special_overworld
+
+	AND.b #$3F
+	CMP.l $02A4E3,X
+	BEQ ++
+
+.protect
+	LDA.b #$15
+	STA.b $5D
+
+	STZ.b $2E
+	STZ.b $67
+
+	LDA.b #$02
+	STA.b $2F
+
+	STZ.w $0112
+	STZ.w $02E4
+	STZ.w $0FFC
+
+++	RTL
+
+.special_overworld
+	CMP.l .spow,X
+	BNE .protect
+
+	RTL
+
+.spow
+	db $80, $81, $81, $FF, $FF, $FF, $FF, $FF
+	db $FF, $81, $81, $FF, $FF, $FF, $FF, $FF
