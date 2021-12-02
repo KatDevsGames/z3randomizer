@@ -161,10 +161,10 @@ CurrentGenericKeys: skip 1      ; Generic small keys
 ;================================================================================
 ; Tracking & Indicators ($7EF38C - $7EF3F0)
 ;--------------------------------------------------------------------------------
-InventoryTracking: skip 2       ; b r m p n s k f (bitfield)
-                                ; b = Blue Boomerang | r = Red Boomerang | m = Mushroom Current
-                                ; p = Magic Powder | n = Mushroom Past  | s = Shovel
-                                ; k = Inactive Flute   | f = Active Flute
+InventoryTracking: skip 2       ; b r m p n s k f  - - - - - - - q (bitfield)
+                                ; b = Blue Boomerang | r = Red Boomerang  | m = Mushroom Current
+                                ; p = Magic Powder   | n = Mushroom Past  | s = Shovel
+                                ; k = Inactive Flute | f = Active Flute   | q = Quickswap locked
 BowTracking: skip 2             ; b s p - - - - - (bitfield)
                                 ; b = Bow | s = Silver Arrows Upgrade | p = Second Progressive Bow
                                 ; The front end writes two distinct progressive bow items. p
@@ -250,8 +250,7 @@ BigKeysBigChests: skip 1        ; k k k k c c c c (packed integers)
                                 ; k = Big Keys collected | c = Big Chests opened
 MapsCompasses: skip 1           ; m m m m c c c c (packed integers)
                                 ; m = Maps collected | c = Compasses collected
-HeartPiecesPendants: skip 1     ; h h h h - - p p (packed integers)
-                                ; h = Heart Pieces collected | p = Pendants collected
+PendantCounter: skip 1          ; Number of pendants collected (integer)
 PreGTBKLocations: skip 1        ; Locations checked in GT before finding the big key
                                 ; b = Big Bomb Acquired                     | s = Silver Arrows Acquired
                                 ; c = GT locations collected before big key
@@ -269,11 +268,12 @@ NMIFrames: skip 4               ; Frame counter incremented during NMI hook (32-
 ChestsOpened: skip 1            ; Number of chests opened. Doesn't count NPC, free standing items etc (integer)
 StatsLocked: skip 1             ; Set to $01 when goal is completed; game stops counting stats.
 MenuTime: skip 4                ; Total menu time in frames (32-bit integer)
-HeartPieces: skip 1             ; Total number of heart pieces collected (integer)
+HeartContainerCounter: skip 1   ; Total number of heart containers collected (integer)
 DeathCounter: skip 1            ; Number of deaths (integer)
 skip 1                          ; Reserved
 FluteCounter: skip 1            ; Number of times fluted (integer)
-skip 6                          ;
+skip 4                          ;
+RNGItem: skip 2                 ; RNG Item
 SwordlessBosses: skip 1         ; Number of bosses killed without a sword (integer)
 FaerieRevivalCounter: skip 1    ; Number of faerie revivals (integer)
 ChallengeTimer: skip 4          ; Timer used for OHKO etc
@@ -287,7 +287,9 @@ DamageCounter: skip 2           ; Damage taken by player (16-bit integer)
 MagicCounter: skip 2            ; Magic used by player (16-bit integer)
 HighestMail: skip 1             ; Highest mail level
 SmallKeyCounter: skip 1         ; Total Number of small keys collected (integer)     
-skip 48                         ; Unused
+HeartPieceCounter: skip 1       ; Total Number of heartpieces collected (integer)     
+CrystalCounter: skip 1         ; Total Number of crystals collected (integer)     
+skip 46                         ; Unused
 ServiceSequence: skip 1         ; Service sequence value. See servicerequest.asL
 skip 49                         ; Unused 
                                 ; \  Dungeon locations checked counters (integers)
@@ -466,7 +468,7 @@ assert TemperedGoldBosses     = $7EF425, "TemperedGoldBosses labeled at incorrec
 assert FighterMasterBosses    = $7EF426, "FighterMasterBosses labeled at incorrect address"
 assert BigKeysBigChests       = $7EF427, "BigKeysBigChests labeled at incorrect address"
 assert MapsCompasses          = $7EF428, "MapsCompasses labeled at incorrect address"
-assert HeartPiecesPendants    = $7EF429, "HeartPiecesPendants labeled at incorrect address"
+assert PendantCounter         = $7EF429, "PendantCounter labeled at incorrect address"
 assert PreGTBKLocations       = $7EF42A, "PreGTBKLocations labeled at incorrect address"
 assert RupeesSpent            = $7EF42B, "RupeesSpent labeled at incorrect address"
 assert SaveQuits              = $7EF42D, "SaveQuits labeled at incorrect address"
@@ -481,9 +483,10 @@ assert NMIFrames              = $7EF43E, "NMIFrames labeled at incorrect address
 assert ChestsOpened           = $7EF442, "ChestsOpened labeled at incorrect address"
 assert StatsLocked            = $7EF443, "StatsLocked labeled at incorrect address"
 assert MenuTime               = $7EF444, "MenuTime labeled at incorrect address"
-assert HeartPieces            = $7EF448, "HeartPieces labeled at incorrect address"
+assert HeartContainerCounter  = $7EF448, "HeartContainerCounter labeled at incorrect address"
 assert DeathCounter           = $7EF449, "DeathCounter labeled at incorrect address"
 assert FluteCounter           = $7EF44B, "FluteCounter labeled at incorrect address"
+assert RNGItem                = $7EF450, "FluteCounter labeled at incorrect address"
 assert SwordlessBosses        = $7EF452, "SwordlessBosses labeled at incorrect address"
 assert FaerieRevivalCounter   = $7EF453, "FaerieRevivalCounter labeled at incorrect address"
 assert ChallengeTimer         = $7EF454, "ChallengeTimer labeled at incorrect address"
@@ -492,10 +495,13 @@ assert BootsTime              = $7EF45C, "BootsTime labeled at incorrect address
 assert FluteTime              = $7EF460, "FluteTime labeled at incorrect address"
 assert MirrorTime             = $7EF464, "MirrorTime labeled at incorrect address"
 assert ChestTurnCounter       = $7EF468, "ChestTurnCounter labeled at incorrect address"
+assert CapacityUpgrades       = $7EF469, "CapacityUpgrades labeled at incorrect address"
 assert DamageCounter          = $7EF46A, "DamageCounter labeled at incorrect address"
 assert MagicCounter           = $7EF46C, "MagicCounter labeled at incorrect address"
 assert HighestMail            = $7EF46E, "HighestMail labeled at incorrect address"
 assert SmallKeyCounter        = $7EF46F, "SmallKeyCounter labeled at incorrect address"
+assert HeartPieceCounter      = $7EF470, "HeartPieceCounter labeled at incorrect address"
+assert CrystalCounter         = $7EF471, "CrystalCounter labeled at incorrect address"
 ;--------------------------------------------------------------------------------
 assert ServiceSequence        = $7EF4A0, "ServiceSequence labeled at incorrect address"
 ;--------------------------------------------------------------------------------
@@ -550,6 +556,9 @@ assert RomName                = $7F1000, "RomName at incorrect address"
 ; ServiceSequence: 7ef419 -> 7ef418 (two bytes reserved)
 ; SwordsShields: 7ef422 -> swords using HighestSword
 ; PreMirrorLocations: 7ef432 -> 7ef434, PreBoots and PreMirror now 2 bytes
+; Heart Pieces: 7ef429 ->  7ef470
+; Pendant counter: 7ef429, now an integer
+; SwordlessBosses: 7ef452, now an integer
 ; 
 ; DungeonLocations values and labels moved to block right before ChestKeys block
 ; starting at address 7ef472

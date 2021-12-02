@@ -627,19 +627,19 @@ RTL
 ; out: A(b) - sum of bits
 ; caller is responsible for setting 8-bit mode and preserving X and Y
 ;--------------------------------------------------------------------------------
-CountBits:
-	PHX
-	TAX                      ; Save a copy of value
-	LSR #4                   ; Shift down hi nybble, Leave <3> in C
-	PHA                      ; And save <7:4> in Stack
-	TXA                      ; Recover value
-	AND.b #$07               ; Put out <2:0> in X
-	TAX                      ; And save in X
-	LDA.l NybbleBitCounts, X ; Fetch count for <2:0>
-	PLX                      ; get <7:4>
-	ADC.l NybbleBitCounts, X ; Add count for S & C
-	PLX
-RTL
+;CountBits:
+;	PHX
+;	TAX                      ; Save a copy of value
+;	LSR #4                   ; Shift down hi nybble, Leave <3> in C
+;	PHA                      ; And save <7:4> in Stack
+;	TXA                      ; Recover value
+;	AND.b #$07               ; Put out <2:0> in X
+;	TAX                      ; And save in X
+;	LDA.l NybbleBitCounts, X ; Fetch count for <2:0>
+;	PLX                      ; get <7:4>
+;	ADC.l NybbleBitCounts, X ; Add count for S & C
+;	PLX
+;RTL
 
 ; Look up table of bit counts in the values $00-$0F
 NybbleBitCounts:
