@@ -71,7 +71,7 @@
 ;
 ;        PLX
 ;
-;        LDA.b #$00 : STA $7EF3CC
+;        LDA.b #$00 : STA FollowerIndicator
 ;
 ;        STZ $5E
 ;

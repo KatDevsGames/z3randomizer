@@ -1,43 +1,37 @@
 ;================================================================================
 ; Capacity Logic
 ;================================================================================
-!BOMB_UPGRADES = "$7EF370"
-!BOMB_CURRENT = "$7EF343"
-;--------------------------------------------------------------------------------
 IncrementBombs:
-    LDA !BOMB_UPGRADES ; get bomb upgrades
+    LDA BombCapacityUpgrades ; get bomb upgrades
 	!ADD.l StartingMaxBombs : BEQ + ; Skip if we can't have bombs
 	DEC
 
-    CMP !BOMB_CURRENT
+    CMP BombsEquipment
 	
 	!BLT +
-    	LDA !BOMB_CURRENT
+    	LDA BombsEquipment
 		CMP.b #99 : !BGE +
-		INC : STA !BOMB_CURRENT
+		INC : STA BombsEquipment
 	+
 RTL
 ;--------------------------------------------------------------------------------
-!ARROW_UPGRADES = "$7EF371"
-!ARROW_CURRENT = "$7EF377"
-;--------------------------------------------------------------------------------
 IncrementArrows:
-    LDA !ARROW_UPGRADES ; get arrow upgrades
+    LDA ArrowCapacityUpgrades ; get arrow upgrades
 	!ADD.l StartingMaxArrows : DEC
 
-    CMP !ARROW_CURRENT
+    CMP CurrentArrows
 	
 	!BLT +    
-    	LDA !ARROW_CURRENT
+    	LDA CurrentArrows
 		CMP.b #99 : !BGE +
-		INC : STA !ARROW_CURRENT
+		INC : STA CurrentArrows
 	+
 RTL
 ;--------------------------------------------------------------------------------
 CompareBombsToMax:
-    LDA !BOMB_UPGRADES ; get bomb upgrades
+    LDA BombCapacityUpgrades ; get bomb upgrades
 	!ADD.l StartingMaxBombs
 
-    CMP !BOMB_CURRENT
+    CMP BombsEquipment
 RTL
 ;--------------------------------------------------------------------------------

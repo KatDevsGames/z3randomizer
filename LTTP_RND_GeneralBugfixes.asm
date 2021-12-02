@@ -2,14 +2,12 @@
 ; The Legend of Zelda, A Link to the Past - Randomizer General Development & Bugfixes
 ;================================================================================
 lorom
-
 ;================================================================================
 
 ;org $00FFC0 ; <- 7FC0 - Bank00.asm : 9173 (db "THE LEGEND OF ZELDA  " ; 21 bytes)
 ;db #$23, $4E
 
 org $00FFD5 ; <- 7FD5 - Bank00.asm : 9175 (db $20   ; rom layout)
-;db #$35 ; set fast exhirom
 db #$30 ; set fast lorom
 
 ;org $00FFD6 ; <- 7FD6 - Bank00.asm : 9176 (db $02   ; cartridge type)
@@ -44,10 +42,6 @@ dw !ROM_VERSION_HIGH
 !BGE = "BCS"
 
 ; Rando Specific SRAM assignments
-!SHOP_PURCHASE_COUNTS = "$7EF302" ;$7EF302 - $7EF33F (temporary home)
-!INVENTORY_SWAP = "$7EF38C" ; [w]
-!INVENTORY_SWAP_2 = "$7EF38E" ; [w]
-!ITEM_LIMIT_COUNTS = "$7EF390" ; $7EF390 - ????
 !NPC_FLAGS   = "$7EF410"
 !NPC_FLAGS_2 = "$7EF411"
 !MAP_OVERLAY = "$7EF414" ; [w]
@@ -58,16 +52,10 @@ dw !ROM_VERSION_HIGH
 !SHAME_CHEST = "$7EF416" ; ---s ----
 !HAS_GROVE_ITEM = "$7EF416" ; ---- ---g general flags, don't waste these
 !HIGHEST_SWORD_LEVEL = "$7EF417" ; --- -sss
-;$7EF41A[w] - Programmable Item #1
-;$7EF41C[w] - Programmable Item #2
-;$7EF41E[w] - Programmable Item #3
-!SRAM_SINK = "$7EF41E" ; <- change this (conflicts with Programmable item 3)
 ;$7EF418 - Goal Item Counter
 ;$7EF419 - Service Sequence
 ;$7EF420 - $7EF46D - Stat Tracking Bank 1 (overlaps with RNG Item Flags)
-;$7EF450 - $7EF45F - RNG Item (Single) Flags
 ;$7EF4A0 - $7EF4A7 - Service Request Block
-!FRESH_FILE_MARKER = "$7EF4F0" ; zero if fresh file
 ;$700500 - $70050F - Extended File Name
 ;$701000 - $70100F - Password (incorporate into log header)
 ;$702000 - $702014 - Rom title copy (incorporate into log header)
@@ -112,6 +100,7 @@ incsrc treekid.asm
 incsrc spriteswap.asm
 incsrc hashalphabethooks.asm
 incsrc sharedplayerpalettefix.asm
+incsrc sram.asm
 
 ;org $208000 ; bank #$20
 org $A08000 ; bank #$A0
@@ -349,6 +338,7 @@ warnpc $B08000
 ;$7F5000[0x800]: Rando's main free ram region
 ;   See tables.asm for specific assignments
 ;$7F6000[0x500]: Free RAM (reclaimed from damage table) Not allocated yet
+;$7F6000[0x500]: SRAM buffer save 2 0x500
 ;$7F6500[0xB00]: SRAM mirror for last 0xB00 bytes of SRAM (extended sram)
 ;$7F7667[0x6719] - free ram
 ;================================================================================

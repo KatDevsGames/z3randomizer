@@ -1,30 +1,35 @@
 ; Note shortly before this we have a blank-the-sram slot code that we might want to hook
 WriteBlanksToPlayerName:
-	STA.l !ExtendedPlayerName
-	STA.l !ExtendedPlayerName+2
-	STA.l !ExtendedPlayerName+4
-	STA.l !ExtendedPlayerName+6
+	STA.l ExtendedFileNameSRAM
+	STA.l ExtendedFileNameSRAM+2
+	STA.l ExtendedFileNameSRAM+4
+	STA.l ExtendedFileNameSRAM+6
 
-	STA.l !ExtendedPlayerName+8
-	STA.l !ExtendedPlayerName+10
-	STA.l !ExtendedPlayerName+12
-	STA.l !ExtendedPlayerName+14
+	STA.l ExtendedFileNameSRAM+8
+	STA.l ExtendedFileNameSRAM+10
+        STA.l ExtendedFileNameSRAM+12
+	STA.l ExtendedFileNameSRAM+14
 
-	STA.l $7003D9, X ;What we wrote over (clear first byte of vanilla name slot)
+        STA.l ExtendedFileNameSRAM+16
+	STA.l ExtendedFileNameSRAM+18
+	STA.l ExtendedFileNameSRAM+20
+	STA.l ExtendedFileNameSRAM+22
+
+        STA.l $7003D9, X ;What we wrote over (clear first byte of vanilla name slot)
 RTL
 
 WriteCharacterToPlayerName:
-	CPX.w #$0008 : !BLT .orig
-		STA !ExtendedPlayerName-8, X
-	.orig
-	STA $7003D9, X ;what we wrote over
+	STA ExtendedFileNameSRAM, X
+        CPX.w #$0008 : !BGE +
+	    STA $7003D9, X ;what we wrote over
+        +
 RTL
 
 ReadCharacterFromPlayerName: ;Only for use on Name Screen
-	CPX.w #$0008 : !BLT .orig
-		LDA !ExtendedPlayerName-8, X
-	.orig
-	LDA $7003D9, X ;what we wrote over
+	LDA ExtendedFileNameSRAM, X
+        CPX.w #$0008 : !BGE +
+            LDA $7003D9, X ;what we wrote over
+        +
 RTL
 
 GetCharacterPosition:

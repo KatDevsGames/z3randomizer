@@ -107,9 +107,9 @@
 ;--------------------------------------------------------------------------------
 ; $7EF44B - flute counter
 ;--------------------------------------------------------------------------------
-; $7EF44Cl[3] - RTA-Timestamp (Start)
+; $7EF44Cl[3] - Unused
 ;--------------------------------------------------------------------------------
-; $7EF44Fl[3] - RTA-Timestamp (End)
+; $7EF44Fl[3] - Unused
 ;--------------------------------------------------------------------------------
 ; $7EF452 - sssscccc
 ; s - swordless bosses
@@ -182,10 +182,10 @@ DungeonHoleEntranceTransition:
 	
 	LDA.l SilverArrowsAutoEquip : AND.b #$02 : BEQ +
 	LDA $010E : CMP.b #$7B : BNE + ; skip unless falling to ganon's room
-	LDA !INVENTORY_SWAP_2 : AND.b #$40 : BEQ + ; skip if we don't have silvers
-	LDA $7EF340 : BEQ + ; skip if we have no bow
+	LDA BowTracking : AND.b #$40 : BEQ + ; skip if we don't have silvers
+	LDA BowEquipment : BEQ + ; skip if we have no bow
 	CMP.b #$03 : !BGE + ; skip if the bow is already silver
-		!ADD #$02 : STA $7EF340 ; increase bow to silver
+		!ADD #$02 : STA BowEquipment ; increase bow to silver
 	+
 	
 	BRA StatTransitionCounter
@@ -218,7 +218,7 @@ IncrementFlute:
 RTL
 ;--------------------------------------------------------------------------------
 IncrementSmallKeys:
-	STA $7EF36F ; thing we wrote over, write small key count
+	STA CurrentSmallKeys ; thing we wrote over, write small key count
 	PHX
 		LDA !LOCK_STATS : BNE +
 			JSL AddInventory_incrementKeyLong
@@ -230,7 +230,7 @@ IncrementSmallKeys:
 RTL
 ;--------------------------------------------------------------------------------
 IncrementSmallKeysNoPrimary:
-	STA $7EF36F ; thing we wrote over, write small key count
+	STA CurrentSmallKeys ; thing we wrote over, write small key count
 	PHX
 		LDA !LOCK_STATS : BNE +
 			JSL AddInventory_incrementKeyLong
@@ -249,7 +249,7 @@ IncrementSmallKeysNoPrimary:
 RTL
 ;--------------------------------------------------------------------------------
 DecrementSmallKeys:
-	STA $7EF36F ; thing we wrote over, write small key count
+	STA CurrentSmallKeys ; thing we wrote over, write small key count
 	JSL.l UpdateKeys
 RTL
 ;--------------------------------------------------------------------------------
@@ -302,7 +302,7 @@ RTL
 IncrementDeathCounter:
 	PHA
 		LDA !LOCK_STATS : BNE +
-		LDA $7EF36D : BNE + ; link is still alive, skip
+		LDA CurrentHealth : BNE + ; link is still alive, skip
 			LDA !DEATH_COUNTER : INC : STA !DEATH_COUNTER
 			;JSL.l DecrementSaveCounter
 		+
@@ -311,7 +311,7 @@ RTL
 ;--------------------------------------------------------------------------------
 !FAIRY_COUNTER = "$7EF453"
 IncrementFairyRevivalCounter:
-	STA $7EF35C, X ; thing we wrote over
+	STA BottleContents, X ; thing we wrote over
 	PHA
 		LDA !LOCK_STATS : BNE +
 			LDA !FAIRY_COUNTER : INC : STA !FAIRY_COUNTER
@@ -368,7 +368,7 @@ RTL
 !DAMAGE_COUNTER = $7EF46A
 !MAGIC_COUNTER = $7EF46C
 IncrementDamageTakenCounter_Eight:
-	STA.l $7EF36D
+	STA.l CurrentHealth
 	PHA : PHP
 	LDA !LOCK_STATS : BNE +
 	REP #$21
@@ -393,11 +393,11 @@ IncrementDamageTakenCounter_Arb:
 ++	STA.l !DAMAGE_COUNTER
 +	PLP
 
-	LDA.l $7EF36D
+	LDA.l CurrentHealth
 	RTL
 
 IncrementMagicUseCounter:
-	STA.l $7EF36E
+	STA.l CurrentMagic
 
 IncrementMagicUseCounterByrna:
 	PHA : PHP
@@ -421,7 +421,7 @@ IncrementMagicUseCounterOne:
 	BEQ ++
 	STA.l !MAGIC_COUNTER
 ++	SEP #$20
-+	LDA.l $7EF36E
++	LDA.l CurrentMagic
 	RTL
 
 ;--------------------------------------------------------------------------------
@@ -429,7 +429,7 @@ IncrementMagicUseCounterOne:
 IncrementOWMirror:
 	PHA
 		LDA !LOCK_STATS : BNE +
-		LDA $7EF3CA : BEQ + ; only do this for DW->LW
+		LDA CurrentWorld : BEQ + ; only do this for DW->LW
 			LDA !OW_MIRROR_COUNTER : INC : STA !OW_MIRROR_COUNTER
 		+
 	PLA
@@ -451,7 +451,7 @@ RTL
 !SPENT_RUPEES = "$7EF42B"
 IncrementSpentRupees:
     DEC A : BPL .subtractRupees
-    LDA.w #$0000 : STA $7EF360
+    LDA.w #$0000 : STA $7EF
 RTL
 	.subtractRupees
 	PHA : PHP
@@ -490,7 +490,6 @@ JMP StatTransitionCounter
 !RUPEES_COLLECTED = "$7F503C"
 !ITEM_TOTAL = "$7EF423"
 
-!RTA_END = "$7EF44F"
 StatsFinalPrep:
 	PHA : PHX : PHP
 		SEP #$30 ; set 8-bit accumulator and index registers
@@ -517,27 +516,11 @@ StatsFinalPrep:
 		LDA !NMI_COUNTER+2 : SBC !LOOP_COUNTER+2 : STA !LAG_TIME+2
 		LDA !NMI_COUNTER+3 : SBC !LOOP_COUNTER+3 : STA !LAG_TIME+3
 	
-		LDA !SPENT_RUPEES : !ADD $7EF362 : STA !RUPEES_COLLECTED
+		LDA !SPENT_RUPEES : !ADD CurrentRupees : STA !RUPEES_COLLECTED
 		LDA !SPENT_RUPEES+1 : ADC $7EF363 : STA !RUPEES_COLLECTED+1
 	
 		LDA !ITEM_TOTAL : !SUB !CHEST_COUNTER : STA !NONCHEST_COUNTER
-		
-		;LDA $FFFFFF
-		;JSL.l Clock_IsSupported
-		;BRA +
-		;	REP #$20 ; set 16-bit accumulator
-		;
-		;	LDA $00 : PHA
-		;	LDA $02 : PHA
-		;
-		;	JSL.l Clock_QuickStamp
-		;	LDA $00 : STA !RTA_END
-		;	LDA $02 : STA !RTA_END+2
-		;
-		;	PLA : STA $02
-		;	PLA : STA $00
-		;+
-		
+
 		.done
 	PLP : PLX : PLA
 	LDA.b #$19 : STA $10 ; thing we wrote over, load triforce room

@@ -10,6 +10,6 @@ GetMagicBatItem:
 	JML.l Link_ReceiveItem
 .normalLogic
 	LDA HalfMagic
-	STA $7EF37B
+	STA MagicConsumption
 RTL
 ;--------------------------------------------------------------------------------

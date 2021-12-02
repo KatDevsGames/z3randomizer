@@ -11,7 +11,7 @@ Draw4DigitRupees:
 			BRA .print
 	.outdoors
     .normal
-		LDA $7EF362
+		LDA CurrentRupees
 	.print
 	    JSL.l HexToDec
 		LDA $7F5004 : AND.w #$00FF : ORA.w #$2400 : STA $7EC750

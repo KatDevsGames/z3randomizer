@@ -20,7 +20,7 @@
 ;JML.l Smithy_DoesntHaveSword
 ;================================================================================
 ;LoadSwordForDamage:
-;	LDA $7EF359 : CMP #$04 : BNE .done ; skip if not gold sword
+;	LDA SwordEquipment : CMP #$04 : BNE .done ; skip if not gold sword
 ;	LDA $1B : BEQ + ; skip if outdoors
 ;	LDA $A0 : CMP #41 : BNE + ; decimal 41 ; skip if not in the mothula room
 ;		LDA #$03 ; pretend we're using tempered
@@ -62,20 +62,20 @@ RTL
 ; $7F50C0 - Sword Modifier
 LoadModifiedSwordLevel: ; returns short
 	LDA $7F50C0 : BEQ +
-		!ADD $7EF359 ; add normal sword value to modifier
+		!ADD SwordEquipment ; add normal sword value to modifier
 			BNE ++ : LDA.b #$01 : RTS : ++
 			CMP.b #$05 : !BLT ++ : LDA.b #$04 : RTS : ++
 		RTS
 	+
-	LDA $7EF359 ; load normal sword value
+	LDA SwordEquipment ; load normal sword value
 RTS
 ;================================================================================
-; $7EF35B - Armor Inventory
+; ArmorEquipment - Armor Inventory
 ; $7F50C2 - Armor Modifier
 ; $7F5020 - Scratch Space (Caller Preserved)
 LoadModifiedArmorLevel:
 	PHA
-		LDA $7EF35B : !ADD $7F50C2
+		LDA ArmorEquipment : !ADD $7F50C2
 		CMP.b #$FF : BNE + : LDA.b #$00 : +
 		CMP.b #$03 : !BLT + : LDA.b #$02 : +
 		STA $7F5020
@@ -83,16 +83,16 @@ LoadModifiedArmorLevel:
 	!ADD $7F5020
 RTL
 ;================================================================================
-; $7EF37B - Magic Inventory
+; MagicConsumption - Magic Inventory
 ; $7F50C3 - Magic Modifier
 LoadModifiedMagicLevel:
 	LDA $7F50C3 : BEQ +
-		!ADD $7EF37B ; add normal magic value to modifier
+		!ADD MagicConsumption ; add normal magic value to modifier
 			CMP.b #$FF : BNE ++ : LDA.b #$00 : RTL : ++
 			CMP.b #$03 : !BLT ++ : LDA.b #$02 : ++
 		RTL
 	+
-	LDA $7EF37B ; load normal magic value
+	LDA MagicConsumption ; load normal magic value
 RTL
 ;================================================================================
 ; $7E0348 - Ice Value
@@ -116,17 +116,17 @@ RTL
 ;================================================================================
 CheckTabletSword:
 	LDA.l AllowHammerTablets : BEQ +
-	LDA $7EF34B : BEQ + ; check for hammer
+	LDA HammerEquipment : BEQ + ; check for hammer
 		LDA.b #$02 : RTL
 	+
-	LDA $7EF359 ; get actual sword value
+	LDA SwordEquipment ; get actual sword value
 RTL
 ;================================================================================
 GetSwordLevelForEvilBarrier:
 	LDA.l AllowHammerEvilBarrierWithFighterSword : BEQ +
 	LDA #$FF : RTL
 	+
-	LDA $7EF359
+	LDA SwordEquipment
 RTL
 ;================================================================================
 CheckGanonHammerDamage:
@@ -143,7 +143,7 @@ GetSmithSword:
 		JML.l Smithy_DoesntHaveSword ; Classic Smithy
 	+
 
-	REP #$20 : LDA $7EF360 : CMP #$000A : SEP #$20 : !BGE .buy
+	REP #$20 : LDA TargetRupees : CMP #$000A : SEP #$20 : !BGE .buy
 	.cant_afford
 		REP #$10
 		LDA.b #$7A
@@ -158,7 +158,7 @@ GetSmithSword:
 		STZ $02E9 ; Item from NPC
 		PHX : JSL Link_ReceiveItem : PLX
 
-		REP #$20 : LDA $7EF360 : !SUB.w #$000A : STA $7EF360 : SEP #$20 ; Take 10 rupees
+		REP #$20 : LDA TargetRupees : !SUB.w #$000A : STA TargetRupees : SEP #$20 ; Take 10 rupees
 		JSL ItemSet_SmithSword
 	
 	.done
@@ -170,7 +170,7 @@ CheckMedallionSword:
 		LDA.b #$02 ; Pretend we have master sword
 		RTL
 	.check_sword
-		LDA $7EF359
+		LDA SwordEquipment
 		RTL
 	.check_pad
 		PHB : PHX : PHY
@@ -220,7 +220,7 @@ CheckMedallionSword:
 			+
 	.done
 		PLY : PLX : PLB
-		LDA $7EF359
+		LDA SwordEquipment
 		RTL
 	.permit
 		SEP #$20 ; set 8-bit accumulator

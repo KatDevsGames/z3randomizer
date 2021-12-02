@@ -8,7 +8,7 @@ SEP #$30
 
 	LDA !INFINITE_BOMBS : BNE .infinite_bombs
 	.finite_bombs
-		LDA.l $7EF343 ; bombs
+		LDA.l BombsEquipment ; bombs
 		JSR HudHexToDec2Digit ;requires 8 bit registers!
 		REP #$20
 		LDX.b $06 : TXA : ORA.w #$2400 : STA !BOMBCOUNT_DRAW_ADDRESS ; Draw bombs 10 digit
@@ -26,7 +26,7 @@ SEP #$30
 !RUPEE_DRAW_ADDRESS = "$7EC750"
 ;================================================================================
 	
-	LDA.l $7EF362 ; Drawing bombs (above) always ends with 16-bit A, so, no need to REP here
+	LDA.l CurrentRupees ; Drawing bombs (above) always ends with 16-bit A, so, no need to REP here
 	JSR HudHexToDec4Digit
 	LDX.b $04 : TXA : ORA.w #$2400 : STA !RUPEE_DRAW_ADDRESS	; 1000s
 	LDX.b $05 : TXA : ORA.w #$2400 : STA !RUPEE_DRAW_ADDRESS+2	;  100s
@@ -43,7 +43,7 @@ SEP #$30
 	LDA.l ArrowMode : BNE +
 		LDA !INFINITE_ARROWS : BNE .infinite_arrows
 		.finite_arrows
-			LDA.l $7EF377 ; arrows
+			LDA.l CurrentArrows ; arrows
 			JSR HudHexToDec2Digit
 			REP #$20
 			LDX.b $06 : TXA : ORA.w #$2400 : STA !ARROWCOUNT_DRAW_ADDRESS ; Draw arrows 10 digit
@@ -104,12 +104,11 @@ SEP #$30
 
 ;================================================================================
 ; Draw key count
-!KEYS = "$7EF36F"
 !KEY_DIGITS_ADDRESS = "$7EC764"
 !KEY_ICON_ADDRESS = "$7EC726"
 ;================================================================================
 	SEP #$20
-	LDA.l !KEYS : CMP.b #$FF : BEQ .not_in_dungeon
+	LDA.l CurrentSmallKeys : CMP.b #$FF : BEQ .not_in_dungeon
 		.in_dungeon
 		JSR HudHexToDec2Digit : REP #$20
 		
@@ -156,7 +155,7 @@ SEP #$30
 	REP #$20
 	BEQ .drawprize
 
-	LDA.l $7EF368
+	LDA.l MapField
 	AND.l DungeonItemMasks,X
 	BEQ .noprize
 
@@ -184,13 +183,13 @@ SEP #$30
 !INFINITE_MAGIC = "$7F50CA"
 !DrawMagicMeter_mp_tilemap = "$0DFE0F" 
 ;--------------------------------------------------------------------------------
-	LDA $7EF36E : AND #$00FF ; crap we wrote over when placing the hook for OnDrawHud
+	LDA CurrentMagic : AND #$00FF ; crap we wrote over when placing the hook for OnDrawHud
 	!ADD #$0007
 	AND #$FFF8
 	TAX						 ; end of crap
 	
 	LDA !INFINITE_MAGIC : AND.w #$00FF : BNE + : JMP .green : +
-	SEP #$20 : LDA.b #$80 : STA $7EF36E : REP #$30 ; set magic to max
+	SEP #$20 : LDA.b #$80 : STA CurrentMagic : REP #$30 ; set magic to max
 	LDX.w #$0080 ; load full magic meter graphics
 	LDA $1A : AND.w #$000C : LSR #2
 	BEQ .red

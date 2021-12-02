@@ -61,7 +61,7 @@ JML.l FluteBoy_Continue
 ;--------------------------------------------------------------------------------
 FreeDuckCheck:
 	LDA.l InvertedMode : BEQ .done
-	LDA $7EF34C : CMP.b #$03 : BEQ .done ; flute is already active
+	LDA FluteEquipment : CMP.b #$03 : BEQ .done ; flute is already active
 	
     ; check the area, is it #$18 = 30?
     LDA $8A : CMP.b #$18 : BNE .done

@@ -5,15 +5,15 @@
 ModifyBoots:
     PHA
         LDA !BOOTS_MODIFIER : CMP.b #$01 : BNE +
-            PLA : AND $7EF379 : ORA.b #$04 : RTL ; yes boots
+            PLA : AND AbilityFlags : ORA.b #$04 : RTL ; yes boots
         + : CMP.b #$02 : BNE +
-            PLA : AND $7EF379 : AND.b #$FB : RTL ; no boots
+            PLA : AND AbilityFlags : AND.b #$FB : RTL ; no boots
         + : LDA FakeBoots : CMP.b #$01 : BNE +
             LDA $5B : BEQ ++ : LDA $59 : BNE + ; hover check
-                ++ : PLA : AND $7EF379 : ORA.b #$04 : RTL ; yes boots, not hovering
+                ++ : PLA : AND AbilityFlags : ORA.b #$04 : RTL ; yes boots, not hovering
         +
     PLA
-    AND $7EF379 ; regular boots
+    AND AbilityFlags ; regular boots
 RTL
 ;--------------------------------------------------------------------------------
 AddBonkTremors:
@@ -22,7 +22,7 @@ AddBonkTremors:
             JSL.l IncrementBonkCounter
         +
         LDA !BOOTS_MODIFIER : CMP.b #$01 : BEQ +
-        LDA $7EF355 : BNE + ; Check for Boots
+        LDA BootsEquipment : BNE + ; Check for Boots
             PLA : RTL
         +
     PLA
@@ -33,7 +33,7 @@ BonkBreakableWall:
     PHX : PHP
         SEP #$30 ; set 8-bit accumulator and index registers
         LDA !BOOTS_MODIFIER : CMP.b #$01 : BEQ +
-        LDA $7EF355 : BNE + ; Check for Boots
+        LDA BootsEquipment : BNE + ; Check for Boots
             PLP : PLX : LDA.w #$0000 : RTL
         +
     PLP : PLX
@@ -42,7 +42,7 @@ RTL
 ;--------------------------------------------------------------------------------
 BonkRockPile:
     LDA !BOOTS_MODIFIER : CMP.b #$01 : BEQ +
-    LDA $7EF355 : BNE + ; Check for Boots
+    LDA BootsEquipment : BNE + ; Check for Boots
         LDA.b #$00 : RTL
     +
     LDA $02EF : AND.b #$70 ; things we wrote over
@@ -50,7 +50,7 @@ RTL
 ;--------------------------------------------------------------------------------
 GravestoneHook:
     LDA !BOOTS_MODIFIER : CMP.b #$01 : BEQ +
-    LDA $7EF355 : BEQ .done ; Check for Boots
+    LDA BootsEquipment : BEQ .done ; Check for Boots
     +
     LDA $0372 : BEQ .done ; things we wrote over
         JML.l moveGravestone
@@ -59,7 +59,7 @@ GravestoneHook:
 ;--------------------------------------------------------------------------------
 JumpDownLedge:
     LDA !BOOTS_MODIFIER : CMP.b #$01 : BEQ +
-    LDA $7EF355 : BNE + ; Check for Boots
+    LDA BootsEquipment : BNE + ; Check for Boots
         ; Disarm Waterwalk
         LDA $5B : CMP.b #$01 : BNE +
             STZ $5B
@@ -70,7 +70,7 @@ RTL
 ;--------------------------------------------------------------------------------
 BonkRecoil:
     LDA !BOOTS_MODIFIER : CMP.b #$01 : BEQ +
-    LDA $7EF355 : BNE + ; Check for Boots
+    LDA BootsEquipment : BNE + ; Check for Boots
         LDA.b #$16 : STA $29 : RTL
     +
     LDA.b #$24 : STA $29 ; things we wrote over
