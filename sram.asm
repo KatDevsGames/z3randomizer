@@ -98,48 +98,51 @@ skip 1                          ; Not used
 SwordEquipment: skip 1          ; $01 = Fighter | $02 = Master | $03 = Tempered | $04 = Gold
 ShieldEquipment: skip 1         ; $01 = Fighter | $02 = Red    | $03 = Mirror
 ArmorEquipment: skip 1          ; $00 = Green   | $01 = Blue   | $02 = Red
-BottleContentsOne: skip 1       ; \  Bottle Contents
+BottleContents:                 ; \  Bottle Contents
+BottleContentsOne: skip 1       ;  |
 BottleContentsTwo: skip 1       ;  | $00 = No Bottle  | $01 = Mushroom     | $02 = Empty Bottle
 BottleContentsThree: skip 1     ;  | $03 = Red Potion | $04 = Green Potion | $05 = Blue Potion
 BottleContentsFour: skip 1      ; /  $06 = Fairy      | $07 = Bee          | $08 = Good Bee
 TargetRupees: skip 2            ; \ CurrentRupees will always increment or decrement to match
 CurrentRupees: skip 2           ; / TargetRupees if not equal (16-bit integer)
 ;--------------------------------------------------------------------------------
-                                ; Dungeon item bitfields
-CompassFieldOne: skip 2         ; \  - - g r t h i s
-BigKeyFieldOne: skip 2          ;  | g = Ganon's Tower | r = Turtle Rock | t = Thieves' Town
-MapFieldOne: skip -3            ; /  h = Tower of Hera | i = Ice Palace  | s = Skull Woods
-CompassFieldTwo: skip 2         ; \  m d s a t e h p
-BigKeyFieldTwo: skip 2          ;  | m = Misery Mire   | d = Palace of Darkness | s = Swamp Palace
-MapFieldTwo: skip 1             ;  | a = Aga Tower     | t = Desert Palace      | e = Eastern Palace
-                                ; /  h = Hyrule Castle | s = Sewer Passage
+CompassField: skip 2            ; Dungeon item bitfields
+BigKeyField: skip 2             ;    Low byte:  - - g r t h i s
+MapField: skip 2                ;    g = Ganon's Tower | r = Turtle Rock | t = Thieves' Town
+                                ;    h = Tower of Hera | i = Ice Palace  | s = Skull Woods
+                                ;------------------------------------------------
+                                ;    High Byte: m d s a t e h p
+                                ;    m = Misery Mire   | d = Palace of Darkness | s = Swamp Palace
+                                ;    a = Aga Tower     | t = Desert Palace      | e = Eastern Palace
+                                ;    h = Hyrule Castle | s = Sewer Passage
 ;--------------------------------------------------------------------------------
                                 ; HUD & other equipment
 skip 1                          ; Wishing Pond Rupee (Unused)
-HeartPieceFraction: skip 1      ; Heart pieces of four for upgrade. Wraps around to $00 after $03.
+HeartPieceQuarter: skip 1       ; Heart pieces of four for health upgrade. Wraps around to $00 after $03.
 HealthCapacity: skip 1          ; \ Health Capacity & Current Health
 CurrentHealth: skip 1           ; / Max value is $A0 | $04 = half heart | $08 = heart
 CurrentMagic: skip 1            ; Current magic | Max value is $80
 CurrentSmallKeys: skip 1        ; Number of small keys held for current dungeon (integer)
 BombCapacityUpgrades: skip 1    ; \ Bomb & Arrow Capacity Upgrades
 ArrowCapacityUpgrades: skip 1   ; / Indicates flatly how many can be held above vanilla max (integers)
-HeartFiller: skip 1             ; Hearts collected yet to be filled. Write in multiples of $08
+HeartsFiller: skip 1            ; Hearts collected yet to be filled. Write in multiples of $08
 MagicFiller: skip 1             ; Magic collected yet to be filled
-PendantsField: skip 1                ; - - - - - g b r (bitfield)
+PendantsField: skip 1           ; - - - - - g b r (bitfield)
                                 ; g = Green (Courage) | b = Blue (Power) | r = Red (Wisdom)
-BombFiller: skip 1              ; Bombs collected yet to be filled (integer)
-ArrowFiller: skip 1             ; Arrows collected yet to be filled (integer)
+BombsFiller: skip 1             ; Bombs collected yet to be filled (integer)
+ArrowsFiller: skip 1            ; Arrows collected yet to be filled (integer)
 CurrentArrows: skip 1           ; Current arrows (integer)
 skip 1                          ; Unknown
 AbilityFlags: skip 1            ; - r t - p d s - (bitfield)
                                 ; r = Read | t = Talk | p = Pull | d = Dash
                                 ; s = Swim
-CurrentCrystals: skip 1         ; - 3 4 2 7 5 1 6 (bitfield)
+CrystalsField: skip 1           ; - 3 4 2 7 5 1 6 (bitfield)
 MagicConsumption: skip 1        ; $00 = Normal | $01 = Half Magic | $02 = Quarter Magic
 ;--------------------------------------------------------------------------------
                                 ; Small keys earned per dungeon (integers)
-SewerKeys: skip 1               ; \ Hyrule Castle and Sewer keys typically increment
-HyruleCastleKeys: skip 1        ; / and decrement together
+SewerKeys: skip 1               ; \  Hyrule Castle and Sewer keys typically increment
+DungeonKeys:                    ;  | and decrement together
+HyruleCastleKeys: skip 1        ; / 
 EasternKeys: skip 1             ; Eastern Palace small keys
 DesertKeys: skip 1              ; Desert Palace small keys
 CastleTowerKeys: skip 1         ; Agahnim's Tower small keys
@@ -152,7 +155,8 @@ HeraKeys: skip 1                ; Tower of Hera small keys
 ThievesTownKeys: skip 1         ; Thieves' Town small keys
 TurtleRockKeys: skip 1          ; Turtle Rock small keys
 GanonsTowerKeys: skip 1         ; Ganon's Tower small keys
-skip 2                          ; Unused
+skip 1                          ; Unused
+CurrentGenericKeys: skip 1      ; Generic small keys
 
 ;================================================================================
 ; Tracking & Indicators ($7EF38C - $7EF3F0)
@@ -166,9 +170,9 @@ BowTracking: skip 2             ; b s p - - - - - (bitfield)
                                 ; The front end writes two distinct progressive bow items. p
                                 ; indicates whether the "second" has been found independent of
                                 ; the first
-ItemLimitCounts: skip 3         ; Keeps track of limited non-progressive items such as lamp.
+ItemLimitCounts: skip 10        ; Keeps track of limited non-progressive items such as lamp.
                                 ; See: ItemSubstitutionRules in tables.asm
-skip 50                         ;
+skip 43                         ;
 ProgressIndicator: skip 1       ; $00 = Pre-Uncle | $01 = Post-Uncle item | $02 = Zelda Rescued
                                 ; $03 = Agahnim 1 defeated
                                 ; $04 and above don't do anything. $00-$02 used in standard mode
@@ -382,28 +386,25 @@ assert BottleContentsFour     = $7EF35F, "BottleContentsFour labeled at incorrec
 assert TargetRupees           = $7EF360, "TargetRupees labeled at incorrect address"
 assert CurrentRupees          = $7EF362, "CurrentRupees labeled at incorrect address"
 ;--------------------------------------------------------------------------------
-assert CompassFieldOne        = $7EF364, "Compass bitfield labeled at incorrect address"
-assert CompassFieldTwo        = $7EF365, "Compass bitfield labeled at incorrect address"
-assert BigKeyFieldOne         = $7EF366, "Big Key item bitfield labeled at incorrect address"
-assert BigKeyFieldTwo         = $7EF367, "Big Key item bitfield labeled at incorrect address"
-assert MapFieldOne            = $7EF368, "Map item bitfield labeled at incorrect address"
-assert MapFieldTwo            = $7EF369, "Map item bitfield labeled at incorrect address"
+assert CompassField           = $7EF364, "Compass bitfield labeled at incorrect address"
+assert BigKeyField            = $7EF366, "Big Key item bitfield labeled at incorrect address"
+assert MapField               = $7EF368, "Map item bitfield labeled at incorrect address"
 ;--------------------------------------------------------------------------------
-assert HeartPieceFraction     = $7EF36B, "HeartPieceFraction labeled at incorrect address"
+assert HeartPieceQuarter      = $7EF36B, "HeartPieceQuarter labeled at incorrect address"
 assert HealthCapacity         = $7EF36C, "HealthCapacity labeled at incorrect address"
 assert CurrentHealth          = $7EF36D, "CurrentHealth labeled at incorrect address"
 assert CurrentMagic           = $7EF36E, "CurrentMagic labeled at incorrect address"
 assert CurrentSmallKeys       = $7EF36F, "CurrentSmallKeys labeled at incorrect address"
 assert BombCapacityUpgrades   = $7EF370, "BombCapacityUpgrades labeled at incorrect address"
 assert ArrowCapacityUpgrades  = $7EF371, "ArrowCapacityUpgrades labeled at incorrect address"
-assert HeartFiller            = $7EF372, "HeartFiller labeled at incorrect address"
+assert HeartsFiller           = $7EF372, "HeartsFiller labeled at incorrect address"
 assert MagicFiller            = $7EF373, "MagicFiller labeled at incorrect address"
 assert PendantsField          = $7EF374, "PendantsField labeled at incorrect address"
-assert BombFiller             = $7EF375, "BombFiller labeled at incorrect address"
-assert ArrowFiller            = $7EF376, "ArrowFiller labeled at incorrect address"
+assert BombsFiller            = $7EF375, "BombsFiller labeled at incorrect address"
+assert ArrowsFiller           = $7EF376, "ArrowsFiller labeled at incorrect address"
 assert CurrentArrows          = $7EF377, "CurrentArrows labeled at incorrect address"
 assert AbilityFlags           = $7EF379, "AbilityFlags labeled at incorrect address"
-assert CurrentCrystals        = $7EF37A, "CurrentCrystals labeled at incorrect address"
+assert CrystalsField          = $7EF37A, "CrystalsField labeled at incorrect address"
 assert MagicConsumption       = $7EF37B, "MagicConsumption labeled at incorrect address"
 ;--------------------------------------------------------------------------------
 assert SewerKeys              = $7EF37C, "SewerKeys labeled at incorrect address"
@@ -420,6 +421,7 @@ assert HeraKeys               = $7EF386, "HeraKeys labeled at incorrect address"
 assert ThievesTownKeys        = $7EF387, "ThievesTownKeys labeled at incorrect address"
 assert TurtleRockKeys         = $7EF388, "TurtleRockKeys labeled at incorrect address"
 assert GanonsTowerKeys        = $7EF389, "GanonsTowerKeys labeled at incorrect address"
+assert CurrentGenericKeys     = $7EF38B, "CurrentGenericKeys labeled at incorrect address"
 ;--------------------------------------------------------------------------------
 assert ProgressIndicator      = $7EF3C5, "ProgressIndicator labeled at incorrect address"
 assert ProgressFlags          = $7EF3C6, "ProgressFlags labeled at incorrect address"

@@ -32,7 +32,7 @@ CalculateByrnaUsage:
 		LDA.l HardModeExclusionCaneOfByrnaUsage, X : STA $00
 		PLX
 	++
-	LDA $7EF36E ; thing we wrote over
+	LDA CurrentMagic ; thing we wrote over
 	JML IncrementMagicUseCounterByrna
 ;--------------------------------------------------------------------------------
 CalculateCapeUsage:

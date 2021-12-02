@@ -257,13 +257,13 @@ CheckMusicLoadRequest:
             -- : PLA : BRA .check_fallback-3
 .darkworld
             PHA
-                LDA $7EF37A : CMP.b #$7F : BNE --
+                LDA CrystalsField : CMP.b #$7F : BNE --
             - : PLA
             LDA.b #61 : BRA .check_fallback-3 
 .darkwoods
             PHA
-                LDA $7EF37A : CMP.b #$7F : BEQ -
-                LDA $7EF3CA : BEQ --
+                LDA CrystalsField : CMP.b #$7F : BEQ -
+                LDA CurrentWorld : BEQ --
                 LDA $8A : CMP #$40 : BNE --
             PLA
             LDA.b #15 : BRA .check_fallback-3
@@ -347,7 +347,7 @@ CheckMusicLoadRequest:
                 LDA $7EF2F0 : AND.b #$20 : BEQ .rain
             +
 
-            LDA $7EF3C5 : CMP.b #$02 : BCS +
+            LDA ProgressIndicator : CMP.b #$02 : BCS +
 .rain
                 LDX.b #$01
             +
@@ -385,7 +385,7 @@ SpiralStairsPreCheck:
         LDA !REG_MSU_ID_45 : CMP !VAL_MSU_ID_45 : BNE .done
     +
 
-    LDA $7EF366 : AND.w #$0004 : BEQ .done                      ; Check that we have the GT big key
+    LDA BigKeyField : AND.w #$0004 : BEQ .done                  ; Check that we have the GT big key
     LDA !REG_MSU_FALLBACK_TABLE+7 : AND.w #$0004 : BEQ .done    ; Check that we have the extended track
 
 .fade

@@ -84,7 +84,7 @@ IcePalaceBombosNE:
     RTL
 
 CastleEastEntrance:
-    LDA $7EF3C5 : CMP.b #$02 : !BLT + : RTL : + ; only apply in rain states (0 or 1) 
+    LDA ProgressIndicator : CMP.b #$02 : !BLT + : RTL : + ; only apply in rain states (0 or 1) 
     LDA.l BlockCastleDoorsInRain : BNE + : RTL : +
 
     REP #$20 ; 16 A
@@ -115,7 +115,7 @@ CastleEastEntrance:
     RTL
 
 CastleWestEntrance:
-    LDA $7EF3C5 : CMP.b #$02 : !BLT + : RTL : + ; only apply in rain states (0 or 1) 
+    LDA ProgressIndicator : CMP.b #$02 : !BLT + : RTL : + ; only apply in rain states (0 or 1) 
     LDA.l BlockCastleDoorsInRain : BNE + : RTL : +
 
     REP #$20 ; 16 A

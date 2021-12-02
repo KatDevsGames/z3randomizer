@@ -144,7 +144,6 @@ endmacro
 ;--------------------------------------------------------------------------------
 !CHALLENGE_TIMER = "$7EF454"
 !GOAL_COUNTER = "$7EF418"
-!INVENTORY_SWAP_2 = "$7EF38E"
 ;--------------------------------------------------------------------------------
 ;carry clear if pass
 ;carry set if caught
@@ -201,62 +200,62 @@ AddReceivedItemExpandedGetItem:
 	LDA $02D8 ; check inventory
 	JSL.l FreeDungeonItemNotice
 	CMP.b #$0B : BNE + ; Bow
-		LDA !INVENTORY_SWAP_2 : AND.b #$40 : BEQ ++
+		LDA BowTracking : AND.b #$40 : BEQ ++
 		LDA.l SilverArrowsUseRestriction : BNE ++
-			LDA.b #03 : STA $7EF340 ; set bow to silver
+			LDA.b #03 : STA BowEquipment ; set bow to silver
 		++
 		JMP .done
 	+ CMP.b #$3B : BNE + ; Silver Bow
 		LDA.l SilverArrowsUseRestriction : BNE .noequip
 		LDA.l SilverArrowsAutoEquip : AND.b #$01 : BEQ .noequip
-		LDA $7EF376 : BNE ++ ; check arrows
+		LDA ArrowsFiller : BNE ++ ; check arrows
 			LDA.b #$03 : BRA +++ ; bow without arrow
 		++
 			LDA.b #$04 ; bow with arrow
 		+++
-		STA $7EF340
+		STA BowEquipment
 		.noequip
-		LDA !INVENTORY_SWAP_2 : ORA #$40 : STA !INVENTORY_SWAP_2 ; mark silver bow on y-toggle
+		LDA BowTracking : ORA #$40 : STA BowTracking ; mark silver bow on y-toggle
 		JMP .done
 	+ CMP.b #$4C : BNE + ; 50 bombs
-		;LDA.b #$07 : STA $7EF370 ; upgrade bombs
-		LDA.b #50 : !SUB.l StartingMaxBombs : STA $7EF370 ; upgrade bombs
-		LDA.b #50 : STA $7EF375 ; fill bombs
+		;LDA.b #$07 : STA BombCapacityUpgrades ; upgrade bombs
+		LDA.b #50 : !SUB.l StartingMaxBombs : STA BombCapacityUpgrades ; upgrade bombs
+		LDA.b #50 : STA BombsFiller ; fill bombs
 		JMP .done
 	+ CMP.b #$4D : BNE + ; 70 arrows
-		;LDA #$07 : STA $7EF371 ; upgrade arrows
-		LDA.b #70 : !SUB.l StartingMaxArrows : STA $7EF371 ; upgrade arrows
-		LDA.b #70 : STA $7EF376 ; fill arrows
+		;LDA #$07 : STA ArrowCapacityUpgrades ; upgrade arrows
+		LDA.b #70 : !SUB.l StartingMaxArrows : STA ArrowCapacityUpgrades ; upgrade arrows
+		LDA.b #70 : STA ArrowsFiller ; fill arrows
 		JMP .done
 	+ CMP.b #$4E : BNE + ; 1/2 magic
-		LDA $7EF37B : CMP #$02 : !BGE ++
-			INC : STA $7EF37B ; upgrade magic
+		LDA MagicConsumption : CMP #$02 : !BGE ++
+			INC : STA MagicConsumption ; upgrade magic
 		++
-		LDA.b #$80 : STA $7EF373 ; fill magic
+		LDA.b #$80 : STA MagicFiller ; fill magic
 		JMP .done
 	+ CMP.b #$4F : BNE + ; 1/4 magic
-		LDA.b #$02 : STA $7EF37B ; upgrade magic
-		LDA.b #$80 : STA $7EF373 ; fill magic
+		LDA.b #$02 : STA MagicConsumption ; upgrade magic
+		LDA.b #$80 : STA MagicFiller ; fill magic
 		JMP .done
 	+ CMP.b #$50 : BNE + ; Master Sword (Safe)
-		LDA $7EF359 : CMP.b #$02 : !BGE + ; skip if we have a better sword
-		LDA.b #$02 : STA $7EF359 ; set master sword
+		LDA SwordEquipment : CMP.b #$02 : !BGE + ; skip if we have a better sword
+		LDA.b #$02 : STA SwordEquipment ; set master sword
 		JMP .done
 	+ CMP.b #$51 : BNE + ; +5 Bombs
-		LDA $7EF370 : !ADD.b #$05 : STA $7EF370 ; upgrade bombs +5
-		LDA.l Upgrade5BombsRefill : STA $7EF375 ; fill bombs
+		LDA BombCapacityUpgrades : !ADD.b #$05 : STA BombCapacityUpgrades ; upgrade bombs +5
+		LDA.l Upgrade5BombsRefill : STA BombsFiller ; fill bombs
 		JMP .done
 	+ CMP.b #$52 : BNE + ; +10 Bombs
-		LDA $7EF370 : !ADD.b #$0A : STA $7EF370 ; upgrade bombs +10
-		LDA.l Upgrade10BombsRefill : STA $7EF375 ; fill bombs
+		LDA BombCapacityUpgrades : !ADD.b #$0A : STA BombCapacityUpgrades ; upgrade bombs +10
+		LDA.l Upgrade10BombsRefill : STA BombsFiller ; fill bombs
 		JMP .done
 	+ CMP.b #$53 : BNE + ; +5 Arrows
-		LDA $7EF371 : !ADD.b #$05 : STA $7EF371 ; upgrade arrows +5
-		LDA.l Upgrade5ArrowsRefill : STA $7EF376 ; fill arrows
+		LDA ArrowCapacityUpgrades : !ADD.b #$05 : STA ArrowCapacityUpgrades ; upgrade arrows +5
+		LDA.l Upgrade5ArrowsRefill : STA ArrowsFiller ; fill arrows
 		JMP .done
 	+ CMP.b #$54 : BNE + ; +10 Arrows
-		LDA $7EF371 : !ADD.b #$0A : STA $7EF371 ; upgrade arrows +10
-		LDA.l Upgrade10ArrowsRefill : STA $7EF376 ; fill arrows
+		LDA ArrowCapacityUpgrades : !ADD.b #$0A : STA ArrowCapacityUpgrades ; upgrade arrows +10
+		LDA.l Upgrade10ArrowsRefill : STA ArrowsFiller ; fill arrows
 		JMP .done
 	+ CMP.b #$55 : BNE + ; Programmable Object 1
 		%ProgrammableItemLogic(1)
@@ -270,15 +269,15 @@ AddReceivedItemExpandedGetItem:
 	+ CMP.b #$58 : BNE + ; Upgrade-Only Sivler Arrows
 		LDA.l SilverArrowsUseRestriction : BNE +++
 		LDA.l SilverArrowsAutoEquip : AND.b #$01 : BEQ +++
-			LDA $7EF340 : BEQ ++ : CMP.b #$03 : !BGE ++
-				!ADD.b #$02 : STA $7EF340 ; switch to silver bow
+			LDA BowEquipment : BEQ ++ : CMP.b #$03 : !BGE ++
+				!ADD.b #$02 : STA BowEquipment ; switch to silver bow
 			++
 		+++
 		LDA.l ArrowMode : BEQ ++
-			LDA.b #$01 : STA $7EF376
+			LDA.b #$01 : STA ArrowsFiller
 		++
 	+ CMP.b #$59 : BNE + ; 1 Rupoor
-		REP #$20 : LDA $7EF360 : !SUB RupoorDeduction : STA $7EF360 : SEP #$20 ; Take 1 rupee
+		REP #$20 : LDA TargetRupees : !SUB RupoorDeduction : STA TargetRupees : SEP #$20 ; Take 1 rupee
 		JMP .done
 	+ CMP.b #$5A : BNE + ; Null Item
 		JMP .done
@@ -345,53 +344,53 @@ AddReceivedItemExpandedGetItem:
 	+ CMP.b #$70 : !BLT + : CMP.b #$80 : !BGE + ; Free Map
 		AND #$0F : CMP #$08 : !BGE ++
 			%ValueShift()
-			ORA $7EF368 : STA $7EF368 ; Map 1
+			ORA MapField : STA MapField ; Map 1
 			JMP .done
 		++
 			!SUB #$08
 			%ValueShift()
 			BIT.b #$C0 : BEQ +++ : LDA.b #$C0 : +++ ; Make Hyrule Castle / Sewers Count for Both
-			ORA $7EF369 : STA $7EF369 ; Map 2
+			ORA MapField+1 : STA MapField+1 ; Map 2
 		JMP .done
 	+ CMP.b #$80 : !BLT + : CMP.b #$90 : !BGE + ; Free Compass
 		AND #$0F : CMP #$08 : !BGE ++
 			%ValueShift()
-			ORA $7EF364 : STA $7EF364 ; Compass 1
+			ORA CompassField : STA CompassField ; Compass 1
 			JMP .done
 		++
 			!SUB #$08
 			%ValueShift()
 			BIT.b #$C0 : BEQ +++ : LDA.b #$C0 : +++ ; Make Hyrule Castle / Sewers Count for Both
-			ORA $7EF365 : STA $7EF365 ; Compass 2
+			ORA CompassField+1 : STA CompassField+1 ; Compass 2
 		JMP .done
 	+ CMP.b #$90 : !BLT + : CMP.b #$A0 : !BGE + ; Free Big Key
 		AND #$0F : CMP #$08 : !BGE ++
 			%ValueShift()
-			ORA $7EF366 : STA $7EF366 ; Big Key 1
+			ORA BigKeyField : STA BigKeyField ; Big Key 1
 			JMP .done
 		++
 			!SUB #$08
 			%ValueShift()
 			BIT.b #$C0 : BEQ +++ : LDA.b #$C0 : +++ ; Make Hyrule Castle / Sewers Count for Both
-			ORA $7EF367 : STA $7EF367 ; Big Key 2
+			ORA BigKeyField+1 : STA BigKeyField+1 ; Big Key 2
 		JMP .done
 	+ CMP.b #$A0 : !BLT + : CMP.b #$B0 : !BGE + ; Free Small Key
 		AND #$0F : TAX
-		LDA $7EF37C, X : INC : STA $7EF37C, X ; Increment Key Count
+		LDA SewerKeys, X : INC : STA SewerKeys, X ; Increment Key Count
 
 		CPX.b #$00 : BNE ++
-			STA $7EF37D ; copy HC to sewers
+			STA HyruleCastleKeys ; copy HC to sewers
 		++ : CPX.b #$01 : BNE ++
-			STA $7EF37C ; copy sewers to HC
+			STA SewerKeys ; copy sewers to HC
 		++
 
 		LDA.l GenericKeys : BEQ +
 		.generic
-			LDA $7EF36F : INC : STA $7EF36F
+			LDA CurrentSmallKeys : INC : STA CurrentSmallKeys
 			JMP .done
 		.normal
 			TXA : ASL : CMP $040C : BNE ++
-				LDA $7EF36F : INC : STA $7EF36F
+				LDA CurrentSmallKeys : INC : STA CurrentSmallKeys
 			++
 			JMP .done
 	+
@@ -404,7 +403,7 @@ RTL
 ; #$90 - Big Keys
 ; #$A0 - Small Keys
 ;--------------------------------------------------------------------------------
-!PROGRESSIVE_SHIELD = "$7EF416" ; ss-- ----
+!HIGHEST_ARMOR_SHIELD_SWORD = "$7EF416" ; ss-- ----
 !RNG_ITEM = "$7EF450"
 !SCRATCH_AREA = "$7F5020"
 !SINGLE_INDEX_TEMP = "$7F5020"
@@ -458,11 +457,11 @@ AddReceivedItemExpanded:
 				LDA.l BottleLimitReplacement : STA $02D8
 			+++ : JMP .done
 		++ : CMP.b #$4E : BNE ++ ; Progressive Magic
-			LDA $7EF37B : BEQ +++
+			LDA MagicConsumption : BEQ +++
 				LDA.b #$4F : STA $02D8
 			+++ : JMP .done
 		++ : CMP.b #$5E : BNE ++ ; Progressive Sword
-			LDA $7EF359 : CMP.l ProgressiveSwordLimit : !BLT +
+			LDA SwordEquipment : CMP.l ProgressiveSwordLimit : !BLT +
 				LDA.l ProgressiveSwordReplacement : STA $02D8 : JMP .done
 			+ : CMP.b #$00 : BNE + ; No Sword
 				LDA.b #$49 : STA $02D8 : JMP .done
@@ -473,39 +472,35 @@ AddReceivedItemExpanded:
 			+ ; Everything Else
 				LDA.b #$03 : STA $02D8 : JMP .done
 		++ : CMP.b #$5F : BNE ++ ; Progressive Shield
-			LDA !PROGRESSIVE_SHIELD : LSR #6 : CMP.l ProgressiveShieldLimit : !BLT +
+			LDA ShieldEquipment : CMP.l ProgressiveShieldLimit : !BLT +
 				LDA.l ProgressiveShieldReplacement : STA $02D8 : JMP .done
-			+
-			LDA !PROGRESSIVE_SHIELD : AND.b #$C0 : BNE + ; No Shield
-				LDA.b #$04 : STA $02D8
-				LDA !PROGRESSIVE_SHIELD : !ADD.b #$40 : STA !PROGRESSIVE_SHIELD : JMP .done
-			+ : CMP.b #$40 : BNE + ; Fighter Shield
-				LDA.b #$05 : STA $02D8
-				LDA !PROGRESSIVE_SHIELD : !ADD.b #$40 : STA !PROGRESSIVE_SHIELD : JMP .done
+			+ : CMP.b #$00 : BNE + ; No Shield
+				LDA.b #$04 : STA $02D8 : JMP .done
+			+ : CMP.b #$01 : BNE + ; Fighter Shield
+				LDA.b #$05 : STA $02D8 : JMP .done
 			+ ; Everything Else
-				LDA.b #$06 : STA $02D8
-				LDA !PROGRESSIVE_SHIELD : !ADD.b #$40 : STA !PROGRESSIVE_SHIELD : JMP .done
+				LDA.b #$06 : STA $02D8 : JMP .done
 		++ : CMP.b #$60 : BNE ++ ; Progressive Armor
-			LDA $7EF35B : CMP.l ProgressiveArmorLimit : !BLT +
+			LDA ArmorEquipment : CMP.l ProgressiveArmorLimit : !BLT +
 				LDA.l ProgressiveArmorReplacement : STA $02D8 : JMP .done
 			+ : CMP.b #$00 : BNE + ; No Armor
 				LDA.b #$22 : STA $02D8 : JMP .done
 			+ ; Everything Else
 				LDA.b #$23 : STA $02D8 : JMP .done
 		++ : CMP.b #$61 : BNE ++ ; Progressive Lifting Glove
-			LDA $7EF354 : BNE + ; No Lift
+			LDA GloveEquipment : BNE + ; No Lift
 				LDA.b #$1B : STA $02D8 : BRA .done
 			+ ; Everything Else
 				LDA.b #$1C : STA $02D8 : BRA .done
 		++ : CMP.b #$64 : BNE ++ : -- ; Progressive Bow
-			LDA $7EF340 : INC : LSR : CMP.l ProgressiveBowLimit : !BLT +
+			LDA BowEquipment : INC : LSR : CMP.l ProgressiveBowLimit : !BLT +
 				LDA.l ProgressiveBowReplacement : STA $02D8 : JMP .done
 			+ : CMP.b #$00 : BNE + ; No Bow
 				LDA.b #$3A : STA $02D8 : BRA .done
 			+ ; Any Bow
 				LDA.b #$3B : STA $02D8 : BRA .done
 		++ : CMP.b #$65 : BNE ++ ; Progressive Bow 2
-			LDA.l !INVENTORY_SWAP_2 : ORA #$20 : STA.l !INVENTORY_SWAP_2
+			LDA.l BowTracking : ORA #$20 : STA.l BowTracking
 			BRA --
 		; ++ : CMP.b #$FE : BNE ++ ; Server Request (Null Chest)
 		;	JSL ChestItemServiceRequest
@@ -758,7 +753,7 @@ org $A08800
 	dw $F359 ; Master Sword (Safe)
 	dw $F375, $F375, $F376, $F376 ; +5/+10 Bomb Arrows
 	dw $F41A, $F41C, $F41E ; 3x Programmable Item
-	dw $F340 ; Upgrade-Only Sivler Arrows
+	dw $F340 ; Upgrade-Only Silver Arrows
 	dw $F360 ; 1 Rupoor
 	dw $F36A ; Null Item
 	dw $F454, $F454, $F454 ; Red, Blue & Green Clocks
@@ -918,8 +913,8 @@ Link_ReceiveItemAlternatesExpanded:
 RTL
 ;--------------------------------------------------------------------------------
 ;DrawHUDSilverArrows:
-;	LDA $7EF340 : AND.w #$00FF : BNE +
-;		LDA !INVENTORY_SWAP_2 : AND.w #$0040 : BEQ +
+;	LDA BowEquipment : AND.w #$00FF : BNE +
+;		LDA BowTracking : AND.w #$0040 : BEQ +
 ;	        LDA.w #$2810 : STA $11C8
 ;	        LDA.w #$2811 : STA $11CA
 ;	        LDA.w #$2820 : STA $1208
@@ -928,19 +923,19 @@ RTL
 ;	LDA.w #$11CE : STA $00 ; thing we wrote over
 ;RTL
 ;--------------------------------------------------------------------------------
-;Return $7EF340 but also draw silver arrows if you have the upgrade even if you don't have the bow
+;Return BowEquipment but also draw silver arrows if you have the upgrade even if you don't have the bow
 CheckHUDSilverArrows:
 	LDA.l ArrowMode : BEQ .normal
 	.rupee_arrows
 		JSL.l DrawHUDArrows
-		LDA $7EF340
+		LDA BowEquipment
 		RTL
 	.normal
-	LDA $7EF340 : BNE +
-		LDA !INVENTORY_SWAP_2 : AND.b #$40 : BEQ ++
+	LDA BowEquipment : BNE +
+		LDA BowTracking : AND.b #$40 : BEQ ++
 			JSL.l DrawHUDArrows
 		++
-		LDA $7EF340
+		LDA BowEquipment
 	+
 RTL
 ;--------------------------------------------------------------------------------
@@ -948,9 +943,9 @@ DrawHUDArrows:
 LDA.l ArrowMode : BEQ .normal
 	.rupee_arrows
 
-	LDA $7EF377 : BEQ .none ; assuming silvers will increment this. if we go with something else, reorder these checks
-	LDA $7EF340 : BNE +
-	LDA !INVENTORY_SWAP_2 : AND.b #$40 : BNE .silver
+	LDA CurrentArrows : BEQ .none ; assuming silvers will increment this. if we go with something else, reorder these checks
+	LDA BowEquipment : BNE +
+	LDA BowTracking : AND.b #$40 : BNE .silver
 	BRA .wooden
 	+ CMP.b #03 : !BGE .silver
 
@@ -1070,7 +1065,7 @@ IncrementItemCounters:
 				.match
 					PHX
 						TXA : LSR #2 : TAX
-						LDA !ITEM_LIMIT_COUNTS, X : INC : STA !ITEM_LIMIT_COUNTS, X
+						LDA ItemLimitCounts, X : INC : STA ItemLimitCounts, X
 					PLX
 					BEQ .exit
 				.noMatch
@@ -1090,7 +1085,7 @@ AttemptItemSubstitution:
 			.match
 				PHX
 					TXA : LSR #2 : TAX
-					LDA !ITEM_LIMIT_COUNTS, X
+					LDA ItemLimitCounts, X
 				PLX
 				CMP.l ItemSubstitutionRules+1, X : !BLT +
 					LDA.l ItemSubstitutionRules+2, X : STA 1,s
@@ -1106,10 +1101,10 @@ RTS
 CountBottles:
     PHX
         LDX.b #$00
-        LDA $7EF35C : BEQ ++ : INX
-        ++ : LDA $7EF35D : BEQ ++ : INX
-        ++ : LDA $7EF35E : BEQ ++ : INX
-        ++ : LDA $7EF35F : BEQ ++ : INX
+        LDA BottleContentsOne : BEQ ++ : INX
+        ++ : LDA BottleContentsTwo : BEQ ++ : INX
+        ++ : LDA BottleContentsThree : BEQ ++ : INX
+        ++ : LDA BottleContentsFour : BEQ ++ : INX
         ++
         TXA
     PLX

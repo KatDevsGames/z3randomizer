@@ -45,7 +45,7 @@ GetSpriteID:
 RTL
 	.specialHandling
 	CMP.b #$F9 : BNE ++ ; Progressive Magic
-		LDA.l $7EF37B : BNE +++
+		LDA.l MagicConsumption : BNE +++
 			LDA.b #$3B : RTL ; Half Magic
 		+++
 			LDA.b #$3C : RTL ; Quarter Magic
@@ -54,13 +54,13 @@ RTL
 	++ CMP.b #$FB : BNE ++ ; RNG Item (Multi)
 		JSL.l GetRNGItemMulti : JMP GetSpriteID
 	++ CMP.b #$FD : BNE ++ ; Progressive Armor
-		LDA $7EF35B : CMP.l ProgressiveArmorLimit : !BLT + ; Progressive Armor Limit
+		LDA ArmorEquipment : CMP.l ProgressiveArmorLimit : !BLT + ; Progressive Armor Limit
 			LDA.l ProgressiveArmorReplacement
 			JMP GetSpriteID
 		+
 		LDA.b #$04 : RTL
 	++ CMP.b #$FE : BNE ++ ; Progressive Sword
-		LDA $7EF359
+		LDA SwordEquipment
 		CMP.l ProgressiveSwordLimit : !BLT + ; Progressive Sword Limit
 			LDA.l ProgressiveSwordReplacement
 			JMP GetSpriteID
@@ -85,7 +85,7 @@ RTL
 		+ ; Everything Else
 			LDA.b #$2E : RTL
 	++ : CMP.b #$F8 : BNE ++ ; Progressive Bow
-		LDA $7EF340 : INC : LSR
+		LDA BowEquipment : INC : LSR
 		CMP.l ProgressiveBowLimit : !BLT +
 			LDA.l ProgressiveBowReplacement
 			JMP GetSpriteID
@@ -183,7 +183,7 @@ GetSpritePalette:
 RTL
 	.specialHandling
 	CMP.b #$FD : BNE ++ ; Progressive Sword
-		LDA $7EF359
+		LDA SwordEquipment
 		CMP.l ProgressiveSwordLimit : !BLT + ; Progressive Sword Limit
 			LDA.l ProgressiveSwordReplacement
 			JMP GetSpritePalette
@@ -207,7 +207,7 @@ RTL
 		+ ; Everything Else
 			LDA.b #$08 : RTL
 	++ : CMP.b #$FF : BNE ++ ; Progressive Armor
-		LDA $7EF35B : CMP.l ProgressiveArmorLimit : !BLT + ; Progressive Armor Limit
+		LDA ArmorEquipment : CMP.l ProgressiveArmorLimit : !BLT + ; Progressive Armor Limit
 			LDA.l ProgressiveArmorReplacement
 			JMP GetSpritePalette
 		+ : CMP.b #$00 : BNE + ; Green Tunic
@@ -215,12 +215,12 @@ RTL
 		+ ; Everything Else
 			LDA.b #$02 : RTL
 	++ : CMP.b #$FC : BNE ++ ; Progressive Gloves
-		LDA $7EF354 : BNE + ; No Gloves
+		LDA GloveEquipment : BNE + ; No Gloves
 			LDA.b #$02 : RTL
 		+ ; Everything Else
 			LDA.b #$08 : RTL
 	++ : CMP.b #$F8 : BNE ++ ; Progressive Bow
-		LDA $7EF340 : INC : LSR
+		LDA BowEquipment : INC : LSR
 		CMP.l ProgressiveBowLimit : !BLT +
 			LDA.l ProgressiveBowReplacement
 			JMP GetSpritePalette
@@ -307,7 +307,7 @@ IsNarrowSprite:
 			+ : JMP .continue
 		.notBottle
 	CMP.b #$5E : BNE ++ ; Progressive Sword
-		LDA $7EF359 : CMP.l ProgressiveSwordLimit : !BLT + ; Progressive Sword Limit
+		LDA SwordEquipment : CMP.l ProgressiveSwordLimit : !BLT + ; Progressive Sword Limit
 			LDA.l ProgressiveSwordReplacement
 			JSL.l IsNarrowSprite
 			JMP .done
@@ -319,7 +319,7 @@ IsNarrowSprite:
 			JSL.l IsNarrowSprite
 			JMP .done
 	++ CMP.b #$60 : BNE ++ ; Progressive Armor
-		LDA $7EF35B : CMP.l ProgressiveArmorLimit : !BLT .continue
+		LDA ArmorEquipment : CMP.l ProgressiveArmorLimit : !BLT .continue
 			LDA.l ProgressiveArmorReplacement
 			JSL.l IsNarrowSprite
 			JMP .done
@@ -330,7 +330,7 @@ IsNarrowSprite:
 		JSL.l GetRNGItemMulti
 	++ CMP.b #$64 : BEQ +               ; Progressive Bow
            CMP.b #$65 : BNE .continue       ; Progressive Bow (alt)
-                + : LDA $7EF340 : INC : LSR
+                + : LDA BowEquipment : INC : LSR
                 CMP.l ProgressiveBowLimit : !BLT +
 			LDA.l ProgressiveBowReplacement
 			JSL.l IsNarrowSprite

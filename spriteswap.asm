@@ -39,7 +39,7 @@ SpriteSwap_Palette_ArmorAndGloves:
     SEP #$30
     LDA !SPRITE_SWAP : BNE .continue
         REP #$30
-        LDA $7EF354 
+        LDA GloveEquipment 
         JSL $1BEE21 ; Read Original Palette Code
     RTL
 

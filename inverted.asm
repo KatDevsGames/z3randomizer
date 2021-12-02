@@ -131,7 +131,7 @@ db $02, $02, $02, $02, $02, $02, $02, $00, $00, $01, $01, $01, $02, $00, $08, $0
 
 Electric_Barrier:
 	LDA InvertedMode : BEQ .done
-		LDA $7EF280, X : ORA #$40 : STA $7EF280, X ;set barrier dead
+		LDA OverworldData, X : ORA #$40 : STA $7EF280, X ;set barrier dead
 	.done
 	LDA $7EF280, X ; what we wrote over
 RTL

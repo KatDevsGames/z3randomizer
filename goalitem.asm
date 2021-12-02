@@ -62,12 +62,12 @@ CheckGanonVulnerability:
 
 ; 02 = All dungeons
 .all_dungeons
-	LDA.l $7EF3C5 : CMP.b #$03 : BCC .fail ; require post-aga world state
+	LDA.l ProgressIndicator : CMP.b #$03 : BCC .fail ; require post-aga world state
 
 ; 09 = All dungeons except agahnim
 .all_dungeons_no_agahnim
-	LDA.l $7EF374 : AND.b #$07 : CMP.b #$07 : BNE .fail ; require all pendants
-	LDA.l $7EF37A : AND.b #$7F : CMP.b #$7F : BNE .fail ; require all crystals
+	LDA.l PendantsField : AND.b #$07 : CMP.b #$07 : BNE .fail ; require all pendants
+	LDA.l CrystalsField : AND.b #$7F : CMP.b #$7F : BNE .fail ; require all crystals
 	LDA.l $7EF2DB : AND.b #$20 : BEQ .fail ; require aga2 defeated (pyramid hole open)
 	BRA .success
 
@@ -125,12 +125,12 @@ GetRequiredCrystalsInX:
 RTL
 ;--------------------------------------------------------------------------------
 CheckEnoughCrystalsForGanon:
-	LDA $7EF37A : JSL CountBits ; the comparison is against 1 less
+	LDA CrystalsField : JSL CountBits ; the comparison is against 1 less
 	CMP.l NumberOfCrystalsRequiredForGanon
 RTL
 ;--------------------------------------------------------------------------------
 CheckEnoughCrystalsForTower:
-	LDA $7EF37A : JSL CountBits ; the comparison is against 1 less
+	LDA CrystalsField : JSL CountBits ; the comparison is against 1 less
 	CMP.l NumberOfCrystalsRequiredForTower
 RTL
 
@@ -158,15 +158,15 @@ CheckAgaForPed:
 ;---------------------------------------------------------------------------------------------------
 
 KillGanon:
-	STA.l $7EF3C5 ; vanilla game state stuff we overwrote
+	STA.l ProgressIndicator ; vanilla game state stuff we overwrote
 
 	LDA.l InvincibleGanon
 	CMP.b #$06 : BNE .exit
 
 .light_speed
 	LDA.l $7EF2DB : ORA.b #$20 : STA.l $7EF2DB ; pyramid hole
-	LDA.b #$08 : STA.l $7EF001 ; kill ganon
-	LDA.b #$02 : STA.l $7EF357 ; pearl but invisible in menu
+	LDA.b #$08 : STA.l RoomData[$00].Low ; kill ganon
+	LDA.b #$02 : STA.l MoonPearlEquipment ; pearl but invisible in menu
 
 .exit
 	RTL

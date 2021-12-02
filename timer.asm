@@ -182,8 +182,8 @@ OHKOTimer:
 	LDA.l TimeoutBehavior : CMP #$02 : BNE +
 	LDA !Status : AND.b #$02 : BEQ +
 		.kill
-		LDA.b #$00 : STA $7EF36D ; kill link
+		LDA.b #$00 : STA CurrentHealth ; kill link
 	+
-	LDA $7EF36D
+	LDA CurrentHealth
 RTL
 ;--------------------------------------------------------------------------------

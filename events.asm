@@ -65,15 +65,15 @@ OnUncleItemGet:
 	PLA
 	JSL Link_ReceiveItem
 
-	LDA.l UncleRefill : BIT.b #$04 : BEQ + : LDA.b #$80 : STA $7EF373 : + ; refill magic
-	LDA.l UncleRefill : BIT.b #$02 : BEQ + : LDA.b #50 : STA $7EF375 : + ; refill bombs
+	LDA.l UncleRefill : BIT.b #$04 : BEQ + : LDA.b #$80 : STA MagicFiller : + ; refill magic
+	LDA.l UncleRefill : BIT.b #$02 : BEQ + : LDA.b #50 : STA BombsFiller : + ; refill bombs
 	LDA.l UncleRefill : BIT.b #$01 : BEQ + ; refill arrows
-		LDA.b #70 : STA $7EF376
+		LDA.b #70 : STA ArrowsFiller
 
 		LDA.l ArrowMode : BEQ +
-			LDA !INVENTORY_SWAP_2 : ORA #$80 : STA !INVENTORY_SWAP_2 ; enable bow toggle
+			LDA BowTracking : ORA #$80 : STA BowTracking ; enable bow toggle
 			REP #$20 ; set 16-bit accumulator
-			LDA $7EF360 : !ADD.l FreeUncleItemAmount : STA $7EF360 ; rupee arrows, so also give the player some money to start
+			LDA TargetRupees : !ADD.l FreeUncleItemAmount : STA TargetRupees ; rupee arrows, so also give the player some money to start
 			SEP #$20 ; set 8-bit accumulator
 	+
 RTL
@@ -95,9 +95,9 @@ OnFileLoad:
 
 	LDA.b #$07 : STA $210C ; Restore screen 3 to normal tile area
 
-	LDA !FRESH_FILE_MARKER : BNE +
+	LDA FileMarker : BNE +
 		JSL.l OnNewFile
-		LDA.b #$FF : STA !FRESH_FILE_MARKER
+		LDA.b #$FF : STA FileMarker
 	+
 	LDA.w $010A : BNE + ; don't adjust the worlds for "continue" or "save-continue"
 	LDA.l $7EC011 : BNE + ; don't adjust worlds if mosiac is enabled (Read: mirroring in dungeon)
@@ -108,7 +108,7 @@ OnFileLoad:
 	LDA #$FF : STA !RNG_ITEM_LOCK_IN ; reset rng item lock-in
 	LDA #$00 : STA $7F5001 ; mark fake flipper softlock as impossible
 	LDA.l GenericKeys : BEQ +
-		LDA $7EF38B : STA $7EF36F ; copy generic keys to key counter
+		LDA CurrentGenericKeys : STA CurrentSmallKeys ; copy generic keys to key counter
 	+
 
 	JSL.l SetSilverBowMode
@@ -125,17 +125,17 @@ RTL
 OnNewFile:
 	PHX : PHP
 		REP #$20 ; set 16-bit accumulator
-		LDA.l LinkStartingRupees : STA $7EF362 : STA $7EF360
+		LDA.l LinkStartingRupees : STA CurrentRupees : STA TargetRupees
 		LDA.l StartingTime : STA $7EF454
 		LDA.l StartingTime+2 : STA $7EF454+2
 
 		LDX.w #$004E : - ; copy over starting equipment
-			LDA StartingEquipment, X : STA $7EF340, X
+			LDA StartingEquipment, X : STA SRAMEquipment, X
 			DEX : DEX
 		BPL -
 
 		LDX #$000E : -
-        	LDA $7EF37C, X : STA $7EF4E0, X
+        	LDA SewerKeys, X : STA $7EF4E0, X
 			DEX : DEX
 		BPL -
 
@@ -154,7 +154,7 @@ OnNewFile:
 			LDA.b #$20 : STA $7EF2C3 ; Ganons Tower already open
 		+
 
-		LDA StartingSword : STA $7EF359 ; set starting sword type
+		LDA StartingSword : STA SwordEquipment ; set starting sword type
 
 		; reset some values on new file that are otherwise only reset on hard reset
 		STZ $03C4 ; ancilla slot index

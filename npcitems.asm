@@ -49,11 +49,11 @@ ItemCheck_SickKid:
 RTL
 
 ItemCheck_TreeKid:
-	LDA !NPC_FLAGS : AND.b #$08 ; FluteBoy_Chillin - 73: LDA $7EF34C
+	LDA !NPC_FLAGS : AND.b #$08 ; FluteBoy_Chillin - 73: LDA FluteEquipment
 RTL
 
 ItemCheck_TreeKid2:
-	LDA !NPC_FLAGS : AND.b #$08 : LSR #$02 ; FluteAardvark_InitialStateFromFluteState - 225: LDA $7EF34C : AND.b #$03
+	LDA !NPC_FLAGS : AND.b #$08 : LSR #$02 ; FluteAardvark_InitialStateFromFluteState - 225: LDA FluteEquipment : AND.b #$03
 RTL
 
 ItemCheck_TreeKid3:
@@ -92,7 +92,7 @@ ItemCheck_Catfish:
 	;LDA CatfishGoodItem : BEQ .junk
 	;PHX
 	;	LDA CatfishGoodItem+1 : TAX
-	;	LDA $7EF340-1, X
+	;	LDA BowEquipment-1, X
 	;PLX
 	;--
 	;CMP CatfishGoodItem : !BLT .oursNewer

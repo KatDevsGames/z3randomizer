@@ -8,7 +8,7 @@ LockAgahnimDoors:
 		;#$0 = Never Locked
 		LDA.w #$0000 : RTL
 	+ : CMP.w #$0001 : BNE +
-		LDA $7EF3C5 : AND.w #$000F : CMP.w #$0002 : !BGE .unlock ; if we rescued zelda, skip
+		LDA ProgressIndicator : AND.w #$000F : CMP.w #$0002 : !BGE .unlock ; if we rescued zelda, skip
 			JSR.w LockAgahnimDoorsCore : RTL
 	+ : CMP.w #$0002 : BNE +
 		JSR.w LockAgahnimDoorsCore : BEQ .unlock
@@ -77,7 +77,7 @@ JML.l Overworld_Entrance_BRANCH_RHO
 AllowStartFromSingleEntranceCave:
 ; 16 Bit A, 16 bit XY
 ; do not need to preserve A or X or Y
-	LDA $7EF3C8 : AND.w #$00FF ; What we wrote over
+	LDA StartingEntrance : AND.w #$00FF ; What we wrote over
 	PHA
 		TAX
 
@@ -138,7 +138,7 @@ AllowStartFromExit:
 	LDX $1CE8
 	LDA.l ShouldStartatExit, X : BNE .doStart
 
-	LDA.l $7EF3C8 ; what we wrote over
+	LDA.l StartingEntrance ; what we wrote over
 JML.l AllowStartFromExitReturn
 
 	.doStart
