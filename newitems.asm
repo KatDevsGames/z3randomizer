@@ -142,9 +142,6 @@ macro ValueShift()
 	BRA ?start : ?end:
 endmacro
 ;--------------------------------------------------------------------------------
-!CHALLENGE_TIMER = "$7EF454"
-!GOAL_COUNTER = "$7EF418"
-;--------------------------------------------------------------------------------
 ;carry clear if pass
 ;carry set if caught
 ;incsrc eventdata.asm
@@ -170,7 +167,7 @@ ProcessEventItems:
 			SEP #$10 ; set 8-bit index registers
 
 			LDA GoalItemRequirement : BEQ ++
-			LDA !GOAL_COUNTER : INC : STA !GOAL_COUNTER
+			LDA GoalCounter : INC : STA GoalCounter
 			CMP GoalItemRequirement : !BLT ++
 			LDA TurnInGoalItems : BNE ++
 				JSL.l ActivateGoal
@@ -192,7 +189,7 @@ AddReceivedItemExpandedGetItem:
 
 	;JSR.w ProcessEventItems : CPX.b #$00 : BEQ ++
 	;	;JSL.l Main_ShowTextMessage_Alt
-	;	LDA !GOAL_COUNTER : INC : STA !GOAL_COUNTER
+	;	LDA GoalCounter : INC : STA GoalCounter
 	;	LDA.b #$01 : STA $7F50XX
 	;	JMP .done
 	;++
@@ -283,20 +280,20 @@ AddReceivedItemExpandedGetItem:
 		JMP .done
 	+ CMP.b #$5B : BNE + ; Red Clock
 		REP #$20 ; set 16-bit accumulator
-		LDA !CHALLENGE_TIMER : !ADD.l RedClockAmount : STA !CHALLENGE_TIMER
-		LDA !CHALLENGE_TIMER+2 : ADC.l RedClockAmount+2 : STA !CHALLENGE_TIMER+2
+		LDA ChallengeTimer : !ADD.l RedClockAmount : STA ChallengeTimer
+		LDA ChallengeTimer+2 : ADC.l RedClockAmount+2 : STA ChallengeTimer+2
 		SEP #$20 ; set 8-bit accumulator
 		JMP .done
 	+ CMP.b #$5C : BNE + ; Blue Clock
 		REP #$20 ; set 16-bit accumulator
-		LDA !CHALLENGE_TIMER : !ADD.l BlueClockAmount : STA !CHALLENGE_TIMER
-		LDA !CHALLENGE_TIMER+2 : ADC.l BlueClockAmount+2 : STA !CHALLENGE_TIMER+2
+		LDA ChallengeTimer : !ADD.l BlueClockAmount : STA ChallengeTimer
+		LDA ChallengeTimer+2 : ADC.l BlueClockAmount+2 : STA ChallengeTimer+2
 		SEP #$20 ; set 8-bit accumulator
 		JMP .done
 	+ CMP.b #$5D : BNE + ; Green Clock
 		REP #$20 ; set 16-bit accumulator
-		LDA !CHALLENGE_TIMER : !ADD.l GreenClockAmount : STA !CHALLENGE_TIMER
-		LDA !CHALLENGE_TIMER+2 : ADC.l GreenClockAmount+2 : STA !CHALLENGE_TIMER+2
+		LDA ChallengeTimer : !ADD.l GreenClockAmount : STA ChallengeTimer
+		LDA ChallengeTimer+2 : ADC.l GreenClockAmount+2 : STA ChallengeTimer+2
 		SEP #$20 ; set 8-bit accumulator
 		JMP .done
 	+ CMP.b #$5E : BNE + ; Progressive Sword
@@ -323,7 +320,7 @@ AddReceivedItemExpandedGetItem:
 	+ CMP.b #$6C : BNE + ; Goal Collectable (Multi/Power Star) Alternate Graphic
 		.multi_collect
 		LDA GoalItemRequirement : BEQ ++
-		LDA !GOAL_COUNTER : INC : STA !GOAL_COUNTER
+		LDA GoalCounter : INC : STA GoalCounter
 		CMP GoalItemRequirement : !BLT ++
 		LDA TurnInGoalItems : BNE ++
 				JSL.l ActivateGoal

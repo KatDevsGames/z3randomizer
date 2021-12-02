@@ -125,12 +125,12 @@ GetRequiredCrystalsInX:
 RTL
 ;--------------------------------------------------------------------------------
 CheckEnoughCrystalsForGanon:
-	LDA CrystalsField : JSL CountBits ; the comparison is against 1 less
+	LDA CrystalCounter
 	CMP.l NumberOfCrystalsRequiredForGanon
 RTL
 ;--------------------------------------------------------------------------------
 CheckEnoughCrystalsForTower:
-	LDA CrystalsField : JSL CountBits ; the comparison is against 1 less
+	LDA CrystalCounter
 	CMP.l NumberOfCrystalsRequiredForTower
 RTL
 
