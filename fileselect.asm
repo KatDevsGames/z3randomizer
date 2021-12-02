@@ -1,4 +1,3 @@
-!ExtendedPlayerName = "$700500"
 !ValidKeyLoaded = "$7F509E"
 
 ;FS prefix means file_select, since these defines and macros are specific to this screen
@@ -136,22 +135,22 @@ DrawPlayerFileShared:
 	LDA.b #FileSelectItems>>16 : PHA : PLB
 	REP #$20 ; restore 16 bit accumulator
 
-	LDA !ExtendedPlayerName+$00 : ORA.w #!FS_COLOR_BW
+	LDA ExtendedFileNameSRAM+$08 : ORA.w #!FS_COLOR_BW
 	%fs_draw8x16(6,5)
-	LDA !ExtendedPlayerName+$02 : ORA.w #!FS_COLOR_BW
+	LDA ExtendedFileNameSRAM+$0A : ORA.w #!FS_COLOR_BW
 	%fs_draw8x16(6,6)
-	LDA !ExtendedPlayerName+$04 : ORA.w #!FS_COLOR_BW
+	LDA ExtendedFileNameSRAM+$0C : ORA.w #!FS_COLOR_BW
 	%fs_draw8x16(6,7)
-	LDA !ExtendedPlayerName+$06 : ORA.w #!FS_COLOR_BW
+	LDA ExtendedFileNameSRAM+$0E : ORA.w #!FS_COLOR_BW
 	%fs_draw8x16(6,8)
 
-	LDA !ExtendedPlayerName+$08 : ORA.w #!FS_COLOR_BW
+	LDA ExtendedFileNameSRAM+$10 : ORA.w #!FS_COLOR_BW
 	%fs_draw8x16(9,5)
-	LDA !ExtendedPlayerName+$0A : ORA.w #!FS_COLOR_BW
+	LDA ExtendedFileNameSRAM+$12 : ORA.w #!FS_COLOR_BW
 	%fs_draw8x16(9,6)
-	LDA !ExtendedPlayerName+$0C : ORA.w #!FS_COLOR_BW
+	LDA ExtendedFileNameSRAM+$14 : ORA.w #!FS_COLOR_BW
 	%fs_draw8x16(9,7)
-	LDA !ExtendedPlayerName+$0E : ORA.w #!FS_COLOR_BW
+	LDA ExtendedFileNameSRAM+$16 : ORA.w #!FS_COLOR_BW
 	%fs_draw8x16(9,8)
 
 	JSR FileSelectDrawHudBar
