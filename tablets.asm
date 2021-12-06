@@ -2,19 +2,19 @@
 ; Randomize Tablets
 ;--------------------------------------------------------------------------------
 ItemSet_EtherTablet:
-	PHA : LDA !NPC_FLAGS_2 : ORA.b #$01 : STA !NPC_FLAGS_2 : PLA
+	PHA : LDA NpcFlags+1 : ORA.b #$01 : STA NpcFlags+1 : PLA
 RTL
 ;--------------------------------------------------------------------------------
 ItemSet_BombosTablet:
-	PHA : LDA !NPC_FLAGS_2 : ORA.b #$02 : STA !NPC_FLAGS_2 : PLA
+	PHA : LDA NpcFlags+1 : ORA.b #$02 : STA NpcFlags+1 : PLA
 RTL
 ;--------------------------------------------------------------------------------
 ItemCheck_EtherTablet:
-	LDA !NPC_FLAGS_2 : AND.b #$01
+	LDA NpcFlags+1 : AND.b #$01
 RTL
 ;--------------------------------------------------------------------------------
 ItemCheck_BombosTablet:
-	LDA !NPC_FLAGS_2 : AND.b #$02
+	LDA NpcFlags+1 : AND.b #$02
 RTL
 ;--------------------------------------------------------------------------------
 SetTabletItem:
