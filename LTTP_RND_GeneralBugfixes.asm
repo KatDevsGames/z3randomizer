@@ -2,6 +2,7 @@
 ; The Legend of Zelda, A Link to the Past - Randomizer General Development & Bugfixes
 ;================================================================================
 lorom
+
 ;================================================================================
 
 ;org $00FFC0 ; <- 7FC0 - Bank00.asm : 9173 (db "THE LEGEND OF ZELDA  " ; 21 bytes)
@@ -41,28 +42,7 @@ dw !ROM_VERSION_HIGH
 !BLT = "BCC"
 !BGE = "BCS"
 
-; Rando Specific SRAM assignments
-!NPC_FLAGS   = "$7EF410"
-!NPC_FLAGS_2 = "$7EF411"
-!MAP_OVERLAY = "$7EF414" ; [w]
-!PROGRESSIVE_SHIELD = "$7EF416" ; ss-- ----
-!HUD_FLAG = "$7EF416" ; --h- ----
-!FORCE_PYRAMID = "$7EF416" ; ---- p---
-!IGNORE_FAIRIES = "$7EF416" ; ---- -i--
-!SHAME_CHEST = "$7EF416" ; ---s ----
-!HAS_GROVE_ITEM = "$7EF416" ; ---- ---g general flags, don't waste these
-!HIGHEST_SWORD_LEVEL = "$7EF417" ; --- -sss
-;$7EF418 - Goal Item Counter
-;$7EF419 - Service Sequence
-;$7EF420 - $7EF46D - Stat Tracking Bank 1 (overlaps with RNG Item Flags)
-;$7EF4A0 - $7EF4A7 - Service Request Block
-;$700500 - $70050F - Extended File Name
-;$701000 - $70100F - Password (incorporate into log header)
-;$702000 - $702014 - Rom title copy (incorporate into log header)
-
-
 !MS_GOT = "$7F5031"
-!DARK_WORLD = "$7EF3CA"
 
 !REDRAW = "$7F5000"
 !GANON_WARP_CHAIN = "$7F5032";
@@ -114,7 +94,6 @@ incsrc heartpieces.asm
 incsrc npcitems.asm
 incsrc utilities.asm
 incsrc flipperkill.asm
-incsrc previewdatacopy.asm
 incsrc pendantcrystalhud.asm
 incsrc potions.asm
 incsrc shopkeeper.asm
@@ -335,21 +314,21 @@ warnpc $B08000
 ;RAM 
 ;$7EC900[0x1F00]: BIGRAM buffer
 ;$7EF000[0x500]: SRAM mirror First 0x500 bytes of SRAM
+;   See sram.asm for labels and assignments
 ;$7F5000[0x800]: Rando's main free ram region
 ;   See tables.asm for specific assignments
-;$7F6000[0x500]: Free RAM (reclaimed from damage table) Not allocated yet
-;$7F6000[0x500]: SRAM buffer save 2 0x500
-;$7F6500[0xB00]: SRAM mirror for last 0xB00 bytes of SRAM (extended sram)
+;$7F6000[0x1000]: SRAM buffer mapped to vanilla save slots 1 and 2
+;   See sram.asm for labels and assignments
 ;$7F7667[0x6719] - free ram
 ;================================================================================
 ;SRAM Map
-;$70:0000 ( 4K) Game state
-;  0000-04FF Vanilla Slot 1 (mirrored at 0x7EF000)
-;    See earlier in this file for rando specific assignments
-;  0500-0FFF Ext Slot 1 (not yet mirrored)
-;    See earlier in this file for rando specific assignments
-;$70:1000 (20K) Log entries
-;$70:6000 ( 8K) Scratch buffers
+;See sram.asm for rando-specific assignments
+;$70:0000 (5K) Game state
+;  0000-04FF Vanilla Slot 1 (mirrored at $7EF000)
+;  0500-14FF Ext Slot 1 (mirrored at $7F6000)
+;$70:2000 (0x25) ROM Name and version number
+;$70:3000 (0x16) Password
+;$70:6000 (8K) Scratch buffers
 ;================================================================================
 ;org $0080DC ; <- 0xDC - Bank00.asm:179 - Kill Music
 ;db #$A9, #$00, #$EA
