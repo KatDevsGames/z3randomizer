@@ -541,10 +541,6 @@ org $0288D1 ; <- 108D1 - Bank02.asm : 1690 (STZ $0646)
 JSL.l IndoorSubtileTransitionCounter
 NOP #2
 ;--------------------------------------------------------------------------------
-org $07B574 ; <- 3B574 - Bank07.asm : 8519 (LDA.b #$01 : STA $02E9)
-JSL.l IncrementChestCounter
-NOP
-;--------------------------------------------------------------------------------
 ;org $05FC7E ; <- 2FC7E - sprite_dash_item.asm : 118 (LDA $7EF36F : INC A : STA $7EF36F)
 ;JSL.l IncrementSmallKeys
 ;--------------------------------------------------------------------------------
@@ -2101,7 +2097,7 @@ JSL.l ItemCheck_TreeKid2
 
 org $06AF9B ; <- 32F9B - FluteBoy_Chillin : 73 : LDA $7EF34C : CMP.b #$02 : BCS .player_has_flute
 ;NOP #8
-LDA !HAS_GROVE_ITEM : AND.b #$01
+LDA HasGroveItem : AND.b #$01
 db #$D0 ; BNE
 
 org $06B062 ; <- 33062 - FluteAardvark_InitialStateFromFluteState : 225 : LDA $7EF34C : AND.b #$03 : !BGE #$05
@@ -2472,7 +2468,7 @@ org $00DF62 ; <- Bank00.asm:4672 (LDX.w #$0000 : LDY.w #$0040)
     JML ReloadingFloors
     NOP : NOP
     ReloadingFloorsResume:
-org $00DF6E ; <- A few instructions later, right after JSR Do3To4High16Bit
+org $00DF6E ; <- A few instructions later, right after JSR Do3To.high16Bit
     ReloadingFloorsCancel:
 ;================================================================================
 

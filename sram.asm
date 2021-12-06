@@ -1,4 +1,3 @@
-org 0
 ;================================================================================
 ; SRAM Labels & Assertions
 ;--------------------------------------------------------------------------------
@@ -9,6 +8,7 @@ org 0
 ; $7F6000 - $7F6FFF in WRAM maps to the next 4k bytes, occupying the 2nd and 3rd vanilla
 ;                   save file locations. ($700500 - $701500)
 ;--------------------------------------------------------------------------------
+org 0 ; This module writes no bytes. Asar gives bank cross errors without this.
 
 ;================================================================================
 ; Room Data ($7EF000 - $7EF27F
@@ -365,7 +365,8 @@ ExtendedFileNameSRAM: skip 24   ; We read and write the file name directly from 
 skip $1AE8                      ;
 RomNameSRAM: skip 21            ; ROM name from $FFC0, burned in during init (21 bytes)
                                 ; If value in the ROM doesn't match SRAM, save is cleared.
-VERSIONSRAM: skip 4             ; ALTTPR ROM version (32 bytes)
+RomVersionSRAM: skip 4          ; ALTTPR ROM version. Low byte is the version, high byte writes
+                                ; $01 for now (32-bits total)
 skip 4071                       ;
 PasswordSRAM: skip 16           ; Password value (16 bytes)
 
@@ -573,7 +574,7 @@ assert InventoryTrackingSRAM  = $70038C, "InventoryTracking labeled at incorrect
 assert BowTrackingSRAM        = $70038E, "BowTracking labeled at incorrect address"
 assert ExtendedFileNameSRAM   = $700500, "ExtendedFilenameSRAM labeled at incorrect address"
 assert RomNameSRAM            = $702000, "RomNameSRAM at incorrect address"
-assert VERSIONSRAM            = $702015, "VERSIONSRAM at incorrect address"
+assert RomVersionSRAM         = $702015, "RomVersionSRAM at incorrect address"
 assert PasswordSRAM           = $703000, "PasswordSRAM at incorrect address"
 
 ;--------------------------------------------------------------------------------

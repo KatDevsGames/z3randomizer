@@ -155,14 +155,14 @@ ProcessEventItems:
 		LDA $02D8
 		CMP.b #$E0 : BNE +
 			REP #$30 ; set 16-bit accumulator & index registers
-			LDA $7EF450 : ASL : TAX
+			LDA RNGItem : ASL : TAX
 			LDA.l EventDataOffsets, X : !ADD #EventDataTable : STA $00
 
 			SEP #$20 ; set 8-bit accumulator
 			LDA.b #$AF : STA $02
 
 			JSL.l LoadDialogAddressIndirect
-			LDA $7EF450 : INC : STA $7EF450
+			LDA RNGItem : INC : STA RNGItem
 
 			SEP #$10 ; set 8-bit index registers
 
@@ -373,7 +373,7 @@ AddReceivedItemExpandedGetItem:
 		JMP .done
 	+ CMP.b #$A0 : !BLT + : CMP.b #$B0 : !BGE + ; Free Small Key
 		AND #$0F : TAX
-		LDA SewerKeys, X : INC : STA SewerKeys, X ; Increment Key Count
+		LDA DungeonKeys, X : INC : STA DungeonKeys, X ; Increment Key Count
 
 		CPX.b #$00 : BNE ++
 			STA HyruleCastleKeys ; copy HC to sewers
@@ -400,8 +400,6 @@ RTL
 ; #$90 - Big Keys
 ; #$A0 - Small Keys
 ;--------------------------------------------------------------------------------
-!HIGHEST_ARMOR_SHIELD_SWORD = "$7EF416" ; ss-- ----
-!RNG_ITEM = "$7EF450"
 !SCRATCH_AREA = "$7F5020"
 !SINGLE_INDEX_TEMP = "$7F5020"
 !SINGLE_INDEX_OFFSET_TEMP = "$7F5021"
@@ -966,7 +964,6 @@ RTL
 	LDA.b #$24 : STA $7EC723
 RTL
 ;--------------------------------------------------------------------------------
-!RNG_ITEM = "$7EF450"
 !SCRATCH_AREA = "$7F5020"
 !SINGLE_INDEX_TEMP = "$7F5020"
 !SINGLE_INDEX_OFFSET_TEMP = "$7F5021"
@@ -1004,7 +1001,7 @@ RTL
 ;--------------------------------------------------------------------------------
 CheckSingleItem:
 	LSR #3 : TAX
-	LDA.l !RNG_ITEM, X : STA !SINGLE_INDEX_BITMASK_TEMP ; load value to temporary
+	LDA.l RNGItem, X : STA !SINGLE_INDEX_BITMASK_TEMP ; load value to temporary
 	PHX
 		LDA !SINGLE_INDEX_TEMP : AND #$07 : TAX ; load 0-7 part into X
 		LDA !SINGLE_INDEX_BITMASK_TEMP
@@ -1022,7 +1019,7 @@ MarkRNGItemSingle:
 	;STA !SINGLE_INDEX_TEMP
 
 	LSR #3 : STA !SINGLE_INDEX_OFFSET_TEMP : TAX
-	LDA.l !RNG_ITEM, X
+	LDA.l RNGItem, X
 	STA.l !SINGLE_INDEX_BITMASK_TEMP
 	LDA.l !SINGLE_INDEX_TEMP : AND #$07 : TAX ; load 0-7 part into X
 	LDA.b #01
@@ -1037,7 +1034,7 @@ MarkRNGItemSingle:
 		LDA.l !SINGLE_INDEX_OFFSET_TEMP : TAX
 	PLA
 	ORA.l !SINGLE_INDEX_BITMASK_TEMP
-	STA.l !RNG_ITEM, X
+	STA.l RNGItem, X
 RTS
 ;--------------------------------------------------------------------------------
 GetRNGItemMulti:
@@ -1114,6 +1111,7 @@ JML.l StatsFinalPrep
 ;--------------------------------------------------------------------------------
 ChestPrep:
 	LDA.b #$01 : STA $02E9
+        JSL.l IncrementChestCounter
 	LDA.l ServerRequestMode : BEQ +
 		JSL.l ChestItemServiceRequest
 		RTL
