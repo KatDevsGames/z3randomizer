@@ -1,8 +1,6 @@
 ;================================================================================
 ; Utility Functions
 ;================================================================================
-!PROGRESSIVE_SHIELD = "$7EF416" ; ss-- ----
-;--------------------------------------------------------------------------------
 ; GetSpriteTile
 ; in:	A - Loot ID
 ; out:	A - Sprite GFX ID
@@ -60,7 +58,7 @@ RTL
 		+
 		LDA.b #$04 : RTL
 	++ CMP.b #$FE : BNE ++ ; Progressive Sword
-		LDA SwordEquipment
+		LDA HighestSword
 		CMP.l ProgressiveSwordLimit : !BLT + ; Progressive Sword Limit
 			LDA.l ProgressiveSwordReplacement
 			JMP GetSpriteID
@@ -74,7 +72,7 @@ RTL
 			LDA.b #$46 : RTL
 		+
 	++ : CMP.b #$FF : BNE ++ ; Progressive Shield
-		LDA !PROGRESSIVE_SHIELD : AND #$C0 : LSR #6
+		LDA HighestShield
 		CMP.l ProgressiveShieldLimit : !BLT + ; Progressive Shield Limit
 			LDA.l ProgressiveShieldReplacement
 			JMP GetSpriteID
@@ -183,7 +181,7 @@ GetSpritePalette:
 RTL
 	.specialHandling
 	CMP.b #$FD : BNE ++ ; Progressive Sword
-		LDA SwordEquipment
+		LDA HighestSword
 		CMP.l ProgressiveSwordLimit : !BLT + ; Progressive Sword Limit
 			LDA.l ProgressiveSwordReplacement
 			JMP GetSpritePalette
@@ -196,7 +194,7 @@ RTL
 		+ ; Everything Else
 			LDA.b #$08 : RTL
 	++ : CMP.b #$FE : BNE ++ ; Progressive Shield
-		LDA !PROGRESSIVE_SHIELD : AND #$C0 : LSR #6
+		LDA HighestShield
 		CMP.l ProgressiveShieldLimit : !BLT + ; Progressive Shield Limit
 			LDA.l ProgressiveShieldReplacement
 			JMP GetSpritePalette
@@ -207,7 +205,8 @@ RTL
 		+ ; Everything Else
 			LDA.b #$08 : RTL
 	++ : CMP.b #$FF : BNE ++ ; Progressive Armor
-		LDA ArmorEquipment : CMP.l ProgressiveArmorLimit : !BLT + ; Progressive Armor Limit
+		LDA HighestMail
+                CMP.l ProgressiveArmorLimit : !BLT + ; Progressive Armor Limit
 			LDA.l ProgressiveArmorReplacement
 			JMP GetSpritePalette
 		+ : CMP.b #$00 : BNE + ; Green Tunic
@@ -307,19 +306,19 @@ IsNarrowSprite:
 			+ : JMP .continue
 		.notBottle
 	CMP.b #$5E : BNE ++ ; Progressive Sword
-		LDA SwordEquipment : CMP.l ProgressiveSwordLimit : !BLT + ; Progressive Sword Limit
+		LDA HighestSword : CMP.l ProgressiveSwordLimit : !BLT + ; Progressive Sword Limit
 			LDA.l ProgressiveSwordReplacement
 			JSL.l IsNarrowSprite
 			JMP .done
 		+ : JMP .continue
 	++ CMP.b #$5F : BNE ++ ; Progressive Shield
-		LDA !PROGRESSIVE_SHIELD : AND #$C0 : BNE + : SEC : JMP .done ; No Shield
-		+ : LSR #6 : CMP.l ProgressiveShieldLimit : !BLT .continue
+		LDA HighestShield : BNE + : JMP .done ; No Shield
+		+ : CMP.l ProgressiveShieldLimit : !BLT .continue
 			LDA.l ProgressiveShieldReplacement
 			JSL.l IsNarrowSprite
 			JMP .done
 	++ CMP.b #$60 : BNE ++ ; Progressive Armor
-		LDA ArmorEquipment : CMP.l ProgressiveArmorLimit : !BLT .continue
+		LDA HighestMail : CMP.l ProgressiveArmorLimit : !BLT .continue
 			LDA.l ProgressiveArmorReplacement
 			JSL.l IsNarrowSprite
 			JMP .done

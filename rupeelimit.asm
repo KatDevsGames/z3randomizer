@@ -5,9 +5,7 @@ Draw4DigitRupees:
 	LDA $1B : AND.w #$00FF : BEQ .outdoors ; skip if outdoors
 	.indoors
 		LDA $A0 : BNE .normal ; skip except for ganon's room
-			;LDA #$246E : STA $7EC712
-			;LDA #$246F : STA $7EC714
-			LDA $7EF423 : AND #$00FF
+			LDA TotalItemCounter
 			BRA .print
 	.outdoors
     .normal
