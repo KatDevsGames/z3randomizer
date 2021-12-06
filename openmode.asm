@@ -15,7 +15,7 @@ InitOpenMode:
 		LDA.b #$02 : STA ProgressIndicator ; Go to post-escape phase (pre aga1)
 		LDA ProgressFlags : ORA #$14 : STA ProgressFlags ; remove uncle
 		LDA StartingEntrance : CMP #$05 : BEQ ++ : LDA.b #$01 : ++ : STA StartingEntrance ; set spawn points to house+sanc unless already house+sanc+mountain
-		LDA $7EF29B : ORA.b #$20 : STA $7EF29B ; open castle gate
+		LDA OverworldEventData+$1B : ORA.b #$20 : STA OverworldEventData+$1B ; open castle gate
 		JSL MaybeSetPostAgaWorldState
 	+
 RTL
@@ -23,7 +23,7 @@ RTL
 MaybeSetPostAgaWorldState:
 	LDA.l InstantPostAgaWorldState : BEQ + ; Skip if not enabled
 		LDA.b #$03 : STA ProgressIndicator ; Go to post-aga phase
-		LDA $7EF282 : ORA.b #$20 : STA $7EF282 ; make lumberjack tree accessible
+		LDA OverworldEventData+$02 : ORA.b #$20 : STA OverworldEventData+$02 ; make lumberjack tree accessible
 	+
 RTL
 ;--------------------------------------------------------------------------------

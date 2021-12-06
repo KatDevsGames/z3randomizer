@@ -130,7 +130,7 @@ HeartUpgradeSpawnDecision: ; this should return #$00 to make the hp spawn
 RTL
 	
 	.normal_behavior
-	LDA $7EF280, X
+	LDA OverworldEventData, X
 RTL
 ;--------------------------------------------------------------------------------
 SaveHeartCollectedStatus:
@@ -140,7 +140,7 @@ SaveHeartCollectedStatus:
 RTL
 	
 	.normal_behavior
-	LDA $7EF280, X : ORA.b #$40 : STA $7EF280, X
+	LDA OverworldEventData, X : ORA.b #$40 : STA OverworldEventData, X
 RTL
 ;--------------------------------------------------------------------------------
 !REDRAW = "$7F5000"
@@ -195,7 +195,7 @@ MaybeMarkDigSpotCollected:
 		REP #$20 ; set 16-bit accumulator
 		LDA $8A
 		CMP.w #$2A : BNE +
-			LDA !HAS_GROVE_ITEM : ORA.w #$0001 : STA !HAS_GROVE_ITEM
+			LDA HasGroveItem : ORA.w #$0001 : STA HasGroveItem
 		+
 	PLP : PLA
 RTL

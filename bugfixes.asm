@@ -63,7 +63,7 @@ RTL
 ;--------------------------------------------------------------------------------
 ;ReadInventoryPond:
 ;	CPX.b #$1B : BNE + : LDA.b #$01 : RTL : +
-;	LDA SRAMEquipment, X
+;	LDA WRAMEquipment, X
 ;RTL
 ;--------------------------------------------------------------------------------
 
@@ -83,10 +83,10 @@ RTS
 FixAga2Bunny:
     LDA.l FixFakeWorld :  BEQ + ; Only use this fix is fakeworld fix is in use
         LDA.l InvertedMode : BEQ +++
-            LDA.b #$00 : STA !DARK_WORLD ; Switch to light world
+            LDA.b #$00 : STA CurrentWorld ; Switch to light world
             BRA ++
         +++
-        LDA.b #$40 : STA !DARK_WORLD ; Switch to dark world
+        LDA.b #$40 : STA CurrentWorld ; Switch to dark world
     ++
 	JSL DecideIfBunny : BNE +
 		JSR MakeBunny

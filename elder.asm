@@ -52,7 +52,7 @@ RTL
         LDY.b #$01
         
         JSL Sprite_ShowSolicitedMessageIfPlayerFacing_PreserveMessage : BCC .dont_show
-            LDA !GOAL_COUNTER 
+            LDA GoalCounter
             CMP GoalItemRequirement : !BLT +
                 JSL.l ActivateGoal
             +

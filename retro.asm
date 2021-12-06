@@ -5,7 +5,7 @@ IsItemAvailable:
 		CPX.b #$04 : BNE .finite
 		LDA.b #$01 : RTL
 	.finite
-		LDA $7EF33F, X
+                LDA WRAMEquipment-1, X
 RTL
 LoadBombCount:
 	LDA !INFINITE_BOMBS : BNE .infinite

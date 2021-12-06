@@ -16,20 +16,20 @@ GetAgahnimDeath:
 	CMP.b #13 : BNE + ; Agahnim 2 room
 		LDA.l Bugfix_SetWorldOnAgahnimDeath : BEQ ++
 			LDA.l InvertedMode : BEQ +++
-				LDA.b #$00 : STA !DARK_WORLD ; Switch to light world
+				LDA.b #$00 : STA CurrentWorld ; Switch to light world
 				BRA ++
 			+++
-			LDA.b #$40 : STA !DARK_WORLD ; Switch to dark world
+			LDA.b #$40 : STA CurrentWorld ; Switch to dark world
 		++
 		LDA.b #$01 ; Use Agahnim 2
 		RTL
 	+ ; Elsewhere
 		LDA.l Bugfix_SetWorldOnAgahnimDeath : BEQ ++
 			LDA.l InvertedMode : BEQ +++
-				LDA.b #$40 : STA !DARK_WORLD ; Switch to dark world
+				LDA.b #$40 : STA CurrentWorld ; Switch to dark world
 				BRA ++
 			+++
-			LDA.b #$00 : STA !DARK_WORLD ; Switch to light world
+			LDA.b #$00 : STA CurrentWorld ; Switch to light world
 			; (This will later get flipped to DW when Agahnim 1
 			; warps us to the pyramid)
 		++
