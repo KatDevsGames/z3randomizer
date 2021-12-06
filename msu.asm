@@ -250,7 +250,7 @@ CheckMusicLoadRequest:
             BRA .check_fallback-3
 .lightworld
             PHA
-                LDA $7EF300 : AND.b #$40 : BEQ +
+                LDA OverworldEventData+$80 : AND.b #$40 : BEQ +
                     PLA
                     LDA.b #60 : BRA .check_fallback-3
                 +
@@ -344,7 +344,7 @@ CheckMusicLoadRequest:
             +
 
             CMP.b #$70 : BNE +    ; Misery Mire
-                LDA $7EF2F0 : AND.b #$20 : BEQ .rain
+                LDA OverworldEventData+$70 : AND.b #$20 : BEQ .rain
             +
 
             LDA ProgressIndicator : CMP.b #$02 : BCS +
@@ -517,16 +517,16 @@ PHA : XBA : PHA
         ; dont save if we already saved recently
         REP #$20
         LDA !MSU_RESUME_TRACK : AND #$00FF : BEQ ++
-            LDA !NMI_COUNTER : !SUB !MSU_RESUME_TIME : PHA
-            LDA !NMI_COUNTER+2 : SBC !MSU_RESUME_TIME+2 : BNE +++
+            LDA NMIFrames : !SUB !MSU_RESUME_TIME : PHA
+            LDA NMIFrames+2 : SBC !MSU_RESUME_TIME+2 : BNE +++
                 PLA : CMP MSUResumeTimer : !BLT .too_early
                 BRA ++
             +++
             PLA
         ++
         ; saving
-        LDA !NMI_COUNTER : STA !MSU_RESUME_TIME
-        LDA !NMI_COUNTER+2 : STA !MSU_RESUME_TIME+2
+        LDA NMIFrames : STA !MSU_RESUME_TIME
+        LDA NMIFrames+2 : STA !MSU_RESUME_TIME+2
         SEP #$20
 
         LDA !MSU_LOADED_TRACK : STA !MSU_RESUME_TRACK
@@ -683,8 +683,8 @@ MSUMain:
     PLX
     TXA : CMP !MSU_RESUME_TRACK : BNE + ; dont resume if too late
         REP #$20
-            LDA !NMI_COUNTER : !SUB !MSU_RESUME_TIME : PHA
-            LDA !NMI_COUNTER+2 : SBC !MSU_RESUME_TIME+2 : BNE ++
+            LDA NMIFrames : !SUB !MSU_RESUME_TIME : PHA
+            LDA NMIFrames+2 : SBC !MSU_RESUME_TIME+2 : BNE ++
                 PLA : CMP MSUResumeTimer : !BGE +++
                 SEP #$20
                 LDA !FLAG_RESUME_FADEIN : BRA .done_resume

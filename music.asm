@@ -33,7 +33,7 @@ PreOverworld_LoadProperties_ChooseMusic:
     LDX.b #$05 ; Lost woods theme
 
     ; check if we've pulled from the master sword pedestal
-    LDA $7EF300 : AND.b #$40 : BEQ +
+    LDA OverworldEventData+$80 : AND.b #$40 : BEQ +
         LDX.b #$02 ; Default light world theme
     +
 
@@ -129,7 +129,7 @@ Overworld_FinishMirrorWarp:
 
     ; Check if we're entering the lost woods
     CMP.b #$00 : BNE +
-        LDA $7EF300 : AND.b #$40 : BNE .endOfLightWorldChecks
+        LDA OverworldEventData+$80 : AND.b #$40 : BNE .endOfLightWorldChecks
         LDX.b #$05 ; lost woods theme
         BRA .endOfLightWorldChecks
     +
@@ -196,7 +196,7 @@ BirdTravel_LoadTargetAreaMusic:
     ;LDX.b #$05 ; Lost woods theme
 
     ; check if we've pulled from the master sword pedestal
-    ;LDA $7EF300 : AND.b #$40 : BEQ +
+    ;LDA OverworldEventData+$80 : AND.b #$40 : BEQ +
     ;    LDX.b #$02 ; Default light world theme
     ;+
 
@@ -222,7 +222,7 @@ BirdTravel_LoadTargetAreaMusic:
     LDA $8A
     ; Misery Mire rain SFX
     CMP.b #$70 : BNE ++
-        LDA $7EF2F0 : AND.b #$20 : BNE ++
+        LDA OverworldEventData+$70 : AND.b #$20 : BNE ++
             LDA.b #$01 : CMP $0131 : BEQ +
                 STA $012D
             + : BRA .checkInverted

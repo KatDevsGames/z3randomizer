@@ -2,7 +2,7 @@
 ; Pendant / Crystal HUD Fix
 ;--------------------------------------------------------------------------------
 ;CheckPendantHUD:
-;	LDA !HUD_FLAG : CMP.b #$40 ; check for hud flag instead
+;	LDA HudFlag : CMP.b #$40 ; check for hud flag instead
 ;RTL
 ;================================================================================
 FlipLWDWFlag:
@@ -52,17 +52,16 @@ GetCrystalNumber:
 	PLX
 RTL
 ;================================================================================
-!MAP_OVERLAY = "$7EF414" ; [2]
 OverworldMap_CheckObject:
 	PHX
 		;CPX.b #$01 : BNE + : JMP ++ : + : JMP .fail
 		LDA CurrentWorld : AND.b #$40 : BNE +
 			;LW Map
 			LDA.l MapMode : BEQ +++
-			LDA MapField : ORA !MAP_OVERLAY : AND.b #$01 : BNE +++
+			LDA MapField : ORA MapOverlay : AND.b #$01 : BNE +++
 				PHX
 					LDA.l .lw_map_offsets, X : TAX ; put map offset into X
-					LDA MapField, X : ORA !MAP_OVERLAY, X
+					LDA MapField, X : ORA MapOverlay, X
 				PLX
 				AND.l .lw_map_masks, X : BNE +++
 				JMP .fail
@@ -73,10 +72,10 @@ OverworldMap_CheckObject:
 		+
 			;DW Map
 			LDA.l MapMode : BEQ +++			
-			LDA MapField : ORA !MAP_OVERLAY : AND.b #$02 : BNE +++
+			LDA MapField : ORA MapOverlay : AND.b #$02 : BNE +++
 				PHX
 					LDA.l .dw_map_offsets, X : TAX ; put map offset into X
-					LDA.l MapField, X : ORA !MAP_OVERLAY, X
+					LDA.l MapField, X : ORA MapOverlay, X
 				PLX
 				AND.l .dw_map_masks, X : BNE +++
 				JMP .fail
@@ -192,7 +191,7 @@ RTL
 ShowDungeonItems:
 	LDA $040C : AND.w #$00FF : CMP.w #$00FF : BNE + : RTL : + ; return normal result if outdoors or in a cave
 	;LDA $F0 : AND.w #$0020 ; check for select
-	LDA !HUD_FLAG : AND.w #$0020 ; check hud flag
+	LDA HudFlag : AND.w #$0020 ; check hud flag
 	BEQ + : LDA.w #$0000 : RTL : + ; if set, send the zero onwards
 	LDA $040C : AND.w #$00FF : CMP.w #$00FF ; original logic
 RTL
@@ -205,7 +204,7 @@ UpdateKeys:
 		LSR : TAX ; get dungeon index and store to X
 	
 		LDA CurrentSmallKeys ; load current key count
-		STA SewerKeys, X ; save to main counts
+		STA DungeonKeys, X ; save to main counts
 		
 		CPX.b #$00 : BNE +
 			STA HyruleCastleKeys ; copy HC to sewers
@@ -365,7 +364,7 @@ DrawHUDDungeonItems:
 	DEX : DEX : BPL --
 
 
-	LDA.l !HUD_FLAG : AND.w #$0020 : BEQ + 
+	LDA.l HudFlag : AND.w #$0020 : BEQ +
 
 	JMP .maps_and_compasses
 
@@ -438,7 +437,7 @@ DrawHUDDungeonItems:
 
 .next_boss_kill
 		LDX.w .boss_room_ids,Y
-		LDA.l $7EF000,X
+		LDA.l RoomData.l,X
 		AND.w #$0800
 		BEQ ..skip_boss_kill
 

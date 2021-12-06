@@ -208,13 +208,13 @@ CheckMedallionSword:
 		.outdoors
 			LDA $8A : CMP.b #$70 : BNE +
 				LDA.l MireRequiredMedallion : TAX : LDA.l .medallion_type, X : CMP $0303 : BNE .done
-				LDA $7EF2F0 : AND.b #$20 : BNE .done
+				LDA OverworldEventData+$70 : AND.b #$20 : BNE .done
 				LDA.b #$08 : PHA : PLB ; set data bank to $08
 				LDY.b #$02 : JSL.l Ancilla_CheckIfEntranceTriggered : BCS .permit ; misery mire
 				BRA .done
 			+ : CMP.b #$47 : BNE +
 				LDA.l TRockRequiredMedallion : TAX : LDA.l .medallion_type, X : CMP $0303 : BNE .done
-				LDA $7EF2C7 : AND.b #$20 : BNE .done
+				LDA OverworldEventData+$47 : AND.b #$20 : BNE .done
 				LDA.b #$08 : PHA : PLB ; set data bank to $08
 				LDY.b #$03 : JSL.l Ancilla_CheckIfEntranceTriggered : BCS .permit ; turtle rock
 			+

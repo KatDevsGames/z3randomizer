@@ -58,17 +58,16 @@ SEP #$30
 	
 ;================================================================================
 ; Draw Goal Item Indicator
-!GOAL_COUNTER = "$7EF418"
 !GOAL_DRAW_ADDRESS = "$7EC72A"
 ;================================================================================
 
 	SEP #$20
 	LDA.l GoalItemRequirement : BNE + : JMP .done : + ; Star Meter
-	
-	LDA.l !GOAL_COUNTER
-	JSR HudHexToDec3Digit
-	REP #$20
-	
+
+        LDA.l GoalCounter
+        JSR HudHexToDec3Digit
+        REP #$20
+
 	LDA.l GoalItemIcon : STA !GOAL_DRAW_ADDRESS ; draw star icon
 	
 	LDX.b $05 : TXA : ORA.w #$2400 : STA !GOAL_DRAW_ADDRESS+2 ; draw 100's digit

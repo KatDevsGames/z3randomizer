@@ -2,7 +2,7 @@
 ; OnLoadOW
 ;--------------------------------------------------------------------------------
 ;OnLoadMap:
-;	LDA $7EF2DB ; thing we wrote over
+;	LDA OverworldEventData+$5B ; thing we wrote over
 ;RTL
 ;--------------------------------------------------------------------------------
 OnPrepFileSelect:
@@ -84,8 +84,8 @@ OnAga2Defeated:
 ;--------------------------------------------------------------------------------
 OnFileCreation:
 	TAX ; what we wrote over
-	LDA StartingEquipment+$4C : STA $700340+$4C ; copy starting equipment swaps to file select screen
-	LDA StartingEquipment+$4E : STA $700340+$4E
+	LDA StartingEquipment+$4C : STA SRAMEquipment+$4C ; copy starting equipment swaps to file select screen
+	LDA StartingEquipment+$4E : STA SRAMEquipment+$4E
 RTL
 ;--------------------------------------------------------------------------------
 !RNG_ITEM_LOCK_IN = "$7F5090"
@@ -126,32 +126,32 @@ OnNewFile:
 	PHX : PHP
 		REP #$20 ; set 16-bit accumulator
 		LDA.l LinkStartingRupees : STA CurrentRupees : STA TargetRupees
-		LDA.l StartingTime : STA $7EF454
-		LDA.l StartingTime+2 : STA $7EF454+2
+		LDA.l StartingTime : STA ChallengeTimer
+		LDA.l StartingTime+2 : STA ChallengeTimer+2
 
 		LDX.w #$004E : - ; copy over starting equipment
-			LDA StartingEquipment, X : STA SRAMEquipment, X
+			LDA StartingEquipment, X : STA WRAMEquipment, X
 			DEX : DEX
 		BPL -
 
-		LDX #$000E : -
-        	LDA SewerKeys, X : STA $7EF4E0, X
+		LDX #$0008 : - ; copy starting keys to chest key counters in sram
+                LDA DungeonKeys, X : STA DungeonChestKeys, X
 			DEX : DEX
 		BPL -
 
 		SEP #$20 ; set 8-bit accumulator
 		;LDA #$FF : STA !RNG_ITEM_LOCK_IN ; reset rng item lock-in
 		LDA.l PreopenCurtains : BEQ +
-			LDA.b #$80 : STA $7EF061 ; open aga tower curtain
-			LDA.b #$80 : STA $7EF093 ; open skull woods curtain
+			LDA.b #$80 : STA RoomData[$30].high ; open aga tower curtain
+			LDA.b #$80 : STA RoomData[$49].high ; open skull woods curtain
 		+
 
 		LDA.l PreopenPyramid : BEQ +
-			LDA.b #$20 : STA $7EF2DB ; pyramid hole already open
+			LDA.b #$20 : STA OverworldEventData+$5B ; pyramid hole already open
 		+
 
 		LDA.l PreopenGanonsTower : BEQ +
-			LDA.b #$20 : STA $7EF2C3 ; Ganons Tower already open
+			LDA.b #$20 : STA OverworldEventData+$43 ; Ganons Tower already open
 		+
 
 		LDA StartingSword : STA SwordEquipment ; set starting sword type
@@ -235,8 +235,8 @@ PreItemGet:
 RTL
 ;--------------------------------------------------------------------------------
 PostItemGet:
-	JML.l MaybeWriteSRAMTrace
 
+RTL
 ;--------------------------------------------------------------------------------
 PostItemAnimation:
 	LDA.b #$00 : STA !ITEM_BUSY ; mark item as finished

@@ -55,92 +55,66 @@ CompassCountDungeonHandlers: ; pointers to functions that handle dungeon-specifi
 
 CompassCount_Escape:
 	%DrawConstantNumber(0,8)
-	LDA $7EF434 : LSR #4
+	LDA SewersLocations
 	JMP DrawDungeonCompassCounts_return_spot
 	
 CompassCount_Eastern:
 	%DrawConstantNumber(0,6)
-	LDA $7EF436 : AND.b #$07
+	LDA EPLocations
 	JMP DrawDungeonCompassCounts_return_spot
 	
 CompassCount_Desert: 
 	%DrawConstantNumber(0,6)
-	LDA $7EF435 : LSR #5
+	LDA DPLocations
 	JMP DrawDungeonCompassCounts_return_spot
 
 CompassCount_Agah:
 	%DrawConstantNumber(0,2)
-	LDA $7EF435 : AND.b #$03
+	LDA CTLocations
 	JMP DrawDungeonCompassCounts_return_spot
 
 CompassCount_Swamp:
 	%DrawConstantNumber(1,0)
-	LDA $7EF439 : AND.b #$0F
+	LDA SPLocations
 	JMP DrawDungeonCompassCounts_return_spot
 
 CompassCount_PoD:
 	%DrawConstantNumber(1,4)
-	LDA $7EF434 : AND.b #$0F
+	LDA PDLocations
 	JMP DrawDungeonCompassCounts_return_spot
 
 CompassCount_Mire:
 	%DrawConstantNumber(0,8)
-	LDA $7EF438 : AND.b #$0F
+	LDA MMLocations
 	JMP DrawDungeonCompassCounts_return_spot
 	
 CompassCount_Skull:
 	%DrawConstantNumber(0,8)
-	LDA $7EF437 : LSR #4 
+	LDA SWLocations
 	JMP DrawDungeonCompassCounts_return_spot
 	
 CompassCount_Ice:
 	%DrawConstantNumber(0,8)
-	LDA $7EF438 : LSR #4 
+	LDA IPLocations
 	JMP DrawDungeonCompassCounts_return_spot
 
 CompassCount_Hera:
 	%DrawConstantNumber(0,6)
-	LDA $7EF435 : AND.b #$1C : LSR #2
+	LDA THLocations
 	JMP DrawDungeonCompassCounts_return_spot
 	
 CompassCount_Thieves:
 	%DrawConstantNumber(0,8)
-	LDA $7EF437 : AND.b #$0F
+	LDA TTLocations
 	JMP DrawDungeonCompassCounts_return_spot
 	
 CompassCount_Trock:
 	%DrawConstantNumber(1,2)
-	LDA $7EF439 : LSR #4
+	LDA TRLocations
 	JMP DrawDungeonCompassCounts_return_spot
 	
 CompassCount_Gt:
 	%DrawConstantNumber(2,7)
-	LDA $7EF436 : LSR #3
+	LDA GTLocations
 	JMP DrawDungeonCompassCounts_return_spot
 
-;--------------------------------------------------------------------------------
-; $7EF434 - hhhhdddd - item locations checked
-; h - hyrule castle/sewers
-; d - palace of darkness
-;--------------------------------------------------------------------------------
-; $7EF435 - dddhhhaa - item locations checked
-; d - desert palace
-; h - tower of hera
-; a - agahnim's tower
-;--------------------------------------------------------------------------------
-; $7EF436 - gggggeee - item locations checked
-; g - ganon's tower
-; e - eastern palace
-;--------------------------------------------------------------------------------
-; $7EF437 - sssstttt - item locations checked
-; s - skull woods
-; t - thieves town
-;--------------------------------------------------------------------------------
-; $7EF438 - iiiimmmm - item locations checked
-; i - ice palace
-; m - misery mire
-;--------------------------------------------------------------------------------
-; $7EF439 - ttttssss - item locations checked
-; t - turtle rock
-; s - swamp palace
-;--------------------------------------------------------------------------------
