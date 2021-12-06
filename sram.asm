@@ -1,3 +1,4 @@
+org 0
 ;================================================================================
 ; SRAM Labels & Assertions
 ;--------------------------------------------------------------------------------
@@ -19,11 +20,11 @@
 ; 4 (northwest), 3 (northeast), 2 (southwest), and 1 (southeast), which is the same
 ; as they are laid out on the screen from left to right, top to bottom.
 ;
-; Example: We can use RoomData[$37].Low to read or write the pot key in the first
+; Example: We can use RoomData[$37].high to read or write the pot key in the first
 ; floodable room in Swamp Palace ($04)
 ;--------------------------------------------------------------------------------
-; Low Byte:  d d d d b k u r
-; High Byte: c c c c q q q q
+; .high Byte:  d d d d b k u r
+; .low Byte:   c c c c q q q q
 ;
 ; d = Door opened (key, bomb wall, etc)
 ; b = Boss kill / Heart Piece
@@ -37,8 +38,9 @@
 ; q = Quadrant visits
 ;--------------------------------------------------------------------------------
 struct RoomData $7EF000
-    .Low: skip 1
-    .High: skip 1
+    .l
+    .low: skip 1
+    .high: skip 1
 endstruct align 2
 
 ;================================================================================
@@ -48,7 +50,7 @@ endstruct align 2
 ; in WRAM (16-bits.) 
 ;
 ; This label can be indexed with a plus symbol (e.g. The Hyrule Castle screen would
-; be OverworldData+$1B or OverworldData+27)
+; be OverworldEventData+$1B or OverworldEventData+27)
 ;--------------------------------------------------------------------------------
 ; - i o - - - b -
 ;
@@ -56,7 +58,7 @@ endstruct align 2
 ; o = Overlay active
 ; b = Secondary overlay active
 ;--------------------------------------------------------------------------------
-OverworldData = $7EF280
+OverworldEventData = $7EF280
 
 ;================================================================================
 ; Items & Equipment ($7EF340 - $7EF38B)
@@ -68,7 +70,7 @@ OverworldData = $7EF280
 ; $00 = None
 ;--------------------------------------------------------------------------------
 base $7EF340
-SRAMEquipment:                  ;
+WRAMEquipment:                  ;
 BowEquipment: skip 1            ; $01 = Bow              | $02 = Bow & Arrows
                                 ; $03 = Silver Arrow Bow | $04 = Bow & Silver Arrows
 BoomerangEquipment: skip 1      ; $01 = Blue | $02 = Red
@@ -107,14 +109,14 @@ TargetRupees: skip 2            ; \ CurrentRupees will always increment or decre
 CurrentRupees: skip 2           ; / TargetRupees if not equal (16-bit integer)
 ;--------------------------------------------------------------------------------
 CompassField: skip 2            ; Dungeon item bitfields
-BigKeyField: skip 2             ;    Low byte:  - - g r t h i s
-MapField: skip 2                ;    g = Ganon's Tower | r = Turtle Rock | t = Thieves' Town
-                                ;    h = Tower of Hera | i = Ice Palace  | s = Skull Woods
+BigKeyField: skip 2             ; High byte:  - - g r t h i s
+MapField: skip 2                ; g = Ganon's Tower | r = Turtle Rock | t = Thieves' Town
+                                ; h = Tower of Hera | i = Ice Palace  | s = Skull Woods
                                 ;------------------------------------------------
-                                ;    High Byte: m d s a t e h p
-                                ;    m = Misery Mire   | d = Palace of Darkness | s = Swamp Palace
-                                ;    a = Aga Tower     | t = Desert Palace      | e = Eastern Palace
-                                ;    h = Hyrule Castle | s = Sewer Passage
+                                ; Low Byte: m d s a t e h p
+                                ; m = Misery Mire   | d = Palace of Darkness | s = Swamp Palace
+                                ; a = Aga Tower     | t = Desert Palace      | e = Eastern Palace
+                                ; h = Hyrule Castle | s = Sewer Passage
 ;--------------------------------------------------------------------------------
                                 ; HUD & other equipment
 skip 1                          ; Wishing Pond Rupee (Unused)
@@ -140,9 +142,9 @@ CrystalsField: skip 1           ; - 3 4 2 7 5 1 6 (bitfield)
 MagicConsumption: skip 1        ; $00 = Normal | $01 = Half Magic | $02 = Quarter Magic
 ;--------------------------------------------------------------------------------
                                 ; Small keys earned per dungeon (integers)
-SewerKeys: skip 1               ; \  Hyrule Castle and Sewer keys typically increment
-DungeonKeys:                    ;  | and decrement together
-HyruleCastleKeys: skip 1        ; / 
+DungeonKeys:                    ;
+SewerKeys: skip 1               ;
+HyruleCastleKeys: skip 1        ;
 EasternKeys: skip 1             ; Eastern Palace small keys
 DesertKeys: skip 1              ; Desert Palace small keys
 CastleTowerKeys: skip 1         ; Agahnim's Tower small keys
@@ -161,18 +163,20 @@ CurrentGenericKeys: skip 1      ; Generic small keys
 ;================================================================================
 ; Tracking & Indicators ($7EF38C - $7EF3F0)
 ;--------------------------------------------------------------------------------
-InventoryTracking: skip 2       ; b r m p n s k f  - - - - - - - q (bitfield)
-                                ; b = Blue Boomerang | r = Red Boomerang  | m = Mushroom Current
-                                ; p = Magic Powder   | n = Mushroom Past  | s = Shovel
-                                ; k = Inactive Flute | f = Active Flute   | q = Quickswap locked
+InventoryTracking: skip 2       ; b r m p n s k f  - - - - - - o q (bitfield)
+                                ; b = Blue Boomerang   | r = Red Boomerang  | m = Mushroom Current
+                                ; p = Magic Powder     | n = Mushroom Past  | s = Shovel
+                                ; k = Inactive Flute   | f = Active Flute   | o = Any bomb acquired
+                                ; q = Quickswap locked
 BowTracking: skip 2             ; b s p - - - - - (bitfield)
                                 ; b = Bow | s = Silver Arrows Upgrade | p = Second Progressive Bow
                                 ; The front end writes two distinct progressive bow items. p
                                 ; indicates whether the "second" has been found independent of
                                 ; the first
-ItemLimitCounts: skip 10        ; Keeps track of limited non-progressive items such as lamp.
+ItemLimitCounts: skip 24        ; Keeps track of limited non-progressive items such as lamp.
                                 ; See: ItemSubstitutionRules in tables.asm
-skip 43                         ;
+                                ; Right now this is only used for three items but extra space is
+skip 29                         ; reserved
 ProgressIndicator: skip 1       ; $00 = Pre-Uncle | $01 = Post-Uncle item | $02 = Zelda Rescued
                                 ; $03 = Agahnim 1 defeated
                                 ; $04 and above don't do anything. $00-$02 used in standard mode
@@ -197,7 +201,7 @@ FollowerIndicator: skip 1       ; $00 = No Follower  | $01 = Zelda    | $04 = Ol
 FollowerXCoord: skip 2          ; \ Cached X and Y overworld coordinates of dropped follower
 FollowerYCoord: skip 2          ; / (16-bit integers)
 DroppedFollowerIndoors: skip 1  ; $00 = Dropped follower outdoors | $01 = Dropped follower indoors
-DroppedFollowerLayer: skip 1    ; $00 = Upper layer | $01 = Lower layer
+DroppedFollowerLayer: skip 1    ; $00 = Upper layer | $01 =.lower layer
 FollowerDropped: skip 1         ; Set to $80 when a follower exists and has been dropped somewhere
                                 ; $00 otherwise
 skip 5                          ; Unused
@@ -212,10 +216,11 @@ GameCounter: skip 2             ; Number of deaths and save + quits (16-bit inte
 PostGameCounter: skip 2         ; Initialized to $FFFF, replaced with GameCounter on goal completion
                                 ; Number is displayed on file select when not $FFFF. Max 999 (16-bit integer)
 skip 13                         ;
-NpcFlagsOne: skip 1             ; l - c s t k z o (bitfield)
+NpcFlags: skip 2                ; l - c s t k z o (bitfield)
                                 ; l = Library  | c = Catfish   | s = Sahasrahla | t = Stumpy
                                 ; k = Sick Kid | z = King Zora | o = Old Man
-NpcFlagsTwo: skip 1             ; b - p m f s b e (bitfield)
+                                ;
+                                ; b - p m f s b e (bitfield)
                                 ; b = Magic Bat      | p = Potion Shop (Powder) | m = Lost Woods (Mushroom)
                                 ; f = Fairy (unused) | s = Smith                | b = Bombos Tablet
                                 ; e = Ether Tablet
@@ -229,9 +234,11 @@ MapOverlay: skip 2              ; Used to reveal dungeon prizes on the map in mo
                                 ;  | m = Misery Mire   | d = Palace of Darkness | s = Swamp Palace
                                 ;  | a = Aga Tower     | t = Desert Palace      | e = Eastern Palace
                                 ; /  h = Hyrule Castle | s = Sewer Passage
-GeneralFlags: skip 1            ; - - h - p i - g (bitfield)
-                                ; h = HUD Flag       | p = Force pyramid
-                                ; i = Ignore faeries | g = Has diggable grove item
+HudFlag:                        ;
+IgnoreFaeries:                  ;
+HasGroveItem:                   ;
+GeneralFlags: skip 1            ; - - h - - i - g (bitfield)
+                                ; h = HUD Flag       | i = ignore faeries | g = has diggable grove item
 HighestSword: skip 1            ; Highest sword level (integer)
 GoalCounter: skip 2             ; Goal items collected (16-bit integer)
 ProgrammableItemOne: skip 2     ; \  Reserved for programmable items
@@ -242,10 +249,9 @@ YAItemCounter: skip 1           ; y y y y y a a a (packed integers)
                                 ; Number of Y and A items collected represented as packed integers
 HighestShield: skip 1           ; Highest Shield level
 TotalItemCounter: skip 2        ; Total items collected (integer)
-TemperedGoldBosses: skip 1      ; t t t t g g g g (packed integers)
+SwordBossKills: skip 2          ; t t t t g g g g  f f f f m m m m (packed integers)
                                 ; t = Tempered Sword boss kills | g = Gold Sword boss kills
-FighterMasterBosses: skip 1     ; f f f f m m m m (packed integers)
-                                ; f = Fighter Sword boss kills | m = Master Sword boss kills
+                                ; f = Fighter Sword boss kills  | m = Master Sword boss kills
 BigKeysBigChests: skip 1        ; k k k k c c c c (packed integers)
                                 ; k = Big Keys collected | c = Big Chests opened
 MapsCompasses: skip 1           ; m m m m c c c c (packed integers)
@@ -255,7 +261,7 @@ PreGTBKLocations: skip 1        ; Locations checked in GT before finding the big
                                 ; b = Big Bomb Acquired                     | s = Silver Arrows Acquired
                                 ; c = GT locations collected before big key
 RupeesSpent: skip 2             ; Rupees spent (16-bit integer)
-SaveQuits: skip 1               ; Number of times player has saved and quit (integer)
+SaveQuitCounter: skip 1         ; Number of times player has saved and quit (integer)
 LoopFrames: skip 4              ; Frame counter incremented during frame hook (32-bit integer)
 PreBootsLocations: skip 2       ; Number of locations checked before getting boots (integer)
 PreMirrorLocations: skip 2      ; Number of locations checked before getting mirror (integer)
@@ -267,14 +273,14 @@ ScreenTransitions: skip 2       ; Number of screen transitions (16-bit integer)
 NMIFrames: skip 4               ; Frame counter incremented during NMI hook (32-bit integer)
 ChestsOpened: skip 1            ; Number of chests opened. Doesn't count NPC, free standing items etc (integer)
 StatsLocked: skip 1             ; Set to $01 when goal is completed; game stops counting stats.
-MenuTime: skip 4                ; Total menu time in frames (32-bit integer)
+MenuFrames: skip 4              ; Total menu time in frames (32-bit integer)
 HeartContainerCounter: skip 1   ; Total number of heart containers collected (integer)
 DeathCounter: skip 1            ; Number of deaths (integer)
 skip 1                          ; Reserved
 FluteCounter: skip 1            ; Number of times fluted (integer)
 skip 4                          ;
 RNGItem: skip 2                 ; RNG Item
-SwordlessBosses: skip 1         ; Number of bosses killed without a sword (integer)
+SwordlessBossKills: skip 1      ; Number of bosses killed without a sword (integer)
 FaerieRevivalCounter: skip 1    ; Number of faerie revivals (integer)
 ChallengeTimer: skip 4          ; Timer used for OHKO etc
 SwordTime: skip 4               ; Time first sword found in frames (32-bit integer) 
@@ -288,13 +294,15 @@ MagicCounter: skip 2            ; Magic used by player (16-bit integer)
 HighestMail: skip 1             ; Highest mail level
 SmallKeyCounter: skip 1         ; Total Number of small keys collected (integer)     
 HeartPieceCounter: skip 1       ; Total Number of heartpieces collected (integer)     
-CrystalCounter: skip 1         ; Total Number of crystals collected (integer)     
+CrystalCounter: skip 1          ; Total Number of crystals collected (integer)     
 skip 46                         ; Unused
-ServiceSequence: skip 1         ; Service sequence value. See servicerequest.asL
-skip 49                         ; Unused 
+ServiceRequestReceive:          ;
+ServiceRequestTransmit:         ;
+ServiceRequest: skip 8          ; Service request block. See servicerequest.asm
+skip 42                         ; Unused 
                                 ; \  Dungeon locations checked counters (integers)
+SewersLocations: skip 1         ;  | Sewer Passage
 HCLocations: skip 1             ;  | Hyrule Castle
-SewerLocations: skip 1          ;  | Sewer Passage
 EPLocations: skip 1             ;  | Eastern Palace
 DPLocations: skip 1             ;  | Desert Palace
 CTLocations: skip 1             ;  | Agahnim's Tower
@@ -307,9 +315,9 @@ THLocations: skip 1             ;  | Tower of Hera
 TTLocations: skip 1             ;  | Thieves' Town
 TRLocations: skip 1             ;  | Turtle Rock
 GTLocations: skip 1             ; /  Ganon's Tower
-                                ; \  Chest Key Counters. Only counts keys placed in chests. (integers)
-HCChestKeys: skip 1             ;  | Hyrule Castle
+DungeonChestKeys:               ; \  Chest Key Counters. Only counts keys placed in chests. (integers)
 SewerChestKeys: skip 1          ;  | Sewer Passage
+HCChestKeys: skip 1             ;  | Hyrule Castle
 EPChestKeys: skip 1             ;  | Eastern Palace
 DPChestKeys: skip 1             ;  | Desert Palace
 CTChestKeys: skip 1             ;  | Agahnim's Tower
@@ -322,7 +330,7 @@ THChestKeys: skip 1             ;  | Tower of Hera
 TTChestKeys: skip 1             ;  | Thieves' Town
 TRChestKeys: skip 1             ;  | Turtle Rock
 GTChestKeys: skip 1             ; /  Ganon's Tower
-skip 2                          ; Unused
+skip 2                          ; Reserved, may be indexed into and have junk generic key data written
 FileMarker: skip 1              ; $FF = Active save file | $00 = Inactive save file
 skip 13                         ; Unused
 InverseChecksum: skip 2         ; Vanilla Inverse Checksum. Don't write unless computing checksum.
@@ -334,26 +342,44 @@ InverseChecksum: skip 2         ; Vanilla Inverse Checksum. Don't write unless c
 ; beginning at $700500
 ;--------------------------------------------------------------------------------
 base $7F6000                    ; $1000 byte buffer we place beginning at second save file
-ExtendedFileNameSRAM = $706000  ; We read and write the file name directly from and to SRAM
 ExtendedFileNameWRAM: skip 24   ; File name, 12 word-length characters.
-VERSION: skip 4                 ; $0000 = Default TODO
-RoomPotData: skip 592           ; Table for expanded pot shuffle
+RoomPotData: skip 592           ; Table for expanded pot shuffle. One word per room.
 PurchaseCounts: skip 96         ; Keeps track of shop purchases
+PrivateBlock: skip 512          ; Reserved for 3rd party developers
 DummyValue: skip 1              ; $01 if you're a real dummy
+
+;================================================================================
+; Direct SRAM Assignments ($700000 - $7080000)
 ;--------------------------------------------------------------------------------
-base $7F1000                    ;
-RomName:                        ; ROM name from $FFC0, burned in during init (21 bytes)
+; Label assignments for the actual cartridge SRAM, expanded to 32k. Used mainly
+; for burning in values such as the ROM name directly or when we only have to read
+; a small amount of data which is not currently in the WRAM mirror.
+;--------------------------------------------------------------------------------
+base $700000                    ;
+skip $0340                      ;
+SRAMEquipment: skip 76          ;
+InventoryTrackingSRAM: skip 2   ;
+BowTrackingSRAM: skip 2         ;
+skip 368                        ;
+ExtendedFileNameSRAM: skip 24   ; We read and write the file name directly from and to SRAM (24 bytes)
+skip $1AE8                      ;
+RomNameSRAM: skip 21            ; ROM name from $FFC0, burned in during init (21 bytes)
                                 ; If value in the ROM doesn't match SRAM, save is cleared.
+VERSIONSRAM: skip 4             ; ALTTPR ROM version (32 bytes)
+skip 4071                       ;
+PasswordSRAM: skip 16           ; Password value (16 bytes)
 
 base off
 
+;================================================================================
+; Assertions
 ;================================================================================
 ; Vanilla Assertions
 ;--------------------------------------------------------------------------------
 ; All of these need to pass for the base rom to build or something is probably
 ; very wrong.
 ;--------------------------------------------------------------------------------
-assert SRAMEquipment          = $7EF340, "SRAMEquipment labeled at incorrect address"
+assert WRAMEquipment          = $7EF340, "WRAMEquipment labeled at incorrect address"
 assert BowEquipment           = $7EF340, "BowEquipment labeled at incorrect address"
 assert BoomerangEquipment     = $7EF341, "BoomerangEquipment labeled at incorrect address"
 assert HookshotEquipment      = $7EF342, "HookshotEquipment labeled at incorrect address"
@@ -443,7 +469,7 @@ assert InverseChecksum        = $7EF4FE, "InverseChecksum labeled at incorrect a
 ;================================================================================
 ; Randomizer Assertions
 ;--------------------------------------------------------------------------------
-; Trackers and other third party consumers may depend on these values
+; Trackers and other third party consumers may depend on these values.
 ;--------------------------------------------------------------------------------
 assert InventoryTracking      = $7EF38C, "InventoryTracking labeled at incorrect address"
 assert BowTracking            = $7EF38E, "BowTracking labeled at incorrect address"
@@ -451,8 +477,7 @@ assert ItemLimitCounts        = $7EF390, "ItemLimitCounts labeled at incorrect a
 ;--------------------------------------------------------------------------------
 assert GameCounter            = $7EF3FF, "GameCounter labeled at incorrect address"
 assert PostGameCounter        = $7EF401, "PostGameCounter labeled at incorrect address"
-assert NpcFlagsOne            = $7EF410, "NPCFlagsOne labeled at incorrect address"
-assert NpcFlagsTwo            = $7EF411, "NPCFlagsTwo labeled at incorrect address"
+assert NpcFlags               = $7EF410, "NPCFlags labeled at incorrect address"
 assert MapOverlay             = $7EF414, "MapOverlay labeled at incorrect address"
 assert GeneralFlags           = $7EF416, "GeneralFlags labeled at incorrect address"
 assert HighestSword           = $7EF417, "HighestSword labeled at incorrect address"
@@ -462,16 +487,15 @@ assert ProgrammableItemTwo    = $7EF41C, "ProgrammableItemTwo labeled at incorre
 assert ProgrammableItemThree  = $7EF41E, "ProgrammableItemThree labeled at incorrect address"
 assert BonkCounter            = $7EF420, "BonkCounter labeled at incorrect address"
 assert YAItemCounter          = $7EF421, "YAItemCounter labeled at incorrect address"
-assert HighestShield          = $7EF422, "SwordsShields labeled at incorrect address"
+assert HighestShield          = $7EF422, "HighestShield labeled at incorrect address"
 assert TotalItemCounter       = $7EF423, "TotalItemCounter labeled at incorrect address"
-assert TemperedGoldBosses     = $7EF425, "TemperedGoldBosses labeled at incorrect address"
-assert FighterMasterBosses    = $7EF426, "FighterMasterBosses labeled at incorrect address"
+assert SwordBossKills         = $7EF425, "SwordBossKills labeled at incorrect address"
 assert BigKeysBigChests       = $7EF427, "BigKeysBigChests labeled at incorrect address"
 assert MapsCompasses          = $7EF428, "MapsCompasses labeled at incorrect address"
 assert PendantCounter         = $7EF429, "PendantCounter labeled at incorrect address"
 assert PreGTBKLocations       = $7EF42A, "PreGTBKLocations labeled at incorrect address"
 assert RupeesSpent            = $7EF42B, "RupeesSpent labeled at incorrect address"
-assert SaveQuits              = $7EF42D, "SaveQuits labeled at incorrect address"
+assert SaveQuitCounter        = $7EF42D, "SaveQuitCounter labeled at incorrect address"
 assert LoopFrames             = $7EF42E, "LoopFrames labeled at incorrect address"
 assert PreBootsLocations      = $7EF432, "PreBootsLocations labeled at incorrect address"
 assert PreMirrorLocations     = $7EF434, "PreMirrorLocations labeled at incorrect address"
@@ -482,12 +506,12 @@ assert ScreenTransitions      = $7EF43C, "ScreenTransitions labeled at incorrect
 assert NMIFrames              = $7EF43E, "NMIFrames labeled at incorrect address"
 assert ChestsOpened           = $7EF442, "ChestsOpened labeled at incorrect address"
 assert StatsLocked            = $7EF443, "StatsLocked labeled at incorrect address"
-assert MenuTime               = $7EF444, "MenuTime labeled at incorrect address"
+assert MenuFrames             = $7EF444, "MenuFrames labeled at incorrect address"
 assert HeartContainerCounter  = $7EF448, "HeartContainerCounter labeled at incorrect address"
 assert DeathCounter           = $7EF449, "DeathCounter labeled at incorrect address"
 assert FluteCounter           = $7EF44B, "FluteCounter labeled at incorrect address"
-assert RNGItem                = $7EF450, "FluteCounter labeled at incorrect address"
-assert SwordlessBosses        = $7EF452, "SwordlessBosses labeled at incorrect address"
+assert RNGItem                = $7EF450, "RNGItem labeled at incorrect address"
+assert SwordlessBossKills     = $7EF452, "SwordlessBossKills labeled at incorrect address"
 assert FaerieRevivalCounter   = $7EF453, "FaerieRevivalCounter labeled at incorrect address"
 assert ChallengeTimer         = $7EF454, "ChallengeTimer labeled at incorrect address"
 assert SwordTime              = $7EF458, "SwordTime labeled at incorrect address"
@@ -503,10 +527,10 @@ assert SmallKeyCounter        = $7EF46F, "SmallKeyCounter labeled at incorrect a
 assert HeartPieceCounter      = $7EF470, "HeartPieceCounter labeled at incorrect address"
 assert CrystalCounter         = $7EF471, "CrystalCounter labeled at incorrect address"
 ;--------------------------------------------------------------------------------
-assert ServiceSequence        = $7EF4A0, "ServiceSequence labeled at incorrect address"
+assert ServiceRequest         = $7EF4A0, "ServiceRequest labeled at incorrect address"
 ;--------------------------------------------------------------------------------
-assert HCLocations            = $7EF4D2, "HCLocations labeled at incorrect address"
-assert SewerLocations         = $7EF4D3, "SewersLocations labeled at incorrect address"
+assert SewersLocations        = $7EF4D2, "SewersLocations labeled at incorrect address"
+assert HCLocations            = $7EF4D3, "HCLocations labeled at incorrect address"
 assert EPLocations            = $7EF4D4, "EPLocations labeled at incorrect address"
 assert DPLocations            = $7EF4D5, "DPLocations labeled at incorrect address"
 assert CTLocations            = $7EF4D6, "CTLocations labeled at incorrect address"
@@ -519,8 +543,8 @@ assert THLocations            = $7EF4DC, "THLocations labeled at incorrect addre
 assert TTLocations            = $7EF4DD, "TTLocations labeled at incorrect address"
 assert TRLocations            = $7EF4DE, "TRLocations labeled at incorrect address"
 assert GTLocations            = $7EF4DF, "GTLocations labeled at incorrect address"
-assert HCChestKeys            = $7EF4E0, "HCChestKeys labeled at incorrect address"
-assert SewerChestKeys         = $7EF4E1, "SewerChestKeys labeled at incorrect address"
+assert SewerChestKeys         = $7EF4E0, "SewerChestKeys labeled at incorrect address"
+assert HCChestKeys            = $7EF4E1, "HCChestKeys labeled at incorrect address"
 assert EPChestKeys            = $7EF4E2, "EPChestKeys labeled at incorrect address"
 assert DPChestKeys            = $7EF4E3, "DPChestKeys labeled at incorrect address"
 assert CTChestKeys            = $7EF4E4, "ATChestKeys labeled at incorrect address"
@@ -535,13 +559,22 @@ assert TRChestKeys            = $7EF4EC, "TRChestKeys labeled at incorrect addre
 assert GTChestKeys            = $7EF4ED, "GChestKeys labeled at incorrect address"
 assert FileMarker             = $7EF4F0, "FileMarker labeled at incorrect address"
 ;--------------------------------------------------------------------------------
-assert ExtendedFileNameWRAM   = $7F6000, "Filename labeled at incorrect address"
-assert VERSION                = $7F6018, "VERSION labeled at incorrect address"
-assert RoomPotData            = $7F601C, "RoomPotData labeled at incorrect address"
-assert PurchaseCounts         = $7F626C, "PurchaseCounts labeled at incorrect address"
-assert DummyValue             = $7F62CC, "DummyValue labeled at incorrect address"
+assert ExtendedFileNameWRAM   = $7F6000, "ExtendedFilenameWRAM labeled at incorrect address"
+assert RoomPotData            = $7F6018, "RoomPotData labeled at incorrect address"
+assert PurchaseCounts         = $7F6268, "PurchaseCounts labeled at incorrect address"
+assert PrivateBlock           = $7F62C8, "PrivateBlock labeled at incorrect address"
+assert DummyValue             = $7F64C8, "DummyValue labeled at incorrect address"
+
+;================================================================================
+; Direct SRAM Assertions
 ;--------------------------------------------------------------------------------
-assert RomName                = $7F1000, "RomName at incorrect address"
+assert SRAMEquipment          = $700340, "SRAMEquipment labeled at incorrect address"
+assert InventoryTrackingSRAM  = $70038C, "InventoryTracking labeled at incorrect address"
+assert BowTrackingSRAM        = $70038E, "BowTracking labeled at incorrect address"
+assert ExtendedFileNameSRAM   = $700500, "ExtendedFilenameSRAM labeled at incorrect address"
+assert RomNameSRAM            = $702000, "RomNameSRAM at incorrect address"
+assert VERSIONSRAM            = $702015, "VERSIONSRAM at incorrect address"
+assert PasswordSRAM           = $703000, "PasswordSRAM at incorrect address"
 
 ;--------------------------------------------------------------------------------
 ; MOVED TODO
@@ -550,11 +583,11 @@ assert RomName                = $7F1000, "RomName at incorrect address"
 ; file name: 3e3-3f0, -> 7ef500
 ; shop purchase counts: 7ef302 -> 7ef51a - 7ef579
 ; GoalCounter: 7ef418 -> 7ef418 (2 bytes)
-; HighestMail: 7ef424 -> 7ef470
-; HighestShield: 7ef422 -> swords using HighestSword, shields removed from general flags
+;HighestMail: 7ef424 -> 7ef470
+;HighestShield: 7ef422 -> swords usingHighestSword, shields removed from general flags
 ; SmallKeyCounter: 7ef424 -> 7ef471
-; ServiceSequence: 7ef419 -> 7ef418 (two bytes reserved)
-; SwordsShields: 7ef422 -> swords using HighestSword
+; ServiceSequence: removed
+; SwordsShields: 7ef422 -> swords usingHighestSword
 ; PreMirrorLocations: 7ef432 -> 7ef434, PreBoots and PreMirror now 2 bytes
 ; Heart Pieces: 7ef429 ->  7ef470
 ; Pendant counter: 7ef429, now an integer
@@ -566,15 +599,21 @@ assert RomName                = $7F1000, "RomName at incorrect address"
 ; bombs (?), silvers, and pre gtbk at $7ef42a now just pre gtbk
 ;
 ; whole file name now at $7F6000/706000, first four still at vanilla location
+;
+; password_sram: 701000 -> 703000
 ;--------------------------------------------------------------------------------
 ; ADDED
 ;--------------------------------------------------------------------------------
 ;
-; PreFluteLocations      = $7EF436
-; VERSION                = $7F6018
-; RoomPotData            = $7F601C
-; PurchaseCounts         = $7F601C
-; DummyValue             = $7F607C
+; PreFluteLocations      = $7EF436[0x02]
+; ServiceRequest         = $7EF4A0[0x08]
+; VERSION                = $7F6018[0x04]
+; RoomPotData            = $7F601C[0x250]
+; PurchaseCounts         = $7F601C[0x60]
+; DummyValue             = $7F607C[0x02]
 ;
 ;--------------------------------------------------------------------------------
-
+; TODO
+;--------------------------------------------------------------------------------
+; figure out why ChestsOpened is wrong
+;

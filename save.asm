@@ -27,7 +27,7 @@ RTL
 ;--------------------------------------------------------------------------------
 ClearExtendedWRAMSaveFile:
 	STA $7EF400, X ; what we wrote over
-;	STA $7F6000, X
+ 	STA $7F6000, X
 	STA $7F6100, X
 	STA $7F6200, X
 	STA $7F6300, X
@@ -68,7 +68,7 @@ CopyExtendedSaveFileToWRAM:
                 LDA #$05 : STA $4303
                 LDA #$70 : STA $4304
 
-		LDA #$00 : STA $4305 ; set transfer size to 0xB00
+		LDA #$00 : STA $4305 ; set transfer size to 0x1000
 		LDA #$10 : STA $4306 ; STZ $4307
 
 		LDA #$01 : STA $420B ; begin DMA transfer
