@@ -28,6 +28,15 @@ org $1FFFF8 ; <- FFFF8 timestamp rom
 db #$20, #$19, #$08, #$31 ; year/month/day
 
 ;================================================================================
+!ROM_VERSION_LOW ?= 1  ; ROM version (two 16-bit integers)
+!ROM_VERSION_HIGH ?= 1 ;
+
+org $00FFE0 ; Unused hardware vector
+RomVersion:
+dw !ROM_VERSION_LOW
+dw !ROM_VERSION_HIGH
+
+;================================================================================
 
 !ADD = "CLC : ADC"
 !SUB = "SEC : SBC"
