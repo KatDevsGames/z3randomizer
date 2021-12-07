@@ -127,7 +127,7 @@ CountChestKey: ; called by neighbor functions
 			INC ; combines HC and Sewer counts
 		+ TAX
 		.count
-		LDA DungeonChestKeys, X : INC : STA DungeonChestKeys, X
+		LDA DungeonCollectedKeys, X : INC : STA DungeonCollectedKeys, X
    .end
 	PLX : PLA
 RTS

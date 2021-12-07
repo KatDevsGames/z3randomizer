@@ -296,11 +296,26 @@ SmallKeyCounter: skip 1         ; Total Number of small keys collected (integer)
 HeartPieceCounter: skip 1       ; Total Number of heartpieces collected (integer)     
 CrystalCounter: skip 1          ; Total Number of crystals collected (integer)     
 skip 46                         ; Unused
-ServiceRequestReceive:          ;
-ServiceRequestTransmit:         ;
-ServiceRequest: skip 8          ; Service request block. See servicerequest.asm
-skip 42                         ; Unused 
-                                ; \  Dungeon locations checked counters (integers)
+ServiceSequenceRx:              ; Service sequence receive
+ServiceSequenceTx:              ; Service sequence transmit
+ServiceSequence: skip 8         ; Service request block. See servicerequest.asm
+skip 28                         ; Unused 
+DungeonAbsorbedKeys:            ; \  Absorbed key counters (integers)
+SewerAbsorbedKeys: skip 1       ;  | Sewer Passage
+HCAbsorbedKeys: skip 1          ;  | Hyrule Castle
+EPAbsorbedKeys: skip 1          ;  | Eastern Palace
+DPAbsorbedKeys: skip 1          ;  | Desert Palace
+CTAbsorbedKeys: skip 1          ;  | Agahnim's Tower
+SPAbsorbedKeys: skip 1          ;  | Swamp Palace
+PDAbsorbedKeys: skip 1          ;  | Palace of Darkness
+MMAbsorbedKeys: skip 1          ;  | Misery Mire
+SWAbsorbedKeys: skip 1          ;  | Skull Woods
+IPAbsorbedKeys: skip 1          ;  | Ice Palace
+THAbsorbedKeys: skip 1          ;  | Tower of Hera
+TTAbsorbedKeys: skip 1          ;  | Thieves' Town
+TRAbsorbedKeys: skip 1          ;  | Turtle Rock
+GTAbsorbedKeys: skip 1          ; /  Ganon's Tower
+DungeonLocationsChecked:        ; \  Dungeon locations checked counters (integers)
 SewersLocations: skip 1         ;  | Sewer Passage
 HCLocations: skip 1             ;  | Hyrule Castle
 EPLocations: skip 1             ;  | Eastern Palace
@@ -314,22 +329,22 @@ IPLocations: skip 1             ;  | Ice Palace
 THLocations: skip 1             ;  | Tower of Hera
 TTLocations: skip 1             ;  | Thieves' Town
 TRLocations: skip 1             ;  | Turtle Rock
-GTLocations: skip 1             ; /  Ganon's Tower
-DungeonChestKeys:               ; \  Chest Key Counters. Only counts keys placed in chests. (integers)
-SewerChestKeys: skip 1          ;  | Sewer Passage
-HCChestKeys: skip 1             ;  | Hyrule Castle
-EPChestKeys: skip 1             ;  | Eastern Palace
-DPChestKeys: skip 1             ;  | Desert Palace
-CTChestKeys: skip 1             ;  | Agahnim's Tower
-SPChestKeys: skip 1             ;  | Swamp Palace
-PDChestKeys: skip 1             ;  | Palace of Darkness
-MMChestKeys: skip 1             ;  | Misery Mire
-SWChestKeys: skip 1             ;  | Skull Woods
-IPChestKeys: skip 1             ;  | Ice Palace
-THChestKeys: skip 1             ;  | Tower of Hera
-TTChestKeys: skip 1             ;  | Thieves' Town
-TRChestKeys: skip 1             ;  | Turtle Rock
-GTChestKeys: skip 1             ; /  Ganon's Tower
+GTLocations: skip 1             ; /  Ganon's Tower:
+DungeonCollectedKeys:           ; \  Chest Key Counters. Only counts keys placed in chests. (integers)
+SewerCollectedKeys: skip 1      ;  | Sewer Passage
+HCCollectedKeys: skip 1         ;  | Hyrule Castle
+EPCollectedKeys: skip 1         ;  | Eastern Palace
+DPCollectedKeys: skip 1         ;  | Desert Palace
+CTCollectedKeys: skip 1         ;  | Agahnim's Tower
+SPCollectedKeys: skip 1         ;  | Swamp Palace
+PDCollectedKeys: skip 1         ;  | Palace of Darkness
+MMCollectedKeys: skip 1         ;  | Misery Mire
+SWCollectedKeys: skip 1         ;  | Skull Woods
+IPCollectedKeys: skip 1         ;  | Ice Palace
+THCollectedKeys: skip 1         ;  | Tower of Hera
+TTCollectedKeys: skip 1         ;  | Thieves' Town
+TRCollectedKeys: skip 1         ;  | Turtle Rock
+GTCollectedKeys: skip 1         ; /  Ganon's Tower
 skip 2                          ; Reserved, may be indexed into and have junk generic key data written
 FileMarker: skip 1              ; $FF = Active save file | $00 = Inactive save file
 skip 13                         ; Unused
@@ -528,8 +543,22 @@ assert SmallKeyCounter        = $7EF46F, "SmallKeyCounter labeled at incorrect a
 assert HeartPieceCounter      = $7EF470, "HeartPieceCounter labeled at incorrect address"
 assert CrystalCounter         = $7EF471, "CrystalCounter labeled at incorrect address"
 ;--------------------------------------------------------------------------------
-assert ServiceRequest         = $7EF4A0, "ServiceRequest labeled at incorrect address"
+assert ServiceSequence        = $7EF4A0, "ServiceSequence labeled at incorrect address"
 ;--------------------------------------------------------------------------------
+assert SewerAbsorbedKeys      = $7EF4E0, "SewerAbsorbedKeys labeled at incorrect address"
+assert HCAbsorbedKeys         = $7EF4E1, "HCAbsorbedKeys labeled at incorrect address"
+assert EPAbsorbedKeys         = $7EF4E2, "EPAbsorbedKeys labeled at incorrect address"
+assert DPAbsorbedKeys         = $7EF4E3, "DPAbsorbedKeys labeled at incorrect address"
+assert CTAbsorbedKeys         = $7EF4E4, "ATAbsorbedKeys labeled at incorrect address"
+assert SPAbsorbedKeys         = $7EF4E5, "SPAbsorbedKeys labeled at incorrect address"
+assert PDAbsorbedKeys         = $7EF4E6, "PDAbsorbedKeys labeled at incorrect address"
+assert MMAbsorbedKeys         = $7EF4E7, "MMAbsorbedKeys labeled at incorrect address"
+assert SWAbsorbedKeys         = $7EF4E8, "SWAbsorbedKeys labeled at incorrect address"
+assert IPAbsorbedKeys         = $7EF4E9, "IPAbsorbedKeys labeled at incorrect address"
+assert THAbsorbedKeys         = $7EF4EA, "THAbsorbedKeys labeled at incorrect address"
+assert TTAbsorbedKeys         = $7EF4EB, "TTAbsorbedKeys labeled at incorrect address"
+assert TRAbsorbedKeys         = $7EF4EC, "TRAbsorbedKeys labeled at incorrect address"
+assert GTAbsorbedKeys         = $7EF4ED, "GCAbsorbedKeys labeled at incorrect address"
 assert SewersLocations        = $7EF4D2, "SewersLocations labeled at incorrect address"
 assert HCLocations            = $7EF4D3, "HCLocations labeled at incorrect address"
 assert EPLocations            = $7EF4D4, "EPLocations labeled at incorrect address"
@@ -544,20 +573,20 @@ assert THLocations            = $7EF4DC, "THLocations labeled at incorrect addre
 assert TTLocations            = $7EF4DD, "TTLocations labeled at incorrect address"
 assert TRLocations            = $7EF4DE, "TRLocations labeled at incorrect address"
 assert GTLocations            = $7EF4DF, "GTLocations labeled at incorrect address"
-assert SewerChestKeys         = $7EF4E0, "SewerChestKeys labeled at incorrect address"
-assert HCChestKeys            = $7EF4E1, "HCChestKeys labeled at incorrect address"
-assert EPChestKeys            = $7EF4E2, "EPChestKeys labeled at incorrect address"
-assert DPChestKeys            = $7EF4E3, "DPChestKeys labeled at incorrect address"
-assert CTChestKeys            = $7EF4E4, "ATChestKeys labeled at incorrect address"
-assert SPChestKeys            = $7EF4E5, "SPChestKeys labeled at incorrect address"
-assert PDChestKeys            = $7EF4E6, "PDChestKeys labeled at incorrect address"
-assert MMChestKeys            = $7EF4E7, "MMChestKeys labeled at incorrect address"
-assert SWChestKeys            = $7EF4E8, "SWChestKeys labeled at incorrect address"
-assert IPChestKeys            = $7EF4E9, "IPChestKeys labeled at incorrect address"
-assert THChestKeys            = $7EF4EA, "THChestKeys labeled at incorrect address"
-assert TTChestKeys            = $7EF4EB, "TTChestKeys labeled at incorrect address"
-assert TRChestKeys            = $7EF4EC, "TRChestKeys labeled at incorrect address"
-assert GTChestKeys            = $7EF4ED, "GChestKeys labeled at incorrect address"
+assert SewerCollectedKeys     = $7EF4E0, "SewerCollectedKeys labeled at incorrect address"
+assert HCCollectedKeys        = $7EF4E1, "HCCollectedKeys labeled at incorrect address"
+assert EPCollectedKeys        = $7EF4E2, "EPCollectedKeys labeled at incorrect address"
+assert DPCollectedKeys        = $7EF4E3, "DPCollectedKeys labeled at incorrect address"
+assert CTCollectedKeys        = $7EF4E4, "ATCollectedKeys labeled at incorrect address"
+assert SPCollectedKeys        = $7EF4E5, "SPCollectedKeys labeled at incorrect address"
+assert PDCollectedKeys        = $7EF4E6, "PDCollectedKeys labeled at incorrect address"
+assert MMCollectedKeys        = $7EF4E7, "MMCollectedKeys labeled at incorrect address"
+assert SWCollectedKeys        = $7EF4E8, "SWCollectedKeys labeled at incorrect address"
+assert IPCollectedKeys        = $7EF4E9, "IPCollectedKeys labeled at incorrect address"
+assert THCollectedKeys        = $7EF4EA, "THCollectedKeys labeled at incorrect address"
+assert TTCollectedKeys        = $7EF4EB, "TTCollectedKeys labeled at incorrect address"
+assert TRCollectedKeys        = $7EF4EC, "TRCollectedKeys labeled at incorrect address"
+assert GTCollectedKeys        = $7EF4ED, "GTCollectedeys labeled at incorrect address"
 assert FileMarker             = $7EF4F0, "FileMarker labeled at incorrect address"
 ;--------------------------------------------------------------------------------
 assert ExtendedFileNameWRAM   = $7F6000, "ExtendedFilenameWRAM labeled at incorrect address"
@@ -587,7 +616,7 @@ assert PasswordSRAM           = $703000, "PasswordSRAM at incorrect address"
 ;HighestMail: 7ef424 -> 7ef470
 ;HighestShield: 7ef422 -> swords usingHighestSword, shields removed from general flags
 ; SmallKeyCounter: 7ef424 -> 7ef471
-; ServiceSequence: removed
+; ServiceSequence: 7ef419 -> 7ef4a0
 ; SwordsShields: 7ef422 -> swords usingHighestSword
 ; PreMirrorLocations: 7ef432 -> 7ef434, PreBoots and PreMirror now 2 bytes
 ; Heart Pieces: 7ef429 ->  7ef470

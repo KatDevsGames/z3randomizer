@@ -135,7 +135,7 @@ OnNewFile:
 		BPL -
 
 		LDX #$0008 : - ; copy starting keys to chest key counters in sram
-                LDA DungeonKeys, X : STA DungeonChestKeys, X
+                LDA DungeonKeys, X : STA DungeonCollectedKeys, X
 			DEX : DEX
 		BPL -
 
