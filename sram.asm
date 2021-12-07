@@ -299,22 +299,7 @@ skip 46                         ; Unused
 ServiceSequenceRx:              ; Service sequence receive
 ServiceSequenceTx:              ; Service sequence transmit
 ServiceSequence: skip 8         ; Service request block. See servicerequest.asm
-skip 28                         ; Unused 
-DungeonAbsorbedKeys:            ; \  Absorbed key counters (integers)
-SewerAbsorbedKeys: skip 1       ;  | Sewer Passage
-HCAbsorbedKeys: skip 1          ;  | Hyrule Castle
-EPAbsorbedKeys: skip 1          ;  | Eastern Palace
-DPAbsorbedKeys: skip 1          ;  | Desert Palace
-CTAbsorbedKeys: skip 1          ;  | Agahnim's Tower
-SPAbsorbedKeys: skip 1          ;  | Swamp Palace
-PDAbsorbedKeys: skip 1          ;  | Palace of Darkness
-MMAbsorbedKeys: skip 1          ;  | Misery Mire
-SWAbsorbedKeys: skip 1          ;  | Skull Woods
-IPAbsorbedKeys: skip 1          ;  | Ice Palace
-THAbsorbedKeys: skip 1          ;  | Tower of Hera
-TTAbsorbedKeys: skip 1          ;  | Thieves' Town
-TRAbsorbedKeys: skip 1          ;  | Turtle Rock
-GTAbsorbedKeys: skip 1          ; /  Ganon's Tower
+skip 24                         ; Unused 
 DungeonLocationsChecked:        ; \  Dungeon locations checked counters (integers)
 SewersLocations: skip 1         ;  | Sewer Passage
 HCLocations: skip 1             ;  | Hyrule Castle
@@ -330,6 +315,23 @@ THLocations: skip 1             ;  | Tower of Hera
 TTLocations: skip 1             ;  | Thieves' Town
 TRLocations: skip 1             ;  | Turtle Rock
 GTLocations: skip 1             ; /  Ganon's Tower:
+skip 2                          ; Reserved for previous table
+DungeonAbsorbedKeys:            ; \  Absorbed key counters (integers)
+SewerAbsorbedKeys: skip 1       ;  | Sewer Passage
+HCAbsorbedKeys: skip 1          ;  | Hyrule Castle
+EPAbsorbedKeys: skip 1          ;  | Eastern Palace
+DPAbsorbedKeys: skip 1          ;  | Desert Palace
+CTAbsorbedKeys: skip 1          ;  | Agahnim's Tower
+SPAbsorbedKeys: skip 1          ;  | Swamp Palace
+PDAbsorbedKeys: skip 1          ;  | Palace of Darkness
+MMAbsorbedKeys: skip 1          ;  | Misery Mire
+SWAbsorbedKeys: skip 1          ;  | Skull Woods
+IPAbsorbedKeys: skip 1          ;  | Ice Palace
+THAbsorbedKeys: skip 1          ;  | Tower of Hera
+TTAbsorbedKeys: skip 1          ;  | Thieves' Town
+TRAbsorbedKeys: skip 1          ;  | Turtle Rock
+GTAbsorbedKeys: skip 1          ; /  Ganon's Tower
+skip 2                          ; Reserved for previous table
 DungeonCollectedKeys:           ; \  Chest Key Counters. Only counts keys placed in chests. (integers)
 SewerCollectedKeys: skip 1      ;  | Sewer Passage
 HCCollectedKeys: skip 1         ;  | Hyrule Castle
@@ -345,7 +347,7 @@ THCollectedKeys: skip 1         ;  | Tower of Hera
 TTCollectedKeys: skip 1         ;  | Thieves' Town
 TRCollectedKeys: skip 1         ;  | Turtle Rock
 GTCollectedKeys: skip 1         ; /  Ganon's Tower
-skip 2                          ; Reserved, may be indexed into and have junk generic key data written
+skip 2                          ; Reserved for previous table
 FileMarker: skip 1              ; $FF = Active save file | $00 = Inactive save file
 skip 13                         ; Unused
 InverseChecksum: skip 2         ; Vanilla Inverse Checksum. Don't write unless computing checksum.
@@ -544,35 +546,37 @@ assert HeartPieceCounter      = $7EF470, "HeartPieceCounter labeled at incorrect
 assert CrystalCounter         = $7EF471, "CrystalCounter labeled at incorrect address"
 ;--------------------------------------------------------------------------------
 assert ServiceSequence        = $7EF4A0, "ServiceSequence labeled at incorrect address"
+assert ServiceSequenceRx      = $7EF4A0, "ServiceSequenceRx labeled at incorrect address"
+assert ServiceSequenceTx      = $7EF4A0, "ServiceSequenceTx labeled at incorrect address"
 ;--------------------------------------------------------------------------------
-assert SewerAbsorbedKeys      = $7EF4C4, "SewerAbsorbedKeys labeled at incorrect address"
-assert HCAbsorbedKeys         = $7EF4C5, "HCAbsorbedKeys labeled at incorrect address"
-assert EPAbsorbedKeys         = $7EF4C6, "EPAbsorbedKeys labeled at incorrect address"
-assert DPAbsorbedKeys         = $7EF4C7, "DPAbsorbedKeys labeled at incorrect address"
-assert CTAbsorbedKeys         = $7EF4C8, "ATAbsorbedKeys labeled at incorrect address"
-assert SPAbsorbedKeys         = $7EF4C9, "SPAbsorbedKeys labeled at incorrect address"
-assert PDAbsorbedKeys         = $7EF4CA, "PDAbsorbedKeys labeled at incorrect address"
-assert MMAbsorbedKeys         = $7EF4CB, "MMAbsorbedKeys labeled at incorrect address"
-assert SWAbsorbedKeys         = $7EF4CC, "SWAbsorbedKeys labeled at incorrect address"
-assert IPAbsorbedKeys         = $7EF4CD, "IPAbsorbedKeys labeled at incorrect address"
-assert THAbsorbedKeys         = $7EF4CE, "THAbsorbedKeys labeled at incorrect address"
-assert TTAbsorbedKeys         = $7EF4CF, "TTAbsorbedKeys labeled at incorrect address"
-assert TRAbsorbedKeys         = $7EF4D0, "TRAbsorbedKeys labeled at incorrect address"
-assert GTAbsorbedKeys         = $7EF4D1, "GCAbsorbedKeys labeled at incorrect address"
-assert SewersLocations        = $7EF4D2, "SewersLocations labeled at incorrect address"
-assert HCLocations            = $7EF4D3, "HCLocations labeled at incorrect address"
-assert EPLocations            = $7EF4D4, "EPLocations labeled at incorrect address"
-assert DPLocations            = $7EF4D5, "DPLocations labeled at incorrect address"
-assert CTLocations            = $7EF4D6, "CTLocations labeled at incorrect address"
-assert SPLocations            = $7EF4D7, "SPLocations labeled at incorrect address"
-assert PDLocations            = $7EF4D8, "PDLocations labeled at incorrect address"
-assert MMLocations            = $7EF4D9, "MMLocations labeled at incorrect address"
-assert SWLocations            = $7EF4DA, "SWLocations labeled at incorrect address"
-assert IPLocations            = $7EF4DB, "IPLocations labeled at incorrect address"
-assert THLocations            = $7EF4DC, "THLocations labeled at incorrect address"
-assert TTLocations            = $7EF4DD, "TTLocations labeled at incorrect address"
-assert TRLocations            = $7EF4DE, "TRLocations labeled at incorrect address"
-assert GTLocations            = $7EF4DF, "GTLocations labeled at incorrect address"
+assert SewersLocations        = $7EF4C0, "SewersLocations labeled at incorrect address"
+assert HCLocations            = $7EF4C1, "HCLocations labeled at incorrect address"
+assert EPLocations            = $7EF4C2, "EPLocations labeled at incorrect address"
+assert DPLocations            = $7EF4C3, "DPLocations labeled at incorrect address"
+assert CTLocations            = $7EF4C4, "CTLocations labeled at incorrect address"
+assert SPLocations            = $7EF4C5, "SPLocations labeled at incorrect address"
+assert PDLocations            = $7EF4C6, "PDLocations labeled at incorrect address"
+assert MMLocations            = $7EF4C7, "MMLocations labeled at incorrect address"
+assert SWLocations            = $7EF4C8, "SWLocations labeled at incorrect address"
+assert IPLocations            = $7EF4C9, "IPLocations labeled at incorrect address"
+assert THLocations            = $7EF4CA, "THLocations labeled at incorrect address"
+assert TTLocations            = $7EF4CB, "TTLocations labeled at incorrect address"
+assert TRLocations            = $7EF4CC, "TRLocations labeled at incorrect address"
+assert GTLocations            = $7EF4CD, "GTLocations labeled at incorrect address"
+assert SewerAbsorbedKeys      = $7EF4D0, "SewerAbsorbedKeys labeled at incorrect address"
+assert HCAbsorbedKeys         = $7EF4D1, "HCAbsorbedKeys labeled at incorrect address"
+assert EPAbsorbedKeys         = $7EF4D2, "EPAbsorbedKeys labeled at incorrect address"
+assert DPAbsorbedKeys         = $7EF4D3, "DPAbsorbedKeys labeled at incorrect address"
+assert CTAbsorbedKeys         = $7EF4D4, "ATAbsorbedKeys labeled at incorrect address"
+assert SPAbsorbedKeys         = $7EF4D5, "SPAbsorbedKeys labeled at incorrect address"
+assert PDAbsorbedKeys         = $7EF4D6, "PDAbsorbedKeys labeled at incorrect address"
+assert MMAbsorbedKeys         = $7EF4D7, "MMAbsorbedKeys labeled at incorrect address"
+assert SWAbsorbedKeys         = $7EF4D8, "SWAbsorbedKeys labeled at incorrect address"
+assert IPAbsorbedKeys         = $7EF4D9, "IPAbsorbedKeys labeled at incorrect address"
+assert THAbsorbedKeys         = $7EF4DA, "THAbsorbedKeys labeled at incorrect address"
+assert TTAbsorbedKeys         = $7EF4DB, "TTAbsorbedKeys labeled at incorrect address"
+assert TRAbsorbedKeys         = $7EF4DC, "TRAbsorbedKeys labeled at incorrect address"
+assert GTAbsorbedKeys         = $7EF4DD, "GCAbsorbedKeys labeled at incorrect address"
 assert SewerCollectedKeys     = $7EF4E0, "SewerCollectedKeys labeled at incorrect address"
 assert HCCollectedKeys        = $7EF4E1, "HCCollectedKeys labeled at incorrect address"
 assert EPCollectedKeys        = $7EF4E2, "EPCollectedKeys labeled at incorrect address"
