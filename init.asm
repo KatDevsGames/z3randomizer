@@ -1,3 +1,5 @@
+RomVersionSRAM = $701FFC
+
 ;--------------------------------------------------------------------------------
 ; Init_Primary
 ;--------------------------------------------------------------------------------
@@ -39,6 +41,11 @@ Init_Primary:
 			LDA $00FFC0, X : STA $702000, X
 			INX
 			CPX #$15 : !BLT -
+                LDX #$00
+                -
+                        LDA RomVersion, X : STA RomVersionSRAM, X
+                        INX
+                        CPX #$04 : !BLT -
 	.done
 
 	REP #$20
