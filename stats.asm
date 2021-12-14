@@ -296,7 +296,7 @@ RTL
 ;--------------------------------------------------------------------------------
 IncrementSpentRupees:
     DEC A : BPL .subtractRupees
-    LDA.w #$0000 : STA TargetRupees
+    LDA.w #$0000 : STA CurrentRupees
 RTL
 	.subtractRupees
 	PHA : PHP
@@ -347,8 +347,8 @@ StatsFinalPrep:
 		LDA NMIFrames+2 : SBC LoopFrames+2 : STA !LAG_TIME+2
 		LDA NMIFrames+3 : SBC LoopFrames+3 : STA !LAG_TIME+3
 	
-		LDA RupeesSpent : !ADD CurrentRupees : STA !RUPEES_COLLECTED
-		LDA RupeesSpent+1 : ADC CurrentRupees+1 : STA !RUPEES_COLLECTED+1
+		LDA RupeesSpent : !ADD DisplayRupees : STA !RUPEES_COLLECTED
+		LDA RupeesSpent+1 : ADC DisplayRupees+1 : STA !RUPEES_COLLECTED+1
 	
 		LDA TotalItemCounter : !SUB ChestsOpened : STA !NONCHEST_COUNTER
 

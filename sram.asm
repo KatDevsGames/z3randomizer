@@ -6,7 +6,7 @@
 ;--------------------------------------------------------------------------------
 ; $7EF000 - $7EF4FF in WRAM maps to the first $4FF bytes in SRAM (Bank $70)
 ; $7F6000 - $7F6FFF in WRAM maps to the next 4k bytes, occupying the 2nd and 3rd vanilla
-;                   save file locations. ($700500 - $701500)
+; save file locations. ($700500 - $701500)
 ;--------------------------------------------------------------------------------
 org 0 ; This module writes no bytes. Asar gives bank cross errors without this.
 
@@ -16,9 +16,9 @@ org 0 ; This module writes no bytes. Asar gives bank cross errors without this.
 ; Each room has two bytes. There are 296 ($128) rooms in the ROM. The data beyond
 ; $7EF24F is unused. The current room index is located at $A0 in WRAM (16-bits.)
 ;
-; The quadrant bits from left to right correspond to quadrants
-; 4 (northwest), 3 (northeast), 2 (southwest), and 1 (southeast), which is the same
-; as they are laid out on the screen from left to right, top to bottom.
+; The quadrant bits from left to right correspond to quadrants 4 (northwest), 3 (northeast),
+; 2 (southwest), and 1 (southeast), which is the same as they are laid out on the screen from
+; left to right, top to bottom.
 ;
 ; Example: We can use RoomData[$37].high to read or write the pot key in the first
 ; floodable room in Swamp Palace ($04)
@@ -27,10 +27,10 @@ org 0 ; This module writes no bytes. Asar gives bank cross errors without this.
 ; .low Byte:   c c c c q q q q
 ;
 ; d = Door opened (key, bomb wall, etc)
-; b = Boss kill / Heart Piece
-; k = Key
+; b = Boss kill / Heart Container
+; k = Key / Heart Piece
 ; u = Second key
-; t = Chest 4 / Rupee floor / Swamp drains
+; t = Chest 4 / Rupee floor / Swamp drains / Bombable floor / Mire wall
 ; s = Chest 3 / Bomable floor / PoD or Desert wall
 ; e = Chest 2
 ; h = Chest 1
@@ -56,7 +56,7 @@ endstruct align 2
 ;
 ; i = Free-standing item collected. Also used for sprites like the castle tower barrier
 ; o = Overlay active
-; b = Secondary overlay active
+; b = Bomb wall opened
 ;--------------------------------------------------------------------------------
 OverworldEventData = $7EF280
 
@@ -93,8 +93,8 @@ ByrnaEquipment: skip 1          ; $01 = Cane of Byrna
 CapeEquipment: skip 1           ; $01 = Magic Cape
 MirrorEquipment: skip 1         ; $01 = Scroll (graphic only) | $02 = Mirror
 GloveEquipment: skip 1          ; $01 = Power Gloves | $02 = Titan's Mitts
-BootsEquipment: skip 1          ; \ $01 = Boots/Flippers | These only show menu item
-FlippersEquipment: skip 1       ; / Correct bits must be set in AbilityFlags to dash/swim
+BootsEquipment: skip 1          ; $01 = Boots | This only shows menu item, see: AbilityFlags
+FlippersEquipment: skip 1       ; $01 = Flippers
 MoonPearlEquipment: skip 1      ; $01 = Moon Pearl
 skip 1                          ; Not used
 SwordEquipment: skip 1          ; $01 = Fighter | $02 = Master | $03 = Tempered | $04 = Gold
@@ -105,24 +105,23 @@ BottleContentsOne: skip 1       ;  |
 BottleContentsTwo: skip 1       ;  | $00 = No Bottle  | $01 = Mushroom     | $02 = Empty Bottle
 BottleContentsThree: skip 1     ;  | $03 = Red Potion | $04 = Green Potion | $05 = Blue Potion
 BottleContentsFour: skip 1      ; /  $06 = Fairy      | $07 = Bee          | $08 = Good Bee
-TargetRupees: skip 2            ; \ CurrentRupees will always increment or decrement to match
-CurrentRupees: skip 2           ; / TargetRupees if not equal (16-bit integer)
+CurrentRupees: skip 2           ; \ DisplayRupees holds the number on the HUD. It will always
+DisplayRupees: skip 2           ; / increment/decrement to match CurrentRupees if not equal (16-bit integers)
 ;--------------------------------------------------------------------------------
 CompassField: skip 2            ; Dungeon item bitfields
-BigKeyField: skip 2             ; High byte:  - - g r t h i s
-MapField: skip 2                ; g = Ganon's Tower | r = Turtle Rock | t = Thieves' Town
-                                ; h = Tower of Hera | i = Ice Palace  | s = Skull Woods
+BigKeyField: skip 2             ; Low byte:  w i h b t g - -
+MapField: skip 2                ; w = Skull Woods | i = Ice Palace    | h = Hera | b = Thieves' Town
+                                ; t = Turtle Rock | g = Ganon's Tower
                                 ;------------------------------------------------
-                                ; Low Byte: m d s a t e h p
-                                ; m = Misery Mire   | d = Palace of Darkness | s = Swamp Palace
-                                ; a = Aga Tower     | t = Desert Palace      | e = Eastern Palace
-                                ; h = Hyrule Castle | s = Sewer Passage
+                                ; High Byte: x c e d a s p m
+                                ; x = Sewers       | c = Hyrule Castle | e = Eastern Palace | d = Desert Palace
+                                ; a = Castle Tower | s = Swamp Palace  | p = PoD            | m = Mire
 ;--------------------------------------------------------------------------------
                                 ; HUD & other equipment
 skip 1                          ; Wishing Pond Rupee (Unused)
 HeartPieceQuarter: skip 1       ; Heart pieces of four for health upgrade. Wraps around to $00 after $03.
-HealthCapacity: skip 1          ; \ Health Capacity & Current Health
-CurrentHealth: skip 1           ; / Max value is $A0 | $04 = half heart | $08 = heart
+MaximumHealth: skip 1           ; \ Max Health & Current Health
+CurrentHealth: skip 1           ; / Max value for both is $A0 | $04 = half heart | $08 = heart
 CurrentMagic: skip 1            ; Current magic | Max value is $80
 CurrentSmallKeys: skip 1        ; Number of small keys held for current dungeon (integer)
 BombCapacityUpgrades: skip 1    ; \ Bomb & Arrow Capacity Upgrades
@@ -135,9 +134,9 @@ BombsFiller: skip 1             ; Bombs collected yet to be filled (integer)
 ArrowsFiller: skip 1            ; Arrows collected yet to be filled (integer)
 CurrentArrows: skip 1           ; Current arrows (integer)
 skip 1                          ; Unknown
-AbilityFlags: skip 1            ; - r t - p d s - (bitfield)
-                                ; r = Read | t = Talk | p = Pull | d = Dash
-                                ; s = Swim
+AbilityFlags: skip 1            ; l r t u p d s h (bitfield)
+                                ; l = Lift | r = Read | t = Talk | u = Unused but set by default
+                                ; p = Pull | d = Dash | s = Swim | h = Pray (unused)
 CrystalsField: skip 1           ; - 3 4 2 7 5 1 6 (bitfield)
 MagicConsumption: skip 1        ; $00 = Normal | $01 = Half Magic | $02 = Quarter Magic
 ;--------------------------------------------------------------------------------
@@ -181,7 +180,7 @@ ProgressIndicator: skip 1       ; $00 = Pre-Uncle | $01 = Post-Uncle item | $02 
                                 ; $03 = Agahnim 1 defeated
                                 ; $04 and above don't do anything. $00-$02 used in standard mode
 ProgressFlags: skip 1           ; - - - u - z - s (bitfield)
-                                ; u = Uncle left house | z = Mantle | s = Uncle item obtained
+                                ; u = Uncle left house | z = Zelda rescued | s = Uncle item obtained
 MapIcons: skip 1                ; Used for deciding which icons to display on OW map
                                 ; $03 = Pendants  | $04 = Master Sword | $05 = Skull at Hyrule Castle
                                 ; $06 = Crystal 1 | $07 = All Crystals | $08 = Skull at Ganon's Tower
@@ -190,8 +189,8 @@ StartingEntrance: skip 1        ; Starting entrance to use
                                 ; $02 = Zelda's Cell         | $03 = Secret Passage or HC if entered (escape)
                                 ; $04 = Throne Room (escape) | $05 = Old Man Cave w/ Old Man
 NpcFlagsVanilla: skip 1         ; - - b p s - m h (bitfield)
-                                ; b = Frog rescued    | p = Purple Chest | s = Stumpy (tree kid)
-                                ; m = Bottle Merchant | h = Hobo
+                                ; b = Frog rescued         | p = Purple Chest | s = Tree Kid (unused)
+                                ; m = Bottle Merchant item | h = Hobo item
 CurrentWorld: skip 1            ; $00 = Light World | $40 = Dark World
 skip 1                          ; Unused
 FollowerIndicator: skip 1       ; $00 = No Follower  | $01 = Zelda    | $04 = Old Man
@@ -397,218 +396,222 @@ base off
 ; All of these need to pass for the base rom to build or something is probably
 ; very wrong.
 ;--------------------------------------------------------------------------------
-assert WRAMEquipment          = $7EF340, "WRAMEquipment labeled at incorrect address"
-assert BowEquipment           = $7EF340, "BowEquipment labeled at incorrect address"
-assert BoomerangEquipment     = $7EF341, "BoomerangEquipment labeled at incorrect address"
-assert HookshotEquipment      = $7EF342, "HookshotEquipment labeled at incorrect address"
-assert BombsEquipment         = $7EF343, "BombsEquipment labeled at incorrect address"
-assert PowderEquipment        = $7EF344, "PowderEquipment labeled at incorrect address"
-assert FireRodEquipment       = $7EF345, "FireRodEquipment labeled at incorrect address"
-assert IceRodEquipment        = $7EF346, "IceRodEquipment labeled at incorrect address"
-assert BombosEquipment        = $7EF347, "BombosEquipment labeled at incorrect address"
-assert EtherEquipment         = $7EF348, "EtherEquipment labeled at incorrect address"
-assert QuakeEquipment         = $7EF349, "QuakeEquipment labeled at incorrect address"
-assert LampEquipment          = $7EF34A, "LampEquipment labeled at incorrect address"
-assert HammerEquipment        = $7EF34B, "HammerEquipment labeled at incorrect address"
-assert FluteEquipment         = $7EF34C, "FluteEquipment labeled at incorrect address"
-assert BugNetEquipment        = $7EF34D, "BugNetEquipment labeled at incorrect address"
-assert BookOfMudoraEquipment  = $7EF34E, "BookOfMudoraEquipment labeled at incorrect address"
-assert BottleIndex            = $7EF34F, "BottleIndex labeled at incorrect address"
-assert SomariaEquipment       = $7EF350, "SomariaEquipment labeled at incorrect address"
-assert ByrnaEquipment         = $7EF351, "ByrnaEquipment labeled at incorrect address"
-assert CapeEquipment          = $7EF352, "CapeEquipment labeled at incorrect address"
-assert MirrorEquipment        = $7EF353, "MirrorEquipment labeled at incorrect address"
-assert GloveEquipment         = $7EF354, "GloveEquipment labeled at incorrect address"
-assert BootsEquipment         = $7EF355, "BootsEquipment labeled at incorrect address"
-assert FlippersEquipment      = $7EF356, "FlippersEquipment labeled at incorrect address"
-assert MoonPearlEquipment     = $7EF357, "MoonPearlEquipment labeled at incorrect address"
-assert SwordEquipment         = $7EF359, "SwordEquipment labeled at incorrect address"
-assert ShieldEquipment        = $7EF35A, "ShieldEquipment labeled at incorrect address"
-assert ArmorEquipment         = $7EF35B, "ArmorEquipment labeled at incorrect address"
-assert BottleContentsOne      = $7EF35C, "BottleContentsOne labeled at incorrect address"
-assert BottleContentsTwo      = $7EF35D, "BottleContentsTwo labeled at incorrect address"
-assert BottleContentsThree    = $7EF35E, "BottleContentsThree labeled at incorrect address"
-assert BottleContentsFour     = $7EF35F, "BottleContentsFour labeled at incorrect address"
-assert TargetRupees           = $7EF360, "TargetRupees labeled at incorrect address"
-assert CurrentRupees          = $7EF362, "CurrentRupees labeled at incorrect address"
+macro assertSRAM(label, address)
+  assert <label> = <address>, "<label> labeled at incorrect address."
+endmacro
+
+%assertSRAM(WRAMEquipment, $7EF340)
+%assertSRAM(BowEquipment, $7EF340)
+%assertSRAM(BoomerangEquipment, $7EF341)
+%assertSRAM(HookshotEquipment, $7EF342)
+%assertSRAM(BombsEquipment, $7EF343)
+%assertSRAM(PowderEquipment, $7EF344)
+%assertSRAM(FireRodEquipment, $7EF345)
+%assertSRAM(IceRodEquipment, $7EF346)
+%assertSRAM(BombosEquipment, $7EF347)
+%assertSRAM(EtherEquipment, $7EF348)
+%assertSRAM(QuakeEquipment, $7EF349)
+%assertSRAM(LampEquipment, $7EF34A)
+%assertSRAM(HammerEquipment, $7EF34B)
+%assertSRAM(FluteEquipment, $7EF34C)
+%assertSRAM(BugNetEquipment, $7EF34D)
+%assertSRAM(BookOfMudoraEquipment, $7EF34E)
+%assertSRAM(BottleIndex, $7EF34F)
+%assertSRAM(SomariaEquipment, $7EF350)
+%assertSRAM(ByrnaEquipment, $7EF351)
+%assertSRAM(CapeEquipment, $7EF352)
+%assertSRAM(MirrorEquipment, $7EF353)
+%assertSRAM(GloveEquipment, $7EF354)
+%assertSRAM(BootsEquipment, $7EF355)
+%assertSRAM(FlippersEquipment, $7EF356)
+%assertSRAM(MoonPearlEquipment, $7EF357)
+%assertSRAM(SwordEquipment, $7EF359)
+%assertSRAM(ShieldEquipment, $7EF35A)
+%assertSRAM(ArmorEquipment, $7EF35B)
+%assertSRAM(BottleContentsOne, $7EF35C)
+%assertSRAM(BottleContentsTwo, $7EF35D)
+%assertSRAM(BottleContentsThree, $7EF35E)
+%assertSRAM(BottleContentsFour, $7EF35F)
+%assertSRAM(CurrentRupees, $7EF360)
+%assertSRAM(DisplayRupees, $7EF362)
 ;--------------------------------------------------------------------------------
-assert CompassField           = $7EF364, "Compass bitfield labeled at incorrect address"
-assert BigKeyField            = $7EF366, "Big Key item bitfield labeled at incorrect address"
-assert MapField               = $7EF368, "Map item bitfield labeled at incorrect address"
+%assertSRAM(CompassField, $7EF364)
+%assertSRAM(BigKeyField, $7EF366)
+%assertSRAM(MapField, $7EF368)
 ;--------------------------------------------------------------------------------
-assert HeartPieceQuarter      = $7EF36B, "HeartPieceQuarter labeled at incorrect address"
-assert HealthCapacity         = $7EF36C, "HealthCapacity labeled at incorrect address"
-assert CurrentHealth          = $7EF36D, "CurrentHealth labeled at incorrect address"
-assert CurrentMagic           = $7EF36E, "CurrentMagic labeled at incorrect address"
-assert CurrentSmallKeys       = $7EF36F, "CurrentSmallKeys labeled at incorrect address"
-assert BombCapacityUpgrades   = $7EF370, "BombCapacityUpgrades labeled at incorrect address"
-assert ArrowCapacityUpgrades  = $7EF371, "ArrowCapacityUpgrades labeled at incorrect address"
-assert HeartsFiller           = $7EF372, "HeartsFiller labeled at incorrect address"
-assert MagicFiller            = $7EF373, "MagicFiller labeled at incorrect address"
-assert PendantsField          = $7EF374, "PendantsField labeled at incorrect address"
-assert BombsFiller            = $7EF375, "BombsFiller labeled at incorrect address"
-assert ArrowsFiller           = $7EF376, "ArrowsFiller labeled at incorrect address"
-assert CurrentArrows          = $7EF377, "CurrentArrows labeled at incorrect address"
-assert AbilityFlags           = $7EF379, "AbilityFlags labeled at incorrect address"
-assert CrystalsField          = $7EF37A, "CrystalsField labeled at incorrect address"
-assert MagicConsumption       = $7EF37B, "MagicConsumption labeled at incorrect address"
+%assertSRAM(HeartPieceQuarter, $7EF36B)
+%assertSRAM(MaximumHealth, $7EF36C)
+%assertSRAM(CurrentHealth, $7EF36D)
+%assertSRAM(CurrentMagic, $7EF36E)
+%assertSRAM(CurrentSmallKeys, $7EF36F)
+%assertSRAM(BombCapacityUpgrades, $7EF370)
+%assertSRAM(ArrowCapacityUpgrades, $7EF371)
+%assertSRAM(HeartsFiller, $7EF372)
+%assertSRAM(MagicFiller, $7EF373)
+%assertSRAM(PendantsField, $7EF374)
+%assertSRAM(BombsFiller, $7EF375)
+%assertSRAM(ArrowsFiller, $7EF376)
+%assertSRAM(CurrentArrows, $7EF377)
+%assertSRAM(AbilityFlags, $7EF379)
+%assertSRAM(CrystalsField, $7EF37A)
+%assertSRAM(MagicConsumption, $7EF37B)
 ;--------------------------------------------------------------------------------
-assert SewerKeys              = $7EF37C, "SewerKeys labeled at incorrect address"
-assert HyruleCastleKeys       = $7EF37D, "HyruleCastleKeys labeled at incorrect address"
-assert EasternKeys            = $7EF37E, "EasternKeys labeled at incorrect address"
-assert DesertKeys             = $7EF37F, "DesertKeys labeled at incorrect address"
-assert CastleTowerKeys        = $7EF380, "CastleTowerKeys labeled at incorrect address"
-assert SwampKeys              = $7EF381, "SwampKeys labeled at incorrect address"
-assert PalaceOfDarknessKeys   = $7EF382, "PalaceOfDarknessKeys labeled at incorrect address"
-assert MireKeys               = $7EF383, "MireKeys labeled at incorrect address"
-assert SkullWoodsKeys         = $7EF384, "SkullWoodsKeys labeled at incorrect address"
-assert IcePalaceKeys          = $7EF385, "IcePalaceKeys labeled at incorrect address"
-assert HeraKeys               = $7EF386, "HeraKeys labeled at incorrect address"
-assert ThievesTownKeys        = $7EF387, "ThievesTownKeys labeled at incorrect address"
-assert TurtleRockKeys         = $7EF388, "TurtleRockKeys labeled at incorrect address"
-assert GanonsTowerKeys        = $7EF389, "GanonsTowerKeys labeled at incorrect address"
-assert CurrentGenericKeys     = $7EF38B, "CurrentGenericKeys labeled at incorrect address"
+%assertSRAM(SewerKeys, $7EF37C)
+%assertSRAM(HyruleCastleKeys, $7EF37D)
+%assertSRAM(EasternKeys, $7EF37E)
+%assertSRAM(DesertKeys, $7EF37F)
+%assertSRAM(CastleTowerKeys, $7EF380)
+%assertSRAM(SwampKeys, $7EF381)
+%assertSRAM(PalaceOfDarknessKeys, $7EF382)
+%assertSRAM(MireKeys, $7EF383)
+%assertSRAM(SkullWoodsKeys, $7EF384)
+%assertSRAM(IcePalaceKeys, $7EF385)
+%assertSRAM(HeraKeys, $7EF386)
+%assertSRAM(ThievesTownKeys, $7EF387)
+%assertSRAM(TurtleRockKeys, $7EF388)
+%assertSRAM(GanonsTowerKeys, $7EF389)
+%assertSRAM(CurrentGenericKeys, $7EF38B)
 ;--------------------------------------------------------------------------------
-assert ProgressIndicator      = $7EF3C5, "ProgressIndicator labeled at incorrect address"
-assert ProgressFlags          = $7EF3C6, "ProgressFlags labeled at incorrect address"
-assert MapIcons               = $7EF3C7, "MapIcons labeled at incorrect address"
-assert StartingEntrance       = $7EF3C8, "StartingEntrance labeled at incorrect address"
-assert NpcFlagsVanilla        = $7EF3C9, "NpcFlagsVanilla labeled at incorrect address"
-assert CurrentWorld           = $7EF3CA, "CurrentWorld labeled at incorrect address"
-assert FollowerIndicator      = $7EF3CC, "FollowerIndicator labeled at incorrect address"
-assert FollowerXCoord         = $7EF3CD, "FollowerXCoord labeled at incorrect address"
-assert FollowerYCoord         = $7EF3CF, "FollowerYCoord labeled at incorrect address"
-assert DroppedFollowerIndoors = $7EF3D1, "DroppedFollowerIndoors labeled at incorrect address"
-assert DroppedFollowerLayer   = $7EF3D2, "DroppedFollowerLayer labeled at incorrect address"
-assert FollowerDropped        = $7EF3D3, "FollowerDropped labeled at incorrect address"
-assert FileValidity           = $7EF3E1, "FileValidity labeled at incorrect address"
-assert InverseChecksum        = $7EF4FE, "InverseChecksum labeled at incorrect address"
+%assertSRAM(ProgressIndicator, $7EF3C5)
+%assertSRAM(ProgressFlags, $7EF3C6)
+%assertSRAM(MapIcons, $7EF3C7)
+%assertSRAM(StartingEntrance, $7EF3C8)
+%assertSRAM(NpcFlagsVanilla, $7EF3C9)
+%assertSRAM(CurrentWorld, $7EF3CA)
+%assertSRAM(FollowerIndicator, $7EF3CC)
+%assertSRAM(FollowerXCoord, $7EF3CD)
+%assertSRAM(FollowerYCoord, $7EF3CF)
+%assertSRAM(DroppedFollowerIndoors, $7EF3D1)
+%assertSRAM(DroppedFollowerLayer, $7EF3D2)
+%assertSRAM(FollowerDropped, $7EF3D3)
+%assertSRAM(FileValidity, $7EF3E1)
+%assertSRAM(InverseChecksum, $7EF4FE)
 
 ;================================================================================
 ; Randomizer Assertions
 ;--------------------------------------------------------------------------------
 ; Trackers and other third party consumers may depend on these values.
 ;--------------------------------------------------------------------------------
-assert InventoryTracking      = $7EF38C, "InventoryTracking labeled at incorrect address"
-assert BowTracking            = $7EF38E, "BowTracking labeled at incorrect address"
-assert ItemLimitCounts        = $7EF390, "ItemLimitCounts labeled at incorrect address"
+%assertSRAM(InventoryTracking, $7EF38C)
+%assertSRAM(BowTracking, $7EF38E)
+%assertSRAM(ItemLimitCounts, $7EF390)
 ;--------------------------------------------------------------------------------
-assert GameCounter            = $7EF3FF, "GameCounter labeled at incorrect address"
-assert PostGameCounter        = $7EF401, "PostGameCounter labeled at incorrect address"
-assert NpcFlags               = $7EF410, "NPCFlags labeled at incorrect address"
-assert MapOverlay             = $7EF414, "MapOverlay labeled at incorrect address"
-assert GeneralFlags           = $7EF416, "GeneralFlags labeled at incorrect address"
-assert HighestSword           = $7EF417, "HighestSword labeled at incorrect address"
-assert GoalCounter            = $7EF418, "GoalCounter labeled at incorrect address"
-assert ProgrammableItemOne    = $7EF41A, "ProgrammableItemOne labeled at incorrect address"
-assert ProgrammableItemTwo    = $7EF41C, "ProgrammableItemTwo labeled at incorrect address"
-assert ProgrammableItemThree  = $7EF41E, "ProgrammableItemThree labeled at incorrect address"
-assert BonkCounter            = $7EF420, "BonkCounter labeled at incorrect address"
-assert YAItemCounter          = $7EF421, "YAItemCounter labeled at incorrect address"
-assert HighestShield          = $7EF422, "HighestShield labeled at incorrect address"
-assert TotalItemCounter       = $7EF423, "TotalItemCounter labeled at incorrect address"
-assert SwordBossKills         = $7EF425, "SwordBossKills labeled at incorrect address"
-assert BigKeysBigChests       = $7EF427, "BigKeysBigChests labeled at incorrect address"
-assert MapsCompasses          = $7EF428, "MapsCompasses labeled at incorrect address"
-assert PendantCounter         = $7EF429, "PendantCounter labeled at incorrect address"
-assert PreGTBKLocations       = $7EF42A, "PreGTBKLocations labeled at incorrect address"
-assert RupeesSpent            = $7EF42B, "RupeesSpent labeled at incorrect address"
-assert SaveQuitCounter        = $7EF42D, "SaveQuitCounter labeled at incorrect address"
-assert LoopFrames             = $7EF42E, "LoopFrames labeled at incorrect address"
-assert PreBootsLocations      = $7EF432, "PreBootsLocations labeled at incorrect address"
-assert PreMirrorLocations     = $7EF434, "PreMirrorLocations labeled at incorrect address"
-assert PreFluteLocations      = $7EF436, "PreFluteLocations labeled at incorrect address"
-assert OverworldMirrors       = $7EF43A, "OverworldMirrors labeled at incorrect address"
-assert UnderworldMirrors      = $7EF43B, "UnderworldMirrors labeled at incorrect address"
-assert ScreenTransitions      = $7EF43C, "ScreenTransitions labeled at incorrect address"
-assert NMIFrames              = $7EF43E, "NMIFrames labeled at incorrect address"
-assert ChestsOpened           = $7EF442, "ChestsOpened labeled at incorrect address"
-assert StatsLocked            = $7EF443, "StatsLocked labeled at incorrect address"
-assert MenuFrames             = $7EF444, "MenuFrames labeled at incorrect address"
-assert HeartContainerCounter  = $7EF448, "HeartContainerCounter labeled at incorrect address"
-assert DeathCounter           = $7EF449, "DeathCounter labeled at incorrect address"
-assert FluteCounter           = $7EF44B, "FluteCounter labeled at incorrect address"
-assert RNGItem                = $7EF450, "RNGItem labeled at incorrect address"
-assert SwordlessBossKills     = $7EF452, "SwordlessBossKills labeled at incorrect address"
-assert FaerieRevivalCounter   = $7EF453, "FaerieRevivalCounter labeled at incorrect address"
-assert ChallengeTimer         = $7EF454, "ChallengeTimer labeled at incorrect address"
-assert SwordTime              = $7EF458, "SwordTime labeled at incorrect address"
-assert BootsTime              = $7EF45C, "BootsTime labeled at incorrect address"
-assert FluteTime              = $7EF460, "FluteTime labeled at incorrect address"
-assert MirrorTime             = $7EF464, "MirrorTime labeled at incorrect address"
-assert ChestTurnCounter       = $7EF468, "ChestTurnCounter labeled at incorrect address"
-assert CapacityUpgrades       = $7EF469, "CapacityUpgrades labeled at incorrect address"
-assert DamageCounter          = $7EF46A, "DamageCounter labeled at incorrect address"
-assert MagicCounter           = $7EF46C, "MagicCounter labeled at incorrect address"
-assert HighestMail            = $7EF46E, "HighestMail labeled at incorrect address"
-assert SmallKeyCounter        = $7EF46F, "SmallKeyCounter labeled at incorrect address"
-assert HeartPieceCounter      = $7EF470, "HeartPieceCounter labeled at incorrect address"
-assert CrystalCounter         = $7EF471, "CrystalCounter labeled at incorrect address"
+%assertSRAM(GameCounter, $7EF3FF)
+%assertSRAM(PostGameCounter, $7EF401)
+%assertSRAM(NpcFlags, $7EF410)
+%assertSRAM(MapOverlay, $7EF414)
+%assertSRAM(GeneralFlags, $7EF416)
+%assertSRAM(HighestSword, $7EF417)
+%assertSRAM(GoalCounter, $7EF418)
+%assertSRAM(ProgrammableItemOne, $7EF41A)
+%assertSRAM(ProgrammableItemTwo, $7EF41C)
+%assertSRAM(ProgrammableItemThree, $7EF41E)
+%assertSRAM(BonkCounter, $7EF420)
+%assertSRAM(YAItemCounter, $7EF421)
+%assertSRAM(HighestShield, $7EF422)
+%assertSRAM(TotalItemCounter, $7EF423)
+%assertSRAM(SwordBossKills, $7EF425)
+%assertSRAM(BigKeysBigChests, $7EF427)
+%assertSRAM(MapsCompasses, $7EF428)
+%assertSRAM(PendantCounter, $7EF429)
+%assertSRAM(PreGTBKLocations, $7EF42A)
+%assertSRAM(RupeesSpent, $7EF42B)
+%assertSRAM(SaveQuitCounter, $7EF42D)
+%assertSRAM(LoopFrames, $7EF42E)
+%assertSRAM(PreBootsLocations, $7EF432)
+%assertSRAM(PreMirrorLocations, $7EF434)
+%assertSRAM(PreFluteLocations, $7EF436)
+%assertSRAM(OverworldMirrors, $7EF43A)
+%assertSRAM(UnderworldMirrors, $7EF43B)
+%assertSRAM(ScreenTransitions, $7EF43C)
+%assertSRAM(NMIFrames, $7EF43E)
+%assertSRAM(ChestsOpened, $7EF442)
+%assertSRAM(StatsLocked, $7EF443)
+%assertSRAM(MenuFrames, $7EF444)
+%assertSRAM(HeartContainerCounter, $7EF448)
+%assertSRAM(DeathCounter, $7EF449)
+%assertSRAM(FluteCounter, $7EF44B)
+%assertSRAM(RNGItem, $7EF450)
+%assertSRAM(SwordlessBossKills, $7EF452)
+%assertSRAM(FaerieRevivalCounter, $7EF453)
+%assertSRAM(ChallengeTimer, $7EF454)
+%assertSRAM(SwordTime, $7EF458)
+%assertSRAM(BootsTime, $7EF45C)
+%assertSRAM(FluteTime, $7EF460)
+%assertSRAM(MirrorTime, $7EF464)
+%assertSRAM(ChestTurnCounter, $7EF468)
+%assertSRAM(CapacityUpgrades, $7EF469)
+%assertSRAM(DamageCounter, $7EF46A)
+%assertSRAM(MagicCounter, $7EF46C)
+%assertSRAM(HighestMail, $7EF46E)
+%assertSRAM(SmallKeyCounter, $7EF46F)
+%assertSRAM(HeartPieceCounter, $7EF470)
+%assertSRAM(CrystalCounter, $7EF471)
 ;--------------------------------------------------------------------------------
-assert ServiceSequence        = $7EF4A0, "ServiceSequence labeled at incorrect address"
-assert ServiceSequenceRx      = $7EF4A0, "ServiceSequenceRx labeled at incorrect address"
-assert ServiceSequenceTx      = $7EF4A0, "ServiceSequenceTx labeled at incorrect address"
+%assertSRAM(ServiceSequence, $7EF4A0)
+%assertSRAM(ServiceSequenceRx, $7EF4A0)
+%assertSRAM(ServiceSequenceTx, $7EF4A0)
 ;--------------------------------------------------------------------------------
-assert SewersLocations        = $7EF4C0, "SewersLocations labeled at incorrect address"
-assert HCLocations            = $7EF4C1, "HCLocations labeled at incorrect address"
-assert EPLocations            = $7EF4C2, "EPLocations labeled at incorrect address"
-assert DPLocations            = $7EF4C3, "DPLocations labeled at incorrect address"
-assert CTLocations            = $7EF4C4, "CTLocations labeled at incorrect address"
-assert SPLocations            = $7EF4C5, "SPLocations labeled at incorrect address"
-assert PDLocations            = $7EF4C6, "PDLocations labeled at incorrect address"
-assert MMLocations            = $7EF4C7, "MMLocations labeled at incorrect address"
-assert SWLocations            = $7EF4C8, "SWLocations labeled at incorrect address"
-assert IPLocations            = $7EF4C9, "IPLocations labeled at incorrect address"
-assert THLocations            = $7EF4CA, "THLocations labeled at incorrect address"
-assert TTLocations            = $7EF4CB, "TTLocations labeled at incorrect address"
-assert TRLocations            = $7EF4CC, "TRLocations labeled at incorrect address"
-assert GTLocations            = $7EF4CD, "GTLocations labeled at incorrect address"
-assert SewerAbsorbedKeys      = $7EF4D0, "SewerAbsorbedKeys labeled at incorrect address"
-assert HCAbsorbedKeys         = $7EF4D1, "HCAbsorbedKeys labeled at incorrect address"
-assert EPAbsorbedKeys         = $7EF4D2, "EPAbsorbedKeys labeled at incorrect address"
-assert DPAbsorbedKeys         = $7EF4D3, "DPAbsorbedKeys labeled at incorrect address"
-assert CTAbsorbedKeys         = $7EF4D4, "ATAbsorbedKeys labeled at incorrect address"
-assert SPAbsorbedKeys         = $7EF4D5, "SPAbsorbedKeys labeled at incorrect address"
-assert PDAbsorbedKeys         = $7EF4D6, "PDAbsorbedKeys labeled at incorrect address"
-assert MMAbsorbedKeys         = $7EF4D7, "MMAbsorbedKeys labeled at incorrect address"
-assert SWAbsorbedKeys         = $7EF4D8, "SWAbsorbedKeys labeled at incorrect address"
-assert IPAbsorbedKeys         = $7EF4D9, "IPAbsorbedKeys labeled at incorrect address"
-assert THAbsorbedKeys         = $7EF4DA, "THAbsorbedKeys labeled at incorrect address"
-assert TTAbsorbedKeys         = $7EF4DB, "TTAbsorbedKeys labeled at incorrect address"
-assert TRAbsorbedKeys         = $7EF4DC, "TRAbsorbedKeys labeled at incorrect address"
-assert GTAbsorbedKeys         = $7EF4DD, "GCAbsorbedKeys labeled at incorrect address"
-assert SewerCollectedKeys     = $7EF4E0, "SewerCollectedKeys labeled at incorrect address"
-assert HCCollectedKeys        = $7EF4E1, "HCCollectedKeys labeled at incorrect address"
-assert EPCollectedKeys        = $7EF4E2, "EPCollectedKeys labeled at incorrect address"
-assert DPCollectedKeys        = $7EF4E3, "DPCollectedKeys labeled at incorrect address"
-assert CTCollectedKeys        = $7EF4E4, "ATCollectedKeys labeled at incorrect address"
-assert SPCollectedKeys        = $7EF4E5, "SPCollectedKeys labeled at incorrect address"
-assert PDCollectedKeys        = $7EF4E6, "PDCollectedKeys labeled at incorrect address"
-assert MMCollectedKeys        = $7EF4E7, "MMCollectedKeys labeled at incorrect address"
-assert SWCollectedKeys        = $7EF4E8, "SWCollectedKeys labeled at incorrect address"
-assert IPCollectedKeys        = $7EF4E9, "IPCollectedKeys labeled at incorrect address"
-assert THCollectedKeys        = $7EF4EA, "THCollectedKeys labeled at incorrect address"
-assert TTCollectedKeys        = $7EF4EB, "TTCollectedKeys labeled at incorrect address"
-assert TRCollectedKeys        = $7EF4EC, "TRCollectedKeys labeled at incorrect address"
-assert GTCollectedKeys        = $7EF4ED, "GTCollectedeys labeled at incorrect address"
-assert FileMarker             = $7EF4F0, "FileMarker labeled at incorrect address"
+%assertSRAM(SewersLocations, $7EF4C0)
+%assertSRAM(HCLocations, $7EF4C1)
+%assertSRAM(EPLocations, $7EF4C2)
+%assertSRAM(DPLocations, $7EF4C3)
+%assertSRAM(CTLocations, $7EF4C4)
+%assertSRAM(SPLocations, $7EF4C5)
+%assertSRAM(PDLocations, $7EF4C6)
+%assertSRAM(MMLocations, $7EF4C7)
+%assertSRAM(SWLocations, $7EF4C8)
+%assertSRAM(IPLocations, $7EF4C9)
+%assertSRAM(THLocations, $7EF4CA)
+%assertSRAM(TTLocations, $7EF4CB)
+%assertSRAM(TRLocations, $7EF4CC)
+%assertSRAM(GTLocations, $7EF4CD)
+%assertSRAM(SewerAbsorbedKeys, $7EF4D0)
+%assertSRAM(HCAbsorbedKeys, $7EF4D1)
+%assertSRAM(EPAbsorbedKeys, $7EF4D2)
+%assertSRAM(DPAbsorbedKeys, $7EF4D3)
+%assertSRAM(CTAbsorbedKeys, $7EF4D4)
+%assertSRAM(SPAbsorbedKeys, $7EF4D5)
+%assertSRAM(PDAbsorbedKeys, $7EF4D6)
+%assertSRAM(MMAbsorbedKeys, $7EF4D7)
+%assertSRAM(SWAbsorbedKeys, $7EF4D8)
+%assertSRAM(IPAbsorbedKeys, $7EF4D9)
+%assertSRAM(THAbsorbedKeys, $7EF4DA)
+%assertSRAM(TTAbsorbedKeys, $7EF4DB)
+%assertSRAM(TRAbsorbedKeys, $7EF4DC)
+%assertSRAM(GTAbsorbedKeys, $7EF4DD)
+%assertSRAM(SewerCollectedKeys, $7EF4E0)
+%assertSRAM(HCCollectedKeys, $7EF4E1)
+%assertSRAM(EPCollectedKeys, $7EF4E2)
+%assertSRAM(DPCollectedKeys, $7EF4E3)
+%assertSRAM(CTCollectedKeys, $7EF4E4)
+%assertSRAM(SPCollectedKeys, $7EF4E5)
+%assertSRAM(PDCollectedKeys, $7EF4E6)
+%assertSRAM(MMCollectedKeys, $7EF4E7)
+%assertSRAM(SWCollectedKeys, $7EF4E8)
+%assertSRAM(IPCollectedKeys, $7EF4E9)
+%assertSRAM(THCollectedKeys, $7EF4EA)
+%assertSRAM(TTCollectedKeys, $7EF4EB)
+%assertSRAM(TRCollectedKeys, $7EF4EC)
+%assertSRAM(GTCollectedKeys, $7EF4ED)
+%assertSRAM(FileMarker, $7EF4F0)
 ;--------------------------------------------------------------------------------
-assert ExtendedFileNameWRAM   = $7F6000, "ExtendedFilenameWRAM labeled at incorrect address"
-assert RoomPotData            = $7F6018, "RoomPotData labeled at incorrect address"
-assert PurchaseCounts         = $7F6268, "PurchaseCounts labeled at incorrect address"
-assert PrivateBlock           = $7F62C8, "PrivateBlock labeled at incorrect address"
-assert DummyValue             = $7F64C8, "DummyValue labeled at incorrect address"
+%assertSRAM(ExtendedFileNameWRAM, $7F6000)
+%assertSRAM(RoomPotData, $7F6018)
+%assertSRAM(PurchaseCounts, $7F6268)
+%assertSRAM(PrivateBlock, $7F62C8)
+%assertSRAM(DummyValue, $7F64C8)
 
 ;================================================================================
 ; Direct SRAM Assertions
 ;--------------------------------------------------------------------------------
-assert SRAMEquipment          = $700340, "SRAMEquipment labeled at incorrect address"
-assert InventoryTrackingSRAM  = $70038C, "InventoryTracking labeled at incorrect address"
-assert BowTrackingSRAM        = $70038E, "BowTracking labeled at incorrect address"
-assert ExtendedFileNameSRAM   = $700500, "ExtendedFilenameSRAM labeled at incorrect address"
-assert RomNameSRAM            = $702000, "RomNameSRAM at incorrect address"
-assert RomVersionSRAM         = $702015, "RomVersionSRAM at incorrect address"
-assert PasswordSRAM           = $703000, "PasswordSRAM at incorrect address"
+%assertSRAM(SRAMEquipment, $700340)
+%assertSRAM(InventoryTrackingSRAM, $70038C)
+%assertSRAM(BowTrackingSRAM, $70038E)
+%assertSRAM(ExtendedFileNameSRAM, $700500)
+%assertSRAM(RomNameSRAM, $702000)
+%assertSRAM(RomVersionSRAM, $702015)
+%assertSRAM(PasswordSRAM, $703000)
 
 ;--------------------------------------------------------------------------------
 ; MOVED TODO

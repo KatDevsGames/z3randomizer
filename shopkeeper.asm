@@ -537,7 +537,7 @@ Shopkeeper_BuyItem:
 		+
 
 		LDA !SHOP_TYPE : AND.b #$80 : BNE .buy ; don't charge if this is a take-any
-		REP #$20 : LDA TargetRupees : CMP.l !SHOP_INVENTORY+1, X : SEP #$20 : !BGE .buy
+		REP #$20 : LDA CurrentRupees : CMP.l !SHOP_INVENTORY+1, X : SEP #$20 : !BGE .buy
 		
 		.cant_afford
 	        LDA.b #$7A
@@ -553,7 +553,7 @@ Shopkeeper_BuyItem:
 			JMP .done
 		.buy
 			LDA !SHOP_TYPE : AND.b #$80 : BNE ++ ; don't charge if this is a take-any
-				REP #$20 : LDA TargetRupees : !SUB !SHOP_INVENTORY+1, X : STA TargetRupees : SEP #$20 ; Take price away
+				REP #$20 : LDA CurrentRupees : !SUB !SHOP_INVENTORY+1, X : STA CurrentRupees : SEP #$20 ; Take price away
 			++
 			LDA.l !SHOP_INVENTORY, X : TAY : JSL.l Link_ReceiveItem
 			LDA.l !SHOP_INVENTORY+3, X : INC : STA.l !SHOP_INVENTORY+3, X

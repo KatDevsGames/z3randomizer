@@ -57,11 +57,11 @@ DecrementArrows:
 		.shoot_arrow
 		PHX
 		REP #$20
-		LDA TargetRupees : BEQ +
+		LDA CurrentRupees : BEQ +
 			PHA : LDA BowEquipment : DEC : AND #$0002 : TAX : PLA
 			!SUB.l ArrowModeWoodArrowCost, X ; CMP.w #$0000
 			BMI .not_enough_money
-				STA TargetRupees : LDA.w #$0001 : BRA +
+				STA CurrentRupees : LDA.w #$0001 : BRA +
 			.not_enough_money
 				LDA.w #$0000
 		+
@@ -82,7 +82,7 @@ ArrowGame:
 			PHX
 			REP #$20 ; set 16-bit accumulator
 				LDA BowEquipment : DEC : AND #$0002 : TAX
-				LDA TargetRupees : !ADD.l ArrowModeWoodArrowCost, X : STA TargetRupees
+				LDA CurrentRupees : !ADD.l ArrowModeWoodArrowCost, X : STA CurrentRupees
 			SEP #$20 ; set 8-bit accumulator
 			PLX
 	+

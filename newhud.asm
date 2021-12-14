@@ -26,7 +26,7 @@ SEP #$30
 !RUPEE_DRAW_ADDRESS = "$7EC750"
 ;================================================================================
 	
-	LDA.l CurrentRupees ; Drawing bombs (above) always ends with 16-bit A, so, no need to REP here
+	LDA.l DisplayRupees ; Drawing bombs (above) always ends with 16-bit A, so, no need to REP here
 	JSR HudHexToDec4Digit
 	LDX.b $04 : TXA : ORA.w #$2400 : STA !RUPEE_DRAW_ADDRESS	; 1000s
 	LDX.b $05 : TXA : ORA.w #$2400 : STA !RUPEE_DRAW_ADDRESS+2	;  100s

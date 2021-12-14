@@ -73,7 +73,7 @@ OnUncleItemGet:
 		LDA.l ArrowMode : BEQ +
 			LDA BowTracking : ORA #$80 : STA BowTracking ; enable bow toggle
 			REP #$20 ; set 16-bit accumulator
-			LDA TargetRupees : !ADD.l FreeUncleItemAmount : STA TargetRupees ; rupee arrows, so also give the player some money to start
+			LDA CurrentRupees : !ADD.l FreeUncleItemAmount : STA CurrentRupees ; rupee arrows, so also give the player some money to start
 			SEP #$20 ; set 8-bit accumulator
 	+
 RTL
@@ -125,7 +125,7 @@ RTL
 OnNewFile:
 	PHX : PHP
 		REP #$20 ; set 16-bit accumulator
-		LDA.l LinkStartingRupees : STA CurrentRupees : STA TargetRupees
+		LDA.l LinkStartingRupees : STA DisplayRupees : STA CurrentRupees
 		LDA.l StartingTime : STA ChallengeTimer
 		LDA.l StartingTime+2 : STA ChallengeTimer+2
 

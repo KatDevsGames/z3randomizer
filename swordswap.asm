@@ -143,7 +143,7 @@ GetSmithSword:
 		JML.l Smithy_DoesntHaveSword ; Classic Smithy
 	+
 
-	REP #$20 : LDA TargetRupees : CMP #$000A : SEP #$20 : !BGE .buy
+	REP #$20 : LDA CurrentRupees : CMP #$000A : SEP #$20 : !BGE .buy
 	.cant_afford
 		REP #$10
 		LDA.b #$7A
@@ -158,7 +158,7 @@ GetSmithSword:
 		STZ $02E9 ; Item from NPC
 		PHX : JSL Link_ReceiveItem : PLX
 
-		REP #$20 : LDA TargetRupees : !SUB.w #$000A : STA TargetRupees : SEP #$20 ; Take 10 rupees
+		REP #$20 : LDA CurrentRupees : !SUB.w #$000A : STA CurrentRupees : SEP #$20 ; Take 10 rupees
 		JSL ItemSet_SmithSword
 	
 	.done

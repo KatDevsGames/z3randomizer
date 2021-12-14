@@ -16,7 +16,7 @@ RefillHealth:
 		LDA !BUSY_HEALTH : BNE ++
 			LDA.l PotionHealthRefill ; load refill amount
 			!ADD CurrentHealth ; add to current health
-			CMP HealthCapacity : !BLT +++ : LDA HealthCapacity : +++
+			CMP MaximumHealth : !BLT +++ : LDA MaximumHealth : +++
 			STA !BUSY_HEALTH
 		++
 
@@ -35,8 +35,8 @@ RefillHealth:
 
     ; Check goal health versus actual health.
     ; if(actual < goal) then branch.
-    LDA CurrentHealth : CMP HealthCapacity : BCC .refillAllHealth
-    LDA HealthCapacity : STA CurrentHealth
+    LDA CurrentHealth : CMP MaximumHealth : BCC .refillAllHealth
+    LDA MaximumHealth : STA CurrentHealth
     LDA.b #$00 : STA HeartsFiller
     ; ??? not sure what purpose this branch serves.
     LDA $020A : BNE .beta
