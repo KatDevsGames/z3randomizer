@@ -12,7 +12,7 @@ RTL
 ;--------------------------------------------------------------------------------
 CheckFullHealth:
     LDA BigFairyHealth : BEQ +
-        LDA CurrentHealth : CMP HealthCapacity : BNE .player_hp_not_full_yet
+        LDA CurrentHealth : CMP MaximumHealth : BNE .player_hp_not_full_yet
     +
     LDA BigFairyMagic : BEQ +
         LDA CurrentMagic : CMP.b #$80 : BNE .player_mp_not_full_yet

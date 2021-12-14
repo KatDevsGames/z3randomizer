@@ -274,7 +274,7 @@ AddReceivedItemExpandedGetItem:
 			LDA.b #$01 : STA ArrowsFiller
 		++
 	+ CMP.b #$59 : BNE + ; 1 Rupoor
-		REP #$20 : LDA TargetRupees : !SUB RupoorDeduction : STA TargetRupees : SEP #$20 ; Take 1 rupee
+		REP #$20 : LDA CurrentRupees : !SUB RupoorDeduction : STA CurrentRupees : SEP #$20 ; Take 1 rupee
 		JMP .done
 	+ CMP.b #$5A : BNE + ; Null Item
 		JMP .done
