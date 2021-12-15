@@ -388,12 +388,12 @@ InventoryTrackingSRAM: skip 2   ;
 BowTrackingSRAM: skip 2         ;
 skip 368                        ;
 ExtendedFileNameSRAM: skip 24   ; We read and write the file name directly from and to SRAM (24 bytes)
-skip $1AE8                      ;
-RomNameSRAM: skip 21            ; ROM name from $FFC0, burned in during init (21 bytes)
-                                ; If value in the ROM doesn't match SRAM, save is cleared.
+skip $1AE4                      ;
 RomVersionSRAM: skip 4          ; ALTTPR ROM version. Low byte is the version, high byte writes
                                 ; $01 for now (32-bits total)
-skip 4071                       ;
+RomNameSRAM: skip 21            ; ROM name from $FFC0, burned in during init (21 bytes)
+                                ; If value in the ROM doesn't match SRAM, save is cleared.
+skip 4075                       ;
 PasswordSRAM: skip 16           ; Password value (16 bytes)
 
 base off
@@ -401,15 +401,16 @@ base off
 ;================================================================================
 ; Assertions
 ;================================================================================
+macro assertSRAM(label, address)
+  assert <label> = <address>, "<label> labeled at incorrect address."
+endmacro
+
+;================================================================================
 ; Vanilla Assertions
 ;--------------------------------------------------------------------------------
 ; All of these need to pass for the base rom to build or something is probably
 ; very wrong.
 ;--------------------------------------------------------------------------------
-macro assertSRAM(label, address)
-  assert <label> = <address>, "<label> labeled at incorrect address."
-endmacro
-
 %assertSRAM(WRAMEquipment, $7EF340)
 %assertSRAM(BowEquipment, $7EF340)
 %assertSRAM(BoomerangEquipment, $7EF341)
@@ -621,47 +622,6 @@ endmacro
 %assertSRAM(BowTrackingSRAM, $70038E)
 %assertSRAM(ExtendedFileNameSRAM, $700500)
 %assertSRAM(RomNameSRAM, $702000)
-%assertSRAM(RomVersionSRAM, $702015)
+%assertSRAM(RomVersionSRAM, $701FFC)
 %assertSRAM(PasswordSRAM, $703000)
 
-;--------------------------------------------------------------------------------
-; MOVED TODO
-;--------------------------------------------------------------------------------
-; CapacityUpgrades: 7ef452 -> 7ef469
-; file name: 3e3-3f0, -> 7ef500
-; shop purchase counts: 7ef302 -> 7ef51a - 7ef579
-; GoalCounter: 7ef418 -> 7ef418 (2 bytes)
-;HighestMail: 7ef424 -> 7ef470
-;HighestShield: 7ef422 -> swords usingHighestSword, shields removed from general flags
-; SmallKeyCounter: 7ef424 -> 7ef471
-; ServiceSequence: 7ef419 -> 7ef4a0
-; SwordsShields: 7ef422 -> swords usingHighestSword
-; PreMirrorLocations: 7ef432 -> 7ef434, PreBoots and PreMirror now 2 bytes
-; Heart Pieces: 7ef429 ->  7ef470
-; Pendant counter: 7ef429, now an integer
-; SwordlessBosses: 7ef452, now an integer
-; 
-; DungeonLocations values and labels moved to block right before ChestKeys block
-; starting at address 7ef472
-;
-; bombs (?), silvers, and pre gtbk at $7ef42a now just pre gtbk
-;
-; whole file name now at $7F6000/706000, first four still at vanilla location
-;
-; password_sram: 701000 -> 703000
-;--------------------------------------------------------------------------------
-; ADDED
-;--------------------------------------------------------------------------------
-;
-; PreFluteLocations      = $7EF436[0x02]
-; ServiceRequest         = $7EF4A0[0x08]
-; VERSION                = $7F6018[0x04]
-; RoomPotData            = $7F601C[0x250]
-; PurchaseCounts         = $7F601C[0x60]
-; DummyValue             = $7F607C[0x02]
-;
-;--------------------------------------------------------------------------------
-; TODO
-;--------------------------------------------------------------------------------
-; figure out why ChestsOpened is wrong
-;
