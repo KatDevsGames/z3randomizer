@@ -196,7 +196,6 @@ FullInventoryExternal:
 ;--------------------------------------------------------------------------------
 AddInventory:
 	PHA : PHX : PHP
-        PHA : LDA DummyValue : PLA
 	CPY.b #$0C : BNE + ; Blue Boomerang
 		LDA InventoryTracking : ORA #$80 : STA InventoryTracking
 		JMP .incrementCounts
@@ -434,6 +433,7 @@ AddInventory:
 		JSR .incrementKey
 		JMP .done
 	+ CPY.b #$25 : BNE + ; Compass
+                JSL MaybeFlagCompassTotalPickup
 		JSR .incrementCompass
 		JMP .done
 	+ CPY.b #$26 : BNE + ; Liar Heart (Container)
@@ -546,6 +546,7 @@ AddInventory:
 		JMP .done
 	+ CPY.b #$80 : !BLT + ; Items $80 - $8F - Free Compasses
 	  CPY.b #$90 : !BGE +
+                JSL MaybeFlagCompassTotalPickup
 		JSR .incrementCompass
 		JMP .done
 	+ CPY.b #$90 : !BLT + ; Items $90 - $9F - Free Big Keys

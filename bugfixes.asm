@@ -214,3 +214,9 @@ FixJingleGlitch:
 
 .exit
 	RTL
+;--------------------------------------------------------------------------------
+; Fix spawning with more hearts than capacity when less than 3 heart containers
+pushpc
+        org $09F4AC ; <- module_death.asm:331
+        db $08, $08, $10
+pullpc
