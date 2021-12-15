@@ -14,7 +14,13 @@ endmacro
 
 DrawDungeonCompassCounts:
 	LDX $1B : BNE + : RTL : + ; Skip if outdoors
-	LDX $040C : CPX.b #$FF : BEQ .done ; Skip if not in a dungeon
+
+	; extra hard safeties for getting dungeon ID to prevent crashes
+	PHA
+	LDA.w $040C : AND.w #$00FE : TAX ; force dungeon ID to be multiple of 2
+	PLA
+
+	CPX.b #$1B : BCS .done ; Skip if not in a valid dungeon ID
 
 	CMP.w #$0002 : BEQ ++ ; if CompassMode==2, we don't check for the compass
 		LDA $7EF364 : AND.l DungeonItemMasks, X ; Load compass values to A, mask with dungeon item masks
