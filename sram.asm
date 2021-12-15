@@ -172,10 +172,11 @@ BowTracking: skip 2             ; b s p - - - - - (bitfield)
                                 ; The front end writes two distinct progressive bow items. p
                                 ; indicates whether the "second" has been found independent of
                                 ; the first
-ItemLimitCounts: skip 24        ; Keeps track of limited non-progressive items such as lamp.
+ItemLimitCounts: skip 16        ; Keeps track of limited non-progressive items such as lamp.
                                 ; See: ItemSubstitutionRules in tables.asm
                                 ; Right now this is only used for three items but extra space is
-skip 29                         ; reserved
+                                ; reserved
+skip 37                         ; Unused
 ProgressIndicator: skip 1       ; $00 = Pre-Uncle | $01 = Post-Uncle item | $02 = Zelda Rescued
                                 ; $03 = Agahnim 1 defeated
                                 ; $04 and above don't do anything. $00-$02 used in standard mode
@@ -214,7 +215,15 @@ skip 28                         ; Unused
 GameCounter: skip 2             ; Number of deaths and save + quits (16-bit integer)
 PostGameCounter: skip 2         ; Initialized to $FFFF, replaced with GameCounter on goal completion
                                 ; Number is displayed on file select when not $FFFF. Max 999 (16-bit integer)
-skip 13                         ;
+CompassCountDisplay: skip 2     ; Compass count display flags (bitfield)
+                                ; Sets a flag if the total item count has been displayed on HUD
+                                ; Low byte:  w i h b t g - -
+                                ; w = Skull Woods | i = Ice Palace    | h = Hera | b = Thieves' Town
+                                ; t = Turtle Rock | g = Ganon's Tower
+                                ; High Byte: x c e d a s p m
+                                ; x = Sewers       | c = Hyrule Castle | e = Eastern Palace | d = Desert Palace
+                                ; a = Castle Tower | s = Swamp Palace  | p = PoD            | m = Mire
+skip 11                         ;
 NpcFlags: skip 2                ; l - c s t k z o (bitfield)
                                 ; l = Library  | c = Catfish   | s = Sahasrahla | t = Stumpy
                                 ; k = Sick Kid | z = King Zora | o = Old Man
@@ -298,23 +307,7 @@ skip 46                         ; Unused
 ServiceSequenceRx:              ; Service sequence receive
 ServiceSequenceTx:              ; Service sequence transmit
 ServiceSequence: skip 8         ; Service request block. See servicerequest.asm
-skip 24                         ; Unused 
-DungeonLocationsChecked:        ; \  Dungeon locations checked counters (integers)
-SewersLocations: skip 1         ;  | Sewer Passage
-HCLocations: skip 1             ;  | Hyrule Castle
-EPLocations: skip 1             ;  | Eastern Palace
-DPLocations: skip 1             ;  | Desert Palace
-CTLocations: skip 1             ;  | Agahnim's Tower
-SPLocations: skip 1             ;  | Swamp Palace
-PDLocations: skip 1             ;  | Palace of Darkness
-MMLocations: skip 1             ;  | Misery Mire
-SWLocations: skip 1             ;  | Skull Woods
-IPLocations: skip 1             ;  | Ice Palace
-THLocations: skip 1             ;  | Tower of Hera
-TTLocations: skip 1             ;  | Thieves' Town
-TRLocations: skip 1             ;  | Turtle Rock
-GTLocations: skip 1             ; /  Ganon's Tower:
-skip 2                          ; Reserved for previous table
+skip 8                          ; Unused
 DungeonAbsorbedKeys:            ; \  Absorbed key counters (integers)
 SewerAbsorbedKeys: skip 1       ;  | Sewer Passage
 HCAbsorbedKeys: skip 1          ;  | Hyrule Castle
@@ -331,6 +324,23 @@ TTAbsorbedKeys: skip 1          ;  | Thieves' Town
 TRAbsorbedKeys: skip 1          ;  | Turtle Rock
 GTAbsorbedKeys: skip 1          ; /  Ganon's Tower
 skip 2                          ; Reserved for previous table
+DungeonLocationsChecked:        ; \  Dungeon locations checked counters (integers)
+SewersLocations: skip 1         ;  | Sewer Passage
+HCLocations: skip 1             ;  | Hyrule Castle
+EPLocations: skip 1             ;  | Eastern Palace
+DPLocations: skip 1             ;  | Desert Palace
+CTLocations: skip 1             ;  | Agahnim's Tower
+SPLocations: skip 1             ;  | Swamp Palace
+PDLocations: skip 1             ;  | Palace of Darkness
+MMLocations: skip 1             ;  | Misery Mire
+SWLocations: skip 1             ;  | Skull Woods
+IPLocations: skip 1             ;  | Ice Palace
+THLocations: skip 1             ;  | Tower of Hera
+TTLocations: skip 1             ;  | Thieves' Town
+TRLocations: skip 1             ;  | Turtle Rock
+GTLocations: skip 1             ; /  Ganon's Tower:
+skip 2                          ; Reserved for previous table
+skip 16                         ; Currently occupied by multiworld stuff in DR, can be reclaimed
 DungeonCollectedKeys:           ; \  Chest Key Counters. Only counts keys placed in chests. (integers)
 SewerCollectedKeys: skip 1      ;  | Sewer Passage
 HCCollectedKeys: skip 1         ;  | Hyrule Castle
@@ -498,6 +508,7 @@ endmacro
 ;--------------------------------------------------------------------------------
 %assertSRAM(GameCounter, $7EF3FF)
 %assertSRAM(PostGameCounter, $7EF401)
+%assertSRAM(CompassCountDisplay, $7EF403)
 %assertSRAM(NpcFlags, $7EF410)
 %assertSRAM(MapOverlay, $7EF414)
 %assertSRAM(GeneralFlags, $7EF416)
@@ -552,6 +563,20 @@ endmacro
 %assertSRAM(ServiceSequenceRx, $7EF4A0)
 %assertSRAM(ServiceSequenceTx, $7EF4A0)
 ;--------------------------------------------------------------------------------
+%assertSRAM(SewerAbsorbedKeys, $7EF4B0)
+%assertSRAM(HCAbsorbedKeys, $7EF4B1)
+%assertSRAM(EPAbsorbedKeys, $7EF4B2)
+%assertSRAM(DPAbsorbedKeys, $7EF4B3)
+%assertSRAM(CTAbsorbedKeys, $7EF4B4)
+%assertSRAM(SPAbsorbedKeys, $7EF4B5)
+%assertSRAM(PDAbsorbedKeys, $7EF4B6)
+%assertSRAM(MMAbsorbedKeys, $7EF4B7)
+%assertSRAM(SWAbsorbedKeys, $7EF4B8)
+%assertSRAM(IPAbsorbedKeys, $7EF4B9)
+%assertSRAM(THAbsorbedKeys, $7EF4BA)
+%assertSRAM(TTAbsorbedKeys, $7EF4BB)
+%assertSRAM(TRAbsorbedKeys, $7EF4BC)
+%assertSRAM(GTAbsorbedKeys, $7EF4BD)
 %assertSRAM(SewersLocations, $7EF4C0)
 %assertSRAM(HCLocations, $7EF4C1)
 %assertSRAM(EPLocations, $7EF4C2)
@@ -566,20 +591,6 @@ endmacro
 %assertSRAM(TTLocations, $7EF4CB)
 %assertSRAM(TRLocations, $7EF4CC)
 %assertSRAM(GTLocations, $7EF4CD)
-%assertSRAM(SewerAbsorbedKeys, $7EF4D0)
-%assertSRAM(HCAbsorbedKeys, $7EF4D1)
-%assertSRAM(EPAbsorbedKeys, $7EF4D2)
-%assertSRAM(DPAbsorbedKeys, $7EF4D3)
-%assertSRAM(CTAbsorbedKeys, $7EF4D4)
-%assertSRAM(SPAbsorbedKeys, $7EF4D5)
-%assertSRAM(PDAbsorbedKeys, $7EF4D6)
-%assertSRAM(MMAbsorbedKeys, $7EF4D7)
-%assertSRAM(SWAbsorbedKeys, $7EF4D8)
-%assertSRAM(IPAbsorbedKeys, $7EF4D9)
-%assertSRAM(THAbsorbedKeys, $7EF4DA)
-%assertSRAM(TTAbsorbedKeys, $7EF4DB)
-%assertSRAM(TRAbsorbedKeys, $7EF4DC)
-%assertSRAM(GTAbsorbedKeys, $7EF4DD)
 %assertSRAM(SewerCollectedKeys, $7EF4E0)
 %assertSRAM(HCCollectedKeys, $7EF4E1)
 %assertSRAM(EPCollectedKeys, $7EF4E2)

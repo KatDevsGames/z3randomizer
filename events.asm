@@ -21,9 +21,10 @@ OnDrawHud:
 	JSL.l PollService
 JML.l ReturnFromOnDrawHud
 ;--------------------------------------------------------------------------------
-;OnDungeonEntrance:
-;	STA $7EC172 ; thing we wrote over
-;RTL
+OnDungeonEntrance:
+	STA $7EC172 ; thing we wrote over
+        JSL MaybeFlagCompassTotalEntrance
+RTL
 ;--------------------------------------------------------------------------------
 OnPlayerDead:
 	PHA

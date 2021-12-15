@@ -80,6 +80,7 @@ incsrc treekid.asm
 incsrc spriteswap.asm
 incsrc hashalphabethooks.asm
 incsrc sharedplayerpalettefix.asm
+incsrc ram.asm
 incsrc sram.asm
 
 ;org $208000 ; bank #$20

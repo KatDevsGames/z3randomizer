@@ -1556,8 +1556,8 @@ dw #9999 ; Rupee Limit
 ; $7F5200 - $7F52FF - RNG Pointer Block
 ; $7F5300 - $7F53FF - Multiworld Block
 ; $7F5400 - $7F540F - MSU Block
-
-; $7F5410 - $7F56FF - Unused
+; $7F5410 - $7F545F - Dungeon Tracking Block
+; $7F5460 - $7F56FF - Unused
 
 ; $7F5700 - $7F57FF - Dialog Buffer
 ;
@@ -1650,11 +1650,6 @@ ShopContentsTable:
 db $01, $51, $64, $00, $07, $FF, $00, $00
 db $01, $53, $64, $00, $07, $FF, $00, $00
 db $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF
-
-; Fix spawning with more hearts than capacity when less than 3 heart containers
-LowHeartFix:
-	org $09F4AC ; <- module_death.asm:331
-	db $08, $08, $10
 
 ;--------------------------------------------------------------------------------
 ; 0x185060 - 1850FF (unused)
@@ -2653,13 +2648,19 @@ org $30EA84 : RoomHeader_012E: ; pc 0x186A84
 db $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF
 
 ;--------------------------------------------------------------------------------
-; 0x186C00 - 187FFF (unused)
+; 0x186C00 - 186FFE (unused)
 ;--------------------------------------------------------------------------------
+org $30EFFF ; PC 0x186FFF
+BallNChainDungeon:
+db #$02
 
+org $30F000 ; PC 0x187000-0x18700F
+CompassTotalsROM:
+db $08, $08, $06, $06, $02, $0A, $0E, $08, $08, $08, $06, $08, $0C, $1B, $00, $00
 
-
-
-
+;--------------------------------------------------------------------------------
+; 0x187010 - 187FFF (unused)
+;--------------------------------------------------------------------------------
 
 
 
