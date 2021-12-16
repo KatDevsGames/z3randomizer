@@ -75,11 +75,11 @@ JMP .done
 	PHA
                 LDA HighestSword
                 STA [$00] ; already set to 1 if we had no sword, always keep highest
-                LDA ShieldEquipment : BNE + ; keep our shield unless we have no shield
-                        INC $00
+                INC $00
+                LDA HighestShield : BNE + ; keep our shield unless we have no shield
                         INC A
-                        STA [$00]
                 +
+                        STA [$00]
 	PLA
 RTS
 ;================================================================================
