@@ -564,6 +564,7 @@ endmacro
 %assertSRAM(ServiceSequenceRx, $7EF4A0)
 %assertSRAM(ServiceSequenceTx, $7EF4A0)
 ;--------------------------------------------------------------------------------
+%assertSRAM(DungeonAbsorbedKeys, $7EF4B0)
 %assertSRAM(SewerAbsorbedKeys, $7EF4B0)
 %assertSRAM(HCAbsorbedKeys, $7EF4B1)
 %assertSRAM(EPAbsorbedKeys, $7EF4B2)
@@ -578,6 +579,7 @@ endmacro
 %assertSRAM(TTAbsorbedKeys, $7EF4BB)
 %assertSRAM(TRAbsorbedKeys, $7EF4BC)
 %assertSRAM(GTAbsorbedKeys, $7EF4BD)
+%assertSRAM(DungeonLocationsChecked, $7EF4C0)
 %assertSRAM(SewersLocations, $7EF4C0)
 %assertSRAM(HCLocations, $7EF4C1)
 %assertSRAM(EPLocations, $7EF4C2)
@@ -592,6 +594,7 @@ endmacro
 %assertSRAM(TTLocations, $7EF4CB)
 %assertSRAM(TRLocations, $7EF4CC)
 %assertSRAM(GTLocations, $7EF4CD)
+%assertSRAM(DungeonCollectedKeys, $7EF4E0)
 %assertSRAM(SewerCollectedKeys, $7EF4E0)
 %assertSRAM(HCCollectedKeys, $7EF4E1)
 %assertSRAM(EPCollectedKeys, $7EF4E2)

@@ -40,7 +40,7 @@ DrawDungeonCompassCounts:
 		LDX.b $07 : TXA : ORA #$2400 : STA $7EC79C
 	PLX
 
-        LDA DungeonLocationsChecked-1, X : AND #$00FF
+        LDA DungeonLocationsChecked, X : AND #$00FF
 	SEP #$20
 	JSR HudHexToDec2Digit
 	REP #$20
