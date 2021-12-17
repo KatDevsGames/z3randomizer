@@ -27,11 +27,11 @@ DrawDungeonCompassCounts:
 		BEQ .done ; skip if we don't have compass
 	++
 	
-        LDA $040C : LSR
+        TXA : LSR : TAX
         BNE +
                 INC
         +
-        TAX : LDA.l CompassTotalsWRAM, X : AND #$00FF
+        LDA.l CompassTotalsWRAM, X : AND #$00FF
 	SEP #$20
 	JSR HudHexToDec2Digit
 	REP #$20

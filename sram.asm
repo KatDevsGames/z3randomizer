@@ -142,8 +142,8 @@ MagicConsumption: skip 1        ; $00 = Normal | $01 = Half Magic | $02 = Quarte
 ;--------------------------------------------------------------------------------
                                 ; Small keys earned per dungeon (integers)
 DungeonKeys:                    ;
-SewerKeys: skip 1               ;
-HyruleCastleKeys: skip 1        ;
+SewerKeys: skip 1               ; \ HC and Sewers small keys increment together
+HyruleCastleKeys: skip 1        ; /
 EasternKeys: skip 1             ; Eastern Palace small keys
 DesertKeys: skip 1              ; Desert Palace small keys
 CastleTowerKeys: skip 1         ; Agahnim's Tower small keys
@@ -467,6 +467,7 @@ endmacro
 %assertSRAM(CrystalsField, $7EF37A)
 %assertSRAM(MagicConsumption, $7EF37B)
 ;--------------------------------------------------------------------------------
+%assertSRAM(DungeonKeys, $7EF37C)
 %assertSRAM(SewerKeys, $7EF37C)
 %assertSRAM(HyruleCastleKeys, $7EF37D)
 %assertSRAM(EasternKeys, $7EF37E)
@@ -512,6 +513,9 @@ endmacro
 %assertSRAM(CompassCountDisplay, $7EF403)
 %assertSRAM(NpcFlags, $7EF410)
 %assertSRAM(MapOverlay, $7EF414)
+%assertSRAM(HudFlag, $7EF416)
+%assertSRAM(IgnoreFaeries, $7EF416)
+%assertSRAM(HasGroveItem, $7EF416)
 %assertSRAM(GeneralFlags, $7EF416)
 %assertSRAM(HighestSword, $7EF417)
 %assertSRAM(GoalCounter, $7EF418)
