@@ -32,7 +32,7 @@ DrawDungeonCompassCounts:
                 INC
         +
         LDA.l CompassTotalsWRAM, X : AND #$00FF
-	SEP #$20
+        SEP #$20
 	JSR HudHexToDec2Digit
 	REP #$20
         PHX
