@@ -127,12 +127,12 @@ RTS
 ;--------------------------------------------------------------------------------
 
 ;--------------------------------------------------------------------------------
-;Fix for SQ jumping causing accidental Exploration Glitch
+; Fix for SQ jumping causing accidental Exploration Glitch
 SQEGFix:
-    LDA Bugfix_PodEG : BNE .done
-        STZ $047A ;disarm exploration glitch
-    .done
-RTL
+	LDA.l Bugfix_PodEG : BEQ ++
+	STZ.w $047A ; disarm exploration glitch
+++	RTL
+
 ;--------------------------------------------------------------------------------
 ; Fix crystal not spawning when using somaria vs boss
 TryToSpawnCrystalUntilSuccess:
