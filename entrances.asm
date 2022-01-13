@@ -80,8 +80,8 @@ AllowStartFromSingleEntranceCave:
 	LDA $7EF3C8 : AND.w #$00FF ; What we wrote over
 	PHA
 		TAX
-
 		LDA.l StartingAreaExitOffset, X
+                AND.w #$00FF
 
 		BNE +
 			JMP .done
