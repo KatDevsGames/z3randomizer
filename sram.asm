@@ -134,10 +134,12 @@ BombsFiller: skip 1             ; Bombs collected yet to be filled (integer)
 ArrowsFiller: skip 1            ; Arrows collected yet to be filled (integer)
 CurrentArrows: skip 1           ; Current arrows (integer)
 skip 1                          ; Unknown
-AbilityFlags: skip 1            ; l r t u p d s h (bitfield)
+AbilityFlags: skip 1            ; l r t u p b s h (bitfield)
                                 ; l = Lift | r = Read | t = Talk | u = Unused but set by default
-                                ; p = Pull | d = Dash | s = Swim | h = Pray (unused)
-CrystalsField: skip 1           ; - 3 4 2 7 5 1 6 (bitfield)
+                                ; p = Pull | b = Dash | s = Swim | h = Pray (unused)
+CrystalsField: skip 1           ; - w b s t i p m (bitfield)
+                                ; w = Skull Woods | b = Thieves' Town      | s = Swamp Palace | t = Turtle Rock
+                                ; i = Ice Palace  | p = Palace of Darkness | m = Misery Mire
 MagicConsumption: skip 1        ; $00 = Normal | $01 = Half Magic | $02 = Quarter Magic
 ;--------------------------------------------------------------------------------
                                 ; Small keys earned per dungeon (integers)
@@ -180,8 +182,8 @@ skip 37                         ; Unused
 ProgressIndicator: skip 1       ; $00 = Pre-Uncle | $01 = Post-Uncle item | $02 = Zelda Rescued
                                 ; $03 = Agahnim 1 defeated
                                 ; $04 and above don't do anything. $00-$02 used in standard mode
-ProgressFlags: skip 1           ; - - - u - z - s (bitfield)
-                                ; u = Uncle left house | z = Zelda rescued | s = Uncle item obtained
+ProgressFlags: skip 1           ; - - - h - z - u (bitfield)
+                                ; h = Uncle left house | z = Zelda rescued | u = Uncle item obtained
 MapIcons: skip 1                ; Used for deciding which icons to display on OW map
                                 ; $03 = Pendants  | $04 = Master Sword | $05 = Skull at Hyrule Castle
                                 ; $06 = Crystal 1 | $07 = All Crystals | $08 = Skull at Ganon's Tower
@@ -189,9 +191,9 @@ StartingEntrance: skip 1        ; Starting entrance to use
                                 ; $00 = Link's House         | $01 = Menu or Pyramid w/ Aga dead & mirror
                                 ; $02 = Zelda's Cell         | $03 = Secret Passage or HC if entered (escape)
                                 ; $04 = Throne Room (escape) | $05 = Old Man Cave w/ Old Man
-NpcFlagsVanilla: skip 1         ; - - b p s - m h (bitfield)
-                                ; b = Frog rescued         | p = Purple Chest | s = Tree Kid (unused)
-                                ; m = Bottle Merchant item | h = Hobo item
+NpcFlagsVanilla: skip 1         ; - - d p s - b h (bitfield)
+                                ; d = Frog rescued         | p = Purple Chest | s = Tree Kid (unused)
+                                ; b = Bottle Merchant item | h = Hobo item
 CurrentWorld: skip 1            ; $00 = Light World | $40 = Dark World
 skip 1                          ; Unused
 FollowerIndicator: skip 1       ; $00 = No Follower  | $01 = Zelda    | $04 = Old Man
@@ -370,6 +372,7 @@ InverseChecksum: skip 2         ; Vanilla Inverse Checksum. Don't write unless c
 base $7F6000                    ; $1000 byte buffer we place beginning at second save file
 ExtendedFileNameWRAM: skip 24   ; File name, 12 word-length characters.
 RoomPotData: skip 592           ; Table for expanded pot shuffle. One word per room.
+SpritePotData: skip 592         ; Table for expanded pot shuffle. One word per room.
 PurchaseCounts: skip 96         ; Keeps track of shop purchases
 PrivateBlock: skip 512          ; Reserved for 3rd party developers
 DummyValue: skip 1              ; $01 if you're a real dummy
@@ -617,9 +620,10 @@ endmacro
 ;--------------------------------------------------------------------------------
 %assertSRAM(ExtendedFileNameWRAM, $7F6000)
 %assertSRAM(RoomPotData, $7F6018)
-%assertSRAM(PurchaseCounts, $7F6268)
-%assertSRAM(PrivateBlock, $7F62C8)
-%assertSRAM(DummyValue, $7F64C8)
+%assertSRAM(SpritePotData, $7F6268)
+%assertSRAM(PurchaseCounts, $7F64B8)
+%assertSRAM(PrivateBlock, $7F6518)
+%assertSRAM(DummyValue, $7F6718)
 
 ;================================================================================
 ; Direct SRAM Assertions
