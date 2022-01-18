@@ -218,6 +218,7 @@ incsrc darkroomitems.asm
 incsrc fastcredits.asm
 incsrc msu.asm
 incsrc dungeonmap.asm
+incsrc textrenderer.asm
 warnpc $A58000
 
 ;org $228000 ; contrib area
@@ -304,6 +305,12 @@ warnpc $339600
 org $339600
 BossMapIconGFX:
 incbin bossicons.4bpp
+
+org $339C00
+NewFont:
+incbin newfont.bin
+NewFontInverted:
+incbin newfont_inverted.bin
 
 org $328000
 Extra_Text_Table:
