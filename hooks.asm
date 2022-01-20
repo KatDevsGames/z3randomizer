@@ -2746,30 +2746,32 @@ org $01C65F : JSL FixJingleGlitch
 ;================================================================================
 ; Text Renderer
 ;--------------------------------------------------------------------------------
-org $0EF51B
-    JML RenderCharExtended
-org $0EF520
-    RenderCharExtended_returnOriginal:
-org $0EF567
-    RenderCharExtended_returnUncompressed:
+if !FEATURE_NEW_TEXT
+    org $0EF51B
+        JML RenderCharExtended
+    org $0EF520
+        RenderCharExtended_returnOriginal:
+    org $0EF567
+        RenderCharExtended_returnUncompressed:
 
-org $0EF356
-    JSL RenderCharLookupWidth
-org $0EF3BA
-    JSL RenderCharLookupWidth
-org $0EF48E
-    JML RenderCharLookupWidthDraw
-org $0EF499
-    RenderCharLookupWidthDraw_return:
+    org $0EF356
+        JSL RenderCharLookupWidth
+    org $0EF3BA
+        JSL RenderCharLookupWidth
+    org $0EF48E
+        JML RenderCharLookupWidthDraw
+    org $0EF499
+        RenderCharLookupWidthDraw_return:
 
-org $0EF6AA
-    JML RenderCharToMapExtended
-org $0EF6C2
-    RenderCharToMapExtended_return:
+    org $0EF6AA
+        JML RenderCharToMapExtended
+    org $0EF6C2
+        RenderCharToMapExtended_return:
 
-org $0EFA50
-    JSL RenderCharSetColorExtended
-org $0EEE5D
-    JSL RenderCharSetColorExtended_init
-org $0EF285
-    JSL RenderCharSetColorExtended_close : NOP
+    org $0EFA50
+        JSL RenderCharSetColorExtended
+    org $0EEE5D
+        JSL RenderCharSetColorExtended_init
+    org $0EF285
+        JSL RenderCharSetColorExtended_close : NOP
+endif
