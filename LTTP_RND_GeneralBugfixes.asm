@@ -105,6 +105,9 @@ dw !ROM_VERSION_HIGH
 
 function hexto555(h) = ((((h&$FF)/8)<<10)|(((h>>8&$FF)/8)<<5)|(((h>>16&$FF)/8)<<0))
 
+; Feature flags, run asar with -DFEATURE_X=1 to enable
+!FEATURE_NEW_TEXT ?= 0
+
 ;================================================================================
 
 incsrc hooks.asm
@@ -218,6 +221,9 @@ incsrc darkroomitems.asm
 incsrc fastcredits.asm
 incsrc msu.asm
 incsrc dungeonmap.asm
+if !FEATURE_NEW_TEXT
+    incsrc textrenderer.asm
+endif
 warnpc $A58000
 
 ;org $228000 ; contrib area
@@ -304,6 +310,14 @@ warnpc $339600
 org $339600
 BossMapIconGFX:
 incbin bossicons.4bpp
+
+if !FEATURE_NEW_TEXT
+    org $339C00
+    NewFont:
+    incbin newfont.bin
+    NewFontInverted:
+    incbin newfont_inverted.bin
+endif
 
 org $328000
 Extra_Text_Table:
