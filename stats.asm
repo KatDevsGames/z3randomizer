@@ -428,6 +428,7 @@ IncrementMagicUseCounterOne:
 !OW_MIRROR_COUNTER = "$7EF43A"
 IncrementOWMirror:
 	PHA
+		LDA #$08 : STA $021B ; fail race game
 		LDA !LOCK_STATS : BNE +
 		LDA $7EF3CA : BEQ + ; only do this for DW->LW
 			LDA !OW_MIRROR_COUNTER : INC : STA !OW_MIRROR_COUNTER

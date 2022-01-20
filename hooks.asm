@@ -2526,6 +2526,22 @@ NOP
 ;================================================================================
 
 ;================================================================================
+; Resolve conflict between race game and witch item
+;--------------------------------------------------------------------------------
+; Change race game to use $021B instead of $0ABF for detecting cheating
+org $0DCB9D ; STZ.w $0ABF
+STZ $021B
+
+org $0DCBFE ; LDA.w $0ABF
+LDA $021B
+
+org $02BFE0 ; LDA.b #$01 : STA.w $0ABF
+JSL SetOverworldTransitionFlags
+NOP
+; For mirroring, the new flag is set in IncrementOWMirror in stats.asm
+;================================================================================
+
+;================================================================================
 ; Player Sprite Fixes
 ;--------------------------------------------------------------------------------
 org $0DA9C8 ; <- 06A9C8 - player_oam.asm: 1663 (AND.w #$00FF : CMP.w #$00F8 : BCC BRANCH_MARLE)
