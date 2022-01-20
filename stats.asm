@@ -275,6 +275,7 @@ IncrementMagicUseCounterOne:
 ;--------------------------------------------------------------------------------
 IncrementOWMirror:
 	PHA
+		LDA #$08 : STA $021B ; fail race game
 		LDA StatsLocked : BNE +
 		LDA CurrentWorld : BEQ + ; only do this for DW->LW
 			LDA OverworldMirrors : INC : STA OverworldMirrors

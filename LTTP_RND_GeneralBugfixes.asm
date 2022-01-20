@@ -312,7 +312,8 @@ warnpc $B08000
 ;$3B reserved for downstream use
 ;$3F reserved for internal debugging
 ;================================================================================
-;RAM 
+;RAM
+;$7E021B[0x1]: Used by race game instead of $0ABF to avoid witch item conflict
 ;$7EC900[0x1F00]: BIGRAM buffer
 ;$7EF000[0x500]: SRAM mirror First 0x500 bytes of SRAM
 ;   See sram.asm for labels and assignments

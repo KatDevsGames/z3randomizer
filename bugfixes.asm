@@ -220,3 +220,9 @@ pushpc
         org $09F4AC ; <- module_death.asm:331
         db $08, $08, $10
 pullpc
+;--------------------------------------------------------------------------------
+SetOverworldTransitionFlags:
+	LDA #$01
+	STA $0ABF ; used by witch
+	STA $021B ; used by race game
+	RTL

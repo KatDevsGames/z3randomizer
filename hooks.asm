@@ -1854,12 +1854,12 @@ NOP #8
 ;JSL.l OnLoadMap
 ;================================================================================
 org $028B8F ; <- 10B8F - Bank02.asm:2236 (LDA $7EF374 : LSR A : BCS BRANCH_BETA)
-LDA $7EF00F : BNE + : NOP
+JSL CheckHeraBossDefeated : BNE + : NOP
 LDX.b #$F1 : STX $012C
 +
 ;================================================================================
 org $029090 ; <- 11090 - Bank02.asm:3099 (LDA $7EF374 : LSR A : BCS BRANCH_GAMMA)
-LDA $7EF00F : BNE + : NOP
+JSL CheckHeraBossDefeated : BNE + : NOP
 STX $012C ; DON'T MOVE THIS FORWARD OR MADNESS AWAITS
 +
 ;================================================================================
@@ -2517,6 +2517,22 @@ Overworld_Entrance_BRANCH_RHO: ; branch here to continue into door
 org $008C19 ; Bank00.asm@1633 (LDA.b #$01 : STA $420B)
 JSL ParadoxCaveGfxFix
 NOP
+;================================================================================
+
+;================================================================================
+; Resolve conflict between race game and witch item
+;--------------------------------------------------------------------------------
+; Change race game to use $021B instead of $0ABF for detecting cheating
+org $0DCB9D ; STZ.w $0ABF
+STZ $021B
+
+org $0DCBFE ; LDA.w $0ABF
+LDA $021B
+
+org $02BFE0 ; LDA.b #$01 : STA.w $0ABF
+JSL SetOverworldTransitionFlags
+NOP
+; For mirroring, the new flag is set in IncrementOWMirror in stats.asm
 ;================================================================================
 
 ;================================================================================
