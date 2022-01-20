@@ -2394,15 +2394,13 @@ Overworld_Hole_End:
 ;--------------------------------------------------------------------------------
 
 ;================================================================================
-; Disable pyramid hole check for killing aga2
+; Replace pyramid hole check for killing aga2
 ;
 ; this check is intended to prevent getting fluted out a second time if you 
-; return to his room after already killing him once. But with a pre-opened 
-; pyramid hole, it can cause you to get stuck there on killing him the first 
-; time. So we change it, and accept the flute out if you return. 
+; return to his room after already killing him once.
 ;---------------------------------------------------------------------------------
-org $01C753 ; 0C753 = Bank01:10398 (LDA $7EF2DB : AND.b #$20 : BNE .return)
-db $00 ; (originally $20)
+org $01C74E ; 00C74E - bank_01.asm:13281 - (LDA.l $7EF2DB : AND.b #$20)
+LDA.l Aga2Duck : NOP #2
 
 ;================================================================================
 ; Music fixes

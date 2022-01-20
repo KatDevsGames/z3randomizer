@@ -80,8 +80,9 @@ OnUncleItemGet:
 RTL
 ;--------------------------------------------------------------------------------
 OnAga2Defeated:
-	JSL.l Dungeon_SaveRoomData_justKeys ; thing we wrote over, make sure this is first
-	JML.l IncrementAgahnim2Sword
+        JSL.l Dungeon_SaveRoomData_justKeys ; thing we wrote over, make sure this is first
+        LDA.b #$01 : STA Aga2Duck
+        JML.l IncrementAgahnim2Sword
 ;--------------------------------------------------------------------------------
 OnFileCreation:
 	TAX ; what we wrote over

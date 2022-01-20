@@ -8,6 +8,7 @@
 ; $7F6000 - $7F6FFF in WRAM maps to the next 4k bytes, occupying the 2nd and 3rd vanilla
 ; save file locations. ($700500 - $701500)
 ;--------------------------------------------------------------------------------
+pushpc
 org 0 ; This module writes no bytes. Asar gives bank cross errors without this.
 
 ;================================================================================
@@ -225,7 +226,9 @@ CompassCountDisplay: skip 2     ; Compass count display flags (bitfield)
                                 ; High Byte: x c e d a s p m
                                 ; x = Sewers       | c = Hyrule Castle | e = Eastern Palace | d = Desert Palace
                                 ; a = Castle Tower | s = Swamp Palace  | p = PoD            | m = Mire
-skip 11                         ;
+skip 10                         ;
+Aga2Duck: skip 1                ; Used in lieu of pyramid hole for checking if the duck should come
+                                ; 0 = Haven't called post-Aga 2 bird | 1 = Have called post-Aga 2 bird
 NpcFlags: skip 2                ; l - c s t k z o (bitfield)
                                 ; l = Library  | c = Catfish   | s = Sahasrahla | t = Stumpy
                                 ; k = Sick Kid | z = King Zora | o = Old Man
@@ -514,6 +517,7 @@ endmacro
 %assertSRAM(GameCounter, $7EF3FF)
 %assertSRAM(PostGameCounter, $7EF401)
 %assertSRAM(CompassCountDisplay, $7EF403)
+%assertSRAM(Aga2Duck, $7EF40F)
 %assertSRAM(NpcFlags, $7EF410)
 %assertSRAM(MapOverlay, $7EF414)
 %assertSRAM(HudFlag, $7EF416)
@@ -636,3 +640,4 @@ endmacro
 %assertSRAM(RomVersionSRAM, $701FFC)
 %assertSRAM(PasswordSRAM, $703000)
 
+pullpc
