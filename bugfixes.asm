@@ -214,3 +214,10 @@ FixJingleGlitch:
 
 .exit
 	RTL
+
+;--------------------------------------------------------------------------------
+SetOverworldTransitionFlags:
+	LDA #$01
+	STA $0ABF ; used by witch
+	STA $021B ; used by race game
+	RTL
