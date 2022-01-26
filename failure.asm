@@ -11,6 +11,7 @@ table "bsodencode.txt"
 
 DontUseZSNES:
 	SEP #$35 ; sets carry and I flag too
+
 	LDA.b #$00
 	STA.l $4200 ; disable NMI and IRQ
 	STA.l $420C ; disable HDMA
@@ -20,8 +21,6 @@ DontUseZSNES:
 	STA.l $2115
 
 	; Empty VRAM
-	SEP #$20
-
 	LDA.b #AllZeros>>16 : STA.l $4304
 
 	REP #$20
@@ -57,7 +56,7 @@ DontUseZSNES:
 
 ZSNESMessage:
 .line1
-	db "It has been detected that you are attempting to play", $FF
+	db "It has been detected that you are attempting to load", $FF
 
 .line2
 	db "this ROM on a low-quality emulator.", $FF
@@ -69,7 +68,7 @@ ZSNESMessage:
 	db "which this application cannot emulate properly;", $FF
 
 .line5
-	db "As such, this ROM file refuses to boot.", $FF
+	db "as such, this ROM file refuses to boot.", $FF
 
 .line6
 	db "Please upgrade to a more accurate emulator such as", $FF
@@ -95,6 +94,7 @@ Crashed:
 ;===================================================================================================
 ;===================================================================================================
 	SEP #$35 ; sets carry and I flag too
+
 	LDA.b #$00
 	STA.l $4200 ; disable NMI and IRQ
 	STA.l $420C ; disable HDMA
@@ -104,11 +104,9 @@ Crashed:
 	STA.l $2115
 
 	; Empty VRAM
-	SEP #$20
-
 	LDA.b #AllZeros>>16 : STA.l $4304
 
-	REP #$20
+	REP #$38
 
 	LDA.w #AllZeros
 	STA.l $4302
@@ -125,8 +123,6 @@ Crashed:
 ;===================================================================================================
 
 	; Create report
-	REP #$30
-
 	LDA.w #$2100
 	TCD
 
@@ -234,6 +230,7 @@ Crashed:
 
 .done_row
 	CLC
+
 	LDA.l $7F0004
 	ADC.w #32
 	BRA .next_row
@@ -243,20 +240,18 @@ Crashed:
 ;===================================================================================================
 	; once the stack is reported, we can start doing stuff that mucks with it
 .skip_stack
-	REP #$30
-	SEP #$10
-
 	LDA.w #$0000
 	TCD
-	TSC
 
-	STA.b $80 ; remember stack for later messages
+;	TSC
+;	STA.b $80 ; remember stack for later messages
 
 	JSR ConfigurePPUForFailureReport
 	JSR ConfigureBSODVWF
 	JSR LoadBSODFont
 
 	STZ.b VWFR
+
 	LDA.w #BSODMessage_line1 : JSR DrawVWFLine
 	LDA.w #BSODMessage_line2 : JSR DrawVWFLine
 	LDA.w #BSODMessage_line3 : JSR DrawVWFLine
@@ -264,7 +259,6 @@ Crashed:
 	LDA.w #BSODMessage_line5 : JSR DrawVWFLine
 	LDA.w #BSODMessage_line6 : JSR DrawVWFLine
 	LDA.w #BSODMessage_line7 : JSR DrawVWFLine
-
 
 	LDA.w #$0F0F
 	STA.w $2100
@@ -293,7 +287,7 @@ BSODMessage:
 	db "and share it in the #bug-reports channel of the official", $FF
 
 .line6
-	db "ALTTPR discord, along with a detailed description of", $FF
+	db "ALTTPR discord along with a detailed description of", $FF
 
 .line7
 	db "what you were doing, including video if available.", $FF
@@ -340,9 +334,6 @@ DrawVWFLine:
 	LDA.b #$01
 	STA.w $420B
 
-	LDA.b #$80
-	STA.w $2115
-
 	REP #$20
 
 	JMP ResetVFW
@@ -370,10 +361,6 @@ VWFR = $4A
 ;===================================================================================================
 
 DrawFailureVWFChar:
-	REP #$30
-	PHY
-	PHX
-
 	AND.w #$00FF
 	STA.b VWFL
 
@@ -393,6 +380,7 @@ DrawFailureVWFChar:
 	AND.w #$0007
 	STA.w VWFS
 
+	; carry set on purpose to add letter spacing
 	SEC
 	LDA.w BSODCharWidths,X
 	AND.w #$00FF
@@ -428,10 +416,6 @@ DrawFailureVWFChar:
 	INY
 	CPY.w #$0008
 	BCC .next_row
-
-	REP #$30
-	PLX
-	PLY
 
 	RTS
 
@@ -498,7 +482,6 @@ ConfigureBSODVWF:
 
 	REP #$20
 
-
 	PEA.w $0001
 
 	LDA.w #8
@@ -537,6 +520,7 @@ ConfigureBSODVWF:
 
 ResetVFW:
 	REP #$30
+
 	LDX.w #$0400
 
 --	STZ.w $1000,X
@@ -570,7 +554,6 @@ ConfigurePPUForFailureReport:
 	STZ.w $2131
 	STZ.w $2133
 
-
 	LDA.b #$01
 	STA.w $210B
 	STA.w $212C
@@ -591,7 +574,7 @@ BSODCharWidths:
 	db 3
 
 	;  A  B  C  D  E  F  G  H  I  J  K  L  M  N  O  P  Q  R  S  T  U  V  W  X  Y  Z
-	db 4, 4, 4, 4, 3, 3, 4, 3, 1, 4, 3, 3, 5, 4, 4, 4, 5, 4, 4, 3, 4, 5, 5, 3, 5, 3
+	db 4, 4, 3, 4, 3, 3, 4, 3, 1, 4, 3, 3, 5, 4, 4, 4, 5, 4, 4, 3, 4, 5, 5, 3, 3, 3
 
 	;  0  1  2  3  4  5  6  7  8  9  .  #  ?  -  /  ,  '
 	db 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 2, 5, 8, 3, 3, 2, 1
