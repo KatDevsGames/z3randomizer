@@ -39,6 +39,28 @@ ReturnCheckZSNES:
 ;--------------------------------------------------------------------------------
 
 ;================================================================================
+; Ok so basically, in rare cases, major glitches may try to read far into the
+; A bus until they reach a value of $FFFF
+; For maximum security of vanilla behavior, I am reserving this space
+; that could otherwise be considered free ROM.
+;--------------------------------------------------------------------------------
+org $0089C2
+dw $FFFF, $FFFF, $FFFF, $FFFF
+dw $FFFF, $FFFF, $FFFF, $FFFF
+dw $FFFF, $FFFF, $FFFF, $FFFF
+
+;================================================================================
+; BSOD for BRK and COP opcodes
+;--------------------------------------------------------------------------------
+org $00FFB7
+SoftwareInterrupt:
+JML Crashed
+
+org $00FFE4 : dw SoftwareInterrupt
+org $00FFE6 : dw SoftwareInterrupt
+org $00FFF4 : dw SoftwareInterrupt
+
+;================================================================================
 ; Dungeon Entrance Hook (works, but not needed at the moment)
 ;--------------------------------------------------------------------------------
 ;org $02D8C7 ; <- 158C7 - Bank02.asm : 10981 (STA $7EC172)

@@ -11,6 +11,5 @@ CheckZSNES:
     LDA #$01FF : TCS ; thing we wrote over - initialize stack
 JML.l ReturnCheckZSNES
 .zsnes
-	
-STP ; !
+	JML DontUseZSNES
 ;--------------------------------------------------------------------------------
