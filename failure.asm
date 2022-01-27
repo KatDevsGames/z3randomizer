@@ -3,9 +3,7 @@ pushtable
 table "bsodencode.txt"
 
 ; Uncomment this to force a crash to test message
-;pushpc
-;	org $8132 : db 0
-;pullpc
+;pushpc : org $008132 : db 0 : pullpc
 
 ;===================================================================================================
 
@@ -41,13 +39,8 @@ DontUseZSNES:
 	JSR ConfigureBSODVWF
 
 	STZ.b VWFR
-	LDA.w #ZSNESMessage_line1 : JSR DrawVWFLine
-	LDA.w #ZSNESMessage_line2 : JSR DrawVWFLine
-	LDA.w #ZSNESMessage_line3 : JSR DrawVWFLine
-	LDA.w #ZSNESMessage_line4 : JSR DrawVWFLine
-	LDA.w #ZSNESMessage_line5 : JSR DrawVWFLine
-	LDA.w #ZSNESMessage_line6 : JSR DrawVWFLine
-	LDA.w #ZSNESMessage_line7 : JSR DrawVWFLine
+	LDA.w #ZSNESMessage
+	JSR DrawVWFMessage
 
 	LDA.w #$0F0F
 	STA.w $2100
@@ -55,26 +48,14 @@ DontUseZSNES:
 --	BRA --
 
 ZSNESMessage:
-.line1
-	db "It has been detected that you are attempting to load", $FF
-
-.line2
-	db "this ROM on a low-quality emulator.", $FF
-
-.line3
-	db "The randomizer is designed to work on real hardware,", $FF
-
-.line4
-	db "which this application cannot emulate properly;", $FF
-
-.line5
-	db "as such, this ROM file refuses to boot.", $FF
-
-.line6
-	db "Please upgrade to a more accurate emulator such as", $FF
-
-.line7
-	db "SNES9X or BSNES/higan.", $FF
+	db "It has been detected that you are attempting to load", $80
+	db "this ROM on a low-quality emulator.", $80
+	db "The randomizer is designed to work on real hardware,", $80
+	db "which this application cannot emulate properly;", $80
+	db "as such, this ROM file refuses to boot.", $80
+	db "Please upgrade to a more accurate emulator such as", $80
+	db "SNES9X or BSNES/higan.", $80
+	db $FF
 
 ;===================================================================================================
 
@@ -131,7 +112,7 @@ Crashed:
 	; Report status
 
 	; stack pointer
-	LDA.w #$0438>>1
+	LDA.w #$0C38>>1
 	STA.b $2116
 
 	TSC
@@ -146,7 +127,7 @@ Crashed:
 	STA.l $2118
 
 	; game module
-	LDA.w #$0478>>1
+	LDA.w #$0C78>>1
 	STA.b $2116
 
 	LDA.l $10
@@ -166,11 +147,11 @@ Crashed:
 	INC
 	STA.l $7F0100
 
+	LDA.l UselessStackTooFar
+
 	; For now, we can report as much of the stack as possible
 	; If desired later on, uncomment the code below to keep the stack limited to
 	; where it was last doing stuff
-	LDA.l UselessStackTooFar ; also comment out this line when doing the above
-
 ;	TSC
 ;
 ;	; keep stack in a useful range
@@ -191,28 +172,29 @@ Crashed:
 
 	LDX.w #$01FF
 
-	LDA.w #$0404>>1
+	LDA.w #$0C04>>1
 
 .next_row
-	STA.l $7F0002
 	STA.l $7F0004
+	STA.b $2116
 
 	LDY.w #20
 
-.next_char
-	STA.b $2116
-
 	TXA
+
+.next_char
+	; set carry to see if we should color this value as being in the stack
 	CMP.l $7F0100
 
 	LDA.l $000000,X
 	AND.w #$00FF
 	ORA.w #$0500
-	BCS ++
+	BCS .in_stack
 
 	AND.w #$01FF
 
-++	STA.b $2118
+.in_stack
+	STA.b $2118
 
 	DEX
 	TXA
@@ -220,13 +202,7 @@ Crashed:
 	BEQ .skip_stack
 
 	DEY
-	BEQ .done_row
-
-	LDA.l $7F0002
-	INC
-	STA.l $7F0002
-
-	BRA .next_char
+	BNE .next_char
 
 .done_row
 	CLC
@@ -246,24 +222,23 @@ Crashed:
 ;	TSC
 ;	STA.b $80 ; remember stack for later messages
 
+	LDA.w #$01FF
+	TCS
+
 	JSR ConfigurePPUForFailureReport
 	JSR ConfigureBSODVWF
-	JSR LoadBSODFont
+	JSR LoadBSODHexFont
 
 	STZ.b VWFR
 
-	LDA.w #BSODMessage_line1 : JSR DrawVWFLine
-	LDA.w #BSODMessage_line2 : JSR DrawVWFLine
-	LDA.w #BSODMessage_line3 : JSR DrawVWFLine
-	LDA.w #BSODMessage_line4 : JSR DrawVWFLine
-	LDA.w #BSODMessage_line5 : JSR DrawVWFLine
-	LDA.w #BSODMessage_line6 : JSR DrawVWFLine
-	LDA.w #BSODMessage_line7 : JSR DrawVWFLine
+	LDA.w #BSODMessage
+	JSR DrawVWFMessage
 
 	LDA.w #$0F0F
 	STA.w $2100
 
 --	BRA --
+
 ;	LDA.w #$0000
 ;	TCD
 ;
@@ -271,42 +246,38 @@ Crashed:
 
 
 BSODMessage:
-.line1
-	db "A fatal error has occurred and resulted in an", $FF
-
-.line2
-	db "unrecoverable crash. ?", $FF
-
-.line3
-	db "If you believe this is the result of a bug caused by", $FF
-
-.line4
-	db "the randomizer itself, please screenshot this message", $FF
-
-.line5
-	db "and share it in the #bug-reports channel of the official", $FF
-
-.line6
-	db "ALTTPR discord along with a detailed description of", $FF
-
-.line7
-	db "what you were doing, including video if available.", $FF
+	db "A fatal error has occurred and resulted in an", $80
+	db "unrecoverable crash. ?", $80
+	db "If you believe this was the result of a bug caused by", $80
+	db "the randomizer itself, please screenshot this message", $80
+	db "and share it in the #bug-reports channel of the official", $80
+	db "ALTTPR discord along with a detailed description of", $80
+	db "what you were doing, including video if available.", $80
+	db "Please also make a savestate now and include that in", $80
+	db "your report.", $80
+	db $FF
 
 ;===================================================================================================
 
-DrawVWFLine:
+DrawVWFMessage:
 	STA.b $06
 
 .next
 	LDA.b ($06)
+	INC.b $06
 	AND.w #$00FF
-	CMP.w #$00FF
+	CMP.w #$0080
 	BEQ .done_row
+
+	CMP.w #$00FF
+	BEQ .done_message
 
 	JSR DrawFailureVWFChar
 
-	INC.b $06
 	BRA .next
+
+.done_message
+	RTS
 
 .done_row
 	LDA.b VWFR
@@ -336,7 +307,10 @@ DrawVWFLine:
 
 	REP #$20
 
-	JMP ResetVFW
+	JSR ResetVFW
+
+	BRA .next
+
 
 .row_offset
 	dw $10F8
@@ -347,6 +321,9 @@ DrawVWFLine:
 	dw $15A8
 	dw $1698
 	dw $1788
+	dw $1878
+	dw $1968
+	dw $1A58
 
 
 
@@ -421,7 +398,7 @@ DrawFailureVWFChar:
 
 ;===================================================================================================
 
-LoadBSODFont:
+LoadBSODHexFont:
 	REP #$20
 
 	LDA.w #BSODHex
@@ -433,7 +410,7 @@ LoadBSODFont:
 	LDA.w #$1000
 	STA.w $4305
 
-	LDA.w #$1800
+	LDA.w #$2800
 	STA.w $2116
 
 	SEP #$20
@@ -455,36 +432,32 @@ ConfigureBSODVWF:
 	LDA.w #$2100
 	TCD
 
-	SEP #$20
+	SEP #$30
+
+	LDX.b #$FF
+	LDY.b #$7F
+
 	STZ.b $2121
+	STZ.b $2122 : STZ.b $2122
 
-	STZ.b $2122
-	STZ.b $2122
+	STX.b $2122 : STY.b $2122
 
-	LDA.b #$FF
-	STA.b $2122
-	LDA.b #$7F
-	STA.b $2122
+	LDA.b #$05
+	STA.b $2121
 
-	STZ.b $2122
-	STZ.b $2122
+	LDA.b #$11 : STA.b $2122 : STY.b $2122
 
-	STZ.b $2122
-	STZ.b $2122
+	LDA.b #$21 : STA.b $2121
+	STX.b $2122 : STY.b $2122
 
-	STZ.b $2122
-	STZ.b $2122
+	LDA.b #$25 : STA.b $2121
+	LDA.b #$11 : STA.b $2122 : STY.b $2122
 
-	LDA.b #$11
-	STA.b $2122
-	LDA.b #$7F
-	STA.b $2122
-
-	REP #$20
+	REP #$30
 
 	PEA.w $0001
 
-	LDA.w #8
+	LDA.w #15
 	STA.w $28
 
 	LDA.w #$0042>>1
@@ -546,18 +519,26 @@ ConfigurePPUForFailureReport:
 	STZ.w $2105 ; BG mode 0
 	STZ.w $2106 ; no mosaic
 	STZ.w $2107 ; BG1 tilemap to $0000
-	STZ.w $210D
-	STZ.w $210D
-	STZ.w $210E
-	STZ.w $210E
+	STZ.w $212D
+
+	STZ.w $210D : STZ.w $210D
+	STZ.w $210E : STZ.w $210E
+	STZ.w $210F : STZ.w $210F
+	STZ.w $2110 : STZ.w $2110
+
+
 	STZ.w $2123
 	STZ.w $2131
 	STZ.w $2133
 
-	LDA.b #$01
+	LDA.b #$04
+	STA.w $2108 ; BG1 tilemap to $0800
+
+	LDA.b #$21
 	STA.w $210B
+
+	LDA.b #$03
 	STA.w $212C
-	STA.w $212D
 
 	RTS
 
