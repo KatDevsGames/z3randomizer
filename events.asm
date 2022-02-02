@@ -86,8 +86,8 @@ OnAga2Defeated:
 ;--------------------------------------------------------------------------------
 OnFileCreation:
 	TAX ; what we wrote over
-	LDA StartingEquipment+$4C : STA SRAMEquipment+$4C ; copy starting equipment swaps to file select screen
-	LDA StartingEquipment+$4E : STA SRAMEquipment+$4E
+	LDA StartingEquipment+$4C : STA EquipmentSRAM+$4C ; copy starting equipment swaps to file select screen
+	LDA StartingEquipment+$4E : STA EquipmentSRAM+$4E
 RTL
 ;--------------------------------------------------------------------------------
 !RNG_ITEM_LOCK_IN = "$7F5090"
@@ -132,7 +132,7 @@ OnNewFile:
 		LDA.l StartingTime+2 : STA ChallengeTimer+2
 
 		LDX.w #$004E : - ; copy over starting equipment
-			LDA StartingEquipment, X : STA WRAMEquipment, X
+			LDA StartingEquipment, X : STA EquipmentWRAM, X
 			DEX : DEX
 		BPL -
 

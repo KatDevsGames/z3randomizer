@@ -55,7 +55,15 @@ RTL
 DungeonItemMasks: ; these are dungeon correlations to $7EF364 - $7EF369 so it knows where to store compasses, etc
     dw $8000, $4000, $2000, $1000, $0800, $0400, $0200, $0100
     dw $0080, $0040, $0020, $0010, $0008, $0004
-	
+;--------------------------------------------------------------------------------
+InitCompassTotalsRAM:
+        LDX #$00
+        -
+                LDA CompassTotalsROM, X : STA CompassTotalsWRAM, X
+                INX
+                CPX #$0F : !BLT -
+RTL
+
 ;CompassCountDungeonHandlers: ; pointers to functions that handle dungeon-specific code
 ;	dw CompassCount_Escape, 	CompassCount_Escape ; (hyrule castle, sewers)
 ;	dw CompassCount_Eastern,	CompassCount_Desert,	CompassCount_Agah

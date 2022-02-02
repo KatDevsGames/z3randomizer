@@ -71,7 +71,7 @@ OverworldEventData = $7EF280
 ; $00 = None
 ;--------------------------------------------------------------------------------
 base $7EF340
-WRAMEquipment:                  ;
+EquipmentWRAM:                  ;
 BowEquipment: skip 1            ; $01 = Bow              | $02 = Bow & Arrows
                                 ; $03 = Silver Arrow Bow | $04 = Bow & Silver Arrows
 BoomerangEquipment: skip 1      ; $01 = Blue | $02 = Red
@@ -208,7 +208,7 @@ DroppedFollowerLayer: skip 1    ; $00 = Upper layer | $01 =.lower layer
 FollowerDropped: skip 1         ; Set to $80 when a follower exists and has been dropped somewhere
                                 ; $00 otherwise
 skip 5                          ; Unused
-skip 8                          ; Unused
+FileNameVanillaWRAM: skip 8     ; First four characters of file name
 FileValidity: skip 2            ; Always $55AA. Don't write.
 
 ;================================================================================
@@ -388,11 +388,14 @@ DummyValue: skip 1              ; $01 if you're a real dummy
 ; a small amount of data which is not currently in the WRAM mirror.
 ;--------------------------------------------------------------------------------
 base $700000                    ;
+CartridgeSRAM:                  ;
 skip $0340                      ;
-SRAMEquipment: skip 76          ;
+EquipmentSRAM: skip 76          ;
 InventoryTrackingSRAM: skip 2   ;
 BowTrackingSRAM: skip 2         ;
-skip 368                        ;
+skip 73                         ;
+FileNameVanillaSRAM: skip 8     ; First four characters of file name
+skip 287 
 ExtendedFileNameSRAM: skip 24   ; We read and write the file name directly from and to SRAM (24 bytes)
 skip $1AE4                      ;
 RomVersionSRAM: skip 4          ; ALTTPR ROM version. Low byte is the version, high byte writes
@@ -417,7 +420,7 @@ endmacro
 ; All of these need to pass for the base rom to build or something is probably
 ; very wrong.
 ;--------------------------------------------------------------------------------
-%assertSRAM(WRAMEquipment, $7EF340)
+%assertSRAM(EquipmentWRAM, $7EF340)
 %assertSRAM(BowEquipment, $7EF340)
 %assertSRAM(BoomerangEquipment, $7EF341)
 %assertSRAM(HookshotEquipment, $7EF342)
@@ -502,6 +505,7 @@ endmacro
 %assertSRAM(DroppedFollowerIndoors, $7EF3D1)
 %assertSRAM(DroppedFollowerLayer, $7EF3D2)
 %assertSRAM(FollowerDropped, $7EF3D3)
+%assertSRAM(FileNameVanillaWRAM, $7EF3D9)
 %assertSRAM(FileValidity, $7EF3E1)
 %assertSRAM(InverseChecksum, $7EF4FE)
 
@@ -632,9 +636,11 @@ endmacro
 ;================================================================================
 ; Direct SRAM Assertions
 ;--------------------------------------------------------------------------------
-%assertSRAM(SRAMEquipment, $700340)
+%assertSRAM(CartridgeSRAM, $700000)
+%assertSRAM(EquipmentSRAM, $700340)
 %assertSRAM(InventoryTrackingSRAM, $70038C)
 %assertSRAM(BowTrackingSRAM, $70038E)
+%assertSRAM(FileNameVanillaSRAM, $7003D9)
 %assertSRAM(ExtendedFileNameSRAM, $700500)
 %assertSRAM(RomNameSRAM, $702000)
 %assertSRAM(RomVersionSRAM, $701FFC)

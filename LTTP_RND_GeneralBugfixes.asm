@@ -580,6 +580,13 @@ OverworldMap_DarkWorldTilemap:
 org $0ABAB9
 OverworldMap_LoadSprGfx:
 
+org $0CD7D1
+NameFile_MakeScreenVisible:
+org $0CDB3E
+InitializeSaveFile:
+org $0CDB3E
+InitializeSaveFile_build_checksum:
+
 org $0DBA71
 GetRandomInt:
 

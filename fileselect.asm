@@ -153,15 +153,15 @@ DrawPlayerFileShared:
 	JSR FileSelectDrawHudBar
 
 	; Bow
-	LDA.l BowTracking : AND.w #$0040 : BEQ +
-		LDA SRAMEquipment : AND.w #$00FF : BEQ ++
+	LDA.l BowTrackingSRAM : AND.w #$0040 : BEQ +
+		LDA EquipmentSRAM+$00 : AND.w #$00FF : BEQ ++
 			%fs_drawItem(3,12,FileSelectItems_silver_bow)
 			BRA .bow_end
 		++
 		%fs_drawItem(3,12,FileSelectItems_silver_arrow)
 		BRA .bow_end
 	+
-	LDA.l SRAMEquipment : AND.w #$00FF : BEQ +
+	LDA.l EquipmentSRAM : AND.w #$00FF : BEQ +
 		%fs_drawItem(3,12,FileSelectItems_bow)
 		BRA .bow_end
 	+
@@ -169,15 +169,15 @@ DrawPlayerFileShared:
 	.bow_end
 
 	; Boomerang
-	LDA.l InventoryTracking : AND.w #$00C0 : CMP.w #$00C0 : BNE +
+	LDA.l InventoryTrackingSRAM : AND.w #$00C0 : CMP.w #$00C0 : BNE +
 		%fs_drawItem(3,14,FileSelectItems_both_boomerang)
 		BRA .boomerang_end
 	+
-	LDA.l InventoryTracking : AND.w #$0040 : BEQ +
+	LDA.l InventoryTrackingSRAM : AND.w #$0040 : BEQ +
 		%fs_drawItem(3,14,FileSelectItems_red_boomerang)
 		BRA .boomerang_end
 	+
-	LDA.l InventoryTracking : AND.w #$0080 : BEQ +
+	LDA.l InventoryTrackingSRAM : AND.w #$0080 : BEQ +
 		%fs_drawItem(3,14,FileSelectItems_blue_boomerang)
 		BRA .boomerang_end
 	+
@@ -185,13 +185,13 @@ DrawPlayerFileShared:
 	.boomerang_end
 
 	; Hookshot
-	%fs_drawItemBasic(SRAMEquipment+$02,3,16,FileSelectItems_hookshot)
+	%fs_drawItemBasic(EquipmentSRAM+$02,3,16,FileSelectItems_hookshot)
 
 	; Bombs
-	; %fs_drawItemBasic(SRAMEquipment+$03,3,18,FileSelectItems_bombs)
+	; %fs_drawItemBasic(EquipmentSRAM+$03,3,18,FileSelectItems_bombs)
 
 	; Powder
-	LDA.l InventoryTracking : AND.w #$0010 : BEQ +
+	LDA.l InventoryTrackingSRAM : AND.w #$0010 : BEQ +
 		%fs_drawItem(3,20,FileSelectItems_powder)
 		BRA ++
 	+
@@ -199,7 +199,7 @@ DrawPlayerFileShared:
 	++
 
 	; Mushroom
-	LDA.l InventoryTracking : AND.w #$0008 : BEQ +
+	LDA.l InventoryTrackingSRAM : AND.w #$0008 : BEQ +
 		%fs_drawItem(3,18,FileSelectItems_mushroom)
 		BRA ++
 	+
@@ -207,7 +207,7 @@ DrawPlayerFileShared:
 	++
 
 	; Flute
-	LDA.l InventoryTracking : AND.w #$0003 : BEQ +
+	LDA.l InventoryTrackingSRAM : AND.w #$0003 : BEQ +
 		%fs_drawItem(7,16,FileSelectItems_flute)
 		BRA ++
 	+
@@ -215,7 +215,7 @@ DrawPlayerFileShared:
 	++
 
 	; Shovel
-	LDA.l InventoryTracking : AND.w #$0004 : BEQ +
+	LDA.l InventoryTrackingSRAM : AND.w #$0004 : BEQ +
 		%fs_drawItem(9,12,FileSelectItems_shovel)
 		BRA ++
 	+
@@ -223,52 +223,52 @@ DrawPlayerFileShared:
 	++
 
 	; Fire Rod
-	%fs_drawItemBasic(SRAMEquipment+$05,5,12,FileSelectItems_fire_rod)
+	%fs_drawItemBasic(EquipmentSRAM+$05,5,12,FileSelectItems_fire_rod)
 
 	; Ice Rod
-	%fs_drawItemBasic(SRAMEquipment+$06,5,14,FileSelectItems_ice_rod)
+	%fs_drawItemBasic(EquipmentSRAM+$06,5,14,FileSelectItems_ice_rod)
 
 	; Bombos Medallion
-	%fs_drawItemBasic(SRAMEquipment+$07,5,16,FileSelectItems_bombos)
+	%fs_drawItemBasic(EquipmentSRAM+$07,5,16,FileSelectItems_bombos)
 
 	; Ether Medallion
-	%fs_drawItemBasic(SRAMEquipment+$08,5,18,FileSelectItems_ether)
+	%fs_drawItemBasic(EquipmentSRAM+$08,5,18,FileSelectItems_ether)
 
 	; Quake Medallion
-	%fs_drawItemBasic(SRAMEquipment+$09,5,20,FileSelectItems_quake)
+	%fs_drawItemBasic(EquipmentSRAM+$09,5,20,FileSelectItems_quake)
 
 	; Lamp
-	%fs_drawItemBasic(SRAMEquipment+$0A,7,12,FileSelectItems_lamp)
+	%fs_drawItemBasic(EquipmentSRAM+$0A,7,12,FileSelectItems_lamp)
 
 	; Hammer
-	%fs_drawItemBasic(SRAMEquipment+$0B,7,14,FileSelectItems_hammer)
+	%fs_drawItemBasic(EquipmentSRAM+$0B,7,14,FileSelectItems_hammer)
 
 	; Bug Net
-	%fs_drawItemBasic(SRAMEquipment+$0D,7,18,FileSelectItems_bugnet)
+	%fs_drawItemBasic(EquipmentSRAM+$0D,7,18,FileSelectItems_bugnet)
 
 	; Book of Mudora
-	%fs_drawItemBasic(SRAMEquipment+$0E,7,20,FileSelectItems_book)
+	%fs_drawItemBasic(EquipmentSRAM+$0E,7,20,FileSelectItems_book)
 
 	; Red Cane
-	%fs_drawItemBasic(SRAMEquipment+$10,9,14,FileSelectItems_redcane)
+	%fs_drawItemBasic(EquipmentSRAM+$10,9,14,FileSelectItems_redcane)
 
 	; Blue Cane
-	%fs_drawItemBasic(SRAMEquipment+$11,9,16,FileSelectItems_bluecane)
+	%fs_drawItemBasic(EquipmentSRAM+$11,9,16,FileSelectItems_bluecane)
 
 	; Cape
-	%fs_drawItemBasic(SRAMEquipment+$12,9,18,FileSelectItems_cape)
+	%fs_drawItemBasic(EquipmentSRAM+$12,9,18,FileSelectItems_cape)
 
 	; Mirror
-	%fs_drawItemBasic(SRAMEquipment+$13,9,20,FileSelectItems_mirror)
+	%fs_drawItemBasic(EquipmentSRAM+$13,9,20,FileSelectItems_mirror)
 
 	; Bottles
-	%fs_drawBottle(SRAMEquipment+$1C,3,23)
-	%fs_drawBottle(SRAMEquipment+$1D,5,23)
-	%fs_drawBottle(SRAMEquipment+$1E,7,23)
-	%fs_drawBottle(SRAMEquipment+$1F,9,23)
+	%fs_drawBottle(EquipmentSRAM+$1C,3,23)
+	%fs_drawBottle(EquipmentSRAM+$1D,5,23)
+	%fs_drawBottle(EquipmentSRAM+$1E,7,23)
+	%fs_drawBottle(EquipmentSRAM+$1F,9,23)
 
 	; Sword
-	LDA.l SRAMEquipment+$19 : AND.w #$00FF : BNE +
+	LDA.l EquipmentSRAM+$19 : AND.w #$00FF : BNE +
 		%fs_drawItemGray(3,26,FileSelectItems_fighters_sword)
 		BRA ++
 	+ : DEC : BNE +
@@ -289,7 +289,7 @@ DrawPlayerFileShared:
 	++
 
 	; Shield
-	LDA.l SRAMEquipment+$1A : AND.w #$00FF : BNE +
+	LDA.l EquipmentSRAM+$1A : AND.w #$00FF : BNE +
 		%fs_drawItemGray(5,26,FileSelectItems_fighters_shield)
 		BRA ++
 	+ : DEC : BNE +
@@ -303,7 +303,7 @@ DrawPlayerFileShared:
 	++
 
 	; Mail
-	LDA.l SRAMEquipment+$1B : AND.w #$00FF : BNE +
+	LDA.l EquipmentSRAM+$1B : AND.w #$00FF : BNE +
 		%fs_drawItem(7,26,FileSelectItems_green_mail)
 		BRA ++
 	+ : DEC : BNE +
@@ -314,7 +314,7 @@ DrawPlayerFileShared:
 	++
 
 	; Heart Pieces
-	LDA.l SRAMEquipment+$2B : AND.w #$00FF : BNE +
+	LDA.l EquipmentSRAM+$2B : AND.w #$00FF : BNE +
 		%fs_drawItem(9,26,FileSelectItems_heart_piece_0_of_4)
 		BRA ++
 	+ : DEC : BNE +
@@ -327,16 +327,16 @@ DrawPlayerFileShared:
 		%fs_drawItem(9,26,FileSelectItems_heart_piece_3_of_4)
 	++
 
-	LDA SRAMEquipment+$0108 : AND.w #$00FF
+	LDA EquipmentSRAM+$0108 : AND.w #$00FF
 	JSL.l HexToDec
 	LDA $7F5006 : AND.w #$00FF : !ADD.w #$210+!FS_COLOR_BW : %fs_draw8x8(11,26)
 	LDA $7F5007 : AND.w #$00FF : !ADD.w #$210+!FS_COLOR_BW : %fs_draw8x8(11,27)
 
 	; Boots
-	%fs_drawItemBasic(SRAMEquipment+$15,3,28,FileSelectItems_boots)
+	%fs_drawItemBasic(EquipmentSRAM+$15,3,28,FileSelectItems_boots)
 
 	; Gloves
-	LDA.l SRAMEquipment+$14 : AND.w #$00FF : BNE +
+	LDA.l EquipmentSRAM+$14 : AND.w #$00FF : BNE +
 		%fs_drawItemGray(5,28,FileSelectItems_gloves)
 		BRA ++
 	+ : DEC : BNE +
@@ -347,27 +347,27 @@ DrawPlayerFileShared:
 	++
 
 	; Flippers
-	%fs_drawItemBasic(SRAMEquipment+$16,7,28,FileSelectItems_flippers)
+	%fs_drawItemBasic(EquipmentSRAM+$16,7,28,FileSelectItems_flippers)
 
 	; Moon Pearl
-	%fs_drawItemBasic(SRAMEquipment+$17,9,28,FileSelectItems_pearl)
+	%fs_drawItemBasic(EquipmentSRAM+$17,9,28,FileSelectItems_pearl)
 
 	; Pendants
-	LDA SRAMEquipment+$34 : AND.w #$0004 : BEQ +
+	LDA EquipmentSRAM+$34 : AND.w #$0004 : BEQ +
 		%fs_drawItem(12,12,FileSelectItems_green_pendant)
 		BRA ++
 	+
 		%fs_drawItem(12,12,FileSelectItems_no_pendant)
 	++
 
-	LDA SRAMEquipment+$34 : AND.w #$0002 : BEQ +
+	LDA EquipmentSRAM+$34 : AND.w #$0002 : BEQ +
 		%fs_drawItem(12,14,FileSelectItems_blue_pendant)
 		BRA ++
 	+
 		%fs_drawItem(12,14,FileSelectItems_no_pendant)
 	++
 
-	LDA SRAMEquipment+$34 : AND.w #$0001 : BEQ +
+	LDA EquipmentSRAM+$34 : AND.w #$0001 : BEQ +
 		%fs_drawItem(12,16,FileSelectItems_red_pendant)
 		BRA ++
 	+
@@ -375,49 +375,49 @@ DrawPlayerFileShared:
 	++
 
 	; Crystals
-	LDA SRAMEquipment+$3A : AND.w #$0002 : BEQ +
+	LDA EquipmentSRAM+$3A : AND.w #$0002 : BEQ +
 		LDA.w #$0297|!FS_COLOR_BLUE
 		BRA ++
 	+
 		LDA.w #$0287|!FS_COLOR_GRAY
 	++ : %fs_draw16x8(13,18)
 
-	LDA SRAMEquipment+$3A : AND.w #$0010 : BEQ +
+	LDA EquipmentSRAM+$3A : AND.w #$0010 : BEQ +
 		LDA.w #$0297|!FS_COLOR_BLUE
 		BRA ++
 	+
 		LDA.w #$0287|!FS_COLOR_GRAY
 	++ : %fs_draw16x8(12,19)
 
-	LDA SRAMEquipment+$3A : AND.w #$0040 : BEQ +
+	LDA EquipmentSRAM+$3A : AND.w #$0040 : BEQ +
 		LDA.w #$0297|!FS_COLOR_BLUE
 		BRA ++
 	+
 		LDA.w #$0287|!FS_COLOR_GRAY
 	++ : %fs_draw16x8(13,20)
 
-	LDA SRAMEquipment+$3A : AND.w #$0020 : BEQ +
+	LDA EquipmentSRAM+$3A : AND.w #$0020 : BEQ +
 		LDA.w #$0297|!FS_COLOR_BLUE
 		BRA ++
 	+
 		LDA.w #$0287|!FS_COLOR_GRAY
 	++ : %fs_draw16x8(12,21)
 
-	LDA SRAMEquipment+$3A : AND.w #$0004 : BEQ +
+	LDA EquipmentSRAM+$3A : AND.w #$0004 : BEQ +
 		LDA.w #$0297|!FS_COLOR_RED
 		BRA ++
 	+
 		LDA.w #$0287|!FS_COLOR_GRAY
 	++ : %fs_draw16x8(13,22)
 
-	LDA SRAMEquipment+$3A : AND.w #$0001 : BEQ +
+	LDA EquipmentSRAM+$3A : AND.w #$0001 : BEQ +
 		LDA.w #$0297|!FS_COLOR_RED
 		BRA ++
 	+
 		LDA.w #$0287|!FS_COLOR_GRAY
 	++ : %fs_draw16x8(12,23)
 
-	LDA SRAMEquipment+$3A : AND.w #$0008 : BEQ +
+	LDA EquipmentSRAM+$3A : AND.w #$0008 : BEQ +
 		LDA.w #$0297|!FS_COLOR_BLUE
 		BRA ++
 	+
@@ -559,7 +559,7 @@ FileSelectItems:
 ;--------------------------------------------------------------------------------
 FileSelectDrawHudBar:
 	LDA #$029B|!FS_COLOR_GREEN : %fs_draw16x8(0,10)
-	LDA SRAMEquipment+$22
+	LDA EquipmentSRAM+$22
 	JSL.l HexToDec
 	LDA $7F5004 : AND.w #$00FF : !ADD.w #$210+!FS_COLOR_BW : %fs_draw8x8(1,9)
 	LDA $7F5005 : AND.w #$00FF : !ADD.w #$210+!FS_COLOR_BW : %fs_draw8x8(1,10)
@@ -567,18 +567,18 @@ FileSelectDrawHudBar:
 	LDA $7F5007 : AND.w #$00FF : !ADD.w #$210+!FS_COLOR_BW : %fs_draw8x8(1,12)
 
 	LDA #$028B|!FS_COLOR_BLUE : %fs_draw16x8(0,14)
-	LDA SRAMEquipment+$03 : AND.w #$00FF
+	LDA EquipmentSRAM+$03 : AND.w #$00FF
 	JSL.l HexToDec
 	LDA $7F5006 : AND.w #$00FF : !ADD.w #$210+!FS_COLOR_BW : %fs_draw8x8(1,14)
 	LDA $7F5007 : AND.w #$00FF : !ADD.w #$210+!FS_COLOR_BW : %fs_draw8x8(1,15)
 
-	LDA.l BowTracking : AND.w #$0040 : BEQ +
+	LDA.l BowTrackingSRAM : AND.w #$0040 : BEQ +
 		LDA #$0299|!FS_COLOR_RED : %fs_draw16x8(0,17)
 		BRA ++
 	+
 	LDA #$0289|!FS_COLOR_BROWN : %fs_draw16x8(0,17)
 	++
-	LDA SRAMEquipment+$37 : AND.w #$00FF
+	LDA EquipmentSRAM+$37 : AND.w #$00FF
 	JSL.l HexToDec
 	LDA $7F5006 : AND.w #$00FF : !ADD.w #$210+!FS_COLOR_BW : %fs_draw8x8(1,17)
 	LDA $7F5007 : AND.w #$00FF : !ADD.w #$210+!FS_COLOR_BW : %fs_draw8x8(1,18)
@@ -787,16 +787,16 @@ DrawPlayerFile_credits:
 	; see $6563C for drawing first file name and hearts
 	REP #$20 ; set 16 bit accumulator
 
-	LDA SRAMEquipment+$99 : ORA.w #!FS_COLOR_BW
+	LDA EquipmentSRAM+$99 : ORA.w #!FS_COLOR_BW
 	%fs_draw8x16(3,5)
-	LDA SRAMEquipment+$9B : ORA.w #!FS_COLOR_BW
+	LDA EquipmentSRAM+$9B : ORA.w #!FS_COLOR_BW
 	%fs_draw8x16(3,6)
-	LDA SRAMEquipment+$9D : ORA.w #!FS_COLOR_BW
+	LDA EquipmentSRAM+$9D : ORA.w #!FS_COLOR_BW
 	%fs_draw8x16(3,7)
-	LDA SRAMEquipment+$9F : ORA.w #!FS_COLOR_BW
+	LDA EquipmentSRAM+$9F : ORA.w #!FS_COLOR_BW
 	%fs_draw8x16(3,8)
 
-	LDA SRAMEquipment+$2C : AND.w #$00FF : LSR #3 : STA $02
+	LDA EquipmentSRAM+$2C : AND.w #$00FF : LSR #3 : STA $02
 	%fs_LDY_screenpos(0,20)
 	LDA.w #$028F|!FS_COLOR_RED
 	LDX.w #$000A
@@ -865,4 +865,22 @@ JML FSSelectFile_continue
 	LDA #$03 : STA $C8 ;set cursor to unlock
 	LDA.b #$3C : STA $012E ; play error sound
 JML FSSelectFile_return
+;--------------------------------------------------------------------------------
+MaybeForceFileName:
+        LDA.l ForceFileName : BEQ +
+                REP #$20
+                LDX.b #$FE
+                -
+                INX : INX
+                LDA.l StaticFileName, X : STA.l ExtendedFileNameSRAM, X
+                CPX #$16 : BEQ .done
+                CPX #$08 : BCS -
+                STA.l FileNameVanillaSRAM, X
+                BRA -
+        .done
+                SEP #$20
+                JML.l InitializeSaveFile
+
+        +
+JML.l NameFile_MakeScreenVisible
 ;--------------------------------------------------------------------------------

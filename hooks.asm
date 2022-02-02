@@ -214,6 +214,8 @@ LDA.l HeartCursorPositions, X
 org $0CDAEB ; <- 65AEB : Bank0C.asm : 3571-3575,3581-3587 (...) [LDA $0B12 : AND #$03]
 ; JP here is different. Indicated line number implement the US version of the same functionality
 JSL.l WrapCharacterPosition : NOP
+org $0CD75E ; bank_0C.asm (dl NameFile_MakeScreenVisible)
+dl MaybeForceFileName
 ;--------------------------------------------------------------------------------
 org $0CE43A ; No assembly source. Makes name entry box wider
 db $2C
