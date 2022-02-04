@@ -130,7 +130,7 @@ HeartUpgradeSpawnDecision: ; this should return #$00 to make the hp spawn
 RTL
 	
 	.normal_behavior
-	LDA OverworldEventData, X
+	LDA OverworldEventDataWRAM, X
 RTL
 ;--------------------------------------------------------------------------------
 SaveHeartCollectedStatus:
@@ -140,7 +140,7 @@ SaveHeartCollectedStatus:
 RTL
 	
 	.normal_behavior
-	LDA OverworldEventData, X : ORA.b #$40 : STA OverworldEventData, X
+	LDA OverworldEventDataWRAM, X : ORA.b #$40 : STA OverworldEventDataWRAM, X
 RTL
 ;--------------------------------------------------------------------------------
 !REDRAW = "$7F5000"

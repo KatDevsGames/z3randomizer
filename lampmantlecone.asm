@@ -26,8 +26,6 @@ RTL
 ; Output: 0 locked, 1 open
 ;--------------------------------------------------------------------------------
 CheckForZelda:
-	;LDA.l OpenMode : BEQ + ; Skip if not open mode
-	;LDA $FFFFFF
 	LDA.l ProgressIndicator : CMP.b #$02 : !BLT + ; Skip if rain is falling
 		LDA.b #$01 ; pretend we have zelda anyway
 		RTL
@@ -37,7 +35,6 @@ RTL
 ;================================================================================
 ;--------------------------------------------------------------------------------
 SetOverlayIfLamp:
-	;LDA LampEquipment ; check if lamp
 	JSL.l LampCheck
 	STA $1D ; write it directly to the overlay, this isn't a terrible idea at all
 RTL

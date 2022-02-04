@@ -292,7 +292,7 @@ IncrementUWMirror:
 			JSL.l StatTransitionCounter
 		+
 	PLA
-	JSL.l Dungeon_SaveRoomData ; thing we wrote over
+	JSL.l Dungeon_SaveRoomDataWRAM ; thing we wrote over
 RTL
 ;--------------------------------------------------------------------------------
 IncrementSpentRupees:

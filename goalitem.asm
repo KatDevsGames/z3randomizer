@@ -67,12 +67,12 @@ CheckGanonVulnerability:
 .all_dungeons_no_agahnim
 	LDA.l PendantsField : AND.b #$07 : CMP.b #$07 : BNE .fail ; require all pendants
 	LDA.l CrystalsField : AND.b #$7F : CMP.b #$7F : BNE .fail ; require all crystals
-	LDA.l OverworldEventData+$5B : AND.b #$20 : BEQ .fail ; require aga2 defeated (pyramid hole open)
+	LDA.l OverworldEventDataWRAM+$5B : AND.b #$20 : BEQ .fail ; require aga2 defeated (pyramid hole open)
 	BRA .success
 
 ; 03 = crystals and aga 2
 .crystals_and_aga
-	LDA.l OverworldEventData+$5B : AND.b #$20 : BEQ .fail ; check aga2 first then bleed in
+	LDA.l OverworldEventDataWRAM+$5B : AND.b #$20 : BEQ .fail ; check aga2 first then bleed in
 
 ; 04 = crystals only
 .crystals
@@ -138,7 +138,7 @@ CheckAgaForPed:
 	CMP.b #$06 : BNE .vanilla
 
 .light_speed
-	LDA.l OverworldEventData+$80 ; check ped flag
+	LDA.l OverworldEventDataWRAM+$80 ; check ped flag
 	AND.b #$40
 	BEQ .force_blue_ball
 
@@ -162,8 +162,8 @@ KillGanon:
 	CMP.b #$06 : BNE .exit
 
 .light_speed
-	LDA.l OverworldEventData+$5B : ORA.b #$20 : STA.l OverworldEventData+$5B ; pyramid hole
-	LDA.b #$08 : STA.l RoomData[$00].high ; kill ganon
+	LDA.l OverworldEventDataWRAM+$5B : ORA.b #$20 : STA.l OverworldEventDataWRAM+$5B ; pyramid hole
+	LDA.b #$08 : STA.l RoomDataWRAM[$00].high ; kill ganon
 	LDA.b #$02 : STA.l MoonPearlEquipment ; pearl but invisible in menu
 
 .exit
@@ -195,7 +195,7 @@ CheckForCrystalBossesDefeated:
 
 	LDA.l DrawHUDDungeonItems_boss_room_ids-4,X
 	TAX
-	LDA.l RoomData.l,X
+	LDA.l RoomDataWRAM.l,X
 
 	AND.w #$0800
 	BEQ ++

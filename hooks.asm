@@ -310,9 +310,8 @@ org $0CCE85 ; <- Bank0C.asm : 1953 (LDA $C8 : ASL A : INC #2 : STA $701FFE)
 NOP #4
 ;--------------------------------------------------------------------------------
 org $0CDB4C ; <- Bank0C.asm : 3655 (LDA $C8 : ASL A : INC #2 : STA $701FFE : TAX)
-JSL OnFileCreation
+JML OnFileCreation
 NOP
-;Additionally, display inventory swap starting equipment on file select
 ;--------------------------------------------------------------------------------
 org $09F5EA ; <- module_death.asm : 510 (LDA $701FFE : TAX : DEX #2)
 LDA.w #$0002 : NOP
@@ -536,7 +535,7 @@ JSL.l CheckGanonHammerDamage : NOP
 org $02B797 ; <- 13797 - Bank02.asm : 8712 (LDA.b #$19 : STA $10)
 JSL.l StatsFinalPrep
 ;--------------------------------------------------------------------------------
-org $07A95B ; <- 3A95B - Bank07.asm : 6565 (JSL Dungeon_SaveRoomData)
+org $07A95B ; <- 3A95B - Bank07.asm : 6565 (JSL Dungeon_SaveRoomDataWRAM)
 JSL.l IncrementUWMirror
 ;--------------------------------------------------------------------------------
 org $0288D1 ; <- 108D1 - Bank02.asm : 1690 (STZ $0646)
@@ -710,7 +709,7 @@ JSL.l GetItemDamageValue
 ;================================================================================
 ; Misc Stats
 ;--------------------------------------------------------------------------------
-org $029E2E ; <- 11E2E - module_ganon_emerges.asm : 59 (JSL Dungeon_SaveRoomData.justKeys)
+org $029E2E ; <- 11E2E - module_ganon_emerges.asm : 59 (JSL Dungeon_SaveRoomDataWRAM.justKeys)
 JSL.l OnAga2Defeated
 ;--------------------------------------------------------------------------------
 org $0DDBDE ; <- 6DBDE - headsup_display.asm : 105 (DEC A : BPL .subtractRupees)
@@ -1676,7 +1675,7 @@ JSL.l FixAga2Bunny : NOP
 ; Open Mode Fixes
 ;--------------------------------------------------------------------------------
 org $05DF65 ; <- 2DF65 - sprite_uncle_and_priest.asm:994 - (LDA.b #$01 : STA $7EF3C5)
-JSL.l SetUncleRainState : RTS
+NOP #6
 ;--------------------------------------------------------------------------------
 ;org $0280DD ; <- 100DD - Bank02.asm:298 - (LDA $7EF3C5 : CMP.b #$02 : BCC .indoors)
 ;JSL.l ForceLinksHouse

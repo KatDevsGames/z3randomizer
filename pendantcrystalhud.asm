@@ -437,7 +437,7 @@ DrawHUDDungeonItems:
 
 .next_boss_kill
 		LDX.w .boss_room_ids,Y
-		LDA.l RoomData.l,X
+		LDA.l RoomDataWRAM.l,X
 		AND.w #$0800
 		BEQ ..skip_boss_kill
 

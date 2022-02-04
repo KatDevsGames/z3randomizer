@@ -250,7 +250,7 @@ CheckMusicLoadRequest:
             BRA .check_fallback-3
 .lightworld
             PHA
-                LDA OverworldEventData+$80 : AND.b #$40 : BEQ +
+                LDA OverworldEventDataWRAM+$80 : AND.b #$40 : BEQ +
                     PLA
                     LDA.b #60 : BRA .check_fallback-3
                 +
@@ -344,7 +344,7 @@ CheckMusicLoadRequest:
             +
 
             CMP.b #$70 : BNE +    ; Misery Mire
-                LDA OverworldEventData+$70 : AND.b #$20 : BEQ .rain
+                LDA OverworldEventDataWRAM+$70 : AND.b #$20 : BEQ .rain
             +
 
             LDA ProgressIndicator : CMP.b #$02 : BCS +

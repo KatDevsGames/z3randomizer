@@ -33,7 +33,7 @@ SpawnHauntedGroveItem:
 	TYX
 
 	LDX $8A ; haunted grove (208D0A)
-	LDA OverworldEventData, X : AND.b #$40 : BNE +
+	LDA OverworldEventDataWRAM, X : AND.b #$40 : BNE +
 		LDA.b #$1B : JSL Sound_SetSfx3PanLong
 	+
 RTL

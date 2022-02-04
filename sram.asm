@@ -21,7 +21,7 @@ org 0 ; This module writes no bytes. Asar gives bank cross errors without this.
 ; 2 (southwest), and 1 (southeast), which is the same as they are laid out on the screen from
 ; left to right, top to bottom.
 ;
-; Example: We can use RoomData[$37].high to read or write the pot key in the first
+; Example: We can use RoomDataWRAM[$37].high to read or write the pot key in the first
 ; floodable room in Swamp Palace ($04)
 ;--------------------------------------------------------------------------------
 ; .high Byte:  d d d d b k u r
@@ -38,7 +38,7 @@ org 0 ; This module writes no bytes. Asar gives bank cross errors without this.
 ; c = Chest 0
 ; q = Quadrant visits
 ;--------------------------------------------------------------------------------
-struct RoomData $7EF000
+struct RoomDataWRAM $7EF000
     .l
     .low: skip 1
     .high: skip 1
@@ -51,7 +51,7 @@ endstruct align 2
 ; in WRAM (16-bits.) 
 ;
 ; This label can be indexed with a plus symbol (e.g. The Hyrule Castle screen would
-; be OverworldEventData+$1B or OverworldEventData+27)
+; be OverworldEventDataWRAM+$1B or OverworldEventDataWRAM+27)
 ;--------------------------------------------------------------------------------
 ; - i o - - - b -
 ;
@@ -59,7 +59,7 @@ endstruct align 2
 ; o = Overlay active
 ; b = Bomb wall opened
 ;--------------------------------------------------------------------------------
-OverworldEventData = $7EF280
+OverworldEventDataWRAM = $7EF280
 
 ;================================================================================
 ; Items & Equipment ($7EF340 - $7EF38B)
@@ -170,7 +170,7 @@ InventoryTracking: skip 2       ; b r m p n s k f  - - - - - - o q (bitfield)
                                 ; p = Magic Powder     | n = Mushroom Past  | s = Shovel
                                 ; k = Inactive Flute   | f = Active Flute   | o = Any bomb acquired
                                 ; q = Quickswap locked
-BowTracking: skip 2             ; b s p - - - - - (bitfield)
+BowTracking: skip 2             ; - - - - b s p - (bitfield)
                                 ; b = Bow | s = Silver Arrows Upgrade | p = Second Progressive Bow
                                 ; The front end writes two distinct progressive bow items. p
                                 ; indicates whether the "second" has been found independent of
@@ -389,13 +389,19 @@ DummyValue: skip 1              ; $01 if you're a real dummy
 ;--------------------------------------------------------------------------------
 base $700000                    ;
 CartridgeSRAM:                  ;
-skip $0340                      ;
+RoomDataWRAMSRAM:                   ;
+skip $280                       ;
+OverworldEventDataSRAM:         ;
+skip $C0                        ;
 EquipmentSRAM: skip 76          ;
 InventoryTrackingSRAM: skip 2   ;
 BowTrackingSRAM: skip 2         ;
-skip 73                         ;
+skip 53                         ;
+ProgressIndicatorSRAM: skip 1   ;
+skip 19                         ;
 FileNameVanillaSRAM: skip 8     ; First four characters of file name
-skip 287 
+FileValiditySRAM: skip 2        ;
+skip 285                        ;
 ExtendedFileNameSRAM: skip 24   ; We read and write the file name directly from and to SRAM (24 bytes)
 skip $1AE4                      ;
 RomVersionSRAM: skip 4          ; ALTTPR ROM version. Low byte is the version, high byte writes
@@ -637,10 +643,14 @@ endmacro
 ; Direct SRAM Assertions
 ;--------------------------------------------------------------------------------
 %assertSRAM(CartridgeSRAM, $700000)
+%assertSRAM(RoomDataWRAMSRAM, $700000)
+%assertSRAM(OverworldEventDataSRAM, $700280)
 %assertSRAM(EquipmentSRAM, $700340)
 %assertSRAM(InventoryTrackingSRAM, $70038C)
 %assertSRAM(BowTrackingSRAM, $70038E)
+%assertSRAM(ProgressIndicatorSRAM, $7003C5)
 %assertSRAM(FileNameVanillaSRAM, $7003D9)
+%assertSRAM(FileValiditySRAM, $7003E1)
 %assertSRAM(ExtendedFileNameSRAM, $700500)
 %assertSRAM(RomNameSRAM, $702000)
 %assertSRAM(RomVersionSRAM, $701FFC)

@@ -394,7 +394,7 @@ AgahnimAsksAboutPed:
 	LDA.l InvincibleGanon
 	CMP.b #$06 : BNE .vanilla
 
-	LDA.l OverworldEventData+$80 ; check ped flag
+	LDA.l OverworldEventDataWRAM+$80 ; check ped flag
 	AND.b #$40
 	BNE .vanilla
 

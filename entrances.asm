@@ -22,7 +22,7 @@ LockAgahnimDoors:
 		.crystalOrUnlock
 		LDA InvertedMode : AND.w #$00FF : BEQ .unlock
 
-		LDA OverworldEventData+$43 : AND.w #$0020 : BNE .unlock ; Check if GT overlay is already on or not
+		LDA OverworldEventDataWRAM+$43 : AND.w #$0020 : BNE .unlock ; Check if GT overlay is already on or not
 		LDA $0308 : AND.w #$0080 : BEQ ++ ;If we are holding an item
 
 	.locked
@@ -44,7 +44,7 @@ RTL
 FlagAgahnimDoor:
 	LDA.l InvertedMode : BEQ .vanilla
 
-	LDA OverworldEventData+$43 : ORA #$20 : STA OverworldEventData+$43 ; activate GT overlay
+	LDA OverworldEventDataWRAM+$43 : ORA #$20 : STA OverworldEventDataWRAM+$43 ; activate GT overlay
 
 .vanilla
 	LDA.b #$28 : STA.b $72
@@ -209,7 +209,7 @@ TurtleRockEntranceFix:
 	LDA TurtleRockAutoOpenFix : BEQ .done
 	LDA $8A : CMP.b #$47 : BNE .done
 		;If exiting to turtle rock ensure the entrance is open
-		LDA.l OverworldEventData+$47 : ORA.b #$20 : STA.l OverworldEventData+$47
+		LDA.l OverworldEventDataWRAM+$47 : ORA.b #$20 : STA.l OverworldEventDataWRAM+$47
 .done
 RTL
 ;--------------------------------------------------------------------------------

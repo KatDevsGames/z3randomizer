@@ -159,7 +159,6 @@ org $A48000 ; code bank - PUT NEW CODE HERE
 incsrc glitched.asm
 incsrc hardmode.asm
 incsrc goalitem.asm
-incsrc openmode.asm
 incsrc quickswap.asm
 incsrc endingsequence.asm
 incsrc cuccostorm.asm
@@ -446,10 +445,10 @@ org $028296
     .setAmbientSfx
 
 org $02A0A8
-Dungeon_SaveRoomData:
+Dungeon_SaveRoomDataWRAM:
 
 org $02A0BE
-Dungeon_SaveRoomData_justKeys:
+Dungeon_SaveRoomDataWRAM_justKeys:
 
 org $02B861
 Dungeon_SaveRoomQuadrantData:
@@ -584,7 +583,7 @@ org $0CD7D1
 NameFile_MakeScreenVisible:
 org $0CDB3E
 InitializeSaveFile:
-org $0CDB3E
+org $0CDBC0
 InitializeSaveFile_build_checksum:
 
 org $0DBA71
