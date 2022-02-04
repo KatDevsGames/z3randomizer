@@ -389,7 +389,7 @@ DummyValue: skip 1              ; $01 if you're a real dummy
 ;--------------------------------------------------------------------------------
 base $700000                    ;
 CartridgeSRAM:                  ;
-RoomDataWRAMSRAM:                   ;
+RoomDataSRAM:                   ;
 skip $280                       ;
 OverworldEventDataSRAM:         ;
 skip $C0                        ;
@@ -643,7 +643,7 @@ endmacro
 ; Direct SRAM Assertions
 ;--------------------------------------------------------------------------------
 %assertSRAM(CartridgeSRAM, $700000)
-%assertSRAM(RoomDataWRAMSRAM, $700000)
+%assertSRAM(RoomDataSRAM, $700000)
 %assertSRAM(OverworldEventDataSRAM, $700280)
 %assertSRAM(EquipmentSRAM, $700340)
 %assertSRAM(InventoryTrackingSRAM, $70038C)

@@ -83,7 +83,7 @@ OnUncleItemGet:
 RTL
 ;--------------------------------------------------------------------------------
 OnAga2Defeated:
-        JSL.l Dungeon_SaveRoomDataWRAM_justKeys ; thing we wrote over, make sure this is first
+        JSL.l Dungeon_SaveRoomData_justKeys ; thing we wrote over, make sure this is first
         LDA.b #$01 : STA.l Aga2Duck
         JML.l IncrementAgahnim2Sword
 ;--------------------------------------------------------------------------------

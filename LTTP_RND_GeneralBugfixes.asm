@@ -459,10 +459,10 @@ org $028296
     .setAmbientSfx
 
 org $02A0A8
-Dungeon_SaveRoomDataWRAM:
+Dungeon_SaveRoomData:
 
 org $02A0BE
-Dungeon_SaveRoomDataWRAM_justKeys:
+Dungeon_SaveRoomData_justKeys:
 
 org $02B861
 Dungeon_SaveRoomQuadrantData:
