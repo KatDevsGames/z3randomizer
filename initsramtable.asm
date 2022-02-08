@@ -16,9 +16,9 @@ fill $500      ;
 
 org $30B000 ; PC 0x183000
 InitRoomDataWRAM:
-org $30B060
+org $30B060 ; PC 0x183060
 InitATAltarRoom: dw $0000 ; aga curtains
-org $30B092
+org $30B092 ; PC 0x183092
 InitSWBackEntryRoom: dw $0000 ; skull woods curtains (?)
 
 org $30B20C
@@ -30,9 +30,9 @@ org $30B282 ; PC 0x183282 - Lumberjacks
 InitLumberjackOW: db $00
 org $30B29B ; PC 0x18329B - Open castle gate
 InitHyruleCastleOW: db $20
-org $30B2DB ; PC 0x18329B - Pyramid hole
+org $30B2DB ; PC 0x1832DB - Pyramid hole
 InitPyramidOW: db $00
-org $30B2C3 ; PC 0x18329B - GT
+org $30B2C3 ; PC 0x1832C3 - GT
 InitDDMWestOW: db $00
 
 
@@ -115,9 +115,9 @@ InitBowTracking: skip 2                 ; PC 0x18338E / boomerangs, powder/mushr
 InitItemLimitCounts: skip 16            ; PC 0x183390
 skip 37                                 ;
 InitProgressIndicator: db $02           ; PC 0x1833C5 - Set to $80 for instant post-aga with standard
-InitProgressFlags: db $14               ; PC 0x1833C6 
+InitProgressFlags: db $14               ; PC 0x1833C6 - Set to $00 for standard
 InitMapIcons: skip 1                    ; PC 0x1833C7
-InitStartingEntrance: db $01            ; PC 0x1833C8
+InitStartingEntrance: db $01            ; PC 0x1833C8 - Set to $00 for standard
 InitNpcFlagsVanilla: skip 1             ; PC 0x1833C9
 InitCurrentWorld: skip 1                ; PC 0x1833CA
 skip 1                                  ; PC 0x1833CB
