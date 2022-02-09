@@ -1,16 +1,6 @@
 ;--------------------------------------------------------------------------------
 ; $7F5010 - Scratch Space
 ;--------------------------------------------------------------------------------
-; The number of items in a dungeon never changes. use this macro instead of
-; HexToDec when drawing the "??/XX" item counter
-; %DrawConstantNumber(1,4) draws 14
-;--------------------------------------------------------------------------------
-;macro DrawConstantNumber(digit1,digit2)
-;	LDA.w #$2490+<digit1> : STA $7EC79A
-;	LDA.w #$2490+<digit2> : STA $7EC79C
-;	SEP #$20
-;endmacro
-;--------------------------------------------------------------------------------
 
 DrawDungeonCompassCounts:
 	LDX $1B : BNE + : RTL : + ; Skip if outdoors
@@ -64,76 +54,3 @@ InitCompassTotalsRAM:
                 CPX #$0F : !BLT -
 RTL
 
-;CompassCountDungeonHandlers: ; pointers to functions that handle dungeon-specific code
-;	dw CompassCount_Escape, 	CompassCount_Escape ; (hyrule castle, sewers)
-;	dw CompassCount_Eastern,	CompassCount_Desert,	CompassCount_Agah
-;	dw CompassCount_Swamp,		CompassCount_PoD,		CompassCount_Mire
-;	dw CompassCount_Skull,		CompassCount_Ice,		CompassCount_Hera
-;	dw CompassCount_Thieves,	CompassCount_Trock,		CompassCount_Gt
-;}
-;
-;CompassCount_Escape:
-;	%DrawConstantNumber(0,8)
-;	LDA SewersLocations
-;	JMP DrawDungeonCompassCounts_return_spot
-;
-;CompassCount_Eastern:
-;	%DrawConstantNumber(0,6)
-;	LDA EPLocations
-;	JMP DrawDungeonCompassCounts_return_spot
-;
-;CompassCount_Desert: 
-;	%DrawConstantNumber(0,6)
-;	LDA DPLocations
-;	JMP DrawDungeonCompassCounts_return_spot
-;
-;CompassCount_Agah:
-;	%DrawConstantNumber(0,2)
-;	LDA CTLocations
-;	JMP DrawDungeonCompassCounts_return_spot
-;
-;CompassCount_Swamp:
-;	%DrawConstantNumber(1,0)
-;	LDA SPLocations
-;	JMP DrawDungeonCompassCounts_return_spot
-;
-;CompassCount_PoD:
-;	%DrawConstantNumber(1,4)
-;	LDA PDLocations
-;	JMP DrawDungeonCompassCounts_return_spot
-;
-;CompassCount_Mire:
-;	%DrawConstantNumber(0,8)
-;	LDA MMLocations
-;	JMP DrawDungeonCompassCounts_return_spot
-;
-;CompassCount_Skull:
-;	%DrawConstantNumber(0,8)
-;	LDA SWLocations
-;	JMP DrawDungeonCompassCounts_return_spot
-;
-;CompassCount_Ice:
-;	%DrawConstantNumber(0,8)
-;	LDA IPLocations
-;	JMP DrawDungeonCompassCounts_return_spot
-;
-;CompassCount_Hera:
-;	%DrawConstantNumber(0,6)
-;	LDA THLocations
-;	JMP DrawDungeonCompassCounts_return_spot
-;
-;CompassCount_Thieves:
-;	%DrawConstantNumber(0,8)
-;	LDA TTLocations
-;	JMP DrawDungeonCompassCounts_return_spot
-;
-;CompassCount_Trock:
-;	%DrawConstantNumber(1,2)
-;	LDA TRLocations
-;	JMP DrawDungeonCompassCounts_return_spot
-;
-;CompassCount_Gt:
-;	%DrawConstantNumber(2,7)
-;	LDA GTLocations
-;	JMP DrawDungeonCompassCounts_return_spot
-;

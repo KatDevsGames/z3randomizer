@@ -61,32 +61,27 @@ SEP #$30
 !GOAL_DRAW_ADDRESS = "$7EC72A"
 ;================================================================================
 
-	SEP #$20
+	REP #$20
 	LDA.l GoalItemRequirement : BNE + : JMP .done : + ; Star Meter
 
         LDA.l GoalCounter
-        JSR HudHexToDec3Digit
-        REP #$20
+        JSR HudHexToDec4Digit
 
-	LDA.l GoalItemIcon : STA !GOAL_DRAW_ADDRESS ; draw star icon
+	LDA.l GoalItemIcon : STA.l !GOAL_DRAW_ADDRESS ; draw star icon
 	
 	LDX.b $05 : TXA : ORA.w #$2400 : STA !GOAL_DRAW_ADDRESS+2 ; draw 100's digit
 	LDX.b $06 : TXA : ORA.w #$2400 : STA !GOAL_DRAW_ADDRESS+4 ; draw 10's digit
 	LDX.b $07 : TXA : ORA.w #$2400 : STA !GOAL_DRAW_ADDRESS+6 ; draw 1's digit
 	
-	SEP #$20
-	LDA.l GoalItemRequirement : CMP.b #$FF : BEQ .skip
-	
+	LDA.l GoalItemRequirement : CMP.w #$FFFF : BEQ .skip
 		LDA.l GoalItemRequirement
-		JSR HudHexToDec3Digit
-		REP #$20
+		JSR HudHexToDec4Digit
 		LDA.w #$2830 : STA !GOAL_DRAW_ADDRESS+8 ; draw slash
 		LDX.b $05 : TXA : ORA.w #$2400 : STA !GOAL_DRAW_ADDRESS+10 ; draw 100's digit
 		LDX.b $06 : TXA : ORA.w #$2400 : STA !GOAL_DRAW_ADDRESS+12 ; draw 10's digit
 		LDX.b $07 : TXA : ORA.w #$2400 : STA !GOAL_DRAW_ADDRESS+14 ; draw 1's digit
 		BRA .done
 	.skip
-		REP #$20
 		LDA.w #$207F ; transparent tile
 		STA !GOAL_DRAW_ADDRESS+8
 		STA !GOAL_DRAW_ADDRESS+10
@@ -96,7 +91,6 @@ SEP #$30
 ;================================================================================
 ; Draw Dungeon Compass Counts
 ;================================================================================
-	REP #$20
 	LDA.l CompassMode : AND #$00FF : BEQ + ; skip if CompassMode is 0.
 		JSL.l DrawDungeonCompassCounts ; compasses.asm
 	+
@@ -263,27 +257,27 @@ RTS
 ; in:	A(b) - Byte to Convert
 ; out:	$05 - $07 (high - low)
 ;================================================================================
-HudHexToDec3Digit: ; this may be overkill, could have used the 4 digit one...
-	LDY.b #$90
-	-
-		CMP.b #100 : !BLT +
-		INY
-		SBC.b #100 : BRA -
-	+ 
-	STY $05 : LDY.b #$90 ; Store 100s digit and reset Y
-	-
-		CMP.b #10 : !BLT +
-		INY
-		SBC.b #10 : BRA -
-	+ 
-	STY $06 : LDY #$90 ; Store 10s digit and reset Y
-	CMP.b #1 : !BLT +
-	-
-		INY
-		DEC : BNE -
-	+
-	STY $07	; Store 1s digit
-RTS
+;HudHexToDec3Digit: ; this may be overkill, could have used the 4 digit one...
+;	LDY.b #$90
+;	-
+;		CMP.b #100 : !BLT +
+;		INY
+;		SBC.b #100 : BRA -
+;	+
+;	STY $05 : LDY.b #$90 ; Store 100s digit and reset Y
+;	-
+;		CMP.b #10 : !BLT +
+;		INY
+;		SBC.b #10 : BRA -
+;	+
+;	STY $06 : LDY #$90 ; Store 10s digit and reset Y
+;	CMP.b #1 : !BLT +
+;	-
+;		INY
+;		DEC : BNE -
+;	+
+;	STY $07	; Store 1s digit
+;RTS
 
 ;================================================================================
 ; 8-bit registers

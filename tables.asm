@@ -805,13 +805,9 @@ org $308165 ; PC 0x180165
 GoalItemIcon:
 dw #$280E ; #$280D = Star - #$280E = Triforce Piece (default)
 ;================================================================================
-org $308167 ; PC 0x180167
+org $308167 ; PC 0x180167-0x180167
 GoalItemRequirement:
-db #$00 ; #$00 = Off (default) - #$XX = Require $XX Goal Items - #$FF = Counter-Only
-;================================================================================
-org $308168 ; PC 0x180168
-ByrnaCaveSpikeDamage:
-db #$08 ; #$08 = 1 Heart (default) - #$02 = 1/4 Heart
+dw $0000 ; #$0000 = Off (default) - #$XXXX = Require $XX Goal Items - #$FFFF = Counter-Only
 ;================================================================================
 org $308169 ; PC 0x180169
 AgahnimDoorStyle:
@@ -934,7 +930,11 @@ org $308194 ; PC 0x180194
 TurnInGoalItems:
 db #$01 ; #$00 = Instant win if last goal item collected. $01 = (Default) must turn in goal items
 ;--------------------------------------------------------------------------------
-; 0x180195 - 0x1801FF (unused)
+org $308195 ; PC 0x180195
+ByrnaCaveSpikeDamage:
+db #$08 ; #$08 = 1 Heart (default) - #$02 = 1/4 Heart
+;--------------------------------------------------------------------------------
+; 0x180196 - 0x1801FF (unused)
 ;================================================================================
 org $308200 ; PC 0x180200 - 0x18020B
 RedClockAmount:

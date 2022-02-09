@@ -201,7 +201,9 @@ RTL
 DecrementItemCounter:
 	PHA
 		LDA StatsLocked : BNE +
+                        REP #$20
 			LDA TotalItemCounter : DEC : STA TotalItemCounter
+                        SEP #$20
 		+
 	PLA
 RTL
@@ -350,14 +352,15 @@ StatsFinalPrep:
 	
 		LDA RupeesSpent : !ADD DisplayRupees : STA !RUPEES_COLLECTED
 		LDA RupeesSpent+1 : ADC DisplayRupees+1 : STA !RUPEES_COLLECTED+1
-	
+
+                REP #$20
 		LDA TotalItemCounter : !SUB ChestsOpened : STA !NONCHEST_COUNTER
 
 		.done
 	PLP : PLX : PLA
 	LDA.b #$19 : STA $10 ; thing we wrote over, load triforce room
-    STZ $11
-    STZ $B0
+        STZ $11
+        STZ $B0
 RTL
 ;--------------------------------------------------------------------------------
 ; Notes:

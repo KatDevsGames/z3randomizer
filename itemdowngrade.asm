@@ -73,13 +73,9 @@ RTS
 JMP .done
         .isUncleSwordShield
 	PHA
-                LDA HighestSword
-                STA [$00] ; already set to 1 if we had no sword, always keep highest
+                LDA HighestSword : STA [$00] ; already set to 1 if we had no sword, always keep highest
                 INC $00
-                LDA HighestShield : BNE + ; keep our shield unless we have no shield
-                        INC A
-                +
-                        STA [$00]
+                LDA HighestShield : STA [$00]
 	PLA
 RTS
 ;================================================================================

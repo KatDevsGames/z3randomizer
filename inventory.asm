@@ -354,7 +354,9 @@ AddInventory:
 		LDA PreFluteLocations : INC : STA PreFluteLocations ; Increment Pre Mirror Counter
 	+
 
+        REP #$20
 	LDA TotalItemCounter : INC : STA TotalItemCounter ; Increment Item Total
+        SEP #$20
 
 	.itemCounts
 
@@ -522,15 +524,15 @@ AddInventory:
 		JSR .incrementBow
 		JMP .done
 	+ CPY.b #$5E : BNE + ; Progressive Sword
-                LDA SwordEquipment : TAX
+                LDA SwordEquipment : INC : TAX
 		JSR .incrementSword
 		JMP .done
 	+ CPY.b #$5F : BNE + ; Progressive Shield
-                LDA ShieldEquipment : TAX
+                LDA ShieldEquipment : INC : TAX
 		JSR .incrementShield
 		JMP .done
 	+ CPY.b #$60 : BNE + ; Progressive Armor
-                LDA ArmorEquipment : TAX
+                LDA ArmorEquipment : INC : TAX
 		JSR .incrementMail
 		JMP .done
 	+ CPY.b #$61 : BNE + ; Progressive Lifting Glove

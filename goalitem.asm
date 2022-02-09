@@ -81,7 +81,9 @@ CheckGanonVulnerability:
 
 ; 05 = require goal item
 .goal_item
-	LDA.l GoalCounter : CMP GoalItemRequirement
+        REP #$20
+	LDA.l GoalCounter : CMP.l GoalItemRequirement
+        SEP #$20
 	RTS
 
 ; 06 = light speed

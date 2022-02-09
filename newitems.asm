@@ -165,14 +165,14 @@ ProcessEventItems:
 			LDA RNGItem : INC : STA RNGItem
 
 			SEP #$10 ; set 8-bit index registers
-
+                        REP #$20 ; set 16-bit accumulator
 			LDA GoalItemRequirement : BEQ ++
 			LDA GoalCounter : INC : STA GoalCounter
 			CMP GoalItemRequirement : !BLT ++
-			LDA TurnInGoalItems : BNE ++
+			LDA TurnInGoalItems : AND.w #$00FF : BNE ++
 				JSL.l ActivateGoal
 			++
-
+                        SEP #$20 ; set 8-bit accumulator
 			LDX.b #$01 : BRA .done
 		+
 		LDX.b #$00
@@ -187,13 +187,6 @@ RTS
 AddReceivedItemExpandedGetItem:
 	PHX
 
-	;JSR.w ProcessEventItems : CPX.b #$00 : BEQ ++
-	;	;JSL.l Main_ShowTextMessage_Alt
-	;	LDA GoalCounter : INC : STA GoalCounter
-	;	LDA.b #$01 : STA $7F50XX
-	;	JMP .done
-	;++
-	;STA $FFFFFF
 	LDA $02D8 ; check inventory
 	JSL.l FreeDungeonItemNotice
 	CMP.b #$0B : BNE + ; Bow
@@ -319,12 +312,14 @@ AddReceivedItemExpandedGetItem:
 		BRA .multi_collect
 	+ CMP.b #$6C : BNE + ; Goal Collectable (Multi/Power Star) Alternate Graphic
 		.multi_collect
-		LDA GoalItemRequirement : BEQ ++
-		LDA GoalCounter : INC : STA GoalCounter
-		CMP GoalItemRequirement : !BLT ++
-		LDA TurnInGoalItems : BNE ++
+                REP #$20 ; set 16-bit accumulator
+		LDA.l GoalItemRequirement : BEQ ++
+		LDA.l GoalCounter : INC : STA.l GoalCounter
+		CMP.w GoalItemRequirement : !BLT ++
+		LDA.l TurnInGoalItems : AND.w #$00FF : BNE ++
 				JSL.l ActivateGoal
 		++
+                SEP #$20 ; set 8-bit accumulator
 		JMP .done
 	+ CMP.b #$6D : BNE + ; Server Request F0
 		JSL.l ItemGetServiceRequest_F0
