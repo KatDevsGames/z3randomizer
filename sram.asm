@@ -170,7 +170,7 @@ InventoryTracking: skip 2       ; b r m p n s k f  - - - - - - o q (bitfield)
                                 ; p = Magic Powder     | n = Mushroom Past  | s = Shovel
                                 ; k = Inactive Flute   | f = Active Flute   | o = Any bomb acquired
                                 ; q = Quickswap locked
-BowTracking: skip 2             ; - - - - b s p - (bitfield)
+BowTracking: skip 2             ; b s p - - - - -  - - - - - - - - (bitfield)
                                 ; b = Bow | s = Silver Arrows Upgrade | p = Second Progressive Bow
                                 ; The front end writes two distinct progressive bow items. p
                                 ; indicates whether the "second" has been found independent of

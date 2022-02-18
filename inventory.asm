@@ -288,57 +288,22 @@ AddInventory:
 	SEP #$20 ; Set 8-bit Accumulator
 
 	LDA $040C ; get dungeon id
+        CMP.b #$FF : BEQ .fullItemCounts
 
-	CMP.b #$00 : BNE + ; Sewers (Escape)
-		LDA SewersLocations : INC : STA SewersLocations
-		LDA HCLocations : INC : STA HCLocations
-		BRA ++
-	+ CMP.b #$02 : BNE + ; Hyrule Castle (Escape)
-		++
-		CPY.b #$32 : BNE ++ : JMP .itemCounts : ++ ; Ball & Chain Guard's Big Key
-		LDA HCLocations : INC : STA HCLocations
-		LDA SewersLocations : INC : STA SewersLocations
-		JMP .fullItemCounts
-	+ CMP.b #$04 : BNE + ; Eastern Palace
-                LDA EPLocations : INC : STA EPLocations
-		JMP .fullItemCounts
-	+ CMP.b #$06 : BNE + ; Desert Palace
-                LDA DPLocations : INC : STA DPLocations
-		JMP .fullItemCounts
-	+ CMP.b #$08 : BNE + ; Agahnim's Tower
-                LDA CTLocations : INC : STA CTLocations
-		JMP .fullItemCounts
-	+ CMP.b #$0A : BNE + ; Swamp Palace
-                LDA SPLocations : INC : STA SPLocations
-		JMP .fullItemCounts
-	+ CMP.b #$0C : BNE + ; Palace of Darkness
-                LDA PDLocations : INC : STA PDLocations
-		JMP .fullItemCounts
-	+ CMP.b #$0E : BNE + ; Misery Mire
-                LDA MMLocations : INC : STA MMLocations
-		JMP .fullItemCounts
-	+ CMP.b #$10 : BNE + ; Skull Woods
-                LDA SWLocations : INC : STA SWLocations
-		JMP .fullItemCounts
-	+ CMP.b #$12 : BNE + ; Ice Palace
-                LDA IPLocations : INC : STA IPLocations
-		JMP .fullItemCounts
-	+ CMP.b #$14 : BNE + ; Tower of Hera
-                LDA THLocations : INC : STA THLocations
-		JMP .fullItemCounts
-	+ CMP.b #$16 : BNE + ; Thieves' Town
-                LDA TTLocations : INC : STA TTLocations
-		JMP .fullItemCounts
-	+ CMP.b #$18 : BNE + ; Turtle Rock
-                LDA TRLocations : INC : STA TRLocations
-		JMP .fullItemCounts
-	+ CMP.b #$1A : BNE + ; Ganon's Tower
-                LDA GTLocations : INC : STA GTLocations
+        CMP.l BallNChainDungeon : BNE +
+		CPY.b #$32 : BNE +
+                        JMP .done
+	+
+        CMP.b #$04 : BCS +
+                LDA SewersLocations : INC : STA SewersLocations
+                LDA HCLocations : INC : STA HCLocations
+                BRA .fullItemCounts
+        + LSR : TAX : LDA DungeonLocationsChecked, X : INC : STA DungeonLocationsChecked, X
+	++ CPX.b #$0D : BNE +
 		LDA BigKeyField : AND #$04 : BNE ++
 			JSR .incrementGTowerPreBigKey
 		++
 	+
-
 	; == END INDOOR-ONLY SECTION
 	.fullItemCounts
 
