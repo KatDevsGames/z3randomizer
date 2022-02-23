@@ -305,10 +305,12 @@ CapacityUpgrades: skip 1        ; Number of capacity upgrades collected (integer
 DamageCounter: skip 2           ; Damage taken by player (16-bit integer)
 MagicCounter: skip 2            ; Magic used by player (16-bit integer)
 HighestMail: skip 1             ; Highest mail level
-SmallKeyCounter: skip 1         ; Total Number of small keys collected (integer)     
-HeartPieceCounter: skip 1       ; Total Number of heartpieces collected (integer)     
-CrystalCounter: skip 1          ; Total Number of crystals collected (integer)     
-skip 46                         ; Unused
+SmallKeyCounter: skip 1         ; Total Number of small keys collected (integer)
+HeartPieceCounter: skip 1       ; Total Number of heartpieces collected (integer)
+CrystalCounter: skip 1          ; Total Number of crystals collected (integer)
+DungeonsCompleted: skip 2       ; Bitfield indicating whether a dungeon's prize has been collected.
+                                ; This has the same shape as the dungeon item bitfields.
+skip 44                         ; Unused
 ServiceSequenceRx:              ; Service sequence receive
 ServiceSequenceTx:              ; Service sequence transmit
 ServiceSequence: skip 8         ; Service request block. See servicerequest.asm
@@ -580,6 +582,7 @@ endmacro
 %assertSRAM(SmallKeyCounter, $7EF46F)
 %assertSRAM(HeartPieceCounter, $7EF470)
 %assertSRAM(CrystalCounter, $7EF471)
+%assertSRAM(DungeonsCompleted, $7EF472)
 ;--------------------------------------------------------------------------------
 %assertSRAM(ServiceSequence, $7EF4A0)
 %assertSRAM(ServiceSequenceRx, $7EF4A0)

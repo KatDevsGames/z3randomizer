@@ -386,6 +386,7 @@ AddInventory:
 		JMP .done
 	+ CPY.b #$20 : BNE + ; Crystal
 		JSR .incrementCrystal
+                JSR .setDungeonCompletion
 		JMP .done
 	+ CPY.b #$21 : BNE + ; Bug Net
 		JSR .incrementY
@@ -431,6 +432,7 @@ AddInventory:
 	+ CPY.b #$37 : !BLT + ; Items $37 - $39 - Pendants
 	  CPY.b #$3A : !BGE +
 		JSR .incrementPendant
+                JSR .setDungeonCompletion
 		JMP .done
 	+ CPY.b #$3A : !BLT + ; Items $3A - $3B - Bow & Silver Arrows
 	  CPY.b #$3C : !BGE +
@@ -676,6 +678,33 @@ RTL
 	+ CMP #$04 : BNE +
 		%BottomHalf(SwordBossKills+1)
 	+
+RTS
+
+.setDungeonCompletion
+        LDA $040C
+	CMP #$FF : BEQ +
+		LSR : AND #$0F : CMP #$08 : !BGE ++
+			JSR .valueShift
+			ORA DungeonsCompleted : STA DungeonsCompleted
+			BRA +
+		++
+			!SUB #$08
+			JSR .valueShift
+			BIT.b #$C0 : BEQ +++ : LDA.b #$C0 : +++ ; Make Hyrule Castle / Sewers Count for Both
+			ORA DungeonsCompleted+1 : STA DungeonsCompleted+1
+	+
+RTS
+
+.valueShift
+	PHX
+	TAX : LDA.b #$01
+	-
+		CPX #$00 : BEQ +
+		ASL
+		DEX
+	BRA -
+	+
+	PLX
 RTS
 ;--------------------------------------------------------------------------------
 
