@@ -27,6 +27,11 @@ RTL
 ;--------------------------------------------------------------------------------
 ClearExtendedWRAMSaveFile:
 	STA $7EF400, X ; what we wrote over
+ 	STA $7F6000, X
+	STA $7F6100, X
+	STA $7F6200, X
+	STA $7F6300, X
+	STA $7F6400, X
 	STA $7F6500, X
 	STA $7F6600, X
 	STA $7F6700, X
@@ -55,16 +60,16 @@ CopyExtendedSaveFileToWRAM:
 
 		LDA #$80 : STA $4301 ; set bus B source to WRAM register
 
-		LDA #$00 : STA $2181 ; set WRAM register source address
-		LDA #$65 : STA $2182
-		LDA #$7F : STA $2183
+                LDA #$00 : STA $2181 ; set WRAM register source address
+                LDA #$60 : STA $2182
+                LDA #$7F : STA $2183
 
 		STZ $4302 ; set bus A destination address to SRAM
-		LDA #$05 : STA $4303
-		LDA #$70 : STA $4304
+                LDA #$05 : STA $4303
+                LDA #$70 : STA $4304
 
-		LDA #$00 : STA $4305 ; set transfer size to 0xB00
-		LDA #$0B : STA $4306 ; STZ $4307
+		LDA #$00 : STA $4305 ; set transfer size to 0x1000
+		LDA #$10 : STA $4306 ; STZ $4307
 
 		LDA #$01 : STA $420B ; begin DMA transfer
 		;--------------------------------------------------------------------------------
@@ -97,15 +102,15 @@ CopyExtendedWRAMSaveFileToSRAM:
 
 		STA $4301 ; set bus B source to WRAM register
 
-		LDA #$00 : STA $2181 ; set WRAM register source address
-		LDA #$65 : STA $2182
-		LDA #$7F : STA $2183
+                LDA #$00 : STA $2181 ; set WRAM register source address
+                LDA #$60 : STA $2182
+                LDA #$7F : STA $2183
 
 		STZ $4302 ; set bus A destination address to SRAM
 		LDA #$05 : STA $4303
 		LDA #$70 : STA $4304
 
-		LDA #$00 : STA $4305 ; set transfer size to 0xB00
+		LDA #$10 : STA $4305 ; set transfer size to 0xB00
 		LDA #$0B : STA $4306 ; STZ $4307
 
 		LDA #$01 : STA $420B ; begin DMA transfer

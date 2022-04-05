@@ -23,17 +23,17 @@ SpawnHauntedGroveItem:
 	LDA.b #$30 : STA $0F10, Y
 
 	LDA $22 : !ADD.l .x_offsets, X
-							AND.b #$F0 : STA $0D10, Y
-	LDA $23 : ADC.b #$00			   : STA $0D30, Y
+        AND.b #$F0 : STA $0D10, Y
+	LDA $23 : ADC.b #$00 : STA $0D30, Y
 
 	LDA $20 : !ADD.b #$16 : AND.b #$F0 : STA $0D00, Y
-	LDA $21 : ADC.b #$00			   : STA $0D20, Y
+	LDA $21 : ADC.b #$00 : STA $0D20, Y
 
 	LDA.b #$00 : STA $0F20, Y
 	TYX
 
 	LDX $8A ; haunted grove (208D0A)
-	LDA $7EF280, X : AND.b #$40 : BNE +
+	LDA OverworldEventDataWRAM, X : AND.b #$40 : BNE +
 		LDA.b #$1B : JSL Sound_SetSfx3PanLong
 	+
 RTL
@@ -61,7 +61,7 @@ JML.l FluteBoy_Continue
 ;--------------------------------------------------------------------------------
 FreeDuckCheck:
 	LDA.l InvertedMode : BEQ .done
-	LDA $7EF34C : CMP.b #$03 : BEQ .done ; flute is already active
+	LDA FluteEquipment : CMP.b #$03 : BEQ .done ; flute is already active
 	
     ; check the area, is it #$18 = 30?
     LDA $8A : CMP.b #$18 : BNE .done

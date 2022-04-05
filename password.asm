@@ -1,7 +1,5 @@
 !PASSWORD_CODE_POSITION = "$C8"
 !PASSWORD_SELECTION_POSITION = "$C9"
-!PASSWORD_SRAM = "$701000"
-
 
 Module_Password:
 	LDA $11
@@ -39,7 +37,7 @@ Password_EndInit:
 		LDX.b #$0F
 		LDA.b #$00
 		-
-			STA.l !PASSWORD_SRAM, X
+			STA.l PasswordSRAM, X
 		DEX : BPL -
 	+
 
@@ -108,7 +106,7 @@ Password_Main:
 			BRA +
 		++
 		LDX !PASSWORD_CODE_POSITION
-		STA !PASSWORD_SRAM,X
+		STA PasswordSRAM,X
 		TXA : INC A : AND.b #$0F : STA !PASSWORD_CODE_POSITION
 		BNE ++
 			STZ $012E
@@ -166,7 +164,7 @@ ValidatePassword:
 	;check for incomplete password
 	LDX #$0F
 	-
-		LDA.l !PASSWORD_SRAM, X : BNE +
+		LDA.l PasswordSRAM, X : BNE +
 		 	JMP .incorrect
 		+
 	DEX : BPL -
@@ -229,7 +227,7 @@ PasswordToKey:
 	LDA.w #$000B : STA $04
 	-
 		LDX $00
-		LDA !PASSWORD_SRAM, X : DEC : AND #$001F
+		LDA PasswordSRAM, X : DEC : AND #$001F
 		LDY $04
 		-- : BEQ + : ASL : DEY : BRA -- : + ; Shift left by Y
 		XBA
@@ -343,7 +341,7 @@ UpdatePasswordTiles:
 	REP #$30 ; set 16-bit both
 	LDX.w #$000F
 	-
-		LDA.l !PASSWORD_SRAM, X : AND.w #$00FF : TXY
+		LDA.l PasswordSRAM, X : AND.w #$00FF : TXY
 		ASL #3 : STA $00
 		TYA : ASL #4 : STA $03
 		LDX $00 : LDA.l HashAlphabetTilesWithBlank, X

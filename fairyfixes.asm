@@ -2,20 +2,20 @@
 ; Fairy Changes & Fixes
 ;--------------------------------------------------------------------------------
 RefillHealthPlusMagic:
-    LDA BigFairyHealth : STA $7EF372
+    LDA BigFairyHealth : STA HeartsFiller
 RTL
 ;--------------------------------------------------------------------------------
 RefillHealthPlusMagic8bit:
-    LDA BigFairyHealth : STA $7EF372
-    LDA BigFairyMagic : STA $7EF373
+    LDA BigFairyHealth : STA HeartsFiller
+    LDA BigFairyMagic : STA MagicFiller
 RTL
 ;--------------------------------------------------------------------------------
 CheckFullHealth:
     LDA BigFairyHealth : BEQ +
-        LDA $7EF36D : CMP $7EF36C : BNE .player_hp_not_full_yet
+        LDA CurrentHealth : CMP MaximumHealth : BNE .player_hp_not_full_yet
     +
     LDA BigFairyMagic : BEQ +
-        LDA $7EF36E : CMP.b #$80 : BNE .player_mp_not_full_yet
+        LDA CurrentMagic : CMP.b #$80 : BNE .player_mp_not_full_yet
     +
     LDA.b #$00
 RTL
@@ -30,10 +30,10 @@ FairyPond_Init:
 		JML.l Sprite_ShowMessageFromPlayerContact
 	+
 	PHY : JSL.l Sprite_CheckDamageToPlayerSameLayerLong : BCC +
-		LDA $7EF35C : CMP.b #$02 : BNE ++ : LDA.b #$1C : PHA : BRA .emptyBottle : ++
-		LDA $7EF35D : CMP.b #$02 : BNE ++ : LDA.b #$1D : PHA : BRA .emptyBottle : ++
-		LDA $7EF35E : CMP.b #$02 : BNE ++ : LDA.b #$1E : PHA : BRA .emptyBottle : ++
-		LDA $7EF35F : CMP.b #$02 : BNE ++ : LDA.b #$1F : PHA : BRA .emptyBottle : ++
+		LDA BottleContentsOne : CMP.b #$02 : BNE ++ : LDA.b #$1C : PHA : BRA .emptyBottle : ++
+		LDA BottleContentsTwo : CMP.b #$02 : BNE ++ : LDA.b #$1D : PHA : BRA .emptyBottle : ++
+		LDA BottleContentsThree : CMP.b #$02 : BNE ++ : LDA.b #$1E : PHA : BRA .emptyBottle : ++
+		LDA BottleContentsFour : CMP.b #$02 : BNE ++ : LDA.b #$1F : PHA : BRA .emptyBottle : ++
 			.noInventory
 			LDA.b #$0A : STA $0D80, X
 			LDA.b #$51

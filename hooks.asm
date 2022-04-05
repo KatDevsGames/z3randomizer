@@ -63,8 +63,8 @@ org $00FFF4 : dw SoftwareInterrupt
 ;================================================================================
 ; Dungeon Entrance Hook (works, but not needed at the moment)
 ;--------------------------------------------------------------------------------
-;org $02D8C7 ; <- 158C7 - Bank02.asm : 10981 (STA $7EC172)
-;JSL.l OnDungeonEntrance
+org $02D8C7 ; <- 158C7 - Bank02.asm : 10981 (STA $7EC172)
+JSL.l OnDungeonEntrance
 ;--------------------------------------------------------------------------------
 
 ;================================================================================
@@ -236,6 +236,8 @@ LDA.l HeartCursorPositions, X
 org $0CDAEB ; <- 65AEB : Bank0C.asm : 3571-3575,3581-3587 (...) [LDA $0B12 : AND #$03]
 ; JP here is different. Indicated line number implement the US version of the same functionality
 JSL.l WrapCharacterPosition : NOP
+org $0CD75E ; bank_0C.asm (dl NameFile_MakeScreenVisible)
+dl MaybeForceFileName
 ;--------------------------------------------------------------------------------
 org $0CE43A ; No assembly source. Makes name entry box wider
 db $2C
@@ -330,9 +332,8 @@ org $0CCE85 ; <- Bank0C.asm : 1953 (LDA $C8 : ASL A : INC #2 : STA $701FFE)
 NOP #4
 ;--------------------------------------------------------------------------------
 org $0CDB4C ; <- Bank0C.asm : 3655 (LDA $C8 : ASL A : INC #2 : STA $701FFE : TAX)
-JSL OnFileCreation
+JML OnFileCreation
 NOP
-;Additionally, display inventory swap starting equipment on file select
 ;--------------------------------------------------------------------------------
 org $09F5EA ; <- module_death.asm : 510 (LDA $701FFE : TAX : DEX #2)
 LDA.w #$0002 : NOP
@@ -556,16 +557,12 @@ JSL.l CheckGanonHammerDamage : NOP
 org $02B797 ; <- 13797 - Bank02.asm : 8712 (LDA.b #$19 : STA $10)
 JSL.l StatsFinalPrep
 ;--------------------------------------------------------------------------------
-org $07A95B ; <- 3A95B - Bank07.asm : 6565 (JSL Dungeon_SaveRoomData)
+org $07A95B ; <- 3A95B - Bank07.asm : 6565 (JSL Dungeon_SaveRoomDataWRAM)
 JSL.l IncrementUWMirror
 ;--------------------------------------------------------------------------------
 org $0288D1 ; <- 108D1 - Bank02.asm : 1690 (STZ $0646)
 JSL.l IndoorSubtileTransitionCounter
 NOP #2
-;--------------------------------------------------------------------------------
-org $07B574 ; <- 3B574 - Bank07.asm : 8519 (LDA.b #$01 : STA $02E9)
-JSL.l IncrementChestCounter
-NOP
 ;--------------------------------------------------------------------------------
 ;org $05FC7E ; <- 2FC7E - sprite_dash_item.asm : 118 (LDA $7EF36F : INC A : STA $7EF36F)
 ;JSL.l IncrementSmallKeys
@@ -734,7 +731,7 @@ JSL.l GetItemDamageValue
 ;================================================================================
 ; Misc Stats
 ;--------------------------------------------------------------------------------
-org $029E2E ; <- 11E2E - module_ganon_emerges.asm : 59 (JSL Dungeon_SaveRoomData.justKeys)
+org $029E2E ; <- 11E2E - module_ganon_emerges.asm : 59 (JSL Dungeon_SaveRoomDataWRAM.justKeys)
 JSL.l OnAga2Defeated
 ;--------------------------------------------------------------------------------
 org $0DDBDE ; <- 6DBDE - headsup_display.asm : 105 (DEC A : BPL .subtractRupees)
@@ -1700,7 +1697,7 @@ JSL.l FixAga2Bunny : NOP
 ; Open Mode Fixes
 ;--------------------------------------------------------------------------------
 org $05DF65 ; <- 2DF65 - sprite_uncle_and_priest.asm:994 - (LDA.b #$01 : STA $7EF3C5)
-JSL.l SetUncleRainState : RTS
+NOP #6
 ;--------------------------------------------------------------------------------
 ;org $0280DD ; <- 100DD - Bank02.asm:298 - (LDA $7EF3C5 : CMP.b #$02 : BCC .indoors)
 ;JSL.l ForceLinksHouse
@@ -2123,7 +2120,7 @@ JSL.l ItemCheck_TreeKid2
 
 org $06AF9B ; <- 32F9B - FluteBoy_Chillin : 73 : LDA $7EF34C : CMP.b #$02 : BCS .player_has_flute
 ;NOP #8
-LDA !HAS_GROVE_ITEM : AND.b #$01
+LDA HasGroveItem : AND.b #$01
 db #$D0 ; BNE
 
 org $06B062 ; <- 33062 - FluteAardvark_InitialStateFromFluteState : 225 : LDA $7EF34C : AND.b #$03 : !BGE #$05
@@ -2420,15 +2417,13 @@ Overworld_Hole_End:
 ;--------------------------------------------------------------------------------
 
 ;================================================================================
-; Disable pyramid hole check for killing aga2
+; Replace pyramid hole check for killing aga2
 ;
 ; this check is intended to prevent getting fluted out a second time if you 
-; return to his room after already killing him once. But with a pre-opened 
-; pyramid hole, it can cause you to get stuck there on killing him the first 
-; time. So we change it, and accept the flute out if you return. 
+; return to his room after already killing him once.
 ;---------------------------------------------------------------------------------
-org $01C753 ; 0C753 = Bank01:10398 (LDA $7EF2DB : AND.b #$20 : BNE .return)
-db $00 ; (originally $20)
+org $01C74E ; 00C74E - bank_01.asm:13281 - (LDA.l $7EF2DB : AND.b #$20)
+LDA.l Aga2Duck : NOP #2
 
 ;================================================================================
 ; Music fixes
@@ -2494,7 +2489,7 @@ org $00DF62 ; <- Bank00.asm:4672 (LDX.w #$0000 : LDY.w #$0040)
     JML ReloadingFloors
     NOP : NOP
     ReloadingFloorsResume:
-org $00DF6E ; <- A few instructions later, right after JSR Do3To4High16Bit
+org $00DF6E ; <- A few instructions later, right after JSR Do3To.high16Bit
     ReloadingFloorsCancel:
 ;================================================================================
 
@@ -2505,7 +2500,7 @@ org $07A055 ; <- Bank07.asm:5205 (LDA $0B99 : BEQ BRANCH_DELTA)
 JSL.l ArrowGame : NOP #14
 
 org $07A06C ; <- Bank07.asm:5215 (LDA $7EF377 : BEQ BRANCH_EPSILON)
-JSL.l DecrementArrows : SKIP 2 : NOP : LDA $7EF377
+JSL.l DecrementArrows : SKIP 2 : NOP : LDA CurrentArrows
 ;================================================================================
 
 ;================================================================================

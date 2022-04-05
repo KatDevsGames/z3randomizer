@@ -117,7 +117,7 @@ FastTextScroll:
 	RTL
 
 DumbFlagForMSU:
-	STA.l $7EF3CA
+	STA.l CurrentWorld
 	STZ.b $50
 	RTL
 

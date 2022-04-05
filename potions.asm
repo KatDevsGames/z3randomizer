@@ -15,19 +15,19 @@ RefillHealth:
 	LDA.l PotionHealthRefill : CMP.b #$A0 : !BGE .done
 		LDA !BUSY_HEALTH : BNE ++
 			LDA.l PotionHealthRefill ; load refill amount
-			!ADD $7EF36D ; add to current health
-			CMP $7EF36C : !BLT +++ : LDA $7EF36C : +++
+			!ADD CurrentHealth ; add to current health
+			CMP MaximumHealth : !BLT +++ : LDA MaximumHealth : +++
 			STA !BUSY_HEALTH
 		++
 
-		LDA $7EF36D : CMP.l !BUSY_HEALTH : !BLT ++
-			LDA.b #$00 : STA $7EF372
+		LDA CurrentHealth : CMP.l !BUSY_HEALTH : !BLT ++
+			LDA.b #$00 : STA HeartsFiller
 			LDA $020A : BNE .notDone
 			LDA.b #$00 : STA !BUSY_HEALTH
 			SEC
 			RTL
 		++
-			LDA.b #$08 : STA $7EF372 ; refill some health
+			LDA.b #$08 : STA HeartsFiller ; refill some health
 			.notDone
 			CLC
 			RTL
@@ -35,16 +35,16 @@ RefillHealth:
 
     ; Check goal health versus actual health.
     ; if(actual < goal) then branch.
-    LDA $7EF36D : CMP $7EF36C : BCC .refillAllHealth
-    LDA $7EF36C : STA $7EF36D
-    LDA.b #$00 : STA $7EF372
+    LDA CurrentHealth : CMP MaximumHealth : BCC .refillAllHealth
+    LDA MaximumHealth : STA CurrentHealth
+    LDA.b #$00 : STA HeartsFiller
     ; ??? not sure what purpose this branch serves.
     LDA $020A : BNE .beta
         SEC
     RTL
 .refillAllHealth
     ; Fill up ze health.
-    LDA.b #$A0 : STA $7EF372
+    LDA.b #$A0 : STA HeartsFiller
 .beta
     CLC
 RTL
@@ -62,27 +62,27 @@ RefillMagic:
 	LDA.l PotionMagicRefill : CMP.b #$80 : !BGE .done
 		LDA !BUSY_MAGIC : BNE ++
 			LDA.l PotionMagicRefill ; load refill amount
-			!ADD $7EF36E ; add to current magic
+			!ADD CurrentMagic ; add to current magic
 			CMP.b #$80 : !BLT +++ : LDA.b #$80 : +++
 			STA !BUSY_MAGIC
 		++
 
-		LDA $7EF36E : CMP.l !BUSY_MAGIC : !BLT ++
+		LDA CurrentMagic : CMP.l !BUSY_MAGIC : !BLT ++
 			LDA.b #$00 : STA !BUSY_MAGIC
 			SEC
 			RTL
 		++
-			LDA.b #$01 : STA $7EF373 ; refill some magic
+			LDA.b #$01 : STA MagicFiller ; refill some magic
 			CLC
 			RTL
 	.done
 
     SEP #$30
     ; Check if Link's magic meter is full
-    LDA $7EF36E : CMP.b #$80
+    LDA CurrentMagic : CMP.b #$80
     BCS .itsFull
     ; Tell the magic meter to fill up until it's full.
-    LDA.b #$80 : STA $7EF373
+    LDA.b #$80 : STA MagicFiller
     SEP #$30
     RTL
 .itsFull

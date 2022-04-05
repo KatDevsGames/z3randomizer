@@ -32,14 +32,14 @@ SpriteSwap_Palette_ArmorAndGloves:
     LDA !SPRITE_SWAP : BNE .continue
         LDA.b #$10 : STA $BC ; Load Original Sprite Location
         REP #$21
-        LDA $7EF35B
+        LDA ArmorEquipment
         JSL $1BEDFF ; Read Original Palette Code
     RTL
     .part_two
     SEP #$30
     LDA !SPRITE_SWAP : BNE .continue
         REP #$30
-        LDA $7EF354 
+        LDA GloveEquipment 
         JSL $1BEE21 ; Read Original Palette Code
     RTL
 
@@ -51,7 +51,7 @@ SpriteSwap_Palette_ArmorAndGloves:
     REP #$20 ; set 16-bit accumulator
     
     ; Check what Link's armor value is.
-    LDA $7EF35B : AND.w #$00FF : TAX
+    LDA ArmorEquipment : AND.w #$00FF : TAX
     
     ; (DEC06, X)
     

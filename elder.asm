@@ -40,25 +40,30 @@ RTL
 
     Elder_Code:
     {
-        LDA GoalItemRequirement : BEQ .despawn
-        LDA InvincibleGanon : CMP #$05 : BEQ .despawn
-        LDA TurnInGoalItems : BNE +
+        REP #$20
+        LDA.l GoalItemRequirement : BEQ .despawn
+        LDA.l InvincibleGanon : AND.w #$00FF : CMP.w #$0005 : BEQ .despawn
+        LDA.l TurnInGoalItems : AND.w #$00FF : BNE +
             .despawn
+            SEP #$20
             STZ $0DD0, X ; despawn self
             RTS
         +
-            
+        SEP #$20
         LDA.b #$96
         LDY.b #$01
         
         JSL Sprite_ShowSolicitedMessageIfPlayerFacing_PreserveMessage : BCC .dont_show
-            LDA !GOAL_COUNTER 
-            CMP GoalItemRequirement : !BLT +
+            REP #$20
+            LDA.l GoalCounter
+            CMP.l GoalItemRequirement : !BLT +
+                SEP #$20
                 JSL.l ActivateGoal
             +
         .dont_show
         
         .done
-        LDA $1A : LSR #5 : AND.b #$01 : STA $0DC0, X
+        SEP #$20
+        LDA.b $1A : LSR #5 : AND.b #$01 : STA.w $0DC0, X
         RTS
     }

@@ -168,7 +168,7 @@ SpritePrep_ShopKeeper:
 			PHY
 				PHX
 					LDA.b #$00 : XBA : TYA : LSR #2 : !ADD !SHOP_SRAM_INDEX : TAX
-					LDA !SHOP_PURCHASE_COUNTS, X : TYX : STA.l !SHOP_INVENTORY+3, X : TAY
+					LDA PurchaseCounts, X : TYX : STA.l !SHOP_INVENTORY+3, X : TAY
 				PLX
 				
 				LDA.l ShopContentsTable+4, X : BEQ ++
@@ -214,7 +214,7 @@ SpritePrep_ShopKeeper:
 	.takeAll
 
 		LDA.b #$00 : XBA : LDA !SHOP_SRAM_INDEX : TAX
-		LDA.l !SHOP_PURCHASE_COUNTS, X
+		LDA.l PurchaseCounts, X
 		BRA ++
 	.notTakeAll
 		LDA.b #$00
@@ -265,8 +265,6 @@ RTS
 ;--------------------------------------------------------------------------------
 ;!SHOP_INVENTORY, X
 ;[id][$lo][$hi][purchase_counter]
-;--------------------------------------------------------------------------------
-;!SHOP_PURCHASE_COUNTS = "$7EF302"
 ;--------------------------------------------------------------------------------
 Shopkeeper_UploadVRAMTilesLong:
 	JSR.w Shopkeeper_UploadVRAMTiles
@@ -390,13 +388,13 @@ Sprite_ShopKeeper:
 			BIT.b #$20 : BNE + ; Not A Take-All
 			PHX
 				LDA !SHOP_SRAM_INDEX : TAX
-				LDA !SHOP_PURCHASE_COUNTS, X : BEQ ++ : PLX : BRA .done : ++
+				LDA PurchaseCounts, X : BEQ ++ : PLX : BRA .done : ++
 			PLX
 			BRA .normal
 		+ ; Take-All
 			;PHX
 			;	LDA !SHOP_SRAM_INDEX : TAX
-			;	LDA.w !SHOP_PURCHASE_COUNTS, X : STA.l !SHOP_STATE
+			;	LDA.w PurchaseCounts, X : STA.l !SHOP_STATE
 			;PLX
 		.normal
 		
@@ -539,7 +537,7 @@ Shopkeeper_BuyItem:
 		+
 
 		LDA !SHOP_TYPE : AND.b #$80 : BNE .buy ; don't charge if this is a take-any
-		REP #$20 : LDA $7EF360 : CMP.l !SHOP_INVENTORY+1, X : SEP #$20 : !BGE .buy
+		REP #$20 : LDA CurrentRupees : CMP.l !SHOP_INVENTORY+1, X : SEP #$20 : !BGE .buy
 		
 		.cant_afford
 	        LDA.b #$7A
@@ -555,7 +553,7 @@ Shopkeeper_BuyItem:
 			JMP .done
 		.buy
 			LDA !SHOP_TYPE : AND.b #$80 : BNE ++ ; don't charge if this is a take-any
-				REP #$20 : LDA $7EF360 : !SUB !SHOP_INVENTORY+1, X : STA $7EF360 : SEP #$20 ; Take price away
+				REP #$20 : LDA CurrentRupees : !SUB !SHOP_INVENTORY+1, X : STA CurrentRupees : SEP #$20 ; Take price away
 			++
 			LDA.l !SHOP_INVENTORY, X : TAY : JSL.l Link_ReceiveItem
 			LDA.l !SHOP_INVENTORY+3, X : INC : STA.l !SHOP_INVENTORY+3, X
@@ -565,7 +563,7 @@ Shopkeeper_BuyItem:
 				LDA.l !SHOP_STATE : ORA.w Shopkeeper_ItemMasks, X : STA.l !SHOP_STATE
 				PHX
 					TXA : !ADD !SHOP_SRAM_INDEX : TAX
-					LDA !SHOP_PURCHASE_COUNTS, X : INC : BEQ +++ : STA !SHOP_PURCHASE_COUNTS, X : +++
+					LDA PurchaseCounts, X : INC : BEQ +++ : STA PurchaseCounts, X : +++
 				PLX
 				BRA ++
 			+ ; Take-any
@@ -573,11 +571,11 @@ Shopkeeper_BuyItem:
 				BIT.b #$20 : BNE .takeAll
 				.takeAny
 					LDA.l !SHOP_STATE : ORA.b #$07 : STA.l !SHOP_STATE
-					PHX : LDA.l !SHOP_SRAM_INDEX : TAX : LDA.b #$01 : STA.l !SHOP_PURCHASE_COUNTS, X : PLX
+					PHX : LDA.l !SHOP_SRAM_INDEX : TAX : LDA.b #$01 : STA.l PurchaseCounts, X : PLX
 					BRA ++
 				.takeAll
 					LDA.l !SHOP_STATE : ORA.w Shopkeeper_ItemMasks, X : STA.l !SHOP_STATE
-					PHX : LDA.l !SHOP_SRAM_INDEX : TAX : LDA.l !SHOP_STATE : STA.l !SHOP_PURCHASE_COUNTS, X : PLX
+					PHX : LDA.l !SHOP_SRAM_INDEX : TAX : LDA.l !SHOP_STATE : STA.l PurchaseCounts, X : PLX
 			++
 	.done
 	PLY : PLX
@@ -587,7 +585,6 @@ db #$01, #$02, #$04
 ;--------------------
 ;!SHOP_ID = "$7F5050"
 ;!SHOP_SRAM_INDEX = "$7F5062"
-;!SHOP_PURCHASE_COUNTS = "$7EF302"
 ;--------------------
 Setup_ShopItemCollisionHitbox:
 ;The complications with XBA are to handle the fact that nintendo likes to store

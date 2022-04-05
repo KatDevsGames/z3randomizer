@@ -71,7 +71,7 @@ Overworld_CreatePyramidHoleModified:
 
 	SEP #$30
 
-	LDA $7EF2DB : ORA.b #$20 : STA $7EF2DB
+	LDA OverworldEventDataWRAM+$5B : ORA.b #$20 : STA OverworldEventDataWRAM+$5B
 
 	LDA.b #$03 : STA $012F
 
@@ -131,9 +131,9 @@ db $02, $02, $02, $02, $02, $02, $02, $00, $00, $01, $01, $01, $02, $00, $08, $0
 
 Electric_Barrier:
 	LDA InvertedMode : BEQ .done
-		LDA $7EF280, X : ORA #$40 : STA $7EF280, X ;set barrier dead
+		LDA OverworldEventDataWRAM, X : ORA #$40 : STA OverworldEventDataWRAM, X ;set barrier dead
 	.done
-	LDA $7EF280, X ; what we wrote over
+	LDA OverworldEventDataWRAM, X ; what we wrote over
 RTL
 
 
@@ -187,7 +187,7 @@ RTL
 
 TurtleRockPegSolved:
 	LDA.l InvertedMode : AND.w #$00FF : BNE +
-		LDA.l $7ef287 ; What we wrote over (reading flags for this screen)
+		LDA.l OverworldEventDataWRAM+07 ; What we wrote over (reading flags for this screen)
 		RTL
 	+
 	LDA.w #$0020 ; We always treat puzzle as pre solved (overlay flag set) for inverted mode.

@@ -46,10 +46,10 @@
 ; ;--------------------------------------------------------------------------------
 !RX_BUFFER = "$7F5300"
 !RX_STATUS = "$7F537F"
-!RX_SEQUENCE = "$7EF4A0"
+;ServiceSequenceRx = $7EF4A0
 !TX_BUFFER = "$7F5380"
 !TX_STATUS = "$7F53FF"
-!TX_SEQUENCE = "$7EF4A0"
+;ServiceSequenceTx = $7EF4A0
 ;--------------------------------------------------------------------------------
 macro ServiceRequestVersion()
 	LDA !TX_STATUS : BEQ + : CLC : RTL : + ; return fail if we don't have the lock

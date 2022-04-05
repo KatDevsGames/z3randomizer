@@ -5,18 +5,18 @@ IsItemAvailable:
 		CPX.b #$04 : BNE .finite
 		LDA.b #$01 : RTL
 	.finite
-		LDA $7EF33F, X
+                LDA EquipmentWRAM-1, X
 RTL
 LoadBombCount:
 	LDA !INFINITE_BOMBS : BNE .infinite
 	.finite
-		LDA $7EF343
+		LDA BombsEquipment
 	.infinite
 RTL
 LoadBombCount16:
 	LDA !INFINITE_BOMBS : AND.w #$00FF : BNE .infinite
 	.finite
-		LDA $7EF343
+		LDA BombsEquipment
 	.infinite
 RTL
 StoreBombCount:
@@ -24,13 +24,13 @@ StoreBombCount:
 	.infinite
 		PLA : LDA.b #$01 : RTL
 	.finite
-		PLA : STA $7EF343
+		PLA : STA BombsEquipment
 RTL
 SearchForEquippedItem:
 	LDA !INFINITE_BOMBS : BEQ +
 		LDA.b #$01 : LDX.b #$00 : RTL
 	+
-	LDA $7EF340 ; thing we wrote over
+	LDA BowEquipment ; thing we wrote over
 RTL
 
 !INFINITE_ARROWS = "$7F50C8"
@@ -40,8 +40,8 @@ DecrementArrows:
 	.infinite
 		LDA.b #$01 : RTL
 	.normal
-		LDA $7EF377 : BEQ .done
-		DEC : STA $7EF377 : INC
+		LDA CurrentArrows : BEQ .done
+		DEC : STA CurrentArrows : INC
 		BRA .done
 	.rupees
 		REP #$20
@@ -51,17 +51,17 @@ DecrementArrows:
 			LDA.b #$00 : BRA .done
 		
 		.not_archery_game
-		LDA.l $7EF377 : BNE .shoot_arrow ; check if we have arrows
+		LDA.l CurrentArrows : BNE .shoot_arrow ; check if we have arrows
 			BRA .done
 		
 		.shoot_arrow
 		PHX
 		REP #$20
-		LDA $7EF360 : BEQ +
-			PHA : LDA $7EF340 : DEC : AND #$0002 : TAX : PLA
+		LDA CurrentRupees : BEQ +
+			PHA : LDA BowEquipment : DEC : AND #$0002 : TAX : PLA
 			!SUB.l ArrowModeWoodArrowCost, X ; CMP.w #$0000
 			BMI .not_enough_money
-				STA $7EF360 : LDA.w #$0001 : BRA +
+				STA CurrentRupees : LDA.w #$0001 : BRA +
 			.not_enough_money
 				LDA.w #$0000
 		+
@@ -76,13 +76,13 @@ ArrowGame:
 		DEC $0B99 ; reduce minigame arrow count
 		LDA.l ArrowMode : BNE .rupees
 		.normal
-			LDA $7EF377 : INC #2 : STA $7EF377 ; increment arrow count (by 2 for some reason)
+			LDA CurrentArrows : INC #2 : STA CurrentArrows ; increment arrow count (by 2 for some reason)
 			RTL
 		.rupees
 			PHX
 			REP #$20 ; set 16-bit accumulator
-				LDA $7EF340 : DEC : AND #$0002 : TAX
-				LDA $7EF360 : !ADD.l ArrowModeWoodArrowCost, X : STA $7EF360
+				LDA BowEquipment : DEC : AND #$0002 : TAX
+				LDA CurrentRupees : !ADD.l ArrowModeWoodArrowCost, X : STA CurrentRupees
 			SEP #$20 ; set 8-bit accumulator
 			PLX
 	+

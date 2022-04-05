@@ -15,7 +15,7 @@ HeartPieceGet:
 	STZ $02E9 ; 0 = Receiving item from an NPC or message
 
 	CPY.b #$26 : BNE .notHeart ; don't add a 1/4 heart if it's not a heart piece
-	LDA $7EF36B : INC A : AND.b #$03 : STA $7EF36B : BNE .unfinished_heart ; add up heart quarters
+	LDA HeartPieceQuarter : INC A : AND.b #$03 : STA HeartPieceQuarter : BNE .unfinished_heart ; add up heart quarters
 	BRA .giveItem
 
 	.notHeart
@@ -130,7 +130,7 @@ HeartUpgradeSpawnDecision: ; this should return #$00 to make the hp spawn
 RTL
 	
 	.normal_behavior
-	LDA $7EF280, X
+	LDA OverworldEventDataWRAM, X
 RTL
 ;--------------------------------------------------------------------------------
 SaveHeartCollectedStatus:
@@ -140,7 +140,7 @@ SaveHeartCollectedStatus:
 RTL
 	
 	.normal_behavior
-	LDA $7EF280, X : ORA.b #$40 : STA $7EF280, X
+	LDA OverworldEventDataWRAM, X : ORA.b #$40 : STA OverworldEventDataWRAM, X
 RTL
 ;--------------------------------------------------------------------------------
 !REDRAW = "$7F5000"
@@ -195,7 +195,7 @@ MaybeMarkDigSpotCollected:
 		REP #$20 ; set 16-bit accumulator
 		LDA $8A
 		CMP.w #$2A : BNE +
-			LDA !HAS_GROVE_ITEM : ORA.w #$0001 : STA !HAS_GROVE_ITEM
+			LDA HasGroveItem : ORA.w #$0001 : STA HasGroveItem
 		+
 	PLP : PLA
 RTL

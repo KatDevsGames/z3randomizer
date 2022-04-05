@@ -6,7 +6,7 @@ TryOpenMire:
     LDA $8A : CMP.b #$70 : BNE .untriggered
     
     ; Checks whether the Misery Mire dungeon is already revealed.
-    LDA $7EF2F0 : AND.b #$20 : BNE .untriggered
+    LDA OverworldEventDataWRAM+$70 : AND.b #$20 : BNE .untriggered
     
     ; You have to be in the trigger window.
     LDY.b #$02 : JSL.l Ancilla_CheckIfEntranceTriggered : BCC .untriggered
@@ -25,7 +25,7 @@ TryOpenTRock:
     LDA $8A : CMP.b #$47 : BNE .untriggered
     
     ; Checks whether the Turtle Rock dungeon is already revealed.
-    LDA $7EF2C7 : AND.b #$20 : BNE .untriggered
+    LDA OverworldEventDataWRAM+$47 : AND.b #$20 : BNE .untriggered
     
     ; You have to be in the trigger window.
     LDY.b #$03 : JSL.l Ancilla_CheckIfEntranceTriggered : BCC .untriggered

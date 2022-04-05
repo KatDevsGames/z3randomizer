@@ -2,8 +2,8 @@
 
 ;--------------------------------------------------------------------------------
 AssignKiki:
-    LDA.b #$00 : STA $7EF3D3 ; defuse bomb
-    LDA.b #$0A : STA $7EF3CC ; assign kiki as follower
+    LDA.b #$00 : STA FollowerDropped ; defuse bomb
+    LDA.b #$0A : STA FollowerIndicator ; assign kiki as follower
 RTL
 ;--------------------------------------------------------------------------------
 
@@ -13,7 +13,7 @@ RTL
 ;--------------------------------------------------------------------------------
 !ITEM_BUSY = "$7F5091"
 AllowSQ:
-	LDA $7EF3C5 : BEQ .done ; thing we overwrote - check if link is in his bed
+	LDA ProgressIndicator : BEQ .done ; thing we overwrote - check if link is in his bed
 	LDA !ITEM_BUSY : EOR #$01
 	.done
 RTL
@@ -32,8 +32,8 @@ RTL
 ;--------------------------------------------------------------------------------
 ;0 = Become (Perma)bunny
 DecideIfBunny:
-	LDA $7EF357 : BNE .done
-	LDA $7EF3CA : AND.b #$40
+	LDA MoonPearlEquipment : BNE .done
+	LDA CurrentWorld : AND.b #$40
 	PHA : LDA.l InvertedMode : BNE .inverted
 	.normal
 		PLA : EOR #$40
@@ -48,7 +48,7 @@ DecideIfBunnyByScreenIndex:
 	; If indoors we don't have a screen index. Return non-bunny to make mirror-based
 	; superbunny work
 	LDA $1B : BNE .done
-	LDA $7EF357 : BNE .done
+	LDA MoonPearlEquipment : BNE .done
 	LDA $8A : AND.b #$40 : PHA
 	LDA.l InvertedMode : BNE .inverted
 	.normal
@@ -63,7 +63,7 @@ RTL
 ;--------------------------------------------------------------------------------
 ;ReadInventoryPond:
 ;	CPX.b #$1B : BNE + : LDA.b #$01 : RTL : +
-;	LDA $7EF340, X
+;	LDA EquipmentWRAM, X
 ;RTL
 ;--------------------------------------------------------------------------------
 
@@ -83,10 +83,10 @@ RTS
 FixAga2Bunny:
     LDA.l FixFakeWorld :  BEQ + ; Only use this fix is fakeworld fix is in use
         LDA.l InvertedMode : BEQ +++
-            LDA.b #$00 : STA !DARK_WORLD ; Switch to light world
+            LDA.b #$00 : STA CurrentWorld ; Switch to light world
             BRA ++
         +++
-        LDA.b #$40 : STA !DARK_WORLD ; Switch to dark world
+        LDA.b #$40 : STA CurrentWorld ; Switch to dark world
     ++
 	JSL DecideIfBunny : BNE +
 		JSR MakeBunny
@@ -112,15 +112,15 @@ RTS
 ; fix issue where cross world caves (in Entrance randomizer) don't cause
 ; frog to become smith or vice versa.
 FixFrogSmith:
-	LDA.l $7EF3CA : BNE .darkWorld
-		LDA.l $7EF3CC : CMP.b #$07 : BNE .done
+	LDA.l CurrentWorld : BNE .darkWorld
+		LDA.l FollowerIndicator : CMP.b #$07 : BNE .done
 		LDA.b #$08 ; make frog into smith in light world
 		BRA .loadgfx
 	.darkWorld
-		LDA.l $7EF3CC : CMP.b #$08 : BNE .done
+		LDA.l FollowerIndicator : CMP.b #$08 : BNE .done
 		LDA.b #$07 ; make smith into frog in dark world
 	.loadgfx
-		STA.l $7EF3CC
+		STA.l FollowerIndicator
 		JSL Tagalong_LoadGfx
 	.done
 RTS
@@ -158,8 +158,8 @@ WallmasterCameraFix:
 ; Fix losing glove colors
 LoadActualGearPalettesWithGloves:
 REP #$20
-LDA $7EF359 : STA $0C
-LDA $7EF35B : AND.w #$00FF
+LDA SwordEquipment : STA $0C
+LDA ArmorEquipment : AND.w #$00FF
 JSL LoadGearPalettes_variable
 JSL SpriteSwap_Palette_ArmorAndGloves_part_two
 RTL
@@ -214,7 +214,12 @@ FixJingleGlitch:
 
 .exit
 	RTL
-
+;--------------------------------------------------------------------------------
+; Fix spawning with more hearts than capacity when less than 3 heart containers
+pushpc
+        org $09F4AC ; <- module_death.asm:331
+        db $08, $08, $10
+pullpc
 ;--------------------------------------------------------------------------------
 SetOverworldTransitionFlags:
 	LDA #$01

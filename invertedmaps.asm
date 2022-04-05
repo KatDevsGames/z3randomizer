@@ -1007,7 +1007,7 @@ LDA #$0108 : STA $3C38
 
 ;Warp Tile agah defeated
 LDA #$0034 : STA $3BBE ;Tile when no warp
-LDA $7EF3C5 : AND #$00FF : CMP #$0003 : BNE .agahnimAlive
+LDA ProgressIndicator : AND #$00FF : CMP #$0003 : BNE .agahnimAlive
 LDA #$0212 : STA $3BBE ;warp
 .agahnimAlive
 

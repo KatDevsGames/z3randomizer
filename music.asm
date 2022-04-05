@@ -22,7 +22,7 @@ PreOverworld_LoadProperties_ChooseMusic:
     LDX.b #$07 ; Default village theme
 
     ; Check what phase we're in
-    ;LDA $7EF3C5 : CMP.b #$03 : !BLT +
+    ;LDA ProgressIndicator : CMP.b #$03 : !BLT +
     ;    LDX.b #$02 ; Default light world theme (phase >=3)
     ;+
 
@@ -33,7 +33,7 @@ PreOverworld_LoadProperties_ChooseMusic:
     LDX.b #$05 ; Lost woods theme
 
     ; check if we've pulled from the master sword pedestal
-    LDA $7EF300 : AND.b #$40 : BEQ +
+    LDA OverworldEventDataWRAM+$80 : AND.b #$40 : BEQ +
         LDX.b #$02 ; Default light world theme
     +
 
@@ -45,14 +45,14 @@ PreOverworld_LoadProperties_ChooseMusic:
     LDX.b #$02
 
     ; Check phase        ; In phase >= 2
-    LDA $7EF3C5 : CMP.b #$02 : !BGE +
+    LDA ProgressIndicator : CMP.b #$02 : !BGE +
         ; If phase < 2, play the legend music
         LDX.b #$03
     +
 
     .endOfLightWorldChecks
     ; if we are in the light world go ahead and set chosen selection
-    LDA $7EF3CA : BEQ .checkInverted+4
+    LDA CurrentWorld : BEQ .checkInverted+4
 
     LDX.b #$0F ; dark woods theme
 
@@ -68,10 +68,10 @@ PreOverworld_LoadProperties_ChooseMusic:
 
     ; if not inverted and light world, or inverted and dark world, skip moon pearl check
     .checkInverted
-    LDA $7EF3CA : CLC : ROL #$03 : CMP InvertedMode : BEQ .lastCheck
+    LDA CurrentWorld : CLC : ROL #$03 : CMP InvertedMode : BEQ .lastCheck
 
     ; Does Link have a moon pearl?
-    LDA $7EF357 : BNE +
+    LDA MoonPearlEquipment : BNE +
         LDX.b #$04 ; bunny theme
     +
 
@@ -117,8 +117,8 @@ Overworld_FinishMirrorWarp:
     LDX.b #$04  ; bunny theme
 
     ; if not inverted and light world, or inverted and dark world, skip moon pearl check
-    LDA $7EF3CA : CLC : ROL #$03 : CMP InvertedMode : BEQ +
-        LDA $7EF357 : BEQ .endOfLightWorldChecks
+    LDA CurrentWorld : CLC : ROL #$03 : CMP InvertedMode : BEQ +
+        LDA MoonPearlEquipment : BEQ .endOfLightWorldChecks
     +
 
     LDX.b #$09  ; default dark world theme
@@ -129,7 +129,7 @@ Overworld_FinishMirrorWarp:
 
     ; Check if we're entering the lost woods
     CMP.b #$00 : BNE +
-        LDA $7EF300 : AND.b #$40 : BNE .endOfLightWorldChecks
+        LDA OverworldEventDataWRAM+$80 : AND.b #$40 : BNE .endOfLightWorldChecks
         LDX.b #$05 ; lost woods theme
         BRA .endOfLightWorldChecks
     +
@@ -138,7 +138,7 @@ Overworld_FinishMirrorWarp:
     CMP.b #$18 : BNE .endOfLightWorldChecks
 
     ; Check what phase we're in
-    ; LDA $7EF3C5 : CMP.b #$03 : !BGE .endOfLightWorldChecks
+    ; LDA ProgressIndicator : CMP.b #$03 : !BGE .endOfLightWorldChecks
         LDX.b #$07 ; Default village theme (phase <3)
 
 .endOfLightWorldChecks
@@ -158,7 +158,7 @@ Overworld_FinishMirrorWarp:
     LDX.b #$0D  ; dark mountain theme
 
 .bunny
-    LDA $7EF357 : ORA InvertedMode : BNE +
+    LDA MoonPearlEquipment : ORA InvertedMode : BNE +
         LDX #$04    ; bunny theme
     +
 
@@ -185,7 +185,7 @@ BirdTravel_LoadTargetAreaMusic:
     LDX.b #$07 ; Default village theme
 
     ; Check what phase we're in
-    ;LDA $7EF3C5 : CMP.b #$03 : !BLT +
+    ;LDA ProgressIndicator : CMP.b #$03 : !BLT +
     ;    LDX.b #$02 ; Default light world theme (phase >=3)
     ;+
 
@@ -196,7 +196,7 @@ BirdTravel_LoadTargetAreaMusic:
     ;LDX.b #$05 ; Lost woods theme
 
     ; check if we've pulled from the master sword pedestal
-    ;LDA $7EF300 : AND.b #$40 : BEQ +
+    ;LDA OverworldEventDataWRAM+$80 : AND.b #$40 : BEQ +
     ;    LDX.b #$02 ; Default light world theme
     ;+
 
@@ -208,21 +208,21 @@ BirdTravel_LoadTargetAreaMusic:
     LDX.b #$02
 
     ; Check phase        ; In phase >= 2
-    LDA $7EF3C5 : CMP.b #$02 : !BGE +
+    LDA ProgressIndicator : CMP.b #$02 : !BGE +
         ; If phase < 2, play the legend music
         LDX.b #$03
     +
 
     .endOfLightWorldChecks
     ; if we are in the light world go ahead and set chosen selection
-    LDA $7EF3CA : BEQ .checkInverted+4
+    LDA CurrentWorld : BEQ .checkInverted+4
 
     LDX.b #$09 ; dark overworld theme
 
     LDA $8A
     ; Misery Mire rain SFX
     CMP.b #$70 : BNE ++
-        LDA $7EF2F0 : AND.b #$20 : BNE ++
+        LDA OverworldEventDataWRAM+$70 : AND.b #$20 : BNE ++
             LDA.b #$01 : CMP $0131 : BEQ +
                 STA $012D
             + : BRA .checkInverted
@@ -236,16 +236,16 @@ BirdTravel_LoadTargetAreaMusic:
         BRA .checkInverted
 
 .darkMountain
-    LDA $7EF37A : CMP.b #$7F : BEQ +
+    LDA CrystalsField : CMP.b #$7F : BEQ +
         LDX.b #$0D  ; dark death mountain theme
     + : LDA.b #$09 : STA $012D
 
     ; if not inverted and light world, or inverted and dark world, skip moon pearl check
     .checkInverted
-    LDA $7EF3CA : CLC : ROL #$03 : CMP InvertedMode : BEQ .lastCheck
+    LDA CurrentWorld : CLC : ROL #$03 : CMP InvertedMode : BEQ .lastCheck
 
     ; Does Link have a moon pearl?
-    LDA $7EF357 : BNE +
+    LDA MoonPearlEquipment : BNE +
         LDX.b #$04 ; bunny theme
     +
 
@@ -275,7 +275,7 @@ Overworld_MosaicDarkWorldChecks:
     CMP.b #$51 : bne .doFade
 
 .checkCrystals
-    LDA $7EF37A : CMP.b #$7F : BEQ .done
+    LDA CrystalsField : CMP.b #$7F : BEQ .done
 
 .doFade
     LDA.b #$F1 : STA $012C  ; thing we wrote over, fade out music

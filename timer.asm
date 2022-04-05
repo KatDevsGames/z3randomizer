@@ -2,8 +2,6 @@
 ; Challenge Timer
 ;================================================================================
 !Temp = "$7F5020"
-!BaseTimer = "$7EF43E"
-!ChallengeTimer = "$7EF454"
 !TemporaryOHKO = "$7F50CC"
 ;--------------------------------------------------------------------------------
 !CLOCK_HOURS = "$7F5080" ; $7F5080 - $7F5083 - Clock Hours
@@ -58,17 +56,17 @@ CalculateTimer:
 	STA.l !CLOCK_SECONDS+2
 
 	LDA.l TimerStyle : AND.w #$00FF : CMP.w #$0002 : BNE + ; Stopwatch Mode
-		%Sub32(!BaseTimer,!ChallengeTimer,!CLOCK_TEMPORARY)
+		%Sub32(NMIFrames,ChallengeTimer,!CLOCK_TEMPORARY)
 		BRA ++
 	+ CMP.w #$0001 : BNE ++ ; Countdown Mode
-		%Sub32(!ChallengeTimer,!BaseTimer,!CLOCK_TEMPORARY)
+		%Sub32(ChallengeTimer,NMIFrames,!CLOCK_TEMPORARY)
 	++
 
 	%Blt32(!CLOCK_TEMPORARY,.halfCycle) : !BLT +
 		LDA.l TimeoutBehavior : AND.w #$00FF : BNE ++ ; DNF
 			LDA.w #$0002 : STA.l !Status ; Set DNF Mode
-			LDA.l !BaseTimer : STA.l !ChallengeTimer
-			LDA.l !BaseTimer+2 : STA.l !ChallengeTimer+2
+			LDA.l NMIFrames : STA.l ChallengeTimer
+			LDA.l NMIFrames+2 : STA.l ChallengeTimer+2
 			RTS
 		++ CMP.w #$0001 : BNE ++ ; Negative Time
 			LDA.l !CLOCK_TEMPORARY : EOR.w #$FFFF : !ADD.w #$0001 : STA.l !CLOCK_TEMPORARY
@@ -77,8 +75,8 @@ CalculateTimer:
 			BRA .prepDigits
 		++ CMP.w #$0002 : BNE ++ ; OHKO
 			LDA.w #$0002 : STA.l !Status ; Set DNF Mode
-			LDA.l !BaseTimer : STA.l !ChallengeTimer
-			LDA.l !BaseTimer+2 : STA.l !ChallengeTimer+2
+			LDA.l NMIFrames : STA.l ChallengeTimer
+			LDA.l NMIFrames+2 : STA.l ChallengeTimer+2
 			RTS
 		++ ; End Game
 			SEP #$30
@@ -182,8 +180,8 @@ OHKOTimer:
 	LDA.l TimeoutBehavior : CMP #$02 : BNE +
 	LDA !Status : AND.b #$02 : BEQ +
 		.kill
-		LDA.b #$00 : STA $7EF36D ; kill link
+		LDA.b #$00 : STA CurrentHealth ; kill link
 	+
-	LDA $7EF36D
+	LDA CurrentHealth
 RTL
 ;--------------------------------------------------------------------------------

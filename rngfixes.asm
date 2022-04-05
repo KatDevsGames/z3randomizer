@@ -97,7 +97,7 @@ RNG_Ganon_Extra_Warp:
 	PLA
 	RTL
 RNG_Enemy_Drops:
-        LDA.l $7EF3C5 : CMP #$01 : BEQ + ; drops are static after uncle pickup & before rescuing zelda
+        LDA.l ProgressIndicator : CMP #$01 : BEQ + ; drops are static after uncle pickup & before rescuing zelda
             JML GetRandomInt
         +
             LDA.b #$0F
