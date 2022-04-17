@@ -290,6 +290,11 @@ if !FEATURE_NEW_TEXT
     incbin newfont.bin
     NewFontInverted:
     incbin newfont_inverted.bin
+
+    org $0CD7DF
+    incbin text_unscramble1.bin
+    org $0CE4D5
+    incbin text_unscramble2.bin
 endif
 
 org $328000
