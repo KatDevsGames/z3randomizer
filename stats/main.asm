@@ -9,7 +9,11 @@ org $238000
 incsrc stats/creditsnew.asm
 
 FontGfx:
-incbin stats/font.gb
+if !FEATURE_NEW_TEXT
+	incbin stats/font.2bpp
+else
+	incbin stats/font.gb
+endif
 FontGfxEnd:
 
 ; Custom addresses. Most are arbitrary. Feel free to make sure they're okay or moving them elsewhere within ZP
