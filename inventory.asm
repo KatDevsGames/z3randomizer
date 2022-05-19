@@ -682,8 +682,10 @@ RTS
 
 .setDungeonCompletion
 	LDX $040C : BMI +
+		REP #$20  ; 16 bit
 		LDA.l DungeonMask, X
 		ORA DungeonsCompleted : STA DungeonsCompleted
+		SEP #$20  ; 8 bit
 	+
 RTS
 ;--------------------------------------------------------------------------------
