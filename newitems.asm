@@ -1141,7 +1141,7 @@ RTL
 ; that compass
 MaybeFlagCompassTotalEntrance:
         LDX $040C : CPX #$FF : BEQ .done ; Skip if we're not entering dungeon
-        LDA.l CompassMode : AND.b #$0F : BEQ .done ; Skip if we're not showing compass counts
+        LDA.l CompassMode : AND.w #$000F : BEQ .done ; Skip if we're not showing compass counts
         CMP.w #$0002 : BEQ .countShown
                 LDA CompassField : AND.l DungeonItemMasks, X : BEQ .done ; skip if we don't have compass
                 .countShown
