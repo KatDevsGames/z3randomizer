@@ -12,7 +12,7 @@ DrawDungeonCompassCounts:
 
 	CPX.b #$1B : BCS .done ; Skip if not in a valid dungeon ID
 
-	CMP.w #$0002 : BEQ ++ ; if CompassMode==2, we don't check for the compass
+	BIT.w #$0002 : BNE ++ ; if CompassMode==2, we don't check for the compass
 		LDA CompassField : AND.l DungeonItemMasks, X ; Load compass values to A, mask with dungeon item masks
 		BEQ .done ; skip if we don't have compass
 	++
