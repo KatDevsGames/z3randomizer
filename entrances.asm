@@ -226,3 +226,16 @@ AnimatedEntranceFix: ;when an entrance animation tries to start
 	STA.w FreezeSprites ;what we wrote over
 	STA.w SkipOAM ;what we wrote over
 RTL
+;---------------------------------------------------------------------------------------------------
+FindOutletID:
+	TAX
+	LDA.l RoomToOutlet,X
+	AND.w #$00FF
+	CMP.w #$00FF
+	BNE .good
+
+	; temporary measure (or permanent?!)
+	BRK #$00
+
+.good
+	JML $02E241
