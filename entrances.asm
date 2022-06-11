@@ -8,7 +8,7 @@ LockAgahnimDoors:
 		;#$0 = Never Locked
 		LDA.w #$0000 : RTL
 	+ : CMP.w #$0001 : BNE +
-		LDA $7EF3C5 : AND.w #$000F : CMP.w #$0002 : !BGE .unlock ; if we rescued zelda, skip
+		LDA ProgressIndicator : AND.w #$000F : CMP.w #$0002 : !BGE .unlock ; if we rescued zelda, skip
 			JSR.w LockAgahnimDoorsCore : RTL
 	+ : CMP.w #$0002 : BNE +
 		JSR.w LockAgahnimDoorsCore : BEQ .unlock
@@ -22,7 +22,7 @@ LockAgahnimDoors:
 		.crystalOrUnlock
 		LDA InvertedMode : AND.w #$00FF : BEQ .unlock
 
-		LDA $7EF2C3 : AND.w #$0020 : BNE .unlock ; Check if GT overlay is already on or not
+		LDA OverworldEventDataWRAM+$43 : AND.w #$0020 : BNE .unlock ; Check if GT overlay is already on or not
 		LDA $0308 : AND.w #$0080 : BEQ ++ ;If we are holding an item
 
 	.locked
@@ -44,7 +44,7 @@ RTL
 FlagAgahnimDoor:
 	LDA.l InvertedMode : BEQ .vanilla
 
-	LDA $7EF2C3 : ORA #$20 : STA $7EF2C3 ; activate GT overlay
+	LDA OverworldEventDataWRAM+$43 : ORA #$20 : STA OverworldEventDataWRAM+$43 ; activate GT overlay
 
 .vanilla
 	LDA.b #$28 : STA.b $72
@@ -77,11 +77,11 @@ JML.l Overworld_Entrance_BRANCH_RHO
 AllowStartFromSingleEntranceCave:
 ; 16 Bit A, 16 bit XY
 ; do not need to preserve A or X or Y
-	LDA $7EF3C8 : AND.w #$00FF ; What we wrote over
+	LDA StartingEntrance : AND.w #$00FF ; What we wrote over
 	PHA
 		TAX
-
 		LDA.l StartingAreaExitOffset, X
+                AND.w #$00FF
 
 		BNE +
 			JMP .done
@@ -124,10 +124,10 @@ AllowStartFromSingleEntranceCave:
 		STZ $0699 ;zero out door overlays in case starting overworld door is not set
 
 		SEP #$20 ; set 8-bit accumulator
-		LDX $00
+		LDA $7EF3C8 : TAX
 		LDA.l StartingAreaOverworldDoor, X : STA.l $7F5099 ;Load overworld door
-
 		REP #$20 ; reset 16-bit accumulator
+                JSL.l CacheDoorFrameData
 
 		.done
 	PLA
@@ -138,7 +138,7 @@ AllowStartFromExit:
 	LDX $1CE8
 	LDA.l ShouldStartatExit, X : BNE .doStart
 
-	LDA.l $7EF3C8 ; what we wrote over
+	LDA.l StartingEntrance ; what we wrote over
 JML.l AllowStartFromExitReturn
 
 	.doStart
@@ -209,7 +209,7 @@ TurtleRockEntranceFix:
 	LDA TurtleRockAutoOpenFix : BEQ .done
 	LDA $8A : CMP.b #$47 : BNE .done
 		;If exiting to turtle rock ensure the entrance is open
-		LDA.l $7EF2C7 : ORA.b #$20 : STA.l $7EF2C7
+		LDA.l OverworldEventDataWRAM+$47 : ORA.b #$20 : STA.l OverworldEventDataWRAM+$47
 .done
 RTL
 ;--------------------------------------------------------------------------------

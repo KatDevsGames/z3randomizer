@@ -39,10 +39,32 @@ ReturnCheckZSNES:
 ;--------------------------------------------------------------------------------
 
 ;================================================================================
+; Ok so basically, in rare cases, major glitches may try to read far into the
+; A bus until they reach a value of $FFFF
+; For maximum security of vanilla behavior, I am reserving this space
+; that could otherwise be considered free ROM.
+;--------------------------------------------------------------------------------
+org $0089C2
+dw $FFFF, $FFFF, $FFFF, $FFFF
+dw $FFFF, $FFFF, $FFFF, $FFFF
+dw $FFFF, $FFFF, $FFFF, $FFFF
+
+;================================================================================
+; BSOD for BRK and COP opcodes
+;--------------------------------------------------------------------------------
+org $00FFB7
+SoftwareInterrupt:
+JML Crashed
+
+org $00FFE4 : dw SoftwareInterrupt
+org $00FFE6 : dw SoftwareInterrupt
+org $00FFF4 : dw SoftwareInterrupt
+
+;================================================================================
 ; Dungeon Entrance Hook (works, but not needed at the moment)
 ;--------------------------------------------------------------------------------
-;org $02D8C7 ; <- 158C7 - Bank02.asm : 10981 (STA $7EC172)
-;JSL.l OnDungeonEntrance
+org $02D8C7 ; <- 158C7 - Bank02.asm : 10981 (STA $7EC172)
+JSL.l OnDungeonEntrance
 ;--------------------------------------------------------------------------------
 
 ;================================================================================
@@ -214,6 +236,8 @@ LDA.l HeartCursorPositions, X
 org $0CDAEB ; <- 65AEB : Bank0C.asm : 3571-3575,3581-3587 (...) [LDA $0B12 : AND #$03]
 ; JP here is different. Indicated line number implement the US version of the same functionality
 JSL.l WrapCharacterPosition : NOP
+org $0CD75E ; bank_0C.asm (dl NameFile_MakeScreenVisible)
+dl MaybeForceFileName
 ;--------------------------------------------------------------------------------
 org $0CE43A ; No assembly source. Makes name entry box wider
 db $2C
@@ -308,9 +332,8 @@ org $0CCE85 ; <- Bank0C.asm : 1953 (LDA $C8 : ASL A : INC #2 : STA $701FFE)
 NOP #4
 ;--------------------------------------------------------------------------------
 org $0CDB4C ; <- Bank0C.asm : 3655 (LDA $C8 : ASL A : INC #2 : STA $701FFE : TAX)
-JSL OnFileCreation
+JML OnFileCreation
 NOP
-;Additionally, display inventory swap starting equipment on file select
 ;--------------------------------------------------------------------------------
 org $09F5EA ; <- module_death.asm : 510 (LDA $701FFE : TAX : DEX #2)
 LDA.w #$0002 : NOP
@@ -534,16 +557,12 @@ JSL.l CheckGanonHammerDamage : NOP
 org $02B797 ; <- 13797 - Bank02.asm : 8712 (LDA.b #$19 : STA $10)
 JSL.l StatsFinalPrep
 ;--------------------------------------------------------------------------------
-org $07A95B ; <- 3A95B - Bank07.asm : 6565 (JSL Dungeon_SaveRoomData)
+org $07A95B ; <- 3A95B - Bank07.asm : 6565 (JSL Dungeon_SaveRoomDataWRAM)
 JSL.l IncrementUWMirror
 ;--------------------------------------------------------------------------------
 org $0288D1 ; <- 108D1 - Bank02.asm : 1690 (STZ $0646)
 JSL.l IndoorSubtileTransitionCounter
 NOP #2
-;--------------------------------------------------------------------------------
-org $07B574 ; <- 3B574 - Bank07.asm : 8519 (LDA.b #$01 : STA $02E9)
-JSL.l IncrementChestCounter
-NOP
 ;--------------------------------------------------------------------------------
 ;org $05FC7E ; <- 2FC7E - sprite_dash_item.asm : 118 (LDA $7EF36F : INC A : STA $7EF36F)
 ;JSL.l IncrementSmallKeys
@@ -712,7 +731,7 @@ JSL.l GetItemDamageValue
 ;================================================================================
 ; Misc Stats
 ;--------------------------------------------------------------------------------
-org $029E2E ; <- 11E2E - module_ganon_emerges.asm : 59 (JSL Dungeon_SaveRoomData.justKeys)
+org $029E2E ; <- 11E2E - module_ganon_emerges.asm : 59 (JSL Dungeon_SaveRoomDataWRAM.justKeys)
 JSL.l OnAga2Defeated
 ;--------------------------------------------------------------------------------
 org $0DDBDE ; <- 6DBDE - headsup_display.asm : 105 (DEC A : BPL .subtractRupees)
@@ -1678,7 +1697,7 @@ JSL.l FixAga2Bunny : NOP
 ; Open Mode Fixes
 ;--------------------------------------------------------------------------------
 org $05DF65 ; <- 2DF65 - sprite_uncle_and_priest.asm:994 - (LDA.b #$01 : STA $7EF3C5)
-JSL.l SetUncleRainState : RTS
+NOP #6
 ;--------------------------------------------------------------------------------
 ;org $0280DD ; <- 100DD - Bank02.asm:298 - (LDA $7EF3C5 : CMP.b #$02 : BCC .indoors)
 ;JSL.l ForceLinksHouse
@@ -1858,12 +1877,12 @@ NOP #8
 ;JSL.l OnLoadMap
 ;================================================================================
 org $028B8F ; <- 10B8F - Bank02.asm:2236 (LDA $7EF374 : LSR A : BCS BRANCH_BETA)
-LDA $7EF00F : BNE + : NOP
+JSL CheckHeraBossDefeated : BNE + : NOP
 LDX.b #$F1 : STX $012C
 +
 ;================================================================================
 org $029090 ; <- 11090 - Bank02.asm:3099 (LDA $7EF374 : LSR A : BCS BRANCH_GAMMA)
-LDA $7EF00F : BNE + : NOP
+JSL CheckHeraBossDefeated : BNE + : NOP
 STX $012C ; DON'T MOVE THIS FORWARD OR MADNESS AWAITS
 +
 ;================================================================================
@@ -2101,7 +2120,7 @@ JSL.l ItemCheck_TreeKid2
 
 org $06AF9B ; <- 32F9B - FluteBoy_Chillin : 73 : LDA $7EF34C : CMP.b #$02 : BCS .player_has_flute
 ;NOP #8
-LDA !HAS_GROVE_ITEM : AND.b #$01
+LDA HasGroveItem : AND.b #$01
 db #$D0 ; BNE
 
 org $06B062 ; <- 33062 - FluteAardvark_InitialStateFromFluteState : 225 : LDA $7EF34C : AND.b #$03 : !BGE #$05
@@ -2259,8 +2278,18 @@ JSL.l OnLinkDamagedFromPitOutdoors
 org $078F27 ; <- 38F27
 JSL.l FlipperReset
 ;--------------------------------------------------------------------------------
-org $09F40B ; <- 4F40B - module_death.asm:222 (LDX.b #$00)
-JSL.l IgnoreFairyCheck
+org $02B468
+	dw FakeFlipperProtection
+
+org $02FFC7
+FakeFlipperProtection:
+	JSR.w $029485
+	JSL protectff
+	RTS
+
+;--------------------------------------------------------------------------------
+;org $09F40B ; <- 4F40B - module_death.asm:222 (LDX.b #$00)
+;JSL.l IgnoreFairyCheck
 ;--------------------------------------------------------------------------------
 org $078F51 ; <- 38F51 - Bank07.asm:2444 (JSR $AE54 ; $3AE54 IN ROM)
 JSL.l OnEnterWater : NOP
@@ -2388,15 +2417,13 @@ Overworld_Hole_End:
 ;--------------------------------------------------------------------------------
 
 ;================================================================================
-; Disable pyramid hole check for killing aga2
+; Replace pyramid hole check for killing aga2
 ;
 ; this check is intended to prevent getting fluted out a second time if you 
-; return to his room after already killing him once. But with a pre-opened 
-; pyramid hole, it can cause you to get stuck there on killing him the first 
-; time. So we change it, and accept the flute out if you return. 
+; return to his room after already killing him once.
 ;---------------------------------------------------------------------------------
-org $01C753 ; 0C753 = Bank01:10398 (LDA $7EF2DB : AND.b #$20 : BNE .return)
-db $00 ; (originally $20)
+org $01C74E ; 00C74E - bank_01.asm:13281 - (LDA.l $7EF2DB : AND.b #$20)
+LDA.l Aga2Duck : NOP #2
 
 ;================================================================================
 ; Music fixes
@@ -2462,7 +2489,7 @@ org $00DF62 ; <- Bank00.asm:4672 (LDX.w #$0000 : LDY.w #$0040)
     JML ReloadingFloors
     NOP : NOP
     ReloadingFloorsResume:
-org $00DF6E ; <- A few instructions later, right after JSR Do3To4High16Bit
+org $00DF6E ; <- A few instructions later, right after JSR Do3To.high16Bit
     ReloadingFloorsCancel:
 ;================================================================================
 
@@ -2473,7 +2500,7 @@ org $07A055 ; <- Bank07.asm:5205 (LDA $0B99 : BEQ BRANCH_DELTA)
 JSL.l ArrowGame : NOP #14
 
 org $07A06C ; <- Bank07.asm:5215 (LDA $7EF377 : BEQ BRANCH_EPSILON)
-JSL.l DecrementArrows : SKIP 2 : NOP : LDA $7EF377
+JSL.l DecrementArrows : SKIP 2 : NOP : LDA CurrentArrows
 ;================================================================================
 
 ;================================================================================
@@ -2516,6 +2543,22 @@ NOP
 ;================================================================================
 
 ;================================================================================
+; Resolve conflict between race game and witch item
+;--------------------------------------------------------------------------------
+; Change race game to use $021B instead of $0ABF for detecting cheating
+org $0DCB9D ; STZ.w $0ABF
+STZ $021B
+
+org $0DCBFE ; LDA.w $0ABF
+LDA $021B
+
+org $02BFE0 ; LDA.b #$01 : STA.w $0ABF
+JSL SetOverworldTransitionFlags
+NOP
+; For mirroring, the new flag is set in IncrementOWMirror in stats.asm
+;================================================================================
+
+;================================================================================
 ; Player Sprite Fixes
 ;--------------------------------------------------------------------------------
 org $0DA9C8 ; <- 06A9C8 - player_oam.asm: 1663 (AND.w #$00FF : CMP.w #$00F8 : BCC BRANCH_MARLE)
@@ -2526,13 +2569,13 @@ org $0DA9C8 ; <- 06A9C8 - player_oam.asm: 1663 (AND.w #$00FF : CMP.w #$00F8 : BC
 LDA $02 ; always zero! (this replaces the BCC)
 ADC.w #0000 ; put the carry bit into the accumulator instead of a hardcoded 1.
 ;-------------------------------------------------------------------------------
-org $02fd6f ; <- 017d6f - bank0E.asm: 3694 (LoadActualGearPalettes:) Note: Overflow of bank02 moved to 0e in US Rom
+org $02FD6F ; <- 017d6f - bank0E.asm: 3694 (LoadActualGearPalettes:) Note: Overflow of bank02 moved to 0e in US Rom
 JSL LoadActualGearPalettesWithGloves
 RTL
 ;--------------------------------------------------------------------------------
 ; Bunny Palette/Overworld Map Bugfix
 ;--------------------------------------------------------------------------------
-org $02fdf0 ; <- 017df0 - bank0E (LDA [$00] : STA $7EC300, X : STA $7EC500, X)
+org $02FDF0 ; <- 017df0 - bank0E (LDA [$00] : STA $7EC300, X : STA $7EC500, X)
 JSL LoadGearPalette_safe_for_bunny
 RTS
 ;================================================================================
@@ -2727,21 +2770,41 @@ org $008BE5 ; hijack stripes for boss GFX transfer
 	JSL DoDungeonMapBossIcon
 
 ;================================================================================
-; Fix quadrant glitch
-org $07A879
-	JSR SwordSpinQuadrantFix
-
-org $07F877 ; free rom
-SwordSpinQuadrantFix:
-	LDA.l AllowAccidentalMajorGlitch
-	BEQ ++
-	JMP.w $07E8D9 ; HandleIndoorCameraAndDoors
-
-++	RTS
-
-;================================================================================
 
 org $01C4B8 : JSL FixJingleGlitch
 org $01C536 : JSL FixJingleGlitch
 org $01C592 : JSL FixJingleGlitch
 org $01C65F : JSL FixJingleGlitch
+
+;================================================================================
+; Text Renderer
+;--------------------------------------------------------------------------------
+if !FEATURE_NEW_TEXT
+    org $0EF51B
+        JML RenderCharExtended
+    org $0EF520
+        RenderCharExtended_returnOriginal:
+    org $0EF567
+        RenderCharExtended_returnUncompressed:
+
+    org $0EF356
+        JSL RenderCharLookupWidth
+    org $0EF3BA
+        JSL RenderCharLookupWidth
+    org $0EF48E
+        JML RenderCharLookupWidthDraw
+    org $0EF499
+        RenderCharLookupWidthDraw_return:
+
+    org $0EF6AA
+        JML RenderCharToMapExtended
+    org $0EF6C2
+        RenderCharToMapExtended_return:
+
+    org $0EFA50
+        JSL RenderCharSetColorExtended
+    org $0EEE5D
+        JSL RenderCharSetColorExtended_init
+    org $0EF285
+        JSL RenderCharSetColorExtended_close : NOP
+endif

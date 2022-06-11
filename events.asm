@@ -2,7 +2,7 @@
 ; OnLoadOW
 ;--------------------------------------------------------------------------------
 ;OnLoadMap:
-;	LDA $7EF2DB ; thing we wrote over
+;	LDA OverworldEventDataWRAM+$5B ; thing we wrote over
 ;RTL
 ;--------------------------------------------------------------------------------
 OnPrepFileSelect:
@@ -21,9 +21,10 @@ OnDrawHud:
 	JSL.l PollService
 JML.l ReturnFromOnDrawHud
 ;--------------------------------------------------------------------------------
-;OnDungeonEntrance:
-;	STA $7EC172 ; thing we wrote over
-;RTL
+OnDungeonEntrance:
+	STA $7EC172 ; thing we wrote over
+        JSL MaybeFlagCompassTotalEntrance
+RTL
 ;--------------------------------------------------------------------------------
 OnPlayerDead:
 	PHA
@@ -63,30 +64,60 @@ OnUncleItemGet:
 	BIT.b #$01 : BEQ + : STA !INFINITE_ARROWS : +
 
 	PLA
-	JSL Link_ReceiveItem
+	JSL.l Link_ReceiveItem
 
-	LDA.l UncleRefill : BIT.b #$04 : BEQ + : LDA.b #$80 : STA $7EF373 : + ; refill magic
-	LDA.l UncleRefill : BIT.b #$02 : BEQ + : LDA.b #50 : STA $7EF375 : + ; refill bombs
+	LDA.l UncleRefill : BIT.b #$04 : BEQ + : LDA.b #$80 : STA.l MagicFiller : + ; refill magic
+	LDA.l UncleRefill : BIT.b #$02 : BEQ + : LDA.b #50 : STA.l BombsFiller : + ; refill bombs
 	LDA.l UncleRefill : BIT.b #$01 : BEQ + ; refill arrows
-		LDA.b #70 : STA $7EF376
+		LDA.b #70 : STA.l ArrowsFiller
 
 		LDA.l ArrowMode : BEQ +
-			LDA !INVENTORY_SWAP_2 : ORA #$80 : STA !INVENTORY_SWAP_2 ; enable bow toggle
+			LDA.l BowTracking : ORA.b #$80 : STA.l BowTracking ; enable bow toggle
 			REP #$20 ; set 16-bit accumulator
-			LDA $7EF360 : !ADD.l FreeUncleItemAmount : STA $7EF360 ; rupee arrows, so also give the player some money to start
+			LDA.l CurrentRupees : !ADD.l FreeUncleItemAmount : STA.l CurrentRupees ; rupee arrows, so also give the player some money to start
 			SEP #$20 ; set 8-bit accumulator
 	+
+        LDA.l ProgressIndicator : BNE +
+                LDA.b #$01 : STA.l ProgressIndicator ; handle rain state
+        +
 RTL
 ;--------------------------------------------------------------------------------
 OnAga2Defeated:
-	JSL.l Dungeon_SaveRoomData_justKeys ; thing we wrote over, make sure this is first
-	JML.l IncrementAgahnim2Sword
+        JSL.l Dungeon_SaveRoomData_justKeys ; thing we wrote over, make sure this is first
+        LDA.b #$01 : STA.l Aga2Duck
+        JML.l IncrementAgahnim2Sword
 ;--------------------------------------------------------------------------------
 OnFileCreation:
-	TAX ; what we wrote over
-	LDA StartingEquipment+$4C : STA $700340+$4C ; copy starting equipment swaps to file select screen
-	LDA StartingEquipment+$4E : STA $700340+$4E
-RTL
+        ; Copy initial SRAM state from ROM to cart SRAM
+        PHB
+        LDA.w #$03D7 ; \
+        LDX.w #$B000 ;  | Copies from beginning of inital sram table up to file name
+        LDY.w #$0000 ;  | (exclusively)
+        MVN $70, $30 ; /
+                     ; Skip file name and validity value
+        LDA.w #$010C ; \
+        LDX.w #$B3E3 ;  | Rando-Specific Assignments & Game Stats block
+        LDY.w #$03E3 ;  |
+        MVN $70, $30 ; /
+        PLB
+
+        ; resolve instant post-aga if standard
+        SEP #$20
+        LDA.l InitProgressIndicator : BIT #$80 : BEQ +
+                LDA.b #$00 : STA.l ProgressIndicatorSRAM  ; set post-aga after zelda rescue
+                LDA.b #$00 : STA.l OverworldEventDataSRAM+$02 ; keep rain state vanilla
+        +
+        REP #$20
+
+        ; Set validity value and do some cleanup. Jump to checksum.
+        LDA.w #$55AA : STA.l $7003E1
+        STZ $00
+        STZ $01
+        LDX.b $00
+        LDY.w #$0000
+        TYA
+
+JML.l InitializeSaveFile_build_checksum
 ;--------------------------------------------------------------------------------
 !RNG_ITEM_LOCK_IN = "$7F5090"
 OnFileLoad:
@@ -95,20 +126,19 @@ OnFileLoad:
 
 	LDA.b #$07 : STA $210C ; Restore screen 3 to normal tile area
 
-	LDA !FRESH_FILE_MARKER : BNE +
+	LDA.l FileMarker : BNE +
 		JSL.l OnNewFile
-		LDA.b #$FF : STA !FRESH_FILE_MARKER
+		LDA.b #$FF : STA.l FileMarker
 	+
 	LDA.w $010A : BNE + ; don't adjust the worlds for "continue" or "save-continue"
 	LDA.l $7EC011 : BNE + ; don't adjust worlds if mosiac is enabled (Read: mirroring in dungeon)
 		JSL.l DoWorldFix
 	+
 	JSL.l MasterSwordFollowerClear
-	JSL.l InitOpenMode
-	LDA #$FF : STA !RNG_ITEM_LOCK_IN ; reset rng item lock-in
-	LDA #$00 : STA $7F5001 ; mark fake flipper softlock as impossible
+	LDA.b #$FF : STA !RNG_ITEM_LOCK_IN ; reset rng item lock-in
+	LDA.b #$00 : STA $7F5001 ; mark fake flipper softlock as impossible
 	LDA.l GenericKeys : BEQ +
-		LDA $7EF38B : STA $7EF36F ; copy generic keys to key counter
+		LDA.l CurrentGenericKeys : STA.l CurrentSmallKeys ; copy generic keys to key counter
 	+
 
 	JSL.l SetSilverBowMode
@@ -124,39 +154,8 @@ RTL
 !RNG_ITEM_LOCK_IN = "$7F5090"
 OnNewFile:
 	PHX : PHP
-		REP #$20 ; set 16-bit accumulator
-		LDA.l LinkStartingRupees : STA $7EF362 : STA $7EF360
-		LDA.l StartingTime : STA $7EF454
-		LDA.l StartingTime+2 : STA $7EF454+2
-
-		LDX.w #$004E : - ; copy over starting equipment
-			LDA StartingEquipment, X : STA $7EF340, X
-			DEX : DEX
-		BPL -
-
-		LDX #$000E : -
-        	LDA $7EF37C, X : STA $7EF4E0, X
-			DEX : DEX
-		BPL -
-
-		SEP #$20 ; set 8-bit accumulator
-		;LDA #$FF : STA !RNG_ITEM_LOCK_IN ; reset rng item lock-in
-		LDA.l PreopenCurtains : BEQ +
-			LDA.b #$80 : STA $7EF061 ; open aga tower curtain
-			LDA.b #$80 : STA $7EF093 ; open skull woods curtain
-		+
-
-		LDA.l PreopenPyramid : BEQ +
-			LDA.b #$20 : STA $7EF2DB ; pyramid hole already open
-		+
-
-		LDA.l PreopenGanonsTower : BEQ +
-			LDA.b #$20 : STA $7EF2C3 ; Ganons Tower already open
-		+
-
-		LDA StartingSword : STA $7EF359 ; set starting sword type
-
 		; reset some values on new file that are otherwise only reset on hard reset
+		SEP #$20 ; set 8-bit accumulator
 		STZ $03C4 ; ancilla slot index
 		STZ $047A ; EG
 		STZ $0B08 : STZ $0B09 ; arc variable
@@ -177,7 +176,7 @@ RTL
 ;--------------------------------------------------------------------------------
 OnLinkDamaged:
 	JSL.l IncrementDamageTakenCounter_Arb
-	JSL.l FlipperKill
+	;JSL.l FlipperKill
 	JML.l OHKOTimer
 
 ;--------------------------------------------------------------------------------
@@ -190,8 +189,17 @@ RTL
 ;--------------------------------------------------------------------------------
 OnLinkDamagedFromPit:
 	JSL.l OHKOTimer
-	LDA.b #$14 : STA $11 ; thing we wrote over
-RTL
+
+	LDA.l AllowAccidentalMajorGlitch
+	BEQ ++
+--	LDA.b #$14 : STA $11 ; thing we wrote over
+
+	RTL
+
+++	LDA.b $10 : CMP.b #$12 : BNE --
+
+	STZ.b $11
+	RTL
 ;--------------------------------------------------------------------------------
 OnLinkDamagedFromPitOutdoors:
 	JML.l OHKOTimer ; make sure this is last
@@ -226,8 +234,8 @@ PreItemGet:
 RTL
 ;--------------------------------------------------------------------------------
 PostItemGet:
-	JML.l MaybeWriteSRAMTrace
 
+RTL
 ;--------------------------------------------------------------------------------
 PostItemAnimation:
 	LDA.b #$00 : STA !ITEM_BUSY ; mark item as finished

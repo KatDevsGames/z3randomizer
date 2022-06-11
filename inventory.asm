@@ -1,19 +1,18 @@
 ;================================================================================
 ; Inventory Updates
 ;================================================================================
-!INVENTORY_SWAP = "$7EF38C"
-; Item Tracking Slot
-; brmpnskf
-; b = blue boomerang
-; r = red boomerang
-; m = mushroom current
-; p = magic powder
-; n = mushroom past
-; s = shovel
-; k = fake flute
-; f = working flute
+; InventoryTracking
+; brmpnskf ------oq
+; b = blue boomerang   | -
+; r = red boomerang    | -
+; m = mushroom current | -
+; p = magic powder     | -
+; n = mushroom past    | -
+; s = shovel           | -
+; k = fake flute       | o = any bomb acquired from item location
+; f = working flute    | q = quickswap locked
 ;--------------------------------------------------------------------------------
-!INVENTORY_SWAP_2 = "$7EF38E"
+; BowTracking
 ; Item Tracking Slot #2
 ; bsp-----
 ; b = bow
@@ -23,20 +22,20 @@
 ; -
 ; -
 ; -
-; q = quickswap lock
+; -
 ;--------------------------------------------------------------------------------
 ; ProcessMenuButtons:
 ; out:	Carry - 0 = No Button, 1 = Yes Button
 ;--------------------------------------------------------------------------------
 ProcessMenuButtons:
-	;LDA #$FD : STA !INVENTORY_SWAP ; DEBUG MODE
+	;LDA #$FD : STA InventoryTracking ; DEBUG MODE
 	;LDA $F6 : BIT #$20 : BNE .l_pressed ; check for P1 L-button
 	LDA $F4 : BIT #$40 : BNE .y_pressed ; check for P1 Y-button
 			  BIT #$20 : BNE .sel_pressed ; check for P1 Select button
 	LDA $F0 : BIT #$20 : BNE .sel_held
 	.sel_unheld
-		LDA !HUD_FLAG : AND #$20 : BEQ +
-		LDA !HUD_FLAG : AND #$DF : STA !HUD_FLAG ; select is released, unset hud flag
+		LDA HudFlag : AND #$20 : BEQ +
+		LDA HudFlag : AND #$DF : STA HudFlag ; select is released, unset hud flag
 		LDA $1B : BEQ + ; skip if outdoors
 			LDA.b #$20 : STA $012F ; menu select sound
 		+
@@ -45,11 +44,8 @@ ProcessMenuButtons:
 	.sel_held
 	CLC ; no buttons
 RTL
-	;.l_pressed
-	;JSL.l SpawnAngryCucco
-;RTL
 	.sel_pressed
-	LDA !HUD_FLAG : ORA #$20 : STA !HUD_FLAG ; set hud flag
+	LDA HudFlag : ORA #$20 : STA HudFlag ; set hud flag
 	LDA.b #$20 : STA $012F ; menu select sound
 	JSL.l ResetEquipment
 RTL
@@ -57,12 +53,12 @@ RTL
 	LDA.b #$10 : STA $0207
 	LDA $0202 ; check selected item
 	CMP #$02 : BNE + ; boomerang
-		LDA !INVENTORY_SWAP : AND #$C0 : CMP #$C0 : BNE .errorJump ; make sure we have both boomerangs
-		LDA $7EF341 : EOR #$03 : STA $7EF341 ; swap blue & red boomerang
+		LDA InventoryTracking : AND #$C0 : CMP #$C0 : BNE .errorJump ; make sure we have both boomerangs
+		LDA BoomerangEquipment : EOR #$03 : STA BoomerangEquipment ; swap blue & red boomerang
 		LDA.b #$20 : STA $012F ; menu select sound
 		JMP .captured
 	+ CMP #$01 : BNE + ; bow
-		LDA !INVENTORY_SWAP_2 : AND #$C0 : CMP #$C0 : BNE .errorJump ; make sure we have both bows
+		LDA BowTracking : AND #$C0 : CMP #$C0 : BNE .errorJump ; make sure we have both bows
 		PHX : LDX.b #$00 ; scan ancilla table for arrows
 			-- : CPX.b #$0A : !BGE ++
 				LDA $0C4A, X : CMP.b #$09 : BNE +++
@@ -72,18 +68,18 @@ RTL
 		PLX
 		LDA.l SilverArrowsUseRestriction : BEQ ++
 		LDA $A0 : ORA $A1 : BEQ ++ ; not in ganon's room in restricted mode
-				LDA $7EF340 : CMP.b #$03 : !BLT .errorJump : !SUB #$02 : STA $7EF340
+				LDA BowEquipment : CMP.b #$03 : !BLT .errorJump : !SUB #$02 : STA BowEquipment
 				BRA .errorJump2
 		++
-		LDA $7EF340 : !SUB #$01 : EOR #$02 : !ADD #$01 : STA $7EF340 ; swap bows
+		LDA BowEquipment : !SUB #$01 : EOR #$02 : !ADD #$01 : STA BowEquipment ; swap bows
 		LDA.b #$20 : STA $012F ; menu select sound
 		JMP .captured
 	+ BRA +
 		.errorJump
 		BRA .errorJump2
 	+ CMP #$05 : BNE + ; powder
-		LDA !INVENTORY_SWAP : AND #$30 : CMP #$30 : BNE .errorJump ; make sure we have mushroom & magic powder
-		LDA $7EF344 : EOR #$03 : STA $7EF344 ; swap mushroom & magic powder
+		LDA InventoryTracking : AND #$30 : CMP #$30 : BNE .errorJump ; make sure we have mushroom & magic powder
+		LDA PowderEquipment : EOR #$03 : STA PowderEquipment ; swap mushroom & magic powder
 		LDA.b #$20 : STA $012F ; menu select sound
 		JMP .captured
 	+ BRA +
@@ -91,11 +87,11 @@ RTL
 		BRA .error
 	+ CMP #$0D : BNE + ; flute
 		LDA $037A :	CMP #$01 : BEQ .midShovel ; inside a shovel animation, force the shovel & make error sound
-		LDA !INVENTORY_SWAP : BIT #$04 : BEQ .error ; make sure we have shovel
+		LDA InventoryTracking : BIT #$04 : BEQ .error ; make sure we have shovel
 					  AND #$03 : BEQ .error ; make sure we have one of the flutes
-		LDA $7EF34C : CMP #01 : BNE .toShovel ; not shovel
+		LDA FluteEquipment : CMP #01 : BNE .toShovel ; not shovel
 
-		LDA !INVENTORY_SWAP : AND #$01 : BEQ .toFakeFlute ; check for real flute
+		LDA InventoryTracking : AND #$01 : BEQ .toFakeFlute ; check for real flute
 		LDA #$03 ; set real flute
 		BRA .fluteSuccess
 		.toFakeFlute
@@ -104,7 +100,7 @@ RTL
 		.toShovel
 		LDA #$01 ; set shovel
 		.fluteSuccess
-		STA $7EF34C ; store set item
+		STA FluteEquipment ; store set item
 		LDA.b #$20 : STA $012F ; menu select sound
 		BRA .captured
 	+
@@ -112,7 +108,7 @@ RTL
 	CLC
 RTL
 	.midShovel
-	; LDA #$01 : STA $7EF34C ; set shovel
+	; LDA #$01 : STA FluteEquipment ; set shovel
 	.error
 	LDA.b #$3C : STA $012E ; error sound
 	.captured
@@ -127,13 +123,13 @@ ProcessBottleMenu:
 ;	LDA $F6 : AND #$30 : CMP.b #$30 : BEQ .double_shoulder_pressed
 ;	LDA $F4 : AND #$40 : BEQ .y_not_pressed ; skip if Y is not down
 ;	.double_shoulder_pressed
-	LDA $7EF34F ; check bottle state
+	LDA BottleIndex ; check bottle state
 	BEQ .no_bottles ; skip if we have no bottles
 	PHX
 		INC : CMP #$05 : !BLT + : LDA #$01 : + ;increment and wrap 1-4
-		TAX : LDA $7EF35C-1, X ; check bottle
+		TAX : LDA BottleContents-1, X ; check bottle
 		BNE + : LDX #$01 : + ; wrap if we reached the last bottle
-		TXA : STA $7EF34F ; set bottle index
+		TXA : STA BottleIndex ; set bottle index
 		LDA.b #$20 : STA $012F ; menu select sound
 	PLX
 	.no_bottles
@@ -178,8 +174,6 @@ RTL
 ;--------------------------------------------------------------------------------
 ; AddInventory:
 ;--------------------------------------------------------------------------------
-!LOCK_STATS = "$7EF443"
-
 macro TopHalf(address)
 	LDA <address> : !ADD #$10 : STA <address>
 endmacro
@@ -193,62 +187,61 @@ macro BottomHalf(address)
 endmacro
 ;--------------------------------------------------------------------------------
 ;FullInventoryExternal:
-;	LDA !LOCK_STATS : BEQ + : RTL : +
+;	LDA StatsLocked : BEQ + : RTL : +
 ;	PHA : PHX : PHP : JMP AddInventory_fullItemCounts
 ;--------------------------------------------------------------------------------
 FullInventoryExternal:
-	LDA !LOCK_STATS : BEQ + : RTL : +
+	LDA StatsLocked : BEQ + : RTL : +
 	PHA : PHX : PHP : JMP AddInventory_incrementCounts
 ;--------------------------------------------------------------------------------
-!SHAME_CHEST = "$7EF416" ; ---s ----
 AddInventory:
 	PHA : PHX : PHP
 	CPY.b #$0C : BNE + ; Blue Boomerang
-		LDA !INVENTORY_SWAP : ORA #$80 : STA !INVENTORY_SWAP
+		LDA InventoryTracking : ORA #$80 : STA InventoryTracking
 		JMP .incrementCounts
 	+ CPY.b #$2A : BNE + ; Red Boomerang
-		LDA !INVENTORY_SWAP : ORA #$40 : STA !INVENTORY_SWAP
+		LDA InventoryTracking : ORA #$40 : STA InventoryTracking
 		JMP .incrementCounts
 	+ CPY.b #$29 : BNE + ; Mushroom
-		LDA !INVENTORY_SWAP : ORA #$28 : STA !INVENTORY_SWAP
+		LDA InventoryTracking : ORA #$28 : STA InventoryTracking
 		JMP .incrementCounts
 	+ CPY.b #$0D : BNE + ; Magic Powder
-		LDA !INVENTORY_SWAP : ORA #$10 : STA !INVENTORY_SWAP
+		LDA InventoryTracking : ORA #$10 : STA InventoryTracking
 		JMP .incrementCounts
 	+ CPY.b #$13 : BNE + ; Shovel
-		LDA !INVENTORY_SWAP : ORA #$04 : STA !INVENTORY_SWAP
+		LDA InventoryTracking : ORA #$04 : STA InventoryTracking
 		JMP .incrementCounts
 	+ CPY.b #$14 : BNE + ; Flute (Inactive)
-		LDA !INVENTORY_SWAP : ORA #$02 : STA !INVENTORY_SWAP
+		LDA InventoryTracking : ORA #$02 : STA InventoryTracking
 		JMP .incrementCounts
 	+ CPY.b #$4A : BNE + ; Flute (Active)
-		LDA !INVENTORY_SWAP : ORA #$01 : STA !INVENTORY_SWAP
+		LDA InventoryTracking : ORA #$01 : STA InventoryTracking
 		JMP .incrementCounts
 	+ CPY.b #$0B : BNE + ; Bow
 		LDA ArrowMode : BNE +++
-			LDA !INVENTORY_SWAP_2 : ORA #$80 : STA !INVENTORY_SWAP_2
+			LDA BowTracking : ORA #$80 : STA BowTracking
 		+++
 		JMP .incrementCounts
 	+ CPY.b #$3A : BNE + ; Bow & Arrows
-		LDA !INVENTORY_SWAP_2 : ORA #$80 : STA !INVENTORY_SWAP_2
+		LDA BowTracking : ORA #$80 : STA BowTracking
 		JMP .incrementCounts
 	+ CPY.b #$3B : BNE + ; Bow & Silver Arrows
-		LDA !INVENTORY_SWAP_2 : ORA #$40 : STA !INVENTORY_SWAP_2
+		LDA BowTracking : ORA #$40 : STA BowTracking
 		LDA ArrowMode : BNE +++
-			LDA !INVENTORY_SWAP_2 : ORA #$80 : STA !INVENTORY_SWAP_2 ; activate wood arrows when not in rupee bow
+			LDA BowTracking : ORA #$80 : STA BowTracking ; activate wood arrows when not in rupee bow
 		+++
 		JMP .incrementCounts
 	+ CPY.b #$43 : BNE + ; Single arrow
 		LDA ArrowMode : BEQ +++
-			LDA !INVENTORY_SWAP_2 : ORA #$80 : STA !INVENTORY_SWAP_2 ; activate wood arrows in quick-swap
+			LDA BowTracking : ORA #$80 : STA BowTracking ; activate wood arrows in quick-swap
 		+++
 		JMP .incrementCounts
 	+ CPY.b #$58 : BNE + ; Upgrade-Only Silver Arrows
-		LDA !INVENTORY_SWAP_2 : ORA #$40 : STA !INVENTORY_SWAP_2
+		LDA BowTracking : ORA #$40 : STA BowTracking
 	+
 
 	.incrementCounts
-	LDA !LOCK_STATS : BEQ + : JMP .done : +
+	LDA StatsLocked : BEQ + : JMP .done : +
 
 	; don't count any of this stuff
 	CPY.b #$20 : BNE + : JMP .itemCounts : + ; Crystal
@@ -259,7 +252,6 @@ AddInventory:
 	CPY.b #$37 : BNE + : JMP .itemCounts : + ; Pendant
 	CPY.b #$38 : BNE + : JMP .itemCounts : + ; Pendant
 	CPY.b #$39 : BNE + : JMP .itemCounts : + ; Pendant
-	CPY.b #$00 : BNE + : JMP .itemCounts : + ; Uncle Sword & Shield
 	
 	CPY.b #$04 : !BLT .isSword ; Swords - Skip Shop/Fairy Check for Swords
 	CPY.b #$49 : BEQ .isSword
@@ -293,111 +285,73 @@ AddInventory:
 
 	.dungeonCounts
 	LDA $1B : BNE + : JMP .fullItemCounts : +
-	; ==BEGIN INDOOR-ONLY SECTION
-
-	;REP #$20 ; Set 16-bit Accumulator
-	;LDA $A0 ; load room ID
-	;CMP.w #$0010 : BNE + ; Ganon Fall Room - I think this got taken out
-		;!SHAME_CHEST = "$7EF416" ; ---s ----
-		;LDA !SHAME_CHEST : ORA.w #$0010 : STA !SHAME_CHEST
-	;+
 	SEP #$20 ; Set 8-bit Accumulator
 
 	LDA $040C ; get dungeon id
+        CMP.b #$FF : BEQ .fullItemCounts
 
-	CMP.b #$00 : BNE + ; Sewers (Escape)
-		BRA ++
-	+ CMP.b #$02 : BNE + ; Hyrule Castle (Escape)
-		++
-		CPY.b #$32 : BNE ++ : JMP .itemCounts : ++ ; Ball & Chain Guard's Big Key
-		%TopHalf($7EF434)
-		JMP .fullItemCounts
-	+ CMP.b #$04 : BNE + ; Eastern Palace
-		LDA $7EF436 : INC : AND #$07 : TAX
-		LDA $7EF436 : AND #$F8 : STA $7EF436
-		TXA : ORA $7EF436 : STA $7EF436
-		JMP .fullItemCounts
-	+ CMP.b #$06 : BNE + ; Desert Palace
-		LDA $7EF435 : !ADD #$20 : STA $7EF435
-		JMP .fullItemCounts
-	+ CMP.b #$08 : BNE + ; Agahnim's Tower
-		LDA $7EF435 : INC : AND #$03 : TAX
-		LDA $7EF435 : AND #$FC : STA $7EF435
-		TXA : ORA $7EF435 : STA $7EF435
-		JMP .fullItemCounts
-	+ CMP.b #$0A : BNE + ; Swamp Palace
-		%BottomHalf($7EF439)
-		JMP .fullItemCounts
-	+ CMP.b #$0C : BNE + ; Palace of Darkness
-		%BottomHalf($7EF434)
-		JMP .fullItemCounts
-	+ CMP.b #$0E : BNE + ; Misery Mire
-		%BottomHalf($7EF438)
-		JMP .fullItemCounts
-	+ CMP.b #$10 : BNE + ; Skull Woods
-		%TopHalf($7EF437)
-		JMP .fullItemCounts
-	+ CMP.b #$12 : BNE + ; Ice Palace
-		%TopHalf($7EF438)
-		JMP .fullItemCounts
-	+ CMP.b #$14 : BNE + ; Tower of Hera
-		LDA $7EF435 : !ADD #$04 : AND #$1C : TAX
-		LDA $7EF435 : AND #$E3 : STA $7EF435
-		TXA : ORA $7EF435 : STA $7EF435
-		JMP .fullItemCounts
-	+ CMP.b #$16 : BNE + ; Thieves' Town
-		%BottomHalf($7EF437)
-		JMP .fullItemCounts
-	+ CMP.b #$18 : BNE + ; Turtle Rock
-		%TopHalf($7EF439)
-		JMP .fullItemCounts
-	+ CMP.b #$1A : BNE + ; Ganon's Tower
-		LDA $7EF436 : !ADD #$08 : STA $7EF436
-		LDA $7EF366 : AND #$04 : BNE ++
+        CMP.l BallNChainDungeon : BNE +
+		CPY.b #$32 : BNE +
+                        JMP .done
+	+
+        CMP.b #$04 : BCS +
+                LDA SewersLocations : INC : STA SewersLocations
+                LDA HCLocations : INC : STA HCLocations
+                BRA .fullItemCounts
+        + LSR : TAX : LDA DungeonLocationsChecked, X : INC : STA DungeonLocationsChecked, X
+	++ CPX.b #$0D : BNE +
+		LDA BigKeyField : AND #$04 : BNE ++
 			JSR .incrementGTowerPreBigKey
 		++
-		;JMP .fullItemCounts
 	+
-
 	; == END INDOOR-ONLY SECTION
 	.fullItemCounts
 
-	CPY.b #$3B : BNE + ; Skip Total Counts for Repeat Silver Arrows
-		LDA $7EF42A : BIT #$20 : BEQ + : BRA .itemCounts
+	LDA BootsEquipment : BNE + ; Check for Boots
+		LDA PreBootsLocations : INC : STA PreBootsLocations ; Increment Pre Boots Counter
 	+
 
-	LDA $7EF355 : BNE + ; Check for Boots
-		LDA $7EF432 : INC : STA $7EF432 ; Increment Pre Boots Counter
+	LDA MirrorEquipment : BNE + ; Check for Mirror
+		LDA PreMirrorLocations : INC : STA PreMirrorLocations ; Increment Pre Mirror Counter
 	+
 
-	LDA $7EF353 : BNE + ; Check for Mirror
-		LDA $7EF433 : INC : STA $7EF433 ; Increment Pre Mirror Counter
+	LDA FluteEquipment : BNE + ; Check for Flute
+		LDA PreFluteLocations : INC : STA PreFluteLocations ; Increment Pre Mirror Counter
 	+
 
-	LDA $7EF423 : INC : STA $7EF423 ; Increment Item Total
+        REP #$20
+	LDA TotalItemCounter : INC : STA TotalItemCounter ; Increment Item Total
+        SEP #$20
 
 	.itemCounts
 
 	CPY.b #$00 : BNE + ; Fighter's Sword & Fighter's Shield
+                LDX #$01
 		JSR .incrementSword
 		JSR .incrementShield
 		JMP .done
 	+ CPY.b #$01 : BNE + ; Master Sword
+                LDX #$02
 		JSR .incrementSword
 		JMP .done
 	+ CPY.b #$02 : BNE + ; Tempered Sword
+                LDX #$03
 		JSR .incrementSword
 		JMP .done
 	+ CPY.b #$03 : BNE + ; Golden Sword
+                LDX #$04
 		JSR .incrementSword
 		JMP .done
 	+ CPY.b #$04 : BNE + ; Fighter's Shield
+                LDX #$01
 		JSR .incrementShield
 		JMP .done
 	+ CPY.b #$05 : BNE + ; Red Shield
+                LDX #$02
 		JSR .incrementShield
 		JMP .done
 	+ CPY.b #$06 : BNE + ; Mirror Shield
+                LDX #$03
 		JSR .incrementShield
 		JMP .done
 	+ CPY.b #$07 : !BLT + ; Items $07 - $0D
@@ -432,18 +386,22 @@ AddInventory:
 		JMP .done
 	+ CPY.b #$20 : BNE + ; Crystal
 		JSR .incrementCrystal
+                JSR .setDungeonCompletion
 		JMP .done
 	+ CPY.b #$21 : BNE + ; Bug Net
 		JSR .incrementY
 		JMP .done
-	+ CPY.b #$22 : !BLT + ; Items $22 - $23
-	  CPY.b #$24 : !BGE +
-		JSR .incrementMail
-		JMP .done
+	+ CPY.b #$22 : BNE + ; Blue Mail
+                LDX #$01
+                JSR .incrementMail
+	+ CPY.b #$23 : BNE + ; Red Mail
+                LDX #$02
+                JSR .incrementMail
 	+ CPY.b #$24 : BNE + ; Small Key
 		JSR .incrementKey
 		JMP .done
 	+ CPY.b #$25 : BNE + ; Compass
+                JSL MaybeFlagCompassTotalPickup
 		JSR .incrementCompass
 		JMP .done
 	+ CPY.b #$26 : BNE + ; Liar Heart (Container)
@@ -455,7 +413,7 @@ AddInventory:
 	+ CPY.b #$28 : BNE + ; 3 Bombs
 		JSR .maybeIncrementBombs
 		JMP .done
-	+ CPY.b #$29 : BNE + ; Musoroom
+	+ CPY.b #$29 : BNE + ; Mushroom
 		JSR .incrementY
 		JMP .done
 	+ CPY.b #$2A : !BLT + ; Items $2A - $2D
@@ -474,6 +432,7 @@ AddInventory:
 	+ CPY.b #$37 : !BLT + ; Items $37 - $39 - Pendants
 	  CPY.b #$3A : !BGE +
 		JSR .incrementPendant
+                JSR .setDungeonCompletion
 		JMP .done
 	+ CPY.b #$3A : !BLT + ; Items $3A - $3B - Bow & Silver Arrows
 	  CPY.b #$3C : !BGE +
@@ -493,6 +452,7 @@ AddInventory:
 		JSR .incrementY
 		JMP .done
 	+ CPY.b #$49 : BNE + ; Fighter's Sword
+                LDX #$01
 		JSR .incrementSword
 		JMP .done
 	+ CPY.b #$4A : BNE + ; Flute (Active)
@@ -503,7 +463,7 @@ AddInventory:
 		JSR .stampBoots
 		JSR .incrementA
 		JMP .done
-	+ CPY.b #$4C : BNE + ; Bomb Capacity Upgrade
+	+ CPY.b #$4C : BNE + ; 50 Bomb Capacity Upgrade
 		JSR .incrementCapacity
 		JSR .maybeIncrementBombs
 		JMP .done
@@ -512,22 +472,34 @@ AddInventory:
 		JSR .incrementCapacity
 		JMP .done
 	+ CPY.b #$50 : BNE + ; Master Sword (Safe)
+                LDX #$02
 		JSR .incrementSword
+		JMP .done
+	+ CPY.b #$51 : BNE + ; 5 Bomb Capacity Upgrade
+                LDX #$02
+		JSR .maybeIncrementBombs
+		JMP .done
+	+ CPY.b #$52 : BNE + ; 10 Bomb Capacity Upgrade
+                LDX #$02
+		JSR .maybeIncrementBombs
 		JMP .done
 	+ CPY.b #$51 : !BLT + ; Items $51 - $54 - Capacity Upgrades
 	  CPY.b #$55 : !BGE +
 		JSR .incrementCapacity
 		JMP .done
-	+ CPY.b #$58 : BNE + ; Upgrade-Only Sivler Arrows
+	+ CPY.b #$58 : BNE + ; Upgrade-Only Silver Arrows
 		JSR .incrementBow
 		JMP .done
 	+ CPY.b #$5E : BNE + ; Progressive Sword
+                LDA SwordEquipment : INC : TAX
 		JSR .incrementSword
 		JMP .done
 	+ CPY.b #$5F : BNE + ; Progressive Shield
+                LDA ShieldEquipment : INC : TAX
 		JSR .incrementShield
 		JMP .done
 	+ CPY.b #$60 : BNE + ; Progressive Armor
+                LDA ArmorEquipment : INC : TAX
 		JSR .incrementMail
 		JMP .done
 	+ CPY.b #$61 : BNE + ; Progressive Lifting Glove
@@ -543,6 +515,7 @@ AddInventory:
 		JMP .done
 	+ CPY.b #$80 : !BLT + ; Items $80 - $8F - Free Compasses
 	  CPY.b #$90 : !BGE +
+                JSL MaybeFlagCompassTotalPickup
 		JSR .incrementCompass
 		JMP .done
 	+ CPY.b #$90 : !BLT + ; Items $90 - $9F - Free Big Keys
@@ -560,120 +533,99 @@ RTL
 ; WHICH BEE IS BOTTLED?
 ; MAKE SURE FAIRY FOUNTAINS DON'T FUCK THE COUNTS UP
 
-!NMI_TIME = "$7EF43E"
-
-!SWORD_TIME = "$7EF458"
-!BOOTS_TIME = "$7EF45C"
-!FLUTE_TIME = "$7EF460"
-!MIRROR_TIME = "$7EF464"
-
 .stampSword
 	REP #$20 ; set 16-bit accumulator
-	LDA !SWORD_TIME : BNE +
-	LDA !SWORD_TIME+2 : BNE +
-		LDA !NMI_TIME : STA !SWORD_TIME
-		LDA !NMI_TIME+2 : STA !SWORD_TIME+2
+	LDA SwordTime : BNE +
+	LDA SwordTime+2 : BNE +
+		LDA NMIFrames : STA SwordTime
+		LDA NMIFrames+2 : STA SwordTime+2
 	+
 	SEP #$20 ; set 8-bit accumulator
 RTS
 
 .stampBoots
 	REP #$20 ; set 16-bit accumulator
-	LDA !BOOTS_TIME : BNE +
-	LDA !BOOTS_TIME+2 : BNE +
-		LDA !NMI_TIME : STA !BOOTS_TIME
-		LDA !NMI_TIME+2 : STA !BOOTS_TIME+2
+	LDA BootsTime : BNE +
+	LDA BootsTime+2 : BNE +
+		LDA NMIFrames : STA BootsTime
+		LDA NMIFrames+2 : STA BootsTime+2
 	+
 	SEP #$20 ; set 8-bit accumulator
 RTS
 
 .stampFlute
 	REP #$20 ; set 16-bit accumulator
-	LDA !FLUTE_TIME : BNE +
-	LDA !FLUTE_TIME+2 : BNE +
-		LDA !NMI_TIME : STA !FLUTE_TIME
-		LDA !NMI_TIME+2 : STA !FLUTE_TIME+2
+	LDA FluteTime : BNE +
+	LDA FluteTime+2 : BNE +
+		LDA NMIFrames : STA FluteTime
+		LDA NMIFrames+2 : STA FluteTime+2
 	+
 	SEP #$20 ; set 8-bit accumulator
 RTS
 
 .stampMirror
 	REP #$20 ; set 16-bit accumulator
-	LDA !MIRROR_TIME : BNE +
-	LDA !MIRROR_TIME+2 : BNE +
-		LDA !NMI_TIME : STA !MIRROR_TIME
-		LDA !NMI_TIME+2 : STA !MIRROR_TIME+2
+	LDA MirrorTime : BNE +
+	LDA MirrorTime+2 : BNE +
+		LDA NMIFrames : STA MirrorTime
+		LDA NMIFrames+2 : STA MirrorTime+2
 	+
 	SEP #$20 ; set 8-bit accumulator
 RTS
 
 .incrementSword
-	; CHECK FOR DUPLICATE SWORDS
 	JSR .stampSword
-	TYA ; load sword item
-	CMP.b #$50 : BNE + : LDA.b #$01 : + ; convert extra master sword to normal one
-	CMP.b #$49 : BNE + : LDA.b #$00 : + ; convert extra fighter sword to normal one
-	INC : CMP !HIGHEST_SWORD_LEVEL : !BLT + ; skip if highest is higher
-		PHA
-		LDA !HIGHEST_SWORD_LEVEL : AND #$F8 : ORA 1,s : STA !HIGHEST_SWORD_LEVEL
-		PLA
-	+
-
-	LDA $7EF422 : !ADD #$20 : STA $7EF422 ; increment sword counter
+        LDA HighestSword
+        INC : STA $04 : CPX $04 : !BLT + ; don't increment unless we're getting a better sword
+                TXA : STA HighestSword
+        +
 RTS
 
 .incrementShield
-	; CHECK FOR DUPLICATE SHIELDS
-	LDA $7EF422 : !ADD #$08 : AND #$18 : TAX
-	LDA $7EF422 : AND #$E7 : STA $7EF422
-	TXA : ORA $7EF422 : STA $7EF422
+        LDA HighestShield
+        INC : STA $04 : CPX $04 : !BLT + ; don't increment unless we're getting a better shield
+                TXA : STA HighestShield
+        +
 RTS
 
 .incrementBow
-	CPY.b #$3B : BNE ++
-		LDA $7EF42A : BIT #$20 : BEQ + : RTS : +
-		ORA #$20 : STA $7EF42A
-	++
+        LDA BowEquipment : BNE .dontCount ; Don't increment Y item count for extra bows
 .incrementY
-	LDA $7EF421 : !ADD #$08 : STA $7EF421
+	LDA YAItemCounter : !ADD #$08 : STA YAItemCounter
+.dontCount
 RTS
 
 .incrementA
-	LDA $7EF421 : INC : AND #$07 : TAX
-	LDA $7EF421 : AND #$F8 : STA $7EF421
-	TXA : ORA $7EF421 : STA $7EF421
+	LDA YAItemCounter : INC : AND #$07 : TAX
+	LDA YAItemCounter : AND #$F8 : STA YAItemCounter
+	TXA : ORA YAItemCounter : STA YAItemCounter
 RTS
 
 .incrementPendant
-	LDA $7EF429 : INC : AND #$03 : TAX
-	LDA $7EF429 : AND #$FC : STA $7EF429
-	TXA : ORA $7EF429 : STA $7EF429
-	; JSR .incrementBossSword
+	LDA PendantCounter : INC : STA PendantCounter
 RTS
 
 .incrementCapacity
-	%BottomHalf($7EF452)
+	LDA CapacityUpgrades : INC : STA CapacityUpgrades
 RTS
 
 .incrementHeartPiece
-	LDA $7EF448 : INC : AND #$1F : TAX
-	LDA $7EF448 : AND #$E0 : STA $7EF448
-	TXA : ORA $7EF448 : STA $7EF448
+	LDA HeartPieceCounter : INC : STA HeartPieceCounter
 RTS
 
 .incrementHeartContainer
-	%TopHalf($7EF429)
+	LDA HeartContainerCounter : INC : STA HeartContainerCounter
 RTS
 
 .incrementCrystal
-	LDA $7EF422 : INC : AND #$07 : TAX
-	LDA $7EF422 : AND #$F8 : STA $7EF422
-	TXA : ORA $7EF422 : STA $7EF422
-	; JSR .incrementBossSword
+	LDA CrystalCounter : INC : STA CrystalCounter
 RTS
 
 .incrementMail
-	LDA $7EF424 : !ADD #$40 : STA $7EF424
+        LDA HighestMail
+        INC : STA $04 : CPX $04 : !BLT +   ; don't increment unless we're getting a better mail
+                TXA : STA HighestMail
+        +
 RTS
 
 .incrementKeyLong
@@ -681,36 +633,30 @@ RTS
 RTL
 
 .incrementKey
-	PHA : PHX
-		LDA $7EF424 : INC : AND #$3F : TAX
-		LDA $7EF424 : AND #$C0 : STA $7EF424
-		TXA : ORA $7EF424 : STA $7EF424
-	PLX : PLA
+        LDA SmallKeyCounter : INC : STA SmallKeyCounter
 RTS
 
 .incrementCompass
-	%BottomHalf($7EF428)
+	%BottomHalf(MapsCompasses)
 RTS
 
 .incrementBigKey
-	LDA $7EF427 : !ADD #$10 : STA $7EF427
+	%TopHalf(BigKeysBigChests)
 RTS
 
 .incrementGTowerPreBigKey
-	LDA $7EF42A : INC : AND #$1F : TAX
-	LDA $7EF42A : AND #$E0 : STA $7EF42A
-	TXA : ORA $7EF42A : STA $7EF42A
+        LDA PreGTBKLocations : INC : STA PreGTBKLocations
 RTS
 
 .maybeIncrementBombs
-	LDA $7EF42A : AND #$80 : BNE +
-		LDA $7EF42A : ORA #$80 : STA $7EF42A
+	LDA InventoryTracking+1 : AND #$02 : BNE +
+		LDA InventoryTracking+1 : ORA #$02 : STA InventoryTracking+1
 		JSR .incrementY
 	+
 RTS
 
 .incrementMap
-	LDA $7EF428 : !ADD #$10 : STA $7EF428
+	%TopHalf(MapsCompasses)
 RTS
 
 .incrementBossSwordLong
@@ -718,19 +664,47 @@ RTS
 RTL
 
 .incrementBossSword
-	LDA $7EF359
+	LDA SwordEquipment
 	BNE + : -
-		%TopHalf($7EF452) : RTS
+                LDA SwordlessBossKills : INC : STA SwordlessBossKills
+                RTS
 	+ CMP #$FF : BEQ -
 	+ CMP #$01 : BNE +
-		%TopHalf($7EF425) : RTS
+		%TopHalf(SwordBossKills) : RTS
 	+ CMP #$02 : BNE +
-		%BottomHalf($7EF425) : RTS
+		%BottomHalf(SwordBossKills) : RTS
 	+ CMP #$03 : BNE +
-		%TopHalf($7EF426) : RTS
+		%TopHalf(SwordBossKills+1) : RTS
 	+ CMP #$04 : BNE +
-		%BottomHalf($7EF426)
+		%BottomHalf(SwordBossKills+1)
 	+
+RTS
+
+.setDungeonCompletion
+        LDA $040C
+	CMP #$FF : BEQ +
+		LSR : AND #$0F : CMP #$08 : !BGE ++
+			JSR .valueShift
+			ORA DungeonsCompleted : STA DungeonsCompleted
+			BRA +
+		++
+			!SUB #$08
+			JSR .valueShift
+			BIT.b #$C0 : BEQ +++ : LDA.b #$C0 : +++ ; Make Hyrule Castle / Sewers Count for Both
+			ORA DungeonsCompleted+1 : STA DungeonsCompleted+1
+	+
+RTS
+
+.valueShift
+	PHX
+	TAX : LDA.b #$01
+	-
+		CPX #$00 : BEQ +
+		ASL
+		DEX
+	BRA -
+	+
+	PLX
 RTS
 ;--------------------------------------------------------------------------------
 
@@ -738,11 +712,11 @@ RTS
 ; Link_ReceiveItem_HUDRefresh:
 ;--------------------------------------------------------------------------------
 Link_ReceiveItem_HUDRefresh:
-	LDA $7EF343 : BNE + ; skip if we have bombs
-	LDA $7EF370 : !ADD.l StartingMaxBombs : BEQ + ; skip if we can't have bombs
-	LDA $7EF375 : BEQ + ; skip if we are filling no bombs
-		DEC : STA $7EF375 ; decrease bomb fill count
-		LDA.b #$01 : STA $7EF343 ; increase actual bomb count
+	LDA BombsEquipment : BNE + ; skip if we have bombs
+	LDA BombCapacityUpgrades : !ADD.l StartingMaxBombs : BEQ + ; skip if we can't have bombs
+	LDA BombsFiller : BEQ + ; skip if we are filling no bombs
+		DEC : STA BombsFiller ; decrease bomb fill count
+		LDA.b #$01 : STA BombsEquipment ; increase actual bomb count
 	+
 
 	JSL.l HUD_RefreshIconLong ; thing we wrote over
@@ -754,9 +728,9 @@ RTL
 ; HandleBombAbsorbtion:
 ;--------------------------------------------------------------------------------
 HandleBombAbsorbtion:
-	STA $7EF375 ; thing we wrote over
+	STA BombsFiller ; thing we wrote over
 	LDA $0303 : BNE + ; skip if we already have some item selected
-	LDA $7EF370 : !ADD.l StartingMaxBombs : BEQ + ; skip if we can't have bombs
+	LDA BombCapacityUpgrades : !ADD.l StartingMaxBombs : BEQ + ; skip if we can't have bombs
 		LDA.b #$04 : STA $0202 ; set selected item to bombs
 		LDA.b #$01 : STA $0303 ; set selected item to bombs
 		JSL.l HUD_RebuildLong
@@ -771,13 +745,13 @@ RTL
 AddYMarker:
 	LDA $0202 : AND.w #$FF ; load item value
 	CMP.w #$02 : BNE + ; boomerang
-		LDA !INVENTORY_SWAP : AND.w #$C0 : CMP.w #$C0 : BEQ .drawYBubble : BRA .drawNormal
+		LDA InventoryTracking : AND.w #$C0 : CMP.w #$C0 : BEQ .drawYBubble : BRA .drawNormal
 	+ CMP.w #$01 : BNE + ; bow
-		LDA !INVENTORY_SWAP_2 : AND.w #$C0 : CMP.w #$C0 : BEQ .drawYBubble : BRA .drawNormal
+		LDA BowTracking : AND.w #$C0 : CMP.w #$C0 : BEQ .drawYBubble : BRA .drawNormal
 	+ CMP.w #$05 : BNE + ; powder
-		LDA !INVENTORY_SWAP : AND.w #$30 : CMP.w #$30 : BEQ .drawYBubble : BRA .drawNormal
+		LDA InventoryTracking : AND.w #$30 : CMP.w #$30 : BEQ .drawYBubble : BRA .drawNormal
 	+ CMP.w #$0D : BNE + ; flute
-		LDA !INVENTORY_SWAP : BIT.w #$04 : BEQ .drawNormal ; make sure we have shovel
+		LDA InventoryTracking : BIT.w #$04 : BEQ .drawNormal ; make sure we have shovel
 					  AND.w #$03 : BNE .drawYBubble ; make sure we have one of the flutes
 					  BRA .drawNormal
 	+ CMP.w #$10 : BEQ .drawJarMarker
@@ -831,8 +805,8 @@ RTS
 ; UpgradeFlute:
 ;--------------------------------------------------------------------------------
 UpgradeFlute:
-	LDA !INVENTORY_SWAP : AND #$FC : ORA #$01 : STA !INVENTORY_SWAP ; switch to the working flute
-	LDA.b #$03 : STA $7EF34C ; upgrade primary inventory
+	LDA InventoryTracking : AND #$FC : ORA #$01 : STA InventoryTracking ; switch to the working flute
+	LDA.b #$03 : STA FluteEquipment ; upgrade primary inventory
 RTL
 ;--------------------------------------------------------------------------------
 
@@ -859,10 +833,10 @@ RTL
 ;--------------------------------------------------------------------------------
 LoadKeys:
 	LDA.l GenericKeys : BEQ +
-		LDA $7EF38B
+		LDA CurrentGenericKeys
 		RTL
 	+
-	LDA $7EF37C, X
+	LDA DungeonKeys, X
 RTL
 ;--------------------------------------------------------------------------------
 
@@ -872,10 +846,10 @@ RTL
 SaveKeys:
 	PHA
 	LDA.l GenericKeys : BEQ +
-		PLA : STA $7EF38B
+		PLA : STA CurrentGenericKeys
 		RTL
 	+
-	PLA : STA $7EF37C, X
+	PLA : STA DungeonKeys, X
 RTL
 ;--------------------------------------------------------------------------------
 
@@ -889,10 +863,10 @@ ClearOWKeys:
 	JSL.l FakeWorldFix
 	JSR.w FixBunnyOnExitToLightWorld
 	LDA.l GenericKeys : BEQ +
-		PLA : LDA $7EF38B : STA $7EF36F
+		PLA : LDA CurrentGenericKeys : STA CurrentSmallKeys
 		RTL
 	+
-	PLA : STA $7EF36F
+	PLA : STA CurrentSmallKeys
 RTL
 ;--------------------------------------------------------------------------------
 
@@ -955,10 +929,10 @@ RTL
 ; InitializeBottles:
 ;--------------------------------------------------------------------------------
 InitializeBottles:
-	STA $7EF35C, X ; thing we wrote over
+	STA BottleContents, X ; thing we wrote over
 	PHA
-		LDA $7EF34F : BNE +
-			TXA : INC : STA $7EF34F ; write bottle index to menu properly
+		LDA BottleIndex : BNE +
+			TXA : INC : STA BottleIndex ; write bottle index to menu properly
 		+
 	PLA
 RTL
@@ -1047,12 +1021,12 @@ RTL
 ; RemoveMushroom:
 ;--------------------------------------------------------------------------------
 RemoveMushroom:
-	LDA !INVENTORY_SWAP : AND #$DF : STA !INVENTORY_SWAP ; remove the mushroom
+	LDA InventoryTracking : AND #$DF : STA InventoryTracking ; remove the mushroom
 	AND #$10 : BEQ .empty ; check if we have powder
-	LDA.b #$02 : STA $7EF344 ; give powder if we have it
+	LDA.b #$02 : STA PowderEquipment ; give powder if we have it
 RTL
 	.empty
-	LDA.b #$00 : STA $7EF344 ; clear the inventory slot if we don't have powder
+	LDA.b #$00 : STA PowderEquipment ; clear the inventory slot if we don't have powder
 RTL
 ;--------------------------------------------------------------------------------
 
@@ -1060,7 +1034,7 @@ RTL
 ; DrawMagicHeader:
 ;--------------------------------------------------------------------------------
 DrawMagicHeader:
-	LDA $7EF37B : AND.w #$00FF : CMP.w #$0002 : BEQ .quarterMagic
+	LDA MagicConsumption : AND.w #$00FF : CMP.w #$0002 : BEQ .quarterMagic
 	.halfMagic
     LDA.w #$28F7 : STA $7EC704
     LDA.w #$2851 : STA $7EC706
@@ -1078,7 +1052,7 @@ RTL
 ;--------------------------------------------------------------------------------
 ;FixShovelLock:
 ;	LDA $037A :	CMP #$01 : BEQ + ; skip if link is shoveling
-;		LDA $7EF34C ; load shovel/flute item ID
+;		LDA FluteEquipment ; load shovel/flute item ID
 ;	+
 ;	CMP #$00
 ;RTL

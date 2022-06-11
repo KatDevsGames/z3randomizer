@@ -28,7 +28,7 @@ QuickSwap:
 	BRA .store
 
 	.special_swap
-	LDA !INVENTORY_SWAP_2 : ORA #$01 : STA !INVENTORY_SWAP_2
+	LDA InventoryTracking+1 : ORA #$01 : STA InventoryTracking+1
 	CPX.b #$02 : BEQ + ; boomerang
 	CPX.b #$01 : BEQ + ; bow
 	CPX.b #$05 : BEQ + ; powder
@@ -50,10 +50,10 @@ RTL
 RCode:
 	LDX.w $0202
 	LDA.b $F2 : BIT #$20 : BNE ++ ; Still holding L from a previous frame
-		LDA !INVENTORY_SWAP_2 : AND #$FE : STA !INVENTORY_SWAP_2
+		LDA InventoryTracking+1 : AND #$FE : STA InventoryTracking+1
 		BRA +
 	++
-	LDA !INVENTORY_SWAP_2 : BIT #$01 : BEQ +
+	LDA InventoryTracking+1 : BIT #$01 : BEQ +
 	RTS
 	-
 		+ CPX.b #$14 : BNE + : LDX.b #$00 ;will wrap around to 1
@@ -65,10 +65,10 @@ RTS
 LCode:
 	LDX.w $0202
 	LDA.b $F2 : BIT #$10 : BNE ++ ; Still holding R from a previous frame
-		LDA !INVENTORY_SWAP_2 : AND #$FE : STA !INVENTORY_SWAP_2
+		LDA InventoryTracking+1 : AND #$FE : STA InventoryTracking+1
 		BRA +
 	++
-	LDA !INVENTORY_SWAP_2 : BIT #$01 : BEQ +
+	LDA InventoryTracking+1 : BIT #$01 : BEQ +
 	RTS
 	-
 		+ CPX.b #$01 : BNE + : LDX.b #$15 ; will wrap around to $14

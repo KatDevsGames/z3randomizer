@@ -17,10 +17,10 @@ ItemDowngradeFixMain:
 	CPY.b #$0B : BEQ .isBow ; Bow
 	CPY.b #$3A : BEQ .isBowAndArrows ; Bow
 	
-	CPY.b #$49 : BEQ .isFightersSword ; Fighter's Sword
-	CPY.b #$01 : BEQ .isMasterSword ; Master Sword
-	CPY.b #$50 : BEQ .isMasterSword ; Master Sword (Safe)
-	CPY.b #$02 : BEQ .isTemperedSword ; Tempered Sword
+	CPY.b #$49 : BEQ .isSword ; Fighter's Sword
+	CPY.b #$01 : BEQ .isSword ; Master Sword
+	CPY.b #$50 : BEQ .isSword ; Master Sword (Safe)
+	CPY.b #$02 : BEQ .isSword ; Tempered Sword
 	
 	CPY.b #$3B : BEQ .isSilverArrowBow ; Silver Arrow Bow
 	CPY.b #$2A : BEQ .isRedBoomerang ; Red Boomerang
@@ -29,7 +29,9 @@ ItemDowngradeFixMain:
 	CPY.b #$13 : BEQ .isShovel ; Shovel
 	CPY.b #$29 : BEQ .isMushroom ; Mushroom
 	
-	.done
+	CPY.b #$00 : BEQ .isUncleSwordShield ; Fighter's Sword & Shield
+
+        .done
 	STA [$00] ; thing we wrote over part 2
 	.dontWrite
 RTS
@@ -56,18 +58,24 @@ RTS
 	+
 	PLA
 RTS
-	.isFightersSword
-	.isMasterSword
-	.isTemperedSword
+	.isSword
 	PHA
+                LDA HighestSword : STA $04
 		TYA ; load sword item
 		CMP.b #$49 : BNE + : LDA.b #$00 : + ; convert extra fighter's sword to normal one
 		CMP.b #$50 : BNE + : LDA.b #$01 : + ; convert extra master sword to normal one
-		INC : CMP !HIGHEST_SWORD_LEVEL : !BGE + ; skip if highest is lower (this is an upgrade)
-			LDA !HIGHEST_SWORD_LEVEL : DEC ; convert to item id
-			TAY : PLA : LDA !HIGHEST_SWORD_LEVEL ; put sword id into the thing to write
+		INC : CMP $04 : !BGE + ; skip if highest is lower (this is an upgrade)
+			LDA $04 : DEC ; convert to item id
+			TAY : PLA : LDA $04 ; put sword id into the thing to write
 			JMP .done
 		+
 	PLA
 JMP .done
+        .isUncleSwordShield
+	PHA
+                LDA HighestSword : STA [$00] ; already set to 1 if we had no sword, always keep highest
+                INC $00
+                LDA HighestShield : STA [$00]
+	PLA
+RTS
 ;================================================================================

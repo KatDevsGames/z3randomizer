@@ -9,7 +9,6 @@ lorom
 ;db #$23, $4E
 
 org $00FFD5 ; <- 7FD5 - Bank00.asm : 9175 (db $20   ; rom layout)
-;db #$35 ; set fast exhirom
 db #$30 ; set fast lorom
 
 ;org $00FFD6 ; <- 7FD6 - Bank00.asm : 9176 (db $02   ; cartridge type)
@@ -28,44 +27,22 @@ org $1FFFF8 ; <- FFFF8 timestamp rom
 db #$20, #$19, #$08, #$31 ; year/month/day
 
 ;================================================================================
+!ROM_VERSION_LOW ?= 1  ; ROM version (two 16-bit integers)
+!ROM_VERSION_HIGH ?= 2 ;
+
+org $00FFE0 ; Unused hardware vector
+RomVersion:
+dw !ROM_VERSION_LOW
+dw !ROM_VERSION_HIGH
+
+;================================================================================
 
 !ADD = "CLC : ADC"
 !SUB = "SEC : SBC"
 !BLT = "BCC"
 !BGE = "BCS"
 
-; Rando Specific SRAM assignments
-!SHOP_PURCHASE_COUNTS = "$7EF302" ;$7EF302 - $7EF33F (temporary home)
-!INVENTORY_SWAP = "$7EF38C" ; [w]
-!INVENTORY_SWAP_2 = "$7EF38E" ; [w]
-!ITEM_LIMIT_COUNTS = "$7EF390" ; $7EF390 - ????
-!NPC_FLAGS   = "$7EF410"
-!NPC_FLAGS_2 = "$7EF411"
-!MAP_OVERLAY = "$7EF414" ; [w]
-!PROGRESSIVE_SHIELD = "$7EF416" ; ss-- ----
-!HUD_FLAG = "$7EF416" ; --h- ----
-!FORCE_PYRAMID = "$7EF416" ; ---- p---
-!IGNORE_FAIRIES = "$7EF416" ; ---- -i--
-!SHAME_CHEST = "$7EF416" ; ---s ----
-!HAS_GROVE_ITEM = "$7EF416" ; ---- ---g general flags, don't waste these
-!HIGHEST_SWORD_LEVEL = "$7EF417" ; --- -sss
-;$7EF41A[w] - Programmable Item #1
-;$7EF41C[w] - Programmable Item #2
-;$7EF41E[w] - Programmable Item #3
-!SRAM_SINK = "$7EF41E" ; <- change this (conflicts with Programmable item 3)
-;$7EF418 - Goal Item Counter
-;$7EF419 - Service Sequence
-;$7EF420 - $7EF46D - Stat Tracking Bank 1 (overlaps with RNG Item Flags)
-;$7EF450 - $7EF45F - RNG Item (Single) Flags
-;$7EF4A0 - $7EF4A7 - Service Request Block
-!FRESH_FILE_MARKER = "$7EF4F0" ; zero if fresh file
-;$700500 - $70050F - Extended File Name
-;$701000 - $70100F - Password (incorporate into log header)
-;$702000 - $702014 - Rom title copy (incorporate into log header)
-
-
 !MS_GOT = "$7F5031"
-!DARK_WORLD = "$7EF3CA"
 
 !REDRAW = "$7F5000"
 !GANON_WARP_CHAIN = "$7F5032";
@@ -96,6 +73,9 @@ db #$20, #$19, #$08, #$31 ; year/month/day
 
 function hexto555(h) = ((((h&$FF)/8)<<10)|(((h>>8&$FF)/8)<<5)|(((h>>16&$FF)/8)<<0))
 
+; Feature flags, run asar with -DFEATURE_X=1 to enable
+!FEATURE_NEW_TEXT ?= 0
+
 ;================================================================================
 
 incsrc hooks.asm
@@ -103,6 +83,8 @@ incsrc treekid.asm
 incsrc spriteswap.asm
 incsrc hashalphabethooks.asm
 incsrc sharedplayerpalettefix.asm
+incsrc ram.asm
+incsrc sram.asm
 
 ;org $208000 ; bank #$20
 org $A08000 ; bank #$A0
@@ -116,7 +98,6 @@ incsrc heartpieces.asm
 incsrc npcitems.asm
 incsrc utilities.asm
 incsrc flipperkill.asm
-incsrc previewdatacopy.asm
 incsrc pendantcrystalhud.asm
 incsrc potions.asm
 incsrc shopkeeper.asm
@@ -174,6 +155,11 @@ org $A1A000 ; static mapping area. Referenced by front end. Do not move.
 incsrc invertedstatic.asm
 warnpc $A1A100
 
+org $A1B000
+incsrc failure.asm
+warnpc $A1FF00
+
+
 org $A1FF00 ; static mapping area
 incsrc init.asm
 
@@ -181,7 +167,6 @@ org $A48000 ; code bank - PUT NEW CODE HERE
 incsrc glitched.asm
 incsrc hardmode.asm
 incsrc goalitem.asm
-incsrc openmode.asm
 incsrc quickswap.asm
 incsrc endingsequence.asm
 incsrc cuccostorm.asm
@@ -209,6 +194,9 @@ incsrc darkroomitems.asm
 incsrc fastcredits.asm
 incsrc msu.asm
 incsrc dungeonmap.asm
+if !FEATURE_NEW_TEXT
+    incsrc textrenderer.asm
+endif
 warnpc $A58000
 
 ;org $228000 ; contrib area
@@ -296,6 +284,19 @@ org $339600
 BossMapIconGFX:
 incbin bossicons.4bpp
 
+if !FEATURE_NEW_TEXT
+    org $339C00
+    NewFont:
+    incbin newfont.bin
+    NewFontInverted:
+    incbin newfont_inverted.bin
+
+    org $0CD7DF
+    incbin text_unscramble1.bin
+    org $0CE4D5
+    incbin text_unscramble2.bin
+endif
+
 org $328000
 Extra_Text_Table:
 incsrc itemtext.asm
@@ -329,29 +330,30 @@ warnpc $B08000
 ;$31 Graphics Bank
 ;$32 Text Bank
 ;$33 Graphics Bank
-;$37 Don't Use ZSNES Graphics
-;$38 Don't Use ZSNES Graphics (continued)
+;$36 reserved for Enemizer
 ;$3A reserved for downstream use
 ;$3B reserved for downstream use
 ;$3F reserved for internal debugging
 ;================================================================================
-;RAM 
+;RAM
+;$7E021B[0x1]: Used by race game instead of $0ABF to avoid witch item conflict
 ;$7EC900[0x1F00]: BIGRAM buffer
 ;$7EF000[0x500]: SRAM mirror First 0x500 bytes of SRAM
+;   See sram.asm for labels and assignments
 ;$7F5000[0x800]: Rando's main free ram region
 ;   See tables.asm for specific assignments
-;$7F6000[0x500]: Free RAM (reclaimed from damage table) Not allocated yet
-;$7F6500[0xB00]: SRAM mirror for last 0xB00 bytes of SRAM (extended sram)
+;$7F6000[0x1000]: SRAM buffer mapped to vanilla save slots 1 and 2
+;   See sram.asm for labels and assignments
 ;$7F7667[0x6719] - free ram
 ;================================================================================
 ;SRAM Map
-;$70:0000 ( 4K) Game state
-;  0000-04FF Vanilla Slot 1 (mirrored at 0x7EF000)
-;    See earlier in this file for rando specific assignments
-;  0500-0FFF Ext Slot 1 (not yet mirrored)
-;    See earlier in this file for rando specific assignments
-;$70:1000 (20K) Log entries
-;$70:6000 ( 8K) Scratch buffers
+;See sram.asm for rando-specific assignments
+;$70:0000 (5K) Game state
+;  0000-04FF Vanilla Slot 1 (mirrored at $7EF000)
+;  0500-14FF Ext Slot 1 (mirrored at $7F6000)
+;$70:2000 (0x25) ROM Name and version number
+;$70:3000 (0x16) Password
+;$70:6000 (8K) Scratch buffers
 ;================================================================================
 ;org $0080DC ; <- 0xDC - Bank00.asm:179 - Kill Music
 ;db #$A9, #$00, #$EA
@@ -600,6 +602,13 @@ OverworldMap_DarkWorldTilemap:
 
 org $0ABAB9
 OverworldMap_LoadSprGfx:
+
+org $0CD7D1
+NameFile_MakeScreenVisible:
+org $0CDB3E
+InitializeSaveFile:
+org $0CDBC0
+InitializeSaveFile_build_checksum:
 
 org $0DBA71
 GetRandomInt:

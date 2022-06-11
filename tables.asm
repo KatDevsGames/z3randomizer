@@ -98,19 +98,13 @@ db #$02 ; #$02 = Tempered Sword (default)
 ;org $05EBD4 ; PC 0x2EBD4 - sprite_zelda.asm:23 - (LDA $7EF359 : CMP.b #$02 : BCS .hasMasterSword) - Zelda Spawnpoint Sword Check
 ;db #$05 ; #$02 = Tempered Sword (default) - #$05 = All Swords
 ;--------------------------------------------------------------------------------
-; 0x18002B- 0x18002F (Unused)
-;--------------------------------------------------------------------------------
-org $308030 ; PC 0x180030
-EnableSRAMTrace:
-db #$00 ; #$00 = Off (default) - #$01 = On
+; 0x18002B- 0x180030 (Unused)
 ;--------------------------------------------------------------------------------
 org $308031 ; PC 0x180031
 EnableEasterEggs:
 db #$00 ; #$00 = Off (default) - #$01 = On
 ;--------------------------------------------------------------------------------
-org $308032 ; PC 0x180032
-OpenMode:
-db #$01 ; #$00 = Normal (default) - #$01 = Open
+; 0x180032 (unused)
 ;--------------------------------------------------------------------------------
 org $308033 ; PC 0x180033
 HeartBeep:
@@ -161,9 +155,7 @@ org $30803F ; PC 0x18003F
 HammerableGanon:
 db #$00 ; #$00 = Off (default) - #$01 = On
 ;--------------------------------------------------------------------------------
-org $308040 ; PC 0x180040
-PreopenCurtains:
-db #$00 ; #$00 = Off (default) - #$01 = On
+; 0x180040 - (unused)
 ;--------------------------------------------------------------------------------
 org $308041 ; PC 0x180041
 AllowSwordlessMedallionUse:
@@ -173,9 +165,7 @@ org $308042 ; PC 0x180042
 PermitSQFromBosses:
 db #$00 ; #$00 = Off (default) - #$01 = On
 ;--------------------------------------------------------------------------------
-org $308043 ; PC 0x180043
-StartingSword:
-db #$00 ; #$00 = No Sword (default) - #$FF = Non-Sword
+; 0x180043 (unused)
 ;--------------------------------------------------------------------------------
 org $308044 ; PC 0x180044
 AllowHammerTablets:
@@ -190,9 +180,7 @@ HUDDungeonItems:
  ; display ---edcba a: Small Keys, b: Big Key, c: Map, d: Compass, e: Bosses
 db #$00
 ;--------------------------------------------------------------------------------
-org $308046 ; PC 0x180046 Link's starting equipment
-LinkStartingRupees:
-dw #$0000
+; 0x180046 (unused)
 ;--------------------------------------------------------------------------------
 org $308048 ; PC 0x180048
 MenuSpeed:
@@ -376,17 +364,7 @@ org $30808A ; PC 0x18008A
 BlockCastleDoorsInRain:
 db #$00 ; #$00 - Normal, $01 - Block them (Used by Entrance Rando in Standard Mode)
 ;--------------------------------------------------------------------------------
-org $30808B ; PC 0x18008B
-PreopenPyramid:
-db $00 ; #$00 = Off (default) - #$01 = On
-;--------------------------------------------------------------------------------
-org $30808C ; PC 0x18008C
-PreopenGanonsTower:
-db $00 ; #$00 = Off (default) - #$01 = On
-;--------------------------------------------------------------------------------
-org $30808D ; PC 0x18008D
-InstantPostAgaWorldState:
-db $00 ; #$00 = Off (default) - #$01 = On
+; 0x18008B-0x18008D (unused)
 ;--------------------------------------------------------------------------------
 org $30808E ; PC 0x18008E
 FakeBoots:
@@ -827,13 +805,9 @@ org $308165 ; PC 0x180165
 GoalItemIcon:
 dw #$280E ; #$280D = Star - #$280E = Triforce Piece (default)
 ;================================================================================
-org $308167 ; PC 0x180167
+org $308167 ; PC 0x180167-0x180167
 GoalItemRequirement:
-db #$00 ; #$00 = Off (default) - #$XX = Require $XX Goal Items - #$FF = Counter-Only
-;================================================================================
-org $308168 ; PC 0x180168
-ByrnaCaveSpikeDamage:
-db #$08 ; #$08 = 1 Heart (default) - #$02 = 1/4 Heart
+dw $0000 ; #$0000 = Off (default) - #$XXXX = Require $XX Goal Items - #$FFFF = Counter-Only
 ;================================================================================
 org $308169 ; PC 0x180169
 AgahnimDoorStyle:
@@ -956,17 +930,22 @@ org $308194 ; PC 0x180194
 TurnInGoalItems:
 db #$01 ; #$00 = Instant win if last goal item collected. $01 = (Default) must turn in goal items
 ;--------------------------------------------------------------------------------
-; 0x180195 - 0x1801FF (unused)
+org $308195 ; PC 0x180195
+ByrnaCaveSpikeDamage:
+db #$08 ; #$08 = 1 Heart (default) - #$02 = 1/4 Heart
+;--------------------------------------------------------------------------------
+; 0x180196 - 0x1801FF (unused)
 ;================================================================================
-org $308200 ; PC 0x180200 - 0x18020F
+org $308200 ; PC 0x180200 - 0x18020B
 RedClockAmount:
 dw #$4650, #$0000 ; $00004650 = +5 minutes
 BlueClockAmount:
 dw #$B9B0, #$FFFF ; $FFFFB9B0 = -5 minutes
 GreenClockAmount:
 dw #$0000, #$0000
-StartingTime:
-dw #$0000, #$0000 ; #$A5E0, #$0001 = 30 minutes
+;--------------------------------------------------------------------------------
+; 0x18020C-0x18020F (unused)
+;--------------------------------------------------------------------------------
 ;================================================================================
 org $09E3BB ; PC 0x4E3BB
 db $E4 ; Hera Basement Key (Set to programmable HP $EB) (set to $E4 for original hookable/boomable key behavior)
@@ -1560,8 +1539,8 @@ dw #9999 ; Rupee Limit
 ; $7F5200 - $7F52FF - RNG Pointer Block
 ; $7F5300 - $7F53FF - Multiworld Block
 ; $7F5400 - $7F540F - MSU Block
-
-; $7F5410 - $7F56FF - Unused
+; $7F5410 - $7F545F - Dungeon Tracking Block
+; $7F5460 - $7F56FF - Unused
 
 ; $7F5700 - $7F57FF - Dialog Buffer
 ;
@@ -1611,26 +1590,26 @@ dw $0000
 ;--------------------------------------------------------------------------------
 ; 0x182305 - 182FFF (unused)
 ;================================================================================
-org $30B000 ; PC 0x183000 - 0x183054
-StartingEquipment:
-dw $0000, $0000, $0000, $0000, $0000, $0000, $0000, $0000
-dw $0000, $0000, $0000, $0000, $0000, $0000, $0000, $0000
-dw $0000, $0000, $0000, $0000, $0000, $0000, $1818, $FF00
-dw $0000, $0000, $0000, $0000, $F800, $0000, $0000, $0000
-dw $0000, $0000, $0000, $0000, $0000, $0000, $0000, $0000
-dw $0000, $0000
+org $30B000 ; PC 0x183000 - 0x1834FF
+incsrc initsramtable.asm
+
 ;--------------------------------------------------------------------------------
-; 0x182355 - 183FFF (unused)
+; 0x183500 - 183FFF (unused)
 ;================================================================================
-org $30C000 ; PC 0x184000 - 0x184007
+org $30C000 ; PC 0x184000 - 0x184040
 ItemSubstitutionRules:
 ;db [item][quantity][substitution][pad] - CURRENT LIMIT 16 ENTRIES
 db $12, $01, $35, $FF
 db $51, $06, $52, $FF
 db $53, $06, $54, $FF
 db $FF, $FF, $FF, $FF
+
+org $30C041 ; PC 0x184041
+ForceFileName:
+db $00 ; $00 = Player picks name (default) - $01 = Use StaticFileName (initsramtable.asm)
+
 ;--------------------------------------------------------------------------------
-; 0x184008 - 0x1847FF (unused)
+; 0x18405B - 0x1847FF (unused)
 ;================================================================================
 ;shop_config - tdav --qq
 ; t - 0=Shop - 1=TakeAny
@@ -1654,11 +1633,6 @@ ShopContentsTable:
 db $01, $51, $64, $00, $07, $FF, $00, $00
 db $01, $53, $64, $00, $07, $FF, $00, $00
 db $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF
-
-; Fix spawning with more hearts than capacity when less than 3 heart containers
-LowHeartFix:
-	org $09F4AC ; <- module_death.asm:331
-	db $08, $08, $10
 
 ;--------------------------------------------------------------------------------
 ; 0x185060 - 1850FF (unused)
@@ -1746,6 +1720,7 @@ dw $0000
 ; STAIRS3
 ; STAIRS4
 ;--------------------------------------------------------------------------------
+RoomHeaders:
 org $30DA00 : RoomHeader_0000: ; pc 0x185A00
 db $41, $21, $13, $22, $07, $3D, $00, $00, $00, $10, $C0, $00, $00, $04
 
@@ -2656,13 +2631,19 @@ org $30EA84 : RoomHeader_012E: ; pc 0x186A84
 db $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF
 
 ;--------------------------------------------------------------------------------
-; 0x186C00 - 187FFF (unused)
+; 0x186C00 - 186FFE (unused)
 ;--------------------------------------------------------------------------------
+org $30EFFF ; PC 0x186FFF
+BallNChainDungeon:
+db #$02
 
+org $30F000 ; PC 0x187000-0x18700F
+CompassTotalsROM:
+db $08, $08, $06, $06, $02, $0A, $0E, $08, $08, $08, $06, $08, $0C, $1B, $00, $00
 
-
-
-
+;--------------------------------------------------------------------------------
+; 0x187010 - 187FFF (unused)
+;--------------------------------------------------------------------------------
 
 
 

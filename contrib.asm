@@ -71,14 +71,13 @@
 ;
 ;        PLX
 ;
-;        LDA.b #$00 : STA $7EF3CC
+;        LDA.b #$00 : STA FollowerIndicator
 ;
 ;        STZ $5E
 ;
 ;        JML $09A6B6 ; <- 4A6B6 tagalong.asm:1194 (SEP #$30 : RTS)
 ;}
 ;================================================================
-!MAP_OVERLAY = "$7EF414" ; [2]
 Sprite_ShowSolicitedMessageIfPlayerFacing_Alt:
 {
 	STA $1CF0
@@ -108,11 +107,11 @@ Sprite_ShowSolicitedMessageIfPlayerFacing_Alt:
 						   BRA .SayNothing
 
 	.SahasrahlaDialogs
-		REP #$20 : LDA.l MapReveal_Sahasrahla : ORA !MAP_OVERLAY : STA !MAP_OVERLAY : SEP #$20
+		REP #$20 : LDA.l MapReveal_Sahasrahla : ORA MapOverlay : STA MapOverlay : SEP #$20
 		JSL DialogSahasrahla : BRA .SayNothing
 
 	.BombShopGuyDialog
-		REP #$20 : LDA.l MapReveal_BombShop : ORA !MAP_OVERLAY : STA !MAP_OVERLAY : SEP #$20
+		REP #$20 : LDA.l MapReveal_BombShop : ORA MapOverlay : STA MapOverlay : SEP #$20
 		JSL DialogBombShopGuy
 
 	.SayNothing

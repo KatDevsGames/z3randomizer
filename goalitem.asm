@@ -1,7 +1,6 @@
 ;--------------------------------------------------------------------------------
 ; $7F5010 - Scratch Space (Callee Preserved)
 ;--------------------------------------------------------------------------------
-!GOAL_COUNTER = "$7EF418"
 !GOAL_DRAW_ADDRESS = "$7EC72A"
 ;--------------------------------------------------------------------------------
 ; DrawGoalIndicator moved to newhud.asm
@@ -62,18 +61,18 @@ CheckGanonVulnerability:
 
 ; 02 = All dungeons
 .all_dungeons
-	LDA.l $7EF3C5 : CMP.b #$03 : BCC .fail ; require post-aga world state
+	LDA.l ProgressIndicator : CMP.b #$03 : BCC .fail ; require post-aga world state
 
 ; 09 = All dungeons except agahnim
 .all_dungeons_no_agahnim
-	LDA.l $7EF374 : AND.b #$07 : CMP.b #$07 : BNE .fail ; require all pendants
-	LDA.l $7EF37A : AND.b #$7F : CMP.b #$7F : BNE .fail ; require all crystals
-	LDA.l $7EF2DB : AND.b #$20 : BEQ .fail ; require aga2 defeated (pyramid hole open)
+	LDA.l PendantsField : AND.b #$07 : CMP.b #$07 : BNE .fail ; require all pendants
+	LDA.l CrystalsField : AND.b #$7F : CMP.b #$7F : BNE .fail ; require all crystals
+	LDA.l OverworldEventDataWRAM+$5B : AND.b #$20 : BEQ .fail ; require aga2 defeated (pyramid hole open)
 	BRA .success
 
 ; 03 = crystals and aga 2
 .crystals_and_aga
-	LDA.l $7EF2DB : AND.b #$20 : BEQ .fail ; check aga2 first then bleed in
+	LDA.l OverworldEventDataWRAM+$5B : AND.b #$20 : BEQ .fail ; check aga2 first then bleed in
 
 ; 04 = crystals only
 .crystals
@@ -82,7 +81,9 @@ CheckGanonVulnerability:
 
 ; 05 = require goal item
 .goal_item
-	LDA.l !GOAL_COUNTER : CMP GoalItemRequirement
+        REP #$20
+	LDA.l GoalCounter : CMP.l GoalItemRequirement
+        SEP #$20
 	RTS
 
 ; 06 = light speed
@@ -96,7 +97,6 @@ CheckGanonVulnerability:
 
 ; 08 = Crystal bosses but no crystals
 .bosses_only
-	;LDA.l $7EF2DDB : AND.b #$20 : BEQ .fail ; check aga2
 	JMP CheckForCrystalBossesDefeated
 
 ;--------------------------------------------------------------------------------
@@ -125,12 +125,12 @@ GetRequiredCrystalsInX:
 RTL
 ;--------------------------------------------------------------------------------
 CheckEnoughCrystalsForGanon:
-	LDA $7EF37A : JSL CountBits ; the comparison is against 1 less
+	LDA CrystalCounter
 	CMP.l NumberOfCrystalsRequiredForGanon
 RTL
 ;--------------------------------------------------------------------------------
 CheckEnoughCrystalsForTower:
-	LDA $7EF37A : JSL CountBits ; the comparison is against 1 less
+	LDA CrystalCounter
 	CMP.l NumberOfCrystalsRequiredForTower
 RTL
 
@@ -140,7 +140,7 @@ CheckAgaForPed:
 	CMP.b #$06 : BNE .vanilla
 
 .light_speed
-	LDA.l $7EF300 ; check ped flag
+	LDA.l OverworldEventDataWRAM+$80 ; check ped flag
 	AND.b #$40
 	BEQ .force_blue_ball
 
@@ -158,15 +158,15 @@ CheckAgaForPed:
 ;---------------------------------------------------------------------------------------------------
 
 KillGanon:
-	STA.l $7EF3C5 ; vanilla game state stuff we overwrote
+	STA.l ProgressIndicator ; vanilla game state stuff we overwrote
 
 	LDA.l InvincibleGanon
 	CMP.b #$06 : BNE .exit
 
 .light_speed
-	LDA.l $7EF2DB : ORA.b #$20 : STA.l $7EF2DB ; pyramid hole
-	LDA.b #$08 : STA.l $7EF001 ; kill ganon
-	LDA.b #$02 : STA.l $7EF357 ; pearl but invisible in menu
+	LDA.l OverworldEventDataWRAM+$5B : ORA.b #$20 : STA.l OverworldEventDataWRAM+$5B ; pyramid hole
+	LDA.b #$08 : STA.l RoomDataWRAM[$00].high ; kill ganon
+	LDA.b #$02 : STA.l MoonPearlEquipment ; pearl but invisible in menu
 
 .exit
 	RTL
@@ -197,7 +197,7 @@ CheckForCrystalBossesDefeated:
 
 	LDA.l DrawHUDDungeonItems_boss_room_ids-4,X
 	TAX
-	LDA.l $7EF000,X
+	LDA.l RoomDataWRAM.l,X
 
 	AND.w #$0800
 	BEQ ++

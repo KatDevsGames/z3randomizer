@@ -22,7 +22,7 @@ Init_Primary:
 	
 	LDX #$00
 	-
-		LDA $702000, X : CMP $00FFC0, X : BNE .clear
+		LDA RomNameSRAM, X : CMP $00FFC0, X : BNE .clear
 		INX
 		CPX #$15 : !BLT -
 	BRA .done
@@ -36,9 +36,14 @@ Init_Primary:
 		SEP #$30 ; set 8-bit accumulator & index registers
 		LDX #$00
 		-
-			LDA $00FFC0, X : STA $702000, X
+			LDA $00FFC0, X : STA RomNameSRAM, X
 			INX
 			CPX #$15 : !BLT -
+                LDX #$00
+                -
+                        LDA RomVersion, X : STA RomVersionSRAM, X
+                        INX
+                        CPX #$04 : !BLT -
 	.done
 
 	REP #$20
@@ -62,5 +67,6 @@ Init_PostRAMClear:
 
 	JSL MSUInit
 	JSL InitRNGPointerTable
+        JSL InitCompassTotalsRAM
 
 JML $00D463	; The original target of the jump table that we hijacked
