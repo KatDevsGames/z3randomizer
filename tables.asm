@@ -2635,7 +2635,76 @@ db $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF
 ;--------------------------------------------------------------------------------
 org $30EB00
 RoomToOutlet:
-fillbyte $FF : fill $180
+db $FF, $FF, $FF, $3D, $FF, $FF, $FF, $FF ; 0x000-0x007
+db $39, $FF, $FF, $FF, $38, $FF, $2E, $FF ; 0x008-0x00F
+db $37, $FF, $01, $FF, $FF, $FF, $FF, $FF ; 0x010-0x017
+db $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF ; 0x018-0x01F
+db $06, $FF, $FF, $16, $1A, $FF, $FF, $FF ; 0x020-0x027
+db $26, $FF, $FF, $FF, $3C, $FF, $FF, $3A ; 0x028-0x02F
+db $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF ; 0x030-0x037
+db $FF, $FF, $FF, $FF, $3B, $FF, $FF, $FF ; 0x038-0x03F
+db $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF ; 0x040-0x047
+db $FF, $FF, $27, $FF, $FF, $FF, $FF, $FF ; 0x048-0x04F
+db $FF, $FF, $FF, $FF, $FF, $33, $29, $2A ; 0x050-0x057
+db $2B, $2C, $FF, $FF, $FF, $FF, $FF, $FF ; 0x058-0x05F
+db $02, $03, $04, $0D, $FF, $FF, $FF, $FF ; 0x060-0x067
+db $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF ; 0x068-0x06F
+db $FF, $FF, $FF, $FF, $FF, $FF, $FF, $2D ; 0x070-0x077
+db $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF ; 0x078-0x07F
+db $FF, $FF, $FF, $0C, $0A, $0B, $FF, $FF ; 0x080-0x087
+db $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF ; 0x088-0x08F
+db $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF ; 0x090-0x097
+db $28, $FF, $FF, $FF, $FF, $FF, $FF, $FF ; 0x098-0x09F
+db $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF ; 0x0A0-0x0A7
+db $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF ; 0x0A8-0x0AF
+db $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF ; 0x0B0-0x0B7
+db $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF ; 0x0B8-0x0BF
+db $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF ; 0x0C0-0x0C7
+db $FF, $09, $FF, $FF, $FF, $FF, $FF, $FF ; 0x0C8-0x0CF
+db $FF, $FF, $FF, $FF, $FF, $19, $34, $FF ; 0x0D0-0x0D7
+db $FF, $FF, $FF, $35, $FF, $FF, $FF, $21 ; 0x0D8-0x0DF
+db $25, $36, $13, $12, $31, $32, $2F, $30 ; 0x0E0-0x0E7
+db $15, $FF, $24, $18, $FF, $1C, $1E, $20 ; 0x0E8-0x0EF
+db $07, $08, $0E, $0F, $10, $11, $FF, $FF ; 0x0F0-0x0F7
+db $14, $22, $23, $17, $FF, $1B, $1D, $1F ; 0x0F8-0x0FF
+db $FF, $FF, $FF, $FF, $00, $FF, $FF, $FF ; 0x100-0x107
+db $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF ; 0x108-0x10F
+db $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF ; 0x110-0x117
+db $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF ; 0x118-0x11F
+db $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF ; 0x120-0x127
+db $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF ; 0x128-0x12F
+db $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF ; 0x130-0x137
+db $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF ; 0x138-0x13F
+db $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF ; 0x140-0x147
+db $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF ; 0x148-0x14F
+db $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF ; 0x150-0x157
+db $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF ; 0x158-0x15F
+db $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF ; 0x160-0x167
+db $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF ; 0x168-0x16F
+db $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF ; 0x170-0x177
+db $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF ; 0x178-0x17F
+db $4B, $4C, $4D, $FF, $FF, $FF, $FF, $FF ; 0x180-0x187
+db $FF, $4E, $FF, $FF, $FF, $FF, $FF, $FF ; 0x188-0x18F
+db $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF ; 0x190-0x197
+db $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF ; 0x198-0x19F
+
+
+;--------------------------------------------------------------------------------
+; Exit data table pointers - 0x186CA0
+;--------------------------------------------------------------------------------
+org $30ECA0
+dl NewOutletData_overworld_id
+dl NewOutletData_exit_vram_addr
+dl NewOutletData_vertical_scroll
+dl NewOutletData_horizontal_scroll
+dl NewOutletData_y_coordinate
+dl NewOutletData_x_coordinate
+dl NewOutletData_camera_trigger_y
+dl NewOutletData_camera_trigger_x
+dl NewOutletData_scroll_mod_y
+dl NewOutletData_scroll_mod_x
+dl NewOutletData_door_graphic
+dl NewOutletData_door_graphic_location
 
 
 ;--------------------------------------------------------------------------------

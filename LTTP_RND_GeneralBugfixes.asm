@@ -212,6 +212,10 @@ incsrc tables.asm
 org $348000
 incsrc spc.asm
 
+org $34C000
+incsrc overworldoutlets.asm
+
+
 ; uncomment for inverted adjustments
 ;incsrc sandbox.asm
 

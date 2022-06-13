@@ -227,16 +227,3 @@ AnimatedEntranceFix: ;when an entrance animation tries to start
 	STA $0FC1 ;what we wrote over
 	STA $0710 ;what we wrote over
 RTL
-;---------------------------------------------------------------------------------------------------
-FindOutletID:
-	TAX
-	LDA.l RoomToOutlet,X
-	AND.w #$00FF
-	CMP.w #$00FF
-	BNE .good
-
-	; temporary measure (or permanent?!)
-	BRK #$00
-
-.good
-	JML $02E241
