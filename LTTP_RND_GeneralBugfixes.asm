@@ -203,6 +203,9 @@ warnpc $A58000
 org $A28000 ; contrib area
 incsrc contrib.asm
 
+org $AB8000
+incsrc overworldoutlets.asm
+
 org $A38000
 incsrc stats/main.asm
 
@@ -211,10 +214,6 @@ incsrc tables.asm
 
 org $348000
 incsrc spc.asm
-
-org $34C000
-incsrc overworldoutlets.asm
-
 
 ; uncomment for inverted adjustments
 ;incsrc sandbox.asm
