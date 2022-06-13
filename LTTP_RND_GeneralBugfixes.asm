@@ -185,7 +185,14 @@ incsrc tables.asm
 org $B48000
 incsrc spc.asm
 
-org $B18000 ; bank $31
+org $34C000 ; VT TODO: should be B4C000???
+incsrc overworldoutlets.asm
+
+
+; uncomment for inverted adjustments
+;incsrc sandbox.asm
+
+org $B18000 ; bank #$31
 GFX_Mire_Bombos:
 incbin "data/99ff1_bombos.gfx"
 warnpc $B18800

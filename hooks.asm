@@ -150,8 +150,29 @@ JSL BonkRecoil
 org $82E21B ; <- 1621B - Bank02.asm : 11211 (STA $040C)
 JSL.l OnDungeonExit : NOP #2
 
+; change data bank to our new tables
+; this fits exactly, so we can't put anything else in here
 org $82E238
-JML FindOutletID
+JSL FindOutletID
+PEA.w NewOutletData>>8 ; push upper 16 bits
+PLB
+PLB
+
+; it seems safe to leave X in 16 bit for all of this, as nothing scary happens with X
+; and by the time it is needed, there's a SEP #$30
+; update pointers to new data
+org $82E241 : LDA.w NewOutletData_vertical_scroll,X
+org $82E24E : LDA.w NewOutletData_horizontal_scroll,X
+org $82E25B : LDA.w NewOutletData_y_coordinate,X
+org $82E260 : LDA.w NewOutletData_x_coordinate,X
+org $82E265 : LDA.w NewOutletData_exit_vram_addr,X
+org $82E281 : LDA.w NewOutletData_camera_trigger_y,X
+org $82E28C : LDA.w NewOutletData_camera_trigger_x,X
+org $82E29C : LDA.w NewOutletData_door_graphic,X
+org $82E2A2 : LDA.w NewOutletData_door_graphic_location,X
+org $82E2AD : LDA.w NewOutletData_overworld_id,X
+org $82E2BA : LDA.w NewOutletData_scroll_mod_y,X
+org $82E2C9 : LDA.w NewOutletData_scroll_mod_x,X
 
 ;--------------------------------------------------------------------------------
 
