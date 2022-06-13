@@ -172,6 +172,9 @@ incsrc newitems.asm
 incsrc utilities.asm
 incsrc inventory.asm
 
+org $AB8000
+incsrc overworldoutlets.asm
+
 org $A38000
 incsrc stats/credits.asm ; Statically mapped
 incsrc stats/main.asm
@@ -184,13 +187,6 @@ incsrc tables.asm
 
 org $B48000
 incsrc spc.asm
-
-org $34C000 ; VT TODO: should be B4C000???
-incsrc overworldoutlets.asm
-
-
-; uncomment for inverted adjustments
-;incsrc sandbox.asm
 
 org $B18000 ; bank #$31
 GFX_Mire_Bombos:
