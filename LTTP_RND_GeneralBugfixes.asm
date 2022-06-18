@@ -203,6 +203,9 @@ warnpc $A58000
 org $A28000 ; contrib area
 incsrc contrib.asm
 
+org $AB8000
+incsrc overworldoutlets.asm
+
 org $A38000
 incsrc stats/main.asm
 
