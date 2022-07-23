@@ -127,6 +127,7 @@ FindOutletID:
 ; Bonk Fairy (Dark)                 ; 0x8E
 ; Checkerboard Cave                 ; 0x8F
 ; Dark World Hammer Peg Cave        ; 0x90
+; Chicken hut                       ; 0x91
 
 NewOutletData:
 .overworld_id
@@ -277,9 +278,9 @@ NewOutletData:
 	db $6B ; 0x8E
 	db $30 ; 0x8F
 	db $62 ; 0x90
+	db $18 ; 0x91
 
 	; Reserved
-	db $00 ; 0x91
 	db $00 ; 0x92
 	db $00 ; 0x93
 	db $00 ; 0x94
@@ -540,9 +541,9 @@ NewOutletData:
 	dw $00A0 ; 0x8E
 	dw $00C8 ; 0x8F
 	dw $0894 ; 0x90
+	dw $1120 ; 0x91
 
 	; Reserved
-	dw $0000 ; 0x91
 	dw $0000 ; 0x92
 	dw $0000 ; 0x93
 	dw $0000 ; 0x94
@@ -803,6 +804,7 @@ NewOutletData:
 	dw $0A05 ; 0x8E
 	dw $0C0A ; 0x8F
 	dw $091E ; 0x90
+	dw $0837 ; 0x91
 
 	; Reserved
 	dw $0000 ; 0x91
@@ -1066,9 +1068,9 @@ NewOutletData:
 	dw $0700 ; 0x8E
 	dw $024A ; 0x8F
 	dw $0492 ; 0x90
+	dw $0106 ; 0x91
 
 	; Reserved
-	dw $0000 ; 0x91
 	dw $0000 ; 0x92
 	dw $0000 ; 0x93
 	dw $0000 ; 0x94
@@ -1329,9 +1331,9 @@ NewOutletData:
 	dw $0A66 ; 0x8E
 	dw $0C67 ; 0x8F
 	dw $09A6 ; 0x90
+	dw $0888 ; 0x91
 
 	; Reserved
-	dw $0000 ; 0x91
 	dw $0000 ; 0x92
 	dw $0000 ; 0x93
 	dw $0000 ; 0x94
@@ -1592,9 +1594,9 @@ NewOutletData:
 	dw $0788 ; 0x8E
 	dw $02C8 ; 0x8F
 	dw $0508 ; 0x90
+	dw $0188 ; 0x91
 
 	; Reserved
-	dw $0000 ; 0x91
 	dw $0000 ; 0x92
 	dw $0000 ; 0x93
 	dw $0000 ; 0x94
@@ -1855,9 +1857,9 @@ NewOutletData:
 	dw $0A72 ; 0x8E
 	dw $0C77 ; 0x8F
 	dw $098B ; 0x90
+	dw $08A4 ; 0x91
 
 	; Reserved
-	dw $0000 ; 0x91
 	dw $0000 ; 0x92
 	dw $0000 ; 0x93
 	dw $0000 ; 0x94
@@ -2118,9 +2120,9 @@ NewOutletData:
 	dw $0785 ; 0x8E
 	dw $02CF ; 0x8F
 	dw $050F ; 0x90
+	dw $0193 ; 0x91
 
 	; Reserved
-	dw $0000 ; 0x91
 	dw $0000 ; 0x92
 	dw $0000 ; 0x93
 	dw $0000 ; 0x94
@@ -2381,9 +2383,9 @@ NewOutletData:
 	db $0B ; 0x8E
 	db $06 ; 0x8F
 	db $00 ; 0x90
+	db $07 ; 0x91
 
 	; Reserved
-	db $00 ; 0x91
 	db $00 ; 0x92
 	db $00 ; 0x93
 	db $00 ; 0x94
@@ -2644,9 +2646,9 @@ NewOutletData:
 	db $F5 ; 0x8E
 	db $FA ; 0x8F
 	db $00 ; 0x90
+	db $F9 ; 0x91
 
 	; Reserved
-	db $00 ; 0x91
 	db $00 ; 0x92
 	db $00 ; 0x93
 	db $00 ; 0x94
@@ -2907,9 +2909,9 @@ NewOutletData:
 	dw $0000 ; 0x8E
 	dw $0000 ; 0x8F
 	dw $0000 ; 0x90
+	dw $1530 ; 0x91
 
 	; Reserved
-	dw $0000 ; 0x91
 	dw $0000 ; 0x92
 	dw $0000 ; 0x93
 	dw $0000 ; 0x94
@@ -3170,9 +3172,9 @@ NewOutletData:
 	dw $0000 ; 0x8E
 	dw $0000 ; 0x8F
 	dw $0000 ; 0x90
+	dw $0000 ; 0x91
 
 	; Reserved
-	dw $0000 ; 0x91
 	dw $0000 ; 0x92
 	dw $0000 ; 0x93
 	dw $0000 ; 0x94
