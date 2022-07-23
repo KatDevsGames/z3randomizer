@@ -50,6 +50,8 @@ RTL
             RTS
         +
         SEP #$20
+        LDA.b $11
+        BNE .done
         LDA.b #$96
         LDY.b #$01
         

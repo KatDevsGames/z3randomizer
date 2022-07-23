@@ -681,30 +681,12 @@ RTL
 RTS
 
 .setDungeonCompletion
-        LDA $040C
-	CMP #$FF : BEQ +
-		LSR : AND #$0F : CMP #$08 : !BGE ++
-			JSR .valueShift
-			ORA DungeonsCompleted : STA DungeonsCompleted
-			BRA +
-		++
-			!SUB #$08
-			JSR .valueShift
-			BIT.b #$C0 : BEQ +++ : LDA.b #$C0 : +++ ; Make Hyrule Castle / Sewers Count for Both
-			ORA DungeonsCompleted+1 : STA DungeonsCompleted+1
+	LDX $040C : BMI +
+		REP #$20  ; 16 bit
+		LDA.l DungeonMask, X
+		ORA DungeonsCompleted : STA DungeonsCompleted
+		SEP #$20  ; 8 bit
 	+
-RTS
-
-.valueShift
-	PHX
-	TAX : LDA.b #$01
-	-
-		CPX #$00 : BEQ +
-		ASL
-		DEX
-	BRA -
-	+
-	PLX
 RTS
 ;--------------------------------------------------------------------------------
 

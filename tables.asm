@@ -2668,7 +2668,7 @@ db $15, $FF, $24, $18, $FF, $1C, $1E, $20 ; 0x0E8-0x0EF
 db $07, $08, $0E, $0F, $10, $11, $FF, $FF ; 0x0F0-0x0F7
 db $14, $22, $23, $17, $FF, $1B, $1D, $1F ; 0x0F8-0x0FF
 db $FF, $FF, $FF, $FF, $00, $FF, $FF, $FF ; 0x100-0x107
-db $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF ; 0x108-0x10F
+db $91, $FF, $FF, $FF, $FF, $FF, $FF, $FF ; 0x108-0x10F
 db $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF ; 0x110-0x117
 db $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF ; 0x118-0x11F
 db $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF ; 0x120-0x127

@@ -436,6 +436,8 @@ org $00891D
 org $00893D
 EnableForceBlank:
 
+DungeonMask = $0098C0
+
 org $00D308
 DecompSwordGfx:
 
