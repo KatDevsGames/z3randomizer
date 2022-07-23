@@ -24,8 +24,8 @@ org 0 ; This module writes no bytes. Asar gives bank cross errors without this.
 ; Example: We can use RoomDataWRAM[$37].high to read or write the pot key in the first
 ; floodable room in Swamp Palace ($04)
 ;--------------------------------------------------------------------------------
-; .high Byte:  d d d d b k u r
-; .low Byte:   c c c c q q q q
+; .high Byte:  d d d d b k u t
+; .low Byte:   s e h c q q q q
 ;
 ; d = Door opened (key, bomb wall, etc)
 ; b = Boss kill / Heart Container
