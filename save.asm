@@ -1,12 +1,40 @@
 ;--------------------------------------------------------------------------------
-Validate_SRAM:
-	REP #$30 ; vanilla behavior from $0CCD45, includes prize pack reset after save and quit
-		LDX #$00FE : -
-			STZ $0D00, X
-			STZ $0E00, X
-			STZ $0F00, X
-			DEX #2
-		BPL -
+WriteSaveChecksum:
+        LDX.w #$0000 : TXA : - ; Checksum first $04FE bytes
+                CLC : ADC.l SaveDataWRAM, X
+                INX #2
+        CPX #$04FE : BNE -
+        LDX.w #$0000 : - ; Checksum extended save data
+                CLC : ADC.l ExtendedFileNameWRAM, X
+                INX #2
+        CPX #$0FFE : BNE -
+        STA.b $00
+        LDA.w #$5A5A
+        SEC : SBC.b $00
+        STA.l $7004FE
+RTL
+;--------------------------------------------------------------------------------
+ValidateSRAM:
+        REP #$30
+        LDX.w #$0000 : TXA : - ; Checksum first $04FE bytes
+                CLC : ADC.l CartridgeSRAM,X
+                INX #2
+        CPX.w #$04FE : BNE -
+        LDX.w #$0000 : - ; Checksum extended save data
+                CLC : ADC.l ExtendedFileNameSRAM, X
+                INX #2
+        CPX #$0FFE : BNE -
+        STA.b $00
+        LDA.w #$5A5A
+        SEC : SBC.b $00
+        CMP.l InverseChecksumSRAM : BEQ +
+                TDC : STA.l FileValiditySRAM : + ; Delete save by way of zeroing validity marker
+	LDX.w #$00FE : - ; includes prize pack reset after save and quit
+		STZ $0D00, X
+		STZ $0E00, X
+		STZ $0F00, X
+		DEX #2
+	BPL -
 	SEP #$30
 RTL
 ;--------------------------------------------------------------------------------
@@ -23,6 +51,11 @@ ClearExtendedSaveFile:
 	STA $700D00, X
 	STA $700E00, X
 	STA $700F00, X
+	STA $701000, X
+	STA $701100, X
+	STA $701200, X
+	STA $701300, X
+	STA $701400, X
 RTL
 ;--------------------------------------------------------------------------------
 ClearExtendedWRAMSaveFile:
@@ -125,5 +158,4 @@ CopyExtendedWRAMSaveFileToSRAM:
 	REP #$30
 	PLB
 	PLA
-	LDX.w #$0000 : TXA ; what we wrote over
 RTL

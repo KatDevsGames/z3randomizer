@@ -10,6 +10,7 @@
 ;--------------------------------------------------------------------------------
 pushpc
 org 0 ; This module writes no bytes. Asar gives bank cross errors without this.
+SaveDataWRAM = $7EF000
 
 ;================================================================================
 ; Room Data ($7EF000 - $7EF27F
@@ -366,7 +367,7 @@ GTCollectedKeys: skip 1         ; /  Ganon's Tower
 skip 2                          ; Reserved for previous table
 FileMarker: skip 1              ; $FF = Active save file | $00 = Inactive save file
 skip 13                         ; Unused
-InverseChecksum: skip 2         ; Vanilla Inverse Checksum. Don't write unless computing checksum.
+InverseChecksumWRAM: skip 2     ; Vanilla Inverse Checksum. Don't write unless computing checksum.
 
 ;================================================================================
 ; Expanded SRAM ($7F6000 - $7F6FFF)
@@ -379,8 +380,7 @@ ExtendedFileNameWRAM: skip 24   ; File name, 12 word-length characters.
 RoomPotData: skip 592           ; Table for expanded pot shuffle. One word per room.
 SpritePotData: skip 592         ; Table for expanded pot shuffle. One word per room.
 PurchaseCounts: skip 96         ; Keeps track of shop purchases
-PrivateBlock: skip 512          ; Reserved for 3rd party developers
-DummyValue: skip 1              ; $01 if you're a real dummy
+PrivateBlock: skip 513          ; Reserved for 3rd party developers
 
 ;================================================================================
 ; Direct SRAM Assignments ($700000 - $7080000)
@@ -403,7 +403,8 @@ ProgressIndicatorSRAM: skip 1   ;
 skip 19                         ;
 FileNameVanillaSRAM: skip 8     ; First four characters of file name
 FileValiditySRAM: skip 2        ;
-skip 285                        ;
+skip 283                        ;
+InverseChecksumSRAM: skip 2     ;
 ExtendedFileNameSRAM: skip 24   ; We read and write the file name directly from and to SRAM (24 bytes)
 skip $1AE4                      ;
 RomVersionSRAM: skip 4          ; ALTTPR ROM version. Low byte is the version, high byte writes
@@ -515,7 +516,7 @@ endmacro
 %assertSRAM(FollowerDropped, $7EF3D3)
 %assertSRAM(FileNameVanillaWRAM, $7EF3D9)
 %assertSRAM(FileValidity, $7EF3E1)
-%assertSRAM(InverseChecksum, $7EF4FE)
+%assertSRAM(InverseChecksumWRAM, $7EF4FE)
 
 ;================================================================================
 ; Randomizer Assertions
@@ -640,7 +641,6 @@ endmacro
 %assertSRAM(SpritePotData, $7F6268)
 %assertSRAM(PurchaseCounts, $7F64B8)
 %assertSRAM(PrivateBlock, $7F6518)
-%assertSRAM(DummyValue, $7F6718)
 
 ;================================================================================
 ; Direct SRAM Assertions
@@ -654,6 +654,7 @@ endmacro
 %assertSRAM(ProgressIndicatorSRAM, $7003C5)
 %assertSRAM(FileNameVanillaSRAM, $7003D9)
 %assertSRAM(FileValiditySRAM, $7003E1)
+%assertSRAM(InverseChecksumSRAM, $7004FE)
 %assertSRAM(ExtendedFileNameSRAM, $700500)
 %assertSRAM(RomNameSRAM, $702000)
 %assertSRAM(RomVersionSRAM, $701FFC)
