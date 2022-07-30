@@ -411,9 +411,10 @@ RomVersionSRAM: skip 4          ; ALTTPR ROM version. Low byte is the version, h
                                 ; $01 for now (32-bits total)
 RomNameSRAM: skip 21            ; ROM name from $FFC0, burned in during init (21 bytes)
                                 ; If value in the ROM doesn't match SRAM, save is cleared.
-skip 4075                       ;
 PasswordSRAM: skip 16           ; Password value (16 bytes)
-
+skip 8155                       ;
+SaveBackupSRAM:                 ; Backup copy of save ram. Game will attempt to use this if
+                                ; checksum on file select screen load fails.
 base off
 
 ;================================================================================
@@ -656,8 +657,9 @@ endmacro
 %assertSRAM(FileValiditySRAM, $7003E1)
 %assertSRAM(InverseChecksumSRAM, $7004FE)
 %assertSRAM(ExtendedFileNameSRAM, $700500)
-%assertSRAM(RomNameSRAM, $702000)
 %assertSRAM(RomVersionSRAM, $701FFC)
-%assertSRAM(PasswordSRAM, $703000)
+%assertSRAM(RomNameSRAM, $702000)
+%assertSRAM(PasswordSRAM, $702015)
+%assertSRAM(SaveBackupSRAM, $704000)
 
 pullpc

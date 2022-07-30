@@ -306,7 +306,7 @@ org $008998 ; <- Bank00.asm : 1296 (LDX.w #$0000)
 JSL CopyExtendedWRAMSaveFileToSRAM
 ;--------------------------------------------------------------------------------
 org $00899C ; <- bank_00.asm : #_00899C (CLC)
-JSL WriteSaveChecksum
+JSL WriteSaveChecksumAndBackup
 LDA.w #$01F3 : TCS : SEP #$30 : PLB : RTL ; Get the stack and data bank correct
 padbyte $FF : pad $0089C2 ; Fill adjacent free rom forward. See bank_00.asm: #_0089C2
 ;--------------------------------------------------------------------------------
