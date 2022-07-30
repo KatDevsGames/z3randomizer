@@ -15,6 +15,7 @@ fillword $0000 ; Zero out the table
 fill $500      ;
 
 org $30B000 ; PC 0x183000
+InitSRAMTable:
 InitRoomDataWRAM:
 org $30B060 ; PC 0x183060
 InitATAltarRoom: dw $0000 ; aga curtains
