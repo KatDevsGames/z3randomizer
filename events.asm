@@ -89,16 +89,17 @@ OnAga2Defeated:
 ;--------------------------------------------------------------------------------
 OnFileCreation:
         ; Copy initial SRAM state from ROM to cart SRAM
+        ; If the inital SRAM table is move these addresses must be changed
         PHB
-        LDA.w #$03D7 ; \
-        LDX.w #$B000 ;  | Copies from beginning of inital sram table up to file name
-        LDY.w #$0000 ;  | (exclusively)
-        MVN $70, $30 ; /
-                     ; Skip file name and validity value
-        LDA.w #$010C ; \
-        LDX.w #$B3E3 ;  | Rando-Specific Assignments & Game Stats block
-        LDY.w #$03E3 ;  |
-        MVN $70, $30 ; /
+        LDA.w #$03D7                ; \
+        LDX.w #$B000                ;  | Copies from beginning of inital sram table up to file name
+        LDY.w #$0000                ;  | (exclusively)
+        MVN SRAMBank, SRAMTableBank ; /
+                                    ; Skip file name and validity value
+        LDA.w #$010C                ; \
+        LDX.w #$B3E3                ;  | Rando-Specific Assignments & Game Stats block
+        LDY.w #$03E3                ;  |
+        MVN SRAMBank, SRAMTableBank ; /
         PLB
 
         ; resolve instant post-aga if standard

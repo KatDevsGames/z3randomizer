@@ -188,7 +188,7 @@ JSL.l AltBufferTable : NOP #8 ; Delete screen
 ;--------------------------------------------------------------------------------
 org $0CCCCC ;<- 64CCC - Bank0C.asm : 1628 (JSL Intro_ValidateSram) / Bank02.asm : 75 (REP #$30)
 ; Explanation: In JP 1.0 the code for Intro_ValidateSram was inline in Bank 0C
-JML.l Validate_SRAM ;(Return via RTL. Original code JML'd to Intro_LoadSpriteStats which returns with RTL, but we want to skip that)
+JML.l ValidateSRAM ;(Return via RTL. Original code JML'd to Intro_LoadSpriteStats which returns with RTL, but we want to skip that)
 org $0CCD57 ;<- 64D57 - Bank0C.asm :
 RTL ;Just in case anybody ever removes the previous hook
 ;--------------------------------------------------------------------------------
@@ -299,11 +299,16 @@ BRA +
 ;================================================================================
 ; Extended SRAM Save file
 ;--------------------------------------------------------------------------------
-org $0ccf08 ; <- Bank0C.asm : 2036 (LDA.w #$0007 : STA $7EC00D : STA $7EC013)
+org $0CCF08 ; <- Bank0C.asm : 2036 (LDA.w #$0007 : STA $7EC00D : STA $7EC013)
 JSL CopyExtendedSaveFileToWRAM
 ;--------------------------------------------------------------------------------
 org $008998 ; <- Bank00.asm : 1296 (LDX.w #$0000)
 JSL CopyExtendedWRAMSaveFileToSRAM
+;--------------------------------------------------------------------------------
+org $00899C ; <- bank_00.asm : #_00899C (CLC)
+JSL WriteSaveChecksumAndBackup
+LDA.w #$01F3 : TCS : SEP #$30 : PLB : RTL ; Get the stack and data bank correct
+padbyte $FF : pad $0089C2 ; Fill adjacent free rom forward. See bank_00.asm: #_0089C2
 ;--------------------------------------------------------------------------------
 org $0CD7AB ; <- Bank0C.asm : 3342 (STA $700400, X)
 JSL.l ClearExtendedSaveFile
