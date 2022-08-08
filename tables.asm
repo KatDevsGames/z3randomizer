@@ -110,11 +110,7 @@ org $308033 ; PC 0x180033
 HeartBeep:
 db #$20 ; #$00 = Off - #$20 = Normal (default) - #$40 = Half Speed - #$80 = Quarter Speed
 ;--------------------------------------------------------------------------------
-org $308034 ; PC 0x180034 - 0x180035
-StartingMaxBombs:
-db #10 ; #10 = Default (10 decimal)
-StartingMaxArrows:
-db #30 ; #30 = Default (30 decimal)
+; 0x180034 - 0x180035 (Unused)
 ;--------------------------------------------------------------------------------
 org $308036 ; PC 0x180036 - 0x180037
 RupoorDeduction:
@@ -332,15 +328,15 @@ db $00 ;
 ;Warp BL     : 7A
 ;Warp BR     : 7B
 ;--------------------------------------------------------------------------------
-org $308080 ; PC 0x180080 - 0x180083
+org $308080 ; PC 0x180080 - 0x180083 ; Default to fill on upgrade. Can be set to 0 to not fill.
 Upgrade5BombsRefill:
-db #$00
+db #$32
 Upgrade10BombsRefill:
-db #$00
+db #$32
 Upgrade5ArrowsRefill:
-db #$00
+db #$46
 Upgrade10ArrowsRefill:
-db #$00
+db #$46
 ;--------------------------------------------------------------------------------
 org $308084 ; PC 0x180084 - 0x180085
 PotionHealthRefill:
