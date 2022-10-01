@@ -126,8 +126,8 @@ MaximumHealth: skip 1           ; \ Max Health & Current Health
 CurrentHealth: skip 1           ; / Max value for both is $A0 | $04 = half heart | $08 = heart
 CurrentMagic: skip 1            ; Current magic | Max value is $80
 CurrentSmallKeys: skip 1        ; Number of small keys held for current dungeon (integer)
-BombCapacityUpgrades: skip 1    ; \ Bomb & Arrow Capacity Upgrades
-ArrowCapacityUpgrades: skip 1   ; / Indicates flatly how many can be held above vanilla max (integers)
+BombCapacity: skip 1            ; \ Bomb & Arrow Capacity Upgrades
+ArrowCapacity: skip 1           ; / Indicates flatly how many can be held (integers)
 HeartsFiller: skip 1            ; Hearts collected yet to be filled. Write in multiples of $08
 MagicFiller: skip 1             ; Magic collected yet to be filled
 PendantsField: skip 1           ; - - - - - g b r (bitfield)
@@ -483,8 +483,8 @@ endmacro
 %assertSRAM(CurrentHealth, $7EF36D)
 %assertSRAM(CurrentMagic, $7EF36E)
 %assertSRAM(CurrentSmallKeys, $7EF36F)
-%assertSRAM(BombCapacityUpgrades, $7EF370)
-%assertSRAM(ArrowCapacityUpgrades, $7EF371)
+%assertSRAM(BombCapacity, $7EF370)
+%assertSRAM(ArrowCapacity, $7EF371)
 %assertSRAM(HeartsFiller, $7EF372)
 %assertSRAM(MagicFiller, $7EF373)
 %assertSRAM(PendantsField, $7EF374)

@@ -695,7 +695,7 @@ RTS
 ;--------------------------------------------------------------------------------
 Link_ReceiveItem_HUDRefresh:
 	LDA BombsEquipment : BNE + ; skip if we have bombs
-	LDA BombCapacityUpgrades : !ADD.l StartingMaxBombs : BEQ + ; skip if we can't have bombs
+	LDA BombCapacity : BEQ + ; skip if we can't have bombs
 	LDA BombsFiller : BEQ + ; skip if we are filling no bombs
 		DEC : STA BombsFiller ; decrease bomb fill count
 		LDA.b #$01 : STA BombsEquipment ; increase actual bomb count
@@ -712,7 +712,7 @@ RTL
 HandleBombAbsorbtion:
 	STA BombsFiller ; thing we wrote over
 	LDA $0303 : BNE + ; skip if we already have some item selected
-	LDA BombCapacityUpgrades : !ADD.l StartingMaxBombs : BEQ + ; skip if we can't have bombs
+	LDA BombCapacity : BEQ + ; skip if we can't have bombs
 		LDA.b #$04 : STA $0202 ; set selected item to bombs
 		LDA.b #$01 : STA $0303 ; set selected item to bombs
 		JSL.l HUD_RebuildLong
