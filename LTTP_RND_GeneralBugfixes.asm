@@ -209,6 +209,9 @@ incsrc overworldoutlets.asm
 org $A38000
 incsrc stats/main.asm
 
+;bank 28/A8 for keydrop shuffle / standing items / pottery lottery
+incsrc keydrop/standing_items.asm
+
 org $308000 ; bank #$30
 incsrc tables.asm
 
@@ -326,7 +329,12 @@ warnpc $B08000
 ;$22 Contrib Code
 ;$23 Stats & Credits
 ;$24 Code Bank
+;$26 Reserved for Multiworld Data
+;$27 Reserved for DR
+;$28 Standing Items (Pottery Lottery/Key Drop shuffle)
 ;$29 External hooks (rest of bank not used)
+;$2A Reserved for OWR
+;$2B Outlet Data
 ;$2E Reserved for Tournament Use
 ;$2F Static RNG (rest is reserved for tournament use)
 ;$30 Main Configuration Table
