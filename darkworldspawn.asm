@@ -11,10 +11,11 @@ DoWorldFix:
 		JMP DoWorldFix_Inverted
 	+
 	LDA.l Bugfix_MirrorlessSQToLW : BEQ .skip_mirror_check
+                LDA.l FollowerIndicator : CMP #$04 : BEQ .setLightWorld ; check if old man is following
 		LDA MirrorEquipment : BEQ .noMirror ; check if we have the mirror
 	.skip_mirror_check ; alt entrance point
 	LDA ProgressIndicator : CMP.b #$03 : BCS .done ; check if agahnim 1 is alive
-	.aga1Alive
+        .setLightWorld
 	LDA #$00
 	.noMirror
 	STA CurrentWorld ; set flag to light world
@@ -46,11 +47,11 @@ RTL
 ;================================================================================
 DoWorldFix_Inverted:
 	LDA.l Bugfix_MirrorlessSQToLW : BEQ .skip_mirror_check
-		LDA MirrorEquipment : BEQ .noMirror ; check if we have the mirror
+                LDA.l FollowerIndicator : CMP #$04 : BEQ .setDarkWorld ; check if old man is following
+		LDA MirrorEquipment : BEQ .setDarkWorld ; check if we have the mirror
 	.skip_mirror_check ; alt entrance point
 	LDA ProgressIndicator : CMP.b #$03 : BCS .done ; check if agahnim 1 is alive
-	.noMirror
-	.aga1Alive
+        .setDarkWorld
 	LDA #$40 : STA CurrentWorld ; set flag to dark world
 	LDA FollowerIndicator
 	CMP #$07 : BEQ .clear ; clear frog
