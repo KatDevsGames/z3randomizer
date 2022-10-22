@@ -449,7 +449,7 @@ AddReceivedItemExpanded:
 				LDA.b #$4F : STA $02D8
 			+++ : JMP .done
 		++ : CMP.b #$5E : BNE ++ ; Progressive Sword
-			LDA SwordEquipment : CMP.l ProgressiveSwordLimit : !BLT +
+			LDA HighestSword : CMP.l ProgressiveSwordLimit : !BLT +
 				LDA.l ProgressiveSwordReplacement : STA $02D8 : JMP .done
 			+ : CMP.b #$00 : BNE + ; No Sword
 				LDA.b #$49 : STA $02D8 : JMP .done
@@ -460,7 +460,7 @@ AddReceivedItemExpanded:
 			+ ; Everything Else
 				LDA.b #$03 : STA $02D8 : JMP .done
 		++ : CMP.b #$5F : BNE ++ ; Progressive Shield
-			LDA ShieldEquipment : CMP.l ProgressiveShieldLimit : !BLT +
+			LDA HighestShield : CMP.l ProgressiveShieldLimit : !BLT +
 				LDA.l ProgressiveShieldReplacement : STA $02D8 : JMP .done
 			+ : CMP.b #$00 : BNE + ; No Shield
 				LDA.b #$04 : STA $02D8 : JMP .done
@@ -469,7 +469,7 @@ AddReceivedItemExpanded:
 			+ ; Everything Else
 				LDA.b #$06 : STA $02D8 : JMP .done
 		++ : CMP.b #$60 : BNE ++ ; Progressive Armor
-			LDA ArmorEquipment : CMP.l ProgressiveArmorLimit : !BLT +
+			LDA HighestMail : CMP.l ProgressiveArmorLimit : !BLT +
 				LDA.l ProgressiveArmorReplacement : STA $02D8 : JMP .done
 			+ : CMP.b #$00 : BNE + ; No Armor
 				LDA.b #$22 : STA $02D8 : JMP .done
