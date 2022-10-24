@@ -11,6 +11,7 @@ QuickSwap:
 	LDA.l QuickSwapFlag : BEQ .done
 	LDA.w $0202 : BEQ .done ; Skip everything if we don't have any items
 
+        LDY.b #$14
 	PHX
 	XBA ; restore the stashed value
 	CMP.b #$30 : BNE +
@@ -58,8 +59,10 @@ RCode:
 	-
 		+ CPX.b #$14 : BNE + : LDX.b #$00 ;will wrap around to 1
 		+ INX
+                DEY : BEQ +
 	.nextItem
 	JSL.l IsItemAvailable : BEQ -
+        +
 RTS
 
 LCode:
@@ -73,6 +76,17 @@ LCode:
 	-
 		+ CPX.b #$01 : BNE + : LDX.b #$15 ; will wrap around to $14
 		+ DEX
+                DEY : BEQ +
 	.nextItem
 	JSL.l IsItemAvailable : BEQ -
+        +
 RTS
+
+IsItemAvailable:
+        LDA.l InfiniteBombs : BEQ .finite
+        .infinite
+                CPX.b #$04 : BNE .finite
+                LDA.b #$01 : RTL
+        .finite
+                LDA.l EquipmentWRAM-1, X
+RTL

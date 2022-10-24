@@ -6,6 +6,7 @@
 ;--------------------------------------------------------------------------------
 ; Placeholder and for compass item max count allocations, still WIP
 ;--------------------------------------------------------------------------------
+InfiniteBombs = $7F50C9
 CompassTotalsWRAM = $7F5410
 
 ;================================================================================
@@ -15,4 +16,5 @@ macro assertRAM(label, address)
   assert <label> = <address>, "<label> labeled at incorrect address."
 endmacro
 
+%assertRAM(InfiniteBombs, $7F50C9)
 %assertRAM(CompassTotalsWRAM, $7F5410)

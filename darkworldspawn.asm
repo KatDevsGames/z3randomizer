@@ -131,19 +131,18 @@ RefreshRainAmmo:
 RTL
 ;--------------------------------------------------------------------------------
 !INFINITE_ARROWS = "$7F50C8"
-!INFINITE_BOMBS = "$7F50C9"
 !INFINITE_MAGIC = "$7F50CA"
 SetEscapeAssist:
 	LDA ProgressIndicator : CMP.b #$01 : BNE .no_train ; check if we're in rain state
 	.rain
 		LDA.l EscapeAssist
 		BIT.b #$04 : BEQ + : STA !INFINITE_MAGIC : +
-		BIT.b #$02 : BEQ + : STA !INFINITE_BOMBS : +
+		BIT.b #$02 : BEQ + : STA InfiniteBombs : +
 		BIT.b #$01 : BEQ + : STA !INFINITE_ARROWS : +
 		BRA ++
 	.no_train ; choo choo
 		LDA.l EscapeAssist : BIT.b #$04 : BEQ + : LDA.b #$00 : STA !INFINITE_MAGIC : +
-		LDA.l EscapeAssist : BIT.b #$02 : BEQ + : LDA.b #$00 : STA !INFINITE_BOMBS : +
+		LDA.l EscapeAssist : BIT.b #$02 : BEQ + : LDA.b #$00 : STA InfiniteBombs : +
 		LDA.l EscapeAssist : BIT.b #$01 : BEQ + : LDA.b #$00 : STA !INFINITE_ARROWS : +
 	++
 RTL

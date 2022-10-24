@@ -3,10 +3,9 @@ SEP #$30
 ;================================================================================
 ; Draw bomb count
 !BOMBCOUNT_DRAW_ADDRESS = "$7EC75A"
-!INFINITE_BOMBS = "$7F50C9"
 ;================================================================================
 
-	LDA !INFINITE_BOMBS : BNE .infinite_bombs
+	LDA.l InfiniteBombs : BNE .infinite_bombs
 	.finite_bombs
 		LDA.l BombsEquipment ; bombs
 		JSR HudHexToDec2Digit ;requires 8 bit registers!
