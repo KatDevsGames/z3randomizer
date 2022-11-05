@@ -2,42 +2,41 @@
 ; RNG Fixes
 ;--------------------------------------------------------------------------------
 RigDigRNG:
-	LDA $7FFE01 : CMP.l DiggingGameRNG : !BGE .forceHeart
+	LDA.l $7FFE01 : CMP.l DiggingGameRNG : !BGE .forceHeart
 	.normalItem
 	JML GetRandomInt
 	.forceHeart
-	LDA $7FFE00 : BNE .normalItem
-	LDA #$04
+	LDA.l $7FFE00 : BNE .normalItem
+	LDA.b #$04
 RTL
 ;--------------------------------------------------------------------------------
 RigChestRNG:
 	JSL.l DecrementChestCounter
-	LDA $04C4 : CMP.l ChestGameRNG : BEQ .forceHeart
+	LDA.w $04C4 : CMP.l ChestGameRNG : BEQ .forceHeart
 	.normalItem
 	JSL GetRandomInt
 	AND.b #$07 ; restrict values to 0-7
-	CMP #$07 : BEQ .notHeart
+	CMP.b #$07 : BEQ .notHeart
 	JSL.l DecrementItemCounter
 RTL
 	.forceHeart
-	LDA #$33 : STA $C8 ; assure the correct state if player talked to shopkeeper
-	LDA $0403 : AND.b #$40 : BNE .notHeart
-	LDA #$07 ; give prize item
+	LDA.b #$33 : STA.b $C8 ; assure the correct state if player talked to shopkeeper
+	LDA.w $0403 : AND.b #$40 : BNE .notHeart
+	LDA.b #$07 ; give prize item
 RTL
 	.notHeart
 	JSL.l DecrementItemCounter
-	;LDA #$00 ; bullshit rupee farming in chest game
 	
 	JSL GetRandomInt ; spam RNG until we stop getting the prize item
 	AND.b #$07 ; restrict values to 0-7
-	CMP #$07 : BNE + ; player got prize item AGAIN
+	CMP.b #$07 : BNE + ; player got prize item AGAIN
 		LDA.b #$00 ; give them money instead
 	+
 RTL
 ;--------------------------------------------------------------------------------
 FixChestCounterForChestGame:
 	JSL.l DecrementItemCounter
-	JSL $0DBA71
+	JSL.l $0DBA71
 RTL
 ;--------------------------------------------------------------------------------
 RNG_Lanmolas1:
@@ -45,12 +44,12 @@ RNG_Lanmolas1:
 RNG_Moldorm1:
 	LDA.b #$01 : BRA _rng_done
 RNG_Agahnim1:
-	LDA.b $A0 : CMP #$20 : BNE RNG_Agahnim2 ; Agah 1 and 2 use the same code, check which agah we're fighting and branch
+	LDA.b $A0 : CMP.b #$20 : BNE RNG_Agahnim2 ; Agah 1 and 2 use the same code, check which agah we're fighting and branch
 	LDA.b #$02
 	JSL.l GetStaticRNG : PHA
 	LDA.l GanonAgahRNG : BEQ + ; check if blue balls are disabled
 		PLA
-		ORA #$01 ; guarantee no blue ball
+		ORA.b #$01 ; guarantee no blue ball
 		RTL
 	+
 	PLA
@@ -77,7 +76,7 @@ RNG_Agahnim2:
 	JSL.l GetStaticRNG : PHA
 	LDA.l GanonAgahRNG : BEQ + ; check if blue balls are disabled
 		PLA
-		ORA #$01 ; guarantee no blue ball
+		ORA.b #$01 ; guarantee no blue ball
 		RTL
 	+
 	PLA
@@ -89,32 +88,31 @@ RNG_Ganon:
 RNG_Ganon_Extra_Warp:
 	LDA.b #$0E
 	JSL.l GetStaticRNG : PHA
-	LDA GanonAgahRNG : BEQ + ; check if warps are disabled
+	LDA.l GanonAgahRNG : BEQ + ; check if warps are disabled
 		PLA
-		AND #$FE ; set least significant bit to 0 to prevent teleport
+		AND.b #$FE ; set least significant bit to 0 to prevent teleport
 		RTL
 	+
 	PLA
 	RTL
 RNG_Enemy_Drops:
-        LDA.l ProgressIndicator : CMP #$01 : BEQ + ; drops are static after uncle pickup & before rescuing zelda
-            JML GetRandomInt
+        LDA.l ProgressIndicator : CMP.b #$01 : BEQ + ; drops are static after uncle pickup & before rescuing zelda
+                JML GetRandomInt
         +
-            LDA.b #$0F
-	_rng_done:
-	JSL.l GetStaticRNG
+                LDA.b #$0F
+        _rng_done:
+        JSL.l GetStaticRNG
 RTL
 ;--------------------------------------------------------------------------------
 ; In: A = RNG Index
 ; Out: A = RNG Result
 ;--------------------------------------------------------------------------------
-!RNG_POINTERS = "$7F5200"
 GetStaticRNG:
 	PHX : PHP
 	REP #$30 ; set 16-bit accumulator and index registers
 	AND.w #$000F
-	ASL : TAX : LDA !RNG_POINTERS, X : INC : AND.w #$03FF : STA !RNG_POINTERS, X : TAX ; increment pointer and move value to X
-	LDA Static_RNG, X ; load RNG value
+	ASL : TAX : LDA.l RNGPointers, X : INC : AND.w #$03FF : STA.l RNGPointers, X : TAX ; increment pointer and move value to X
+	LDA.l Static_RNG, X ; load RNG value
 	PLP : PLX
 RTL
 ;--------------------------------------------------------------------------------
@@ -123,10 +121,10 @@ InitRNGPointerTable:
 	REP #$30 ; set 16-bit accumulator & index registers
 	LDX.w #$0000
 	-
-		LDA.l .rngDefaults, X : STA !RNG_POINTERS, X : INX #2
-		LDA.l .rngDefaults, X : STA !RNG_POINTERS, X : INX #2
-		LDA.l .rngDefaults, X : STA !RNG_POINTERS, X : INX #2
-		LDA.l .rngDefaults, X : STA !RNG_POINTERS, X : INX #2
+		LDA.l .rngDefaults, X : STA.l RNGPointers, X : INX #2
+		LDA.l .rngDefaults, X : STA.l RNGPointers, X : INX #2
+		LDA.l .rngDefaults, X : STA.l RNGPointers, X : INX #2
+		LDA.l .rngDefaults, X : STA.l RNGPointers, X : INX #2
 	CPX.w #$001F : !BLT -
 	PLP : PLX
 RTL

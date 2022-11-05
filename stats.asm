@@ -6,44 +6,44 @@
 ; See sram.asm for adresses and documentation of stat values
 ;--------------------------------------------------------------------------------
 IncrementBonkCounter:
-	LDA StatsLocked : BNE +
-		LDA BonkCounter : INC
+	LDA.l StatsLocked : BNE +
+		LDA.l BonkCounter : INC
 		CMP.b #100 : BEQ + ; decimal 100
-			STA BonkCounter
+			STA.l BonkCounter
 	+
 RTL
 ;--------------------------------------------------------------------------------
 StatSaveCounter:
 	PHA
-		LDA StatsLocked : BNE +
-		LDA $10 : CMP.b #$17 : BNE + ; not a proper s&q, link probably died
-		LDA SaveQuitCounter : INC
+		LDA.l StatsLocked : BNE +
+		LDA.b $10 : CMP.b #$17 : BNE + ; not a proper s&q, link probably died
+		LDA.l SaveQuitCounter : INC
 		CMP.b #100 : BEQ + ; decimal 100
-			STA SaveQuitCounter
+			STA.l SaveQuitCounter
 		+
 	PLA
 RTL
 ;--------------------------------------------------------------------------------
 DecrementSaveCounter:
 	PHA
-		LDA StatsLocked : BNE +
-			LDA SaveQuitCounter : DEC : STA SaveQuitCounter
+		LDA.l StatsLocked : BNE +
+			LDA.l SaveQuitCounter : DEC : STA.l SaveQuitCounter
 		+
 	PLA
 RTL
 ;--------------------------------------------------------------------------------
 DungeonHoleWarpTransition:
-	LDA $01C31F, X
+	LDA.l $01C31F, X
 	BRA StatTransitionCounter
 DungeonHoleEntranceTransition:
 	JSL EnableForceBlank
 	
 	LDA.l SilverArrowsAutoEquip : AND.b #$02 : BEQ +
 	LDA $010E : CMP.b #$7B : BNE + ; skip unless falling to ganon's room
-	LDA BowTracking : AND.b #$40 : BEQ + ; skip if we don't have silvers
-	LDA BowEquipment : BEQ + ; skip if we have no bow
+	LDA.l BowTracking : AND.b #$40 : BEQ + ; skip if we don't have silvers
+	LDA.l BowEquipment : BEQ + ; skip if we have no bow
 	CMP.b #$03 : !BGE + ; skip if the bow is already silver
-		!ADD #$02 : STA BowEquipment ; increase bow to silver
+		!ADD #$02 : STA.l BowEquipment ; increase bow to silver
 	+
 	
 	BRA StatTransitionCounter
@@ -51,33 +51,33 @@ DungeonStairsTransition:
 	JSL Dungeon_SaveRoomQuadrantData
 	BRA StatTransitionCounter
 DungeonExitTransition:
-	LDA $7F50C7 : BEQ + ; ice physics
+	LDA.l IceModifier : BEQ + ; ice physics
 		JSL Player_HaltDashAttackLong
-		LDA.b #$00 : STA $0301 ; stop item dashing
+		LDA.b #$00 : STA.w $0301 ; stop item dashing
 	+
-	LDA.b #$0F : STA $10 ; stop running through the transition
+	LDA.b #$0F : STA.b $10 ; stop running through the transition
 StatTransitionCounter:
 	PHA : PHP
-		LDA StatsLocked : BNE +
+		LDA.l StatsLocked : BNE +
 		REP #$20 ; set 16-bit accumulator
-		LDA ScreenTransitions : INC
+		LDA.l ScreenTransitions : INC
 		CMP.w #999 : BEQ + ; decimal 999
-			STA ScreenTransitions
+			STA.l ScreenTransitions
 		+
 	PLP : PLA
 RTL
 ;--------------------------------------------------------------------------------
 IncrementFlute:
-	LDA StatsLocked : BNE +
-		LDA FluteCounter : INC : STA FluteCounter
+	LDA.l StatsLocked : BNE +
+		LDA.l FluteCounter : INC : STA.l FluteCounter
 	+
 	JSL.l StatTransitionCounter ; also increment transition counter
 RTL
 ;--------------------------------------------------------------------------------
 IncrementSmallKeys:
-	STA CurrentSmallKeys ; thing we wrote over, write small key count
+	STA.l CurrentSmallKeys ; thing we wrote over, write small key count
 	PHX
-		LDA StatsLocked : BNE +
+		LDA.l StatsLocked : BNE +
 			JSL AddInventory_incrementKeyLong
 		+
 		JSL.l UpdateKeys
@@ -87,15 +87,15 @@ IncrementSmallKeys:
 RTL
 ;--------------------------------------------------------------------------------
 IncrementSmallKeysNoPrimary:
-	STA CurrentSmallKeys ; thing we wrote over, write small key count
+	STA.l CurrentSmallKeys ; thing we wrote over, write small key count
 	PHX
-		LDA StatsLocked : BNE +
+		LDA.l StatsLocked : BNE +
 			JSL AddInventory_incrementKeyLong
 		+
 		JSL.l UpdateKeys
-		LDA $1B : BEQ + ; skip room check if outdoors
+		LDA.b $1B : BEQ + ; skip room check if outdoors
 			PHP : REP #$20 ; set 16-bit accumulator
-				LDA $048E : CMP.w #$0087 : BNE ++ ; hera basement
+				LDA.w $048E : CMP.w #$0087 : BNE ++ ; hera basement
 					PLP : PHY : LDY.b #$24 : JSL.l FullInventoryExternal
 					JSR CountChestKey : PLY : BRA +
 				++
@@ -106,7 +106,7 @@ IncrementSmallKeysNoPrimary:
 RTL
 ;--------------------------------------------------------------------------------
 DecrementSmallKeys:
-	STA CurrentSmallKeys ; thing we wrote over, write small key count
+	STA.l CurrentSmallKeys ; thing we wrote over, write small key count
 	JSL.l UpdateKeys
 RTL
 ;--------------------------------------------------------------------------------
@@ -116,31 +116,31 @@ RTL
 ;--------------------------------------------------------------------------------
 CountChestKey: ; called by neighbor functions
 	PHA : PHX
-		CPY #$24 : BEQ +  ; small key for this dungeon - use $040C
-			CPY #$A0 : !BLT .end ; Ignore most items
-			CPY #$AE : !BGE .end ; Ignore reserved key and generic key
+		CPY.b #$24 : BEQ +  ; small key for this dungeon - use $040C
+			CPY.b #$A0 : !BLT .end ; Ignore most items
+			CPY.b #$AE : !BGE .end ; Ignore reserved key and generic key
 			TYA : AND.B #$0F : BNE ++ ; If this is an HC key, instead count it as a sewers key
 				INC
 			++ TAX : BRA .count  ; use Key id instead of $040C (Keysanity)
-		+ LDA $040C : LSR
+		+ LDA.w $040C : LSR
 		BNE +
 			INC ; combines HC and Sewer counts
 		+ TAX
 		.count
-		LDA DungeonCollectedKeys, X : INC : STA DungeonCollectedKeys, X
+		LDA.l DungeonCollectedKeys, X : INC : STA.l DungeonCollectedKeys, X
    .end
 	PLX : PLA
 RTS
 ;--------------------------------------------------------------------------------
 CountBonkItem: ; called from GetBonkItem in bookofmudora.asm
-	LDA $A0 ; check room ID - only bonk keys in 2 rooms so we're just checking the lower byte
-	CMP #115 : BNE + ; Desert Bonk Key
-		LDA.L BonkKey_Desert : BRA ++
-	+ : CMP #140 : BNE + ; GTower Bonk Key
-		LDA.L BonkKey_GTower : BRA ++
-	+ LDA.B #$24 ; default to small key
+	LDA.b $A0 ; check room ID - only bonk keys in 2 rooms so we're just checking the lower byte
+	CMP.b #115 : BNE + ; Desert Bonk Key
+		LDA.l BonkKey_Desert : BRA ++
+	+ : CMP.b #140 : BNE + ; GTower Bonk Key
+		LDA.l BonkKey_GTower : BRA ++
+	+ LDA.b #$24 ; default to small key
 	++
-	CMP #$24 : BNE +
+	CMP.b #$24 : BNE +
 		PHY
 			TAY : JSR CountChestKey
 		PLY
@@ -149,7 +149,7 @@ RTL
 ;--------------------------------------------------------------------------------
 IncrementAgahnim2Sword:
 	PHA
-		LDA StatsLocked : BNE +
+		LDA.l StatsLocked : BNE +
 			JSL AddInventory_incrementBossSwordLong
 		+
 	PLA
@@ -157,52 +157,52 @@ RTL
 ;--------------------------------------------------------------------------------
 IncrementDeathCounter:
 	PHA
-		LDA StatsLocked : BNE +
-		LDA CurrentHealth : BNE + ; link is still alive, skip
-			LDA DeathCounter : INC : STA DeathCounter
+		LDA.l StatsLocked : BNE +
+		LDA.l CurrentHealth : BNE + ; link is still alive, skip
+			LDA.l DeathCounter : INC : STA.l DeathCounter
 		+
 	PLA
 RTL
 ;--------------------------------------------------------------------------------
 IncrementFairyRevivalCounter:
-	STA BottleContents, X ; thing we wrote over
+	STA.l BottleContents, X ; thing we wrote over
 	PHA
-		LDA StatsLocked : BNE +
-			LDA FaerieRevivalCounter : INC : STA FaerieRevivalCounter
+		LDA.l StatsLocked : BNE +
+			LDA.l FaerieRevivalCounter : INC : STA.l FaerieRevivalCounter
 		+
 	PLA
 RTL
 ;--------------------------------------------------------------------------------
 IncrementChestTurnCounter:
 	PHA
-		LDA StatsLocked : BNE +
-			LDA ChestTurnCounter : INC : STA ChestTurnCounter
+		LDA.l StatsLocked : BNE +
+			LDA.l ChestTurnCounter : INC : STA.l ChestTurnCounter
 		+
 	PLA
 RTL
 ;--------------------------------------------------------------------------------
 IncrementChestCounter:
-	LDA.b #$01 : STA $02E9 ; thing we wrote over
+	LDA.b #$01 : STA.w $02E9 ; thing we wrote over
 	PHA
-		LDA StatsLocked : BNE +
-			LDA ChestsOpened : INC : STA ChestsOpened
+		LDA.l StatsLocked : BNE +
+			LDA.l ChestsOpened : INC : STA.l ChestsOpened
 		+
 	PLA
 RTL
 ;--------------------------------------------------------------------------------
 DecrementChestCounter:
 	PHA
-		LDA StatsLocked : BNE +
-			LDA ChestsOpened : DEC : STA ChestsOpened
+		LDA.l StatsLocked : BNE +
+			LDA.l ChestsOpened : DEC : STA.l ChestsOpened
 		+
 	PLA
 RTL
 ;--------------------------------------------------------------------------------
 DecrementItemCounter:
 	PHA
-		LDA StatsLocked : BNE +
+		LDA.l StatsLocked : BNE +
                         REP #$20
-			LDA TotalItemCounter : DEC : STA TotalItemCounter
+			LDA.l TotalItemCounter : DEC : STA.l TotalItemCounter
                         SEP #$20
 		+
 	PLA
@@ -211,7 +211,7 @@ RTL
 IncrementBigChestCounter:
 	JSL.l Dungeon_SaveRoomQuadrantData ; thing we wrote over
 	PHA
-		LDA StatsLocked : BNE +
+		LDA.l StatsLocked : BNE +
 			%BottomHalf(BigKeysBigChests)
 		+
 	PLA
@@ -220,7 +220,7 @@ RTL
 IncrementDamageTakenCounter_Eight:
 	STA.l CurrentHealth
 	PHA : PHP
-	LDA StatsLocked : BNE +
+	LDA.l StatsLocked : BNE +
 	REP #$21
 	LDA.l DamageCounter
 	ADC.w #$0008
@@ -233,7 +233,7 @@ IncrementDamageTakenCounter_Eight:
 
 IncrementDamageTakenCounter_Arb:
 	PHP
-	LDA StatsLocked : BNE +
+	LDA.l StatsLocked : BNE +
 	REP #$21
 	LDA.b $00
 	AND.w #$00FF
@@ -251,7 +251,7 @@ IncrementMagicUseCounter:
 
 IncrementMagicUseCounterByrna:
 	PHA : PHP
-	LDA StatsLocked : BNE +
+	LDA.l StatsLocked : BNE +
 	REP #$21
 	LDA.b $00
 	AND.w #$00FF
@@ -264,7 +264,7 @@ IncrementMagicUseCounterByrna:
 	RTL
 
 IncrementMagicUseCounterOne:
-	LDA StatsLocked : BNE +
+	LDA.l StatsLocked : BNE +
 	REP #$20
 	LDA.l MagicCounter
 	INC
@@ -276,21 +276,21 @@ IncrementMagicUseCounterOne:
 
 ;--------------------------------------------------------------------------------
 IncrementOWMirror:
-	PHA
-		LDA #$08 : STA $021B ; fail race game
-		LDA StatsLocked : BNE +
-		LDA CurrentWorld : BEQ + ; only do this for DW->LW
-			LDA OverworldMirrors : INC : STA OverworldMirrors
-		+
-	PLA
+        PHA
+                LDA.b #$08 : STA.w $021B ; fail race game
+                LDA.l StatsLocked : BNE +
+                LDA.l CurrentWorld : BEQ + ; only do this for DW->LW
+                        LDA.l OverworldMirrors : INC : STA.l OverworldMirrors
+                +
+        PLA
 JMP StatTransitionCounter
 ;--------------------------------------------------------------------------------
 IncrementUWMirror:
 	PHA
-		LDA.b #$00 : STA $7F5035 ; bandaid patch bug with mirroring away from text
-		LDA StatsLocked : BNE +
+		LDA.b #$00 : STA.l $7F5035 ; bandaid patch bug with mirroring away from text
+		LDA.l StatsLocked : BNE +
 		LDA $040C : CMP #$FF : BEQ + ; skip if we're in a cave or house
-			LDA UnderworldMirrors : INC : STA UnderworldMirrors
+			LDA.l UnderworldMirrors : INC : STA.l UnderworldMirrors
 			JSL.l StatTransitionCounter
 		+
 	PLA
@@ -299,14 +299,14 @@ RTL
 ;--------------------------------------------------------------------------------
 IncrementSpentRupees:
     DEC A : BPL .subtractRupees
-    LDA.w #$0000 : STA CurrentRupees
+    LDA.w #$0000 : STA.l CurrentRupees
 RTL
 	.subtractRupees
 	PHA : PHP
-	LDA StatsLocked : AND.w #$00FF : BNE +
-		LDA RupeesSpent : INC
+	LDA.l StatsLocked : AND.w #$00FF : BNE +
+		LDA.l RupeesSpent : INC
 		CMP.w #9999 : BEQ + ; decimal 9999
-			STA RupeesSpent
+			STA.l RupeesSpent
 	+
 	PLP : PLA
 RTL
@@ -314,53 +314,45 @@ RTL
 IndoorTileTransitionCounter:
 JMP StatTransitionCounter
 ;--------------------------------------------------------------------------------
-!REDRAW = "$7F5000"
 IndoorSubtileTransitionCounter:
-	LDA.b #$01 : STA !REDRAW ; set redraw flag for items
-    STZ $0646 ; stuff we wrote over
-    STZ $0642
+        LDA.b #$01 : STA.l RedrawFlag ; set redraw flag for items
+        STZ.w $0646 ; stuff we wrote over
+        STZ.w $0642
 JMP StatTransitionCounter
 ;--------------------------------------------------------------------------------
-!BOSS_KILLS = "$7F5037"
-!NONCHEST_COUNTER = "$7F503E"
-
-!LAG_TIME = "$7F5038"
-
-!RUPEES_COLLECTED = "$7F503C"
-
 StatsFinalPrep:
 	PHA : PHX : PHP
 		SEP #$30 ; set 8-bit accumulator and index registers
 		
-		LDA StatsLocked : BNE .ramPostOnly
-		INC : STA StatsLocked
+		LDA.l StatsLocked : BNE .ramPostOnly
+		INC : STA.l StatsLocked
 	
 		JSL.l AddInventory_incrementBossSwordLong
 	
-		LDA HighestMail : INC : STA HighestMail ; add green mail to mail count
+		LDA.l HighestMail : INC : STA.l HighestMail ; add green mail to mail count
 		
-		LDA ScreenTransitions : DEC : STA ScreenTransitions ; remove extra transition from exiting gtower via duck
+		LDA.l ScreenTransitions : DEC : STA.l ScreenTransitions ; remove extra transition from exiting gtower via duck
 		
 		.ramPostOnly
-		LDA SwordBossKills : LSR #4 : !ADD SwordBossKills : STA !BOSS_KILLS
-		LDA SwordBossKills+1 : LSR #4 : !ADD SwordBossKills+1 : !ADD !BOSS_KILLS : AND #$0F : STA !BOSS_KILLS
+		LDA.l SwordBossKills : LSR #4 : !ADD SwordBossKills : STA.l BossKills
+		LDA.l SwordBossKills+1 : LSR #4 : !ADD SwordBossKills+1 : !ADD BossKills : AND.b #$0F : STA.l BossKills
 	
-		LDA NMIFrames : !SUB LoopFrames : STA !LAG_TIME
-		LDA NMIFrames+1 : SBC LoopFrames+1 : STA !LAG_TIME+1
-		LDA NMIFrames+2 : SBC LoopFrames+2 : STA !LAG_TIME+2
-		LDA NMIFrames+3 : SBC LoopFrames+3 : STA !LAG_TIME+3
-	
-		LDA RupeesSpent : !ADD DisplayRupees : STA !RUPEES_COLLECTED
-		LDA RupeesSpent+1 : ADC DisplayRupees+1 : STA !RUPEES_COLLECTED+1
+		LDA.l NMIFrames : !SUB LoopFrames : STA.l LagTime
+		LDA.l NMIFrames+1 : SBC LoopFrames+1 : STA.l LagTime+1
+		LDA.l NMIFrames+2 : SBC LoopFrames+2 : STA.l LagTime+2
+		LDA.l NMIFrames+3 : SBC LoopFrames+3 : STA.l LagTime+3
+
+		LDA.l RupeesSpent : !ADD DisplayRupees : STA.l RupeesCollected
+		LDA.l RupeesSpent+1 : ADC DisplayRupees+1 : STA.l RupeesCollected+1
 
                 REP #$20
-		LDA TotalItemCounter : !SUB ChestsOpened : STA !NONCHEST_COUNTER
+		LDA.l TotalItemCounter : !SUB ChestsOpened : STA.l NonChestCounter
 
 		.done
 	PLP : PLX : PLA
-	LDA.b #$19 : STA $10 ; thing we wrote over, load triforce room
-        STZ $11
-        STZ $B0
+	LDA.b #$19 : STA.b $10 ; thing we wrote over, load triforce room
+        STZ.b $11
+        STZ.b $B0
 RTL
 ;--------------------------------------------------------------------------------
 ; Notes:

@@ -24,9 +24,8 @@ SearchForEquippedItem:
 	LDA.l BowEquipment ; thing we wrote over
 RTL
 
-!INFINITE_ARROWS = "$7F50C8"
 DecrementArrows:
-	LDA.l !INFINITE_ARROWS : BNE .infinite
+	LDA.l InfiniteArrows : BNE .infinite
 	LDA.l ArrowMode : BNE .rupees : BRA .normal
 	.infinite
 		LDA.b #$01 : RTL
@@ -36,7 +35,7 @@ DecrementArrows:
 		BRA .done
 	.rupees
 		REP #$20
-		LDA.b $A0 : CMP #$0111 : SEP #$20 : BNE .not_archery_game
+		LDA.b $A0 : CMP.w #$0111 : SEP #$20 : BNE .not_archery_game
 			LDA.b $1B : BEQ .not_archery_game ; in overworld
 			LDA.w $0B9A : BEQ .shoot_arrow ; arrow game active
 			LDA.b #$00 : BRA .done

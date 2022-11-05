@@ -148,23 +148,23 @@ Clock_QuickStamp:
 		SEC ; indicate success
 		
 		.ready
-		%Clock_ReadBCD() : STA $00 ; seconds
-		%Clock_ReadBCD() : STA $01 ; minutes
-		%Clock_ReadBCD() : STA $02 ; hours
-		%Clock_ReadBCD() : STA $03 ; days
+		%Clock_ReadBCD() : STA.b Scrap00 ; seconds
+		%Clock_ReadBCD() : STA.b Scrap01 ; minutes
+		%Clock_ReadBCD() : STA.b Scrap02 ; hours
+		%Clock_ReadBCD() : STA.b Scrap03 ; days
 		
 		REP $20 ; set 16-bit accumulator
-		LDA $01 : AND #$00FF : %A_x60() ; convert minutes to seconds
-		STZ $01 : !ADD $00 : STA $00 ; store running total seconds to $00
+		LDA.b Scrap01 : AND.w #$00FF : %A_x60() ; convert minutes to seconds
+		STZ.b Scrap01 : !ADD Scrap00 : STA.b Scrap00 ; store running total seconds to $00
 
-		LDA $03 : AND #$00FF : %A_x24() ; convert days to hours
-		STZ $03 : !ADD $02 ; get total hours
+		LDA.b Scrap03 : AND.w #$00FF : %A_x24() ; convert days to hours
+		STZ.b Scrap03 : !ADD Scrap02 ; get total hours
 		%A_x60() ; get total minutes
 		
 		LDY #$60
 		JSL.l Multiply_A16Y8
-		STY $02 : STZ $03
-		!ADD $00 : BCC + : INC $02 : +
+		STY.b Scrap02 : STZ.b Scrap03
+		!ADD Scrap00 : BCC + : INC.b Scrap02 : +
 		
 	.done
 	PLP : PLX : PLA
@@ -183,18 +183,18 @@ RTL
 ;--------------------------------------------------------------------------------
 Multiply_A16Y8:
 	SEP #$20 ; set 8-bit accumulator
-	STY $4202
-	STA $4203
+	STY.w WRMPYA
+	STA.w WRMPYB
 	NOP #4
-	LDA $4216
-	LDY $4217
+	LDA.w RDMPYL
+	LDY.w RDMPYH
 	XBA
-	STA $4203
+	STA.w WRMPYB
 	NOP #2
 	TYA
 	CLC
-	ADC $4216
-	LDY $4217
+	ADC.w RDMPYL
+	LDY.w RDMPYH
 	BCC .carry_bit
 	INY
 .carry_bit:
@@ -230,17 +230,17 @@ Clock_GetTime:
 		SEC ; indicate success
 		
 		.ready
-		%Clock_ReadBCD() : STA $00 ; seconds
-		%Clock_ReadBCD() : STA $01 ; minutes
-		%Clock_ReadBCD() : STA $02 ; hours
-		%Clock_ReadBCD() : STA $03 ; days
-		LDA $002800 : STA $04 ; months
-		%Clock_ReadBCD() : STA $05 ; years
-		LDA $002800 : STA $06 ; century
+		%Clock_ReadBCD() : STA.b Scrap00 ; seconds
+		%Clock_ReadBCD() : STA.b Scrap01 ; minutes
+		%Clock_ReadBCD() : STA.b Scrap02 ; hours
+		%Clock_ReadBCD() : STA.b Scrap03 ; days
+		LDA $002800 : STA.b Scrap04 ; months
+		%Clock_ReadBCD() : STA.b Scrap05 ; years
+		LDA $002800 : STA.b Scrap06 ; century
 		
 		REP $20 ; set 16-bit accumulator
-		STA $06 : AND #$00FF : %A_x10() : %A_x10() : !ADD #1000 ; multiply century digit by 100 and add 1000
-		STZ $06 : !ADD $05 : STA $05 ; add lower 2 digits of the year and store
+		STA.b Scrap06 : AND #$00FF : %A_x10() : %A_x10() : !ADD #1000 ; multiply century digit by 100 and add 1000
+		STZ.b Scrap06 : !ADD Scrap05 : STA.b Scrap05 ; add lower 2 digits of the year and store
 		
 	.done
 	PLP : PLY : PLX : PLA

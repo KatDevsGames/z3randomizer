@@ -1,13 +1,6 @@
-;--------------------------------------------------------------------------------
-; OnLoadOW
-;--------------------------------------------------------------------------------
-;OnLoadMap:
-;	LDA OverworldEventDataWRAM+$5B ; thing we wrote over
-;RTL
-;--------------------------------------------------------------------------------
 OnPrepFileSelect:
-	LDA $11 : CMP.b #$03 : BNE +
-		LDA.b #$06 : STA $14 ; thing we wrote over
+	LDA.b $11 : CMP.b #$03 : BNE +
+		LDA.b #$06 : STA.b $14 ; thing we wrote over
 		RTL
 	+
 	JSL.l LoadAlphabetTilemap
@@ -22,7 +15,7 @@ OnDrawHud:
 JML.l ReturnFromOnDrawHud
 ;--------------------------------------------------------------------------------
 OnDungeonEntrance:
-	STA $7EC172 ; thing we wrote over
+	STA.l $7EC172 ; thing we wrote over
         JSL MaybeFlagCompassTotalEntrance
 RTL
 ;--------------------------------------------------------------------------------
@@ -40,7 +33,7 @@ OnDungeonExit:
 		JSL.l SQEGFix
 	PLP : PLA
 
-	STA $040C : STZ $04AC ; thing we wrote over
+	STA.w $040C : STZ.w $04AC ; thing we wrote over
 
 	PHA : PHP
 		JSL.l HUD_RebuildLong
@@ -51,17 +44,17 @@ RTL
 ;--------------------------------------------------------------------------------
 OnQuit:
 	JSL.l SQEGFix
-	LDA.b #$00 : STA $7F5035 ; bandaid patch bug with mirroring away from text
-	LDA.b #$10 : STA $1C ; thing we wrote over
+	LDA.b #$00 : STA.l $7F5035 ; bandaid patch bug with mirroring away from text
+	LDA.b #$10 : STA.b $1C ; thing we wrote over
 RTL
 ;--------------------------------------------------------------------------------
 OnUncleItemGet:
 	PHA
 
 	LDA.l EscapeAssist
-	BIT.b #$04 : BEQ + : STA !INFINITE_MAGIC : +
-	BIT.b #$02 : BEQ + : STA InfiniteBombs : +
-	BIT.b #$01 : BEQ + : STA !INFINITE_ARROWS : +
+	BIT.b #$04 : BEQ + : STA.l InfiniteMagic : +
+	BIT.b #$02 : BEQ + : STA.l InfiniteBombs : +
+	BIT.b #$01 : BEQ + : STA.l InfiniteArrows : +
 
 	PLA
 	JSL.l Link_ReceiveItem
@@ -112,20 +105,19 @@ OnFileCreation:
 
         ; Set validity value and do some cleanup. Jump to checksum.
         LDA.w #$55AA : STA.l $7003E1
-        STZ $00
-        STZ $01
-        LDX.b $00
+        STZ.b Scrap00
+        STZ.b Scrap01
+        LDX.b Scrap00
         LDY.w #$0000
         TYA
 
 JML.l InitializeSaveFile_build_checksum
 ;--------------------------------------------------------------------------------
-!RNG_ITEM_LOCK_IN = "$7F5090"
 OnFileLoad:
 	REP #$10 ; set 16 bit index registers
 	JSL.l EnableForceBlank ; what we wrote over
 
-	LDA.b #$07 : STA $210C ; Restore screen 3 to normal tile area
+	LDA.b #$07 : STA.w BG34NBA ; Restore screen 3 to normal tile area
 
 	LDA.l FileMarker : BNE +
 		JSL.l OnNewFile
@@ -136,8 +128,8 @@ OnFileLoad:
 		JSL.l DoWorldFix
 	+
 	JSL.l MasterSwordFollowerClear
-	LDA.b #$FF : STA !RNG_ITEM_LOCK_IN ; reset rng item lock-in
-	LDA.b #$00 : STA $7F5001 ; mark fake flipper softlock as impossible
+	LDA.b #$FF : STA.l RNGLockIn ; reset rng item lock-in
+	LDA.b #$00 : STA.l $7F5001 ; mark fake flipper softlock as impossible
 	LDA.l GenericKeys : BEQ +
 		LDA.l CurrentGenericKeys : STA.l CurrentSmallKeys ; copy generic keys to key counter
 	+
@@ -152,7 +144,6 @@ OnFileLoad:
 	SEP #$10 ; restore 8 bit index registers
 RTL
 ;--------------------------------------------------------------------------------
-!RNG_ITEM_LOCK_IN = "$7F5090"
 OnNewFile:
 	PHX : PHP
 		; reset some values on new file that are otherwise only reset on hard reset
@@ -163,15 +154,13 @@ OnNewFile:
 		STZ $0CFB ; enemies killed (pull trees)
 		STZ $0CFC ; times taken damage (pull trees)
 		STZ $0FC7 : STZ $0FC8 : STZ $0FC9 : STZ $0FCA : STZ $0FCB : STZ $0FCC : STZ $0FCD ; prize packs
-		LDA #$00 : STA $7EC011 ; mosaic
+		LDA #$00 : STA.l $7EC011 ; mosaic
 		JSL InitRNGPointerTable ; boss RNG
 	PLP : PLX
 RTL
 ;--------------------------------------------------------------------------------
 OnInitFileSelect:
-	; LDA.b #$10 : STA $BC ; init sprite pointer - does nothing unless spriteswap.asm is included
-	; JSL.l SpriteSwap_SetSprite
-	LDA.b #$51 : STA $0AA2 ;<-- Line missing from JP1.0, needed to ensure "extra" copy of naming screen graphics are loaded.
+	LDA.b #$51 : STA.w $0AA2 ;<-- Line missing from JP1.0, needed to ensure "extra" copy of naming screen graphics are loaded.
 	JSL.l EnableForceBlank
 RTL
 ;--------------------------------------------------------------------------------
@@ -193,7 +182,7 @@ OnLinkDamagedFromPit:
 
 	LDA.l AllowAccidentalMajorGlitch
 	BEQ ++
---	LDA.b #$14 : STA $11 ; thing we wrote over
+--	LDA.b #$14 : STA.b $11 ; thing we wrote over
 
 	RTL
 
@@ -206,32 +195,30 @@ OnLinkDamagedFromPitOutdoors:
 	JML.l OHKOTimer ; make sure this is last
 
 ;--------------------------------------------------------------------------------
-!RNG_ITEM_LOCK_IN = "$7F5090"
 OnOWTransition:
 	JSL.l FloodGateReset
 	JSL.l FlipperFlag
 	JSL.l StatTransitionCounter
 	PHP
 	SEP #$20 ; set 8-bit accumulator
-	LDA.b #$FF : STA !RNG_ITEM_LOCK_IN ; clear lock-in
+	LDA.b #$FF : STA.l RNGLockIn ; clear lock-in
 	PLP
 RTL
 ;--------------------------------------------------------------------------------
-!DARK_DUCK_TEMP = "$7F509C"
 OnLoadDuckMap:
-	LDA !DARK_DUCK_TEMP
+	LDA.l ScratchBufferV
 	BNE +
-		INC : STA !DARK_DUCK_TEMP
+		INC : STA.l ScratchBufferV
 		JSL OverworldMap_InitGfx : DEC $0200
 
 		RTL
 	+
-	LDA.b #$00 : STA !DARK_DUCK_TEMP
+	LDA.b #$00 : STA.l ScratchBufferV
 	JML OverworldMap_DarkWorldTilemap
 
 ;--------------------------------------------------------------------------------
 PreItemGet:
-	LDA.b #$01 : STA !ITEM_BUSY ; mark item as busy
+	LDA.b #$01 : STA.l BusyItem ; mark item as busy
 RTL
 ;--------------------------------------------------------------------------------
 PostItemGet:
@@ -239,12 +226,12 @@ PostItemGet:
 RTL
 ;--------------------------------------------------------------------------------
 PostItemAnimation:
-	LDA.b #$00 : STA !ITEM_BUSY ; mark item as finished
+	LDA.b #$00 : STA.l BusyItem ; mark item as finished
 
-	LDA $7F509F : BEQ +
-		STZ $1CF0 : STZ $1CF1 ; reset decompression buffer
+	LDA.l $7F509F : BEQ +
+		STZ.w $1CF0 : STZ.w $1CF1 ; reset decompression buffer
 		JSL.l Main_ShowTextMessage_Alt
-		LDA.b #$00 : STA $7F509F
+		LDA.b #$00 : STA.l $7F509F
 	+
 
 	LDA.w $02E9 : CMP.b #$01 : BNE +
@@ -252,6 +239,6 @@ PostItemAnimation:
 			JSL.l IncrementChestTurnCounter
 	+
 
-    STZ $02E9 : LDA $0C5E, X ; thing we wrote over to get here
+    STZ.w $02E9 : LDA.w $0C5E, X ; thing we wrote over to get here
 RTL
 ;--------------------------------------------------------------------------------

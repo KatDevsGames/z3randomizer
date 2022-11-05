@@ -51,11 +51,11 @@ FastCreditsCutsceneScroll:
 	LDA.w $00E2,Y
 	CMP.l $0EC308,X ; compare to target
 
-	ROL.b $00 ; put carry in here
+	ROL.b Scrap00 ; put carry in here
 	LDA.l $0EC348,X ; get movement
 	BPL ++ ; if positive, leave saved carry alone
-	INC.b $00 ; otherwise, flip it
-++	ROR.b $00 ; recover carry
+	INC.b Scrap00 ; otherwise, flip it
+++	ROR.b Scrap00 ; recover carry
 
 	BCC ++ ; scroll if carry not set
 	LDA.w #$0000

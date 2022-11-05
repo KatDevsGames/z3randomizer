@@ -2,25 +2,25 @@
 ; Randomize Tablets
 ;--------------------------------------------------------------------------------
 ItemSet_EtherTablet:
-	PHA : LDA NpcFlags+1 : ORA.b #$01 : STA NpcFlags+1 : PLA
+	PHA : LDA.l NpcFlags+1 : ORA.b #$01 : STA.l NpcFlags+1 : PLA
 RTL
 ;--------------------------------------------------------------------------------
 ItemSet_BombosTablet:
-	PHA : LDA NpcFlags+1 : ORA.b #$02 : STA NpcFlags+1 : PLA
+	PHA : LDA.l NpcFlags+1 : ORA.b #$02 : STA.l NpcFlags+1 : PLA
 RTL
 ;--------------------------------------------------------------------------------
 ItemCheck_EtherTablet:
-	LDA NpcFlags+1 : AND.b #$01
+	LDA.l NpcFlags+1 : AND.b #$01
 RTL
 ;--------------------------------------------------------------------------------
 ItemCheck_BombosTablet:
-	LDA NpcFlags+1 : AND.b #$02
+	LDA.l NpcFlags+1 : AND.b #$02
 RTL
 ;--------------------------------------------------------------------------------
 SetTabletItem:
 	JSL.l GetSpriteID
 	PHA
-		LDA $8A : CMP.b #$03 : BEQ .ether ; if we're on the map where ether is, we're the ether tablet
+		LDA.b $8A : CMP.b #$03 : BEQ .ether ; if we're on the map where ether is, we're the ether tablet
 		.bombos
 		JSL.l ItemSet_BombosTablet : BRA .done
 		.ether
@@ -36,23 +36,23 @@ SpawnTabletItem:
 	PHA
 	JSL.l PrepDynamicTile
 	
-	LDA.b #$01 : STA !FORCE_HEART_SPAWN : STA !SKIP_HEART_SAVE
+	LDA.b #$01 : STA.l ForceHeartSpawn : STA.l SkipHeartSave
 	JSL.l SetTabletItem
 	
 	LDA.b #$EB
-	STA $7FFE00
+	STA.l $7FFE00
 	JSL Sprite_SpawnDynamically
 
-	PLA : STA $0E80, Y ; Store item type
-	LDA $22 : STA $0D10, Y
-	LDA $23 : STA $0D30, Y
+	PLA : STA.w $0E80, Y ; Store item type
+	LDA.b $22 : STA.w $0D10, Y
+	LDA.b $23 : STA.w $0D30, Y
+  
+	LDA.b $20 : STA.w $0D00, Y
+	LDA.b $21 : STA.w $0D20, Y
 
-	LDA $20 : STA $0D00, Y
-	LDA $21 : STA $0D20, Y
-
-	LDA.b #$00 : STA $0F20, Y
+	LDA.b #$00 : STA.w $0F20, Y
 	
-	LDA.b #$7F : STA $0F70, Y ; spawn WAY up high
+	LDA.b #$7F : STA.w $0F70, Y ; spawn WAY up high
 RTL
 ;--------------------------------------------------------------------------------
 MaybeUnlockTabletAnimation:
@@ -60,13 +60,13 @@ MaybeUnlockTabletAnimation:
 		JSL.l IsMedallion : BCC +
 			STZ $0112 ; disable falling-medallion mode
 			STZ $03EF ; release link from item-up pose
-			LDA.b #$00 : STA $5D ; set link to ground state
+			LDA.b #$00 : STA.b $5D ; set link to ground state
 			
 			REP #$20 ; set 16-bit accumulator
-				LDA $8A : CMP.w #$0030 : BNE ++ ; Desert
+				LDA.b $8A : CMP.w #$0030 : BNE ++ ; Desert
 					SEP #$20 ; set 8-bit accumulator
-					LDA.b #$02 : STA $2F ; face link forward
-					LDA.b #$3C : STA $46 ; lock link for 60f
+					LDA.b #$02 : STA.b $2F ; face link forward
+					LDA.b #$3C : STA.b $46 ; lock link for 60f
 				++
 			SEP #$20 ; set 8-bit accumulator
 		+
@@ -75,15 +75,15 @@ RTL
 ;--------------------------------------------------------------------------------
 IsMedallion:
 	REP #$20 ; set 16-bit accumulator
-	LDA $8A
+	LDA.b $8A
 	CMP.w #$03 : BNE + ; Death Mountain
-		LDA $22 : CMP.w #1890 : !BGE ++
+		LDA.b $22 : CMP.w #1890 : !BGE ++
 			SEC
 			JMP .done
 		++
 		BRA .false
 	+ CMP.w #$30 : BNE + ; Desert
-		LDA $22 : CMP.w #512 : !BLT ++
+		LDA.b $22 : CMP.w #512 : !BLT ++
 			SEC
 			JMP .done
 		++
@@ -95,7 +95,7 @@ IsMedallion:
 RTL
 ;--------------------------------------------------------------------------------
 LoadNarrowObject:
-	LDA.l AddReceivedItemExpanded_wide_item_flag, X : STA ($92), Y ; AddReceiveItem.wide_item_flag?
+	LDA.l AddReceivedItemExpanded_wide_item_flag, X : STA.b ($92), Y ; AddReceiveItem.wide_item_flag?
 RTL
 ;--------------------------------------------------------------------------------
 DrawNarrowDroppedObject:
@@ -106,28 +106,28 @@ DrawNarrowDroppedObject:
     REP #$20
     
     ; Shift Y coordinate 8 pixels down
-    LDA $08 : STA $00
+    LDA.b Scrap08 : STA.b Scrap00
     
     SEP #$20
     
     JSL.l Ancilla_SetOam_XY_Long
     
     ; always use the same character graphic (0x34)
-    LDA.b #$34 : STA ($90), Y : INY
+    LDA.b #$34 : STA.b ($90), Y : INY
     
     LDA.l AddReceivedItemExpanded_properties, X : BPL .valid_lower_properties
     
-    LDA $74
+    LDA.b $74
 
 .valid_lower_properties
 
-    ASL A : ORA.b #$30 : STA ($90), Y 
+    ASL A : ORA.b #$30 : STA.b ($90), Y 
     
     INY : PHY
     
     TYA : !SUB.b #$04 : LSR #2 : TAY
     
-    LDA.b #$00 : STA ($92), Y
+    LDA.b #$00 : STA.b ($92), Y
     
     PLY
 .large_sprite

@@ -395,8 +395,11 @@ RoomDataSRAM:                   ;
 skip $280                       ;
 OverworldEventDataSRAM:         ;
 skip $C0                        ;
-EquipmentSRAM: skip 76          ;
-InventoryTrackingSRAM: skip 2   ;
+EquipmentSRAM: skip 3           ; skip 76
+BombsEquipmentSRAM: skip 31     ; 343
+DisplayRupeesSRAM: skip 21      ; 362
+CurrentArrowsSRAM: skip 21      ; 377
+InventoryTrackingSRAM: skip 2   ; 38C
 BowTrackingSRAM: skip 2         ;
 skip 53                         ;
 ProgressIndicatorSRAM: skip 1   ;
@@ -659,6 +662,9 @@ endmacro
 %assertSRAM(RoomDataSRAM, $700000)
 %assertSRAM(OverworldEventDataSRAM, $700280)
 %assertSRAM(EquipmentSRAM, $700340)
+%assertSRAM(BombsEquipmentSRAM, $700343)
+%assertSRAM(DisplayRupeesSRAM, $700362)
+%assertSRAM(CurrentArrowsSRAM, $700377)
 %assertSRAM(InventoryTrackingSRAM, $70038C)
 %assertSRAM(BowTrackingSRAM, $70038E)
 %assertSRAM(ProgressIndicatorSRAM, $7003C5)

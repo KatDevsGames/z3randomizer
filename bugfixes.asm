@@ -2,8 +2,8 @@
 
 ;--------------------------------------------------------------------------------
 AssignKiki:
-    LDA.b #$00 : STA FollowerDropped ; defuse bomb
-    LDA.b #$0A : STA FollowerIndicator ; assign kiki as follower
+    LDA.b #$00 : STA.l FollowerDropped ; defuse bomb
+    LDA.b #$0A : STA.l FollowerIndicator ; assign kiki as follower
 RTL
 ;--------------------------------------------------------------------------------
 
@@ -11,10 +11,9 @@ RTL
 ; Name: AllowSQ
 ; Returns: Accumulator = 0 if S&Q is disallowed, 1 if allowed
 ;--------------------------------------------------------------------------------
-!ITEM_BUSY = "$7F5091"
 AllowSQ:
-	LDA ProgressIndicator : BEQ .done ; thing we overwrote - check if link is in his bed
-	LDA !ITEM_BUSY : EOR #$01
+	LDA.l ProgressIndicator : BEQ .done ; thing we overwrote - check if link is in his bed
+	LDA.l BusyItem : EOR.b #$01
 	.done
 RTL
 ;--------------------------------------------------------------------------------
@@ -23,8 +22,8 @@ RTL
 ;0 = Reset Music
 ;1 = Don't Reset Music
 MSMusicReset:
-	LDA $8A : CMP.b #$80 : BNE +
-		LDA $23
+	LDA.b $8A : CMP.b #$80 : BNE +
+		LDA.b $23
 	+
 RTL
 ;--------------------------------------------------------------------------------
@@ -32,11 +31,11 @@ RTL
 ;--------------------------------------------------------------------------------
 ;0 = Become (Perma)bunny
 DecideIfBunny:
-	LDA MoonPearlEquipment : BNE .done
-	LDA CurrentWorld : AND.b #$40
+	LDA.l MoonPearlEquipment : BNE .done
+	LDA.l CurrentWorld : AND.b #$40
 	PHA : LDA.l InvertedMode : BNE .inverted
 	.normal
-		PLA : EOR #$40
+		PLA : EOR.b #$40
 		BRA .done
 	.inverted
 		PLA
@@ -136,21 +135,21 @@ SQEGFix:
 ;--------------------------------------------------------------------------------
 ; Fix crystal not spawning when using somaria vs boss
 TryToSpawnCrystalUntilSuccess:
-	STX $02D8 ; what we overwrote
+	STX.w $02D8 ; what we overwrote
 	JSL AddAncillaLong : BCS .failed ; a clear carry flag indicates success
 .spawned
-	STZ $AE ; the "trying to spawn crystal" flag
-	STZ $AF ; the "trying to spawn pendant" flag
+	STZ.b $AE ; the "trying to spawn crystal" flag
+	STZ.b $AF ; the "trying to spawn pendant" flag
 .failed
 RTL
 
 ;--------------------------------------------------------------------------------
 ; Fix crystal not spawning when using somaria vs boss
 WallmasterCameraFix:
-	STZ $A7    ; disable vertical camera scrolling for current room
+	STZ.b $A7    ; disable vertical camera scrolling for current room
 	REP #$20
-	STZ $0618  ; something about scrolling, setting these to 0 tricks the game 
-	STZ $061A  ; into thinking we're at the edge of the room so it doesn't scroll.
+	STZ.w $0618  ; something about scrolling, setting these to 0 tricks the game 
+	STZ.w $061A  ; into thinking we're at the edge of the room so it doesn't scroll.
 	SEP #$20
 	JML Sound_SetSfx3PanLong ; what we wrote over, also this will RTL
 
@@ -158,8 +157,8 @@ WallmasterCameraFix:
 ; Fix losing glove colors
 LoadActualGearPalettesWithGloves:
 REP #$20
-LDA SwordEquipment : STA $0C
-LDA ArmorEquipment : AND.w #$00FF
+LDA.l SwordEquipment : STA.b Scrap0C
+LDA.l ArmorEquipment : AND.w #$00FF
 JSL LoadGearPalettes_variable
 JSL SpriteSwap_Palette_ArmorAndGloves_part_two
 RTL
@@ -167,24 +166,24 @@ RTL
 ;--------------------------------------------------------------------------------
 ; Fix Bunny Palette Map Bug
 LoadGearPalette_safe_for_bunny:
-LDA $10 
+LDA.b $10 
 CMP.w #$030E : BEQ .new ; opening dungeon map
 CMP.w #$070E : BEQ .new ; opening overworld map
 .original
 -
-	LDA [$00]
+	LDA.b [Scrap00]
 	STA $7EC300, X
 	STA $7EC500, X
-	INC $00 : INC $00
+	INC.b Scrap00 : INC.b Scrap00
 	INX #2
 	DEY
 	BPL -
 RTL
 .new
 -
-	LDA [$00]
+	LDA.b [Scrap00]
 	STA $7EC500, X
-	INC $00 : INC $00
+	INC.b Scrap00 : INC.b Scrap00
 	INX #2
 	DEY
 	BPL -

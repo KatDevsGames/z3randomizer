@@ -70,8 +70,6 @@ JSL.l OnDungeonEntrance
 ;================================================================================
 ; D-Pad Invert
 ;--------------------------------------------------------------------------------
-;org $0083D9 ; <- 3D9 - Bank00.asm : 611 (LDA $4219 : STA $01)
-;JSL.l InvertDPad : NOP
 org $0083D1 ; <- 3D1 - Bank00.asm (STZ.w JOYPAD - useless instruction here)
 JML.l InvertDPad : SKIP 9
 InvertDPadReturn:
@@ -361,11 +359,10 @@ JSL.l NewBatInit
 org $06EDB5 ;<- 36DBE - Bank06.asm : 4882 (LDA $7F6000, X : STA $02)
 JSL.l LookupDamageLevel
 ;--------------------------------------------------------------------------------
-!StalfosBombDamage = "$7F509D"
-org $1eab5e ;<- F2B5E - sprite_stalfos_knight.asm : 135  (LDA.b #$00 : STA $7F6918)
-STA.l !StalfosBombDamage
-org $1eaad6 ;<- F2AB6 - sprite_stalfos_knight.asm : 32  (LDA.b #$02 : STA $7F6918)
-STA.l !StalfosBombDamage
+org $1EAB5E ;<- F2B5E - sprite_stalfos_knight.asm : 135  (LDA.b #$00 : STA $7F6918)
+STA.l StalfosBombDamage
+org $1EAAD6 ;<- F2AB6 - sprite_stalfos_knight.asm : 32  (LDA.b #$02 : STA $7F6918)
+STA.l StalfosBombDamage
 ;--------------------------------------------------------------------------------
 
 ;================================================================================
@@ -810,10 +807,6 @@ dw $0000, $0002, $0004, $0032, $0004, $0006, $0030
 ;================================================================================
 ; Accessibility
 ;--------------------------------------------------------------------------------
-;org $0AC574 ; <- 54574 - Bank0A.asm : 1797 (LDA $0D : STA $0802, X)
-;JSL FlipGreenPendant
-;NOP #6
-;--------------------------------------------------------------------------------
 org $02A3F4 ; <- 123F4 - Bank02.asm : 6222 (LDA.b #$72 : BRA .setBrightness)
 BRA + : NOP #2 : +
 org $02A3FD ; <- 123FD - Bank02.asm : 6233 (LDA.b #$32 : STA $9a)
@@ -874,20 +867,10 @@ db $B1, $C6, $F9, $C9, $C6, $F9 ; data insert - 2 chests, fat fairy room
 org $01E97E ; <- E97E ($280016, $250016)
 dl $080116, $070116; <- E97E
 ;--------------------------------------------------------------------------------
-;org $06C9BC ; <- 349BC - sprite_ponds.asm : 1066
-;org $06C9C0 ; <- 349C0 - sprite_ponds.asm : 1068
-;org $06C926 ; <- 34926 - sprite_ponds.asm : 945
-;JML.l GetFairySword
-;NOP #12
 org $06C936 ; <- 34936 - sprite_ponds.asm : 952
 PyramidFairy_BRANCH_IOTA:
 org $06C948 ; <- 34948 - sprite_ponds.asm : 961
 PyramidFairy_BRANCH_GAMMA:
-;--------------------------------------------------------------------------------
-;org $0EF7BD ; <- 777BD - sprite_ponds.asm : 1890 (LDA $7EF340, X : BMI .invalidValue : BNE VWF_ChangeItemTiles)
-;JSL.l ReadInventoryPond
-;org $0EF7E4 ; <- 777E4 - sprite_ponds.asm : 1922 (LDA $7EF340, X : BMI .invalidValue : BNE VWF_ChangeItemTiles)
-;JSL.l ReadInventoryPond
 ;--------------------------------------------------------------------------------
 org $1EE16E ; <- F616E - sprite_bomb_shop_entity.asm : 73
 NOP #8 ; fix bomb shop dialog for dwarfless big bomb
@@ -956,9 +939,6 @@ db $03 ; fade out speed. Should be power of 2 minus 1
 
 ;================================================================================
 ; New Items
-;--------------------------------------------------------------------------------
-;org $07B57B ; <- 3B57B - Bank07.asm : 8523 (BMI .cantOpen)
-;NOP #2
 ;--------------------------------------------------------------------------------
 org $07B574 ; <- 3B574 - Bank07.asm : 8519 (LDA.b #$01 : STA $02E9)
 JSL.l ChestPrep
@@ -1037,14 +1017,8 @@ LDA.w BottleListExpanded, X
 org $09895C ; 4895C - ancilla_init.asm:1344 (LDA PotionList, X)
 LDA.w PotionListExpanded, X
 ;--------------------------------------------------------------------------------
-;org $098A36 ; <- 48A36 - ancilla_init.asm:1432 (LDA AddReceiveItem.item_graphics_indices, Y : STA $72)
-;LDA AddReceivedItemExpanded_item_graphics_indices, Y
-;--------------------------------------------------------------------------------
 org $06D1EB ; 351EB - sprite_absorbable.asm:364 (STA $7EF375) ; bugbug commented out until i figure out why it doesn't work
 JSL HandleBombAbsorbtion
-;--------------------------------------------------------------------------------
-;org $09873F ; <- 04873F - ancilla_init.asm : 960 (ADC [$00] : STA [$00] )
-;JSL.l AddToStock
 ;--------------------------------------------------------------------------------
 
 ;================================================================================
@@ -1060,14 +1034,6 @@ LDA.w #$00B0
 
 ;================================================================================
 ; Potion Refill Fixes
-;--------------------------------------------------------------------------------
-;org $0DF1B3 ; <- 6F1B3 - headsup_display.asm:492 - (SEP #$30)
-;JSL.l RefillMagic
-;RTL
-;--------------------------------------------------------------------------------
-;org $0DF128 ; <- 6F128 - headsup_display.asm:407 - (LDA $7EF36D : CMP $7EF36C : BCC .refillAllHealth)
-;JSL.l RefillHealth
-;RTL
 ;--------------------------------------------------------------------------------
 org $00F8FB ; <- 78FB - Bank00.asm:8507 - (JSL HUD.RefillHealth : BCC BRANCH_ALPHA)
 JSL.l RefillHealth
@@ -1119,35 +1085,8 @@ db 80 ; BRA
 org $05DA81 ; <- 2DA81 - sprite_uncle_and_priest.asm : 65 (BCC .dontHaveMasterSword)
 db 80 ; BRA
 ;--------------------------------------------------------------------------------
-;org $05DE1D ; <- 2DE1D - sprite_uncle_and_priest.asm : 725 (LDA.b #$A0 : STA $7EF372)
-;JSL.l RefillHealthPlusMagic8bit
-;NOP #2
-;--------------------------------------------------------------------------------
 org $05DEF8 ; <- 2DEF8 - sprite_uncle_and_priest.asm : 917 (LDA.b #$05)
 LDA.b #$00
-;--------------------------------------------------------------------------------
-;org $1EEAB6 ; <- F6AB6 - sprite_old_mountain_man.asm : 338 (LDA.b #$A0 : STA $7EF372)
-;JSL.l RefillHealthPlusMagic8bit
-;NOP #2
-;--------------------------------------------------------------------------------
-;org $01E5B2 ; <- E5B8 - lower pot link's house
-;db $14 ; fairy
-;org $01E5B5 ; <- E5B8 - lower pot link's house
-;db $14 ; fairy
-;org $01E5B8 ; <- E5B8 - lower pot link's house
-;db $0D ; big magic
-;--------------------------------------------------------------------------------
-
-;================================================================================
-; Ganon's Tower Basement Door Fix
-;--------------------------------------------------------------------------------
-;org $1FF3F4 ; <- 0FF3F4
-;db $00
-;--------------------------------------------------------------------------------
-; Misery Mire Basement Door Fix
-;--------------------------------------------------------------------------------
-;org $1FB8E4 ; <- 0FB8E4
-;db $00
 ;--------------------------------------------------------------------------------
 ;0xFE465 -> 0x1E
 org $1FE465
@@ -1208,7 +1147,6 @@ org $0DDF38 ; <- 6DF38 - equipment.asm : 480
 JSL.l ProcessMenuButtons
 BCC _equipment_497
 JMP.w _equipment_544
-;NOP #7
 ResetEquipment:
 JSR.w RestoreNormalMenu ; (short)
 RTL
@@ -1217,16 +1155,10 @@ NOP #3
 warnpc $0DDF49
 org $0DDF49 ; <- 6DF49 - equipment.asm : 497
 _equipment_497: ; LDA $F4 : AND.b #$08 : BEQ .notPressingUp - NO BUTTON CAPTURE
-;org $0DDF7E ; <- 6DF7E - equipment.asm : 539
 org $0DDF88 ; <- 6DF88 - equipment.asm : 544
-;org $0DE10E ; <- 6E10E - equipment.asm : 806
 _equipment_544:
 ;--------------------------------------------------------------------------------
 org $0DEB98 ; <- 6EB98 - equipment.asm : 1803
-;LDA.w #$3C60 : STA $FFBE, Y
-;ORA.w #$4000 : STA $FFC4, Y
-;ORA.w #$8000 : STA $0084, Y
-;EOR.w #$4000 : STA $007E, Y
 LDA.w #$3C60 : STA $FFBE, Y
 ORA.w #$8000 : STA $007E, Y
 ORA.w #$4000 : STA $0084, Y
@@ -1247,9 +1179,6 @@ org $0DF8A1+6+8  ; blue mail tile tile, lower right
 dw #$2C4F ; (Orig: #$6C78)
 org $0DF8A1+6+16 ; red mail tile, lower right
 dw #$242F ; (Orig: #$6478)
-;--------------------------------------------------------------------------------
-;org $0DDE9B ; <- 6DE9B equipment.asm:296 - LDA $0202 : CMP.b #$10 : BNE .notOnBottleMenu (CMP instruction)
-;CMP.b #$FF
 ;--------------------------------------------------------------------------------
 org $0DDE9F ; <- 6DE9F equipment.asm:300 - LDA.b #$0A : STA $0200
 LDA.b #$04
@@ -1312,16 +1241,11 @@ NOP #5
 org $07A379 ; <- 3A379 - Bank07.asm : 5687
 JSL.l SpawnHauntedGroveItem
 ;--------------------------------------------------------------------------------
-org $07A303 ; 3A303 - Bank07.asm : 5622
-;JSL.l FixShovelLock
-;--------------------------------------------------------------------------------
 org $07A3A2 ; 3A3A2 - Bank07.asm : 5720 - JSL DiggingGameGuy_AttemptPrizeSpawn
 JSL.l SpawnShovelItem
 BRA _Bank07_5726
 org $07A3AB ; 3A3AB - Bank07.asm : 5726 - LDA.b #$12 : JSR Player_DoSfx2
 _Bank07_5726:
-;org $07A381 ; 3A381 - Bank07.asm : 5693 - ORA $035B
-;ORA $035B
 ;--------------------------------------------------------------------------------
 org $079A0E ; 39A0E - Bank07.asm : 4117 - JSL HUD.RefreshIconLong
 JSL.l Link_ReceiveItem_HUDRefresh
@@ -1357,10 +1281,6 @@ JSL.l ItemCheck_BombosTablet
 ;--------------------------------------------------------------------------------
 org $05F285 ; <- 2F285
 JSL.l ItemCheck_EtherTablet
-;--------------------------------------------------------------------------------
-;org $098BCC ; <- 48BCC - ancilla_init.asm : 1679 (LDA AddReceiveItem.item_graphics_indices, Y : STA $72)
-;;JSL.l SetTabletItem
-;JSL SpawnTabletItem : PLX : PLB : RTL
 ;--------------------------------------------------------------------------------
 org $07859F ; <- 3859F - Bank07.asm : 965 (JSL AddPendantOrCrystal)
 JSL SpawnTabletItem
@@ -1440,9 +1360,6 @@ org $1D91E3 ; <- E91E3 - sprite_ganon.asm
 JSL RNG_Ganon_Extra_Warp
 org $1D9488 ; <- E9488 - sprite_ganon.asm
 JSL RNG_Ganon
-;--------------------------------------------------------------------------------
-;org $01EDB2 ; <- EDB2 - Bank01.asm : 14038
-;INC $04C4
 ;--------------------------------------------------------------------------------
 org $05A3F4 ; <- 2A3F4 - sprite_lanmola.asm : 112 (JSL GetRandomInt : AND.b #$07 : TAY)
 JSL.l RNG_Lanmolas1
@@ -1528,22 +1445,11 @@ ReturnFromOnDrawHud:
 SEP #$30
 LDX.b #$FF ; vanilla hud code ends with #$FF in X, and it's required for unknown reasons.
 
-
-;org $0DFD0A ; <- 6FD0A - headsup_display.asm : 900
-;STA $7EC766 ; nudge key digit right
-
-;org $0DFD13 ; <- 6FD13 - headsup_display.asm : 905
-;STA $7EC726 ; key icon blank
-
 org $0DFC37 ; <- 6FC37 - headsup_display.asm : 828 (LDA.w #$28F7)
 JSL.l DrawMagicHeader
 BRA + : NOP #15 : +
 ;--------------------------------------------------------------------------------
 org $0DFB29 ; <- headsup_display.asm : 688 (LDA.b #$86 : STA $7EC71E)
-;LDA.b #$86 : STA $7EC720 ; nudge silver arrow right - remember to update this in newit
-;LDA.b #$24 : STA $7EC721
-;LDA.b #$87 : STA $7EC722
-;LDA.b #$24 : STA $7EC723
 JSL.l DrawHUDArrows : BRA +
 	NOP #18
 +
@@ -1653,16 +1559,16 @@ JSL.l EndingMusicWait
 
 ; Process music commands in NMI from new location after muting is processed
 org $0080DD
-dw !REG_MUSIC_CONTROL
+dw MusicControl
 
 org $008101
-dw !REG_MUSIC_CONTROL
+dw MusicControl
 
 org $09F512
-dw !REG_MUSIC_CONTROL
+dw MusicControl
 
 org $0CF05F
-dw !REG_MUSIC_CONTROL
+dw MusicControl
 ;--------------------------------------------------------------------------------
 
 ;================================================================================
@@ -1704,9 +1610,6 @@ JSL.l FixAga2Bunny : NOP
 org $05DF65 ; <- 2DF65 - sprite_uncle_and_priest.asm:994 - (LDA.b #$01 : STA $7EF3C5)
 NOP #6
 ;--------------------------------------------------------------------------------
-;org $0280DD ; <- 100DD - Bank02.asm:298 - (LDA $7EF3C5 : CMP.b #$02 : BCC .indoors)
-;JSL.l ForceLinksHouse
-;--------------------------------------------------------------------------------
 org $05EDDF ; <- 2EDDF - sprite_zelda.asm:398 - (LDA.b #$02 : STA $7EF3C5)
 JSL.l EndRainState : NOP #2
 ;--------------------------------------------------------------------------------
@@ -1745,10 +1648,6 @@ JSL.l HUDRebuildIndoorHole
 ;================================================================================
 ; Pendant / Crystal Fixes
 ;--------------------------------------------------------------------------------
-;org $0DE9C8 ; <- 6E9C8 - original check for agahnim 1 being defeated
-;;LDA $7EF3CA : CMP.b #$40 ; check for dark world instead
-;JSL.l CheckPendantHUD
-;NOP #2
 ;================================================================================
 org $098BB0 ; <- 048BB0 - ancilla_init.asm:1663 - (STX $02D8 : JSR AddAncilla)
 JSL.l TryToSpawnCrystalUntilSuccess
@@ -1772,15 +1671,6 @@ JSL.l ShowDungeonItems : NOP #5
 org $0DEF3B ; <- 6EF3B - equipment.asm:2290 - (LDA $040C : AND.w #$00FF : CMP.w #$00FF : BEQ .notInPalace)
 JSL.l ShowDungeonItems : NOP #5
 ;================================================================================
-org $0DEA5F ; <- 6EA5F - equipment.asm:1679 - (SEP #$30)
-;NOP #5
-;JMP .skipCrystalInit
-;org $0DEAA4 ; <- 6EAA4 - equipment.asm:1706 - (LDA $7EF37A : AND.w #$0001)
-;.skipCrystalInit
-;================================================================================
-org $0DE9D8 ; <- 6E9D8 - equipment.asm:1635 - (LDA $E860, X : STA $12EA, X)
-org $0DEA15 ; <- 6EA15 - equipment.asm:1647 - (LDA.w #$13B2 : STA $00)
-;================================================================================
 org $00F97E ; <- 797E - Bank00.asm:8586 - (LDA $7EF3CA : EOR.b #$40 : STA $7EF3CA)
 JSL.l FlipLWDWFlag : NOP #6
 ;================================================================================
@@ -1796,11 +1686,6 @@ LDA CrystalPendantFlags_2, X
 ;Kill enemy to clear level
 org $01C715 ; <- C715 - Bank01.asm:10358 - (LDA $7EF3CA : BNE .inDarkWorld)
 LDA CrystalPendantFlags_2, X
-;JSL.l GetPendantCrystalWorld
-;================================================================================
-;org $0AC5C3 ; <- 545C3 - Bank0A.asm:1859 - (LDA $7EF374 : AND $0AC5A6, X : BEQ .fail)
-;NOP #10
-;CLC
 ;================================================================================
 org $0AC5BB ; < 545BB - Bank0A.asm:1856 - (LDA $7EF3C7 : CMP.b #$03 : BNE .fail)
 JSL.l OverworldMap_CheckObject : RTS
@@ -1878,8 +1763,6 @@ JSL.l GetMapMode
 ;================================================================================
 org $0AC012 ; <- 54012 - Bank0A.asm:1039 (LDA $7EF2DB : AND.b #$20 : BNE BRANCH_DELTA)
 NOP #8
-;org $0AC012 ; <- 54012 - Bank0A.asm:1039 - (LDA $7EF2DB)
-;JSL.l OnLoadMap
 ;================================================================================
 org $028B8F ; <- 10B8F - Bank02.asm:2236 (LDA $7EF374 : LSR A : BCS BRANCH_BETA)
 JSL CheckHeraBossDefeated : BNE + : NOP
@@ -1987,9 +1870,7 @@ org $1ECD39
 SkipCrystalPalette:
 ;--------------------------------------------------------------------------------
 org $08C3FD ; <- 443FD - ancilla_receive_item.asm : 89
-!MS_GOT = "$7F5031"
-LDA #$40 : STA !MS_GOT
-;;NOP #6 ; don't set master sword follower
+LDA.b #$40 : STA.l MSReceived
 ;--------------------------------------------------------------------------------
 org $08C5E5 ; <- 445ED - ancilla_receive_item.asm:395 (LDA .item_messages, Y : CMP.w #$FFFF : BEQ .handleGraphics)
 JSL.l DialogItemReceive : NOP #2
@@ -2065,9 +1946,6 @@ JSL.l OnPlayerDead
 JSL.l IncrementDeathCounter
 NOP #6
 ;--------------------------------------------------------------------------------
-;org $02D61A ; <- 1561A
-;LDA.b #$01 : STA $1B ; fix something i wrote over i shouldn't have
-;--------------------------------------------------------------------------------
 org $1ED379 ; <- F5379 - sprite_agahnim.asm:75 - JSL PrepDungeonExit
 JSL FixAgahnimFollowers
 ;================================================================================
@@ -2141,8 +2019,6 @@ FluteBoy_Abort:
 RTS
 FluteBoy_Continue:
 
-;org $1E9968 ; <- F1968 - sprite_flute_boy_ostrich.asm : 14 (dw FluteBoyOstrich_Chillin)
-;dw #$9991 ; FluteBoyOstrich_RunAway
 ;--------------------------------------------------------------------------------
 org $06B0C9 ; <- 330C9
 JSL.l ItemSet_TreeKid
@@ -2174,9 +2050,6 @@ LDA.b #$FF
 org $1DDF81 ; <- EDF81 - sprite_great_catfish.asm : 61
 JSL.l DrawThrownItem
 ;--------------------------------------------------------------------------------
-;org $1DE1B0 ; <- EE1B0 - sprite_great_catfish.asm : 461
-;NOP #2
-;--------------------------------------------------------------------------------
 org $05EE53 ; <- 2EE53 - mushroom.asm : 22
 JSL.l ItemCheck_Mushroom
 NOP #2
@@ -2193,21 +2066,9 @@ CMP.b #$20
 org $1DDF71 ; <- EDF71 - sprite_great_catfish.asm : 47
 JSL.l MarkThrownItem
 ;--------------------------------------------------------------------------------
-;org $05F65D ; <- 2F65D - DONE IN INVENTORY
-;JSL.l ItemSet_Powder
-;NOP #2
-;--------------------------------------------------------------------------------
-;JSL.l ItemCheck_RupeeNPC
-;--------------------------------------------------------------------------------
-;JSL.l ItemSet_RupeeNPC
-;--------------------------------------------------------------------------------
-;org $08D01B ; PC 0x4501B - ancilla_flute.asm - 55
-;JSL.l ItemSet_Flute
-;--------------------------------------------------------------------------------
 org $05FAFF ; <- 2FAFF - sprite_mad_batter.asm:57 (LDA $7EF37B : CMP.b #$01 : BCS .magic_already_doubled)
 JSL.l ItemCheck_MagicBat : BEQ + : RTS : NOP : +
 ;================================================================================
-
 
 ;================================================================================
 ; Boss Hearts
@@ -2265,8 +2126,8 @@ NOP #6
 ; Fake Flippers Softlock Fix + General Damage Hooks
 ;--------------------------------------------------------------------------------
 org $078091 ; <- 38091 - Bank07.asm:138 (LDA $037B : BNE .linkNotDamaged)
-LDA $0373 : STA $00 : STZ $0373 ; store and zero damage
-LDA $037B : BNE LinkDamaged_linkNotDamaged ; skip if immune
+LDA.w $0373 : STA.b Scrap00 : STZ.w $0373 ; store and zero damage
+LDA.w $037B : BNE LinkDamaged_linkNotDamaged ; skip if immune
 ;--------------------------------------------------------------------------------
 org $0780C6 ; <- 380C6 - Bank07.asm:174 (LDA $7EF36D)
 JSL.l OnLinkDamaged
@@ -2542,7 +2403,7 @@ Overworld_Entrance_BRANCH_RHO: ; branch here to continue into door
 ;================================================================================
 ; Paradox Cave Shopkeeper Fixes
 ;--------------------------------------------------------------------------------
-org $008C19 ; Bank00.asm@1633 (LDA.b #$01 : STA $420B)
+org $008C19 ; Bank00.asm@1633 (LDA.b #$01 : STA MDMAEN)
 JSL ParadoxCaveGfxFix
 NOP
 ;================================================================================
@@ -2552,10 +2413,10 @@ NOP
 ;--------------------------------------------------------------------------------
 ; Change race game to use $021B instead of $0ABF for detecting cheating
 org $0DCB9D ; STZ.w $0ABF
-STZ $021B
+STZ.w $021B
 
 org $0DCBFE ; LDA.w $0ABF
-LDA $021B
+LDA.w $021B
 
 org $02BFE0 ; LDA.b #$01 : STA.w $0ABF
 JSL SetOverworldTransitionFlags
@@ -2571,7 +2432,7 @@ org $0DA9C8 ; <- 06A9C8 - player_oam.asm: 1663 (AND.w #$00FF : CMP.w #$00F8 : BC
 ; CMP into $02 into constant time code, so that player sprite head-bobbing can
 ; be removed by sprites while remaining race legal (cycle-for-cycle identical
 ; to the link sprite).
-LDA $02 ; always zero! (this replaces the BCC)
+LDA.b Scrap02 ; always zero! (this replaces the BCC)
 ADC.w #0000 ; put the carry bit into the accumulator instead of a hardcoded 1.
 ;-------------------------------------------------------------------------------
 org $02FD6F ; <- 017d6f - bank0E.asm: 3694 (LoadActualGearPalettes:) Note: Overflow of bank02 moved to 0e in US Rom

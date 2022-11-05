@@ -47,15 +47,15 @@ Init_Primary:
 	.done
 
 	REP #$20
-	LDA.l OneMindTimer : STA.l !ONEMIND_TIMER
+	LDA.l OneMindTimerInit : STA.l OneMindTimerRAM
 	SEP #$20
 
-	LDA.b #$01 : STA $420D ; enable fastrom access on upper banks
-	STA.l !ONEMIND_ID
+	LDA.b #$01 : STA.w MEMSEL ; enable fastrom access on upper banks
+	STA.l OneMindId
 	
 	LDA.b #$10 : STA $BC ; set default player sprite bank
 	
-	LDA.b #$81 : STA $4200 ; thing we wrote over, turn on NMI & gamepad
+	LDA.b #$81 : STA.w NMITIMEN ; thing we wrote over, turn on NMI & gamepad
 RTL
 ;--------------------------------------------------------------------------------
 ; Init_PostRAMClear

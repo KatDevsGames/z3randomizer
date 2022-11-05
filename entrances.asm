@@ -77,7 +77,7 @@ JML.l Overworld_Entrance_BRANCH_RHO
 AllowStartFromSingleEntranceCave:
 ; 16 Bit A, 16 bit XY
 ; do not need to preserve A or X or Y
-	LDA StartingEntrance : AND.w #$00FF ; What we wrote over
+	LDA.l StartingEntrance : AND.w #$00FF ; What we wrote over
 	PHA
 		TAX
 		LDA.l StartingAreaExitOffset, X
@@ -88,29 +88,29 @@ AllowStartFromSingleEntranceCave:
 		+
 
 		DEC
-		STA $00
-		ASL #2 : !ADD $00 : ASL #2 ; mult by 20
+		STA.b Scrap00
+		ASL #2 : !ADD Scrap00 : ASL #2 ; mult by 20
 		TAX
 
-		LDA #$0016 : STA $7EC142 ; Cache the main screen designation
-		LDA.l StartingAreaExitTable+$05, X : STA $7EC144 ; Cache BG1 V scroll
-		LDA.l StartingAreaExitTable+$07, X : STA $7EC146 ; Cache BG1 H scroll
+		LDA.w #$0016 : STA $7EC142 ; Cache the main screen designation
+		LDA.l StartingAreaExitTable+$05, X : STA.l $7EC144 ; Cache BG1 V scroll
+		LDA.l StartingAreaExitTable+$07, X : STA.l $7EC146 ; Cache BG1 H scroll
 		LDA.l StartingAreaExitTable+$09, X : !ADD.w #$0010 : STA $7EC148 ; Cache Link's Y coordinate
-		LDA.l StartingAreaExitTable+$0B, X : STA $7EC14A ; Cache Link's X coordinate
-		LDA.l StartingAreaExitTable+$0D, X : STA $7EC150 ; Cache Camera Y coord lower bound.
-		LDA.l StartingAreaExitTable+$0F, X : STA $7EC152 ; Cache Camera X coord lower bound.
-		LDA.l StartingAreaExitTable+$03, X : STA $7EC14E ; Cache Link VRAM Location
+		LDA.l StartingAreaExitTable+$0B, X : STA.l $7EC14A ; Cache Link's X coordinate
+		LDA.l StartingAreaExitTable+$0D, X : STA.l $7EC150 ; Cache Camera Y coord lower bound.
+		LDA.l StartingAreaExitTable+$0F, X : STA.l $7EC152 ; Cache Camera X coord lower bound.
+		LDA.l StartingAreaExitTable+$03, X : STA.l $7EC14E ; Cache Link VRAM Location
 
 		; Handle the 2 "unknown" bytes, which control what area of the backgound
 		; relative to the camera? gets loaded with new tile data as the player moves around
 		; (because some overworld areas like Kak are too big for a single VRAM tilemap)
 
 		LDA.l StartingAreaExitTable+$11, X : AND.w #$00FF
-		BIT.w #$0080 : BEQ + : ORA #$FF00 : + ; Sign extend
+		BIT.w #$0080 : BEQ + : ORA.w #$FF00 : + ; Sign extend
 		STA.l $7EC16A
 
 		LDA.l StartingAreaExitTable+$12, X  : AND.w #$00FF
-		BIT.w #$0080 : BEQ + : ORA #$FF00 : + ; Sign extend
+		BIT.w #$0080 : BEQ + : ORA.w #$FF00 : + ; Sign extend
 		STA.l $7EC16E
 
 		LDA.w #$0000 : !SUB.l $7EC16A : STA $7EC16C
@@ -167,7 +167,7 @@ RTL
 CheckHole:
 	LDX.w #$0024
 	.nextHoleClassic
-		LDA.b $00   : CMP.l $1BB800, X
+		LDA.b Scrap00   : CMP.l $1BB800, X
 		BNE .wrongMap16Classic
 		LDA.w $040A : CMP.l $1BB826, X
 		BEQ .matchedHoleClassic
@@ -176,7 +176,7 @@ CheckHole:
 
 	LDX.w #$001E
 	.nextHoleExtra
-		LDA.b $00   : CMP.l ExtraHole_Map16, X
+		LDA.b Scrap00   : CMP.l ExtraHole_Map16, X
 		BNE .wrongMap16Extra
 		LDA.w $040A : CMP.l ExtraHole_Area, X
 		BEQ .matchedHoleExtra
@@ -193,7 +193,7 @@ CheckHole:
 JML Overworld_Hole_End
 ;--------------------------------------------------------------------------------
 PreventEnterOnBonk:
-	STA $00 ; part of what we wrote over
+	STA.b Scrap00 ; part of what we wrote over
 	LDA.l InvertedMode : AND.w #$00FF : BEQ .done
 	LDA.l $5D : AND.w #$00FF : CMP.w #$0014 : BNE .done ;in mirror mode?
 	LDA.b $8A : AND.w #$0040 : CMP $7B : BEQ .done ; Are we bonking, or doing the superbunny glitch?

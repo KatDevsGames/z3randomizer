@@ -396,7 +396,7 @@ org $30809A ; PC 0x18009A
 OneMindPlayerCount:
 db 0
 org $30809B ;  PC 0x18009B - 0x18009C
-OneMindTimer:
+OneMindTimerInit:
 dw 0
 ;--------------------------------------------------------------------------------
 ; 0x18009D - Dungeon map icons
@@ -1453,103 +1453,8 @@ dw #9999 ; Rupee Limit
 ; $2F8000 - $2F83FF - RNG Block
 ;================================================================================
 ; $7EC025 - $7EC034 - Item OAM Table
-;================================================================================
-; $7F5000 - Redraw Flag
-; $7F5001 - Flipper Softlock Possible
-; $7F5002 - L/R Rotate
-; $7F5003 - HexToDec 1st Digit
-; $7F5004 - HexToDec 2nd Digit
-; $7F5005 - HexToDec 3rd Digit
-; $7F5006 - HexToDec 4th Digit
-; $7F5007 - HexToDec 5th Digit
-; $7F5008 - Skip Sprite_DrawMultiple EOR
-; $7F5009 - Always Zero
-; $7F5010 - Scratch Space (Callee Preserved)
-; $7F5020 - Scratch Space (Caller Preserved)
-; $7F5030 - Jar Cursor Status
-; $7F5031 - HUD Master Sword Flag
-; $7F5032 - Ganon Warp Chain Flag
-; $7F5033 - Force Heart Spawn Counter
-; $7F5034 - Skip Heart Collection Save Counter
-; $7F5035 - Alternate Text Pointer Flag ; 0=Disable
-; $7F5036 - Padding Byte (Must be Zero)
-; $7F5037 - Stats Boss Kills
-; $7F5038 - Stats Lag Time
-; $7F5039 - Stats Lag Time
-; $7F503A - Stats Lag Time
-; $7F503B - Stats Lag Time
-; $7F503C - Stats Rupee Total
-; $7F503D - Stats Rupee Total
-; $7F503E - Stats Item Total
-; $7F503F - Unused
-; $7F5040 - Free Item Dialog Temporary
-; $7F5041 - Epilepsy Safety Timer
-; $7F5042 - Tile Upload Offset Override (Low)
-; $7F5043 - Tile Upload Offset Override (High)
-; $7F5044 - $7F5046 - NMI Auxiliary Function
-; $7F5047 - $7F504F - Unused
-; $7F5050 - $7F506F - Shop Block
-; $7F5070 - Reserved for OneMind
-; $7F5071 - Reserved for OneMind
-; $7F5072 - OneMind player ID
-; $7F5073 - $7F5074 - OneMind timer
-; $7F5075 - $7F507D - Unused
-; $7F507E - Clock Status
-; $7F507F - Always Zero
-; $7F5080 - $7F5083 - Clock Hours
-; $7F5084 - $7F5087 - Clock Minutes
-; $7F5088 - $7F508B - Clock Seconds
-; $7F508C - $7F508F - Clock Temporary
-; $7F5090 - RNG Item Lock-In
-; $7F5091 - Item Animation Busy Flag
-; $7F5092 - Potion Animation Busy Flags (Health)
-; $7F5093 - Potion Animation Busy Flags (Magic)
-; $7F5094 - Dialog Offset Pointer (Low)
-; $7F5095 - Dialog Offset Pointer (High)
-; $7F5096 - Dialog Offset Pointer Return (Low)
-; $7F5097 - Dialog Offset Pointer Return (High)
-; $7F5098 - Water Entry Index
-; $7F5099 - Last Entered Overworld Door ID
-; $7F509A - (Reserved)
-; $7F509B - Unused
-; $7F509C - Inverted Mode Duck Map Temporary
-; $7F509D - Stalfos Bomb Damage Value
-; $7F509E - Valid Key Loaded
-; $7F509F - Text Box Defer Flag
-; $7F50A0 - $7F50AF - MSU Block
+;================================================================================;
 
-; $7F50B0 - $7F50BF - Downstream Reserved (Enemizer)
-
-; $7F50C0 - Sword Modifier
-; $7F50C1 - Shield Modifier (Not Implemented)
-; $7F50C2 - Armor Modifier
-; $7F50C3 - Magic Modifier
-; $7F50C4 - Light Cone Modifier
-; $7F50C5 - Cucco Storm
-; $7F50C6 - Old Man Dash Modifier
-; $7F50C7 - Ice Physics Modifier
-; $7F50C8 - Infinite Arrows Modifier
-; $7F50C9 - Infinite Bombs Modifier
-; $7F50CA - Infinite Magic Modifier
-; $7F50CB - Invert D-Pad (Fill in values)
-; $7F50CC - Temporary OHKO
-; $7F50CD - Sprite Swapper
-; $7F50CE - Boots Modifier (0=Off, 1=Always, 2=Never)
-
-; $7F50D0 - $7F50FF - Block Cypher Parameters
-; $7F5100 - $7F51FF - Block Cypher Buffer
-; $7F5200 - $7F52FF - RNG Pointer Block
-; $7F5300 - $7F53FF - Multiworld Block
-; $7F5400 - $7F540F - MSU Block
-; $7F5410 - $7F545F - Dungeon Tracking Block
-; $7F5460 - $7F56FF - Unused
-
-; $7F5700 - $7F57FF - Dialog Buffer
-;
-;================================================================================
-!BIGRAM = "$7EC900";
-; $7EC900 - Big RAM Buffer ($1F00)
-;================================================================================
 org $30A100 ; PC 0x182100 - 0x182304
 EntranceDoorFrameTable:
 ; data for multi-entrance caves

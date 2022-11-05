@@ -91,7 +91,7 @@ PreOverworld_LoadProperties_ChooseMusic:
 Overworld_FinishMirrorWarp:
     REP #$20
 
-    LDA.w #$2641 : STA $4370
+    LDA.w #$2641 : STA.w DMAP7
 
     LDX.b #$3E
 
