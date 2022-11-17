@@ -30,13 +30,10 @@ SetTabletItem:
 RTL
 ;--------------------------------------------------------------------------------
 SpawnTabletItem:
-;	JSL.l HeartPieceGet
-;RTL
 	JSL.l LoadOutdoorValue
 	PHA
 	JSL.l PrepDynamicTile
 	
-	LDA.b #$01 : STA.l ForceHeartSpawn : STA.l SkipHeartSave
 	JSL.l SetTabletItem
 	
 	LDA.b #$EB
@@ -61,7 +58,7 @@ MaybeUnlockTabletAnimation:
 			STZ $0112 ; disable falling-medallion mode
 			STZ $03EF ; release link from item-up pose
 			LDA.b #$00 : STA.b $5D ; set link to ground state
-			
+
 			REP #$20 ; set 16-bit accumulator
 				LDA.b $8A : CMP.w #$0030 : BNE ++ ; Desert
 					SEP #$20 ; set 8-bit accumulator

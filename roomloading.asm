@@ -4,7 +4,7 @@ LoadRoomHook:
     .noStats
     JSL Dungeon_LoadRoom
     REP #$10 ; 16 bit XY
-        LDX $A0 ; Room ID
+        LDX.b RoomIndex ; Room ID
         LDA.l RoomCallbackTable, X
     SEP #$10 ; 8 bit XY
     JSL UseImplicitRegIndexedLongJumpTable
@@ -68,20 +68,20 @@ macro DrawBombosPlatform(roomX, roomY, quadX, quadY)
 endMacro
 
 IcePalaceBombosSE:
-    LDA AllowSwordlessMedallionUse : CMP #$01 : BEQ + : RTL : +
+    LDA.l AllowSwordlessMedallionUse : CMP.b #$01 : BEQ + : RTL : +
     %DrawBombosPlatform(14, 18, 1, 1)
     RTL
 IcePalaceBombosSW:
-    LDA AllowSwordlessMedallionUse : CMP #$01 : BEQ + : RTL : +
+    LDA.l AllowSwordlessMedallionUse : CMP.b #$01 : BEQ + : RTL : +
     %DrawBombosPlatform(14, 18, 0, 1)
     RTL
 IcePalaceBombosNE:
-    LDA AllowSwordlessMedallionUse : CMP #$01 : BEQ + : RTL : +
+    LDA.l AllowSwordlessMedallionUse : CMP.b #$01 : BEQ + : RTL : +
     %DrawBombosPlatform(14, 18, 1, 0)
     RTL
 
 CastleEastEntrance:
-    LDA ProgressIndicator : CMP.b #$02 : !BLT + : RTL : + ; only apply in rain states (0 or 1) 
+    LDA.l ProgressIndicator : CMP.b #$02 : !BLT + : RTL : + ; only apply in rain states (0 or 1) 
     LDA.l BlockCastleDoorsInRain : BNE + : RTL : +
 
     REP #$20 ; 16 A
@@ -112,7 +112,7 @@ CastleEastEntrance:
     RTL
 
 CastleWestEntrance:
-    LDA ProgressIndicator : CMP.b #$02 : !BLT + : RTL : + ; only apply in rain states (0 or 1) 
+    LDA.l ProgressIndicator : CMP.b #$02 : !BLT + : RTL : + ; only apply in rain states (0 or 1) 
     LDA.l BlockCastleDoorsInRain : BNE + : RTL : +
 
     REP #$20 ; 16 A

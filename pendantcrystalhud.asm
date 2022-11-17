@@ -1,20 +1,17 @@
 ;================================================================================
 ; Pendant / Crystal HUD Fix
 ;--------------------------------------------------------------------------------
-;CheckPendantHUD:
-;	LDA HudFlag : CMP.b #$40 ; check for hud flag instead
-;RTL
 ;================================================================================
 FlipLWDWFlag:
 	PHP
 	SEP #$20 ; set 8-bit accumulator
-	LDA CurrentWorld : EOR.b #$40 : STA CurrentWorld
+	LDA.l CurrentWorld : EOR.b #$40 : STA.l CurrentWorld
 	BEQ +
 		LDA.b #07 : BRA ++ ; dark world - crystals
 	+ 
 		LDA.b #03 ; light world - pendants
 	++
-	STA MapIcons
+	STA.l MapIcons
 	PLP
 RTL
 ;================================================================================
@@ -23,7 +20,7 @@ HUDRebuildIndoorHole:
 	LDA.l GenericKeys : BEQ .normal
 	.generic
 	PLA
-	LDA CurrentGenericKeys ; generic key count
+	LDA.l CurrentGenericKeys ; generic key count
 	JSL.l HUD_RebuildIndoor_Palace
 RTL
 	.normal
@@ -34,18 +31,18 @@ RTL
 HUDRebuildIndoor:
 	LDA.l GenericKeys : BEQ .normal
 	.generic
-	LDA.b #$00 : STA $7EC017
-	LDA CurrentGenericKeys ; generic key count
+	LDA.b #$00 : STA.l $7EC017
+	LDA.l CurrentGenericKeys ; generic key count
 RTL
 	.normal
-    LDA.b #$00 : STA $7EC017
+    LDA.b #$00 : STA.l $7EC017
     LDA.b #$FF ; don't show keys
 RTL
 ;================================================================================
 GetCrystalNumber:
 	PHX
 		TXA : ASL : TAX
-		LDA CurrentWorld : EOR.b #$40 : BNE +
+		LDA.l CurrentWorld : EOR.b #$40 : BNE +
 			INX
 		+
 		LDA.l CrystalNumberTable-16, X
@@ -55,13 +52,13 @@ RTL
 OverworldMap_CheckObject:
 	PHX
 		;CPX.b #$01 : BNE + : JMP ++ : + : JMP .fail
-		LDA CurrentWorld : AND.b #$40 : BNE +
+		LDA.l CurrentWorld : AND.b #$40 : BNE +
 			;LW Map
 			LDA.l MapMode : BEQ +++
-			LDA MapField : ORA MapOverlay : AND.b #$01 : BNE +++
+			LDA.l MapField : ORA.l MapOverlay : AND.b #$01 : BNE +++
 				PHX
 					LDA.l .lw_map_offsets, X : TAX ; put map offset into X
-					LDA MapField, X : ORA MapOverlay, X
+					LDA.l MapField, X : ORA.l MapOverlay, X
 				PLX
 				AND.l .lw_map_masks, X : BNE +++
 				JMP .fail
@@ -72,7 +69,7 @@ OverworldMap_CheckObject:
 		+
 			;DW Map
 			LDA.l MapMode : BEQ +++			
-			LDA MapField : ORA MapOverlay : AND.b #$02 : BNE +++
+			LDA.l MapField : ORA.l MapOverlay : AND.b #$02 : BNE +++
 				PHX
 					LDA.l .dw_map_offsets, X : TAX ; put map offset into X
 					LDA.l MapField, X : ORA MapOverlay, X
@@ -90,11 +87,11 @@ RTL
 		AND.b #$40 : BNE .checkCrystal
 		
 		.checkPendant
-		LDA PendantsField : AND.l CrystalPendantFlags, X : BNE .fail
+		LDA.l PendantsField : AND.l CrystalPendantFlags, X : BNE .fail
 		CLC : BRA .done
 	
 		.checkCrystal
-		LDA CrystalsField : AND.l CrystalPendantFlags, X : BNE .fail
+		LDA.l CrystalsField : AND.l CrystalPendantFlags, X : BNE .fail
 		CLC : BRA .done
 	
 		.fail
@@ -119,32 +116,23 @@ db $02, $80, $08, $10, $01, $40, $04
 SetLWDWMap:
 	PHP
 	SEP #$20 ; set 8-bit accumulator
-	LDA CurrentWorld : EOR.b #$40
+	LDA.l CurrentWorld : EOR.b #$40
 	BNE +
 		LDA.b #07 : BRA ++ ; dark world - crystals
 	+ 
 		LDA.b #03 ; light world - pendants
 	++
-	STA MapIcons
+	STA.l MapIcons
 	PLP
 RTL
 ;================================================================================
 GetMapMode:
-	LDA CurrentWorld : AND.b #$40 : BEQ +
+	LDA.l CurrentWorld : AND.b #$40 : BEQ +
 		LDA.b #07 ; dark world - crystals
 RTL
 	+ 
 		LDA.b #03 ; light world - pendants
 RTL
-;================================================================================
-;GetPendantCrystalWorld:
-;	PHB : PHK : PLB
-;	PHX
-;		LDA $040C : LSR : TAX
-;		LDA .dungeon_worlds, X
-;	PLX : PLB
-;	CMP.b #$00
-;RTL
 ;================================================================================
 BringMenuDownEnhanced:
 	REP #$20 ; set 16-bit accumulator
@@ -160,7 +148,7 @@ BringMenuDownEnhanced:
 		!ADD $EA : CMP.w #$FF18 : !BGE .noOvershoot
 			LDA.w #$FF18 ; if we went past the limit, go to the limit
 		.noOvershoot
-		STA $EA : CMP.w #$FF18
+		STA.b $EA : CMP.w #$FF18
 	SEP #$20 ; set 8-bit accumulator
 	BNE .notDoneScrolling
 		INC $0200
@@ -178,38 +166,37 @@ RaiseHudMenu:
 	!ADD $EA : BMI .noOvershoot
 		LDA.w #$0000 ; if we went past the limit, go to the limit
 	.noOvershoot
-	STA $EA
+	STA.b $EA
 RTL
 ;================================================================================
 CheckCloseItemMenu:
 	LDA.l MenuCollapse : BNE + 
-		LDA $F4 : AND.b #$10 : RTL
+		LDA.b $F4 : AND.b #$10 : RTL
 	+
-	LDA $F0 : AND.b #$10 : EOR.b #$10
+	LDA.b $F0 : AND.b #$10 : EOR.b #$10
 RTL
 ;================================================================================
 ShowDungeonItems:
-	LDA $040C : AND.w #$00FF : CMP.w #$00FF : BNE + : RTL : + ; return normal result if outdoors or in a cave
-	;LDA $F0 : AND.w #$0020 ; check for select
-	LDA HudFlag : AND.w #$0020 ; check hud flag
+	LDA.w $040C : AND.w #$00FF : CMP.w #$00FF : BNE + : RTL : + ; return normal result if outdoors or in a cave
+	LDA.l HudFlag : AND.w #$0020 ; check hud flag
 	BEQ + : LDA.w #$0000 : RTL : + ; if set, send the zero onwards
-	LDA $040C : AND.w #$00FF : CMP.w #$00FF ; original logic
+	LDA.w $040C : AND.w #$00FF : CMP.w #$00FF ; original logic
 RTL
 ;--------------------------------------------------------------------------------
 UpdateKeys:
 	PHX : PHP
 	SEP #$30 ; set 8-bit accumulator & index registers
-		LDA $040C : CMP.b $1F : !BLT .skip
+		LDA.w $040C : CMP.b $1F : !BLT .skip
 		
 		LSR : TAX ; get dungeon index and store to X
 	
-		LDA CurrentSmallKeys ; load current key count
-		STA DungeonKeys, X ; save to main counts
+		LDA.l CurrentSmallKeys ; load current key count
+		STA.l DungeonKeys, X ; save to main counts
 		
 		CPX.b #$00 : BNE +
-			STA HyruleCastleKeys ; copy HC to sewers
+			STA.l HyruleCastleKeys ; copy HC to sewers
 		+ : CPX.b #$01 : BNE +
-			STA SewerKeys ; copy sewers to HC
+			STA.l SewerKeys ; copy sewers to HC
 		+
 		.skip
 	JSL.l PostItemGet
@@ -232,34 +219,34 @@ RTL
 ;--------------------------------------------------------------------------------
 DrawBootsInMenuLocation:
 	LDA.l HUDDungeonItems : BNE +
-		LDA.w #$1608 : STA $00
+		LDA.w #$1608 : STA.b $00
 		RTL
 	+
-	LDA.w #$1588 : STA $00
+	LDA.w #$1588 : STA.b $00
 RTL
 ;--------------------------------------------------------------------------------
 DrawGlovesInMenuLocation:
 	LDA.l HUDDungeonItems : BNE +
-		LDA.w #$1610 : STA $00
+		LDA.w #$1610 : STA.b $00
 		RTL
 	+
-	LDA.w #$1590 : STA $00
+	LDA.w #$1590 : STA.b $00
 RTL
 ;--------------------------------------------------------------------------------
 DrawFlippersInMenuLocation:
 	LDA.l HUDDungeonItems : BNE +
-		LDA.w #$1618 : STA $00
+		LDA.w #$1618 : STA.b $00
 		RTL
 	+
-	LDA.w #$1598 : STA $00
+	LDA.w #$1598 : STA.b $00
 RTL
 ;--------------------------------------------------------------------------------
 DrawMoonPearlInMenuLocation:
 	LDA.l HUDDungeonItems : BNE +
-		LDA.w #$1620 : STA $00
+		LDA.w #$1620 : STA.b $00
 		RTL
 	+
-	LDA.w #$15A0 : STA $00
+	LDA.w #$15A0 : STA.b $00
 RTL
 ;--------------------------------------------------------------------------------
 DrawHUDDungeonItems:
@@ -371,10 +358,10 @@ DrawHUDDungeonItems:
 +
 ;-------------------------------------------------------------------------------
 
-	LDA HUDDungeonItems : AND.w #$0001 : BEQ .skip_small_keys
+	LDA.l HUDDungeonItems : AND.w #$0001 : BEQ .skip_small_keys
 
 .draw_small_keys
-		LDA.w #$2810 : STA $1684 ; small keys icon
+		LDA.w #$2810 : STA.w $1684 ; small keys icon
 
 		LDY.w #0
 
@@ -399,10 +386,10 @@ DrawHUDDungeonItems:
 .skip_small_keys
 
 	; Big Keys
-	LDA HUDDungeonItems : AND.w #$0002 : BEQ .skip_big_keys
+	LDA.l HUDDungeonItems : AND.w #$0002 : BEQ .skip_big_keys
 
 
-		LDA.w #$2811 : STA $16C4 ; big key icon
+		LDA.w #$2811 : STA.w $16C4 ; big key icon
 
 		; use X so we can BIT
 		LDX.w #0
@@ -429,10 +416,8 @@ DrawHUDDungeonItems:
 
 .skip_big_keys
 
-	LDA HUDDungeonItems : AND.w #$0010 : BEQ .skip_boss_kills
-
-		LDA.w #$280F : STA $1704 ; skull icon
-
+	LDA.l HUDDungeonItems : AND.w #$0010 : BEQ .skip_boss_kills
+		LDA.w #$280F : STA.w $1704 ; skull icon
 		LDY.w #0
 
 .next_boss_kill
@@ -460,8 +445,8 @@ DrawHUDDungeonItems:
  .maps_and_compasses
 
 	; Maps
-	LDA HUDDungeonItems : AND.w #$0004 : BEQ .skip_maps
-		LDA.w #$2821 : STA $1684 ; map icon
+	LDA.l HUDDungeonItems : AND.w #$0004 : BEQ .skip_maps
+		LDA.w #$2821 : STA.w $1684 ; map icon
 
 		; use X so we can BIT
 		LDX.w #0
@@ -489,8 +474,8 @@ DrawHUDDungeonItems:
 .skip_maps
 
 	; Compasses
-	LDA HUDDungeonItems : AND.w #$0008 : BEQ .skip_compasses
-		LDA.w #$2C20 : STA $16C4 ; compass icon
+	LDA.l HUDDungeonItems : AND.w #$0008 : BEQ .skip_compasses
+		LDA.w #$2C20 : STA.w $16C4 ; compass icon
 
 		; use X so we can BIT
 		LDX.w #0
@@ -528,19 +513,19 @@ DrawPendantCrystalDiagram:
 		REP #$30 ; Set 16-bit accumulator & index registers
 		LDX.w #$0000 ; Paint entire box black & draw empty pendants and crystals
 		-
-		LDA.l .row0, X : STA $12EA, X
-		LDA.l .row1, X : STA $132A, X
-		LDA.l .row2, X : STA $136A, X
-		LDA.l .row3, X : STA $13AA, X
-		LDA.l .row4, X : STA $13EA, X
-		LDA.l .row5, X : STA $142A, X
-		LDA.l .row6, X : STA $146A, X
-		LDA.l .row7, X : STA $14AA, X
-		LDA.l .row8, X : STA $14EA, X
+		LDA.l .row0, X : STA.w $12EA, X
+		LDA.l .row1, X : STA.w $132A, X
+		LDA.l .row2, X : STA.w $136A, X
+		LDA.l .row3, X : STA.w $13AA, X
+		LDA.l .row4, X : STA.w $13EA, X
+		LDA.l .row5, X : STA.w $142A, X
+		LDA.l .row6, X : STA.w $146A, X
+		LDA.l .row7, X : STA.w $14AA, X
+		LDA.l .row8, X : STA.w $14EA, X
 		INX #2 : CPX.w #$0014 : BCC -
 		
 		; pendants
-		LDA PendantsField
+		LDA.l PendantsField
 
 		  LSR : BCC + ; pendant of wisdom (red)
 			LDX.w #$252B
@@ -567,7 +552,7 @@ DrawPendantCrystalDiagram:
 
 
 		; crystals
-		LDA CrystalsField
+		LDA.l CrystalsField
 		LDX.w #$2D44
 		LDY.w #$2D45
 

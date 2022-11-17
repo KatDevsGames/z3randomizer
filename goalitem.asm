@@ -118,12 +118,12 @@ GetRequiredCrystalsInX:
 RTL
 ;--------------------------------------------------------------------------------
 CheckEnoughCrystalsForGanon:
-	LDA CrystalCounter
+	LDA.l CrystalCounter
 	CMP.l NumberOfCrystalsRequiredForGanon
 RTL
 ;--------------------------------------------------------------------------------
 CheckEnoughCrystalsForTower:
-	LDA CrystalCounter
+	LDA.l CrystalCounter
 	CMP.l NumberOfCrystalsRequiredForTower
 RTL
 

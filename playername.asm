@@ -19,16 +19,16 @@ WriteBlanksToPlayerName:
 RTL
 
 WriteCharacterToPlayerName:
-	STA ExtendedFileNameSRAM, X
+	STA.l ExtendedFileNameSRAM, X
         CPX.w #$0008 : !BGE +
-	    STA $7003D9, X ;what we wrote over
+	    STA.l $7003D9, X ;what we wrote over
         +
 RTL
 
 ReadCharacterFromPlayerName: ;Only for use on Name Screen
-	LDA ExtendedFileNameSRAM, X
+	LDA.l ExtendedFileNameSRAM, X
         CPX.w #$0008 : !BGE +
-            LDA $7003D9, X ;what we wrote over
+            LDA.l $7003D9, X ;what we wrote over
         +
 RTL
 
@@ -40,13 +40,13 @@ PLB
 RTL
 
 WrapCharacterPosition:
-	LDA $0B12 : BPL +
+	LDA.w $0B12 : BPL +
 		LDA.b #$0B
 	+
 	CMP.b #$0C : !BLT +
 		LDA.b #$00
 	+
-	STA $0B12
+	STA.w $0B12
 RTL
 
 CharacterPositions:

@@ -94,6 +94,9 @@ Sprite_ShowMessageUnconditional:
 org $05EC96
 Sprite_ZeldaLong:
 
+org $05F0C0
+Sprite_EB_HeartPiece_handle_flags:
+
 org $0680FA
 Player_ApplyRumbleToSprites:
 

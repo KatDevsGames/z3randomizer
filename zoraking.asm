@@ -6,7 +6,7 @@ LoadZoraKingItemGFX:
 	JML.l PrepDynamicTile
 ;--------------------------------------------------------------------------------
 JumpToSplashItemTarget:
-	LDA $0D90, X
+	LDA.w $0D90, X
 	CMP.b #$FF : BNE + : JML.l SplashItem_SpawnSplash : +
 	CMP.b #$00 : JML.l SplashItem_SpawnOther
 ;--------------------------------------------------------------------------------

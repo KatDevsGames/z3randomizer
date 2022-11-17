@@ -2,37 +2,35 @@
 ; Randomize Heart Pieces
 ;--------------------------------------------------------------------------------
 HeartPieceGet:
-	PHX : PHY
-	LDY $0E80, X ; load item value into Y register
-	BNE +
-		; if for any reason the item value is 0 reload it, just in case
-		JSL.l LoadHeartPieceRoomValue : TAY
-	+
-	JSL.l MaybeMarkDigSpotCollected
+        PHX : PHY
+        LDY.w $0E80, X ; load item value into Y register
+        BNE +
+                ; if for any reason the item value is 0 reload it, just in case
+                JSL.l LoadHeartPieceRoomValue : TAY
+        +
+        JSL.l MaybeMarkDigSpotCollected
 
-	.skipLoad
+        .skipLoad
 
-	STZ.w $02E9 ; 0 = Receiving item from an NPC or message
+        STZ.w $02E9 ; 0 = Receiving item from an NPC or message
 
-	CPY.b #$26 : BNE .notHeart ; don't add a 1/4 heart if it's not a heart piece
-	LDA.l HeartPieceQuarter : INC A : AND.b #$03 : STA.l HeartPieceQuarter : BNE .unfinished_heart ; add up heart quarters
-	BRA .giveItem
+        CPY.b #$26 : BNE .notHeart ; don't add a 1/4 heart if it's not a heart piece
+        LDA.l HeartPieceQuarter : INC A : AND.b #$03 : STA.l HeartPieceQuarter : BNE .unfinished_heart ; add up heart quarters
+        BRA .giveItem
 
-	.notHeart
+        .notHeart
+        .giveItem
+        JSL.l $0791B3 ; Player_HaltDashAttackLong
+        JSL.l Link_ReceiveItem
+        CLC ; return false
+        JMP .done ; finished
 
-	.giveItem
-	JSL.l $0791B3 ; Player_HaltDashAttackLong
-	JSL.l Link_ReceiveItem
-	CLC ; return false
-	JMP .done ; finished
+        .unfinished_heart
+        SEC ; return true
+        .done
+        JSL MaybeUnlockTabletAnimation
 
-	.unfinished_heart
-	SEC ; return true
-	.done
-	
-    JSL MaybeUnlockTabletAnimation
-	
-	PLY : PLX
+        PLY : PLX
 RTL
 ;--------------------------------------------------------------------------------
 HeartContainerGet:
@@ -118,27 +116,6 @@ RTL
 	CLC
 RTL
 ;--------------------------------------------------------------------------------
-HeartUpgradeSpawnDecision: ; this should return #$00 to make the hp spawn
-	LDA.l ForceHeartSpawn : BEQ .normal_behavior
-	
-	DEC : STA.l ForceHeartSpawn
-	LDA.b #$00
-RTL
-	
-	.normal_behavior
-	LDA.l OverworldEventDataWRAM, X
-RTL
-;--------------------------------------------------------------------------------
-SaveHeartCollectedStatus:
-	LDA.l SkipHeartSave : BEQ .normal_behavior
-	
-	DEC : STA.l SkipHeartSave
-RTL
-	
-	.normal_behavior
-	LDA.l OverworldEventDataWRAM, X : ORA.b #$40 : STA.l OverworldEventDataWRAM, X
-RTL
-;--------------------------------------------------------------------------------
 HeartPieceSpritePrep:
 	PHA
 	
@@ -215,7 +192,7 @@ endmacro
 LoadIndoorValue:
 	PHP
 	REP #$20 ; set 16-bit accumulator
-	LDA.b $A0 ; these are all decimal because i got them that way
+	LDA.b RoomIndex ; these are all decimal because i got them that way
 	CMP.w #225 : BNE +
 		%GetPossiblyEncryptedItem(HeartPiece_Forest_Thieves, HeartPieceIndoorValues)
 		JMP .done
@@ -328,7 +305,7 @@ LoadHeartContainerRoomValue:
 LoadBossValue:
 	PHP
 	REP #$20 ; set 16-bit accumulator
-	LDA.b $A0 ; these are all decimal because i got them that way
+	LDA.b RoomIndex ; these are all decimal because i got them that way
 	CMP.w #200 : BNE +
 		%GetPossiblyEncryptedItem(HeartContainer_ArmosKnights, HeartContainerBossValues)
 		JMP .done
@@ -371,7 +348,7 @@ CheckIfBossRoom:
 ; Carry set if we're in a boss room, unset otherwise.
 ;--------------------------------------------------------------------------------
 	REP #$20 ; set 16-bit accumulator
-	LDA.b $A0 ; these are all decimal because i got them that way
+	LDA.b RoomIndex ; these are all decimal because i got them that way
 	CMP.w #200 : BEQ .done
 	CMP.w #51 : BEQ .done
 	CMP.w #7 : BEQ .done

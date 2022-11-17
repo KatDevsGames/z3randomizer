@@ -60,8 +60,8 @@ macro ServiceRequestChest(type)
 	LDA.l TxStatus : BEQ + : CLC : RTL : + ; return fail if we don't have the lock
 		LDA.b $1B : STA.l TxBuffer+8 ; indoor/outdoor
 		BEQ +
-			LDA.b $A0 : STA.l TxBuffer+9 ; roomid low
-			LDA.b $A1 : STA.l TxBuffer+10 ; roomid high
+			LDA.b RoomIndex : STA.l TxBuffer+9 ; roomid low
+			LDA.b RoomIndex+1 : STA.l TxBuffer+10 ; roomid high
 			BRA ++
 		+
 			LDA.w $040A : STA.l TxBuffer+9 ; area id
@@ -78,8 +78,8 @@ macro ServiceRequest(type,index)
 	LDA.l TxStatus : BEQ + : CLC : RTL : + ; return fail if we don't have the lock
 		LDA.b $1B : STA.l TxBuffer+8 ; indoor/outdoor
 		BEQ +
-			LDA.b $A0 : STA.l TxBuffer+9 ; roomid low
-			LDA.b $A1 : STA.l TxBuffer+10 ; roomid high
+			LDA.b RoomIndex : STA.l TxBuffer+9 ; roomid low
+			LDA.b RoomIndex+1 : STA.l TxBuffer+10 ; roomid high
 			BRA ++
 		+
 			LDA.w $040A : STA.l TxBuffer+9 ; area id

@@ -148,13 +148,13 @@ OnNewFile:
 	PHX : PHP
 		; reset some values on new file that are otherwise only reset on hard reset
 		SEP #$20 ; set 8-bit accumulator
-		STZ $03C4 ; ancilla slot index
-		STZ $047A ; EG
-		STZ $0B08 : STZ $0B09 ; arc variable
-		STZ $0CFB ; enemies killed (pull trees)
-		STZ $0CFC ; times taken damage (pull trees)
-		STZ $0FC7 : STZ $0FC8 : STZ $0FC9 : STZ $0FCA : STZ $0FCB : STZ $0FCC : STZ $0FCD ; prize packs
-		LDA #$00 : STA.l $7EC011 ; mosaic
+		STZ.w $03C4 ; ancilla slot index
+		STZ.w $047A ; EG
+		STZ.w $0B08 : STZ $0B09 ; arc variable
+		STZ.w $0CFB ; enemies killed (pull trees)
+		STZ.w $0CFC ; times taken damage (pull trees)
+		STZ.w $0FC7 : STZ.w $0FC8 : STZ.w $0FC9 : STZ.w $0FCA : STZ.w $0FCB : STZ.w $0FCC : STZ.w $0FCD ; prize packs
+		LDA.b #$00 : STA.l $7EC011 ; mosaic
 		JSL InitRNGPointerTable ; boss RNG
 	PLP : PLX
 RTL
@@ -166,16 +166,12 @@ RTL
 ;--------------------------------------------------------------------------------
 OnLinkDamaged:
 	JSL.l IncrementDamageTakenCounter_Arb
-	;JSL.l FlipperKill
 	JML.l OHKOTimer
 
 ;--------------------------------------------------------------------------------
-OnEnterWater:
-	JSL.l RegisterWaterEntryScreen
-
-	JSL.l MysteryWaterFunction
-	LDX.b #$04
-RTL
+;OnEnterWater:
+;       JSL.l UnequipCapeQuiet ; what we wrote over
+;RTL
 ;--------------------------------------------------------------------------------
 OnLinkDamagedFromPit:
 	JSL.l OHKOTimer
@@ -197,7 +193,6 @@ OnLinkDamagedFromPitOutdoors:
 ;--------------------------------------------------------------------------------
 OnOWTransition:
 	JSL.l FloodGateReset
-	JSL.l FlipperFlag
 	JSL.l StatTransitionCounter
 	PHP
 	SEP #$20 ; set 8-bit accumulator
@@ -206,14 +201,14 @@ OnOWTransition:
 RTL
 ;--------------------------------------------------------------------------------
 OnLoadDuckMap:
-	LDA.l ScratchBufferV
+	LDA.l DuckMapFlag
 	BNE +
-		INC : STA.l ScratchBufferV
+		INC : STA.l DuckMapFlag
 		JSL OverworldMap_InitGfx : DEC $0200
 
 		RTL
 	+
-	LDA.b #$00 : STA.l ScratchBufferV
+	LDA.b #$00 : STA.l DuckMapFlag
 	JML OverworldMap_DarkWorldTilemap
 
 ;--------------------------------------------------------------------------------
@@ -228,10 +223,10 @@ RTL
 PostItemAnimation:
 	LDA.b #$00 : STA.l BusyItem ; mark item as finished
 
-	LDA.l $7F509F : BEQ +
+	LDA.l TextBoxDefer : BEQ +
 		STZ.w $1CF0 : STZ.w $1CF1 ; reset decompression buffer
 		JSL.l Main_ShowTextMessage_Alt
-		LDA.b #$00 : STA.l $7F509F
+		LDA.b #$00 : STA.l TextBoxDefer
 	+
 
 	LDA.w $02E9 : CMP.b #$01 : BNE +

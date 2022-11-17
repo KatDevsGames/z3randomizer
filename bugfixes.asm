@@ -46,9 +46,9 @@ RTL
 DecideIfBunnyByScreenIndex:
 	; If indoors we don't have a screen index. Return non-bunny to make mirror-based
 	; superbunny work
-	LDA $1B : BNE .done
-	LDA MoonPearlEquipment : BNE .done
-	LDA $8A : AND.b #$40 : PHA
+	LDA.b $1B : BNE .done
+	LDA.l MoonPearlEquipment : BNE .done
+	LDA.b $8A : AND.b #$40 : PHA
 	LDA.l InvertedMode : BNE .inverted
 	.normal
 		PLA : EOR #$40
@@ -58,20 +58,11 @@ DecideIfBunnyByScreenIndex:
 	.done
 RTL
 ;--------------------------------------------------------------------------------
-
-;--------------------------------------------------------------------------------
-;ReadInventoryPond:
-;	CPX.b #$1B : BNE + : LDA.b #$01 : RTL : +
-;	LDA EquipmentWRAM, X
-;RTL
-;--------------------------------------------------------------------------------
-
-;--------------------------------------------------------------------------------
 FixBunnyOnExitToLightWorld:
     LDA.w $02E0 : BEQ +
         JSL.l DecideIfBunny : BEQ +
-        STZ $5D ; set player mode to Normal
-        STZ $02E0 : STZ $56 ; return player graphics to normal
+        STZ.b $5D ; set player mode to Normal
+        STZ.w $02E0 : STZ.b $56 ; return player graphics to normal
     +
 RTS
 ;--------------------------------------------------------------------------------
@@ -82,10 +73,10 @@ RTS
 FixAga2Bunny:
     LDA.l FixFakeWorld :  BEQ + ; Only use this fix is fakeworld fix is in use
         LDA.l InvertedMode : BEQ +++
-            LDA.b #$00 : STA CurrentWorld ; Switch to light world
+            LDA.b #$00 : STA.l CurrentWorld ; Switch to light world
             BRA ++
         +++
-        LDA.b #$40 : STA CurrentWorld ; Switch to dark world
+        LDA.b #$40 : STA.l CurrentWorld ; Switch to dark world
     ++
 	JSL DecideIfBunny : BNE +
 		JSR MakeBunny
@@ -100,8 +91,8 @@ RTL
 ;--------------------------------------------------------------------------------
 MakeBunny:
     PHX : PHY
-	LDA.b #$17 : STA $5D ; set player mode to permabunny
-	LDA.b #$01 : STA $02E0 : STA $56 ; make player look like bunny
+	LDA.b #$17 : STA.b $5D ; set player mode to permabunny
+	LDA.b #$01 : STA.w $02E0 : STA.b $56 ; make player look like bunny
 	JSL LoadGearPalettes_bunny
     PLY : PLX
 RTS
@@ -172,8 +163,8 @@ CMP.w #$070E : BEQ .new ; opening overworld map
 .original
 -
 	LDA.b [Scrap00]
-	STA $7EC300, X
-	STA $7EC500, X
+	STA.l $7EC300, X
+	STA.l $7EC500, X
 	INC.b Scrap00 : INC.b Scrap00
 	INX #2
 	DEY
@@ -182,7 +173,7 @@ RTL
 .new
 -
 	LDA.b [Scrap00]
-	STA $7EC500, X
+	STA.l $7EC500, X
 	INC.b Scrap00 : INC.b Scrap00
 	INX #2
 	DEY
@@ -192,10 +183,10 @@ RTL
 ;--------------------------------------------------------------------------------
 ; Fix pedestal pull overlay
 PedestalPullOverlayFix:
-LDA.b #$09 : STA $039F, X	; the thing we wrote over
-LDA $1B : BNE +
-	LDA $8A : CMP.b #$80 : BNE +
-		LDA $8C : CMP.b #$97
+LDA.b #$09 : STA.w $039F, X	; the thing we wrote over
+LDA.b $1B : BNE +
+	LDA.b $8A : CMP.b #$80 : BNE +
+		LDA.b $8C : CMP.b #$97
 +
 RTL
 
@@ -221,7 +212,7 @@ pushpc
 pullpc
 ;--------------------------------------------------------------------------------
 SetOverworldTransitionFlags:
-	LDA #$01
-	STA $0ABF ; used by witch
-	STA $021B ; used by race game
+	LDA.b #$01
+	STA.w $0ABF ; used by witch
+	STA.w $021B ; used by race game
 	RTL

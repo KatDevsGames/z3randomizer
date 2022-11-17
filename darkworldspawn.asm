@@ -28,8 +28,8 @@ SetDeathWorldChecked:
 		JMP SetDeathWorldChecked_Inverted
 	+
 	LDA.b $1B : BEQ .outdoors
-		LDA.w $040C : CMP #$FF : BNE .dungeon
-		LDA.b $A0 : ORA.b $A1 : BNE ++
+		LDA.w $040C : CMP.b #$FF : BNE .dungeon
+		LDA.b RoomIndex : ORA.b RoomIndex+1 : BNE ++
 			LDA.l GanonPyramidRespawn : BNE .pyramid ; if flag is set, force respawn at pyramid on death to ganon
 	    ++
 	.outdoors
@@ -52,20 +52,20 @@ DoWorldFix_Inverted:
 	.skip_mirror_check ; alt entrance point
 	LDA.l ProgressIndicator : CMP.b #$03 : BCS .done ; check if agahnim 1 is alive
         .setDarkWorld
-	LDA.b #$40 : STA CurrentWorld ; set flag to dark world
+	LDA.b #$40 : STA.l CurrentWorld ; set flag to dark world
 	LDA.l FollowerIndicator
 	CMP.b #$07 : BEQ .clear ; clear frog
 	CMP.b #$08 : BEQ .clear ; clear dwarf - consider flute implications
 	BRA .done
 	.clear
-	LDA.b #$00 : STA FollowerIndicator ; clear follower
+	LDA.b #$00 : STA.l FollowerIndicator ; clear follower
 	.done
 RTL
 ;--------------------------------------------------------------------------------
 SetDeathWorldChecked_Inverted:
 	LDA.b $1B : BEQ .outdoors
-		LDA.w $040C : CMP #$FF : BNE .dungeon
-		LDA.b $A0 : ORA $A1 : BNE ++
+		LDA.w $040C : CMP.b #$FF : BNE .dungeon
+		LDA.b RoomIndex : ORA.b RoomIndex+1 : BNE ++
 			LDA.l GanonPyramidRespawn : BNE .castle ; if flag is set, force respawn at pyramid on death to ganon
 		++
 	.outdoors
@@ -77,7 +77,7 @@ JMP DoWorldFix_Inverted_skip_mirror_check
 
 	.castle
 	LDA.b #$00 : STA.l CurrentWorld ; set flag to dark world
-	LDA.l FollowerIndicator : CMP.b #$07 : BNE + : LDA.b #$08 : STA FollowerIndicator : + ; convert frog to dwarf
+	LDA.l FollowerIndicator : CMP.b #$07 : BNE + : LDA.b #$08 : STA.l FollowerIndicator : + ; convert frog to dwarf
 	.done
 RTL
 ;================================================================================

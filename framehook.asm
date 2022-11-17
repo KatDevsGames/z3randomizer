@@ -33,24 +33,13 @@ NMIHookAction:
 JML.l NMIHookReturn
 ;--------------------------------------------------------------------------------
 PostNMIHookAction:
-	LDA.l NMIAux : BEQ +
-		LDA.b Scrap00 : PHA ; preserve DP ram
-		LDA.b Scrap01 : PHA
-		LDA.b Scrap02 : PHA
+	LDA.w NMIAux : BEQ +
 		
-		LDA.l NMIAux+2 : STA.b Scrap02 ; set up jump pointer
-		LDA.l NMIAux+1 : STA.b Scrap01 
-		LDA.l NMIAux+0 : STA.b Scrap00 
-		
-		PHK : PER .return-1 ; push stack for RTL return
-		JMP [$0000]
+		PHK : PEA .return-1 ; push stack for RTL return
+		JMP.w [NMIAux]
 		
 		.return
-		LDA.b #$00 : STA.l NMIAux ; zero bank byte of NMI hook pointer
-		
-		PLA : STA.b Scrap02
-		PLA : STA.b Scrap01
-		PLA : STA.b Scrap00
+		STZ.w NMIAux ; zero bank byte of NMI hook pointer
 	+
 	
 	LDA.b $13 : STA.w INIDISP ; thing we wrote over, turn screen back on

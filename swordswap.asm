@@ -65,7 +65,7 @@ RTL
 ;================================================================================
 ; $7E0348 - Ice Value
 LoadModifiedIceFloorValue_a11:
-	LDA.b $A0 : CMP.b #$91 : BEQ + : CMP.b #$92 : BEQ + : CMP.b #$93 : BEQ + ; mire basement currently broken - not sure why
+	LDA.b RoomIndex : CMP.b #$91 : BEQ + : CMP.b #$92 : BEQ + : CMP.b #$93 : BEQ + ; mire basement currently broken - not sure why
 	LDA.b $5D : CMP.b #$01 : BEQ + : CMP.b #$17 : BEQ + : CMP.b #$1C : BEQ +
 	LDA.b $5E : CMP.b #$02 : BEQ +  
 	LDA.b $5B : BNE +  
@@ -73,7 +73,7 @@ LoadModifiedIceFloorValue_a11:
 	+ : LDA.w $0348 : AND.b #$11  
 RTL  
 LoadModifiedIceFloorValue_a01:  
-	LDA.b $A0 : CMP.b #$91 : BEQ + : CMP.b #$92 : BEQ + : CMP.b #$93 : BEQ + ; mire basement currently broken - not sure why
+	LDA.b RoomIndex : CMP.b #$91 : BEQ + : CMP.b #$92 : BEQ + : CMP.b #$93 : BEQ + ; mire basement currently broken - not sure why
 	LDA.b $5D : CMP.b #$01 : BEQ + : CMP.b #$17 : BEQ + : CMP.b #$1C : BEQ +
 	LDA.b $5E : CMP.b #$02 : BEQ +
 	LDA.b $5B : BNE +
@@ -116,7 +116,7 @@ GetSmithSword:
 		LDA.b #$7A
 		LDY.b #$01
 		JSL.l Sprite_ShowMessageUnconditional
-		LDA.b #$3C : STA $012E ; error sound
+		LDA.b #$3C : STA.w $012E ; error sound
 		SEP #$10
 		BRA .done
 
@@ -144,7 +144,7 @@ CheckMedallionSword:
 		LDA.b $1B : BEQ .outdoors
 		.indoors
 			REP #$20 ; set 16-bit accumulator
-			LDA.b $A0 ; load room ID
+			LDA.b RoomIndex ; load room ID
 			CMP.w #$000E : BNE + ; freezor1
 				LDA.b $22 : AND.w #$01FF ; check x-coord
 					CMP.w #368-8 : !BLT .normal

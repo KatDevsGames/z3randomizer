@@ -5,45 +5,45 @@
 ; called and it only gets called once ever during RESET.
 ;--------------------------------------------------------------------------------
 Init_Primary:
-	LDA #$00
+	LDA.b #$00
 	
-	LDX #$00 ; initalize our ram
+	LDX.b #$00 ; initalize our ram
 	-
-		STA $7EC025, X
-		STA $7F5000, X
+		STA.l $7EC025, X
+		STA.l $7F5000, X
 		INX
-		CPX #$10 : !BLT -
+		CPX.b #$10 : !BLT -
 
-	LDX #$10 ; initalize more ram
+	LDX.b #$10 ; initalize more ram
 	-
-		STA $7F5000, X
+		STA.l $7F5000, X
 		INX
-		CPX #$FF : !BLT -
+		CPX.b #$FF : !BLT -
 	
 	LDX #$00
 	-
-		LDA RomNameSRAM, X : CMP $00FFC0, X : BNE .clear
+		LDA.l RomNameSRAM, X : CMP.w $FFC0, X : BNE .clear
 		INX
-		CPX #$15 : !BLT -
+		CPX.b #$15 : !BLT -
 	BRA .done
 	.clear
 		REP #$30 ; set 16-bit accumulator & index registers
 		LDA.w #$0000
 		-
-			STA $700000, X
+			STA.l $700000, X
 			INX
-			CPX #$2000 : !BLT -
+			CPX.w #$2000 : !BLT -
 		SEP #$30 ; set 8-bit accumulator & index registers
-		LDX #$00
+		LDX.b #$00
 		-
-			LDA $00FFC0, X : STA RomNameSRAM, X
+			LDA.w $FFC0, X : STA.l RomNameSRAM, X
 			INX
 			CPX #$15 : !BLT -
-                LDX #$00
+                LDX.b #$00
                 -
-                        LDA RomVersion, X : STA RomVersionSRAM, X
+                        LDA.w RomVersion, X : STA.l RomVersionSRAM, X
                         INX
-                        CPX #$04 : !BLT -
+                        CPX.b #$04 : !BLT -
 	.done
 
 	REP #$20
@@ -53,7 +53,7 @@ Init_Primary:
 	LDA.b #$01 : STA.w MEMSEL ; enable fastrom access on upper banks
 	STA.l OneMindId
 	
-	LDA.b #$10 : STA $BC ; set default player sprite bank
+	LDA.b #$10 : STA.b $BC ; set default player sprite bank
 	
 	LDA.b #$81 : STA.w NMITIMEN ; thing we wrote over, turn on NMI & gamepad
 RTL

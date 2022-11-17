@@ -312,10 +312,9 @@ CrystalCounter: skip 1          ; Total Number of crystals collected (integer)
 DungeonsCompleted: skip 2       ; Bitfield indicating whether a dungeon's prize has been collected.
                                 ; This has the same shape as the dungeon item bitfields.
 skip 44                         ; Unused
-ServiceSequenceRx:              ; Service sequence receive
-ServiceSequenceTx:              ; Service sequence transmit
-ServiceSequence: skip 8         ; Service request block. See servicerequest.asm
-skip 8                          ; Unused
+ServiceSequence:                ; See servicerequest.asm
+ServiceSequenceRx: skip 8       ; Service sequence receive
+ServiceSequenceTx: skip 8       ; Service sequence transmit
 DungeonAbsorbedKeys:            ; \  Absorbed key counters (integers)
 SewerAbsorbedKeys: skip 1       ;  | Sewer Passage
 HCAbsorbedKeys: skip 1          ;  | Hyrule Castle
@@ -395,11 +394,11 @@ RoomDataSRAM:                   ;
 skip $280                       ;
 OverworldEventDataSRAM:         ;
 skip $C0                        ;
-EquipmentSRAM: skip 3           ; skip 76
-BombsEquipmentSRAM: skip 31     ; 343
-DisplayRupeesSRAM: skip 21      ; 362
-CurrentArrowsSRAM: skip 21      ; 377
-InventoryTrackingSRAM: skip 2   ; 38C
+EquipmentSRAM: skip 3           ;
+BombsEquipmentSRAM: skip 31     ;
+DisplayRupeesSRAM: skip 21      ;
+CurrentArrowsSRAM: skip 21      ;
+InventoryTrackingSRAM: skip 2   ;
 BowTrackingSRAM: skip 2         ;
 skip 53                         ;
 ProgressIndicatorSRAM: skip 1   ;
@@ -600,7 +599,7 @@ endmacro
 ;--------------------------------------------------------------------------------
 %assertSRAM(ServiceSequence, $7EF4A0)
 %assertSRAM(ServiceSequenceRx, $7EF4A0)
-%assertSRAM(ServiceSequenceTx, $7EF4A0)
+%assertSRAM(ServiceSequenceTx, $7EF4A8)
 ;--------------------------------------------------------------------------------
 %assertSRAM(DungeonAbsorbedKeys, $7EF4B0)
 %assertSRAM(SewerAbsorbedKeys, $7EF4B0)

@@ -62,6 +62,6 @@ endmacro
 %AddStat(DeathCounter, 0, 0, 08, 2, !DEATHS_X, !DEATHS_Y)
 %AddStat(FaerieRevivalCounter, 0, 0, 08, 3, !FAERIE_REVIVALS_X, !FAERIE_REVIVALS_Y)
 %AddStat(MenuFrames, 1, 8, 32, 4, !TOTAL_MENU_TIME_X, !TOTAL_MENU_TIME_Y)
-%AddStat($7F5038, 1, 0, 32, 4, !TOTAL_LAG_TIME_X, !TOTAL_LAG_TIME_Y)
+%AddStat(LagTime, 1, 0, 32, 4, !TOTAL_LAG_TIME_X, !TOTAL_LAG_TIME_Y)
 %AddStat(TotalItemCounter, 0, 0, 16, 3, !COLLECTION_RATE_X, !COLLECTION_RATE_Y)
 %AddStat(NMIFrames, 1, 0, 32, 4, !TOTAL_TIME_X, !TOTAL_TIME_Y)

@@ -9,7 +9,7 @@ RTL
 ;--------------------------------------------------------------------------------
 DrawLibraryItemGFX:
         PHA
-        LDA $0E80, X ; Retrieve stored item type
+        LDA.w $0E80, X ; Retrieve stored item type
         JSL.l DrawDynamicTile
         PLA
 RTL
@@ -61,7 +61,7 @@ RTL
 RTL
 ;--------------------------------------------------------------------------------
 LoadBonkItem:
-	LDA.b $A0 ; check room ID - only bonk keys in 2 rooms so we're just checking the lower byte
+	LDA.b RoomIndex ; check room ID - only bonk keys in 2 rooms so we're just checking the lower byte
 	CMP.b #115 : BNE + ; Desert Bonk Key
     	LDA.l BonkKey_Desert
 		BRA ++

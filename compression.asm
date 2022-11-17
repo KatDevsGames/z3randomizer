@@ -2,7 +2,7 @@
 ParadoxCaveGfxFix:
     ; Always upload line unless you're moving into paradox cave (0x0FF) from above (0x0EF)
     LDA.b $1B : BEQ .uploadLine
-    LDX.b $A0 : CPX.w #$00FF : BNE .uploadLine
+    LDX.b RoomIndex : CPX.w #$00FF : BNE .uploadLine
     LDX.b $A2 : CPX.w #$00EF : BNE .uploadLine
 
     ;Ignore uploading four specific lines of tiles to VRAM

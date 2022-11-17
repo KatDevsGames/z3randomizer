@@ -17,7 +17,7 @@ LampCheck:
 			LDA.l LampConeLightWorld : BRA .done
 	+
 		.darkWorld
-		LDA LampConeDarkWorld
+		LDA.l LampConeDarkWorld
 	.done
 RTL
 ;================================================================================

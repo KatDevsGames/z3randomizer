@@ -110,9 +110,9 @@ SpritePrep_ShopKeeper:
 	REP #$30 ; set 16-bit accumulator & index registers
 	LDX.w #$0000
 	-
-		LDA.l ShopTable+1, X : CMP.b $A0 : BNE +
+		LDA.l ShopTable+1, X : CMP.b RoomIndex : BNE +
 		LDA.l ShopTable+5, X : AND.w #$0040 : BNE ++
-			LDA.l $7F5099 : AND #$00FF : CMP.l ShopTable+3, X : BNE +
+			LDA.l PreviousOverworldDoor : AND #$00FF : CMP.l ShopTable+3, X : BNE +
 		++
 			SEP #$20 ; set 8-bit accumulator
 			LDA.l ShopTable, X : STA.l ShopId
@@ -174,9 +174,9 @@ SpritePrep_ShopKeeper:
 	JMP -
 	.stop
 	
-	LDA.b #Shopkeeper_UploadVRAMTilesLong>>16 : STA.l NMIAux+2
-	LDA.b #Shopkeeper_UploadVRAMTilesLong>>8 : STA.l NMIAux+1
-	LDA.b #Shopkeeper_UploadVRAMTilesLong>>0 : STA.l NMIAux
+	LDA.b #Shopkeeper_UploadVRAMTilesLong>>16 : STA.w NMIAux+2
+	LDA.b #Shopkeeper_UploadVRAMTilesLong>>8 : STA.w NMIAux+1
+	LDA.b #Shopkeeper_UploadVRAMTilesLong>>0 : STA.w NMIAux
 
 	.done
 	LDA.l ShopType : BIT.b #$20 : BEQ .notTakeAll ; Take-all

@@ -5,8 +5,8 @@ RenderCharSetColorExtended_init:
 
 RenderCharSetColorExtended_close:
     stz.b Scrap0C
-    lda $010c
-    sta $10
+    lda.w $010c
+    sta.b $10
     rtl
 
 RenderCharSetColorExtended:
@@ -33,7 +33,7 @@ RenderCharToMapExtended:
     plx
     lda.w #$0000
     sta.b Scrap00
-    lda #$007f
+    lda.w #$007f
     sta.b Scrap02
     lda.w #$0000
     clc : adc.w #$0020

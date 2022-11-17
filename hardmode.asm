@@ -3,7 +3,7 @@
 ;================================================================================
 CalculateSpikeFloorDamage:
 		REP #$20 ; set 16-bit accumulator
-		LDA.b $A0 ; these are all decimal because i got them that way
+		LDA.b RoomIndex ; these are all decimal because i got them that way
 		CMP.w #279
 		SEP #$20 ; set 8-bit accumulator
 		BNE +
@@ -18,7 +18,7 @@ RTL
 CalculateByrnaUsage:
 	LDA.b $1B : BEQ ++
 	REP #$20 ; set 16-bit accumulator
-	LDA.b $A0 ; these are all decimal because i got them that way
+	LDA.b RoomIndex ; these are all decimal because i got them that way
 	CMP.w #95 : BEQ + ; Ice Palace Spike Room
 	CMP.w #172 : BEQ + ; Blind Boss Room
 	CMP.w #179 : BEQ + ; Room in Misery Mire
@@ -38,7 +38,7 @@ CalculateByrnaUsage:
 CalculateCapeUsage:
 	LDA.b $1B : BEQ ++
 	REP #$20 ; set 16-bit accumulator
-	LDA.b $A0 ; these are all decimal because i got them that way
+	LDA.b RoomIndex ; these are all decimal because i got them that way
 	CMP.w #95 : BEQ + ; Ice Palace Spike Room
 	CMP.w #179 : BEQ + ; Room in Misery Mire
 	CMP.w #213 : BEQ + ; Laser Bridge
@@ -56,7 +56,7 @@ CalculateCapeUsage:
 ActivateInvulnerabilityOrDont:
 	LDA.b $1B : BEQ .nowhere_special
 	REP #$20 ; set 16-bit accumulator
-	LDA.b $A0 ; these are all decimal because i got them that way
+	LDA.b RoomIndex ; these are all decimal because i got them that way
 	CMP.w #95 : BEQ .somewhere_cool ; Ice Palace Spike Room
 	CMP.w #179 : BEQ .somewhere_cool ; Room in Misery Mire
 	CMP.w #213 : BEQ .somewhere_cool ; Laser Bridge
@@ -81,7 +81,7 @@ GetItemDamageValue:
 	CPX.b #$3d : BEQ .hookshot
 
 	.normal
-	lda $0db8f1,x ;what we wrote over
+	LDA.l $0db8f1,x ;what we wrote over
 RTL
 	.boomerang
 		LDA.l StunItemAction : AND #$01 : BNE .normal

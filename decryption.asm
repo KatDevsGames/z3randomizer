@@ -61,7 +61,7 @@ JML.l Dungeon_OpenKeyedObject_nextChest
 	.nextChest
 
 	INX #2 : CPX.w #$0150 : BEQ .couldntFindChest
-	LDA.l ChestData, X : AND.w #$7FFF : CMP.b $A0 : BNE .nextChest
+	LDA.l ChestData, X : AND.w #$7FFF : CMP.b RoomIndex : BNE .nextChest
 
 	DEC.b Scrap0E : BNE .nextChest
 

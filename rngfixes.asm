@@ -44,7 +44,7 @@ RNG_Lanmolas1:
 RNG_Moldorm1:
 	LDA.b #$01 : BRA _rng_done
 RNG_Agahnim1:
-	LDA.b $A0 : CMP.b #$20 : BNE RNG_Agahnim2 ; Agah 1 and 2 use the same code, check which agah we're fighting and branch
+	LDA.b RoomIndex : CMP.b #$20 : BNE RNG_Agahnim2 ; Agah 1 and 2 use the same code, check which agah we're fighting and branch
 	LDA.b #$02
 	JSL.l GetStaticRNG : PHA
 	LDA.l GanonAgahRNG : BEQ + ; check if blue balls are disabled

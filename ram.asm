@@ -4,7 +4,7 @@
 ; This module is primarily concerned with labeling WRAM addresses used by the
 ; randomizer and documenting their usage.
 ;
-; See the JP 1.0 disassembly for reference as well
+; See the JP 1.0 disassembly for reference
 ; (https://github.com/spannerisms/jpdasm/ - 31/10/2022)
 ;--------------------------------------------------------------------------------
 pushpc
@@ -36,6 +36,7 @@ Scrap0F: skip 1  ;
 LinkPosY = $7E0020 ; 2 bytes
 LinkPosX = $7E0022 ; 2 bytes
 
+RoomIndex = $7E00A0 ; 2 bytes, UW room index
 
 ;================================================================================
 ; Bank 7E
@@ -55,6 +56,8 @@ MusicControlRequest = $7E012C
 
 ItemReceiptID = $7E02D8
 
+NMIAux = $7E0632
+
 SpritePosYLow = $7E0D00 ; all $10 bytes
 SpritePosXLow = $7E0D10
 SpritePosYHigh = $7E0D20
@@ -69,8 +72,15 @@ SpriteDirectionTable = $7E0EB0
 
 ToastBuffer = $7E1E0E ; 2 bytes DoToast
 
-ScratchBufferNV = $7E1E70 ; Callee preserved, not ok to clobber
-ScratchBufferV = $7E1E80 ; Caller preserved, okay to clobber
+MSUResumeTime = $7E1E6B ; 4 bytes
+MSUResumeControl = $7E1E6F
+MSUFallbackTable = $7E1E70 ; 8 bytes
+MSUDelayedCommand = $7E1E79
+MSUPackCount = $7E1E7A
+MSUPackCurrent = $7E1E7B
+MSUPackRequest = $7E1E7C
+MSULoadedTrack = $7E1E7D ; 2 bytes
+MSUResumeTrack = $7E1E7F 
 
 ;1E90
 ClockHours = $7E1E90 ; Clock Hours
@@ -78,7 +88,9 @@ ClockMinutes = $7E1E94 ; Clock Minutes
 ClockSeconds = $7E1E98 ; Clock Seconds
 ClockBuffer = $7E1E9C ; Clock Temporary
 ;1EA0
+ScratchBufferNV = $7E1EA0 ; Callee preserved
 ;1EB0
+ScratchBufferV = $7E1EB0 ; Caller preserved
 ;1EC0
 ;1ED0
 ;1EE0
@@ -108,103 +120,111 @@ BigRAM = $7EC900           ; Big buffer of free ram (0x1F00)
 ;================================================================================
 ; Bank 7F
 ;--------------------------------------------------------------------------------
-RedrawFlag = $7F5000
-
-SpriteSkipEOR = $7F5008
-
-MSReceived = $7F5031
-; GanonWarpChain = $7F5032
-ForceHeartSpawn = $7F5033
-SkipHeartSave = $7F5034
-AltTextFlag = $7F5035 ; two bytes, next must be zero. 0=disable
-BossKills = $7F5037
-LagTime = $7F5038
-RupeesCollected = $7F503C ; 2 bytes
-NonChestCounter = $7F503E
-
-TileUploadOffsetOverride = $7F5042
-
-NMIAux = $7F5044
-
-ShopId = $7F5050
-ShopType = $7F5051
-ShopInventory = $7F5052 ; 0x0C
-ShopState = $7F505F
-ShopCapacity = $7F5060
-ShopScratch = $7F5061
-ShopSRAMIndex = $7F5062
-ShopMerchant = $7F5063
-; ShopDMATimer = $7F5064 unused
-ShopPriceColumn = $7F5066 ; two bytes
-
-OneMindId = $7F5072
-OneMindTimerRAM = $7F5073
-
-ClockStatus = $7F507E ; 2 bytes 
-                      ; ---- --dn
-                      ; d - dnf
-                      ; n - negative
-
-RNGLockIn = $7F5090 ; RNG Item
-BusyItem = $7F5091
-BusyHealth = $7F5092
-BusyMagic = $7F5093
-DialogOffsetPointer = $7F5094 ; 2 bytes
-DialogReturnPointer = $7F5096 ; 2 bytes
-
-StalfosBombDamage = $7F509D
-ValidKeyLoaded = $7F509E
-
-SwordModifier = $7F50C0
-ShieldModifier = $7F50C1 ; not implemented
-ArmorModifier = $7F50C2
-MagicModifier = $7F50C3
-LightConeModifier = $7F50C4
-CuccoStormer = $7F50C5 ; non-zero write causes storm, needs to be zeroed
-OldManDash = $7F50C6
-IceModifier = $7F50C7
-InfiniteArrows = $7F50C8
-InfiniteBombs = $7F50C9
-InfiniteMagic = $7F50CA
-DPadInverter = $7F50CB ; fill in values
-OHKOFlag = $7F50CC
-SpriteSwapper = $7F50CD
-BootsModifier = $7F50CE
-
-; $7F50D0 - $7F50FF - Block Cypher Parameters
-; $7F5100 - $7F51FF - Block Cypher Buffer
-
-; Crypto buffer ($7F50D0 - $7F51FF)
-KeyBase = $7F50D0
-y = $7F50E0
-z = $7F50E4
-Sum = $7F50E8
-p = $7F50EC
-e = $7F50F0
-CryptoScratch = $7F50F2
-CryptoBuffer = $7F5100
-v = $7F5100
-
-RNGPointers = $7F5200 ; $FF bytes 
-
-RxBuffer = $7F5300 ; $00-$5F buffer $60-7E reserved
-RxStatus = $7F537F ; 1 byte
-TxBuffer = $7F5380 ; $80 - $EF buffer $F0 - $FE reserved
-TxStatus = $7F53FF ; $F0 - $FE
-
-MSUFallbackTable = $7F5460 ; 8 bytes
-MSUDelayedCommand = $7F5469
-MSUPackCount = $7F546A
-MSUPackCurrent = $7F546B
-MSUPackRequest = $7F546C
-MSULoadedTrack = $7F546D ; 2 bytes
-MSUResumeTrack = $7F546F 
-MSUResumeTime = $7F5470 ; 4 bytes
-MSUResumeControl = $7F5474 
-
-CompassTotalsWRAM = $7F5410
-
-DialogBuffer = $7F5700 ; $FF bytes
+base $7F5000
+RedrawFlag: skip 1                 ;
+skip 2                             ;
+HexToDecDigit1: skip 1             ; Space for storing the result of hex to decimal conversion.
+HexToDecDigit2: skip 1             ; Digits are stored from high to low.
+HexToDecDigit3: skip 1             ;
+HexToDecDigit4: skip 1             ;
+HexToDecDigit5: skip 1             ;
+SpriteSkipEOR: skip 2              ; Used in utilities.asm to determine when to skip drawing sprites. Zero-padded
+skip $2B                           ; Unused
+AltTextFlag: skip 2                ; dialog.asm: Determines whether to load from vanilla decompression buffer
+                                   ; or from a secondary buffer (used for things like free dungeon item text)
+BossKills: skip 1                  ;
+LagTime: skip 4                    ; Computed during stats preparation for display
+RupeesCollected: skip 2            ; Computed during stats preparation for display
+NonChestCounter: skip 2            ; Computed during stats preparation for display
+skip 2                             ; Unused
+TileUploadOffsetOverride: skip 2   ; Offset override for loading sprite gfx
+skip 3                             ;
+skip 9                             ;
+                                   ; Shop Block $7F5050 - $7F506F
+ShopId: skip 1                     ; Shop ID. Used for indexing and loading inventory for custom shops
+ShopType: skip 1                   ; Shop type. $FF = vanilla shop
+                                   ; t - - - - - - -
+                                   ; t = Take-any
+ShopInventory: skip $0D            ; For three possible shop items, row major:
+                                   ; [Item ID][Price low][Price High][Purchase Count]
+ShopState: skip 1                  ; - - - - - l c r | Bitfield that determines whether to draw an item
+ShopCapacity: skip 1               ; Four lower bits of shop_config in ShopTable, number of items 1-3
+ShopScratch: skip 1                ; Scratch byte used in shop drawing routines
+ShopSRAMIndex: skip 1              ; SRAM index for purchase counts
+ShopMerchant: skip 1               ; Loaded from ShopTable and used to jump to one of four drawing routines
+skip 2                             ; Unused
+ShopPriceColumn: skip 3            ; Stores coordinates for drawing prices in shops
+skip 7                             ;
+skip 2                             ; Reserved for OneMind
+OneMindId: skip 1                  ; Current OneMind player
+OneMindTimerRAM: skip 2            ; Frame counter for OneMind
+skip 9                             ; Unused
+ClockStatus: skip 2                ; 2 bytes second always zero padding
+                                   ; ---- --dn
+                                   ; d - DNF mode
+                                   ; n - Negative
+skip $10                           ; Unused
+RNGLockIn: skip 1                  ; Used for RNG item (currently unused by rando)
+BusyItem: skip 1                   ; Flags for indicating when these things are "busy"
+BusyHealth: skip 1                 ; e.g. doing some animation
+BusyMagic: skip 1                  ; 
+DialogOffsetPointer: skip 2        ; Offset and return pointer into new dialog buffer used
+DialogReturnPointer: skip 2        ; for e.g. free dungeon item text.
+skip 1                             ; Unused
+PreviousOverworldDoor: skip 1      ; Previous overworld door is cached or initialized here
+skip 1                             ; Reserved
+skip 1                             ; Unused
+DuckMapFlag: skip 1                ; Temporary flag used and reset by flute map drawing routine
+StalfosBombDamage: skip 1          ; Relocated from damage table
+ValidKeyLoaded: skip 1             ;
+TextBoxDefer: skip 1               ; Flag used to defer post-item text boxes
+skip $10                           ; Unused
+skip $10                           ; Reserved for enemizer
+                                   ; Most of these modifiers are intended to be written to by
+                                   ; a 3rd party (e.g. Crowd Control.) Writer is responsible
+                                   ; for zeroing.
+SwordModifier: skip 1              ; Adds level to current sword. Doesn't change graphics.
+ShieldModifier: skip 1             ; Not implemented
+ArmorModifier: skip 1              ; Adds level to current mail. Doesn't change graphics.
+MagicModifier: skip 1              ; Adds level to magic consumption (1/2, 1/4.)
+LightConeModifier: skip 1          ; Gives lamp cone when set to 1
+CuccoStormer: skip 1               ; Non-zero write causes storm.
+OldManDash: skip 1                 ; Unused
+IceModifier: skip 1                ; - - - g - - - i | Flipping either sets ice physics
+InfiniteArrows: skip 1             ; Setting these to $01 will give infinite ammo. Set by
+InfiniteBombs: skip 1              ; EscapeAssist.
+InfiniteMagic: skip 1              ;
+ControllerInverter: skip 1         ; $01 = D-pad | $02 = Buttons | $03 = Buttons and D-Pad
+                                   ; >=$04 = Swap buttons and D-pad
+OHKOFlag: skip 1                   ; Any non-zero write sets OHKO mode
+SpriteSwapper: skip 1              ; Loads new link sprite and glove/armor palette. No gfx or
+                                   ; code currently in base ROM for this.
+BootsModifier: skip 1              ; $01 = Give dash ability
+skip 1                             ; Unused
+                                   ; Crypto Block ($7F50D0 - $7F51FF)
+KeyBase: skip $10                  ;
+y: skip 4                          ;
+z: skip 4                          ;
+Sum: skip 4                        ;
+p: skip 4                          ;
+e: skip 2                          ;
+CryptoScratch: skip $0E            ;
+CryptoBuffer:                      ;
+v: skip $100                       ;
+RNGPointers: skip $100             ; Pointers for static RNG
+                                   ; Network I/O block. See servicerequest.asm. Rx and Tx channels
+                                   ; also allocated 8 persistent bytes each in sram.asm.
+RxBuffer: skip $7F                 ;
+RxStatus: skip 1                   ;
+TxBuffer: skip $7F                 ;
+TxStatus: skip 1                   ;
+skip $10                           ; Unused
+CompassTotalsWRAM: skip $10        ; skip $10
+skip $40                           ; Reserved for general dungeon tracking data. May have over
+                                   ; allocated here. Feel free to reassign.
+skip $40                           ; Unused
+skip $260                          ; Unused
+DialogBuffer: skip $100            ; Dialog Buffer
 
 ;================================================================================
 ; RAM Assertions
@@ -233,6 +253,7 @@ endmacro
 
 %assertRAM(LinkPosY, $7E0020)
 %assertRAM(LinkPosX, $7E0022)
+%assertRAM(RoomIndex, $7E00A0)
 %assertRAM(CurrentMSUTrack, $7E010B)
 %assertRAM(CurrentVolume, $7E0127)
 %assertRAM(TargetVolume, $7E0129)
@@ -240,6 +261,7 @@ endmacro
 %assertRAM(MusicControl, $7E012B)
 %assertRAM(MusicControlRequest, $7E012C)
 %assertRAM(ItemReceiptID, $7E02D8)
+%assertRAM(NMIAux, $7E0632)
 %assertRAM(SpritePosYLow, $7E0D00)
 %assertRAM(SpritePosXLow, $7E0D10)
 %assertRAM(SpritePosYHigh, $7E0D20)
@@ -249,12 +271,24 @@ endmacro
 %assertRAM(SpriteTypeTable, $7E0E20)
 %assertRAM(SpriteDirectionTable, $7E0EB0)
 %assertRAM(ToastBuffer, $7E1E0E)
-%assertRAM(ScratchBufferNV, $7E1E70)
-%assertRAM(ScratchBufferV, $7E1E80)
+
+%assertRAM(MSUResumeTime, $7E1E6B)
+%assertRAM(MSUResumeControl, $7E1E6F)
+%assertRAM(MSUFallbackTable, $7E1E70)
+%assertRAM(MSUDelayedCommand, $7E1E79)
+%assertRAM(MSUPackCount, $7E1E7A)
+%assertRAM(MSUPackCurrent, $7E1E7B)
+%assertRAM(MSUPackRequest, $7E1E7C)
+%assertRAM(MSULoadedTrack, $7E1E7D)
+%assertRAM(MSUResumeTrack, $7E1E7F)
+
+
 %assertRAM(ClockHours, $7E1E90)
 %assertRAM(ClockMinutes, $7E1E94)
 %assertRAM(ClockSeconds, $7E1E98)
 %assertRAM(ClockBuffer, $7E1E9C)
+%assertRAM(ScratchBufferNV, $7E1EA0)
+%assertRAM(ScratchBufferV, $7E1EB0)
 %assertRAM(TileUploadBuffer, $7EA180)
 %assertRAM(SpriteOAM, $7EC025)
 %assertRAM(HUDKeyIcon, $7EC726)
@@ -266,17 +300,21 @@ endmacro
 %assertRAM(HUDKeyDigits, $7EC764)
 %assertRAM(BigRAM, $7EC900)
 %assertRAM(RedrawFlag, $7F5000)
+%assertRAM(HexToDecDigit1, $7F5003)
+%assertRAM(HexToDecDigit2, $7F5004)
+%assertRAM(HexToDecDigit3, $7F5005)
+%assertRAM(HexToDecDigit4, $7F5006)
+%assertRAM(HexToDecDigit5, $7F5007)
 %assertRAM(SpriteSkipEOR, $7F5008)
-%assertRAM(MSReceived, $7F5031)
-%assertRAM(ForceHeartSpawn, $7F5033)
-%assertRAM(SkipHeartSave, $7F5034)
+
+
+
 %assertRAM(AltTextFlag, $7F5035)
 %assertRAM(BossKills, $7F5037)
 %assertRAM(LagTime, $7F5038)
 %assertRAM(RupeesCollected, $7F503C)
 %assertRAM(NonChestCounter, $7F503E)
 %assertRAM(TileUploadOffsetOverride, $7F5042)
-%assertRAM(NMIAux, $7F5044)
 %assertRAM(ShopId, $7F5050)
 %assertRAM(ShopType, $7F5051)
 %assertRAM(ShopInventory, $7F5052)
@@ -295,8 +333,11 @@ endmacro
 %assertRAM(BusyMagic, $7F5093)
 %assertRAM(DialogOffsetPointer, $7F5094)
 %assertRAM(DialogReturnPointer, $7F5096)
+%assertRAM(PreviousOverworldDoor, $7F5099)
+%assertRAM(DuckMapFlag, $7F509C)
 %assertRAM(StalfosBombDamage, $7F509D)
 %assertRAM(ValidKeyLoaded, $7F509E)
+%assertRAM(TextBoxDefer, $7F509F)
 %assertRAM(SwordModifier, $7F50C0)
 %assertRAM(ShieldModifier, $7F50C1)
 %assertRAM(ArmorModifier, $7F50C2)
@@ -308,7 +349,7 @@ endmacro
 %assertRAM(InfiniteArrows, $7F50C8)
 %assertRAM(InfiniteBombs, $7F50C9)
 %assertRAM(InfiniteMagic, $7F50CA)
-%assertRAM(DPadInverter, $7F50CB)
+%assertRAM(ControllerInverter, $7F50CB)
 %assertRAM(OHKOFlag, $7F50CC)
 %assertRAM(SpriteSwapper, $7F50CD)
 %assertRAM(BootsModifier, $7F50CE)
@@ -326,15 +367,6 @@ endmacro
 %assertRAM(RxStatus, $7F537F)
 %assertRAM(TxBuffer, $7F5380)
 %assertRAM(TxStatus, $7F53FF)
-%assertRAM(MSUFallbackTable, $7F5460)
-%assertRAM(MSUDelayedCommand, $7F5469)
-%assertRAM(MSUPackCount, $7F546A)
-%assertRAM(MSUPackCurrent, $7F546B)
-%assertRAM(MSUPackRequest, $7F546C)
-%assertRAM(MSULoadedTrack, $7F546D)
-%assertRAM(MSUResumeTrack, $7F546F)
-%assertRAM(MSUResumeTime, $7F5470)
-%assertRAM(MSUResumeControl, $7F5474)
 %assertRAM(CompassTotalsWRAM, $7F5410)
 %assertRAM(DialogBuffer, $7F5700)
 
@@ -344,36 +376,7 @@ pullpc
 ; Bank 7F
 ;--------------------------------------------------------------------------------
 
-; $7F5000 - Redraw Flag
-; $7F5001 - Flipper Softlock Possible
-; $7F5002 - L/R Rotate
-; $7F5003 - HexToDec 1st Digit
-; $7F5004 - HexToDec 2nd Digit
-; $7F5005 - HexToDec 3rd Digit
-; $7F5006 - HexToDec 4th Digit
-; $7F5007 - HexToDec 5th Digit
-; $7F5008 - Skip Sprite_DrawMultiple EOR
-; $7F5009 - Always Zero
-; $7F5010 - Unused
-; $7F5020 - Unused
-; $7F5030 - Unused
-; $7F5031 - HUD Master Sword Flag
-; $7F5032 - Unused
-; $7F5033 - Force Heart Spawn Counter
-; $7F5034 - Skip Heart Collection Save Counter
-; $7F5035 - Alternate Text Pointer Flag ; 0=Disable
-; $7F5036 - Padding Byte (Must be Zero)
-; $7F5037 - Stats Boss Kills
-; $7F5038 - Stats Lag Time
-; $7F5039 - Stats Lag Time
-; $7F503A - Stats Lag Time
-; $7F503B - Stats Lag Time
-; $7F503C - Stats Rupee Total
-; $7F503D - Stats Rupee Total
-; $7F503E - Stats Item Total
-; $7F503F - Unused
-; $7F5040 - Free Item Dialog Temporary
-; $7F5041 - Unused
+;OLDSTUFF
 ; $7F5042 - Tile Upload Offset Override (Low)
 ; $7F5043 - Tile Upload Offset Override (High)
 ; $7F5044 - $7F5046 - NMI Auxiliary Function
@@ -395,11 +398,11 @@ pullpc
 ; $7F5095 - Dialog Offset Pointer (High)
 ; $7F5096 - Dialog Offset Pointer Return (Low)
 ; $7F5097 - Dialog Offset Pointer Return (High)
-; $7F5098 - Water Entry Index
+; $7F5098 - Unused
 ; $7F5099 - Last Entered Overworld Door ID
 ; $7F509A - (Reserved)
 ; $7F509B - Unused
-; $7F509C - Unused
+; $7F509C - Duck Map Flag
 ; $7F509E - Valid Key Loaded
 ; $7F509F - Text Box Defer Flag
 ; $7F50A0 - $7F50AF - Unused
@@ -427,8 +430,7 @@ pullpc
 ; $7F5300 - $7F53FF - Multiworld Block
 ; $7F5400 - $7F540F - Unused
 ; $7F5410 - $7F545F - Dungeon Tracking Block
-; $7F5460 - $7F549F - MSU Block
-; $7F54A0 - $7F56FF - Unused
+; $7F5460 - $7F56FF - Unused
 
 ; $7F5700 - $7F57FF - Dialog Buffer
 

@@ -95,8 +95,6 @@ org $06B55C ; PC 0x3355C ; sprite_smithy_bros.asm : 634
 SmithSword:
 db #$02 ; #$02 = Tempered Sword (default)
 
-;org $05EBD4 ; PC 0x2EBD4 - sprite_zelda.asm:23 - (LDA $7EF359 : CMP.b #$02 : BCS .hasMasterSword) - Zelda Spawnpoint Sword Check
-;db #$05 ; #$02 = Tempered Sword (default) - #$05 = All Swords
 ;--------------------------------------------------------------------------------
 ; 0x18002B- 0x180030 (Unused)
 ;--------------------------------------------------------------------------------
@@ -1435,7 +1433,7 @@ db $04
 ;JSL Sprite_ShowMessageFromPlayerContact ; Inverted uses Sprite_ShowMessageFromPlayerContact
 ;;---------------------------------------------------------------------------------
 org $00886e ; <- Bank00.asm : 1050 (LDA Overworld_TileAttr, X)
-LDA Overworld_TileAttr, X ; use "JML InvertedTileAttributeLookup" for inverted
+LDA.l Overworld_TileAttr, X ; use "JML InvertedTileAttributeLookup" for inverted
 Overworld_GetTileAttrAtLocation_continue:
 ;================================================================================
 org $0DDBEC ; <- 6DBEC

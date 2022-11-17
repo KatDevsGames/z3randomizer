@@ -172,7 +172,7 @@ FreeDungeonItemNotice:
 
 	STZ.w $1CF0 : STZ.w $1CF1 ; reset decompression buffer
 	LDA.b #$01 : STA.l AltTextFlag ; set alternate dialog flag
-	STA.l $7F509F
+	STA.l TextBoxDefer
 
 	;--------------------------------
 	.skip
@@ -414,6 +414,112 @@ CalculateSignIndex:
 
 .done
 RTL
+
+;================================================================
+; Contributor: Myramong
+;================================================================
+Sprite_ShowSolicitedMessageIfPlayerFacing_Alt:
+{
+	STA.w $1CF0
+	STY.w $1CF1
+
+	JSL Sprite_CheckDamageToPlayerSameLayerLong : BCC .alpha
+	JSL Sprite_CheckIfPlayerPreoccupied : BCS .alpha
+
+	LDA.b $F6 : BPL .alpha
+	LDA.w $0F10, X : BNE .alpha
+	LDA.b $4D : CMP.b #$02 : BEQ .alpha
+
+	JSL Sprite_DirectionToFacePlayerLong : PHX : TYX
+
+	; Make sure that the sprite is facing towards the player, otherwise
+	; talking can't happen. (What sprites actually use this???)
+	LDA.l $05E1A3, X : PLX : CMP.b $2F : BNE .not_facing_each_other
+
+	PHY
+
+	LDA.w $1CF0
+	LDY.w $1CF1
+
+	; Check what room we're in so we know which npc we're talking to
+        LDA.b RoomIndex
+        CMP.b #$05 : BEQ .SahasrahlaDialogs
+        CMP.b #$1C : BEQ .BombShopGuyDialog
+        BRA .SayNothing
+
+	.SahasrahlaDialogs
+		REP #$20 : LDA.l MapReveal_Sahasrahla : ORA.l MapOverlay : STA.l MapOverlay : SEP #$20
+		JSL DialogSahasrahla : BRA .SayNothing
+
+	.BombShopGuyDialog
+		REP #$20 : LDA.l MapReveal_BombShop : ORA.l MapOverlay : STA.l MapOverlay : SEP #$20
+		JSL DialogBombShopGuy
+
+	.SayNothing
+
+	LDA.b #$40 : STA.w $0F10, X
+
+	PLA : EOR.b #$03
+
+	SEC
+
+	RTL
+
+.not_facing_each_other
+.alpha
+
+	LDA.w $0DE0, X
+
+	CLC
+
+	RTL
+}
+;================================================================
+Sprite_ShowSolicitedMessageIfPlayerFacing_PreserveMessage:
+{
+	PHY
+	PHA
+
+	JSL Sprite_CheckDamageToPlayerSameLayerLong : BCC .alpha
+	JSL Sprite_CheckIfPlayerPreoccupied : BCS .alpha
+
+	LDA.b $F6 : BPL .alpha
+	LDA.w $0F10, X : BNE .alpha
+	LDA.b $4D : CMP.b #$02 : BEQ .alpha
+
+	JSL Sprite_DirectionToFacePlayerLong : PHX : TYX
+
+	; Make sure that the sprite is facing towards the player, otherwise
+	; talking can't happen. (What sprites actually use this???)
+	LDA.l $05E1A3, X : PLX : CMP.b $2F : BNE .not_facing_each_other
+
+	PLA : XBA : PLA
+
+	PHY
+
+	TAY : XBA
+	
+	JSL Sprite_ShowMessageUnconditional
+
+	LDA.b #$40 : STA.w $0F10, X
+
+	PLA : EOR.b #$03
+
+	SEC
+
+	RTL
+
+.not_facing_each_other
+.alpha
+	PLY
+	PLA
+
+	LDA.w $0DE0, X
+
+	CLC
+
+	RTL
+}
 
 ;--------------------------------------------------------------------------------
 ; A0 - A9 - 0 - 9

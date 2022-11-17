@@ -90,10 +90,8 @@ incsrc halfmagicbat.asm
 incsrc mantle.asm
 incsrc swordswap.asm
 incsrc stats.asm
-incsrc scratchpad.asm
 incsrc dialog.asm
 incsrc entrances.asm
-incsrc clock.asm
 incsrc accessibility.asm
 incsrc heartbeep.asm
 incsrc capacityupgrades.asm
@@ -102,7 +100,6 @@ incsrc doorframefixes.asm
 incsrc music.asm
 incsrc roomloading.asm
 incsrc icepalacegraphics.asm
-incsrc firebarlayer.asm
 warnpc $A18000
 
 org $1C8000 ; text tables for translation
@@ -169,9 +166,7 @@ if !FEATURE_NEW_TEXT
 endif
 warnpc $A58000
 
-;org $228000 ; contrib area
-org $A28000 ; contrib area
-incsrc contrib.asm
+org $A28000
 
 org $A38000
 incsrc stats/main.asm
@@ -287,7 +282,7 @@ warnpc $B08000
 ;Bank Map
 ;$20 Code Bank
 ;$21 Reserved (Frame Hook & Init)
-;$22 Contrib Code
+;$22 Unused
 ;$23 Stats & Credits
 ;$24 Code Bank
 ;$29 External hooks (rest of bank not used)

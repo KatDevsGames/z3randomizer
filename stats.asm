@@ -39,7 +39,7 @@ DungeonHoleEntranceTransition:
 	JSL EnableForceBlank
 	
 	LDA.l SilverArrowsAutoEquip : AND.b #$02 : BEQ +
-	LDA $010E : CMP.b #$7B : BNE + ; skip unless falling to ganon's room
+	LDA.w $010E : CMP.b #$7B : BNE + ; skip unless falling to ganon's room
 	LDA.l BowTracking : AND.b #$40 : BEQ + ; skip if we don't have silvers
 	LDA.l BowEquipment : BEQ + ; skip if we have no bow
 	CMP.b #$03 : !BGE + ; skip if the bow is already silver
@@ -133,7 +133,7 @@ CountChestKey: ; called by neighbor functions
 RTS
 ;--------------------------------------------------------------------------------
 CountBonkItem: ; called from GetBonkItem in bookofmudora.asm
-	LDA.b $A0 ; check room ID - only bonk keys in 2 rooms so we're just checking the lower byte
+	LDA.b RoomIndex ; check room ID - only bonk keys in 2 rooms so we're just checking the lower byte
 	CMP.b #115 : BNE + ; Desert Bonk Key
 		LDA.l BonkKey_Desert : BRA ++
 	+ : CMP.b #140 : BNE + ; GTower Bonk Key
@@ -289,7 +289,7 @@ IncrementUWMirror:
 	PHA
 		LDA.b #$00 : STA.l $7F5035 ; bandaid patch bug with mirroring away from text
 		LDA.l StatsLocked : BNE +
-		LDA $040C : CMP #$FF : BEQ + ; skip if we're in a cave or house
+		LDA.w $040C : CMP.b #$FF : BEQ + ; skip if we're in a cave or house
 			LDA.l UnderworldMirrors : INC : STA.l UnderworldMirrors
 			JSL.l StatTransitionCounter
 		+

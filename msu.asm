@@ -164,27 +164,27 @@ CheckMusicLoadRequest:
         
 .continue
         LDA.l TournamentSeed : BNE +++
-        LDA.l MSUPackRequest
-        CMP.l MSUPackCurrent : BEQ +++
-        CMP.l MSUPackCount : !BLT ++
+        LDA.w MSUPackRequest
+        CMP.w MSUPackCurrent : BEQ +++
+        CMP.w MSUPackCount : !BLT ++
         CMP.b #$FE : !BLT +
-                    STA.l MSUPackCurrent
+                    STA.w MSUPackCurrent
                     SEP #$10
                         LDA.b #$00
                         LDX.b #$07
                         -
-                            STA.l MSUFallbackTable,X
+                            STA.w MSUFallbackTable,X
                         DEX : BPL -
                     REP #$10
                     BRA +++
-                + : LDA.l MSUPackCurrent : STA.l MSUPackRequest
-            ++ : STA.l MSUPackCurrent
+                + : LDA.w MSUPackCurrent : STA.w MSUPackRequest
+            ++ : STA.w MSUPackCurrent
             JSL MSUInit_check_fallback
         +++
 
         LDA.w MusicControlRequest : CMP.b #$08 : BEQ ++  ; Mirror SFX is not affected by NoBGM or pack $FE
             LDA.l NoBGM : BNE +
-            LDA.l MSUPackCurrent : CMP.b #$FE : BNE ++
+            LDA.w MSUPackCurrent : CMP.b #$FE : BNE ++
                 + : JMP .mute
         ++
 
@@ -240,7 +240,7 @@ CheckMusicLoadRequest:
             LDA.l MusicShuffleTable-1,X : DEC : PHA
                 AND.b #$07 : TAY
                 PLA : LSR #3 : TAX
-            LDA.l MSUFallbackTable,X : BEQ .secondary_fallback : CMP.b #$FF : BEQ .mute
+            LDA.w MSUFallbackTable,X : BEQ .secondary_fallback : CMP.b #$FF : BEQ .mute
             
             - : CPY #$00 : BEQ +
                 LSR : DEY : BRA -
@@ -333,7 +333,7 @@ CheckMusicLoadRequest:
 ;--------------------------------------------------------------------------------
 SpiralStairsPreCheck:
     REP #$20    ; thing we wrote over
-    LDA.b $A0
+    LDA.b RoomIndex
     CMP.w #$000C : BNE +
         LDA.w CurrentMSUTrack : AND.w #$00FF : CMP.w #59 : BNE .done
         BRA .fade
@@ -347,14 +347,14 @@ SpiralStairsPreCheck:
         LDA.w MSUID+4 : CMP.w #!VAL_MSU_ID_45 : BNE .done
     +
 
-    LDA.l BigKeyField : AND.w #$0004 : BEQ .done                  ; Check that we have the GT big key
-    LDA.l MSUFallbackTable+7 : AND.w #$0004 : BEQ .done    ; Check that we have the extended track
+    LDA.l BigKeyField : AND.w #$0004 : BEQ .done           ; Check that we have the GT big key
+    LDA.w MSUFallbackTable+7 : AND.w #$0004 : BEQ .done    ; Check that we have the extended track
 
 .fade
     LDX.b #$F1 : STX.w MusicControlRequest
 
 .done
-    LDA.b $A0     ; thing we wrote over
+    LDA.b RoomIndex    ; thing we wrote over
     RTL
 ;--------------------------------------------------------------------------------
 
@@ -362,7 +362,7 @@ SpiralStairsPreCheck:
 ; Change music on stair transition (ToH/GT)
 ;--------------------------------------------------------------------------------
 SpiralStairsPostCheck:
-    LDA.b $A0
+    LDA.b RoomIndex
     CMP.w #$000C : BNE +
         ; Ganon's tower entrance
         LDX.w $0130 : CPX.b #$F1 : BNE .done  ; Check that we were fading out
@@ -379,7 +379,7 @@ SpiralStairsPostCheck:
     LDX.b #59 : STX.w MusicControlRequest
 
 .done
-    LDX.b #$1C : LDA.b $A0    ; thing we wrote over
+    LDX.b #$1C : LDA.b RoomIndex   ; thing we wrote over
     RTL
 ;--------------------------------------------------------------------------------
 
@@ -401,10 +401,10 @@ MSUInit:
     PHP
 
     LDA.b #$00
-    STA.l MSULoadedTrack
-    STA.l MSUResumeTrack
-    STA.l MSUResumeTime : STA.l MSUResumeTime+1 : STA.l MSUResumeTime+2 : STA.l MSUResumeTime+3
-    STA.l MSUResumeControl
+    STA.w MSULoadedTrack
+    STA.w MSUResumeTrack
+    STA.w MSUResumeTime : STA.w MSUResumeTime+1 : STA.w MSUResumeTime+2 : STA.w MSUResumeTime+3
+    STA.w MSUResumeControl
 
     LDA.l NoBGM : BNE .done
 
@@ -431,7 +431,7 @@ MSUInit:
 .wait_pack
     LDA.w MSUSTATUS : BIT.b #!FLAG_MSU_STATUS_AUDIO_BUSY : BNE .wait_pack
     LDA.w MSUSTATUS : BIT.b #!FLAG_MSU_STATUS_TRACK_MISSING : BEQ .check_pack
-    TXA : STA.l MSUPackCount
+    TXA : STA.w MSUPackCount
     BRA +
 
 ; Check the current MSU-1 pack for tracks that require SPC fallback
@@ -453,7 +453,7 @@ MSUInit:
     LDA.w MSUSTATUS : BIT.b #!FLAG_MSU_STATUS_TRACK_MISSING : BNE +
         SEC
     +
-    LDA.l MSUFallbackTable,X : ROL : STA.l MSUFallbackTable,X
+    LDA.w MSUFallbackTable,X : ROL : STA.w MSUFallbackTable,X
 
     DEY : BPL .next_track
         DEX : BPL +
@@ -474,11 +474,11 @@ MSUInit:
 ;--------------------------------------------------------------------------------
 MSUStopPlaying:
 PHA : XBA : PHA
-    LDA.l MSULoadedTrack
+    LDA.w MSULoadedTrack
     JSR IsResumableTrack : BCC +
         ; dont save if we already saved recently
         REP #$20
-        LDA.l MSUResumeTrack : AND #$00FF : BEQ ++
+        LDA.w MSUResumeTrack : AND #$00FF : BEQ ++
             LDA.l NMIFrames : !SUB MSUResumeTime : PHA
             LDA.l NMIFrames+2 : SBC MSUResumeTime+2 : BNE +++
                 PLA : CMP.l MSUResumeTimer : !BLT .too_early
@@ -487,12 +487,12 @@ PHA : XBA : PHA
             PLA
         ++
         ; saving
-        LDA.l NMIFrames : STA.l MSUResumeTime
-        LDA.l NMIFrames+2 : STA.l MSUResumeTime+2
+        LDA.l NMIFrames : STA.w MSUResumeTime
+        LDA.l NMIFrames+2 : STA.w MSUResumeTime+2
         SEP #$20
 
-        LDA.l MSULoadedTrack : STA.l MSUResumeTrack
-        LDA.b #$00 : STA.l MSULoadedTrack ; dont take this path if we're calling again
+        LDA.w MSULoadedTrack : STA.w MSUResumeTrack
+        LDA.b #$00 : STA.w MSULoadedTrack ; dont take this path if we're calling again
         LDA.b #!FLAG_MSU_RESUME : STA.w MSUCTL ; save this track's position
         PLA : XBA : PLA
         RTS
@@ -523,23 +523,23 @@ MSUMain:
     LDX.w MusicControl : BEQ +
         JMP .command_ff
     +
-    LDA.l MSUDelayedCommand : BEQ .do_fade
+    LDA.w MSUDelayedCommand : BEQ .do_fade
 
 .check_busy
     LDA.w MSUSTATUS : BIT.b #!FLAG_MSU_STATUS_AUDIO_BUSY : BNE -
 .ready
     LDA.w MSUSTATUS : BIT.b #!FLAG_MSU_STATUS_TRACK_MISSING : BNE -
 .start
-    LDA.l MSUResumeControl : BIT.b #!FLAG_RESUME_CANCEL : BEQ +
-        EOR.b #!FLAG_RESUME_CANCEL : STA.l MSUResumeControl
-        REP #$20 : LDA.l MSULoadedTrack : STA.w MSUTRACK : SEP #$20
+    LDA.w MSUResumeControl : BIT.b #!FLAG_RESUME_CANCEL : BEQ +
+        EOR.b #!FLAG_RESUME_CANCEL : STA.w MSUResumeControl
+        REP #$20 : LDA.w MSULoadedTrack : STA.w MSUTRACK : SEP #$20
         BRA -
     +
     LDA.b #!VAL_VOLUME_FULL
     STA.w TargetVolume
     
-    LDA.l MSUResumeControl : BIT.b #!FLAG_RESUME_FADEIN : BEQ +
-        EOR.b #!FLAG_RESUME_FADEIN : STA.l MSUResumeControl
+    LDA.w MSUResumeControl : BIT.b #!FLAG_RESUME_FADEIN : BEQ +
+        EOR.b #!FLAG_RESUME_FADEIN : STA.w MSUResumeControl
         LDA.b #$00
         BRA ++
     +
@@ -551,17 +551,17 @@ MSUMain:
     LDA.w CurrentMSUTrack : DEC : PHA
         AND.b #$07 : TAY
         PLA : LSR #3 : TAX
-    LDA.l MSUFallbackTable,X : BEQ +++ : CMP.b #$FF : BEQ ++
+    LDA.w MSUFallbackTable,X : BEQ +++ : CMP.b #$FF : BEQ ++
 
     - : CPY #$00 : BEQ +
         LSR : DEY : BRA -
     +
 
     AND.b #$01 : BEQ +++
-        ++ : LDA.l MSUDelayedCommand
+        ++ : LDA.w MSUDelayedCommand
     +++ : STA.w MSUCTL
     LDA.b #$00
-    STA.l MSUDelayedCommand
+    STA.w MSUDelayedCommand
     JML SPCContinue
 
 .do_fade:
@@ -624,9 +624,9 @@ MSUMain:
     +
     CPX.w CurrentControlRequest : BEQ -
     LDA.b #$00 : XBA
-    LDA.l MSUPackCurrent : BEQ +
-    - : CMP.l MSUPackCount : !BLT +
-        !SUB.l MSUPackCount : BRA -
+    LDA.w MSUPackCurrent : BEQ +
+    - : CMP.w MSUPackCount : !BLT +
+        !SUB.w MSUPackCount : BRA -
     +
 
     JSR MSUStopPlaying
@@ -639,11 +639,11 @@ MSUMain:
         DEX : BNE -
     +
         STA.w MSUTRACK
-        STA.l MSULoadedTrack
+        STA.w MSULoadedTrack
     SEP #$20
 
     PLX
-    TXA : CMP.l MSUResumeTrack : BNE + ; dont resume if too late
+    TXA : CMP.w MSUResumeTrack : BNE + ; dont resume if too late
         REP #$20
             LDA.l NMIFrames : !SUB MSUResumeTime : PHA
             LDA.l NMIFrames+2 : SBC MSUResumeTime+2 : BNE ++
@@ -656,8 +656,8 @@ MSUMain:
         SEP #$20
         LDA.b #!FLAG_RESUME_CANCEL
         .done_resume:
-        STA.l MSUResumeControl
-        LDA.b #$00 : STA.l MSUResumeTrack
+        STA.w MSUResumeControl
+        LDA.b #$00 : STA.w MSUResumeTrack
     +
     CPX #07 : BNE + ; Kakariko Village
         LDA.b $10 : CMP #$07 : BNE +
@@ -667,12 +667,12 @@ MSUMain:
     +
     TXA
     ++
-    STA.l MSULoadedTrack
+    STA.w MSULoadedTrack
     STX.w CurrentMSUTrack
-    LDA.l MSUPackCurrent : CMP #$FE : !BLT +
+    LDA.w MSUPackCurrent : CMP #$FE : !BLT +
         LDA.b #$00 : BRA ++
         + : LDA.l MSUTrackList-1,X
-    ++ : STA.l MSUDelayedCommand
+    ++ : STA.w MSUDelayedCommand
     LDA.l MSUExtendedFallbackList-1,X 
     CMP.b #17 : BEQ +
     CMP.b #22 : BEQ +
@@ -722,9 +722,9 @@ PendantFanfareWait:
     LDA.w MSUID+2 : CMP.w #!VAL_MSU_ID_23 : BNE .spc
     LDA.w MSUID+4 : CMP.w #!VAL_MSU_ID_45 : BNE .spc
     SEP #$20
-    LDA.l MSUPackCurrent : CMP #$FE : !BGE .spc
+    LDA.w MSUPackCurrent : CMP #$FE : !BGE .spc
     LDA.w MSUSTATUS : BIT.b #!FLAG_MSU_STATUS_TRACK_MISSING : BNE .spc
-    LDA.l MSUDelayedCommand : BNE .continue
+    LDA.w MSUDelayedCommand : BNE .continue
     LDA.w MSUSTATUS : BIT.b #!FLAG_MSU_STATUS_AUDIO_PLAYING : BEQ .done
 .continue
     jml PendantFanfareContinue
@@ -746,9 +746,9 @@ CrystalFanfareWait:
     LDA.w MSUID+2 : CMP.w #!VAL_MSU_ID_23 : BNE .spc
     LDA.w MSUID+4 : CMP.w #!VAL_MSU_ID_45 : BNE .spc
     SEP #$20
-    LDA.l MSUPackCurrent : CMP.b #$FE : !BGE .spc
+    LDA.w MSUPackCurrent : CMP.b #$FE : !BGE .spc
     LDA.w MSUSTATUS : BIT.b #!FLAG_MSU_STATUS_TRACK_MISSING : BNE .spc
-    LDA.l MSUDelayedCommand : BNE .continue
+    LDA.w MSUDelayedCommand : BNE .continue
     LDA.w MSUSTATUS : BIT.b #!FLAG_MSU_STATUS_AUDIO_PLAYING : BEQ .done
 .continue    
     jml CrystalFanfareContinue

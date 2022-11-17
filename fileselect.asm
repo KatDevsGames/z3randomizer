@@ -328,8 +328,8 @@ DrawPlayerFileShared:
 
 	LDA.l EquipmentSRAM+$0108 : AND.w #$00FF
 	JSL.l HexToDec
-	LDA.l $7F5006 : AND.w #$00FF : !ADD.w #$210+!FS_COLOR_BW : %fs_draw8x8(11,26)
-	LDA.l $7F5007 : AND.w #$00FF : !ADD.w #$210+!FS_COLOR_BW : %fs_draw8x8(11,27)
+	LDA.l HexToDecDigit4 : AND.w #$00FF : !ADD.w #$210+!FS_COLOR_BW : %fs_draw8x8(11,26)
+	LDA.l HexToDecDigit5 : AND.w #$00FF : !ADD.w #$210+!FS_COLOR_BW : %fs_draw8x8(11,27)
 
 	; Boots
 	%fs_drawItemBasic(EquipmentSRAM+$15,3,28,FileSelectItems_boots)
@@ -560,16 +560,16 @@ FileSelectDrawHudBar:
 	LDA.w #$029B|!FS_COLOR_GREEN : %fs_draw16x8(0,10)
 	LDA.l DisplayRupeesSRAM
 	JSL.l HexToDec
-	LDA.l $7F5004 : AND.w #$00FF : !ADD.w #$210+!FS_COLOR_BW : %fs_draw8x8(1,9)
-	LDA.l $7F5005 : AND.w #$00FF : !ADD.w #$210+!FS_COLOR_BW : %fs_draw8x8(1,10)
-	LDA.l $7F5006 : AND.w #$00FF : !ADD.w #$210+!FS_COLOR_BW : %fs_draw8x8(1,11)
-	LDA.l $7F5007 : AND.w #$00FF : !ADD.w #$210+!FS_COLOR_BW : %fs_draw8x8(1,12)
+	LDA.l HexToDecDigit2 : AND.w #$00FF : !ADD.w #$210+!FS_COLOR_BW : %fs_draw8x8(1,9)
+	LDA.l HexToDecDigit3 : AND.w #$00FF : !ADD.w #$210+!FS_COLOR_BW : %fs_draw8x8(1,10)
+	LDA.l HexToDecDigit4 : AND.w #$00FF : !ADD.w #$210+!FS_COLOR_BW : %fs_draw8x8(1,11)
+	LDA.l HexToDecDigit5 : AND.w #$00FF : !ADD.w #$210+!FS_COLOR_BW : %fs_draw8x8(1,12)
 
 	LDA.w #$028B|!FS_COLOR_BLUE : %fs_draw16x8(0,14)
 	LDA.l BombsEquipmentSRAM : AND.w #$00FF
 	JSL.l HexToDec
-	LDA.l $7F5006 : AND.w #$00FF : !ADD.w #$210+!FS_COLOR_BW : %fs_draw8x8(1,14)
-	LDA.l $7F5007 : AND.w #$00FF : !ADD.w #$210+!FS_COLOR_BW : %fs_draw8x8(1,15)
+	LDA.l HexToDecDigit4 : AND.w #$00FF : !ADD.w #$210+!FS_COLOR_BW : %fs_draw8x8(1,14)
+	LDA.l HexToDecDigit5 : AND.w #$00FF : !ADD.w #$210+!FS_COLOR_BW : %fs_draw8x8(1,15)
 
 	LDA.l BowTrackingSRAM : AND.w #$0040 : BEQ +
 		LDA.w #$0299|!FS_COLOR_RED : %fs_draw16x8(0,17)
@@ -579,8 +579,8 @@ FileSelectDrawHudBar:
 	++
 	LDA.l CurrentArrowsSRAM : AND.w #$00FF
 	JSL.l HexToDec
-	LDA.l $7F5006 : AND.w #$00FF : !ADD.w #$210+!FS_COLOR_BW : %fs_draw8x8(1,17)
-	LDA.l $7F5007 : AND.w #$00FF : !ADD.w #$210+!FS_COLOR_BW : %fs_draw8x8(1,18)
+	LDA.l HexToDecDigit4 : AND.w #$00FF : !ADD.w #$210+!FS_COLOR_BW : %fs_draw8x8(1,17)
+	LDA.l HexToDecDigit5 : AND.w #$00FF : !ADD.w #$210+!FS_COLOR_BW : %fs_draw8x8(1,18)
 RTS
 ;--------------------------------------------------------------------------------
 AltBufferTable:

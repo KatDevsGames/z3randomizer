@@ -22,7 +22,7 @@ InvertDPad:
 	JML.l InvertDPadReturn
 
 .crowd_control
-	LDA.l DPadInverter : BNE +
+	LDA.l ControllerInverter : BNE +
 
 	LDA.w JOY1L : STA.b Scrap00
 	LDA.w JOY1H : STA.b Scrap01

@@ -567,7 +567,7 @@ RTL
 ;--------------------------------------------------------------------------------
 ; HexToDec
 ; in:	A(w) - Word to Convert
-; out:	$7F5004 - $7F5007 (high - low)
+; out:	HexToDecDigit1 - HexToDecDigit5 (high - low)
 ;--------------------------------------------------------------------------------
 HexToDec:
 	PHA
@@ -592,8 +592,8 @@ HexToDec:
 		INC.b Scrap07
 		!SUB.w #1 : BRA -
 	+
-	LDA.b Scrap04 : STA.l $7F5004 ; move to digit storage
-	LDA.b Scrap06 : STA.l $7F5006
+	LDA.b Scrap04 : STA.l HexToDecDigit2 ; move to digit storage
+	LDA.b Scrap06 : STA.l HexToDecDigit4
 	PLA
 RTL
 
@@ -626,33 +626,33 @@ db #00, #01, #01, #02, #01, #02, #02, #03, #01, #02, #02, #03, #02, #03, #03, #0
 ;--------------------------------------------------------------------------------
 ; HexToDec
 ; in:	A(w) - Word to Convert
-; out:	$7F5003 - $7F5007 (high - low)
+; out:	HexToDecDigit1 - HexToDecDigit5 (high - low)
 ;--------------------------------------------------------------------------------
 ;HexToDec:
 ;	PHA
 ;	PHA
 ;		LDA.w #$9090
-;		STA.l $7F5003 : STA.l $7F5005 : STA.l $7F5006 ; clear digit storage
+;		STA.l HexToDecDigit1 : STA.l HexToDecDigit3 : STA.l HexToDecDigit4 ; clear digit storage
 ;	PLA
 ;	-
 ;		CMP.w #10000 : !BLT +
-;		PHA : SEP #$20 : LDA.l $7F5003 : INC : STA.l $7F5003 : REP #$20 : PLA
+;		PHA : SEP #$20 : LDA.l HexToDecDigit1 : INC : STA.l HexToDecDigit1 : REP #$20 : PLA
 ;		!SUB.w #10000 : BRA -
 ;	+ -
 ;		CMP.w #1000 : !BLT +
-;		PHA : SEP #$20 : LDA.l $7F5004 : INC : STA.l $7F5004 : REP #$20 : PLA
+;		PHA : SEP #$20 : LDA.l HexToDecDigit2 : INC : STA.l HexToDecDigit2 : REP #$20 : PLA
 ;		!SUB.w #1000 : BRA -
 ;	+ -
 ;		CMP.w #100 : !BLT +
-;		PHA : SEP #$20 : LDA.l $7F5005 : INC : STA.l $7F5005 : REP #$20 : PLA
+;		PHA : SEP #$20 : LDA.l HexToDecDigit3 : INC : STA.l HexToDecDigit3 : REP #$20 : PLA
 ;		!SUB.w #100 : BRA -
 ;	+ -
 ;		CMP.w #10 : !BLT +
-;		PHA : SEP #$20 : LDA.l $7F5006 : INC : STA.l $7F5006 : REP #$20 : PLA
+;		PHA : SEP #$20 : LDA.l HexToDecDigit4 : INC : STA.l HexToDecDigit4 : REP #$20 : PLA
 ;		!SUB.w #10 : BRA -
 ;	+ -
 ;		CMP.w #1 : !BLT +
-;		PHA : SEP #$20 : LDA.l $7F5007 : INC : STA.l $7F5007 : REP #$20 : PLA
+;		PHA : SEP #$20 : LDA.l HexToDecDigit5 : INC : STA.l HexToDecDigit5 : REP #$20 : PLA
 ;		!SUB.w #1 : BRA -
 ;	+
 ;	PLA

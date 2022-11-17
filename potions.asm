@@ -4,7 +4,7 @@
 ;--------------------------------------------------------------------------------
 RefillHealth:
 	REP #$20 ; set 16-bit accumulator
-	LDA.b $A0 ; these are all decimal because i got them that way
+	LDA.b RoomIndex ; these are all decimal because i got them that way
 	CMP.w #279 : BNE + ; Spike Cave bottles work normally
 		SEP #$20 ; set 8-bit accumulator
 		LDA.b #$A0
@@ -50,7 +50,7 @@ RTL
 ;--------------------------------------------------------------------------------
 RefillMagic:
 	REP #$20 ; set 16-bit accumulator
-	LDA.b $A0 ; these are all decimal because i got them that way
+	LDA.b RoomIndex ; these are all decimal because i got them that way
 	CMP.w #279 : BNE + ; Spike Cave bottles work normally
 		SEP #$20 ; set 8-bit accumulator
 		LDA.b #$80

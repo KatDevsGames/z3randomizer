@@ -65,7 +65,7 @@ RTL
 			INX : BRA -- : ++
 		PLX
 		LDA.l SilverArrowsUseRestriction : BEQ ++
-		LDA.b $A0 : ORA.b $A1 : BEQ ++ ; not in ganon's room in restricted mode
+		LDA.b RoomIndex : ORA.b RoomIndex+1 : BEQ ++ ; not in ganon's room in restricted mode
 				LDA.l BowEquipment : CMP.b #$03 : !BLT .errorJump : !SUB #$02 : STA.l BowEquipment
 				BRA .errorJump2
 		++
@@ -993,7 +993,7 @@ RTL
 ;--------------------------------------------------------------------------------
 SpawnChestGamePrizeSFX:
 	CPX.b #$07 : BNE .normal
-	LDA.b $A0 : CMP.b #$06 : BNE .normal
+	LDA.b RoomIndex : CMP.b #$06 : BNE .normal
 	.prize
 	LDA.b #$1B : STA.w $012F : RTL ; play puzzle sound
 	.normal

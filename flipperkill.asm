@@ -1,65 +1,13 @@
 ;================================================================================
 ; Fake Flippers Softlock Fix
 ;--------------------------------------------------------------------------------
-FlipperKill:
-	PHP
-	LDA.b $5D : CMP.b #$04 : BNE .done ; skip if we're not swimming
-	LDA.l FlippersEquipment : BNE .done ; skip if we have the flippers
-	LDA.l $7F5001 : BEQ .done ; skip if we're not marked in danger for softlock
-	LDA.b $8A : CMP.l $7F5098 : BEQ .done ; skip if we're on the same screen we entered the water on
-	LDA.l IgnoreFaeries : ORA.b #$04 : STA.l IgnoreFaeries
-	LDA.b #$00 : STA CurrentHealth ; kill link
-	LDA.b #$00 : STA $7F5001 ; mark fake flipper softlock as impossible
-	.done
-	PLP
-	LDA.l CurrentHealth ; thing we wrote over
-RTL
-;--------------------------------------------------------------------------------
-IgnoreFairyCheck:
-    LDX.b #$00 ; thing we wrote over
-    LDA.l IgnoreFaeries : BIT.b #$04 : BEQ .normal
-	
-    AND.b #$FB : STA.l IgnoreFaeries ; clear ignore fairy flag
-	LDA.b #$F0 ; set check to invalid entry
-RTL
-	.normal
-    LDA.b #$06 ; set check to fairy
-RTL
-;--------------------------------------------------------------------------------
-FlipperReset:
-	JSL $0998E8 ; AddTransitionSplash
-	LDA.b #$00 : STA.l $7F5001 ; mark fake flipper softlock as impossible
-	.done 
-RTL
-;--------------------------------------------------------------------------------
-FlipperFlag:
-	LDA.b $5D : CMP.b #$04 : BNE .done ; skip if we're not swimming
-	LDA.l FlippersEquipment : BNE .safe ; skip if we have the flippers
-	LDA.b #$01 : STA.l $7F5001 ; mark fake flipper softlock as possible
-	BRA .done
-	.safe
-	LDA.b #$00 : STA.l $7F5001 ; mark fake flipper softlock as impossible
-	.done 
-RTL
-;--------------------------------------------------------------------------------
-RegisterWaterEntryScreen:
-	PHA
-		LDA.b $8A : STA.l $7F5098 ; store ow index
-	PLA
-RTL
-;--------------------------------------------------------------------------------
-MysteryWaterFunction: ; *$3AE54 ALTERNATE ENTRY POINT
-    LDA.b #$20 : STA $02E2
+
+UnequipCapeQuiet: 
+    LDA.b #$20 : STA.w $02E2
     STZ.w $037B
     STZ.b $55
     STZ.w $0360
 RTL
-;--------------------------------------------------------------------------------
-
-
-;===================================================================================================
-; More elegant solution
-;===================================================================================================
 
 protectff:
 	LDA.l AllowAccidentalMajorGlitch

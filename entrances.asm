@@ -8,7 +8,7 @@ LockAgahnimDoors:
 		;#$0 = Never Locked
 		LDA.w #$0000 : RTL
 	+ : CMP.w #$0001 : BNE +
-		LDA ProgressIndicator : AND.w #$000F : CMP.w #$0002 : !BGE .unlock ; if we rescued zelda, skip
+		LDA.l ProgressIndicator : AND.w #$000F : CMP.w #$0002 : !BGE .unlock ; if we rescued zelda, skip
 			JSR.w LockAgahnimDoorsCore : RTL
 	+ : CMP.w #$0002 : BNE +
 		JSR.w LockAgahnimDoorsCore : BEQ .unlock
@@ -18,20 +18,20 @@ LockAgahnimDoors:
 		REP #$30
 		PLY : PLX
 		!BGE .crystalOrUnlock
-		LDA #$0001 : RTL
+		LDA.w #$0001 : RTL
 		.crystalOrUnlock
-		LDA InvertedMode : AND.w #$00FF : BEQ .unlock
+		LDA.l InvertedMode : AND.w #$00FF : BEQ .unlock
 
-		LDA OverworldEventDataWRAM+$43 : AND.w #$0020 : BNE .unlock ; Check if GT overlay is already on or not
-		LDA $0308 : AND.w #$0080 : BEQ ++ ;If we are holding an item
+		LDA.l OverworldEventDataWRAM+$43 : AND.w #$0020 : BNE .unlock ; Check if GT overlay is already on or not
+		LDA.w $0308 : AND.w #$0080 : BEQ ++ ;If we are holding an item
 
 	.locked
-			LDA #$0001 : RTL ;Keep the door locked
+			LDA.w #$0001 : RTL ;Keep the door locked
 		++
 		SEP #$30
 		JSL $099B6F ;Add tower break seal
 		REP #$30
-		LDA #$0001 ;Prevent door from opening that frame otherwise it glitchy
+		LDA.w #$0001 ;Prevent door from opening that frame otherwise it glitchy
 		RTL
 
 	+
@@ -44,7 +44,7 @@ RTL
 FlagAgahnimDoor:
 	LDA.l InvertedMode : BEQ .vanilla
 
-	LDA OverworldEventDataWRAM+$43 : ORA #$20 : STA OverworldEventDataWRAM+$43 ; activate GT overlay
+	LDA.l OverworldEventDataWRAM+$43 : ORA.b #$20 : STA.l OverworldEventDataWRAM+$43 ; activate GT overlay
 
 .vanilla
 	LDA.b #$28 : STA.b $72
@@ -53,9 +53,9 @@ FlagAgahnimDoor:
 
 ;--------------------------------------------------------------------------------
 LockAgahnimDoorsCore:
-	LDA $22 : CMP.w #1992 : !BLT + ; door too far left, skip
+	LDA.b $22 : CMP.w #1992 : !BLT + ; door too far left, skip
 			  CMP.w #2088 : !BGE + ; door too rat right, skip
-	LDA $20 : CMP.w #1720 : !BGE + ; door too low, skip
+	LDA.b $20 : CMP.w #1720 : !BGE + ; door too low, skip
 		LDA.w #$0001
 RTS
 	+
@@ -86,16 +86,15 @@ AllowStartFromSingleEntranceCave:
 		BNE +
 			JMP .done
 		+
-
 		DEC
 		STA.b Scrap00
 		ASL #2 : !ADD Scrap00 : ASL #2 ; mult by 20
 		TAX
 
-		LDA.w #$0016 : STA $7EC142 ; Cache the main screen designation
+		LDA.w #$0016 : STA.l $7EC142 ; Cache the main screen designation
 		LDA.l StartingAreaExitTable+$05, X : STA.l $7EC144 ; Cache BG1 V scroll
 		LDA.l StartingAreaExitTable+$07, X : STA.l $7EC146 ; Cache BG1 H scroll
-		LDA.l StartingAreaExitTable+$09, X : !ADD.w #$0010 : STA $7EC148 ; Cache Link's Y coordinate
+		LDA.l StartingAreaExitTable+$09, X : !ADD.w #$0010 : STA.l $7EC148 ; Cache Link's Y coordinate
 		LDA.l StartingAreaExitTable+$0B, X : STA.l $7EC14A ; Cache Link's X coordinate
 		LDA.l StartingAreaExitTable+$0D, X : STA.l $7EC150 ; Cache Camera Y coord lower bound.
 		LDA.l StartingAreaExitTable+$0F, X : STA.l $7EC152 ; Cache Camera X coord lower bound.
@@ -113,19 +112,19 @@ AllowStartFromSingleEntranceCave:
 		BIT.w #$0080 : BEQ + : ORA.w #$FF00 : + ; Sign extend
 		STA.l $7EC16E
 
-		LDA.w #$0000 : !SUB.l $7EC16A : STA $7EC16C
-		LDA.w #$0000 : !SUB.l $7EC16E : STA $7EC170
+		LDA.w #$0000 : !SUB.l $7EC16A : STA.l $7EC16C
+		LDA.w #$0000 : !SUB.l $7EC16E : STA.l $7EC170
 
 		LDA.l StartingAreaExitTable+$02, X : AND.w #$00FF
-		STA $7EC14C ; Cache the overworld area number
-		STA $7EC140 ; Cache the aux overworld area number
+		STA.l $7EC14C ; Cache the overworld area number
+		STA.l $7EC140 ; Cache the aux overworld area number
 
-		STZ $0698 ;zero out door overlays in case starting overworld door is not set
-		STZ $0699 ;zero out door overlays in case starting overworld door is not set
+		STZ.w $0698 ;zero out door overlays in case starting overworld door is not set
+		STZ.w $0699 ;zero out door overlays in case starting overworld door is not set
 
 		SEP #$20 ; set 8-bit accumulator
-		LDA $7EF3C8 : TAX
-		LDA.l StartingAreaOverworldDoor, X : STA.l $7F5099 ;Load overworld door
+		LDA.l $7EF3C8 : TAX
+		LDA.l StartingAreaOverworldDoor, X : STA.l PreviousOverworldDoor ;Load overworld door
 		REP #$20 ; reset 16-bit accumulator
                 JSL.l CacheDoorFrameData
 
@@ -135,7 +134,7 @@ RTL
 ;--------------------------------------------------------------------------------
 AllowStartFromExit:
 
-	LDX $1CE8
+	LDX.w $1CE8
 	LDA.l ShouldStartatExit, X : BNE .doStart
 
 	LDA.l StartingEntrance ; what we wrote over
@@ -146,21 +145,21 @@ JML.l AllowStartFromExitReturn
 	LDA.l $028481, X ;Module_LocationMenu_starting_points
 	ASL : TAX
 
-	LDA.l $02D8D2, X : STA $A0
-	LDA.l $02D8D3, X : STA $A1
+	LDA.l $02D8D2, X : STA.b RoomIndex
+	LDA.l $02D8D3, X : STA.b RoomIndex+1
 
 	; Go to pre-overworld mode
-	LDA.b #$08 : STA $10
+	LDA.b #$08 : STA.b $10
 
-	STZ $11
-	STZ $B0
+	STZ.b $11
+	STZ.b $B0
 
-	STZ $010A
+	STZ.w $010A
 
-	STZ $04AA
+	STZ.w $04AA
 	JSL Equipment_SearchForEquippedItemLong
 	JSL HUD_RebuildLong2
-	JSL $0DDD32 ; Equipment_UpdateEquippedItemLong
+	JSL Equipment_UpdateEquippedItemLong
 RTL
 
 ;--------------------------------------------------------------------------------
@@ -196,7 +195,7 @@ PreventEnterOnBonk:
 	STA.b Scrap00 ; part of what we wrote over
 	LDA.l InvertedMode : AND.w #$00FF : BEQ .done
 	LDA.l $5D : AND.w #$00FF : CMP.w #$0014 : BNE .done ;in mirror mode?
-	LDA.b $8A : AND.w #$0040 : CMP $7B : BEQ .done ; Are we bonking, or doing the superbunny glitch?
+	LDA.b $8A : AND.w #$0040 : CMP.b $7B : BEQ .done ; Are we bonking, or doing the superbunny glitch?
 
 		; If in inverted, are in mirror mode, and are bonking then do not enter
 		JML.l PreventEnterOnBonk_BRANCH_IX
@@ -206,8 +205,8 @@ PreventEnterOnBonk:
 JML.l PreventEnterOnBonk_return
 ;--------------------------------------------------------------------------------
 TurtleRockEntranceFix:
-	LDA TurtleRockAutoOpenFix : BEQ .done
-	LDA $8A : CMP.b #$47 : BNE .done
+	LDA.l TurtleRockAutoOpenFix : BEQ .done
+	LDA.b $8A : CMP.b #$47 : BNE .done
 		;If exiting to turtle rock ensure the entrance is open
 		LDA.l OverworldEventDataWRAM+$47 : ORA.b #$20 : STA.l OverworldEventDataWRAM+$47
 .done
@@ -216,14 +215,14 @@ RTL
 AnimatedEntranceFix: ;when an entrance animation tries to start
 	PHA
 	LDA.l InvertedMode : BEQ + ;If we are in inverted mode
-	LDA $8A : AND.b #$40 : BNE + ;and in the light world
+	LDA.b $8A : AND.b #$40 : BNE + ;and in the light world
 		PLA
-		STZ $04C6 ; skip it.
-		LDA #$00
+		STZ.w $04C6 ; skip it.
+		LDA.b #$00
 		RTL
 	+
 	PLA
-	STA $02E4 ;what we wrote over
-	STA $0FC1 ;what we wrote over
-	STA $0710 ;what we wrote over
+	STA.w $02E4 ;what we wrote over
+	STA.w $0FC1 ;what we wrote over
+	STA.w $0710 ;what we wrote over
 RTL
