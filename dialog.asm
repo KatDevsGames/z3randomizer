@@ -6,11 +6,11 @@ DialogOverride:
 	LDA.l DialogBuffer, X ; use alternate buffer
 RTL
 	.skip
-    LDA.l $7F1200, X
+    LDA.l DecompressionBuffer+$1200, X
 RTL
 
 ResetDialogPointer:
-	STZ.w $1CF0 : STZ.w $1CF1 ; reset decompression buffer
+	STZ.w TextID : STZ.w TextID+1 ; reset decompression buffer
 	LDA.b #$00 : STA.l AltTextFlag ; zero out the alternate flag
 	LDA.b #$1C : STA.w $1CE9 ; thing we wrote over
 RTL
@@ -23,7 +23,7 @@ macro LoadDialogAddress(address)
 		REP #$10 ; set 16-bit index registers
 		PEI.b ($00)
 		LDA.b Scrap02 : PHA
-			STZ.w $1CF0 : STZ.w $1CF1 ; reset decompression buffer
+			STZ.w TextID : STZ.w TextID+1 ; reset decompression buffer
 			LDA.b #$01 : STA.l AltTextFlag ; set flag
 			%CopyDialog(<address>)
 		PLA : STA.b Scrap02
@@ -55,7 +55,7 @@ macro CopyDialogIndirect()
 endmacro
 ;--------------------------------------------------------------------------------
 LoadDialogAddressIndirect:
-	STZ.w $1CF0 : STZ.w $1CF1 ; reset decompression buffer
+	STZ.w TextID : STZ.w TextID+1 ; reset decompression buffer
 	LDA.b #$01 : STA.l AltTextFlag ; set flag
 	%CopyDialogIndirect()
 RTL
@@ -119,7 +119,6 @@ FreeDungeonItemNotice:
 	LDA.w ScratchBufferV : AND.b #$F0 : CMP.b #$A0 : BNE + ; small key of...
 		LDA.w ScratchBufferV : CMP.b #$AF : BNE ++ : JMP .skip : ++
 		%CopyDialog(Notice_SmallKeyOf)
-		PLA : AND.b #$0F : STA.w ScratchBufferV : LDA.b #$0F : !SUB.w ScratchBufferV : PHA
 		LDA.b #$01 : STA.w ScratchBufferNV ; set up a flip for small keys
 		BRA .dungeon
 	+
@@ -170,7 +169,7 @@ FreeDungeonItemNotice:
 	+
 	.done
 
-	STZ.w $1CF0 : STZ.w $1CF1 ; reset decompression buffer
+	STZ.w TextID : STZ.w TextID+1 ; reset decompression buffer
 	LDA.b #$01 : STA.l AltTextFlag ; set alternate dialog flag
 	STA.l TextBoxDefer
 
@@ -211,7 +210,7 @@ DialogFairyThrow:
         ORA.l BottleContentsTwo : ORA.l BottleContentsThree : ORA.l BottleContentsFour : BNE .normal
 	
 	.noInventory
-	LDA.w $0D80, X : !ADD #$08 : STA.w $0D80, X
+	LDA.w SpriteUnknown, X : !ADD #$08 : STA.w SpriteUnknown, X
 	LDA.b #$51
 	LDY.b #$01
 RTL
@@ -226,7 +225,7 @@ DialogGanon1:
 	LDA.w #$018C
 	BCC +
 	LDA.w #$016D
-+	STA.w $1CF0
++	STA.w TextID
 	SEP #$20
 	JSL.l Sprite_ShowMessageMinimal_Alt
 RTL
@@ -262,18 +261,18 @@ DialogGanon2:
     +
         LDA.w #$016E
     ++
-	STA.w $1CF0
+	STA.w TextID
 	SEP #$20
     JSL.l Sprite_ShowMessageMinimal_Alt
 RTL
 ;--------------------------------------------------------------------------------
 DialogEtherTablet:
 	PHA
-	LDA.w $0202 : CMP.b #$0F : BEQ + ; Show normal text if book is not equipped
+	LDA.w ItemCursor : CMP.b #$0F : BEQ + ; Show normal text if book is not equipped
 	-
 	PLA : JML Sprite_ShowMessageUnconditional ; Wacky Hylian Text
 	+
-	BIT $F4 : BVC - ; Show normal text if Y is not pressed
+	BIT.b Joy1A_New : BVC - ; Show normal text if Y is not pressed
 	LDA.l AllowHammerTablets : BEQ ++
 		LDA.l HammerEquipment : BEQ .yesText : BRA .noText
 	++
@@ -291,11 +290,11 @@ RTL
 ;--------------------------------------------------------------------------------
 DialogBombosTablet:
 	PHA
-	LDA.w $0202 : CMP.b #$0F : BEQ + ; Show normal text if book is not equipped
+	LDA.w ItemCursor : CMP.b #$0F : BEQ + ; Show normal text if book is not equipped
 	-
 	PLA : JML Sprite_ShowMessageUnconditional ; Wacky Hylian Text
 	+
-	BIT $F4 : BVC - ; Show normal text if Y is not pressed
+	BIT.b Joy1A_New : BVC - ; Show normal text if Y is not pressed
 	LDA.l AllowHammerTablets : BEQ ++
 		LDA.l HammerEquipment : BEQ .yesText : BRA .noText
 	++
@@ -339,16 +338,16 @@ AgahnimAsksAboutPed:
 	BNE .vanilla
 
 	LDA.b #$8C ; message 018C for no ped
-	STA.w $1CF0
+	STA.w TextID
 
 .vanilla
 	JML $05FA8E ; Sprite_ShowMessageMinimal
 ;--------------------------------------------------------------------------------
 Main_ShowTextMessage_Alt:
 	; Are we in text mode? If so then end the routine.
-	LDA.b $10 : CMP.b #$0E : BEQ .already_in_text_mode
+	LDA.b GameMode : CMP.b #$0E : BEQ .already_in_text_mode
 Sprite_ShowMessageMinimal_Alt:
-	STZ.b $11
+	STZ.b GameSubMode
 
 	PHX : PHY
 	PEI.b (Scrap00)
@@ -356,7 +355,7 @@ Sprite_ShowMessageMinimal_Alt:
 
 	LDA.b #$1C : STA.b Scrap02
 	REP #$30
-		LDA.w $1CF0 : ASL : TAX
+		LDA.w TextID : ASL : TAX
 		LDA.l $7F71C0, X
 		STA.b Scrap00
 	SEP #$30
@@ -376,13 +375,13 @@ Sprite_ShowMessageMinimal_Alt:
 	STZ.w $1CD8   ; Initialize the step in the submodule
 
 	; Go to text display mode (as opposed to maps, etc)
-	LDA.b #$02 : STA.b $11
+	LDA.b #$02 : STA.b GameSubMode
 
 	; Store the current module in the temporary location.
-	LDA.b $10 : STA.w $010C
+	LDA.b GameMode : STA.w GameModeCache
 
 	; Switch the main module ($10) to text mode.
-	LDA.b #$0E : STA.b $10
+	LDA.b #$0E : STA.b GameMode
 	.end
 	PLA : STA.b Scrap02
 	PLA : STA.b Scrap01
@@ -398,15 +397,15 @@ CalculateSignIndex:
   ; And we do this in a way that will likely give the right value even 
   ; with major glitches.
 
-  LDA.b $8A : ASL A : TAY ;what we wrote over
+  LDA.b OverworldIndex : ASL A : TAY ;what we wrote over
 
   LDA.w $0712 : BEQ .done ; If a small map, we can skip these calculations.
 
-  LDA.b $21 : AND.w #$0002 : ASL #2 : EOR $8A : AND.w #$0008 : BEQ +
+  LDA.b $21 : AND.w #$0002 : ASL #2 : EOR.b OverworldIndex : AND.w #$0008 : BEQ +
   	TYA : !ADD.w #$0010 : TAY  ;add 16 if we are in lower half of big screen.
   + 
 
-  LDA.b $23 : AND.w #$0002 : LSR : EOR.b $8A : AND.w #$0001 : BEQ +
+  LDA.b $23 : AND.w #$0002 : LSR : EOR.b OverworldIndex : AND.w #$0001 : BEQ +
   TYA : INC #2 : TAY  ;add 16 if we are in lower half of big screen.
   +
   ; ensure even if things go horribly wrong, we don't read the sign out of bounds and crash:
@@ -420,26 +419,26 @@ RTL
 ;================================================================
 Sprite_ShowSolicitedMessageIfPlayerFacing_Alt:
 {
-	STA.w $1CF0
-	STY.w $1CF1
+	STA.w TextID
+	STY.w TextID+1
 
 	JSL Sprite_CheckDamageToPlayerSameLayerLong : BCC .alpha
 	JSL Sprite_CheckIfPlayerPreoccupied : BCS .alpha
 
-	LDA.b $F6 : BPL .alpha
+	LDA.b Joy1B_New : BPL .alpha
 	LDA.w $0F10, X : BNE .alpha
-	LDA.b $4D : CMP.b #$02 : BEQ .alpha
+	LDA.b LinkJumping : CMP.b #$02 : BEQ .alpha
 
 	JSL Sprite_DirectionToFacePlayerLong : PHX : TYX
 
 	; Make sure that the sprite is facing towards the player, otherwise
 	; talking can't happen. (What sprites actually use this???)
-	LDA.l $05E1A3, X : PLX : CMP.b $2F : BNE .not_facing_each_other
+	LDA.l $05E1A3, X : PLX : CMP.b LinkDirection : BNE .not_facing_each_other
 
 	PHY
 
-	LDA.w $1CF0
-	LDY.w $1CF1
+	LDA.w TextID
+	LDY.w TextID+1
 
 	; Check what room we're in so we know which npc we're talking to
         LDA.b RoomIndex
@@ -483,15 +482,15 @@ Sprite_ShowSolicitedMessageIfPlayerFacing_PreserveMessage:
 	JSL Sprite_CheckDamageToPlayerSameLayerLong : BCC .alpha
 	JSL Sprite_CheckIfPlayerPreoccupied : BCS .alpha
 
-	LDA.b $F6 : BPL .alpha
+	LDA.b Joy1B_New : BPL .alpha
 	LDA.w $0F10, X : BNE .alpha
-	LDA.b $4D : CMP.b #$02 : BEQ .alpha
+	LDA.b LinkJumping : CMP.b #$02 : BEQ .alpha
 
 	JSL Sprite_DirectionToFacePlayerLong : PHX : TYX
 
 	; Make sure that the sprite is facing towards the player, otherwise
 	; talking can't happen. (What sprites actually use this???)
-	LDA.l $05E1A3, X : PLX : CMP.b $2F : BNE .not_facing_each_other
+	LDA.l $05E1A3, X : PLX : CMP.b LinkDirection : BNE .not_facing_each_other
 
 	PLA : XBA : PLA
 

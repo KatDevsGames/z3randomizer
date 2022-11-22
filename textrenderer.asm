@@ -5,8 +5,8 @@ RenderCharSetColorExtended_init:
 
 RenderCharSetColorExtended_close:
     stz.b Scrap0C
-    lda.w $010c
-    sta.b $10
+    lda.w GameModeCache
+    sta.b GameMode
     rtl
 
 RenderCharSetColorExtended:

@@ -208,7 +208,7 @@ CheckMusicLoadRequest:
             CMP.b #21 : BNE .check_fallback
 
 ;.boss
-            LDA.w $040C : LSR : !ADD.b #45
+            LDA.w DungeonID : LSR : !ADD.b #45
             BRA .check_fallback-3
 .lightworld
             PHA
@@ -226,14 +226,14 @@ CheckMusicLoadRequest:
             PHA
                 LDA.l CrystalsField : CMP.b #$7F : BEQ -
                 LDA.l CurrentWorld : BEQ --
-                LDA.b $8A : CMP #$40 : BNE --
+                LDA.b OverworldIndex : CMP #$40 : BNE --
             PLA
             LDA.b #15 : BRA .check_fallback-3
 .castle
-            LDA.w $040C
+            LDA.w DungeonID
             CMP.b #$08 : BNE .check_fallback  ; Hyrule Castle 2
 .dungeon
-            LDA.w $040C : LSR : !ADD.b #33 : STA.w MusicControlRequest
+            LDA.w DungeonID : LSR : !ADD.b #33 : STA.w MusicControlRequest
 
 .check_fallback
             LDX.w MusicControlRequest
@@ -267,7 +267,7 @@ CheckMusicLoadRequest:
 
 .dungeon_fallback
                 PHB : REP #$10
-                    LDX $040C
+                    LDX.w DungeonID
                     LDA.b #Music_Eastern>>16 : PHA : PLB    ; Set bank to music pointers
                     LDY.b Scrap00 : PHY
                         REP #$20
@@ -291,7 +291,7 @@ CheckMusicLoadRequest:
 
         LDA.w MusicControlRequest : CMP.b #08 : BEQ .done+3    ; No SFX during warp track
 
-        LDA.b $10
+        LDA.b GameMode
             CMP.b #$07 : BEQ .sfx_indoors
             CMP.b #$0E : BEQ .sfx_indoors
             CMP.b #$09 : BNE .done
@@ -300,7 +300,7 @@ CheckMusicLoadRequest:
         SEP #$10
             LDX.b #$09
 
-            LDA.b $8A             ; Dark Death Mountain
+            LDA.b OverworldIndex             ; Dark Death Mountain
             CMP.b #$43 : BEQ + : CMP.b #$45 : BEQ + : CMP.b #$47 : BEQ +
                 LDX.b #$05
             +
@@ -313,7 +313,7 @@ CheckMusicLoadRequest:
 .rain
                 LDX.b #$01
             +
-            STX.w $012D
+            STX.w SFX1
         REP #$10
 
 .done
@@ -323,7 +323,7 @@ CheckMusicLoadRequest:
 
 .sfx_indoors
         LDA.w MusicControlRequest : STA.w MusicControl : STZ.w MusicControlRequest
-    SEP #$20 : LDA.b #$05 : STA.w $012D
+    SEP #$20 : LDA.b #$05 : STA.w SFX1
     REP #$30 : PLY : PLX : PLA : PLD : PLB : PLP
     JML Module_PreDungeon_setAmbientSfx
 ;--------------------------------------------------------------------------------
@@ -660,7 +660,7 @@ MSUMain:
         LDA.b #$00 : STA.w MSUResumeTrack
     +
     CPX #07 : BNE + ; Kakariko Village
-        LDA.b $10 : CMP #$07 : BNE +
+        LDA.b GameMode : CMP #$07 : BNE +
         ; we're in link's house -> ignore
         LDA.b #$00
         BRA ++
@@ -680,7 +680,7 @@ MSUMain:
     CMP.b #47 : !BGE .done
 
     + : PHB : REP #$10
-        LDX $040C
+        LDX.w DungeonID
         LDA.b #Music_Eastern>>16 : PHA : PLB    ; Set bank to music pointers
         LDY.b Scrap00 : PHY
             REP #$20
@@ -763,7 +763,7 @@ CrystalFanfareWait:
 ; Delay input scanning on startup/S&Q to avoid hard-lock from button mashing
 ;--------------------------------------------------------------------------------
 StartupWait:
-    LDA.b $11 : CMP.b #$04 : BCC .done    ; thing we wrote over
+    LDA.b GameSubMode : CMP.b #$04 : BCC .done    ; thing we wrote over
     LDA.w APUIO0 : BEQ .done-1
     CMP.b #$01 : BEQ .done
     CLC

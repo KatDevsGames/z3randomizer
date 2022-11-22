@@ -1,5 +1,5 @@
 org $008A01 ; 0xA01 - Bank00.asm (LDA.b #$10 : STA $4304 : STA $4314 : STA $4324)
-LDA.b $BC
+LDA.b PlayerSpriteBank
 
 org $1BEDF9
 JSL SpriteSwap_Palette_ArmorAndGloves ;4bytes
@@ -16,9 +16,9 @@ org $BF8000
 SwapSpriteIfNecessary:
 	PHP
 		SEP #$20 ; set 8-bit accumulator
-		LDA.l SpriteSwapper : BEQ + : !ADD #!BANK_BASE : CMP.b $BC : BEQ +
-			STA.b $BC
-		    STZ.w $0710 ; Set Normal Sprite NMI
+		LDA.l SpriteSwapper : BEQ + : !ADD #!BANK_BASE : CMP.b PlayerSpriteBank : BEQ +
+			STA.b PlayerSpriteBank
+		    STZ.w SkipOAM ; Set Normal Sprite NMI
 			JSL.l SpriteSwap_Palette_ArmorAndGloves_part_two
 		+
 	PLP
@@ -28,7 +28,7 @@ SpriteSwap_Palette_ArmorAndGloves:
 {
     ;DEDF9
     LDA.l SpriteSwapper : BNE .continue
-        LDA.b #$10 : STA.b $BC ; Load Original Sprite Location
+        LDA.b #$10 : STA.b PlayerSpriteBank ; Load Original Sprite Location
         REP #$21
         LDA.l ArmorEquipment
         JSL $1BEDFF ; Read Original Palette Code
@@ -60,7 +60,7 @@ SpriteSwap_Palette_ArmorAndGloves:
     
     TXY : TAX
     
-    LDA.b $BC : AND.w #$00FF : STA.b Scrap02
+    LDA.b PlayerSpriteBank : AND.w #$00FF : STA.b Scrap02
 
 .loop
 

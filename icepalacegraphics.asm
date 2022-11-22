@@ -3,7 +3,7 @@ ShouldOverrideFileLoad:
     CPY #$0A ; 0A = Ice/Mire floor file
     BNE .no
 
-    LDA.w $040C ; Dungeon number
+    LDA.w DungeonID ; Dungeon number
     CMP #$12 ; Ice Palace
     BEQ .yes
     .no

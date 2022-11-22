@@ -8,7 +8,7 @@ ModifyBoots:
         + : CMP.b #$02 : BNE +
             PLA : AND.l AbilityFlags : AND.b #$FB : RTL ; no boots
         + : LDA.l FakeBoots : CMP.b #$01 : BNE +
-            LDA.b $5B : BEQ ++ : LDA.b $59 : BNE + ; hover check
+            LDA.b LinkSlipping : BEQ ++ : LDA.b $59 : BNE + ; hover check
                 ++ : PLA : AND.l AbilityFlags : ORA.b #$04 : RTL ; yes boots, not hovering
         +
     PLA
@@ -44,7 +44,7 @@ BonkRockPile:
     LDA.l BootsEquipment : BNE + ; Check for Boots
         LDA.b #$00 : RTL
     +
-    LDA.w $02EF : AND.b #$70 ; things we wrote over
+    LDA.w TileActBE : AND.b #$70 ; things we wrote over
 RTL
 ;--------------------------------------------------------------------------------
 GravestoneHook:
@@ -60,17 +60,17 @@ JumpDownLedge:
     LDA.l BootsModifier : CMP.b #$01 : BEQ +
     LDA.l BootsEquipment : BNE + ; Check for Boots
         ; Disarm Waterwalk
-        LDA.b $5B : CMP.b #$01 : BNE +
-            STZ.b $5B
+        LDA.b LinkSlipping : CMP.b #$01 : BNE +
+            STZ.b LinkSlipping
     +
-    LDA.b $1B : BNE .done : LDA.b #$02 : STA.b $EE ; things we wrote over
+    LDA.b IndoorsFlag : BNE .done : LDA.b #$02 : STA.b LinkLayer ; things we wrote over
     .done
 RTL
 ;--------------------------------------------------------------------------------
 BonkRecoil:
     LDA.l BootsModifier : CMP.b #$01 : BEQ +
     LDA.l BootsEquipment : BNE + ; Check for Boots
-        LDA.b #$16 : STA.b $29 : RTL
+        LDA.b #$16 : STA.b LinkRecoilZ : RTL
     +
-    LDA.b #$24 : STA.b $29 ; things we wrote over
+    LDA.b #$24 : STA.b LinkRecoilZ ; things we wrote over
 RTL

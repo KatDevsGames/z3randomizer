@@ -2,7 +2,7 @@
 ; SNES Registers
 ;===================================================================================================
 ; Note: This is almost entirely a copy from the JP 1.0 disassembly.
-;       See: https://github.com/spannerisms/jpdasm/ - 02/11/2022
+;       See: https://github.com/spannerisms/jpdasm/ - 19/11/2022
 ;--------------------------------------------------------------------------------
 
 

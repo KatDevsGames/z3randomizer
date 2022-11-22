@@ -331,7 +331,7 @@ Shopkepeer_CallOriginal:
 	LDA.b #ShopkeeperJumpTable>>16 : PHA
 	LDA.b #ShopkeeperJumpTable>>8 : PHA
 	LDA.b #ShopkeeperJumpTable : PHA
-    LDA.w $0E80, X
+    LDA.w SpriteItemType, X
     JML.l UseImplicitRegIndexedLocalJumpTable
 ;--------------------------------------------------------------------------------
 Sprite_ShopKeeper:
@@ -370,7 +370,7 @@ RTL
 ;--------------------------------------------------------------------------------
 macro DrawMerchant(head,body,speed)
 	PHX : LDX.b #$00
-	LDA.b $1A : AND.b <speed> : BEQ +
+	LDA.b FrameCounter : AND.b <speed> : BEQ +
 		-
 			LDA.w .oam_shopkeeper_f1, X : STA.l BigRAM, X : INX
 		CPX.b #$10 : !BLT -
@@ -420,7 +420,7 @@ Shopkeeper_DrawMerchant_Type1:
 	LDA.b #$01 : STA.b Scrap06 ; request 1 OAM slot
 	LDA.b #$04 : JSL.l OAM_AllocateFromRegionA ; request 4 bytes
 	STZ.b Scrap07
-	LDA.b $1A : AND #$08 : BEQ +
+	LDA.b FrameCounter : AND #$08 : BEQ +
 		LDA.b #.oam_shopkeeper_f1 : STA.b Scrap08
 		LDA.b #.oam_shopkeeper_f1>>8 : STA.b Scrap09
 		BRA ++
@@ -464,8 +464,8 @@ Shopkeeper_SetupHitboxes:
 
 		JSR.w Setup_ShopItemInteractionHitbox
 		JSL.l Utility_CheckIfHitBoxesOverlapLong : BCC .no_interaction
-		    LDA.b $F6 : AND.b #$80 : BEQ .no_interaction ; check for A-press
-			LDA.b $10 : CMP.b #$0C : !BGE .no_interaction ; don't interact in other modes besides game action
+		    LDA.b Joy1B_New : AND.b #$80 : BEQ .no_interaction ; check for A-press
+			LDA.b GameMode : CMP.b #$0C : !BGE .no_interaction ; don't interact in other modes besides game action
 			JSR.w Shopkeeper_BuyItem
 		.no_interaction
 		INY #4
@@ -496,13 +496,13 @@ Shopkeeper_BuyItem:
 	        LDA.b #$7A
 	        LDY.b #$01
 	        JSL.l Sprite_ShowMessageUnconditional
-			LDA.b #$3C : STA.w $012E ; error sound
+			LDA.b #$3C : STA.w SFX2 ; error sound
 			JMP .done
 		.full_bottles
 	        LDA.b #$6B
 	        LDY.b #$01
 	        JSL.l Sprite_ShowMessageUnconditional
-			LDA.b #$3C : STA.w $012E ; error sound
+			LDA.b #$3C : STA.w SFX2 ; error sound
 			JMP .done
 		.buy
 			LDA.l ShopType : AND.b #$80 : BNE ++ ; don't charge if this is a take-any
@@ -544,7 +544,7 @@ Setup_ShopItemCollisionHitbox:
         SEP #$20 ; set 8-bit accumulator
 
         ; load shopkeeper X (16 bit)
-        LDA.w $0D30, X : XBA : LDA.w $0D10, X
+        LDA.w SpritePosXHigh, X : XBA : LDA.w SpritePosXLow, X
 
         REP #$20 ; set 16-bit accumulator
         PHA : PHY
@@ -561,7 +561,7 @@ Setup_ShopItemCollisionHitbox:
         STA.b Scrap04 : XBA : STA.b Scrap0A 
 
         ;load shopkeeper Y (16 bit)
-        LDA.w $0D20, X : XBA : LDA.w $0D00, X 
+        LDA.w SpritePosYHigh, X : XBA : LDA.w SpritePosYLow, X 
 
         REP #$20 ; set 16-bit accumulator
         PHY : INY #2
@@ -624,7 +624,7 @@ RTS
 Sprite_HaltSpecialPlayerMovementCopied:
         PHX      
         JSL Sprite_NullifyHookshotDrag
-        STZ $5E ; Set Link's speed to zero...
+        STZ.b LinkSpeed ; Set Link's speed to zero...
         JSL Player_HaltDashAttackLong
         PLX
 RTS

@@ -1,8 +1,5 @@
-PASSWORD_CODE_POSITION = $C8
-PASSWORD_SELECTION_POSITION = $C9
-
 Module_Password:
-	LDA.b $11
+	LDA.b GameSubMode
 
 	JSL.l UseImplicitRegIndexedLongJumpTable
 
@@ -21,15 +18,15 @@ Password_BeginInit:
 	JSL LoadCustomHudPalette ; replace the 2bpp palettes, and trigger upload
 	LDA.b #$07 : STA.b $14 ; have NMI load up the initial tilemap from Password_Tilemap
 
-	INC.b $11
+	INC.b GameSubMode
 RTL
 
 Password_EndInit:
         JSR LoadPasswordStripeTemplate
 
         ;reset the variables used by this screen
-        STZ.b PASSWORD_CODE_POSITION
-        STZ.b PASSWORD_SELECTION_POSITION
+        STZ.b PasswordCodePosition
+        STZ.b PasswordSelectPosition
 
         JSL ValidatePassword : BNE +
                 ; zero out password if not valid
@@ -41,7 +38,7 @@ Password_EndInit:
 	+
 
 	LDA.b #$0F : STA.b $13
-	INC $11
+	INC.b GameSubMode
 RTL
 
 Password_Main:
@@ -58,38 +55,38 @@ Password_Main:
 		JSR PasswordMoveCursorLeft
 	+
 	LDA.b $F4 : AND.b #$01 : BEQ + ; right
-		LDA.b PASSWORD_SELECTION_POSITION : INC A : CMP.b #$24 : !BLT ++
+		LDA.b PasswordSelectPosition : INC A : CMP.b #$24 : !BLT ++
 			!SUB.b #$24
 		++
-		STA.b PASSWORD_SELECTION_POSITION
-		LDA.b #$20 : STA.w $012F
+		STA.b PasswordSelectPosition
+		LDA.b #$20 : STA.w SFX3
 	+
 	LDA.b $F4 : AND.b #$02 : BEQ + ; left
-		LDA.b PASSWORD_SELECTION_POSITION : DEC A : BPL ++
+		LDA.b PasswordSelectPosition : DEC A : BPL ++
 			!ADD.b #$24
 		++
-		STA.b PASSWORD_SELECTION_POSITION
-		LDA.b #$20 : STA.w $012F
+		STA.b PasswordSelectPosition
+		LDA.b #$20 : STA.w SFX3
 	+
 	LDA.b $F4 : AND.b #$04 : BEQ + ; down
-		LDA.b PASSWORD_SELECTION_POSITION : !ADD.b #$09 : CMP.b #$24 : !BLT ++
+		LDA.b PasswordSelectPosition : !ADD.b #$09 : CMP.b #$24 : !BLT ++
 			!SUB.b #$24
 		++
-		STA.b PASSWORD_SELECTION_POSITION
-		LDA.b #$20 : STA.w $012F
+		STA.b PasswordSelectPosition
+		LDA.b #$20 : STA.w SFX3
 	+
 	LDA.b $F4 : AND.b #$08 : BEQ + ; up
-		LDA.b PASSWORD_SELECTION_POSITION : !SUB.b #$09 :  BPL ++
+		LDA.b PasswordSelectPosition : !SUB.b #$09 :  BPL ++
 			!ADD.b #$24
 		++
-		STA.b PASSWORD_SELECTION_POSITION
-		LDA.b #$20 : STA.w $012F
+		STA.b PasswordSelectPosition
+		LDA.b #$20 : STA.w SFX3
 	+
 	LDA.b $F4 : ORA.b $F6 : AND.b #$C0 : BEQ + ; face button
-		LDX.b PASSWORD_SELECTION_POSITION
+		LDX.b PasswordSelectPosition
 		LDA.l .selectionValues, X : BPL ++
 			CMP.b #$F0 :  BNE +++
-				INC $11
+				INC.b GameSubMode
 				BRA .endOfButtonChecks
 			+++ : CMP.b #$F1 :  BNE +++
 				JSR PasswordMoveCursorLeft
@@ -98,24 +95,24 @@ Password_Main:
 				JSR PasswordMoveCursorRight
 				BRA +
 			+++ : CMP.b #$F3 :  BNE +++
-				INC $11 : INC $11 ; skip to return submodule
-				LDA.b #$2C : STA.w $012E ;file screen selection sound
+				INC.b GameSubMode : INC.b GameSubMode ; skip to return submodule
+				LDA.b #$2C : STA.w SFX2 ;file screen selection sound
 				BRA .endOfButtonChecks
 			+++
 			BRA +
 		++
-		LDX.b PASSWORD_CODE_POSITION
+		LDX.b PasswordCodePosition
 		STA.l PasswordSRAM,X
-		TXA : INC A : AND.b #$0F : STA.b PASSWORD_CODE_POSITION
+		TXA : INC A : AND.b #$0F : STA.b PasswordCodePosition
 		BNE ++
-			STZ.w $012E
-			INC $11
+			STZ.w SFX2
+			INC.b GameSubMode
 			BRA .endOfButtonChecks
 		++
-		LDA.b #$2B : STA.w $012E
+		LDA.b #$2B : STA.w SFX2
 	+
 	LDA.b $F4 : AND.b #$10 : BEQ + ; start
-		INC $11
+		INC.b GameSubMode
 	+
 	.endOfButtonChecks
 
@@ -133,21 +130,21 @@ db $19, $1A, $1B, $1C, $1D, $1E, $1F, $20, $F3
 
 Password_Check:
 	JSL.l ValidatePassword : BNE .correct
-	LDA.b #$3C : STA.w $012E ; error
-	DEC $11
+	LDA.b #$3C : STA.w SFX2 ; error
+	DEC.b GameSubMode
 RTL
 	.correct
-	LDA.b #$1B : STA.w $012F ; solved puzzle sound
-	INC $11
+	LDA.b #$1B : STA.w SFX3 ; solved puzzle sound
+	INC.b GameSubMode
 RTL
 
 Password_Return:
-	LDA.b #$01 : STA.w $10 ; select screen
-	LDA.b #$01 : STA.w $11 ; Skip the first submodule
-	STZ $B0
-	STZ $0B9D ; Reset file screen cursor pre-selection
-	STZ $C8
-	STZ $C9
+	LDA.b #$01 : STA.b GameMode ; select screen
+	LDA.b #$01 : STA.b GameSubMode ; Skip the first submodule
+	STZ.b SubSubModule
+	STZ.w SaveFileIndex
+	STZ.b PasswordCodePosition
+	STZ.b PasswordCodePosition+1
 RTL
 
 ;--------------------------------------------------------------------------------
@@ -275,14 +272,14 @@ PasswordEraseOldCursors:
 	REP #$20 ; set 16-bit accumulator
 
 	;Code Cursor
-	LDA.b PASSWORD_CODE_POSITION : AND.w #$00FF : ASL : TAX
+	LDA.b PasswordCodePosition : AND.w #$00FF : ASL : TAX
 	LDA.l .code_offsets, X
 	!ADD.w #$20*Scrap04+Scrap04+$6000
 	XBA ; because big endian is needed
 	STA.l $1002+Password_StripeImageTemplate_CodeCursorErase-Password_StripeImageTemplate
 
 	;selection cursor
-	LDA.b PASSWORD_SELECTION_POSITION : AND.w #$00FF : ASL : TAX
+	LDA.b PasswordSelectPosition : AND.w #$00FF : ASL : TAX
 	LDA.l .selection_offsets, X
 	!ADD.w #$20*Scrap0D+Scrap03+$6000
 	XBA ; because big endian is needed
@@ -308,14 +305,14 @@ RTS
 PasswordSetNewCursors:
 	REP #$20 ; set 16-bit accumulator
 	;Code Cursor
-	LDA.b PASSWORD_CODE_POSITION : AND.w #$00FF : ASL : TAX
+	LDA.b PasswordCodePosition : AND.w #$00FF : ASL : TAX
 	LDA.l PasswordEraseOldCursors_code_offsets, X
 	!ADD.w #$20*Scrap04+Scrap04+$6000
 	XBA ; because big endian is needed
 	STA.l $1002+Password_StripeImageTemplate_CodeCursorDraw-Password_StripeImageTemplate
 
 	;Selection cursor
-	LDA.b PASSWORD_SELECTION_POSITION : AND.w #$00FF : ASL : TAX
+	LDA.b PasswordSelectPosition : AND.w #$00FF : ASL : TAX
 	LDA.l PasswordEraseOldCursors_selection_offsets, X
 	!ADD.w #$20*Scrap0D+Scrap03+$6000
 	XBA ; because big endian is needed
@@ -353,13 +350,13 @@ RTS
 
 PasswordMoveCursorRight:
 	; return new code position
-	LDA.b #$2B : STA.w $012E
-	LDA.b PASSWORD_CODE_POSITION : INC A : AND.b #$0F : STA.b PASSWORD_CODE_POSITION
+	LDA.b #$2B : STA.w SFX2
+	LDA.b PasswordCodePosition : INC A : AND.b #$0F : STA.b PasswordCodePosition
 RTS
 PasswordMoveCursorLeft:
 	; return new code position
-	LDA.b #$2B : STA.w $012E
-	LDA.b PASSWORD_CODE_POSITION : DEC A : AND.b #$0F : STA.b PASSWORD_CODE_POSITION
+	LDA.b #$2B : STA.w SFX2
+	LDA.b PasswordCodePosition : DEC A : AND.b #$0F : STA.b PasswordCodePosition
 RTS
 
 macro dw_big_endian(value)

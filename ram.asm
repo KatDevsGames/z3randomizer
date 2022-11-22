@@ -2,99 +2,226 @@
 ; RAM Labels & Assertions
 ;--------------------------------------------------------------------------------
 ; This module is primarily concerned with labeling WRAM addresses used by the
-; randomizer and documenting their usage.
+; randomizer and documenting their usage. We use a combination of base $[address]
+; and WRAMLabel = $[address] here, favoring the former when we have larger blocks
+; of contiguous ram labeled. In some cases the label name can be descriptive enough
+; without documentation, you may want to consult more in-depth reference materials,
+; or I just don't understand what they are.
 ;
-; See the JP 1.0 disassembly for reference
-; (https://github.com/spannerisms/jpdasm/ - 31/10/2022)
+; See the JP 1.0 disassembly for reference, specifically symbols_wram.asm
+; (https://github.com/spannerisms/jpdasm/ - 19/11/2022)
 ;--------------------------------------------------------------------------------
 pushpc
 org 0
 
 ;================================================================================
+; Bank 7E
+;--------------------------------------------------------------------------------
+;================================================================================
 ; Direct Page
 ;--------------------------------------------------------------------------------
 base $7E0000
 Scrap:
-Scrap00: skip 1  ; Used as short-term scratch space. If you need some short-term
-Scrap01: skip 1  ; RAM, you can often use these. Double check that the next use
-Scrap02: skip 1  ; of the addresses you want to use is a write.
-Scrap03: skip 1  ;
-Scrap04: skip 1  ;
-Scrap05: skip 1  ;
-Scrap06: skip 1  ;
-Scrap07: skip 1  ;
-Scrap08: skip 1  ;
-Scrap09: skip 1  ;
-Scrap0A: skip 1  ;
-Scrap0B: skip 1  ;
-Scrap0C: skip 1  ;
-Scrap0D: skip 1  ;
-Scrap0E: skip 1  ;
-Scrap0F: skip 1  ;
+Scrap00: skip 1                   ; Used as short-term scratch space. If you need some short-term
+Scrap01: skip 1                   ; RAM, you can often use these. Double check that the next use
+Scrap02: skip 1                   ; of the addresses you want to use is a write.
+Scrap03: skip 1                   ;
+Scrap04: skip 1                   ;
+Scrap05: skip 1                   ;
+Scrap06: skip 1                   ;
+Scrap07: skip 1                   ;
+Scrap08: skip 1                   ;
+Scrap09: skip 1                   ;
+Scrap0A: skip 1                   ;
+Scrap0B: skip 1                   ;
+Scrap0C: skip 1                   ;
+Scrap0D: skip 1                   ;
+Scrap0E: skip 1                   ;
+Scrap0F: skip 1                   ;
+                                  ;
+GameMode = $7E0010                ; Game mode & submode. Refer to disassembly.
+GameSubMode = $7E0011             ;
+                                  ;
+FrameCounter = $7E001A            ; Increments every frame that the game isn't lagging
+IndoorsFlag = $7E001B             ; $00 = Outdoors | $01 = Indoors
+                                  ;
+LinkPosY = $7E0020                ; Link's absolute x/y coordinates. Both are word length.
+LinkPosX = $7E0022                ;
+LinkPosZ = $7E0024                ; $FFFF when on ground
+                                  ;
+LinkRecoilY = $7E0027             ;
+LinkRecoilX = $7E0028             ;
+LinkRecoilZ = $7E0029             ;
+                                  ;
+LinkDirection = $7E002F           ; $00 = Up | $02 = Down | $04 = Left | $06 = Right
+                                  ;
+OAMOffsetY = $7E0044              ;
+OAMOffsetX = $7E0045              ;
+                                  ;
+LinkJumping = $7E004D             ; $00 = None | $01 = Bonk/damage/water | $02 = Ledge
+                                  ;
+BunnyFlagDP = $7E0056             ; $00 = Link | $01 = Bunny
+                                  ;
+LinkSlipping = $7E005B            ; $00 = None | $01 = Near pit
+                                  ; $02 = Falling | $03 = Falling "more"
+FallTimer = $7E005C               ; Timer for falling animation
+LinkState = $7E005D               ; Main Link state handler
+LinkSpeed = $7E005E               ; Main Link speed handler
+                                  ;
+OverworldIndex = $7E008A          ; Overworld screen index. Word length. Dark world is OR $40 of
+                                  ; light world screen in same position. Zeroed on UW entry.
+OverlayID = $7E008C               ; Overworld overlay ID. One Byte.
+                                  ;
+RoomIndex = $7E00A0               ; Underworld room index. Word length. High byte: $00 = EG1 | $01 = EG2
+                                  ; Not zeroed on exit to overworld.
+PreviousRoom = $7E00A2            ; Stores previous value of RoomIndex
+                                  ;
+SubSubModule = $7E00B0            ; Often used as a submodule, such as for transitions
+                                  ;
+ObjPtr = $7E00B7                  ; Pointer for drawing room objects. Three bytes.
+ObjPtrOffset = $7E00BA            ; Used as an offset for ObjPointer. Word Length.
+PlayerSpriteBank = $7E00BC        ;
+ScrapBufferBD = $7E00BD           ; Another scrap buffer. $23 bytes.
+FileSelectPosition = $7E00C8      ;
+PasswordCodePosition = $7E00C8    ;
+PasswordSelectPosition = $7E00C9  ;
+                                  ;
+BG1H = $7E00E0                    ; Background scroll registers
+BG2H = $7E00E2                    ; For BG1 and BG2, these registers are used for calculations later for different writes to PPU.
+BG3HOFSQL = $7E00E4               ; For BG3, the values are written directly to the PPU during NMI
+BG1V = $7E00E6                    ; Since BG1 and BG2 are not written directly to PPU they are given different names from BG3.
+BG2V = $7E00E8                    ;
+BG3VOFSQL = $7E00EA               ;
+                                  ;
+LinkLayer = $7E00EE               ; Layer that Link is on. $00 = BG2 (upper) | $02 = BG1 (lower)
+                                  ;
+Joy1A_All = $7E00F0               ; Joypad input
+Joy2A_All = $7E00F1               ; All = Current & previous frame
+Joy1B_All = $7E00F2               ; New = Current frame
+Joy2B_All = $7E00F3               ; Old = Previous frame
+Joy1A_New = $7E00F4               ;
+Joy2A_New = $7E00F5               ;
+Joy1B_New = $7E00F6               ;
+Joy2B_New = $7E00F7               ;
+Joy1A_Old = $7E00F8               ;
+Joy2A_Old = $7E00F9               ;
+Joy1B_Old = $7E00FA               ;
+Joy2B_Old = $7E00FB               ;
 
-
-LinkPosY = $7E0020 ; 2 bytes
-LinkPosX = $7E0022 ; 2 bytes
-
-RoomIndex = $7E00A0 ; 2 bytes, UW room index
-
-;================================================================================
-; Bank 7E
-;--------------------------------------------------------------------------------
 ;================================================================================
 ; Mirrored WRAM
 ;--------------------------------------------------------------------------------
 ; Pages 0x00–0x1F of Bank7E are mirrored to every program bank ALTTP uses.
 ;--------------------------------------------------------------------------------
 
-CurrentMSUTrack = $7E010B
-CurrentVolume = $7E0127
-TargetVolume = $7E0129
-CurrentControlRequest = $7E0133 ; Last thing written to MusicControlRequest
-MusicControl = $7E012B
-MusicControlRequest = $7E012C
+CurrentMSUTrack = $7E010B         ;
+GameModeCache = $7E010C           ;
+GameSubModeCache = $7E010D        ;
+                                  ;
+MedallionFlag = $7E0112           ; Medallion cutscene flag. $01 = Cutscene active.
+                                  ;
+BG1ShakeV = $7E011A               ; Applied to BG Scroll. Word Length.
+BG1ShakeH = $7E011C               ;
+                                  ;
+CurrentVolume = $7E0127           ;
+TargetVolume = $7E0129            ;
+CurrentControlRequest = $7E0133   ; Last thing written to MusicControlRequest
+MusicControl = $7E012B            ;
+MusicControlRequest = $7E012C     ;
+SFX1 = $7E012D                    ;
+SFX2 = $7E012E                    ;
+SFX3 = $7E012F                    ;
+                                  ;
+SubModuleInterface = $7E0200      ; Word length. High byte expected to be $00.
+ItemCursor = $7E0202              ; Current location of the item menu cursor.
+                                  ;
+BottleMenuCounter = $7E0205       ; Step counter for opening bottle menu
+MenuFrameCounter = $7E0206        ; Incremented every menu frame. Never read.
+MenuBlink = $7E0207               ; Incremented every frame and masked with $10 to blink cursor
+                                  ;
+ItemReceiptID = $7E02D8           ;
+                                  ;
+BunnyFlag = $7E02E0               ; $00 = Link | $01 = Bunny
+                                  ;
+CutsceneFlag = $7E02E4            ; Flags various cutscenes. All non-zero behave the same.
+                                  ;
+ItemReceiptMethod = $7E02E9       ;
+                                  ;
+TileActBE = $7E02EF               ; Bitfield used by breakables and entrances. b b b b d d d d
+                                  ; b = Breakables | d = Entrances
+CurrentYItem = $7E0303            ;
+                                  ;
+                                  ;
+TileActDig = $7E035B              ; Bitfield used by diggable ground. Word length. High byte unused.
+                                  ;
+ForceSwordUp = $7E03EF            ; $01 = Force sword up pose.
+                                  ;
+ItemsTaken = $7E0403              ; Items taken in a room: b k u t s e h c
+                                  ; b = boss kill/item         | k = key/heart piece (prevents crystals)
+                                  ; u = 2nd key/heart piece    | t = chest 4/rupees/swamp drain/bomb floor/mire wall
+                                  ; s = chest 3/pod or dp wall | e, h, c = chest 2, 1, 0
+DungeonID = $7E040C               ; High byte mostly unused but sometimes read. Word length.
+                                  ;
+OWEntranceCutscene = $7E04C6      ;
+                                  ;
+HeartBeepTimer = $7E04CA          ;
+                                  ;
+NMIAux = $7E0632                  ; Stores long address of NMI jump. Currently only used by shops.
+                                  ;
+SkipOAM = $7E0710                 ; Set to skip OAM updates. High byte written $FF with exploding walls
+                                  ;
+BowDryFire = $7E0B9A              ; If set, arrows are deleted immediately
+                                  ;
+SaveFileIndex = $7E0B9D           ;
+                                  ;
+SpritePosYLow = $7E0D00           ; Sprite slot data. Each label has $10 bytes.
+SpritePosXLow = $7E0D10           ;
+SpritePosYHigh = $7E0D20          ;
+SpritePosXHigh = $7E0D30          ;
+SpriteVelocityY = $7E0D40         ;
+SpriteVelocityX = $7E0D50         ;
+                                  ;
+SpriteUnknown = $7E0D80           ; Don't know what this is
+                                  ;
+SpriteAuxTable = $7E0DA0          ; $20 bytes.
+SpriteGFXControl = $7E0DC0        ;
+SpriteAITable = $7E0DD0           ; AI state of sprites. $10 bytes.
+                                  ;
+SpriteTimer = $7E0DF0             ;
+                                  ;
+SpriteTypeTable = $7E0E20         ; Which sprite occupies this slot. $10 bytes.
+                                  ;
+SpriteItemType = $7E0E80          ; Sprite Item Type. $10 bytes.
+                                  ;
+SpriteDirectionTable = $7E0EB0    ; Sprite direction. $10 bytes.
+                                  ;
+FreezeSprites = $7E0FC1           ; "Seems to freeze sprites"
+                                  ;
+SpriteCoordCacheX = $7E0FD8       ;
+SpriteCoordCacheY = $7E0FDA       ;
+                                  ;
+NoMenu = $7E0FFC                  ; When set prevents menu, mirror, medallions
+                                  ;
+TextID = $7E1CF0                  ; Message ID and page. Word length.
+                                  ;
+ToastBuffer = $7E1E0E             ; Multiworld buffer. Word length.
+                                  ;
+MSUResumeTime = $7E1E6B           ; Mirrored MSU block
+MSUResumeControl = $7E1E6F        ;
+MSUFallbackTable = $7E1E70        ;
+MSUDelayedCommand = $7E1E79       ;
+MSUPackCount = $7E1E7A            ;
+MSUPackCurrent = $7E1E7B          ;
+MSUPackRequest = $7E1E7C          ;
+MSULoadedTrack = $7E1E7D          ;
+MSUResumeTrack = $7E1E7F          ;
 
-ItemReceiptID = $7E02D8
-
-NMIAux = $7E0632
-
-SpritePosYLow = $7E0D00 ; all $10 bytes
-SpritePosXLow = $7E0D10
-SpritePosYHigh = $7E0D20
-SpritePosXHigh = $7E0D30
-
-SpriteAuxTable = $7E0DA0 ; 0x1F bytes
-SpriteAITable = $7E0DD0
-
-SpriteTypeTable = $7E0E20
-
-SpriteDirectionTable = $7E0EB0
-
-ToastBuffer = $7E1E0E ; 2 bytes DoToast
-
-MSUResumeTime = $7E1E6B ; 4 bytes
-MSUResumeControl = $7E1E6F
-MSUFallbackTable = $7E1E70 ; 8 bytes
-MSUDelayedCommand = $7E1E79
-MSUPackCount = $7E1E7A
-MSUPackCurrent = $7E1E7B
-MSUPackRequest = $7E1E7C
-MSULoadedTrack = $7E1E7D ; 2 bytes
-MSUResumeTrack = $7E1E7F 
-
-;1E90
-ClockHours = $7E1E90 ; Clock Hours
-ClockMinutes = $7E1E94 ; Clock Minutes
-ClockSeconds = $7E1E98 ; Clock Seconds
-ClockBuffer = $7E1E9C ; Clock Temporary
-;1EA0
-ScratchBufferNV = $7E1EA0 ; Callee preserved
-;1EB0
-ScratchBufferV = $7E1EB0 ; Caller preserved
-;1EC0
-;1ED0
-;1EE0
-;1EF0
+ClockHours = $7E1E90              ; Clock Hours
+ClockMinutes = $7E1E94            ; Clock Minutes
+ClockSeconds = $7E1E98            ; Clock Seconds
+ClockBuffer = $7E1E9C             ; Clock Temporary
+ScratchBufferNV = $7E1EA0         ; Non-volatile scratch buffer. Must preserve values through return.
+ScratchBufferV = $7E1EB0          ; Volatile scratch buffer. Can clobber at will.
 
 ;================================================================================
 ; UNMIRRORED WRAM
@@ -102,24 +229,24 @@ ScratchBufferV = $7E1EB0 ; Caller preserved
 ; or absolute addressing with the appropriate data bank set
 ;--------------------------------------------------------------------------------
 
-TileUploadBuffer = $7EA180 ; 0x300 bytes
-SpriteOAM = $7EC025        ;
+TileUploadBuffer = $7EA180        ; 0x300 bytes
+SpriteOAM = $7EC025               ;
+                                  ; $7EC700 - Tile map buffer for HUD
+HUDKeyIcon = $7EC726              ;
+HUDGoalIndicator = $7EC72A        ;
+HUDPrizeIcon = $7EC742            ;
+HUDRupees = $7EC750               ;
+HUDBombCount = $7EC75A            ;
+HUDArrowCount = $7EC760           ;
+HUDKeyDigits = $7EC764            ;
 
-; $7EC700 - Tile map buffer for HUD
-
-HUDKeyIcon = $7EC726
-HUDGoalIndicator = $7EC72A
-HUDPrizeIcon = $7EC742
-HUDRupees = $7EC750
-HUDBombCount = $7EC75A
-HUDArrowCount = $7EC760
-HUDKeyDigits = $7EC764
-
-BigRAM = $7EC900           ; Big buffer of free ram (0x1F00)
+BigRAM = $7EC900                  ; Big buffer of free ram (0x1F00)
 
 ;================================================================================
 ; Bank 7F
 ;--------------------------------------------------------------------------------
+DecompressionBuffer = $7F0000      ; Decompression Buffer. $2000 bytes.
+
 base $7F5000
 RedrawFlag: skip 1                 ;
 skip 2                             ;
@@ -226,6 +353,9 @@ skip $40                           ; Unused
 skip $260                          ; Unused
 DialogBuffer: skip $100            ; Dialog Buffer
 
+MiniGameTime = $7FFE00             ; Time spent in mini game. 32-bits.
+MiniGameTimeFinal = $7FFE04        ; Final mini game time. 32 bits.
+
 ;================================================================================
 ; RAM Assertions
 ;--------------------------------------------------------------------------------
@@ -249,29 +379,98 @@ endmacro
 %assertRAM(Scrap0D, $7E000D)
 %assertRAM(Scrap0E, $7E000E)
 %assertRAM(Scrap0F, $7E000F)
-
-
+%assertRAM(GameMode, $7E0010)
+%assertRAM(GameSubMode, $7E0011)
+%assertRAM(FrameCounter, $7E001A)
+%assertRAM(IndoorsFlag, $7E001B)
 %assertRAM(LinkPosY, $7E0020)
 %assertRAM(LinkPosX, $7E0022)
+%assertRAM(LinkPosZ, $7E0024)
+%assertRAM(LinkRecoilY, $7E0027)
+%assertRAM(LinkRecoilX, $7E0028)
+%assertRAM(LinkRecoilZ, $7E0029)
+%assertRAM(LinkDirection, $7E002F)
+%assertRAM(OAMOffsetY, $7E0044)
+%assertRAM(OAMOffsetX, $7E0045)
+%assertRAM(LinkJumping, $7E004D)
+%assertRAM(BunnyFlagDP, $7E0056)
+%assertRAM(LinkSlipping, $7E005B)
+%assertRAM(FallTimer, $7E005C)
+%assertRAM(LinkState, $7E005D)
+%assertRAM(LinkSpeed, $7E005E)
+%assertRAM(OverworldIndex, $7E008A)
+%assertRAM(OverlayID, $7E008C)
 %assertRAM(RoomIndex, $7E00A0)
+%assertRAM(PreviousRoom, $7E00A2)
+%assertRAM(SubSubModule, $7E00B0)
+%assertRAM(ObjPtr, $7E00B7)
+%assertRAM(ObjPtrOffset, $7E00BA)
+%assertRAM(ScrapBufferBD, $7E00BD)
+%assertRAM(PlayerSpriteBank, $7E00BC)
+%assertRAM(FileSelectPosition, $7E00C8)
+%assertRAM(PasswordCodePosition, $7E00C8)
+%assertRAM(PasswordSelectPosition, $7E00C9)
+%assertRAM(BG1H, $7E00E0)
+%assertRAM(BG2H, $7E00E2)
+%assertRAM(BG3HOFSQL, $7E00E4)
+%assertRAM(BG1V, $7E00E6)
+%assertRAM(BG2V, $7E00E8)
+%assertRAM(BG3VOFSQL, $7E00EA)
+%assertRAM(LinkLayer, $7E00EE)
 %assertRAM(CurrentMSUTrack, $7E010B)
+%assertRAM(GameModeCache, $7E010C)
+%assertRAM(GameSubModeCache, $7E010D)
+%assertRAM(MedallionFlag, $7E0112)
+%assertRAM(BG1ShakeV, $7E011A)
+%assertRAM(BG1ShakeH, $7E011C)
 %assertRAM(CurrentVolume, $7E0127)
 %assertRAM(TargetVolume, $7E0129)
 %assertRAM(CurrentControlRequest, $7E0133)
 %assertRAM(MusicControl, $7E012B)
 %assertRAM(MusicControlRequest, $7E012C)
+%assertRAM(SFX1, $7E012D)
+%assertRAM(SFX2, $7E012E)
+%assertRAM(SFX3, $7E012F)
+%assertRAM(SubModuleInterface, $7E0200)
+%assertRAM(ItemCursor, $7E0202)
+%assertRAM(BottleMenuCounter, $7E0205)
+%assertRAM(MenuBlink, $7E0207)
 %assertRAM(ItemReceiptID, $7E02D8)
+%assertRAM(BunnyFlag, $7E02E0)
+%assertRAM(CutsceneFlag, $7E02E4)
+%assertRAM(ItemReceiptMethod, $7E02E9)
+%assertRAM(TileActBE, $7E02EF)
+%assertRAM(CurrentYItem, $7E0303)
+%assertRAM(TileActDig, $7E035B)
+%assertRAM(ForceSwordUp, $7E03EF)
+%assertRAM(ItemsTaken, $7E0403)
+%assertRAM(DungeonID, $7E040C)
+%assertRAM(OWEntranceCutscene, $7E04C6)
+%assertRAM(HeartBeepTimer, $7E04CA)
 %assertRAM(NMIAux, $7E0632)
+%assertRAM(SkipOAM, $7E0710)
+%assertRAM(BowDryFire, $7E0B9A)
+%assertRAM(SaveFileIndex, $7E0B9D)
 %assertRAM(SpritePosYLow, $7E0D00)
 %assertRAM(SpritePosXLow, $7E0D10)
 %assertRAM(SpritePosYHigh, $7E0D20)
 %assertRAM(SpritePosXHigh, $7E0D30)
+%assertRAM(SpriteVelocityY, $7E0D40)
+%assertRAM(SpriteVelocityX, $7E0D50)
+%assertRAM(SpriteUnknown, $7E0D80)
 %assertRAM(SpriteAuxTable, $7E0DA0)
+%assertRAM(SpriteGFXControl, $7E0DC0)
 %assertRAM(SpriteAITable, $7E0DD0)
+%assertRAM(SpriteTimer, $7E0DF0)
 %assertRAM(SpriteTypeTable, $7E0E20)
+%assertRAM(SpriteItemType, $7E0E80)
 %assertRAM(SpriteDirectionTable, $7E0EB0)
+%assertRAM(FreezeSprites, $7E0FC1)
+%assertRAM(SpriteCoordCacheX, $7E0FD8)
+%assertRAM(SpriteCoordCacheY, $7E0FDA)
+%assertRAM(NoMenu, $7E0FFC)
+%assertRAM(TextID, $7E1CF0)
 %assertRAM(ToastBuffer, $7E1E0E)
-
 %assertRAM(MSUResumeTime, $7E1E6B)
 %assertRAM(MSUResumeControl, $7E1E6F)
 %assertRAM(MSUFallbackTable, $7E1E70)
@@ -281,8 +480,6 @@ endmacro
 %assertRAM(MSUPackRequest, $7E1E7C)
 %assertRAM(MSULoadedTrack, $7E1E7D)
 %assertRAM(MSUResumeTrack, $7E1E7F)
-
-
 %assertRAM(ClockHours, $7E1E90)
 %assertRAM(ClockMinutes, $7E1E94)
 %assertRAM(ClockSeconds, $7E1E98)
@@ -299,6 +496,8 @@ endmacro
 %assertRAM(HUDArrowCount, $7EC760)
 %assertRAM(HUDKeyDigits, $7EC764)
 %assertRAM(BigRAM, $7EC900)
+
+%assertRAM(DecompressionBuffer, $7F0000)
 %assertRAM(RedrawFlag, $7F5000)
 %assertRAM(HexToDecDigit1, $7F5003)
 %assertRAM(HexToDecDigit2, $7F5004)
@@ -306,9 +505,6 @@ endmacro
 %assertRAM(HexToDecDigit4, $7F5006)
 %assertRAM(HexToDecDigit5, $7F5007)
 %assertRAM(SpriteSkipEOR, $7F5008)
-
-
-
 %assertRAM(AltTextFlag, $7F5035)
 %assertRAM(BossKills, $7F5037)
 %assertRAM(LagTime, $7F5038)
@@ -369,68 +565,7 @@ endmacro
 %assertRAM(TxStatus, $7F53FF)
 %assertRAM(CompassTotalsWRAM, $7F5410)
 %assertRAM(DialogBuffer, $7F5700)
-
+%assertRAM(MiniGameTime, $7FFE00)
+%assertRAM(MiniGameTimeFinal, $7FFE04)
 
 pullpc
-;================================================================================
-; Bank 7F
-;--------------------------------------------------------------------------------
-
-;OLDSTUFF
-; $7F5042 - Tile Upload Offset Override (Low)
-; $7F5043 - Tile Upload Offset Override (High)
-; $7F5044 - $7F5046 - NMI Auxiliary Function
-; $7F5047 - $7F504F - Unused
-; $7F5050 - $7F506F - Shop Block
-; $7F5070 - Reserved for OneMind
-; $7F5071 - Reserved for OneMind
-; $7F5072 - OneMind player ID
-; $7F5073 - $7F5074 - OneMind timer
-; $7F5075 - $7F507D - Unused
-; $7F507E - Clock Status
-; $7F507F - Always Zero
-; $7F5080 - $7F508F - unused
-; $7F5090 - RNG Item Lock-In
-; $7F5091 - Item Animation Busy Flag
-; $7F5092 - Potion Animation Busy Flags (Health)
-; $7F5093 - Potion Animation Busy Flags (Magic)
-; $7F5094 - Dialog Offset Pointer (Low)
-; $7F5095 - Dialog Offset Pointer (High)
-; $7F5096 - Dialog Offset Pointer Return (Low)
-; $7F5097 - Dialog Offset Pointer Return (High)
-; $7F5098 - Unused
-; $7F5099 - Last Entered Overworld Door ID
-; $7F509A - (Reserved)
-; $7F509B - Unused
-; $7F509C - Duck Map Flag
-; $7F509E - Valid Key Loaded
-; $7F509F - Text Box Defer Flag
-; $7F50A0 - $7F50AF - Unused
-
-; $7F50B0 - $7F50BF - Downstream Reserved (Enemizer)
-
-; $7F50C1 - Shield Modifier (Not Implemented)
-; $7F50C2 - Armor Modifier
-; $7F50C3 - Magic Modifier
-; $7F50C4 - Light Cone Modifier
-; $7F50C5 - Cucco Storm
-; $7F50C6 - Old Man Dash Modifier
-; $7F50C7 - Ice Physics Modifier
-; $7F50C8 - Infinite Arrows Modifier
-; $7F50C9 - Infinite Bombs Modifier
-; $7F50CA - Infinite Magic Modifier
-; $7F50CB - Invert D-Pad (Fill in values)
-; $7F50CC - OHKO Flag
-; $7F50CD - Sprite Swapper
-; $7F50CE - Boots Modifier (0=Off, 1=Always, 2=Never)
-
-; $7F50D0 - $7F50FF - Block Cypher Parameters
-; $7F5100 - $7F51FF - Block Cypher Buffer
-; $7F5200 - $7F52FF - RNG Pointer Block
-; $7F5300 - $7F53FF - Multiworld Block
-; $7F5400 - $7F540F - Unused
-; $7F5410 - $7F545F - Dungeon Tracking Block
-; $7F5460 - $7F56FF - Unused
-
-; $7F5700 - $7F57FF - Dialog Buffer
-

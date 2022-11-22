@@ -2,18 +2,18 @@
 ; Randomize Flute Dig Item
 ;--------------------------------------------------------------------------------
 SpawnHauntedGroveItem:
-	LDA.b $8A : CMP.b #$2A : BEQ + : RTL : + ; Skip if not the haunted grove
-	LDA.b $1B : BEQ + : RTL : + ; Skip if indoors
+	LDA.b OverworldIndex : CMP.b #$2A : BEQ + : RTL : + ; Skip if not the haunted grove
+	LDA.b IndoorsFlag : BEQ + : RTL : + ; Skip if indoors
 
 	%GetPossiblyEncryptedItem(HauntedGroveItem, HeartPieceOutdoorValues)
 	JSL.l PrepDynamicTile
 	
 	LDA.b #$EB
-	STA.l $7FFE00
+	STA.l MiniGameTime
 	JSL Sprite_SpawnDynamically
 
 	LDX.b #$00
-	LDA.b $2F : CMP.b #$04 : BEQ + : INX : +
+	LDA.b LinkDirection : CMP.b #$04 : BEQ + : INX : +
 
 	LDA.l .x_speeds, X : STA.w $0D50, Y
 
@@ -32,7 +32,7 @@ SpawnHauntedGroveItem:
 	LDA.b #$00 : STA.w $0F20, Y
 	TYX
 
-	LDX.b $8A ; haunted grove (208D0A)
+	LDX.b OverworldIndex ; haunted grove (208D0A)
 	LDA.l OverworldEventDataWRAM, X : AND.b #$40 : BNE +
 		LDA.b #$1B : JSL Sound_SetSfx3PanLong
 	+
@@ -52,11 +52,11 @@ RTL
 }
 ;--------------------------------------------------------------------------------
 FluteBoy:
-	LDA.b $10 : CMP.b #$1A : BEQ +
+	LDA.b GameMode : CMP.b #$1A : BEQ +
 		LDA.b #$01 : STA.w $0FDD
 		JML.l FluteBoy_Abort
 	+
-	LDA.w $0D80, X : CMP.b #$03 ; thing we wrote over
+	LDA.w SpriteUnknown, X : CMP.b #$03 ; thing we wrote over
 JML.l FluteBoy_Continue
 ;--------------------------------------------------------------------------------
 FreeDuckCheck:
@@ -64,7 +64,7 @@ FreeDuckCheck:
 	LDA.l FluteEquipment : CMP.b #$03 : BEQ .done ; flute is already active
 	
     ; check the area, is it #$18 = 30?
-    LDA.b $8A : CMP.b #$18 : BNE .done
+    LDA.b OverworldIndex : CMP.b #$18 : BNE .done
 
 	REP #$20
 	
@@ -84,7 +84,7 @@ FreeDuckCheck:
     SEP #$20
     
     ; Apparently a special Overworld mode for doing this?
-    LDA.b #$2D : STA.b $11
+    LDA.b #$2D : STA.b GameSubMode
     
     ; Trigger the sequence to start the weathervane explosion.
     LDY.b #$00

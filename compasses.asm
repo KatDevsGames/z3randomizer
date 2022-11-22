@@ -1,9 +1,9 @@
 DrawDungeonCompassCounts:
-	LDX.b $1B : BNE + : RTL : + ; Skip if outdoors
+	LDX.b IndoorsFlag : BNE + : RTL : + ; Skip if outdoors
 
 	; extra hard safeties for getting dungeon ID to prevent crashes
 	PHA
-	LDA.w $040C : AND.w #$00FE : TAX ; force dungeon ID to be multiple of 2
+	LDA.w DungeonID : AND.w #$00FE : TAX ; force dungeon ID to be multiple of 2
 	PLA
 
 	CPX.b #$1B : BCS .done ; Skip if not in a valid dungeon ID

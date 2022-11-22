@@ -35,16 +35,16 @@ FairyPond_Init:
 		LDA.l BottleContentsThree : CMP.b #$02 : BNE ++ : LDA.b #$1E : PHA : BRA .emptyBottle : ++
 		LDA.l BottleContentsFour : CMP.b #$02 : BNE ++ : LDA.b #$1F : PHA : BRA .emptyBottle : ++
 			.noInventory
-			LDA.b #$0A : STA.w $0D80, X
+			LDA.b #$0A : STA.w SpriteUnknown, X
 			LDA.b #$51
 			LDY.b #$01
 			JSL.l Sprite_ShowMessageFromPlayerContact
 			JMP .cleanup
 		
 			.emptyBottle
-			LDA.b #$02 : STA.w $0D80, X
-			STZ $2F
-			LDA.b #$01 : STA.w $02E4
+			LDA.b #$02 : STA.w SpriteUnknown, X
+			STZ.b LinkDirection
+			LDA.b #$01 : STA.w CutsceneFlag
 			PLA : STA.w $1CE8
 		.cleanup
 		STZ.w $0EB0, X ; Clear the sprite's item-given variable
@@ -60,26 +60,26 @@ HappinessPond_Check:
 	LDA.b #$72
 	JSL Sprite_SpawnDynamically
 
-	LDA.w $0FD8 : STA.w $0D10, Y
-	LDA.w $0FD9 : STA.w $0D30, Y
+	LDA.w SpriteCoordCacheX : STA.w SpritePosXLow, Y
+	LDA.w SpriteCoordCacheX+1 : STA.w SpritePosXHigh, Y
 
-	LDA.w $0FDA : !SUB.b #$40 : STA.w $0D00, Y
-	LDA.w $0FDB : SBC.b #$00 : STA.w $0D20, Y
+	LDA.w SpriteCoordCacheY : !SUB.b #$40 : STA.w SpritePosYLow, Y
+	LDA.w SpriteCoordCacheY+1 : SBC.b #$00 : STA.w SpritePosYHigh, Y
 
-	LDA.b #$01 : STA.w $0DA0, Y
+	LDA.b #$01 : STA.w SpriteAuxTable, Y
 
 	LDA.b #$BB
 	JSL Sprite_SpawnDynamically
 
-	LDA.b #$08 : STA.w $0DD0, Y ; ensure we run prep for the shopkeeper
+	LDA.b #$08 : STA.w SpriteAITable, Y ; ensure we run prep for the shopkeeper
 
-	LDA.w $0FD8 : STA.w $0D10, Y
-	LDA.w $0FD9 : STA.w $0D30, Y
+	LDA.w SpriteCoordCacheX : STA.w SpritePosXLow, Y
+	LDA.w SpriteCoordCacheX+1 : STA.w SpritePosXHigh, Y
 
-	LDA.w $0FDA : !SUB.b #$20 : STA.w $0D00, Y
-	LDA.w $0FDB : SBC.b #$00 : STA.w $0D20, Y
+	LDA.w SpriteCoordCacheY : !SUB.b #$20 : STA.w SpritePosYLow, Y
+	LDA.w SpriteCoordCacheY+1 : SBC.b #$00 : STA.w SpritePosYHigh, Y
 
-	STZ.w $0DD0, X ; self terminate
+	STZ.w SpriteAITable, X ; self terminate
 
 	PLP
 	.done

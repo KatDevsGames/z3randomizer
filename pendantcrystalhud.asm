@@ -145,13 +145,13 @@ BringMenuDownEnhanced:
 
 		EOR.w #$FFFF : !ADD.w #$0001 ; negate menu speed
 
-		!ADD $EA : CMP.w #$FF18 : !BGE .noOvershoot
+		!ADD BG3VOFSQL : CMP.w #$FF18 : !BGE .noOvershoot
 			LDA.w #$FF18 ; if we went past the limit, go to the limit
 		.noOvershoot
-		STA.b $EA : CMP.w #$FF18
+		STA.b BG3VOFSQL : CMP.w #$FF18
 	SEP #$20 ; set 8-bit accumulator
 	BNE .notDoneScrolling
-		INC $0200
+		INC.w SubModuleInterface
 	.notDoneScrolling
 RTL
 ;================================================================================
@@ -163,30 +163,30 @@ RaiseHudMenu:
 		LDA.l MenuSpeed : AND.w #$00FF
 	++
 
-	!ADD $EA : BMI .noOvershoot
+	!ADD BG3VOFSQL : BMI .noOvershoot
 		LDA.w #$0000 ; if we went past the limit, go to the limit
 	.noOvershoot
-	STA.b $EA
+	STA.b BG3VOFSQL
 RTL
 ;================================================================================
 CheckCloseItemMenu:
 	LDA.l MenuCollapse : BNE + 
-		LDA.b $F4 : AND.b #$10 : RTL
+		LDA.b Joy1A_New : AND.b #$10 : RTL
 	+
-	LDA.b $F0 : AND.b #$10 : EOR.b #$10
+	LDA.b Joy1A_All : AND.b #$10 : EOR.b #$10
 RTL
 ;================================================================================
 ShowDungeonItems:
-	LDA.w $040C : AND.w #$00FF : CMP.w #$00FF : BNE + : RTL : + ; return normal result if outdoors or in a cave
+	LDA.w DungeonID : AND.w #$00FF : CMP.w #$00FF : BNE + : RTL : + ; return normal result if outdoors or in a cave
 	LDA.l HudFlag : AND.w #$0020 ; check hud flag
 	BEQ + : LDA.w #$0000 : RTL : + ; if set, send the zero onwards
-	LDA.w $040C : AND.w #$00FF : CMP.w #$00FF ; original logic
+	LDA.w DungeonID : AND.w #$00FF : CMP.w #$00FF ; original logic
 RTL
 ;--------------------------------------------------------------------------------
 UpdateKeys:
 	PHX : PHP
 	SEP #$30 ; set 8-bit accumulator & index registers
-		LDA.w $040C : CMP.b $1F : !BLT .skip
+		LDA.w DungeonID : CMP.b $1F : !BLT .skip
 		
 		LSR : TAX ; get dungeon index and store to X
 	

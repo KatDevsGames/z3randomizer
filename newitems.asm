@@ -359,14 +359,14 @@ AddReceivedItemExpandedGetItem:
 			LDA.l CurrentSmallKeys : INC : STA.l CurrentSmallKeys
 			JMP .done
 		.normal
-			TXA : ASL : CMP.w $040C : BNE ++
+			TXA : ASL : CMP.w DungeonID : BNE ++
 				LDA.l CurrentSmallKeys : INC : STA.l CurrentSmallKeys
 			++
 			JMP .done
 	+
 	.done
 	PLX
-	LDA.w $02E9 : CMP.b #$01 ; thing we wrote over
+	LDA.w ItemReceiptMethod : CMP.b #$01 ; thing we wrote over
 RTL
 ; #$70 - Maps
 ; #$80 - Compasses
@@ -1050,18 +1050,18 @@ CountBottles:
 RTS
 ;--------------------------------------------------------------------------------
 ActivateGoal:
-        STZ.b $11
-        STZ.b $B0
+        STZ.b GameSubMode
+        STZ.b SubSubModule
 JML.l StatsFinalPrep
 ;--------------------------------------------------------------------------------
 ChestPrep:
-	LDA.b #$01 : STA.w $02E9
+	LDA.b #$01 : STA.w ItemReceiptMethod
         JSL.l IncrementChestCounter
 	LDA.l ServerRequestMode : BEQ +
 		JSL.l ChestItemServiceRequest
 		RTL
 	+
-    LDY.b $0C ; get item value
+    LDY.b Scrap0C ; get item value
 	SEC
 RTL
 ;--------------------------------------------------------------------------------
@@ -1069,7 +1069,7 @@ RTL
 ; counts on
 MaybeFlagCompassTotalPickup:
         LDA.l CompassMode : AND.b #$0F : BEQ .done
-        LDA.w $040C : CMP.b #$FF : BEQ .done
+        LDA.w DungeonID : CMP.b #$FF : BEQ .done
         LSR : STA.b Scrap04 : LDA.b #$0F : !SUB Scrap04    ; Compute flag "index"
         CPY.b #$25 : BEQ .setFlag                          ; Set flag if it's a compass for this dungeon
                 STA.b Scrap04
@@ -1090,7 +1090,7 @@ RTL
 ; Set the compass count display flag if we're entering a dungeon and alerady have
 ; that compass
 MaybeFlagCompassTotalEntrance:
-        LDX.w $040C : CPX.b #$FF : BEQ .done         ; Skip if we're not entering dungeon
+        LDX.w DungeonID : CPX.b #$FF : BEQ .done         ; Skip if we're not entering dungeon
         LDA.l CompassMode : AND.w #$000F : BEQ .done ; Skip if we're not showing compass counts
         CMP.w #$0002 : BEQ .countShown
                 LDA.l CompassField : AND.l DungeonItemMasks, X : BEQ .done ; skip if we don't have compass

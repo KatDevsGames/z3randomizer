@@ -149,10 +149,10 @@ JML.l AllowStartFromExitReturn
 	LDA.l $02D8D3, X : STA.b RoomIndex+1
 
 	; Go to pre-overworld mode
-	LDA.b #$08 : STA.b $10
+	LDA.b #$08 : STA.b GameMode
 
-	STZ.b $11
-	STZ.b $B0
+	STZ.b GameSubMode
+	STZ.b SubSubModule
 
 	STZ.w $010A
 
@@ -168,7 +168,7 @@ CheckHole:
 	.nextHoleClassic
 		LDA.b Scrap00   : CMP.l $1BB800, X
 		BNE .wrongMap16Classic
-		LDA.w $040A : CMP.l $1BB826, X
+		LDA.b OverworldIndex : CMP.l $1BB826, X
 		BEQ .matchedHoleClassic
 	.wrongMap16Classic
 		DEX #2 : BPL .nextHoleClassic
@@ -177,7 +177,7 @@ CheckHole:
 	.nextHoleExtra
 		LDA.b Scrap00   : CMP.l ExtraHole_Map16, X
 		BNE .wrongMap16Extra
-		LDA.w $040A : CMP.l ExtraHole_Area, X
+		LDA.b OverworldIndex : CMP.l ExtraHole_Area, X
 		BEQ .matchedHoleExtra
 	.wrongMap16Extra
 		DEX #2 : BPL .nextHoleExtra
@@ -194,8 +194,8 @@ JML Overworld_Hole_End
 PreventEnterOnBonk:
 	STA.b Scrap00 ; part of what we wrote over
 	LDA.l InvertedMode : AND.w #$00FF : BEQ .done
-	LDA.l $5D : AND.w #$00FF : CMP.w #$0014 : BNE .done ;in mirror mode?
-	LDA.b $8A : AND.w #$0040 : CMP.b $7B : BEQ .done ; Are we bonking, or doing the superbunny glitch?
+	LDA.b LinkState : AND.w #$00FF : CMP.w #$0014 : BNE .done ;in mirror mode?
+	LDA.b OverworldIndex : AND.w #$0040 : CMP.b $7B : BEQ .done ; Are we bonking, or doing the superbunny glitch?
 
 		; If in inverted, are in mirror mode, and are bonking then do not enter
 		JML.l PreventEnterOnBonk_BRANCH_IX
@@ -206,7 +206,7 @@ JML.l PreventEnterOnBonk_return
 ;--------------------------------------------------------------------------------
 TurtleRockEntranceFix:
 	LDA.l TurtleRockAutoOpenFix : BEQ .done
-	LDA.b $8A : CMP.b #$47 : BNE .done
+	LDA.b OverworldIndex : CMP.b #$47 : BNE .done
 		;If exiting to turtle rock ensure the entrance is open
 		LDA.l OverworldEventDataWRAM+$47 : ORA.b #$20 : STA.l OverworldEventDataWRAM+$47
 .done
@@ -215,14 +215,14 @@ RTL
 AnimatedEntranceFix: ;when an entrance animation tries to start
 	PHA
 	LDA.l InvertedMode : BEQ + ;If we are in inverted mode
-	LDA.b $8A : AND.b #$40 : BNE + ;and in the light world
+	LDA.b OverworldIndex : AND.b #$40 : BNE + ;and in the light world
 		PLA
-		STZ.w $04C6 ; skip it.
+		STZ.w OWEntranceCutscene ; skip it.
 		LDA.b #$00
 		RTL
 	+
 	PLA
-	STA.w $02E4 ;what we wrote over
-	STA.w $0FC1 ;what we wrote over
-	STA.w $0710 ;what we wrote over
+	STA.w CutsceneFlag ;what we wrote over
+	STA.w FreezeSprites ;what we wrote over
+	STA.w SkipOAM ;what we wrote over
 RTL

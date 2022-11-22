@@ -11,7 +11,7 @@ LampCheck:
 	
 	LDA.l CurrentWorld : BNE +
 		.lightWorld
-		LDA.w $040C : BNE ++ ; check if we're in sewers
+		LDA.w DungeonID : BNE ++ ; check if we're in sewers
 			LDA.l LampConeSewers : BRA .done
 		++
 			LDA.l LampConeLightWorld : BRA .done

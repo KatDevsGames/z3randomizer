@@ -137,7 +137,6 @@ incsrc goalitem.asm
 incsrc quickswap.asm
 incsrc endingsequence.asm
 incsrc cuccostorm.asm
-incsrc compression.asm
 incsrc retro.asm
 incsrc controllerjank.asm
 incsrc boots.asm

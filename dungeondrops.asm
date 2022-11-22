@@ -2,7 +2,7 @@
 ; Dungeon & Boss Drop Fixes
 ;--------------------------------------------------------------------------------
 DropSafeDungeon:
-	LDA.w $040C : CMP.b #$08 : BEQ +
+	LDA.w DungeonID : CMP.b #$08 : BEQ +
 		LDA.l $01C6FC, X : JML Sprite_SpawnFallingItem
 	+
 RTL

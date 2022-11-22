@@ -504,23 +504,23 @@ Sprite_IsOnscreen:
     JSR _Sprite_IsOnscreen_DoWork
 	BCS +
 		REP #$20
-		LDA.b $E2 : PHA : !SUB.w #$0F : STA.b $E2
-		LDA.b $E8 : PHA : !SUB.w #$0F : STA.b $E8
+		LDA.b BG2H : PHA : !SUB.w #$0F : STA.b BG2H
+		LDA.b BG2V : PHA : !SUB.w #$0F : STA.b BG2V
 		SEP #$20
 			JSR _Sprite_IsOnscreen_DoWork
 		REP #$20
-		PLA : STA.b $E8
-		PLA : STA.b $E2
+		PLA : STA.b BG2V
+		PLA : STA.b BG2H
 		SEP #$20
 	+
 RTL
 
 _Sprite_IsOnscreen_DoWork:
-    LDA.w $0D10, X : CMP.b $E2
-    LDA.w $0D30, X : SBC.b $E3 : BNE .offscreen
+    LDA.w SpritePosXLow, X : CMP.b BG2H
+    LDA.w SpritePosXHigh, X : SBC.b $E3 : BNE .offscreen
 
-    LDA.w $0D00, X : CMP.b $E8
-    LDA.w $0D20, X : SBC.b $E9 : BNE .offscreen
+    LDA.w SpritePosYLow, X : CMP.b BG2V
+    LDA.w SpritePosYHigh, X : SBC.b $E9 : BNE .offscreen
 	SEC
 RTS
 	.offscreen
@@ -542,13 +542,13 @@ Sprite_GetScreenRelativeCoords:
 
 	STA.b Scrap08
 
-	LDA.w $0D00, X : STA.b Scrap00
-	!SUB $E8       : STA.b Scrap06
-	LDA.w $0D20, X : STA.b Scrap01
+	LDA.w SpritePosYLow, X : STA.b Scrap00
+	!SUB.b BG2V       : STA.b Scrap06
+	LDA.w SpritePosYHigh, X : STA.b Scrap01
 
-	LDA.w $0D10, X : STA.b Scrap02 
-	!SUB $E2       : STA.b Scrap07
-	LDA.w $0D30, X : STA.b Scrap03
+	LDA.w SpritePosXLow, X : STA.b Scrap02 
+	!SUB.b BG2H       : STA.b Scrap07
+	LDA.w SpritePosXHigh, X : STA.b Scrap03
 RTL
 ;--------------------------------------------------------------------------------
 

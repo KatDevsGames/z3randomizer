@@ -67,13 +67,13 @@ Overworld_CreatePyramidHoleModified:
 	LDA.w #$FFFF : STA.w $1012, Y
 
 .ending
-	LDA.w #$3515 : STA.w $012D
+	LDA.w #$3515 : STA.w SFX1
 
 	SEP #$30
 
 	LDA.l OverworldEventDataWRAM+$5B : ORA.b #$20 : STA.l OverworldEventDataWRAM+$5B
 
-	LDA.b #$03 : STA.w $012F
+	LDA.b #$03 : STA.w SFX3
 
 	LDA.b #$01 : STA.b $14
 
@@ -138,26 +138,27 @@ RTL
 
 
 GanonTowerAnimation:
-	LDA.l InvertedMode : BEQ .done
-		LDA.b #$1B : STA.w $012F
-        STZ.w $04C6
-        STZ.b $B0
-        STZ.w $0710
-        STZ.w $02E4
-        
-        STZ.w $0FC1
-        
-        STZ.w $011A
-        STZ.w $011B
-        STZ.w $011C
-        STZ.w $011D
-		LDA.b #$02 : STA.w $012C
-        LDA.b #$09 : STA.w $012D
-		RTL
-	.done
-	    LDA.b #$05 : STA.w $04C6 ;what we wrote over
-        STZ.b $B0 ; (continued)
-	STZ.b $C8 ; (continued)
+        LDA.l InvertedMode : BEQ .done
+                LDA.b #$1B : STA.w SFX3
+        STZ.w OWEntranceCutscene
+        STZ.b SubSubModule
+        STZ.w SkipOAM
+        STZ.w CutsceneFlag
+
+        STZ.w FreezeSprites
+
+        STZ.w BG1ShakeV
+        STZ.w BG1ShakeV+1
+        STZ.w BG1ShakeH
+        STZ.w BG1ShakeH+1
+        LDA.b #$02 : STA.w MusicControlRequest
+        LDA.b #$09 : STA.w SFX1
+        RTL
+
+        .done
+        LDA.b #$05 : STA.w OWEntranceCutscene ; what we wrote over
+        STZ.b SubSubModule ; (continued)
+        STZ.b ScrapBufferBD+$0B ; (continued)
 RTL
 
 GanonTowerInvertedCheck:
@@ -166,7 +167,7 @@ GanonTowerInvertedCheck:
 		LDA.b #$01 ; Load a random value so it doesn't BEQ
 	RTL
 	.done
-	LDA.b $8A : CMP.b #$43 ;what we wrote over
+	LDA.b OverworldIndex : CMP.b #$43 ;what we wrote over
 	RTL
 }
 
@@ -177,7 +178,7 @@ HardcodedRocks:
     LDA.l InvertedMode : AND.w #$00FF : BEQ .normalrocks
         BRA .noRock2
     .normalrocks
-        LDA.w #$020F : LDX $8A : CPX.w #$0033 : BNE .noRock
+        LDA.w #$020F : LDX.b OverworldIndex : CPX.w #$0033 : BNE .noRock
         STA.l $7E22A8
     .noRock
         CPX.w #$002F : BNE .noRock2
@@ -202,9 +203,9 @@ MirrorBonk:
 	; otherwise fall through to .normal
 		PHX : PHP
 		PHB : PHK : PLB
-		LDA.b $8A : AND.b #$40 : BEQ .endLoop ;World we're in? branch if we are in LW we don't want bonks
+		LDA.b OverworldIndex : AND.b #$40 : BEQ .endLoop ;World we're in? branch if we are in LW we don't want bonks
 		REP #$30
-		LDX #$0000
+		LDX.w #$0000
 		.loop
 			LDA.l .bonkRectanglesTable, X ;Load X1
 			CMP $22 : !BGE ++

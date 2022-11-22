@@ -82,42 +82,42 @@ JMP DrawItemGray
 
 DrawBottle:
 	AND.w #$00FF : BNE +
-		LDX #FileSelectItems_empty_bottle
+		LDX.w #FileSelectItems_empty_bottle
 		JMP DrawItemGray
 	+ : DEC #2 : BNE +
-		LDX #FileSelectItems_empty_bottle
+		LDX.w #FileSelectItems_empty_bottle
 		JMP DrawItem
 	+ : DEC : BNE +
-		LDX #FileSelectItems_red_potion
+		LDX.w #FileSelectItems_red_potion
 		JMP DrawItem
 	+ : DEC : BNE +
-		LDX #FileSelectItems_green_potion
+		LDX.w #FileSelectItems_green_potion
 		JMP DrawItem
 	+ : DEC : BNE +
-		LDX #FileSelectItems_blue_potion
+		LDX.w #FileSelectItems_blue_potion
 		JMP DrawItem
 	+ : DEC : BNE +
-		LDX #FileSelectItems_fairy_bottle
+		LDX.w #FileSelectItems_fairy_bottle
 		JMP DrawItem
 	+ : DEC : BNE +
-		LDX #FileSelectItems_bee_bottle
+		LDX.w #FileSelectItems_bee_bottle
 		JMP DrawItem
 	+
-	LDX #FileSelectItems_good_bee_bottle
+	LDX.w #FileSelectItems_good_bee_bottle
 JMP DrawItem
 
 
 DrawPlayerFile:
-	LDA.b $1A : AND.w #$0001 : BNE .normal
+	LDA.b FrameCounter : AND.w #$0001 : BNE .normal
 		JSR DrawPlayerFileShared
-		INC $0710 ; Suppress animated tile updates for this frame
+		INC.w SkipOAM ; Suppress animated tile updates for this frame
 
 		; re-enable  Stripe Image format upload on this frame
 		; Value loaded must match what gets set by AltBufferTable
 		LDA.w #$0161 : STA.w $1002
 		BRA .done
 	.normal
-	STZ $0710 ; ensure core animated tile updates are not suppressed
+	STZ.w SkipOAM ; ensure core animated tile updates are not suppressed
 	LDA.w #$FFFF : STA.w $1002 ; Suppress Stripe Image format upload on this frame
 .done
 	LDA.w #$0004 : STA.b Scrap02 ; thing we wrote over
@@ -642,7 +642,7 @@ AltBufferTable:
     LDA.w #$00FF : STA.w $1402
 
     ; Draw Unlock option if applicable
-    LDA.b $10 : AND.w #$00FF : CMP.w #$0001 : BNE +
+    LDA.b GameMode : AND.w #$00FF : CMP.w #$0001 : BNE +
     LDA.l IsEncrypted : AND.w #$00FF : CMP.w #$0002 : BNE +
     PHP : SEP #$30 : PHX : PHY : JSL ValidatePassword : PLY : PLX : PLP
     AND.w #$00FF : BNE +
@@ -754,7 +754,7 @@ RTL
 ;--------------------------------------------------------------------------------
 
 SetFileSelectPalette:
-	LDA.b $10 : CMP.b #$04 : BNE +
+	LDA.b GameMode : CMP.b #$04 : BNE +
 		; load the vanilla file select screen BG3 palette for naming screen
 		LDA.b #$01 : STA.w $0AB2
 		JSL.l Palette_Hud
@@ -814,7 +814,7 @@ DrawPlayerFile_credits:
 RTL
 ;--------------------------------------------------------------------------------
 FSCursorUp:
-	LDA.b $C8 : BNE +
+	LDA.b FileSelectPosition : BNE +
 		LDA.b #$04 ; up from file becomes delete
 		BRA .done
 	+ : CMP.b #$03 : BNE +
@@ -828,11 +828,11 @@ FSCursorUp:
 	+
 	LDA.b #$00 ;otherwise up from delete is file
 	.done
-	STA.b $C8
+	STA.b FileSelectPosition
 RTL
 
 FSCursorDown:
-	LDA.b $C8 : BNE +
+	LDA.b FileSelectPosition : BNE +
 		LDA.l IsEncrypted : CMP.b #$02 : BNE ++
 		LDA.l ValidKeyLoaded : BNE ++
 			LDA.b #$03 ; down from file is unlock for password protected seeds
@@ -846,23 +846,23 @@ FSCursorDown:
 	+
 	LDA.b #$00 ; down from delete is file
 	.done
-	STA.b $C8
+	STA.b FileSelectPosition
 RTL
 ;--------------------------------------------------------------------------------
 FSSelectFile:
 	LDA.l IsEncrypted : CMP.b #$02 : BNE .normal
-		STZ $012E ; temporarily cancel file screen selection sound
+		STZ.w SFX2 ; temporarily cancel file screen selection sound
 		PHX : PHY
 			JSL ValidatePassword : BEQ .must_unlock
 		PLY : PLX
-		LDA.b #$2C : STA.w $012E ;file screen selection sound
+		LDA.b #$2C : STA.w SFX2 ;file screen selection sound
 	.normal
-	LDA.b #$F1 : STA.w $012C
+	LDA.b #$F1 : STA.w MusicControlRequest
 JML FSSelectFile_continue
 	.must_unlock
 	PLY : PLX
-	LDA.b #$03 : STA.b $C8 ;set cursor to unlock
-	LDA.b #$3C : STA.w $012E ; play error sound
+	LDA.b #$03 : STA.b FileSelectPosition ;set cursor to unlock
+	LDA.b #$3C : STA.w SFX2 ; play error sound
 JML FSSelectFile_return
 ;--------------------------------------------------------------------------------
 MaybeForceFileName:

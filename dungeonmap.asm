@@ -9,7 +9,7 @@ DoDungeonMapBossIcon:
 
 .dungeonmap
 
-	LDX.w $040C
+	LDX.w DungeonID
 	BMI .cave
 
 	; get dungeon boss room

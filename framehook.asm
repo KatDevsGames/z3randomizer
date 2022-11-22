@@ -13,7 +13,7 @@ FrameHookAction:
 				LDA.l LoopFrames : INC : STA.l LoopFrames : BNE +
 					LDA.l LoopFrames+2 : INC : STA.l LoopFrames+2
 				+
-				LDA.l $10 : CMP.w #$010E : BNE + ; move this to nmi hook?
+				LDA.l GameMode : CMP.w #$010E : BNE + ; move this to nmi hook?
 				LDA.l MenuFrames : INC : STA.l MenuFrames : BNE +
 					LDA.l MenuFrames+2 : INC : STA.l MenuFrames+2
 				+

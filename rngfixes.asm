@@ -2,11 +2,11 @@
 ; RNG Fixes
 ;--------------------------------------------------------------------------------
 RigDigRNG:
-	LDA.l $7FFE01 : CMP.l DiggingGameRNG : !BGE .forceHeart
+	LDA.l MiniGameTime+1 : CMP.l DiggingGameRNG : !BGE .forceHeart
 	.normalItem
 	JML GetRandomInt
 	.forceHeart
-	LDA.l $7FFE00 : BNE .normalItem
+	LDA.l MiniGameTime : BNE .normalItem
 	LDA.b #$04
 RTL
 ;--------------------------------------------------------------------------------
@@ -20,8 +20,8 @@ RigChestRNG:
 	JSL.l DecrementItemCounter
 RTL
 	.forceHeart
-	LDA.b #$33 : STA.b $C8 ; assure the correct state if player talked to shopkeeper
-	LDA.w $0403 : AND.b #$40 : BNE .notHeart
+	LDA.b #$33 : STA.b ScrapBufferBD+$0B ; assure the correct state if player talked to shopkeeper
+	LDA.w ItemsTaken : AND.b #$40 : BNE .notHeart
 	LDA.b #$07 ; give prize item
 RTL
 	.notHeart

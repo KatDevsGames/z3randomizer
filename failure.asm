@@ -130,12 +130,12 @@ Crashed:
 	LDA.w #$0C78>>1
 	STA.b VMADDL
 
-	LDA.l $10
+	LDA.l GameMode
 	AND.w #$00FF
 	ORA.w #$0100
 	STA.b VMDATAL
 
-	LDA.l $11
+	LDA.l GameSubMode
 	AND.w #$00FF
 	ORA.w #$0100
 	STA.b VMDATAL

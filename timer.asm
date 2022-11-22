@@ -157,7 +157,7 @@ DrawChallengeTimer:
 			LDA.w ClockSeconds+2 : STA.l $7EC7A2
 			LDA.w ClockSeconds : STA.l $7EC7A4
 		++
-		LDA.b $1A : AND.w #$001F : BNE + : JSR CalculateTimer : +
+		LDA.b FrameCounter : AND.w #$001F : BNE + : JSR CalculateTimer : +
 
 RTL
 ;--------------------------------------------------------------------------------

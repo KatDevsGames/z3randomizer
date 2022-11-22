@@ -20,7 +20,7 @@ RTL
 SetTabletItem:
 	JSL.l GetSpriteID
 	PHA
-		LDA.b $8A : CMP.b #$03 : BEQ .ether ; if we're on the map where ether is, we're the ether tablet
+		LDA.b OverworldIndex : CMP.b #$03 : BEQ .ether ; if we're on the map where ether is, we're the ether tablet
 		.bombos
 		JSL.l ItemSet_BombosTablet : BRA .done
 		.ether
@@ -33,36 +33,36 @@ SpawnTabletItem:
 	JSL.l LoadOutdoorValue
 	PHA
 	JSL.l PrepDynamicTile
-	
+
 	JSL.l SetTabletItem
-	
+
 	LDA.b #$EB
-	STA.l $7FFE00
+	STA.l MiniGameTime
 	JSL Sprite_SpawnDynamically
 
-	PLA : STA.w $0E80, Y ; Store item type
-	LDA.b $22 : STA.w $0D10, Y
-	LDA.b $23 : STA.w $0D30, Y
+	PLA : STA.w SpriteItemType, Y ; Store item type
+	LDA.b LinkPosX   : STA.w SpritePosXLow, Y
+	LDA.b LinkPosX+1 : STA.w SpritePosXHigh, Y
   
-	LDA.b $20 : STA.w $0D00, Y
-	LDA.b $21 : STA.w $0D20, Y
+	LDA.b LinkPosY   : STA.w SpritePosYLow, Y
+	LDA.b LinkPosY+1 : STA.w SpritePosYHigh, Y
 
 	LDA.b #$00 : STA.w $0F20, Y
-	
+
 	LDA.b #$7F : STA.w $0F70, Y ; spawn WAY up high
 RTL
 ;--------------------------------------------------------------------------------
 MaybeUnlockTabletAnimation:
 	PHA : PHP
 		JSL.l IsMedallion : BCC +
-			STZ $0112 ; disable falling-medallion mode
-			STZ $03EF ; release link from item-up pose
-			LDA.b #$00 : STA.b $5D ; set link to ground state
+			STZ.w MedallionFlag ; disable falling-medallion mode
+			STZ.w ForceSwordUp ; release link from item-up pose
+			LDA.b #$00 : STA.b LinkState ; set link to ground state
 
 			REP #$20 ; set 16-bit accumulator
-				LDA.b $8A : CMP.w #$0030 : BNE ++ ; Desert
+				LDA.b OverworldIndex : CMP.w #$0030 : BNE ++ ; Desert
 					SEP #$20 ; set 8-bit accumulator
-					LDA.b #$02 : STA.b $2F ; face link forward
+					LDA.b #$02 : STA.b LinkDirection ; face link forward
 					LDA.b #$3C : STA.b $46 ; lock link for 60f
 				++
 			SEP #$20 ; set 8-bit accumulator
@@ -72,15 +72,15 @@ RTL
 ;--------------------------------------------------------------------------------
 IsMedallion:
 	REP #$20 ; set 16-bit accumulator
-	LDA.b $8A
+	LDA.b OverworldIndex
 	CMP.w #$03 : BNE + ; Death Mountain
-		LDA.b $22 : CMP.w #1890 : !BGE ++
+		LDA.b LinkPosX : CMP.w #1890 : !BGE ++
 			SEC
 			JMP .done
 		++
 		BRA .false
 	+ CMP.w #$30 : BNE + ; Desert
-		LDA.b $22 : CMP.w #512 : !BLT ++
+		LDA.b LinkPosX : CMP.w #512 : !BLT ++
 			SEC
 			JMP .done
 		++

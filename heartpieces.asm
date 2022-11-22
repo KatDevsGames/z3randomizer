@@ -3,7 +3,7 @@
 ;--------------------------------------------------------------------------------
 HeartPieceGet:
         PHX : PHY
-        LDY.w $0E80, X ; load item value into Y register
+        LDY.w SpriteItemType, X ; load item value into Y register
         BNE +
                 ; if for any reason the item value is 0 reload it, just in case
                 JSL.l LoadHeartPieceRoomValue : TAY
@@ -12,7 +12,7 @@ HeartPieceGet:
 
         .skipLoad
 
-        STZ.w $02E9 ; 0 = Receiving item from an NPC or message
+        STZ.w ItemReceiptMethod ; 0 = Receiving item from an NPC or message
 
         CPY.b #$26 : BNE .notHeart ; don't add a 1/4 heart if it's not a heart piece
         LDA.l HeartPieceQuarter : INC A : AND.b #$03 : STA.l HeartPieceQuarter : BNE .unfinished_heart ; add up heart quarters
@@ -36,7 +36,7 @@ RTL
 HeartContainerGet:
 	PHX : PHY
 	JSL.l AddInventory_incrementBossSwordLong
-	LDY $0E80, X ; load item value into Y register
+	LDY.w SpriteItemType, X ; load item value into Y register
 	BNE +
 		; if for any reason the item value is 0 reload it, just in case
 		JSL.l LoadHeartContainerRoomValue : TAY
@@ -54,7 +54,7 @@ DrawHeartPieceGFX:
 	JMP .done ; don't draw on the init frame
 	
 	.skipInit
-	LDA.w $0E80, X ; Retrieve stored item type
+	LDA.w SpriteItemType, X ; Retrieve stored item type
 
 	.skipLoad
 	
@@ -83,7 +83,7 @@ DrawHeartContainerGFX:
 	BRA DrawHeartPieceGFX_done ; don't draw on the init frame
 	
 	.skipInit
-	LDA.w $0E80, X ; Retrieve stored item type
+	LDA.w SpriteItemType, X ; Retrieve stored item type
 
 	BRA DrawHeartPieceGFX_skipLoad
 ;--------------------------------------------------------------------------------
@@ -122,11 +122,11 @@ HeartPieceSpritePrep:
 	LDA.l ServerRequestMode : BEQ + :  : +
 	
 	LDA.b #$01 : STA.l RedrawFlag
-	LDA.b $5D : CMP.b #$14 : BEQ .skip ; skip if we're mid-mirror
+	LDA.b LinkState : CMP.b #$14 : BEQ .skip ; skip if we're mid-mirror
 
 	LDA.b #$00 : STA.l RedrawFlag
 	JSL.l LoadHeartPieceRoomValue ; load item type
-	STA.w $0E80, X ; Store item type
+	STA.w SpriteItemType, X ; Store item type
 	JSL.l PrepDynamicTile
 	
 	.skip
@@ -138,14 +138,14 @@ HeartContainerSpritePrep:
 	
 	LDA.b #$00 : STA.l RedrawFlag
 	JSL.l LoadHeartContainerRoomValue ; load item type
-	STA.w $0E80, X ; Store item type
+	STA.w SpriteItemType, X ; Store item type
 	JSL.l PrepDynamicTile
 	
 	PLA
 RTL
 ;--------------------------------------------------------------------------------
 LoadHeartPieceRoomValue:
-	LDA.b $1B : BEQ .outdoors ; check if we're indoors or outdoors
+	LDA.b IndoorsFlag : BEQ .outdoors ; check if we're indoors or outdoors
 	.indoors
 	JSL.l LoadIndoorValue
 	JMP .done
@@ -161,9 +161,9 @@ RTL
 ;--------------------------------------------------------------------------------
 MaybeMarkDigSpotCollected:
 	PHA : PHP
-		LDA.b $1B : BNE +
+		LDA.b IndoorsFlag : BNE +
 		REP #$20 ; set 16-bit accumulator
-		LDA.b $8A
+		LDA.b OverworldIndex
 		CMP.w #$2A : BNE +
 			LDA.l HasGroveItem : ORA.w #$0001 : STA.l HasGroveItem
 		+
@@ -237,7 +237,7 @@ RTL
 LoadOutdoorValue:
 	PHP
 	REP #$20 ; set 16-bit accumulator
-	LDA.b $8A
+	LDA.b OverworldIndex
 	CMP.w #$03 : BNE +
 		LDA.b $22 : CMP.w #1890 : !BLT ++
 			%GetPossiblyEncryptedItem(HeartPiece_Spectacle, HeartPieceOutdoorValues)

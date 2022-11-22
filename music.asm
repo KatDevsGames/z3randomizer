@@ -9,7 +9,7 @@ PreOverworld_LoadProperties_ChooseMusic:
 
     LDX.b #$02 ; Default light world theme
 
-    LDA.b $8A : ORA.b #$40 ; check both light and dark world DM at the same time
+    LDA.b OverworldIndex : ORA.b #$40 ; check both light and dark world DM at the same time
     CMP.b #$43 : BEQ .endOfLightWorldChecks
     CMP.b #$45 : BEQ .endOfLightWorldChecks
     CMP.b #$47 : BEQ .endOfLightWorldChecks
@@ -17,12 +17,12 @@ PreOverworld_LoadProperties_ChooseMusic:
     LDY.b #$5A ; Main overworld animated tileset
 
     ; Skip village and lost woods checks if entering dark world or a special area
-    LDA.b $8A : CMP.b #$40 : !BGE .notVillageOrWoods
+    LDA.b OverworldIndex : CMP.b #$40 : !BGE .notVillageOrWoods
 
     LDX.b #$07 ; Default village theme
 
     ; Check if we're entering the village
-    LDA.b $8A : CMP.b #$18 : BEQ .endOfLightWorldChecks
+    LDA.b OverworldIndex : CMP.b #$18 : BEQ .endOfLightWorldChecks
     ; For NA release would we also branch on indexes #$22 #$28 #$29
 
     LDX.b #$05 ; Lost woods theme
@@ -33,7 +33,7 @@ PreOverworld_LoadProperties_ChooseMusic:
     +
 
     ; check if we are entering lost woods
-    LDA.b $8A : BEQ .endOfLightWorldChecks
+    LDA.b OverworldIndex : BEQ .endOfLightWorldChecks
 
     .notVillageOrWoods
     ; Use the normal overworld (light world) music
@@ -52,7 +52,7 @@ PreOverworld_LoadProperties_ChooseMusic:
     LDX.b #$0F ; dark woods theme
 
     ; This music is used in dark woods
-    LDA.b $8A
+    LDA.b OverworldIndex
     CMP.b #$40 : BEQ +
         LDX.b #$0D  ; dark death mountain theme
 
@@ -118,7 +118,7 @@ Overworld_FinishMirrorWarp:
 
     LDX.b #$09  ; default dark world theme
 
-    LDA.b $8A : CMP.b #$40 : !BGE .endOfLightWorldChecks
+    LDA.b OverworldIndex : CMP.b #$40 : !BGE .endOfLightWorldChecks
 
     LDX.b #$02  ; hyrule field theme
 
@@ -136,9 +136,9 @@ Overworld_FinishMirrorWarp:
         LDX.b #$07 ; Default village theme (phase <3)
 
 .endOfLightWorldChecks
-    STX.w $012C
+    STX.w MusicControlRequest
 
-    LDA.b $8A : CMP.b #$40 : BNE +
+    LDA.b OverworldIndex : CMP.b #$40 : BNE +
         LDX.b #$0F    ; dark woods theme
         BRA .bunny
     +
@@ -148,7 +148,7 @@ Overworld_FinishMirrorWarp:
     CMP.b #$47 : BNE .notDarkMountain
 
 .darkMountain
-    LDA.b #$09 : STA.w $012D    ; set storm ambient SFX
+    LDA.b #$09 : STA.w SFX1    ; set storm ambient SFX
     LDX.b #$0D  ; dark mountain theme
 
 .bunny
@@ -156,16 +156,16 @@ Overworld_FinishMirrorWarp:
         LDX.b #$04    ; bunny theme
     +
 
-    STX.w $012C
+    STX.w MusicControlRequest
 
 .notDarkMountain
 
-    LDA.b $11 : STA.w $010C
+    LDA.b GameSubMode : STA.w GameSubModeCache ; GameModeCache
 
-    STZ.b $11
-    STZ.b $B0
-    STZ.w $0200
-    STZ.w $0710
+    STZ.b GameSubMode
+    STZ.b SubSubModule
+    STZ.w SubModuleInterface
+    STZ.w SkipOAM
 
     RTL
 ;--------------------------------------------------------------------------------
@@ -173,17 +173,17 @@ Overworld_FinishMirrorWarp:
 ;--------------------------------------------------------------------------------
 BirdTravel_LoadTargetAreaMusic:
     ; Skip village and lost woods checks if entering dark world or a special area
-    LDA.b $8A : CMP.b #$43 : BEQ .endOfLightWorldChecks
+    LDA.b OverworldIndex : CMP.b #$43 : BEQ .endOfLightWorldChecks
     CMP.b #$40 : !BGE .notVillageOrWoods
 
     LDX.b #$07 ; Default village theme
 
     ; Check if we're entering the village
-    LDA.b $8A : CMP.b #$18 : BEQ .endOfLightWorldChecks
+    LDA.b OverworldIndex : CMP.b #$18 : BEQ .endOfLightWorldChecks
     ; For NA release would we also branch on indexes #$22 #$28 #$29
 
     ; check if we are entering lost woods
-    LDA.b $8A : BEQ .endOfLightWorldChecks
+    LDA.b OverworldIndex : BEQ .endOfLightWorldChecks
 
     .notVillageOrWoods
     ; Use the normal overworld (light world) music
@@ -201,24 +201,24 @@ BirdTravel_LoadTargetAreaMusic:
 
     LDX.b #$09 ; dark overworld theme
 
-    LDA.b $8A
+    LDA.b OverworldIndex
     ; Misery Mire rain SFX
     CMP.b #$70 : BNE ++
         LDA.l OverworldEventDataWRAM+$70 : AND.b #$20 : BNE ++
             LDA.b #$01 : CMP.w $0131 : BEQ +
-                STA.w $012D
+                STA.w SFX1
             + : BRA .checkInverted
     ++
 
     ; This music is used in dark death mountain
     CMP.b #$43 : BEQ .darkMountain
-        LDA.b #$05 : STA.w $012D
+        LDA.b #$05 : STA.w SFX1
         BRA .checkInverted
 
 .darkMountain
     LDA.l CrystalsField : CMP.b #$7F : BEQ +
         LDX.b #$0D  ; dark death mountain theme
-    + : LDA.b #$09 : STA.w $012D
+    + : LDA.b #$09 : STA.w SFX1
 
     ; if not inverted and light world, or inverted and dark world, skip moon pearl check
     .checkInverted
@@ -237,8 +237,8 @@ BirdTravel_LoadTargetAreaMusic:
 ;0 = Is Kakariko Overworld
 ;1 = Not Kakariko Overworld
 PsychoSolder_MusicCheck:
-    LDA.w $040A : CMP.b #$18 : BNE .done ; thing we overwrote - check if overworld location is Kakariko
-        LDA.b $1B  ; Also check that we are outdoors
+    LDA.b OverworldIndex : CMP.b #$18 : BNE .done ; thing we overwrote - check if overworld location is Kakariko
+        LDA.b IndoorsFlag  ; Also check that we are outdoors
     .done
 RTL
 ;--------------------------------------------------------------------------------
@@ -258,7 +258,7 @@ Overworld_MosaicDarkWorldChecks:
     LDA.l CrystalsField : CMP.b #$7F : BEQ .done
 
 .doFade
-    LDA.b #$F1 : STA.w $012C  ; thing we wrote over, fade out music
+    LDA.b #$F1 : STA.w MusicControlRequest  ; thing we wrote over, fade out music
 
 .done
     RTL

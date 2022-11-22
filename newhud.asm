@@ -126,14 +126,14 @@ NewDrawHud:
 !C_ICON = $295F
 
 	SEP #$20
-	LDA.b $1B : BEQ .noprize
+	LDA.b IndoorsFlag : BEQ .noprize
 
-	LDX.w $040C
+	LDX.w DungeonID
 	CPX #$1A : !BGE .noprize
 	CPX #$04 : !BLT .noprize
 	CPX #$08 : BEQ .noprize
 
-	LDA.b $10 : CMP #$12 : BEQ .noprize
+	LDA.b GameMode : CMP #$12 : BEQ .noprize
 
 	LDA.l MapMode
 	REP #$20
@@ -174,7 +174,7 @@ DrawMagicMeter_mp_tilemap = $0DFE0F
 	LDA.l InfiniteMagic : AND.w #$00FF : BNE + : JMP .green : +
 	SEP #$20 : LDA.b #$80 : STA.l CurrentMagic : REP #$30 ; set magic to max
 	LDX.w #$0080 ; load full magic meter graphics
-	LDA.b $1A : AND.w #$000C : LSR #2
+	LDA.b FrameCounter : AND.w #$000C : LSR #2
 	BEQ .red
 	CMP.w #0001 : BEQ .yellow
 	CMP.w #0002 : BNE + : JMP .green : +

@@ -28,14 +28,14 @@
 ; out:	Carry - 0 = No Button, 1 = Yes Button
 ;--------------------------------------------------------------------------------
 ProcessMenuButtons:
-	LDA.b $F4 : BIT.b #$40 : BNE .y_pressed ; check for P1 Y-button
+	LDA.b Joy1A_New : BIT.b #$40 : BNE .y_pressed ; check for P1 Y-button
 			  BIT #$20 : BNE .sel_pressed ; check for P1 Select button
-	LDA.b $F0 : BIT.b #$20 : BNE .sel_held
+	LDA.b Joy1A_All : BIT.b #$20 : BNE .sel_held
 	.sel_unheld
 		LDA.l HudFlag : AND.b #$20 : BEQ +
 		LDA.l HudFlag : AND.b #$DF : STA.l HudFlag ; select is released, unset hud flag
-		LDA.b $1B : BEQ + ; skip if outdoors
-			LDA.b #$20 : STA.w $012F ; menu select sound
+		LDA.b IndoorsFlag : BEQ + ; skip if outdoors
+			LDA.b #$20 : STA.w SFX3 ; menu select sound
 		+
 		JSL.l ResetEquipment
 	+
@@ -44,16 +44,16 @@ ProcessMenuButtons:
 RTL
 	.sel_pressed
 	LDA.l HudFlag : ORA.b #$20 : STA.l HudFlag ; set hud flag
-	LDA.b #$20 : STA.w $012F ; menu select sound
+	LDA.b #$20 : STA.w SFX3 ; menu select sound
 	JSL.l ResetEquipment
 RTL
 	.y_pressed ; Note: used as entry point by quickswap code. Must preserve X. 
-	LDA.b #$10 : STA.w $0207
-	LDA.w $0202 ; check selected item
+	LDA.b #$10 : STA.w MenuBlink
+	LDA.w ItemCursor ; check selected item
 	CMP.b #$02 : BNE + ; boomerang
 		LDA.l InventoryTracking : AND.b #$C0 : CMP.b #$C0 : BNE .errorJump ; make sure we have both boomerangs
 		LDA.l BoomerangEquipment : EOR.b #$03 : STA.l BoomerangEquipment ; swap blue & red boomerang
-		LDA.b #$20 : STA.w $012F ; menu select sound
+		LDA.b #$20 : STA.w SFX3 ; menu select sound
 		JMP .captured
 	+ CMP #$01 : BNE + ; bow
 		LDA.l BowTracking : AND.b #$C0 : CMP.b #$C0 : BNE .errorJump ; make sure we have both bows
@@ -70,7 +70,7 @@ RTL
 				BRA .errorJump2
 		++
 		LDA.l BowEquipment : !SUB #$01 : EOR.b #$02 : !ADD #$01 : STA.l BowEquipment ; swap bows
-		LDA.b #$20 : STA.w $012F ; menu select sound
+		LDA.b #$20 : STA.w SFX3 ; menu select sound
 		JMP .captured
 	+ BRA +
 		.errorJump
@@ -78,7 +78,7 @@ RTL
 	+ CMP #$05 : BNE + ; powder
 		LDA.l InventoryTracking : AND.b #$30 : CMP.b #$30 : BNE .errorJump ; make sure we have mushroom & magic powder
 		LDA.l PowderEquipment : EOR.b #$03 : STA.l PowderEquipment ; swap mushroom & magic powder
-		LDA.b #$20 : STA.w $012F ; menu select sound
+		LDA.b #$20 : STA.w SFX3 ; menu select sound
 		JMP .captured
 	+ BRA +
 		.errorJump2
@@ -99,7 +99,7 @@ RTL
 		LDA.b #$01 ; set shovel
 		.fluteSuccess
 		STA.l FluteEquipment ; store set item
-		LDA.b #$20 : STA.w $012F ; menu select sound
+		LDA.b #$20 : STA.w SFX3 ; menu select sound
 		BRA .captured
 	+
 	CMP.b #$10 : BNE .error : JSL.l ProcessBottleMenu : BRA .captured : +
@@ -107,7 +107,7 @@ RTL
 RTL
 	.midShovel
 	.error
-	LDA.b #$3C : STA.w $012E ; error sound
+	LDA.b #$3C : STA.w SFX2 ; error sound
 	.captured
 	SEC
 RTL
@@ -124,13 +124,13 @@ ProcessBottleMenu:
 		TAX : LDA.l BottleContents-1, X ; check bottle
 		BNE + : LDX.b #$01 : + ; wrap if we reached the last bottle
 		TXA : STA.l BottleIndex ; set bottle index
-		LDA.b #$20 : STA.w $012F ; menu select sound
+		LDA.b #$20 : STA.w SFX3 ; menu select sound
 	PLX
 	.no_bottles
 	LDA.b #$00 ; pretend like the controller state was 0 from the overridden load
 RTL
 ;	.y_not_pressed
-;	LDA.b $F4 : AND.b #$0C ; thing we wrote over - load controller state
+;	LDA.b Joy1A_New : AND.b #$0C ; thing we wrote over - load controller state
 ;RTL
 ;--------------------------------------------------------------------------------
 
@@ -138,33 +138,27 @@ RTL
 ;OpenBottleMenu:
 ;--------------------------------------------------------------------------------
 OpenBottleMenu:
-	LDA.b $F6 : AND.b #$40 : BEQ .x_not_pressed ; skip if X is not down
-		LDA.b #$10 : STA.w $0207 ; set 16 frame cool off
-	    LDA.b #$20 : STA.w $012F ; make menu sound
-		LDA.b #$07 : STA.w $0200 ; thing we wrote over - opens bottle menu
+	LDA.b Joy1B_New : AND.b #$40 : BEQ .x_not_pressed ; skip if X is not down
+		LDA.b #$10 : STA.w MenuBlink ; set 16 frame cool off
+	    LDA.b #$20 : STA.w SFX3 ; make menu sound
+		LDA.b #$07 : STA.w SubModuleInterface ; thing we wrote over - opens bottle menu
 	.x_not_pressed
 RTL
-;--------------------------------------------------------------------------------
-
 ;--------------------------------------------------------------------------------
 ;CloseBottleMenu:
 ;--------------------------------------------------------------------------------
 CloseBottleMenu:
-	LDA.b $F6 : AND.b #$40 : BEQ .x_not_pressed ; skip if X is not down
+        LDA.b Joy1B_New : AND.b #$40 : BEQ .x_not_pressed ; skip if X is not down
+        LDA.b #$10 : STA.w MenuBlink ; set 16 frame cool off
+        LDA.b #$20 : STA.w SFX3 ; make menu sound
 
-	LDA.b #$10 : STA.w $0207 ; set 16 frame cool off
-    LDA.b #$20 : STA.w $012F ; make menu sound
-
-	INC.w $0200 ; return to normal menu
-    STZ.w $0205
-
-	LDA.b #$00
+        INC.w SubModuleInterface ; return to normal menu
+        STZ.w BottleMenuCounter
+        LDA.b #$00
 RTL
-	.x_not_pressed
-	LDA.b $F4 : AND.b #$0C ; thing we wrote over (probably)
+        .x_not_pressed
+        LDA.b Joy1A_New : AND.b #$0C ; thing we wrote over (probably)
 RTL
-;--------------------------------------------------------------------------------
-
 ;--------------------------------------------------------------------------------
 ; AddInventory:
 ;--------------------------------------------------------------------------------
@@ -253,8 +247,8 @@ AddInventory:
 	+
 	CPY.b #$3B : BNE + : JMP .dungeonCounts : + ; Silver Arrow Bow - Skip Shop/Fairy Check for Silver Arrow Bow
 
-	LDA.b $1B : BEQ ++ ; skip shop check if outdoors
-	LDA.w $02E9 : CMP.b #$01 : BEQ ++ ; skip shop check for chests
+	LDA.b IndoorsFlag : BEQ ++ ; skip shop check if outdoors
+	LDA.w ItemReceiptMethod : CMP.b #$01 : BEQ ++ ; skip shop check for chests
 		PHP : REP #$20 ; set 16-bit accumulator
 			LDA.w $048E
 			CMP.w #274 : BNE + : JMP .shop : + ; dark world death mountain shop, ornamental shield shop
@@ -274,10 +268,10 @@ AddInventory:
 	++
 
 	.dungeonCounts
-	LDA.b $1B : BNE + : JMP .fullItemCounts : +
+	LDA.b IndoorsFlag : BNE + : JMP .fullItemCounts : +
 	SEP #$20 ; Set 8-bit Accumulator
 
-	LDA.w $040C ; get dungeon id
+	LDA.w DungeonID ; get dungeon id
         CMP.b #$FF : BEQ .fullItemCounts
 
         CMP.l BallNChainDungeon : BNE +
@@ -370,7 +364,7 @@ AddInventory:
 	+ CPY.b #$1D : BNE + ; Book of Mudora - LEAVE THIS ABOVE THE 1B-1F CONDITION - kkat
 		JSR .incrementY
 		JMP .done
-	+ CPY.b #$1B : !BLT + ; Items $1B - $1F
+	+ CPY.b #$1B : !BLT + ; Items IndoorsFlag - $1F
 	  CPY.b #$20 : !BGE +
 		JSR .incrementA
 		JMP .done
@@ -442,7 +436,7 @@ AddInventory:
 		JSR .incrementY
 		JMP .done
 	+ CPY.b #$49 : BNE + ; Fighter's Sword
-                LDX #$01
+                LDX.b #$01
 		JSR .incrementSword
 		JMP .done
 	+ CPY.b #$4A : BNE + ; Flute (Active)
@@ -462,15 +456,15 @@ AddInventory:
 		JSR .incrementCapacity
 		JMP .done
 	+ CPY.b #$50 : BNE + ; Master Sword (Safe)
-                LDX #$02
+                LDX.b #$02
 		JSR .incrementSword
 		JMP .done
 	+ CPY.b #$51 : BNE + ; 5 Bomb Capacity Upgrade
-                LDX #$02
+                LDX.b #$02
 		JSR .maybeIncrementBombs
 		JMP .done
 	+ CPY.b #$52 : BNE + ; 10 Bomb Capacity Upgrade
-                LDX #$02
+                LDX.b #$02
 		JSR .maybeIncrementBombs
 		JMP .done
 	+ CPY.b #$51 : !BLT + ; Items $51 - $54 - Capacity Upgrades
@@ -671,7 +665,7 @@ RTL
 RTS
 
 .setDungeonCompletion
-	LDX $040C : BMI +
+	LDX.w DungeonID : BMI +
 		REP #$20  ; 16 bit
 		LDA.l DungeonMask, X
 		ORA.l DungeonsCompleted : STA.l DungeonsCompleted
@@ -701,10 +695,10 @@ RTL
 ;--------------------------------------------------------------------------------
 HandleBombAbsorbtion:
 	STA.l BombsFiller ; thing we wrote over
-	LDA.w $0303 : BNE + ; skip if we already have some item selected
+	LDA.w CurrentYItem : BNE + ; skip if we already have some item selected
 	LDA.l BombCapacity : BEQ + ; skip if we can't have bombs
-		LDA.b #$04 : STA.w $0202 ; set selected item to bombs
-		LDA.b #$01 : STA.w $0303 ; set selected item to bombs
+		LDA.b #$04 : STA.w ItemCursor ; set selected item to bombs
+		LDA.b #$01 : STA.w CurrentYItem ; set selected item to bombs
 		JSL.l HUD_RebuildLong
 	+
 RTL
@@ -714,7 +708,7 @@ RTL
 ; AddYMarker:
 ;--------------------------------------------------------------------------------
 AddYMarker:
-	LDA.w $0202 : AND.w #$FF ; load item value
+	LDA.w ItemCursor : AND.w #$FF ; load item value
 	CMP.w #$02 : BNE + ; boomerang
 		LDA.l InventoryTracking : AND.w #$C0 : CMP.w #$C0 : BEQ .drawYBubble : BRA .drawNormal
 	+ CMP.w #$01 : BNE + ; bow
@@ -732,7 +726,7 @@ AddYMarker:
 	BRA .drawTile
 
 	.drawJarMarker
-	LDA.w $0207 : AND.w #$0020 : BNE .drawXBubble
+	LDA.w MenuBlink : AND.w #$0020 : BNE .drawXBubble
 
 	.drawYBubble
 	LDA.w #$3D4F
@@ -785,7 +779,7 @@ RTL
 ;--------------------------------------------------------------------------------
 CheckKeys:
 	LDA.l GenericKeys : BEQ + : RTL : +
-	LDA.w $040C : CMP.b #$FF
+	LDA.w DungeonID : CMP.b #$FF
 RTL
 ;--------------------------------------------------------------------------------
 
@@ -856,7 +850,7 @@ RTL
 LoadPowder:
 	JSL.l Sprite_SpawnDynamically ; thing we wrote over
 	%GetPossiblyEncryptedItem(WitchItem, SpriteItemValues)
-	STA.w $0DA0, Y ; Store item type
+	STA.w SpriteAuxTable, Y ; Store item type
 	JSL.l PrepDynamicTile
 RTL
 ;--------------------------------------------------------------------------------
@@ -880,12 +874,12 @@ RTL
 DrawPowder:
 	LDA.w $02DA : BNE .defer ; defer if link is buying a potion
 	LDA.l RedrawFlag : BEQ +
-		LDA.w $0DA0, X ; Retrieve stored item type
+		LDA.w SpriteAuxTable, X ; Retrieve stored item type
 		JSL.l PrepDynamicTile
 		LDA.b #$00 : STA.l RedrawFlag ; reset redraw flag
 		BRA .defer
 	+
-	LDA.w $0DA0, X ; Retrieve stored item type
+	LDA.w SpriteAuxTable, X ; Retrieve stored item type
 	JSL.l DrawDynamicTile
 	.defer
 RTL
@@ -895,17 +889,17 @@ RTL
 ; LoadMushroom:
 ;--------------------------------------------------------------------------------
 LoadMushroom:
-	LDA.b #$00 : STA.w $0DC0, X ; thing we wrote over
+	LDA.b #$00 : STA.w SpriteGFXControl, X ; thing we wrote over
 	.justGFX
 
 	PHA
 
 	LDA.b #$01 : STA.l RedrawFlag
-	LDA.b $5D : CMP.b #$14 : BEQ .skip ; skip if we're mid-mirror
+	LDA.b LinkState : CMP.b #$14 : BEQ .skip ; skip if we're mid-mirror
 
 	LDA.b #$00 : STA.l RedrawFlag
 	%GetPossiblyEncryptedItem(MushroomItem, SpriteItemValues)
-	STA.w $0E80, X ; Store item type
+	STA.w SpriteItemType, X ; Store item type
 	JSL.l PrepDynamicTile
 
 	.skip
@@ -923,7 +917,7 @@ DrawMushroom:
 		BRA .done ; don't draw on the init frame
 
 		.skipInit
-		LDA.w $0E80, X ; Retrieve stored item type
+		LDA.w SpriteItemType, X ; Retrieve stored item type
 		JSL.l DrawDynamicTile
 
 		.done
@@ -935,12 +929,12 @@ RTL
 ; CollectPowder:
 ;--------------------------------------------------------------------------------
 CollectPowder:
-	LDY $0DA0, X ; Retrieve stored item type
+	LDY.w SpriteAuxTable, X ; Retrieve stored item type
 	BNE +
 		; if for any reason the item value is 0 reload it, just in case
 		%GetPossiblyEncryptedItem(WitchItem, SpriteItemValues) : TAY
 	+
-    STZ $02E9 ; item from NPC
+    STZ.w ItemReceiptMethod ; item from NPC
     JSL.l Link_ReceiveItem
 	;JSL.l FullInventoryExternal
 	JSL.l ItemSet_Powder
@@ -981,9 +975,9 @@ RTL
 ; SpawnShovelGamePrizeSFX:
 ;--------------------------------------------------------------------------------
 SpawnShovelGamePrizeSFX:
-	STA.l $7FFE00 ; thing we wrote over
+	STA.l MiniGameTime ; thing we wrote over
 	PHA
-		LDA.b #$1B : STA.w $012F ; play puzzle sound
+		LDA.b #$1B : STA.w SFX3 ; play puzzle sound
 	PLA
 RTL
 ;--------------------------------------------------------------------------------
@@ -995,9 +989,9 @@ SpawnChestGamePrizeSFX:
 	CPX.b #$07 : BNE .normal
 	LDA.b RoomIndex : CMP.b #$06 : BNE .normal
 	.prize
-	LDA.b #$1B : STA.w $012F : RTL ; play puzzle sound
+	LDA.b #$1B : STA.w SFX3 : RTL ; play puzzle sound
 	.normal
-	LDA.b #$0E : STA.w $012F ; play chest sound
+	LDA.b #$0E : STA.w SFX3 ; play chest sound
 RTL
 ;--------------------------------------------------------------------------------
 
@@ -1012,15 +1006,15 @@ SpawnShovelItem:
 		JMP .skip
 	+
 
-	LDA.w $035B : AND.b #$01 : BNE + : JMP .skip : + ; corner dig fix
+	LDA.w TileActDig : AND.b #$01 : BNE + : JMP .skip : + ; corner dig fix
 
 	PHY : PHP
 	PHB : PHK : PLB
 		SEP #$30 ; set 8-bit accumulator and index registers
 
-		LDA.b $1B : BEQ + : JMP .no_drop : + ; skip if indoors
+		LDA.b IndoorsFlag : BEQ + : JMP .no_drop : + ; skip if indoors
 
-                LDA.b $8A : CMP.b #$2A : BEQ .no_drop ; don't drop in the haunted grove
+                LDA.b OverworldIndex : CMP.b #$2A : BEQ .no_drop ; don't drop in the haunted grove
                             CMP.b #$68 : BEQ .no_drop ; don't drop in the digging game area
 
 		JSL GetRandomInt : BIT.b #$03 : BNE .no_drop ; drop with 1/4 chance
@@ -1031,25 +1025,25 @@ SpawnShovelItem:
 
 		;most of this part below is copied from the digging game
 
-		STA.l $7FFE00
+		STA.l MiniGameTime
 		JSL Sprite_SpawnDynamically
 
 		LDX.b #$00
-		LDA.b $2F : CMP.b #$04 : BEQ + : INX : +
+		LDA.b LinkDirection : CMP.b #$04 : BEQ + : INX : +
 
-		LDA.l .x_speeds, X : STA.w $0D50, Y
+		LDA.l .x_speeds, X : STA.w SpriteVelocityX, Y
 
-		LDA.b #$00 : STA.w $0D40, Y
+		LDA.b #$00 : STA.w SpriteVelocityY, Y
 		LDA.b #$18 : STA.w $0F80, Y
 		LDA.b #$FF : STA.w $0B58, Y
 		LDA.b #$30 : STA.w $0F10, Y
 
 		LDA.b $22 : !ADD.l .x_offsets, X
-		                        AND.b #$F0 : STA.w $0D10, Y
-		LDA.b $23 : ADC.b #$00               : STA.w $0D30, Y
+		                        AND.b #$F0 : STA.w SpritePosXLow, Y
+		LDA.b $23 : ADC.b #$00               : STA.w SpritePosXHigh, Y
 
-		LDA.b $20 : !ADD.b #$16 : AND.b #$F0 : STA.w $0D00, Y
-		LDA.b $21 : ADC.b #$00               : STA.w $0D20, Y
+		LDA.b $20 : !ADD.b #$16 : AND.b #$F0 : STA.w SpritePosYLow, Y
+		LDA.b $21 : ADC.b #$00               : STA.w SpritePosYHigh, Y
 
 		LDA.b #$00 : STA.w $0F20, Y
 		TYX

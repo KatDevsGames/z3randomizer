@@ -1637,12 +1637,12 @@ NOP #8
 ;================================================================================
 org $028B8F ; <- 10B8F - Bank02.asm:2236 (LDA $7EF374 : LSR A : BCS BRANCH_BETA)
 JSL CheckHeraBossDefeated : BNE + : NOP
-LDX.b #$F1 : STX.w $012C
+LDX.b #$F1 : STX.w MusicControlRequest
 +
 ;================================================================================
 org $029090 ; <- 11090 - Bank02.asm:3099 (LDA $7EF374 : LSR A : BCS BRANCH_GAMMA)
 JSL CheckHeraBossDefeated : BNE + : NOP
-STX.w $012C ; DON'T MOVE THIS FORWARD OR MADNESS AWAITS
+STX.w MusicControlRequest ; DON'T MOVE THIS FORWARD OR MADNESS AWAITS
 +
 ;================================================================================
 org $029798 ; <- 11798 - Bank02.asm:4287 (CMP $02895C, X : BNE BRANCH_ALPHA)

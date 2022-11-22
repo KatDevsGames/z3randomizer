@@ -16,7 +16,7 @@ RTL
 StatSaveCounter:
 	PHA
 		LDA.l StatsLocked : BNE +
-		LDA.b $10 : CMP.b #$17 : BNE + ; not a proper s&q, link probably died
+		LDA.b GameMode : CMP.b #$17 : BNE + ; not a proper s&q, link probably died
 		LDA.l SaveQuitCounter : INC
 		CMP.b #100 : BEQ + ; decimal 100
 			STA.l SaveQuitCounter
@@ -55,7 +55,7 @@ DungeonExitTransition:
 		JSL Player_HaltDashAttackLong
 		LDA.b #$00 : STA.w $0301 ; stop item dashing
 	+
-	LDA.b #$0F : STA.b $10 ; stop running through the transition
+	LDA.b #$0F : STA.b GameMode ; stop running through the transition
 StatTransitionCounter:
 	PHA : PHP
 		LDA.l StatsLocked : BNE +
@@ -93,7 +93,7 @@ IncrementSmallKeysNoPrimary:
 			JSL AddInventory_incrementKeyLong
 		+
 		JSL.l UpdateKeys
-		LDA.b $1B : BEQ + ; skip room check if outdoors
+		LDA.b IndoorsFlag : BEQ + ; skip room check if outdoors
 			PHP : REP #$20 ; set 16-bit accumulator
 				LDA.w $048E : CMP.w #$0087 : BNE ++ ; hera basement
 					PLP : PHY : LDY.b #$24 : JSL.l FullInventoryExternal
@@ -116,13 +116,13 @@ RTL
 ;--------------------------------------------------------------------------------
 CountChestKey: ; called by neighbor functions
 	PHA : PHX
-		CPY.b #$24 : BEQ +  ; small key for this dungeon - use $040C
+		CPY.b #$24 : BEQ +  ; small key for this dungeon - use DungeonID
 			CPY.b #$A0 : !BLT .end ; Ignore most items
 			CPY.b #$AE : !BGE .end ; Ignore reserved key and generic key
 			TYA : AND.B #$0F : BNE ++ ; If this is an HC key, instead count it as a sewers key
 				INC
-			++ TAX : BRA .count  ; use Key id instead of $040C (Keysanity)
-		+ LDA.w $040C : LSR
+			++ TAX : BRA .count  ; use Key id instead of DungeonID (Keysanity)
+		+ LDA.w DungeonID : LSR
 		BNE +
 			INC ; combines HC and Sewer counts
 		+ TAX
@@ -182,7 +182,7 @@ IncrementChestTurnCounter:
 RTL
 ;--------------------------------------------------------------------------------
 IncrementChestCounter:
-	LDA.b #$01 : STA.w $02E9 ; thing we wrote over
+	LDA.b #$01 : STA.w ItemReceiptMethod ; thing we wrote over
 	PHA
 		LDA.l StatsLocked : BNE +
 			LDA.l ChestsOpened : INC : STA.l ChestsOpened
@@ -289,7 +289,7 @@ IncrementUWMirror:
 	PHA
 		LDA.b #$00 : STA.l $7F5035 ; bandaid patch bug with mirroring away from text
 		LDA.l StatsLocked : BNE +
-		LDA.w $040C : CMP.b #$FF : BEQ + ; skip if we're in a cave or house
+		LDA.w DungeonID : CMP.b #$FF : BEQ + ; skip if we're in a cave or house
 			LDA.l UnderworldMirrors : INC : STA.l UnderworldMirrors
 			JSL.l StatTransitionCounter
 		+
@@ -350,9 +350,9 @@ StatsFinalPrep:
 
 		.done
 	PLP : PLX : PLA
-	LDA.b #$19 : STA.b $10 ; thing we wrote over, load triforce room
-        STZ.b $11
-        STZ.b $B0
+	LDA.b #$19 : STA.b GameMode ; thing we wrote over, load triforce room
+        STZ.b GameSubMode
+        STZ.b SubSubModule
 RTL
 ;--------------------------------------------------------------------------------
 ; Notes:

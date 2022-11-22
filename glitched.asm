@@ -70,10 +70,10 @@ GetAgahnimLightning:
 ;1 = Forbid
 AllowJoypadInput:
 	LDA.l PermitSQFromBosses : BEQ .fullCheck
-	LDA.w $0403 : AND.b #$80 : BEQ .fullCheck
-		LDA.w $0112 : ORA.w $02E4 ; we have heart container, do short check
+	LDA.w ItemsTaken : AND.b #$80 : BEQ .fullCheck
+		LDA.w MedallionFlag : ORA.w CutsceneFlag ; we have heart container, do short check
 RTL
 	.fullCheck
-	LDA.w $0112 : ORA.w $02E4 : ORA.w $0FFC
+	LDA.w MedallionFlag : ORA.w CutsceneFlag : ORA.w NoMenu
 RTL
 ;--------------------------------------------------------------------------------

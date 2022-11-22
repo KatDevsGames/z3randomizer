@@ -1,5 +1,5 @@
 OnPrepFileSelect:
-	LDA.b $11 : CMP.b #$03 : BNE +
+	LDA.b GameSubMode : CMP.b #$03 : BNE +
 		LDA.b #$06 : STA.b $14 ; thing we wrote over
 		RTL
 	+
@@ -33,7 +33,7 @@ OnDungeonExit:
 		JSL.l SQEGFix
 	PLP : PLA
 
-	STA.w $040C : STZ.w $04AC ; thing we wrote over
+	STA.w DungeonID : STZ.w $04AC ; thing we wrote over
 
 	PHA : PHP
 		JSL.l HUD_RebuildLong
@@ -84,15 +84,15 @@ OnFileCreation:
         ; Copy initial SRAM state from ROM to cart SRAM
         ; If the inital SRAM table is move these addresses must be changed
         PHB
-        LDA.w #$03D7                ; \
-        LDX.w #$B000                ;  | Copies from beginning of inital sram table up to file name
-        LDY.w #$0000                ;  | (exclusively)
-        MVN SRAMBank, SRAMTableBank ; /
-                                    ; Skip file name and validity value
-        LDA.w #$010C                ; \
-        LDX.w #$B3E3                ;  | Rando-Specific Assignments & Game Stats block
-        LDY.w #$03E3                ;  |
-        MVN SRAMBank, SRAMTableBank ; /
+        LDA.w #$03D7                  ; \
+        LDX.w #$B000                  ;  | Copies from beginning of inital sram table up to file name
+        LDY.w #$0000                  ;  | (exclusively)
+        MVN !SRAMBank, !SRAMTableBank ; /
+                                      ; Skip file name and validity value
+        LDA.w #$010C                  ; \
+        LDX.w #$B3E3                  ;  | Rando-Specific Assignments & Game Stats block
+        LDY.w #$03E3                  ;  |
+        MVN !SRAMBank, !SRAMTableBank ; /
         PLB
 
         ; resolve instant post-aga if standard
@@ -104,7 +104,7 @@ OnFileCreation:
         REP #$20
 
         ; Set validity value and do some cleanup. Jump to checksum.
-        LDA.w #$55AA : STA.l $7003E1
+        LDA.w #$55AA : STA.l FileValiditySRAM
         STZ.b Scrap00
         STZ.b Scrap01
         LDX.b Scrap00
@@ -167,7 +167,6 @@ RTL
 OnLinkDamaged:
 	JSL.l IncrementDamageTakenCounter_Arb
 	JML.l OHKOTimer
-
 ;--------------------------------------------------------------------------------
 ;OnEnterWater:
 ;       JSL.l UnequipCapeQuiet ; what we wrote over
@@ -178,18 +177,17 @@ OnLinkDamagedFromPit:
 
 	LDA.l AllowAccidentalMajorGlitch
 	BEQ ++
---	LDA.b #$14 : STA.b $11 ; thing we wrote over
+--	LDA.b #$14 : STA.b GameSubMode ; thing we wrote over
 
 	RTL
 
-++	LDA.b $10 : CMP.b #$12 : BNE --
+++	LDA.b GameMode : CMP.b #$12 : BNE --
 
-	STZ.b $11
+	STZ.b GameSubMode
 	RTL
 ;--------------------------------------------------------------------------------
 OnLinkDamagedFromPitOutdoors:
 	JML.l OHKOTimer ; make sure this is last
-
 ;--------------------------------------------------------------------------------
 OnOWTransition:
 	JSL.l FloodGateReset
@@ -204,13 +202,11 @@ OnLoadDuckMap:
 	LDA.l DuckMapFlag
 	BNE +
 		INC : STA.l DuckMapFlag
-		JSL OverworldMap_InitGfx : DEC $0200
-
+		JSL OverworldMap_InitGfx : DEC.w SubModuleInterface
 		RTL
 	+
 	LDA.b #$00 : STA.l DuckMapFlag
 	JML OverworldMap_DarkWorldTilemap
-
 ;--------------------------------------------------------------------------------
 PreItemGet:
 	LDA.b #$01 : STA.l BusyItem ; mark item as busy
@@ -224,16 +220,16 @@ PostItemAnimation:
 	LDA.b #$00 : STA.l BusyItem ; mark item as finished
 
 	LDA.l TextBoxDefer : BEQ +
-		STZ.w $1CF0 : STZ.w $1CF1 ; reset decompression buffer
+		STZ.w TextID : STZ.w TextID+1 ; reset decompression buffer
 		JSL.l Main_ShowTextMessage_Alt
 		LDA.b #$00 : STA.l TextBoxDefer
 	+
 
-	LDA.w $02E9 : CMP.b #$01 : BNE +
-		LDA.b $2F : BEQ +
+	LDA.w ItemReceiptMethod : CMP.b #$01 : BNE +
+		LDA.b LinkDirection : BEQ +
 			JSL.l IncrementChestTurnCounter
 	+
 
-    STZ.w $02E9 : LDA.w $0C5E, X ; thing we wrote over to get here
+    STZ.w ItemReceiptMethod : LDA.w $0C5E, X ; thing we wrote over to get here
 RTL
 ;--------------------------------------------------------------------------------

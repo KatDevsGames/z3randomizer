@@ -1,14 +1,14 @@
 GoalItemGanonCheck:
-	LDA.w $0E20, X : CMP.b #$D6 : BNE .success ; skip if not ganon
+	LDA.w SpriteTypeTable, X : CMP.b #$D6 : BNE .success ; skip if not ganon
 		JSL.l CheckGanonVulnerability
 		BCS .success
 
 		.fail
-		LDA.w $0D80, X : CMP.b #17 : !BLT .success ; decmial 17 because Acmlm's chart is decimal
+		LDA.w SpriteUnknown, X : CMP.b #17 : !BLT .success ; decmial 17 because Acmlm's chart is decimal
 		LDA.b #$00
 RTL
 		.success
-		LDA.b $44 : CMP.b #$80 ; thing we wrote over
+		LDA.b OAMOffsetY : CMP.b #$80 ; thing we wrote over
 RTL
 ;--------------------------------------------------------------------------------
 ;Carry clear = ganon invincible
@@ -143,8 +143,8 @@ CheckAgaForPed:
 	RTL
 
 .force_blue_ball
-	LDA.b #$01 : STA.w $0DA0, Y
-	LDA.b #$20 : STA.w $0DF0, Y
+	LDA.b #$01 : STA.w SpriteAuxTable, Y
+	LDA.b #$20 : STA.w SpriteTimer, Y
 	CLC ; skip the RNG check
 	RTL
 

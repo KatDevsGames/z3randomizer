@@ -58,13 +58,13 @@ endmacro
 ;--------------------------------------------------------------------------------
 macro ServiceRequestChest(type)
 	LDA.l TxStatus : BEQ + : CLC : RTL : + ; return fail if we don't have the lock
-		LDA.b $1B : STA.l TxBuffer+8 ; indoor/outdoor
+		LDA.b IndoorsFlag : STA.l TxBuffer+8 ; indoor/outdoor
 		BEQ +
 			LDA.b RoomIndex : STA.l TxBuffer+9 ; roomid low
 			LDA.b RoomIndex+1 : STA.l TxBuffer+10 ; roomid high
 			BRA ++
 		+
-			LDA.w $040A : STA.l TxBuffer+9 ; area id
+			LDA.b OverworldIndex : STA.l TxBuffer+9 ; area id
 			LDA.b #$00 : STA.l TxBuffer+10 ; protocol defines this as a ushort
 		++
 		LDA.b $76 : !SUB #$58 : STA.l TxBuffer+11 ; object index (type 2 only)
@@ -76,13 +76,13 @@ endmacro
 ;--------------------------------------------------------------------------------
 macro ServiceRequest(type,index)
 	LDA.l TxStatus : BEQ + : CLC : RTL : + ; return fail if we don't have the lock
-		LDA.b $1B : STA.l TxBuffer+8 ; indoor/outdoor
+		LDA.b IndoorsFlag : STA.l TxBuffer+8 ; indoor/outdoor
 		BEQ +
 			LDA.b RoomIndex : STA.l TxBuffer+9 ; roomid low
 			LDA.b RoomIndex+1 : STA.l TxBuffer+10 ; roomid high
 			BRA ++
 		+
-			LDA.w $040A : STA.l TxBuffer+9 ; area id
+			LDA.b OverworldIndex : STA.l TxBuffer+9 ; area id
 			LDA.b #$00 : STA.l TxBuffer+10 ; protocol defines this as a ushort
 		++
 		LDA.b #<index> : STA.l TxBuffer+11 ; object index (type 2 only)
@@ -111,7 +111,7 @@ PollService:
 			BRA .done
 		+ : CMP.b #!SCM_PROMPT : BNE + ; item prompt
 			LDA.l RxBuffer+8 : TAX
-			LDA.l RxBuffer+9 : STA.w $012E, X ; set sound effect
+			LDA.l RxBuffer+9 : STA.w SFX2, X ; set sound effect
 			REP #$30 ; set 16-bit accumulator and index registers
 				LDA.l RxBuffer+10 : TAX
 				LDA.l RxBuffer+12

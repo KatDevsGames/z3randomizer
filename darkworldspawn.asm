@@ -27,8 +27,8 @@ SetDeathWorldChecked:
 	LDA.l InvertedMode : BEQ +
 		JMP SetDeathWorldChecked_Inverted
 	+
-	LDA.b $1B : BEQ .outdoors
-		LDA.w $040C : CMP.b #$FF : BNE .dungeon
+	LDA.b IndoorsFlag : BEQ .outdoors
+		LDA.w DungeonID : CMP.b #$FF : BNE .dungeon
 		LDA.b RoomIndex : ORA.b RoomIndex+1 : BNE ++
 			LDA.l GanonPyramidRespawn : BNE .pyramid ; if flag is set, force respawn at pyramid on death to ganon
 	    ++
@@ -63,8 +63,8 @@ DoWorldFix_Inverted:
 RTL
 ;--------------------------------------------------------------------------------
 SetDeathWorldChecked_Inverted:
-	LDA.b $1B : BEQ .outdoors
-		LDA.w $040C : CMP.b #$FF : BNE .dungeon
+	LDA.b IndoorsFlag : BEQ .outdoors
+		LDA.w DungeonID : CMP.b #$FF : BNE .dungeon
 		LDA.b RoomIndex : ORA.b RoomIndex+1 : BNE ++
 			LDA.l GanonPyramidRespawn : BNE .castle ; if flag is set, force respawn at pyramid on death to ganon
 		++
@@ -86,7 +86,7 @@ RTL
 ;--------------------------------------------------------------------------------
 FakeWorldFix:
 	LDA.l FixFakeWorld : BEQ +
-		LDA.b $8A : AND.b #$40 : STA.l CurrentWorld
+		LDA.b OverworldIndex : AND.b #$40 : STA.l CurrentWorld
 	+
 RTL
 ;--------------------------------------------------------------------------------

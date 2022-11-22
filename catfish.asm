@@ -6,7 +6,7 @@ LoadCatfishItemGFX:
         JML PrepDynamicTile
 ;--------------------------------------------------------------------------------
 DrawThrownItem:
-        LDA.b $8A : CMP.b #$81 : BNE .catfish
+        LDA.b OverworldIndex : CMP.b #$81 : BNE .catfish
                 .zora
                 LDA.b #$01 : STA.l RedrawFlag
                 LDA.l $1DE1C3 ; location randomizer writes zora item to
@@ -18,7 +18,7 @@ DrawThrownItem:
 ;--------------------------------------------------------------------------------
 MarkThrownItem:
 	JSL Link_ReceiveItem ; thing we wrote over
-	LDA.b $8A : CMP.b #$81 : BNE .catfish
+	LDA.b OverworldIndex : CMP.b #$81 : BNE .catfish
 	        .zora
                 JML ItemSet_ZoraKing
 	        .catfish

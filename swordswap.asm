@@ -4,7 +4,7 @@
 ;$03348E: smith sword check (to see if uprade-able)
 ;================================================================================
 LoadSwordForDamage:
-	LDA.w $0E20, X : CMP.b #$88 : BNE .notMoth
+	LDA.w SpriteTypeTable, X : CMP.b #$88 : BNE .notMoth
 		JSR.w LoadModifiedSwordLevel ; load normal sword value
 		CMP.b #$04 : !BLT + : DEC : + ; if it's gold sword, change it to tempered
 		RTL
@@ -66,17 +66,17 @@ RTL
 ; $7E0348 - Ice Value
 LoadModifiedIceFloorValue_a11:
 	LDA.b RoomIndex : CMP.b #$91 : BEQ + : CMP.b #$92 : BEQ + : CMP.b #$93 : BEQ + ; mire basement currently broken - not sure why
-	LDA.b $5D : CMP.b #$01 : BEQ + : CMP.b #$17 : BEQ + : CMP.b #$1C : BEQ +
-	LDA.b $5E : CMP.b #$02 : BEQ +  
-	LDA.b $5B : BNE +  
+	LDA.b LinkState : CMP.b #$01 : BEQ + : CMP.b #$17 : BEQ + : CMP.b #$1C : BEQ +
+	LDA.b LinkSpeed : CMP.b #$02 : BEQ +  
+	LDA.b LinkSlipping : BNE +  
 		LDA.w $0348 : ORA.l IceModifier : AND.b #$11 : RTL  
 	+ : LDA.w $0348 : AND.b #$11  
 RTL  
 LoadModifiedIceFloorValue_a01:  
 	LDA.b RoomIndex : CMP.b #$91 : BEQ + : CMP.b #$92 : BEQ + : CMP.b #$93 : BEQ + ; mire basement currently broken - not sure why
-	LDA.b $5D : CMP.b #$01 : BEQ + : CMP.b #$17 : BEQ + : CMP.b #$1C : BEQ +
-	LDA.b $5E : CMP.b #$02 : BEQ +
-	LDA.b $5B : BNE +
+	LDA.b LinkState : CMP.b #$01 : BEQ + : CMP.b #$17 : BEQ + : CMP.b #$1C : BEQ +
+	LDA.b LinkSpeed : CMP.b #$02 : BEQ +
+	LDA.b LinkSlipping : BNE +
 		LDA.w $0348 : ORA.l IceModifier : AND.b #$01 : RTL
 	+ : LDA.w $0348 : AND.b #$01
 RTL
@@ -98,10 +98,10 @@ RTL
 ;================================================================================
 CheckGanonHammerDamage:
 	LDA.l HammerableGanon : BEQ +
-	LDA.w $0E20, X : CMP.b #$D8 ; original behavior except ganon
+	LDA.w SpriteTypeTable, X : CMP.b #$D8 ; original behavior except ganon
 RTL
 	+
-	LDA.w $0E20, X : CMP.b #$D6 ; original behavior
+	LDA.w SpriteTypeTable, X : CMP.b #$D6 ; original behavior
 RTL
 ;================================================================================
 GetSmithSword:
@@ -122,7 +122,7 @@ GetSmithSword:
 
 	.buy
 		LDA.l SmithItem : TAY
-		STZ.w $02E9 ; Item from NPC
+		STZ.w ItemReceiptMethod ; Item from NPC
 		PHX : JSL Link_ReceiveItem : PLX
 
 		REP #$20 : LDA.l CurrentRupees : !SUB.w #$000A : STA.l CurrentRupees : SEP #$20 ; Take 10 rupees
@@ -133,7 +133,7 @@ GetSmithSword:
 ;================================================================================
 CheckMedallionSword:
 	LDA.l AllowSwordlessMedallionUse : BEQ .check_sword
-	CMP #$01 : BEQ .check_pad
+	CMP.b #$01 : BEQ .check_pad
 		LDA.b #$02 ; Pretend we have master sword
 		RTL
 	.check_sword
@@ -141,31 +141,31 @@ CheckMedallionSword:
 		RTL
 	.check_pad
 		PHB : PHX : PHY
-		LDA.b $1B : BEQ .outdoors
+		LDA.b IndoorsFlag : BEQ .outdoors
 		.indoors
 			REP #$20 ; set 16-bit accumulator
 			LDA.b RoomIndex ; load room ID
 			CMP.w #$000E : BNE + ; freezor1
-				LDA.b $22 : AND.w #$01FF ; check x-coord
+				LDA.b LinkPosX : AND.w #$01FF ; check x-coord
 					CMP.w #368-8 : !BLT .normal
 					CMP.w #368+32-8 : !BGE .normal
-				LDA.b $20 : AND.w #$01FF ; check y-coord
+				LDA.b LinkPosY : AND.w #$01FF ; check y-coord
 					CMP.w #400-22 : !BLT .normal
 					CMP.w #400+32-22 : !BGE .normal
 				JMP .permit
 			+ : CMP.w #$007E : BNE + ; freezor2
-				LDA.b $22 : AND.w #$01FF ; check x-coord
+				LDA.b LinkPosX : AND.w #$01FF ; check x-coord
 					CMP.w #112-8 : !BLT .normal
 					CMP.w #112+32-8 : !BGE .normal
-				LDA.b $20 : AND.w #$01FF ; check y-coord
+				LDA.b LinkPosY : AND.w #$01FF ; check y-coord
 					CMP.w #400-22 : !BLT .normal
 					CMP.w #400+32-22 : !BGE .normal
 				JMP .permit
 			+ : CMP.w #$00DE : BNE + ; kholdstare
-				LDA.b $22 : AND.w #$01FF ; check x-coord
+				LDA.b LinkPosX : AND.w #$01FF ; check x-coord
 					CMP.w #368-8 : !BLT .normal
 					CMP.w #368+32-8 : !BGE .normal
-				LDA.b $20 : AND.w #$01FF ; check y-coord
+				LDA.b LinkPosY : AND.w #$01FF ; check y-coord
 					CMP.w #144-22 : !BLT .normal
 					CMP.w #144+32-22 : !BGE .normal
 				BRA .permit
@@ -173,14 +173,14 @@ CheckMedallionSword:
 			SEP #$20 ; set 8-bit accumulator
 			BRA .done
 		.outdoors
-			LDA.b $8A : CMP.b #$70 : BNE +
-				LDA.l MireRequiredMedallion : TAX : LDA.l .medallion_type, X : CMP.w $0303 : BNE .done
+			LDA.b OverworldIndex : CMP.b #$70 : BNE +
+				LDA.l MireRequiredMedallion : TAX : LDA.l .medallion_type, X : CMP.w CurrentYItem : BNE .done
 				LDA.l OverworldEventDataWRAM+$70 : AND.b #$20 : BNE .done
 				LDA.b #$08 : PHA : PLB ; set data bank to $08
 				LDY.b #$02 : JSL.l Ancilla_CheckIfEntranceTriggered : BCS .permit ; misery mire
 				BRA .done
 			+ : CMP.b #$47 : BNE +
-				LDA.l TRockRequiredMedallion : TAX : LDA.l .medallion_type, X : CMP.w $0303 : BNE .done
+				LDA.l TRockRequiredMedallion : TAX : LDA.l .medallion_type, X : CMP.w CurrentYItem : BNE .done
 				LDA.l OverworldEventDataWRAM+$47 : AND.b #$20 : BNE .done
 				LDA.b #$08 : PHA : PLB ; set data bank to $08
 				LDY.b #$03 : JSL.l Ancilla_CheckIfEntranceTriggered : BCS .permit ; turtle rock

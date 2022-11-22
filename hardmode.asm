@@ -16,7 +16,7 @@ CalculateSpikeFloorDamage:
 RTL
 ;--------------------------------------------------------------------------------
 CalculateByrnaUsage:
-	LDA.b $1B : BEQ ++
+	LDA.b IndoorsFlag : BEQ ++
 	REP #$20 ; set 16-bit accumulator
 	LDA.b RoomIndex ; these are all decimal because i got them that way
 	CMP.w #95 : BEQ + ; Ice Palace Spike Room
@@ -36,7 +36,7 @@ CalculateByrnaUsage:
 	JML IncrementMagicUseCounterByrna
 ;--------------------------------------------------------------------------------
 CalculateCapeUsage:
-	LDA.b $1B : BEQ ++
+	LDA.b IndoorsFlag : BEQ ++
 	REP #$20 ; set 16-bit accumulator
 	LDA.b RoomIndex ; these are all decimal because i got them that way
 	CMP.w #95 : BEQ + ; Ice Palace Spike Room
@@ -54,7 +54,7 @@ CalculateCapeUsage:
 	JML IncrementMagicUseCounterOne
 ;--------------------------------------------------------------------------------
 ActivateInvulnerabilityOrDont:
-	LDA.b $1B : BEQ .nowhere_special
+	LDA.b IndoorsFlag : BEQ .nowhere_special
 	REP #$20 ; set 16-bit accumulator
 	LDA.b RoomIndex ; these are all decimal because i got them that way
 	CMP.w #95 : BEQ .somewhere_cool ; Ice Palace Spike Room

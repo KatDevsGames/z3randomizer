@@ -61,7 +61,7 @@ ItemCheck_TreeKid3:
 	BRA .done
 	LDA.b #$05
 	.normal
-	LDA.w $0D80, X
+	LDA.w SpriteUnknown, X
 	.done
 RTL
 
@@ -133,13 +133,13 @@ RTL
 ItemSet_Mushroom:
 	PHA
 		LDA.l NpcFlags+1 : ORA.b #$10 : STA.l NpcFlags+1
-		LDY.w $0E80, X ; Retrieve stored item type
+		LDY.w SpriteItemType, X ; Retrieve stored item type
 		BNE +
 			; if for any reason the item value is 0 reload it, just in case
 			%GetPossiblyEncryptedItem(MushroomItem, SpriteItemValues) : TAY
 		+
 	PLA
-	STZ.w $02E9 ; thing we wrote over - the mushroom is an npc for item purposes apparently
+	STZ.w ItemReceiptMethod ; thing we wrote over - the mushroom is an npc for item purposes apparently
 RTL
 
 ItemSet_Powder:
@@ -151,7 +151,7 @@ RTL
 ; Randomize 300 Rupee NPC
 ;--------------------------------------------------------------------------------
 Set300RupeeNPCItem:
-	INC.w $0D80, X ; thing we wrote over
+	INC.w SpriteUnknown, X ; thing we wrote over
 
 	PHA : PHP
 	REP #$20 ; set 16-bit accumulator

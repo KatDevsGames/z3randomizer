@@ -38,7 +38,7 @@ protectff:
 	; Remove dark world bit
 	; in game table that converts coordinates to actual screen ID
 	; special case for other areas
-	LDA.b $8A
+	LDA.b OverworldIndex
 	BMI .special_overworld
 
 	AND.b #$3F
@@ -47,17 +47,17 @@ protectff:
 
 .protect
 	LDA.b #$15
-	STA.b $5D
+	STA.b LinkState
 
 	STZ.b $2E
 	STZ.b $67
 
 	LDA.b #$02
-	STA.b $2F
+	STA.b LinkDirection
 
-	STZ.w $0112
-	STZ.w $02E4
-	STZ.w $0FFC
+	STZ.w MedallionFlag
+	STZ.w CutsceneFlag
+	STZ.w NoMenu
 
 ++	RTL
 

@@ -3,19 +3,19 @@
 ;--------------------------------------------------------------------------------
 LoadLibraryItemGFX:
         %GetPossiblyEncryptedItem(LibraryItem, SpriteItemValues)
-        STA.w $0E80, X ; Store item type
+        STA.w SpriteItemType, X ; Store item type
         JSL.l PrepDynamicTile
 RTL
 ;--------------------------------------------------------------------------------
 DrawLibraryItemGFX:
         PHA
-        LDA.w $0E80, X ; Retrieve stored item type
+        LDA.w SpriteItemType, X ; Retrieve stored item type
         JSL.l DrawDynamicTile
         PLA
 RTL
 ;--------------------------------------------------------------------------------
 SetLibraryItem:
-        LDY.w $0E80, X ; Retrieve stored item type
+        LDY.w SpriteItemType, X ; Retrieve stored item type
         JSL.l ItemSet_Library ; contains thing we wrote over
 RTL
 ;--------------------------------------------------------------------------------

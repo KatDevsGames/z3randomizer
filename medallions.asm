@@ -3,7 +3,7 @@
 ;--------------------------------------------------------------------------------
 TryOpenMire:
     ; Checks if we're in the Swamp of Evil.
-    LDA.b $8A : CMP.b #$70 : BNE .untriggered
+    LDA.b OverworldIndex : CMP.b #$70 : BNE .untriggered
     
     ; Checks whether the Misery Mire dungeon is already revealed.
     LDA.l OverworldEventDataWRAM+$70 : AND.b #$20 : BNE .untriggered
@@ -12,17 +12,17 @@ TryOpenMire:
     LDY.b #$02 : JSL.l Ancilla_CheckIfEntranceTriggered : BCC .untriggered
     
     ; Do the 3rd animation for opening entrances
-    LDA.b #$03 : STA.w $04C6
+    LDA.b #$03 : STA.w OWEntranceCutscene
     
-    STZ.b $B0 ; reset the sub-submodule index
-    STZ.b $C8 ; reset this other index.
+    STZ.b SubSubModule ; reset the sub-submodule index
+    STZ.b ScrapBufferBD+$0B ; reset this other index.
 	
 	.untriggered
 RTL
 ;--------------------------------------------------------------------------------
 TryOpenTRock:
     ; Checks if we're at Turtle Rock.
-    LDA.b $8A : CMP.b #$47 : BNE .untriggered
+    LDA.b OverworldIndex : CMP.b #$47 : BNE .untriggered
     
     ; Checks whether the Turtle Rock dungeon is already revealed.
     LDA.l OverworldEventDataWRAM+$47 : AND.b #$20 : BNE .untriggered
@@ -31,17 +31,17 @@ TryOpenTRock:
     LDY.b #$03 : JSL.l Ancilla_CheckIfEntranceTriggered : BCC .untriggered
     
 	; Do the 4rd animation for opening entrances
-    LDA.b #$04 : STA.w $04C6
+    LDA.b #$04 : STA.w OWEntranceCutscene
     
-    STZ.b $B0 ; reset the sub-submodule index
-    STZ.b $C8 ; reset this other index.
+    STZ.b SubSubModule ; reset the sub-submodule index
+    STZ.b ScrapBufferBD+$0B ; reset this other index.
 	
 	.untriggered
 RTL
 ;--------------------------------------------------------------------------------
 MedallionTrigger_Bombos:
     STZ.b $50 ; stuff we wrote over
-    STZ.w $0FC1
+    STZ.w FreezeSprites
 	
 	PHA
 	LDA.l MireRequiredMedallion : BNE +

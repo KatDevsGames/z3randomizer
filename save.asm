@@ -14,10 +14,10 @@ WriteSaveChecksumAndBackup:
         STA.l InverseChecksumSRAM
 
         PHB
-        LDA.w #$14FF                ; \
-        LDX.w #CartridgeSRAM&$FFFF  ;  | Copies $1500 bytes from beginning of cart SRAM to 
-        LDY.w #SaveBackupSRAM&$FFFF ;  | $704000
-        MVN SRAMBank, SRAMBank      ; /
+        LDA.w #$14FF                  ; \
+        LDX.w #CartridgeSRAM&$FFFF    ;  | Copies $1500 bytes from beginning of cart SRAM to 
+        LDY.w #SaveBackupSRAM&$FFFF   ;  | $704000
+        MVN !SRAMBank, !SRAMBank      ; /
         PLB
 
 RTL
@@ -51,10 +51,10 @@ ValidateSRAM:
                         TDC : STA.l FileValiditySRAM ; Delete save by way of zeroing validity marker
                         BRA .goodchecksum : +
                 PHB
-                LDA.w #$14FF                ; \
-                LDX.w #SaveBackupSRAM&$FFFF ;  | Copies $1500 bytes from backup on cart SRAM to 
-                LDY.w #CartridgeSRAM&$FFFF  ;  | main save location at $700000
-                MVN SRAMBank, SRAMBank      ; /
+                LDA.w #$14FF                  ; \
+                LDX.w #SaveBackupSRAM&$FFFF   ;  | Copies $1500 bytes from backup on cart SRAM to 
+                LDY.w #CartridgeSRAM&$FFFF    ;  | main save location at $700000
+                MVN !SRAMBank, !SRAMBank      ; /
                 PLB
 
         .goodchecksum

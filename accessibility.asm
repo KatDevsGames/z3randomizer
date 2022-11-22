@@ -43,7 +43,7 @@ WhitenLoopReal:
             LDA.l $7EC3F0 : JSL Filter_Majorly_Whiten_Color : STA.l $7EC5F0
             LDA.l $7EC3F2 : JSL Filter_Majorly_Whiten_Color : STA.l $7EC5F2
             LDA.l $7EC3F4 : JSL Filter_Majorly_Whiten_Color : STA.l $7EC5F4
-            LDA.b $10 : CMP.w #$0007 : BNE +
+            LDA.b GameMode : CMP.w #$0007 : BNE +
             LDA.w $048E
             CMP.w #$003C : BEQ ++
             CMP.w #$009D : BEQ ++
@@ -89,7 +89,7 @@ WhitenLoopDummy:
             LDA.l $7EC3F0 : JSL Filter_Majorly_Whiten_Color : LDA.l $7EC5F0
             LDA.l $7EC3F2 : JSL Filter_Majorly_Whiten_Color : LDA.l $7EC5F2
             LDA.l $7EC3F4 : JSL Filter_Majorly_Whiten_Color : LDA.l $7EC5F4
-            LDA.b $10 : CMP.w #$0007 : BNE + ; only light invisifloor if we're in dungeon submodule
+            LDA.b GameMode : CMP.w #$0007 : BNE + ; only light invisifloor if we're in dungeon submodule
             LDA.w $048E
             CMP.w #$003C : BEQ ++ ; hookshot cave
             CMP.w #$009D : BEQ ++ ; gt right

@@ -1,19 +1,19 @@
 Overworld_LoadNewTiles:
 {
     ; add sign to EDM for OWG people to read
-    LDA.w $040A : AND.w #$00FF : CMP.w #$0005 : BNE +
+    LDA.b OverworldIndex : AND.w #$00FF : CMP.w #$0005 : BNE +
         LDA.w #$0101 : STA.l $7E2E18 ; #$0101 is the sign tile16 id, $7E2D98 is the position of the tile16 on map
     +
 
     ; GT sign
     LDA.l InvertedMode : AND.w #$00FF : BNE +
-    LDA.w $040A : AND.w #$00FF : CMP.w #$0043 : BNE +
+    LDA.b OverworldIndex : AND.w #$00FF : CMP.w #$0043 : BNE +
         LDA.w #$0101 : STA.l $7E2550
     +
 
     ; Pyramid sign
     LDA.l InvertedMode : AND.w #$00FF : BNE +
-    LDA.w $040A : AND.w #$00FF : CMP.w #$005B : BNE +
+    LDA.b OverworldIndex : AND.w #$00FF : CMP.w #$005B : BNE +
         LDA.w #$0101 : STA.w $7E27B6 ; Moved sign near statue
         LDA.w #$05C2 : STA.w $7E27B4 ; added a pyramid peg on the left of the sign
     +
@@ -26,7 +26,7 @@ Overworld_LoadNewTiles:
     LDA.b #$7E : PHA : PLB
     REP #$30
     ; Use it as an index into a jump table.
-    LDA.b $8A : CMP.w #$0080 : !BGE .noData
+    LDA.b OverworldIndex : CMP.w #$0080 : !BGE .noData
     ASL A : TAX
 
     JSR (Overworld_NewTilesTable, X)
