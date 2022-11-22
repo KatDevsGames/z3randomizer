@@ -103,7 +103,7 @@ incsrc icepalacegraphics.asm
 warnpc $A18000
 
 org $1C8000 ; text tables for translation
-incbin i18n_en.bin
+incbin "data/i18n_en.bin"
 warnpc $1CF356
 
 org $A18000 ; static mapping area
@@ -178,84 +178,84 @@ incsrc spc.asm
 
 org $318000 ; bank #$31
 GFX_Mire_Bombos:
-incbin 99ff1_bombos.gfx
+incbin "data/99ff1_bombos.gfx"
 warnpc $318800
 
 org $318800
 GFX_Mire_Quake:
-incbin 99ff1_quake.gfx
+incbin "data/99ff1_quake.gfx"
 warnpc $319000
 
 org $319000
 GFX_TRock_Bombos:
-incbin a6fc4_bombos.gfx
+incbin "data/a6fc4_bombos.gfx"
 warnpc $319800
 
 org $319800
 GFX_TRock_Ether:
-incbin a6fc4_ether.gfx
+incbin "data/a6fc4_ether.gfx"
 warnpc $31A000
 
 org $31A000
 GFX_HUD_Items:
-incbin c2807_v4.gfx
+incbin "data/c2807_v4.gfx"
 warnpc $31A800
 
 org $31A800
 GFX_New_Items:
-incbin newitems.gfx
+incbin "data/newitems.gfx"
 ;incbin eventitems.gfx ; *EVENT*
 warnpc $31B000
 
 org $31B000
 GFX_HUD_Main:
-incbin c2e3e.gfx
+incbin "data/c2e3e.gfx"
 warnpc $31B800
 
 org $31C000
 IcePalaceFloorGfx:
-incbin ice_palace_floor.bin
+incbin "data/ice_palace_floor.bin"
 warnpc $31C801
 
 org $31C800
 Damage_Table:
-incbin damage_table.bin
+incbin "data/damage_table.bin"
 warnpc $31D001
 
 org $31D000
 FileSelectNewGraphics:
-incbin fileselect.chr.gfx
+incbin "data/fileselect.chr.gfx"
 warnpc $31E001
 
 org $31E000
 InvertedCastleHole: ;address used by front end. DO NOT MOVE!
-incbin sheet73.gfx
+incbin "data/sheet73.gfx"
 warnpc $31E501
 
 org $338000
 GFX_HUD_Palette:
-incbin hudpalette.pal
+incbin "data/hudpalette.pal"
 warnpc $338041
 
 org $339000
-incbin sheet178.gfx
+incbin "data/sheet178.gfx"
 warnpc $339600
 
 org $339600
 BossMapIconGFX:
-incbin bossicons.4bpp
+incbin "data/bossicons.4bpp"
 
 if !FEATURE_NEW_TEXT
     org $339C00
     NewFont:
-    incbin newfont.bin
+    incbin "data/newfont.bin"
     NewFontInverted:
-    incbin newfont_inverted.bin
+    incbin "data/newfont_inverted.bin"
 
     org $0CD7DF
-    incbin text_unscramble1.bin
+    incbin "data/text_unscramble1.bin"
     org $0CE4D5
-    incbin text_unscramble2.bin
+    incbin "data/text_unscramble2.bin"
 endif
 
 org $328000
@@ -265,7 +265,7 @@ incsrc itemtext.asm
 incsrc externalhooks.asm
 ;================================================================================
 org $119100 ; PC 0x89100
-incbin map_icons.gfx
+incbin "data/map_icons.gfx"
 warnpc $119401
 ;================================================================================
 org $AF8000 ; PC 0x178000

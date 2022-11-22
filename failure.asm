@@ -1,6 +1,6 @@
 pushtable
 
-table "bsodencode.txt"
+table "data/bsodencode.txt"
 
 ; Uncomment this to force a crash to test message
 ; pushpc : org $008132 : db 0 : pullpc
@@ -545,10 +545,10 @@ ConfigurePPUForFailureReport:
 ;===================================================================================================
 
 BSODHex:
-incbin "bsodhex.2bpp"
+incbin "data/bsodhex.2bpp"
 
 BSODFontGFX:
-incbin "bsodfont.1bpp"
+incbin "data/bsodfont.1bpp"
 
 BSODCharWidths:
 	; [space]
