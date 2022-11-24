@@ -23,7 +23,7 @@ LockAgahnimDoors:
 		LDA.l InvertedMode : AND.w #$00FF : BEQ .unlock
 
 		LDA.l OverworldEventDataWRAM+$43 : AND.w #$0020 : BNE .unlock ; Check if GT overlay is already on or not
-		LDA.w $0308 : AND.w #$0080 : BEQ ++ ;If we are holding an item
+		LDA.w AButtonAct : AND.w #$0080 : BEQ ++ ;If we are holding an item
 
 	.locked
 			LDA.w #$0001 : RTL ;Keep the door locked
@@ -47,15 +47,15 @@ FlagAgahnimDoor:
 	LDA.l OverworldEventDataWRAM+$43 : ORA.b #$20 : STA.l OverworldEventDataWRAM+$43 ; activate GT overlay
 
 .vanilla
-	LDA.b #$28 : STA.b $72
+	LDA.b #$28 : STA.b ScrapBuffer72
 	RTL
 
 
 ;--------------------------------------------------------------------------------
 LockAgahnimDoorsCore:
-	LDA.b $22 : CMP.w #1992 : !BLT + ; door too far left, skip
+	LDA.b LinkPosX : CMP.w #1992 : !BLT + ; door too far left, skip
 			  CMP.w #2088 : !BGE + ; door too rat right, skip
-	LDA.b $20 : CMP.w #1720 : !BGE + ; door too low, skip
+	LDA.b LinkPosY : CMP.w #1720 : !BGE + ; door too low, skip
 		LDA.w #$0001
 RTS
 	+
@@ -91,14 +91,14 @@ AllowStartFromSingleEntranceCave:
 		ASL #2 : !ADD Scrap00 : ASL #2 ; mult by 20
 		TAX
 
-		LDA.w #$0016 : STA.l $7EC142 ; Cache the main screen designation
-		LDA.l StartingAreaExitTable+$05, X : STA.l $7EC144 ; Cache BG1 V scroll
-		LDA.l StartingAreaExitTable+$07, X : STA.l $7EC146 ; Cache BG1 H scroll
-		LDA.l StartingAreaExitTable+$09, X : !ADD.w #$0010 : STA.l $7EC148 ; Cache Link's Y coordinate
-		LDA.l StartingAreaExitTable+$0B, X : STA.l $7EC14A ; Cache Link's X coordinate
-		LDA.l StartingAreaExitTable+$0D, X : STA.l $7EC150 ; Cache Camera Y coord lower bound.
-		LDA.l StartingAreaExitTable+$0F, X : STA.l $7EC152 ; Cache Camera X coord lower bound.
-		LDA.l StartingAreaExitTable+$03, X : STA.l $7EC14E ; Cache Link VRAM Location
+		LDA.w #$0016 : STA.l EN_MAINDESQ ; Cache the main screen designation
+		LDA.l StartingAreaExitTable+$05, X : STA.l EN_BG2VERT ; Cache BG1 V scroll
+		LDA.l StartingAreaExitTable+$07, X : STA.l EN_BG2HORZ ; Cache BG1 H scroll
+		LDA.l StartingAreaExitTable+$09, X : !ADD.w #$0010 : STA.l EN_POSY ; Cache Link's Y coordinate
+		LDA.l StartingAreaExitTable+$0B, X : STA.l EN_POSX ; Cache Link's X coordinate
+		LDA.l StartingAreaExitTable+$0D, X : STA.l EN_SCROLLATN ; Cache Camera Y coord lower bound.
+		LDA.l StartingAreaExitTable+$0F, X : STA.l EN_SCROLLATW ; Cache Camera X coord lower bound.
+		LDA.l StartingAreaExitTable+$03, X : STA.l EN_OWTMAPI ; Cache Link VRAM Location
 
 		; Handle the 2 "unknown" bytes, which control what area of the backgound
 		; relative to the camera? gets loaded with new tile data as the player moves around
@@ -106,24 +106,24 @@ AllowStartFromSingleEntranceCave:
 
 		LDA.l StartingAreaExitTable+$11, X : AND.w #$00FF
 		BIT.w #$0080 : BEQ + : ORA.w #$FF00 : + ; Sign extend
-		STA.l $7EC16A
+		STA.l EN_SCRMODYA
 
 		LDA.l StartingAreaExitTable+$12, X  : AND.w #$00FF
 		BIT.w #$0080 : BEQ + : ORA.w #$FF00 : + ; Sign extend
-		STA.l $7EC16E
+		STA.l EN_SCRMODXA
 
-		LDA.w #$0000 : !SUB.l $7EC16A : STA.l $7EC16C
-		LDA.w #$0000 : !SUB.l $7EC16E : STA.l $7EC170
+		LDA.w #$0000 : !SUB.l EN_SCRMODYA : STA.l EN_SCRMODYB
+		LDA.w #$0000 : !SUB.l EN_SCRMODXA : STA.l EN_SCRMODXB
 
 		LDA.l StartingAreaExitTable+$02, X : AND.w #$00FF
-		STA.l $7EC14C ; Cache the overworld area number
-		STA.l $7EC140 ; Cache the aux overworld area number
+		STA.l EN_OWSCR ; Cache the overworld area number
+		STA.l EN_OWSCR2 ; Cache the aux overworld area number
 
-		STZ.w $0698 ;zero out door overlays in case starting overworld door is not set
-		STZ.w $0699 ;zero out door overlays in case starting overworld door is not set
+		STZ.w TileMapTile32 ;zero out door overlays in case starting overworld door is not set
+		STZ.w TileMapTile32+1 ;zero out door overlays in case starting overworld door is not set
 
 		SEP #$20 ; set 8-bit accumulator
-		LDA.l $7EF3C8 : TAX
+		LDA.l StartingEntrance : TAX
 		LDA.l StartingAreaOverworldDoor, X : STA.l PreviousOverworldDoor ;Load overworld door
 		REP #$20 ; reset 16-bit accumulator
                 JSL.l CacheDoorFrameData
@@ -134,7 +134,7 @@ RTL
 ;--------------------------------------------------------------------------------
 AllowStartFromExit:
 
-	LDX.w $1CE8
+	LDX.w MessageCursor
 	LDA.l ShouldStartatExit, X : BNE .doStart
 
 	LDA.l StartingEntrance ; what we wrote over
@@ -153,10 +153,9 @@ JML.l AllowStartFromExitReturn
 
 	STZ.b GameSubMode
 	STZ.b SubSubModule
+	STZ.w DeathReloadFlag
+	STZ.w RespawnFlag
 
-	STZ.w $010A
-
-	STZ.w $04AA
 	JSL Equipment_SearchForEquippedItemLong
 	JSL HUD_RebuildLong2
 	JSL Equipment_UpdateEquippedItemLong
@@ -188,14 +187,14 @@ CheckHole:
 	.matchedHoleExtra
 		SEP #$30
 		TXA : LSR A : TAX
-		LDA.l ExtraHole_Entrance, X : STA.w $010E : STZ.w $010F
+		LDA.l ExtraHole_Entrance, X : STA.w EntranceIndex : STZ.w EntranceIndex+1
 JML Overworld_Hole_End
 ;--------------------------------------------------------------------------------
 PreventEnterOnBonk:
 	STA.b Scrap00 ; part of what we wrote over
 	LDA.l InvertedMode : AND.w #$00FF : BEQ .done
 	LDA.b LinkState : AND.w #$00FF : CMP.w #$0014 : BNE .done ;in mirror mode?
-	LDA.b OverworldIndex : AND.w #$0040 : CMP.b $7B : BEQ .done ; Are we bonking, or doing the superbunny glitch?
+	LDA.b OverworldIndex : AND.w #$0040 : CMP.b WorldCache : BEQ .done ; Are we bonking, or doing the superbunny glitch?
 
 		; If in inverted, are in mirror mode, and are bonking then do not enter
 		JML.l PreventEnterOnBonk_BRANCH_IX

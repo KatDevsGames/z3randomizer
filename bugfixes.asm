@@ -23,7 +23,7 @@ RTL
 ;1 = Don't Reset Music
 MSMusicReset:
 	LDA.b OverworldIndex : CMP.b #$80 : BNE +
-		LDA.b $23
+		LDA.b LinkPosX+1
 	+
 RTL
 ;--------------------------------------------------------------------------------
@@ -120,27 +120,27 @@ RTS
 ; Fix for SQ jumping causing accidental Exploration Glitch
 SQEGFix:
 	LDA.l Bugfix_PodEG : BEQ ++
-	STZ.w $047A ; disarm exploration glitch
+	STZ.w LayerAdjustment ; disarm exploration glitch
 ++	RTL
 
 ;--------------------------------------------------------------------------------
 ; Fix crystal not spawning when using somaria vs boss
 TryToSpawnCrystalUntilSuccess:
-	STX.w $02D8 ; what we overwrote
+	STX.w ItemReceiptID ; what we overwrote
 	JSL AddAncillaLong : BCS .failed ; a clear carry flag indicates success
 .spawned
-	STZ.b $AE ; the "trying to spawn crystal" flag
-	STZ.b $AF ; the "trying to spawn pendant" flag
+	STZ.b RoomTag ; the "trying to spawn crystal" flag
+	STZ.b RoomTag+1 ; the "trying to spawn pendant" flag
 .failed
 RTL
 
 ;--------------------------------------------------------------------------------
 ; Fix crystal not spawning when using somaria vs boss
 WallmasterCameraFix:
-	STZ.b $A7    ; disable vertical camera scrolling for current room
+	STZ.b CameraBoundV    ; disable vertical camera scrolling for current room
 	REP #$20
-	STZ.w $0618  ; something about scrolling, setting these to 0 tricks the game 
-	STZ.w $061A  ; into thinking we're at the edge of the room so it doesn't scroll.
+	STZ.w CameraScrollN  ; something about scrolling, setting these to 0 tricks the game 
+	STZ.w CameraScrollS  ; into thinking we're at the edge of the room so it doesn't scroll.
 	SEP #$20
 	JML Sound_SetSfx3PanLong ; what we wrote over, also this will RTL
 
@@ -163,8 +163,8 @@ CMP.w #$070E : BEQ .new ; opening overworld map
 .original
 -
 	LDA.b [Scrap00]
-	STA.l $7EC300, X
-	STA.l $7EC500, X
+	STA.l PaletteBufferAux, X
+	STA.l PaletteBuffer, X
 	INC.b Scrap00 : INC.b Scrap00
 	INX #2
 	DEY
@@ -173,7 +173,7 @@ RTL
 .new
 -
 	LDA.b [Scrap00]
-	STA.l $7EC500, X
+	STA.l PaletteBuffer, X
 	INC.b Scrap00 : INC.b Scrap00
 	INX #2
 	DEY
@@ -183,10 +183,10 @@ RTL
 ;--------------------------------------------------------------------------------
 ; Fix pedestal pull overlay
 PedestalPullOverlayFix:
-LDA.b #$09 : STA.w $039F, X	; the thing we wrote over
+LDA.b #$09 : STA.w AncillaGeneral, X ; the thing we wrote over
 LDA.b IndoorsFlag : BNE +
-	LDA.b OverworldIndex : CMP.b #$80 : BNE +
-		LDA.b OverlayID : CMP.b #$97
+        LDA.b OverworldIndex : CMP.b #$80 : BNE +
+                LDA.b OverlayID : CMP.b #$97
 +
 RTL
 
@@ -213,8 +213,8 @@ pullpc
 ;--------------------------------------------------------------------------------
 SetOverworldTransitionFlags:
 	LDA.b #$01
-	STA.w $0ABF ; used by witch
-	STA.w $021B ; used by race game
+	STA.w OWTransitionFlag
+	STA.w RaceGameFlag
 	RTL
 ;--------------------------------------------------------------------------------
 ParadoxCaveGfxFix:
@@ -224,7 +224,7 @@ ParadoxCaveGfxFix:
     LDX.b PreviousRoom : CPX.w #$00EF : BNE .uploadLine
 
     ;Ignore uploading four specific lines of tiles to VRAM
-    LDX.w $0118
+    LDX.w VRAMUploadAddress
     ; Line 1
     CPX.w #$1800 : BEQ .skipMostOfLine
     ; Line 2

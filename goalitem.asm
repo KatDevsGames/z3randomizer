@@ -4,7 +4,7 @@ GoalItemGanonCheck:
 		BCS .success
 
 		.fail
-		LDA.w SpriteUnknown, X : CMP.b #17 : !BLT .success ; decmial 17 because Acmlm's chart is decimal
+		LDA.w SpriteActivity, X : CMP.b #17 : !BLT .success ; decmial 17 because Acmlm's chart is decimal
 		LDA.b #$00
 RTL
 		.success
@@ -138,7 +138,7 @@ CheckAgaForPed:
 	BEQ .force_blue_ball
 
 .vanilla ; run vanilla check for phase
-	LDA.w $0E30, X
+	LDA.w SpriteAux, X
 	CMP.b #$02
 	RTL
 

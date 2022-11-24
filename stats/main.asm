@@ -610,14 +610,14 @@ EndingItems:
 	REP #$10
 	JSR DrawEndingItems
 	REP #$20
-	LDX.b #$0e
+	LDX.b #$0E
 RTL
 
 DrawEndingItems:
 	JSL DrawPlayerFile_credits
 	JSL SetItemLayoutPriority
 	SEP #$30
-	LDA.b #$01 : STA.b $14
+	LDA.b #$01 : STA.b NMISTRIPES
 RTS
 
 FontTable:

@@ -179,34 +179,34 @@ DrawMagicMeter_mp_tilemap = $0DFE0F
 	CMP.w #0001 : BEQ .yellow
 	CMP.w #0002 : BNE + : JMP .green : +
 	.blue
-	    LDA.l DrawMagicMeter_mp_tilemap+0, X : AND.w #$EFFF : STA.l $7EC746
-	    LDA.l DrawMagicMeter_mp_tilemap+2, X : AND.w #$EFFF : STA.l $7EC786
-	    LDA.l DrawMagicMeter_mp_tilemap+4, X : AND.w #$EFFF : STA.l $7EC7C6
-	    LDA.l DrawMagicMeter_mp_tilemap+6, X : AND.w #$EFFF : STA.l $7EC806
+	    LDA.l DrawMagicMeter_mp_tilemap+0, X : AND.w #$EFFF : STA.l HUDTileMapBuffer+$46
+	    LDA.l DrawMagicMeter_mp_tilemap+2, X : AND.w #$EFFF : STA.l HUDTileMapBuffer+$86
+	    LDA.l DrawMagicMeter_mp_tilemap+4, X : AND.w #$EFFF : STA.l HUDTileMapBuffer+$C6
+	    LDA.l DrawMagicMeter_mp_tilemap+6, X : AND.w #$EFFF : STA.l HUDTileMapBuffer+$06
             RTL
 	.red
-	    LDA.l DrawMagicMeter_mp_tilemap+0, X : AND.w #$E7FF : STA.l $7EC746
-	    LDA.l DrawMagicMeter_mp_tilemap+2, X : AND.w #$E7FF : STA.l $7EC786
-	    LDA.l DrawMagicMeter_mp_tilemap+4, X : AND.w #$E7FF : STA.l $7EC7C6
-	    LDA.l DrawMagicMeter_mp_tilemap+6, X : AND.w #$E7FF : STA.l $7EC806
+	    LDA.l DrawMagicMeter_mp_tilemap+0, X : AND.w #$E7FF : STA.l HUDTileMapBuffer+$46
+	    LDA.l DrawMagicMeter_mp_tilemap+2, X : AND.w #$E7FF : STA.l HUDTileMapBuffer+$86
+	    LDA.l DrawMagicMeter_mp_tilemap+4, X : AND.w #$E7FF : STA.l HUDTileMapBuffer+$C6
+	    LDA.l DrawMagicMeter_mp_tilemap+6, X : AND.w #$E7FF : STA.l HUDTileMapBuffer+$06
             RTL
 	.yellow
-	    LDA.l DrawMagicMeter_mp_tilemap+0, X : AND.w #$EBFF : STA.l $7EC746
-	    LDA.l DrawMagicMeter_mp_tilemap+2, X : AND.w #$EBFF : STA.l $7EC786
-	    LDA.l DrawMagicMeter_mp_tilemap+4, X : AND.w #$EBFF : STA.l $7EC7C6
-	    LDA.l DrawMagicMeter_mp_tilemap+6, X : AND.w #$EBFF : STA.l $7EC806
+	    LDA.l DrawMagicMeter_mp_tilemap+0, X : AND.w #$EBFF : STA.l HUDTileMapBuffer+$46
+	    LDA.l DrawMagicMeter_mp_tilemap+2, X : AND.w #$EBFF : STA.l HUDTileMapBuffer+$86
+	    LDA.l DrawMagicMeter_mp_tilemap+4, X : AND.w #$EBFF : STA.l HUDTileMapBuffer+$C6
+	    LDA.l DrawMagicMeter_mp_tilemap+6, X : AND.w #$EBFF : STA.l HUDTileMapBuffer+$0106
             RTL
 	.orange
-	    LDA.l DrawMagicMeter_mp_tilemap+0, X : AND.w #$E3FF : STA.l $7EC746
-	    LDA.l DrawMagicMeter_mp_tilemap+2, X : AND.w #$E3FF : STA.l $7EC786
-	    LDA.l DrawMagicMeter_mp_tilemap+4, X : AND.w #$E3FF : STA.l $7EC7C6
-	    LDA.l DrawMagicMeter_mp_tilemap+6, X : AND.w #$E3FF : STA.l $7EC806
+	    LDA.l DrawMagicMeter_mp_tilemap+0, X : AND.w #$E3FF : STA.l HUDTileMapBuffer+$46
+	    LDA.l DrawMagicMeter_mp_tilemap+2, X : AND.w #$E3FF : STA.l HUDTileMapBuffer+$86
+	    LDA.l DrawMagicMeter_mp_tilemap+4, X : AND.w #$E3FF : STA.l HUDTileMapBuffer+$C6
+	    LDA.l DrawMagicMeter_mp_tilemap+6, X : AND.w #$E3FF : STA.l HUDTileMapBuffer+$0106
             RTL
 	.green
-	    LDA.l DrawMagicMeter_mp_tilemap+0, X : STA.l $7EC746
-	    LDA.l DrawMagicMeter_mp_tilemap+2, X : STA.l $7EC786
-	    LDA.l DrawMagicMeter_mp_tilemap+4, X : STA.l $7EC7C6
-	    LDA.l DrawMagicMeter_mp_tilemap+6, X : STA.l $7EC806
+	    LDA.l DrawMagicMeter_mp_tilemap+0, X : STA.l HUDTileMapBuffer+$46
+	    LDA.l DrawMagicMeter_mp_tilemap+2, X : STA.l HUDTileMapBuffer+$86
+	    LDA.l DrawMagicMeter_mp_tilemap+4, X : STA.l HUDTileMapBuffer+$C6
+	    LDA.l DrawMagicMeter_mp_tilemap+6, X : STA.l HUDTileMapBuffer+$0106
 RTL
 
 ;================================================================================
@@ -241,33 +241,6 @@ HudHexToDec4Digit:
 	+
 	STY.b Scrap07 ; Store 1s digit
 RTS
-
-;================================================================================
-; 8-bit registers
-; in:	A(b) - Byte to Convert
-; out:	$05 - $07 (high - low)
-;================================================================================
-;HudHexToDec3Digit: ; this may be overkill, could have used the 4 digit one...
-;	LDY.b #$90
-;	-
-;		CMP.b #100 : !BLT +
-;		INY
-;		SBC.b #100 : BRA -
-;	+
-;	STY $05 : LDY.b #$90 ; Store 100s digit and reset Y
-;	-
-;		CMP.b #10 : !BLT +
-;		INY
-;		SBC.b #10 : BRA -
-;	+
-;	STY $06 : LDY #$90 ; Store 10s digit and reset Y
-;	CMP.b #1 : !BLT +
-;	-
-;		INY
-;		DEC : BNE -
-;	+
-;	STY $07	; Store 1s digit
-;RTS
 
 ;================================================================================
 ; 8-bit registers

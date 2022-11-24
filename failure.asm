@@ -239,12 +239,6 @@ Crashed:
 
 --	BRA --
 
-;	LDA.w #$0000
-;	TCD
-;
-;	TSC
-
-
 BSODMessage:
 	db "A fatal error has occurred and resulted in an", $80
 	db "unrecoverable crash. ?", $80

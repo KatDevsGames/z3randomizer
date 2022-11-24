@@ -22,18 +22,18 @@ DrawDungeonCompassCounts:
 	JSR HudHexToDec2Digit
 	REP #$20
         PHX
-		LDX.b Scrap06 : TXA : ORA.w #$2400 : STA.l $7EC79A
-		LDX.b Scrap07 : TXA : ORA.w #$2400 : STA.l $7EC79C
+		LDX.b Scrap06 : TXA : ORA.w #$2400 : STA.l HUDTileMapBuffer+$9A
+		LDX.b Scrap07 : TXA : ORA.w #$2400 : STA.l HUDTileMapBuffer+$9C
 	PLX
 
         LDA.l DungeonLocationsChecked, X : AND.w #$00FF
 	SEP #$20
 	JSR HudHexToDec2Digit
 	REP #$20
-	LDX.b Scrap06 : TXA : ORA.w #$2400 : STA.l $7EC794 ; Draw the item count
-	LDX.b Scrap07 : TXA : ORA.w #$2400 : STA.l $7EC796
+	LDX.b Scrap06 : TXA : ORA.w #$2400 : STA.l HUDTileMapBuffer+$94 ; Draw the item count
+	LDX.b Scrap07 : TXA : ORA.w #$2400 : STA.l HUDTileMapBuffer+$96
 	
-	LDA.w #$2830 : STA.l $7EC798 ; draw the slash
+	LDA.w #$2830 : STA.l HUDTileMapBuffer+$98 ; draw the slash
 
 	.done
 RTL

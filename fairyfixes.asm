@@ -35,19 +35,19 @@ FairyPond_Init:
 		LDA.l BottleContentsThree : CMP.b #$02 : BNE ++ : LDA.b #$1E : PHA : BRA .emptyBottle : ++
 		LDA.l BottleContentsFour : CMP.b #$02 : BNE ++ : LDA.b #$1F : PHA : BRA .emptyBottle : ++
 			.noInventory
-			LDA.b #$0A : STA.w SpriteUnknown, X
+			LDA.b #$0A : STA.w SpriteActivity, X
 			LDA.b #$51
 			LDY.b #$01
 			JSL.l Sprite_ShowMessageFromPlayerContact
 			JMP .cleanup
 		
 			.emptyBottle
-			LDA.b #$02 : STA.w SpriteUnknown, X
+			LDA.b #$02 : STA.w SpriteActivity, X
 			STZ.b LinkDirection
 			LDA.b #$01 : STA.w CutsceneFlag
-			PLA : STA.w $1CE8
+			PLA : STA.w MessageCursor
 		.cleanup
-		STZ.w $0EB0, X ; Clear the sprite's item-given variable
+		STZ.w SpriteDirectionTable, X ; Clear the sprite's item-given variable
 		CLC ; skip rest of original function
 	+ :	PLY
 RTL

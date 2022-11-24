@@ -60,7 +60,7 @@ DrawHeartPieceGFX:
 	
 	PHA
 		JSL.l IsNarrowSprite : BCC +
-		LDA.w $0E60, X : ORA.b #$20 : STA.w $0E60, X
+		LDA.w SpriteControl, X : ORA.b #$20 : STA.w SpriteControl, X
 	+
     PLA
 	
@@ -101,7 +101,7 @@ HeartContainerSound:
 RTL
 ;--------------------------------------------------------------------------------
 NormalItemSkipSound:
-	LDA.w $0C5E, X ; thing we wrote over
+	LDA.w AncillaGet, X ; thing we wrote over
 
 	CPY.b #$20 : BEQ + ; Skip for Crystal
 	CPY.b #$37 : BEQ + ; Skip for Pendants
@@ -203,7 +203,7 @@ LoadIndoorValue:
 		%GetPossiblyEncryptedItem(HeartPiece_Spectacle_Cave, HeartPieceIndoorValues)
 		JMP .done
 	+ CMP.w #283 : BNE +
-		LDA.b $22 : XBA : AND.w #$0001 ; figure out where link is
+		LDA.b LinkPosX : XBA : AND.w #$0001 ; figure out where link is
 		BNE ++
 			%GetPossiblyEncryptedItem(HeartPiece_Circle_Bushes, HeartPieceIndoorValues)
 			JMP .done
@@ -239,7 +239,7 @@ LoadOutdoorValue:
 	REP #$20 ; set 16-bit accumulator
 	LDA.b OverworldIndex
 	CMP.w #$03 : BNE +
-		LDA.b $22 : CMP.w #1890 : !BLT ++
+		LDA.b LinkPosX : CMP.w #1890 : !BLT ++
 			%GetPossiblyEncryptedItem(HeartPiece_Spectacle, HeartPieceOutdoorValues)
 			JMP .done
 		++
@@ -255,7 +255,7 @@ LoadOutdoorValue:
 		%GetPossiblyEncryptedItem(HauntedGroveItem, HeartPieceOutdoorValues)
 		JMP .done
 	+ CMP.w #$30 : BNE +
-		LDA.b $22 : CMP.w #512 : !BGE ++
+		LDA.b LinkPosX : CMP.w #512 : !BGE ++
 			%GetPossiblyEncryptedItem(HeartPiece_Desert, HeartPieceOutdoorValues)
 			JMP .done
 		++

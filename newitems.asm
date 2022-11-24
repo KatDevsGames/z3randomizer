@@ -898,23 +898,23 @@ LDA.l ArrowMode : BEQ .normal
 	+ CMP.b #03 : !BGE .silver
 
 	.wooden
-	LDA.b #$A7 : STA.l $7EC720 ; draw wooden arrow marker
-	LDA.b #$20 : STA.l $7EC721
-	LDA.b #$A9 : STA.l $7EC722
-	LDA.b #$20 : STA.l $7EC723
+	LDA.b #$A7 : STA.l HUDTileMapBuffer+$20 ; draw wooden arrow marker
+	LDA.b #$20 : STA.l HUDTileMapBuffer+$21
+	LDA.b #$A9 : STA.l HUDTileMapBuffer+$22
+	LDA.b #$20 : STA.l HUDTileMapBuffer+$23
 RTL
 	.normal ; in normal arrow mode this function is only ever called for silvers
 	.silver
-	LDA.b #$86 : STA.l $7EC720 ; draw silver arrow marker
-	LDA.b #$24 : STA.l $7EC721
-	LDA.b #$87 : STA.l $7EC722
-	LDA.b #$24 : STA.l $7EC723
+	LDA.b #$86 : STA.l HUDTileMapBuffer+$20 ; draw silver arrow marker
+	LDA.b #$24 : STA.l HUDTileMapBuffer+$21
+	LDA.b #$87 : STA.l HUDTileMapBuffer+$22
+	LDA.b #$24 : STA.l HUDTileMapBuffer+$23
 RTL
 	.none
-	LDA.b #$7F : STA.l $7EC720 ; draw no arrow marker
-	LDA.b #$24 : STA.l $7EC721
-	LDA.b #$7F : STA.l $7EC722
-	LDA.b #$24 : STA.l $7EC723
+	LDA.b #$7F : STA.l HUDTileMapBuffer+$20 ; draw no arrow marker
+	LDA.b #$24 : STA.l HUDTileMapBuffer+$21
+	LDA.b #$7F : STA.l HUDTileMapBuffer+$22
+	LDA.b #$24 : STA.l HUDTileMapBuffer+$23
 RTL
 ;--------------------------------------------------------------------------------
 GetRNGItemSingle:

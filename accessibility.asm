@@ -6,17 +6,17 @@ ConditionalLightning:
         CMP.b #$2C : BEQ ++
         CMP.b #$5A : BEQ ++
             LDA.l DisableFlashing : BNE ++
-                LDA.b #$32 : STA.w $9A
+                LDA.b #$32 : STA.w CGADSUBQ
                 RTL
         ++
                 LDA.b #$72
-        STA.b $9A
+        STA.b CGADSUBQ
 RTL
 ;================================================================================
 ConditionalWhitenBg:
         LDX.b #$00
         LDA.l DisableFlashing : REP #$20 : BNE +
-            LDA.b $00,X
+            LDA.b Scrap00,X
             JSR WhitenLoopReal
             RTL
         +
@@ -26,93 +26,93 @@ ConditionalWhitenBg:
 ;================================================================================
 WhitenLoopReal:
         -
-            LDA.l $7EC340, X : JSL Filter_Majorly_Whiten_Color : STA.l $7EC540, X
-            LDA.l $7EC350, X : JSL Filter_Majorly_Whiten_Color : STA.l $7EC550, X
-            LDA.l $7EC360, X : JSL Filter_Majorly_Whiten_Color : STA.l $7EC560, X
-            LDA.l $7EC370, X : JSL Filter_Majorly_Whiten_Color : STA.l $7EC570, X
-            LDA.l $7EC380, X : JSL Filter_Majorly_Whiten_Color : STA.l $7EC580, X
-            LDA.l $7EC390, X : JSL Filter_Majorly_Whiten_Color : STA.l $7EC590, X
-            LDA.l $7EC3A0, X : JSL Filter_Majorly_Whiten_Color : STA.l $7EC5A0, X
-            LDA.l $7EC3B0, X : JSL Filter_Majorly_Whiten_Color : STA.l $7EC5B0, X
-            LDA.l $7EC3C0, X : JSL Filter_Majorly_Whiten_Color : STA.l $7EC5C0, X
-            LDA.l $7EC3D0, X : JSL Filter_Majorly_Whiten_Color : STA.l $7EC5D0, X
-            LDA.l $7EC3E0, X : JSL Filter_Majorly_Whiten_Color : STA.l $7EC5E0, X
+            LDA.l PaletteBufferAux+$40, X : JSL Filter_Majorly_Whiten_Color : STA.l PaletteBuffer+$40, X
+            LDA.l PaletteBufferAux+$50, X : JSL Filter_Majorly_Whiten_Color : STA.l PaletteBuffer+$50, X
+            LDA.l PaletteBufferAux+$60, X : JSL Filter_Majorly_Whiten_Color : STA.l PaletteBuffer+$60, X
+            LDA.l PaletteBufferAux+$70, X : JSL Filter_Majorly_Whiten_Color : STA.l PaletteBuffer+$70, X
+            LDA.l PaletteBufferAux+$80, X : JSL Filter_Majorly_Whiten_Color : STA.l PaletteBuffer+$80, X
+            LDA.l PaletteBufferAux+$90, X : JSL Filter_Majorly_Whiten_Color : STA.l PaletteBuffer+$90, X
+            LDA.l PaletteBufferAux+$A0, X : JSL Filter_Majorly_Whiten_Color : STA.l PaletteBuffer+$A0, X
+            LDA.l PaletteBufferAux+$B0, X : JSL Filter_Majorly_Whiten_Color : STA.l PaletteBuffer+$B0, X
+            LDA.l PaletteBufferAux+$C0, X : JSL Filter_Majorly_Whiten_Color : STA.l PaletteBuffer+$C0, X
+            LDA.l PaletteBufferAux+$D0, X : JSL Filter_Majorly_Whiten_Color : STA.l PaletteBuffer+$D0, X
+            LDA.l PaletteBufferAux+$E0, X : JSL Filter_Majorly_Whiten_Color : STA.l PaletteBuffer+$E0, X
             INX #2 : CPX.b #$10 : BEQ +
                 JMP -
         +
-            LDA.l $7EC3F0 : JSL Filter_Majorly_Whiten_Color : STA.l $7EC5F0
-            LDA.l $7EC3F2 : JSL Filter_Majorly_Whiten_Color : STA.l $7EC5F2
-            LDA.l $7EC3F4 : JSL Filter_Majorly_Whiten_Color : STA.l $7EC5F4
+            LDA.l PaletteBufferAux+$F0 : JSL Filter_Majorly_Whiten_Color : STA.l PaletteBuffer+$F0
+            LDA.l PaletteBufferAux+$F2 : JSL Filter_Majorly_Whiten_Color : STA.l PaletteBuffer+$F2
+            LDA.l PaletteBufferAux+$F4 : JSL Filter_Majorly_Whiten_Color : STA.l PaletteBuffer+$F4
             LDA.b GameMode : CMP.w #$0007 : BNE +
-            LDA.w $048E
+            LDA.b RoomIndex
             CMP.w #$003C : BEQ ++
             CMP.w #$009D : BEQ ++
             CMP.w #$009C : BEQ ++
             CMP.w #$00A5 : BEQ ++
             +
-                LDA.l $7EC3F6 : JSL Filter_Majorly_Whiten_Color : STA.l $7EC5F6
-                LDA.l $7EC3F8 : JSL Filter_Majorly_Whiten_Color : STA.l $7EC5F8
+                LDA.l PaletteBufferAux+$F6 : JSL Filter_Majorly_Whiten_Color : STA.l PaletteBuffer+$F6
+                LDA.l PaletteBufferAux+$F8 : JSL Filter_Majorly_Whiten_Color : STA.l PaletteBuffer+$F8
                 BRA +++
             ++
-                LDA.l $7EC3F6 : JSL Filter_Majorly_Whiten_Color : STA.l $7EC5F6
-                LDA.l $7EC3F8 : JSL Filter_Majorly_Whiten_Color : STA.l $7EC5F8
+                LDA.l PaletteBuffer+$F6 : JSL Filter_Majorly_Whiten_Color : STA.l PaletteBuffer+$F6
+                LDA.l PaletteBuffer+$F8 : JSL Filter_Majorly_Whiten_Color : STA.l PaletteBuffer+$F8
                 BRA +++
             +++
-            LDA.l $7EC3FA : JSL Filter_Majorly_Whiten_Color : STA.l $7EC5FA
-            LDA.l $7EC3FC : JSL Filter_Majorly_Whiten_Color : STA.l $7EC5FC
-            LDA.l $7EC3FE : JSL Filter_Majorly_Whiten_Color : STA.l $7EC5FE
+            LDA.l PaletteBufferAux+$FA : JSL Filter_Majorly_Whiten_Color : STA.l PaletteBuffer+$FA
+            LDA.l PaletteBufferAux+$FC : JSL Filter_Majorly_Whiten_Color : STA.l PaletteBuffer+$FC
+            LDA.l PaletteBufferAux+$FE : JSL Filter_Majorly_Whiten_Color : STA.l PaletteBuffer+$FE
             REP #$10
-            LDA.l $7EC540 : TAY
-            LDA.l $7EC300 : BNE +
+            LDA.l PaletteBuffer+$40 : TAY
+            LDA.l PaletteBufferAux : BNE +
                 TAY
         +
-            TYA : STA.l $7EC500
+            TYA : STA.l PaletteBuffer
             SEP #$30
 RTS
 ;================================================================================
 WhitenLoopDummy:
         -
-            LDA.l $7EC340, X : JSL Filter_Majorly_Whiten_Color : LDA.l $7EC540, X
-            LDA.l $7EC350, X : JSL Filter_Majorly_Whiten_Color : LDA.l $7EC550, X
-            LDA.l $7EC360, X : JSL Filter_Majorly_Whiten_Color : LDA.l $7EC560, X
-            LDA.l $7EC370, X : JSL Filter_Majorly_Whiten_Color : LDA.l $7EC570, X
-            LDA.l $7EC380, X : JSL Filter_Majorly_Whiten_Color : LDA.l $7EC580, X
-            LDA.l $7EC390, X : JSL Filter_Majorly_Whiten_Color : LDA.l $7EC590, X
-            LDA.l $7EC3A0, X : JSL Filter_Majorly_Whiten_Color : LDA.l $7EC5A0, X
-            LDA.l $7EC3B0, X : JSL Filter_Majorly_Whiten_Color : LDA.l $7EC5B0, X
-            LDA.l $7EC3C0, X : JSL Filter_Majorly_Whiten_Color : LDA.l $7EC5C0, X
-            LDA.l $7EC3D0, X : JSL Filter_Majorly_Whiten_Color : LDA.l $7EC5D0, X
-            LDA.l $7EC3E0, X : JSL Filter_Majorly_Whiten_Color : LDA.l $7EC5E0, X
+            LDA.l PaletteBufferAux+$40, X : JSL Filter_Majorly_Whiten_Color : LDA.l PaletteBuffer+$40, X
+            LDA.l PaletteBufferAux+$50, X : JSL Filter_Majorly_Whiten_Color : LDA.l PaletteBuffer+$50, X
+            LDA.l PaletteBufferAux+$60, X : JSL Filter_Majorly_Whiten_Color : LDA.l PaletteBuffer+$60, X
+            LDA.l PaletteBufferAux+$70, X : JSL Filter_Majorly_Whiten_Color : LDA.l PaletteBuffer+$70, X
+            LDA.l PaletteBufferAux+$80, X : JSL Filter_Majorly_Whiten_Color : LDA.l PaletteBuffer+$80, X
+            LDA.l PaletteBufferAux+$90, X : JSL Filter_Majorly_Whiten_Color : LDA.l PaletteBuffer+$90, X
+            LDA.l PaletteBufferAux+$A0, X : JSL Filter_Majorly_Whiten_Color : LDA.l PaletteBuffer+$A0, X
+            LDA.l PaletteBufferAux+$B0, X : JSL Filter_Majorly_Whiten_Color : LDA.l PaletteBuffer+$B0, X
+            LDA.l PaletteBufferAux+$C0, X : JSL Filter_Majorly_Whiten_Color : LDA.l PaletteBuffer+$C0, X
+            LDA.l PaletteBufferAux+$D0, X : JSL Filter_Majorly_Whiten_Color : LDA.l PaletteBuffer+$D0, X
+            LDA.l PaletteBufferAux+$E0, X : JSL Filter_Majorly_Whiten_Color : LDA.l PaletteBuffer+$E0, X
             INX #2 : CPX.b #$10 : BEQ +
                 JMP -
         +
-            LDA.l $7EC3F0 : JSL Filter_Majorly_Whiten_Color : LDA.l $7EC5F0
-            LDA.l $7EC3F2 : JSL Filter_Majorly_Whiten_Color : LDA.l $7EC5F2
-            LDA.l $7EC3F4 : JSL Filter_Majorly_Whiten_Color : LDA.l $7EC5F4
+            LDA.l PaletteBufferAux+$F0 : JSL Filter_Majorly_Whiten_Color : LDA.l PaletteBuffer+$F0
+            LDA.l PaletteBufferAux+$F2 : JSL Filter_Majorly_Whiten_Color : LDA.l PaletteBuffer+$F2
+            LDA.l PaletteBufferAux+$F4 : JSL Filter_Majorly_Whiten_Color : LDA.l PaletteBuffer+$F4
             LDA.b GameMode : CMP.w #$0007 : BNE + ; only light invisifloor if we're in dungeon submodule
-            LDA.w $048E
+            LDA.b RoomIndex
             CMP.w #$003C : BEQ ++ ; hookshot cave
             CMP.w #$009D : BEQ ++ ; gt right
             CMP.w #$009C : BEQ ++ ; gt big room
             CMP.w #$00A5 : BEQ ++ ; wizzrobes 1
             +
-                LDA.l $7EC3F6 : JSL Filter_Majorly_Whiten_Color : LDA.l $7EC5F6
-                LDA.l $7EC3F8 : JSL Filter_Majorly_Whiten_Color : LDA.l $7EC5F8
+                LDA.l PaletteBufferAux+$F6 : JSL Filter_Majorly_Whiten_Color : LDA.l PaletteBuffer+$F6
+                LDA.l PaletteBufferAux+$F8 : JSL Filter_Majorly_Whiten_Color : LDA.l PaletteBuffer+$F8
                 BRA +++
             ++
-                LDA.l $7EC3F6 : JSL Filter_Majorly_Whiten_Color : STA.l $7EC5F6
-                LDA.l $7EC3F8 : JSL Filter_Majorly_Whiten_Color : STA.l $7EC5F8
+                LDA.l PaletteBufferAux+$F6 : JSL Filter_Majorly_Whiten_Color : STA.l PaletteBuffer+$F6
+                LDA.l PaletteBufferAux+$F8 : JSL Filter_Majorly_Whiten_Color : STA.l PaletteBuffer+$F8
                 BRA +++
             +++
-            LDA.l $7EC3FA : JSL Filter_Majorly_Whiten_Color : LDA.l $7EC5FA
-            LDA.l $7EC3FC : JSL Filter_Majorly_Whiten_Color : LDA.l $7EC5FC
-            LDA.l $7EC3FE : JSL Filter_Majorly_Whiten_Color : LDA.l $7EC5FE
+            LDA.l PaletteBufferAux+$FA : JSL Filter_Majorly_Whiten_Color : LDA.l PaletteBuffer+$FA
+            LDA.l PaletteBufferAux+$FC : JSL Filter_Majorly_Whiten_Color : LDA.l PaletteBuffer+$FC
+            LDA.l PaletteBufferAux+$FE : JSL Filter_Majorly_Whiten_Color : LDA.l PaletteBuffer+$FE
             REP #$10
-            LDA.l $7EC540 : TAY
-            LDA.l $7EC300 : BNE +
+            LDA.l PaletteBuffer+$40 : TAY
+            LDA.l PaletteBufferAux : BNE +
                 TAY
         +
-            TYA : STA.l $7EC500
+            TYA : STA.l PaletteBuffer
             SEP #$30
 RTS
 ;================================================================================
@@ -120,36 +120,36 @@ RestoreBgEther:
         LDX.b #$00
         LDA.l DisableFlashing : REP #$20 : BNE +
         -
-            LDA.b $00,X
-            LDA.l $7EC340, X : STA.l $7EC540, X
-            LDA.l $7EC350, X : STA.l $7EC550, X
-            LDA.l $7EC360, X : STA.l $7EC560, X
-            LDA.l $7EC370, X : STA.l $7EC570, X
-            LDA.l $7EC380, X : STA.l $7EC580, X
-            LDA.l $7EC390, X : STA.l $7EC590, X
-            LDA.l $7EC3A0, X : STA.l $7EC5A0, X
-            LDA.l $7EC3B0, X : STA.l $7EC5B0, X
-            LDA.l $7EC3C0, X : STA.l $7EC5C0, X
-            LDA.l $7EC3D0, X : STA.l $7EC5D0, X
-            LDA.l $7EC3E0, X : STA.l $7EC5E0, X
-            LDA.l $7EC3F0, X : STA.l $7EC5F0, X
+            LDA.b Scrap00,X
+            LDA.l PaletteBufferAux+$40, X : STA.l PaletteBuffer+$40, X
+            LDA.l PaletteBufferAux+$50, X : STA.l PaletteBuffer+$50, X
+            LDA.l PaletteBufferAux+$60, X : STA.l PaletteBuffer+$60, X
+            LDA.l PaletteBufferAux+$70, X : STA.l PaletteBuffer+$70, X
+            LDA.l PaletteBufferAux+$80, X : STA.l PaletteBuffer+$80, X
+            LDA.l PaletteBufferAux+$90, X : STA.l PaletteBuffer+$90, X
+            LDA.l PaletteBufferAux+$A0, X : STA.l PaletteBuffer+$A0, X
+            LDA.l PaletteBufferAux+$B0, X : STA.l PaletteBuffer+$B0, X
+            LDA.l PaletteBufferAux+$C0, X : STA.l PaletteBuffer+$C0, X
+            LDA.l PaletteBufferAux+$D0, X : STA.l PaletteBuffer+$D0, X
+            LDA.l PaletteBufferAux+$E0, X : STA.l PaletteBuffer+$E0, X
+            LDA.l PaletteBufferAux+$F0, X : STA.l PaletteBuffer+$F0, X
             INX #2 : CPX.b #$10 : BNE -
             BRA ++
         +
         -
             LDA.b Scrap00
-            LDA.l $7EC340, X : LDA.l $7EC540, X
-            LDA.l $7EC350, X : LDA.l $7EC550, X
-            LDA.l $7EC360, X : LDA.l $7EC560, X
-            LDA.l $7EC370, X : LDA.l $7EC570, X
-            LDA.l $7EC380, X : LDA.l $7EC580, X
-            LDA.l $7EC390, X : LDA.l $7EC590, X
-            LDA.l $7EC3A0, X : LDA.l $7EC5A0, X
-            LDA.l $7EC3B0, X : LDA.l $7EC5B0, X
-            LDA.l $7EC3C0, X : LDA.l $7EC5C0, X
-            LDA.l $7EC3D0, X : LDA.l $7EC5D0, X
-            LDA.l $7EC3E0, X : LDA.l $7EC5E0, X
-            LDA.l $7EC3F0, X : LDA.l $7EC5F0, X
+            LDA.l PaletteBufferAux+$40, X : LDA.l PaletteBuffer+$40, X
+            LDA.l PaletteBufferAux+$50, X : LDA.l PaletteBuffer+$50, X
+            LDA.l PaletteBufferAux+$60, X : LDA.l PaletteBuffer+$60, X
+            LDA.l PaletteBufferAux+$70, X : LDA.l PaletteBuffer+$70, X
+            LDA.l PaletteBufferAux+$80, X : LDA.l PaletteBuffer+$80, X
+            LDA.l PaletteBufferAux+$90, X : LDA.l PaletteBuffer+$90, X
+            LDA.l PaletteBufferAux+$A0, X : LDA.l PaletteBuffer+$A0, X
+            LDA.l PaletteBufferAux+$B0, X : LDA.l PaletteBuffer+$B0, X
+            LDA.l PaletteBufferAux+$C0, X : LDA.l PaletteBuffer+$C0, X
+            LDA.l PaletteBufferAux+$D0, X : LDA.l PaletteBuffer+$D0, X
+            LDA.l PaletteBufferAux+$E0, X : LDA.l PaletteBuffer+$E0, X
+            LDA.l PaletteBufferAux+$F0, X : LDA.l PaletteBuffer+$F0, X
             INX #2 : CPX.b #$10 : BNE -
             BRA ++
         ++
@@ -165,11 +165,11 @@ DDMConditionalLightning:
         +
             LDA.b Scrap00 : LDX.b #$02 : LDY.b #$00
         -
-            LDA.w $F4EB, Y : LDA.l $7EC560, X
-            LDA.w $F4F9, Y : LDA.l $7EC570, X
-            LDA.w $F507, Y : LDA.l $7EC590, X
-            LDA.w $F515, Y : LDA.l $7EC5E0, X
-            LDA.w $F523, Y : LDA.l $7EC5F0, X
+            LDA.w $F4EB, Y : LDA.l PaletteBuffer+$60, X
+            LDA.w $F4F9, Y : LDA.l PaletteBuffer+$70, X
+            LDA.w $F507, Y : LDA.l PaletteBuffer+$90, X
+            LDA.w $F515, Y : LDA.l PaletteBuffer+$E0, X
+            LDA.w $F523, Y : LDA.l PaletteBuffer+$F0, X
             INY #2
             INX #2 : CPX.b #$10 : BNE -
             JML $07FAAC ; Bank0E.asm : 4754 both branches converge here
@@ -178,14 +178,14 @@ ConditionalGTFlash:
         LDA.l DisableFlashing : REP #$20 : BNE +
             LDA.w Scrap
         -
-            LDA.w $F9C1, Y : STA.l $7EC5D0, X
+            LDA.w $F9C1, Y : STA.l PaletteBuffer+$D0, X
             INY #2
             INX #2 : CPX.b #$10 : BNE -
             RTL
         +
             LDA.b Scrap00
         -
-            LDA.w $F9C1, Y : LDA.l $7EC5D0, X
+            LDA.w $F9C1, Y : LDA.l PaletteBuffer+$D0, X
             INY #2
             INX #2 : CPX.b #$10 : BNE -
             RTL
@@ -193,14 +193,14 @@ ConditionalGTFlash:
 ConditionalRedFlash:
         LDA.l DisableFlashing : REP #$20 : BNE +
             LDA.b Scrap,X
-            LDA.w #$1D59 : STA.l $7EC5DA
-            LDA.w #$25FF : STA.l $7EC5DC
+            LDA.w #$1D59 : STA.l PaletteBuffer+$DA
+            LDA.w #$25FF : STA.l PaletteBuffer+$DC
             LDA.w #$001A
             RTL
         +
             LDA.b Scrap00
-            LDA.w #$1D59 : LDA.l $7EC5DA
-            LDA.w #$25FF : LDA.l $7EC5DC
+            LDA.w #$1D59 : LDA.l PaletteBuffer+$DA
+            LDA.w #$25FF : LDA.l PaletteBuffer+$DC
             LDA.w #$0000
             RTL
 ;================================================================================
@@ -236,7 +236,7 @@ LoadElectroPalette:
         REP #$10 : LDX.w #$01E2 : LDY.w #$000E
         JSR ConditionalLoadGearPalette
         SEP #$30
-        INC.b $15
+        INC.b NMICGRAM
 RTL
 ;================================================================================
 ConditionalLoadGearPalette:
@@ -246,7 +246,7 @@ ConditionalLoadGearPalette:
                 LDA.b Scrap,X
         -
                 LDA.b [Scrap00]
-                STA.l $7EC500, X
+                STA.l PaletteBuffer, X
                 INC.b Scrap00 : INC.b Scrap00
                 INX #2
                 DEY
@@ -256,7 +256,7 @@ ConditionalLoadGearPalette:
                 LDA.b Scrap
         -
                 LDA.b [Scrap00]
-                LDA.l $7EC500, X
+                LDA.l PaletteBuffer, X
                 INC.b Scrap00 : INC.b Scrap00
                 INX #2
                 DEY
@@ -272,13 +272,13 @@ RestoreElectroPalette:
         LDX.w #$01E2 : LDY.w #$000E
         JSR FillPaletteBufferFromAux
         SEP #$30
-        INC.b $15
+        INC.b NMICGRAM
 RTL
 ;================================================================================
 FillPaletteBufferFromAux:
         -
-            LDA.l $7EC300, X
-            STA.l $7EC500, X
+            LDA.l PaletteBufferAux, X
+            STA.l PaletteBuffer, X
             INX #2
             DEY
             BPL -

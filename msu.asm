@@ -365,7 +365,7 @@ SpiralStairsPostCheck:
     LDA.b RoomIndex
     CMP.w #$000C : BNE +
         ; Ganon's tower entrance
-        LDX.w $0130 : CPX.b #$F1 : BNE .done  ; Check that we were fading out
+        LDX.w LastAPUCommand : CPX.b #$F1 : BNE .done  ; Check that we were fading out
 
         LDX.b #22 : STX.w MusicControlRequest
         BRA .done
@@ -374,7 +374,7 @@ SpiralStairsPostCheck:
     CMP.w #$006B : BNE .done
 
     ; Ganon's tower upstairs (with big key)
-    LDX.w $0130 : CPX.b #$F1 : BNE .done  ; Check that we were fading out
+    LDX.w LastAPUCommand : CPX.b #$F1 : BNE .done  ; Check that we were fading out
 
     LDX.b #59 : STX.w MusicControlRequest
 
@@ -387,9 +387,9 @@ SpiralStairsPostCheck:
 ; Make sure expanded OST tracks load properly after death/fairy revival
 ;--------------------------------------------------------------------------------
 StoreMusicOnDeath:
-    STA.l $7EC227   ; thing we wrote over
+    STA.l GameOverSongCache   ; thing we wrote over
     LDA.w MSUSTATUS : BIT.b #!FLAG_MSU_STATUS_AUDIO_PLAYING : BEQ .done
-    LDA.w CurrentMSUTrack : STA.l $7EC227
+    LDA.w CurrentMSUTrack : STA.l GameOverSongCache
 .done
     RTL
 ;--------------------------------------------------------------------------------
@@ -781,7 +781,7 @@ EndingMusicWait:
     LDA.w MSUID+4 : CMP.w #!VAL_MSU_ID_45 : BNE .done
     SEP #$20
 .wait
-    LDA.b $50 : BNE .done
+    LDA.b Strafe : BNE .done
     LDA.w MSUSTATUS : BIT.b #!FLAG_MSU_STATUS_AUDIO_PLAYING : BNE .wait
 .done
     SEP #$20

@@ -87,7 +87,7 @@ DrawPrice:
 		TXA : LSR #3 : STA.b Scrap06 ; request 1-4 OAM slots
 		ASL #2
 			PHA
-				LDA.b $22 : CMP.l ShopPriceColumn : !BLT .off
+				LDA.b LinkPosX : CMP.l ShopPriceColumn : !BLT .off
                                         CMP.l ShopPriceColumn+1 : !BGE .off
 				.on
 				PLA : JSL.l OAM_AllocateFromRegionB : BRA + ; request 4-16 bytes
@@ -205,8 +205,8 @@ SpritePrep_ShopKeeper:
 	
 	LDA.l ShopType : CMP.b #$FF : BNE +
 		PLA : PLA : PLA
-        INC.w $0BA0, X
-        LDA.w $0E40, X
+        INC.w SpriteAncillaInteract, X
+        LDA.w SpriteOAMProperties, X
 		JML.l ShopkeeperFinishInit
 	+
 RTL
@@ -393,8 +393,8 @@ macro DrawMerchant(head,body,speed)
 		LDA.b #BigRAM>>8 : STA.b Scrap09
 		LDA.b #$7E : PHA : PLB ; set data bank to $7E
 		JSL.l Sprite_DrawMultiple_quantity_preset
-		LDA.b $90 : !ADD.b #$04*2 : STA.b $90 ; increment oam pointer
-		LDA.b $92 : INC #2 : STA.b $92
+		LDA.b OAMPtr : !ADD.b #$04*2 : STA.b OAMPtr ; increment oam pointer
+		LDA.b OAMPtr+2 : INC #2 : STA.b OAMPtr+2
 	PLB
 RTS
 .oam_shopkeeper_f1
@@ -429,8 +429,8 @@ Shopkeeper_DrawMerchant_Type1:
 		LDA.b #.oam_shopkeeper_f2>>8 : STA.b Scrap09
 	++
 	JSL.l Sprite_DrawMultiple_quantity_preset
-	LDA.b $90 : !ADD.b #$04 : STA.b $90 ; increment oam pointer
-	LDA.b $92 : INC : STA.b $92
+	LDA.b OAMPtr : !ADD.b #$04 : STA.b OAMPtr ; increment oam pointer
+	LDA.b OAMPtr+2 : INC : STA.b OAMPtr+2
 RTS
 .oam_shopkeeper_f1
 dw 0, 0 : db $46, $0A, $00, $02
@@ -453,7 +453,7 @@ Shopkeeper_SetupHitboxes:
 				PLY : BRA .no_interaction
 			+
 		PLY
-		LDA.w $00EE : CMP.w $0F20, X : BNE .no_interaction  
+		LDA.b LinkLayer : CMP.w SpriteLayer, X : BNE .no_interaction  
 
 		JSR.w Setup_LinksHitbox
 		JSR.w Setup_ShopItemCollisionHitbox
@@ -612,11 +612,11 @@ Setup_LinksHitbox:
 	LDA.b #$08 : STA.b Scrap02
                      STA.b Scrap03
 
-        LDA.b $22 : !ADD.b #$04 : STA.b Scrap00
-        LDA.b $23 : ADC.b #$00 : STA.b Scrap08
+        LDA.b LinkPosX : !ADD.b #$04 : STA.b Scrap00
+        LDA.b LinkPosX+1 : ADC.b #$00 : STA.b Scrap08
 
-        LDA.b $20 : ADC.b #$08 : STA.b Scrap01
-        LDA.b $21 : ADC.b #$00 : STA.b Scrap09
+        LDA.b LinkPosY : ADC.b #$08 : STA.b Scrap01
+        LDA.b LinkPosY+1 : ADC.b #$00 : STA.b Scrap09
 RTS
 ;--------------------------------------------------------------------------------
 ; The following is a copy of procedure Sprite_HaltSpecialPlayerMovement (Bank1E.asm line 255)
@@ -759,9 +759,9 @@ Shopkeeper_DrawNextPrice:
 		PHX : PHA : LDA.l ShopScratch : TAX : PLA : JSL.l Sprite_DrawMultiple_quantity_preset : PLX
 
 		LDA.b 1,s
-		ASL #2 : !ADD $90 : STA.b $90 ; increment oam pointer
+		ASL #2 : !ADD OAMPtr : STA.b OAMPtr ; increment oam pointer
                 PLA
-                !ADD $92 : STA.b $92
+                !ADD OAMPtr+2 : STA.b OAMPtr+2
         .free
         PLP : PLY : PLX
         PLB
@@ -780,7 +780,7 @@ db #$00, #$60, #$60, #$90, #$90, $FF
 RequestItemOAM:
         PHX : PHY : PHA
                 STA.b Scrap06 ; request A OAM slots
-                LDA.b $20 : CMP.b #$62 : !BGE .below
+                LDA.b LinkPosY : CMP.b #$62 : !BGE .below
                         .above
                         LDA.b 1,s : ASL #2 : JSL.l OAM_AllocateFromRegionA ; request 4A bytes
                         BRA +
@@ -794,8 +794,8 @@ RequestItemOAM:
                 LDA.b #$7E : PHB : PHA : PLB
                 JSL Sprite_DrawMultiple_quantity_preset
                 PLB
-                LDA.b 1,s : ASL #2 : !ADD $90 : STA.b $90 ; increment oam pointer
-                LDA.b $92 : !ADD 1,s : STA.b $92
+                LDA.b 1,s : ASL #2 : !ADD.b OAMPtr : STA.b OAMPtr ; increment oam pointer
+                LDA.b OAMPtr+2 : !ADD 1,s : STA.b OAMPtr+2
 	PLA : PLY : PLX
 RTS
 ;--------------------------------------------------------------------------------

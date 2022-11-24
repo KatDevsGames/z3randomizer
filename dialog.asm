@@ -12,7 +12,7 @@ RTL
 ResetDialogPointer:
 	STZ.w TextID : STZ.w TextID+1 ; reset decompression buffer
 	LDA.b #$00 : STA.l AltTextFlag ; zero out the alternate flag
-	LDA.b #$1C : STA.w $1CE9 ; thing we wrote over
+	LDA.b #$1C : STA.w DelayTimer ; thing we wrote over
 RTL
 
 macro LoadDialogAddress(address)
@@ -188,7 +188,7 @@ RTL
 ;--------------------------------------------------------------------------------
 DialogResetSelectionIndex:
     JSL.l Attract_DecompressStoryGfx ; what we wrote over
-    STZ $1CE8
+    STZ.w MessageCursor
 RTL
 ;--------------------------------------------------------------------------------
 DialogItemReceive:
@@ -210,7 +210,7 @@ DialogFairyThrow:
         ORA.l BottleContentsTwo : ORA.l BottleContentsThree : ORA.l BottleContentsFour : BNE .normal
 	
 	.noInventory
-	LDA.w SpriteUnknown, X : !ADD #$08 : STA.w SpriteUnknown, X
+	LDA.w SpriteActivity, X : !ADD #$08 : STA.w SpriteActivity, X
 	LDA.b #$51
 	LDY.b #$01
 RTL
@@ -367,12 +367,12 @@ Sprite_ShowMessageMinimal_Alt:
 	INY : LDA.b [Scrap00], Y : CMP.b #$FE : BNE +
 	INY : LDA.b [Scrap00], Y : CMP.b #$6B : BNE +
 	INY : LDA.b [Scrap00], Y : CMP.b #$04 : BNE +
-		STZ.w $1CE8
+		STZ.w MessageCursor
 		JMP .end
 	+
 
-	STZ.w $0223   ; Otherwise set it so we are in text mode.
-	STZ.w $1CD8   ; Initialize the step in the submodule
+	STZ.w MessageJunk   ; Otherwise set it so we are in text mode.
+	STZ.w MessageSubModule
 
 	; Go to text display mode (as opposed to maps, etc)
 	LDA.b #$02 : STA.b GameSubMode
@@ -399,13 +399,13 @@ CalculateSignIndex:
 
   LDA.b OverworldIndex : ASL A : TAY ;what we wrote over
 
-  LDA.w $0712 : BEQ .done ; If a small map, we can skip these calculations.
+  LDA.w OWScreenSize : BEQ .done ; If a small map, we can skip these calculations.
 
-  LDA.b $21 : AND.w #$0002 : ASL #2 : EOR.b OverworldIndex : AND.w #$0008 : BEQ +
+  LDA.b LinkPosY+1 : AND.w #$0002 : ASL #2 : EOR.b OverworldIndex : AND.w #$0008 : BEQ +
   	TYA : !ADD.w #$0010 : TAY  ;add 16 if we are in lower half of big screen.
   + 
 
-  LDA.b $23 : AND.w #$0002 : LSR : EOR.b OverworldIndex : AND.w #$0001 : BEQ +
+  LDA.b LinkPosX+1 : AND.w #$0002 : LSR : EOR.b OverworldIndex : AND.w #$0001 : BEQ +
   TYA : INC #2 : TAY  ;add 16 if we are in lower half of big screen.
   +
   ; ensure even if things go horribly wrong, we don't read the sign out of bounds and crash:
@@ -426,7 +426,7 @@ Sprite_ShowSolicitedMessageIfPlayerFacing_Alt:
 	JSL Sprite_CheckIfPlayerPreoccupied : BCS .alpha
 
 	LDA.b Joy1B_New : BPL .alpha
-	LDA.w $0F10, X : BNE .alpha
+	LDA.w SpriteTimerE, X : BNE .alpha
 	LDA.b LinkJumping : CMP.b #$02 : BEQ .alpha
 
 	JSL Sprite_DirectionToFacePlayerLong : PHX : TYX
@@ -456,7 +456,7 @@ Sprite_ShowSolicitedMessageIfPlayerFacing_Alt:
 
 	.SayNothing
 
-	LDA.b #$40 : STA.w $0F10, X
+	LDA.b #$40 : STA.w SpriteTimerE, X
 
 	PLA : EOR.b #$03
 
@@ -467,7 +467,7 @@ Sprite_ShowSolicitedMessageIfPlayerFacing_Alt:
 .not_facing_each_other
 .alpha
 
-	LDA.w $0DE0, X
+	LDA.w SpriteMoveDirection, X
 
 	CLC
 
@@ -483,7 +483,7 @@ Sprite_ShowSolicitedMessageIfPlayerFacing_PreserveMessage:
 	JSL Sprite_CheckIfPlayerPreoccupied : BCS .alpha
 
 	LDA.b Joy1B_New : BPL .alpha
-	LDA.w $0F10, X : BNE .alpha
+	LDA.w SpriteTimerE, X : BNE .alpha
 	LDA.b LinkJumping : CMP.b #$02 : BEQ .alpha
 
 	JSL Sprite_DirectionToFacePlayerLong : PHX : TYX
@@ -500,7 +500,7 @@ Sprite_ShowSolicitedMessageIfPlayerFacing_PreserveMessage:
 	
 	JSL Sprite_ShowMessageUnconditional
 
-	LDA.b #$40 : STA.w $0F10, X
+	LDA.b #$40 : STA.w SpriteTimerE, X
 
 	PLA : EOR.b #$03
 
@@ -513,7 +513,7 @@ Sprite_ShowSolicitedMessageIfPlayerFacing_PreserveMessage:
 	PLY
 	PLA
 
-	LDA.w $0DE0, X
+	LDA.w SpriteMoveDirection, X
 
 	CLC
 

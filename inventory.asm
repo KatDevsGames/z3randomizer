@@ -59,7 +59,7 @@ RTL
 		LDA.l BowTracking : AND.b #$C0 : CMP.b #$C0 : BNE .errorJump ; make sure we have both bows
 		PHX : LDX.b #$00 ; scan ancilla table for arrows
 			-- : CPX.b #$0A : !BGE ++
-				LDA.w $0C4A, X : CMP.b #$09 : BNE +++
+				LDA.w AncillaID, X : CMP.b #$09 : BNE +++
 					PLX : BRA .errorJump2 ; found an arrow, don't allow the swap
 				+++
 			INX : BRA -- : ++
@@ -84,7 +84,7 @@ RTL
 		.errorJump2
 		BRA .error
 	+ CMP #$0D : BNE + ; flute
-		LDA.w $037A :	CMP.b #$01 : BEQ .midShovel ; inside a shovel animation, force the shovel & make error sound
+		LDA.w UseY2 : CMP.b #$01 : BEQ .midShovel ; inside a shovel animation, force the shovel & make error sound
 		LDA.l InventoryTracking : BIT.b #$04 : BEQ .error ; make sure we have shovel
 					  AND.b #$03 : BEQ .error ; make sure we have one of the flutes
 		LDA.l FluteEquipment : CMP.b #01 : BNE .toShovel ; not shovel
@@ -250,7 +250,7 @@ AddInventory:
 	LDA.b IndoorsFlag : BEQ ++ ; skip shop check if outdoors
 	LDA.w ItemReceiptMethod : CMP.b #$01 : BEQ ++ ; skip shop check for chests
 		PHP : REP #$20 ; set 16-bit accumulator
-			LDA.w $048E
+			LDA.b RoomIndex
 			CMP.w #274 : BNE + : JMP .shop : + ; dark world death mountain shop, ornamental shield shop
 			CMP.w #271 : BNE + : JMP .shop : + ; villiage of outcasts shop, lumberjack shop, lake hylia shop, dark world magic shop
 			CMP.w #272 : BNE + : JMP .shop : + ; red shield shop
@@ -787,8 +787,8 @@ RTL
 ; DrawKeyIcon:
 ;--------------------------------------------------------------------------------
 DrawKeyIcon:
-	LDA.b Scrap04 : AND.w #$00FF : CMP.w #$0090 : BNE + : LDA.w #$007F : + : ORA.w #$2400 : STA.l $7EC764
-	LDA.b Scrap05 : AND.w #$00FF : ORA.w #$2400 : STA.l $7EC766
+	LDA.b Scrap04 : AND.w #$00FF : CMP.w #$0090 : BNE + : LDA.w #$007F : + : ORA.w #$2400 : STA.l HUDKeyDigits
+	LDA.b Scrap05 : AND.w #$00FF : ORA.w #$2400 : STA.l HUDTileMapBuffer+$66
 RTL
 ;--------------------------------------------------------------------------------
 
@@ -872,7 +872,7 @@ RTL
 ; DrawPowder:
 ;--------------------------------------------------------------------------------
 DrawPowder:
-	LDA.w $02DA : BNE .defer ; defer if link is buying a potion
+	LDA.w ItemReceiptPose : BNE .defer ; defer if link is buying a potion
 	LDA.l RedrawFlag : BEQ +
 		LDA.w SpriteAuxTable, X ; Retrieve stored item type
 		JSL.l PrepDynamicTile
@@ -960,14 +960,14 @@ RTL
 DrawMagicHeader:
 	LDA.l MagicConsumption : AND.w #$00FF : CMP.w #$0002 : BEQ .quarterMagic
 	.halfMagic
-    LDA.w #$28F7 : STA.l $7EC704
-    LDA.w #$2851 : STA.l $7EC706
-    LDA.w #$28FA : STA.l $7EC708
+    LDA.w #$28F7 : STA.l HUDTileMapBuffer+$04
+    LDA.w #$2851 : STA.l HUDTileMapBuffer+$06
+    LDA.w #$28FA : STA.l HUDTileMapBuffer+$08
 RTL   
 	.quarterMagic   
-    LDA.w #$28F7 : STA.l $7EC704
-    LDA.w #$2800 : STA.l $7EC706
-    LDA.w #$2801 : STA.l $7EC708
+    LDA.w #$28F7 : STA.l HUDTileMapBuffer+$04
+    LDA.w #$2800 : STA.l HUDTileMapBuffer+$06
+    LDA.w #$2801 : STA.l HUDTileMapBuffer+$08
 RTL
 ;--------------------------------------------------------------------------------
 
@@ -1001,7 +1001,7 @@ RTL
 SpawnShovelItem:
 	LDA.b #$01 : STA.l RedrawFlag
 
-    LDA.w $03FC : BEQ +
+    LDA.w YButtonOverride : BEQ +
     	JSL DiggingGameGuy_AttemptPrizeSpawn
 		JMP .skip
 	+
@@ -1034,18 +1034,18 @@ SpawnShovelItem:
 		LDA.l .x_speeds, X : STA.w SpriteVelocityX, Y
 
 		LDA.b #$00 : STA.w SpriteVelocityY, Y
-		LDA.b #$18 : STA.w $0F80, Y
-		LDA.b #$FF : STA.w $0B58, Y
-		LDA.b #$30 : STA.w $0F10, Y
+		LDA.b #$18 : STA.w SpriteVelocityZ, Y
+		LDA.b #$FF : STA.w EnemyStunTimer, Y
+		LDA.b #$30 : STA.w SpriteTimerE, Y
 
-		LDA.b $22 : !ADD.l .x_offsets, X
+		LDA.b LinkPosX : !ADD.l .x_offsets, X
 		                        AND.b #$F0 : STA.w SpritePosXLow, Y
-		LDA.b $23 : ADC.b #$00               : STA.w SpritePosXHigh, Y
+		LDA.b LinkPosX+1 : ADC.b #$00               : STA.w SpritePosXHigh, Y
 
-		LDA.b $20 : !ADD.b #$16 : AND.b #$F0 : STA.w SpritePosYLow, Y
-		LDA.b $21 : ADC.b #$00               : STA.w SpritePosYHigh, Y
+		LDA.b LinkPosY : !ADD.b #$16 : AND.b #$F0 : STA.w SpritePosYLow, Y
+		LDA.b LinkPosY+1 : ADC.b #$00               : STA.w SpritePosYHigh, Y
 
-		LDA.b #$00 : STA.w $0F20, Y
+		LDA.b #$00 : STA.w SpriteLayer, Y
 		TYX
 
 		LDA.b #$30 : JSL Sound_SetSfx3PanLong

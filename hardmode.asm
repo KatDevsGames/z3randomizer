@@ -8,11 +8,11 @@ CalculateSpikeFloorDamage:
 		SEP #$20 ; set 8-bit accumulator
 		BNE +
 			LDA.l ByrnaCaveSpikeDamage
-			STA.w $0373
+			STA.w DamageReceived
 			RTL
 		+
 	LDA.w $D055, Y
-	STA.w $0373
+	STA.w DamageReceived
 RTL
 ;--------------------------------------------------------------------------------
 CalculateByrnaUsage:
@@ -48,7 +48,7 @@ CalculateCapeUsage:
 	+
 		SEP #$20 ; set 8-bit accumulator
 		PHX : TYX
-		LDA.l HardModeExclusionCapeUsage, X : STA.b $4C ; set cape decrement timer
+		LDA.l HardModeExclusionCapeUsage, X : STA.b CapeTimer ; set cape decrement timer
 		PLX
 	++
 	JML IncrementMagicUseCounterOne
@@ -66,9 +66,9 @@ ActivateInvulnerabilityOrDont:
 	BRA .nowhere_special
 	.somewhere_cool
 		SEP #$20 ; set 8-bit accumulator
-		LDA.b #$01 : STA.w $037B : RTL
+		LDA.b #$01 : STA.w NoDamage : RTL
 	.nowhere_special
-		LDA.l ByrnaInvulnerability : STA.w $037B
+		LDA.l ByrnaInvulnerability : STA.w NoDamage
 RTL
 ;--------------------------------------------------------------------------------
 GetItemDamageValue:
@@ -99,7 +99,7 @@ SearchAncilla:
 	PHX 
 	LDX #$00
 	.loop
-	LDA.w $0C4A, X 
+	LDA.w AncillaID, X 
 	INX : CPX #$0A : BEQ .notFound
 	CMP Scrap05 : BNE .loop
 		LDA.b #$01

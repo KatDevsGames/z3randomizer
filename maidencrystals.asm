@@ -7,9 +7,9 @@
 ;--------------------------------------------------------------------------------
 MaidenCrystalScript:
         LDA.b #$00 : STA.l BusyItem
-        STZ.w $02D8
-        STZ.w $02DA
-        STZ.b $2E
+        STZ.w ItemReceiptID
+        STZ.w ItemReceiptPose
+        STZ.b LinkAnimationStep
         LDA.b #$02 : STA.w LinkDirection
         LDA.l CrystalsField : AND.b #$7F : CMP.b #$7F : BNE + ; check if we have all crystals
                 LDA.b #$08 : STA.l MapIcons ; Update the map icon to just be Ganon's Tower

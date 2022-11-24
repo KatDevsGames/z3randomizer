@@ -69,16 +69,16 @@ LoadModifiedIceFloorValue_a11:
 	LDA.b LinkState : CMP.b #$01 : BEQ + : CMP.b #$17 : BEQ + : CMP.b #$1C : BEQ +
 	LDA.b LinkSpeed : CMP.b #$02 : BEQ +  
 	LDA.b LinkSlipping : BNE +  
-		LDA.w $0348 : ORA.l IceModifier : AND.b #$11 : RTL  
-	+ : LDA.w $0348 : AND.b #$11  
+		LDA.w TileActIce : ORA.l IceModifier : AND.b #$11 : RTL  
+	+ : LDA.w TileActIce : AND.b #$11  
 RTL  
 LoadModifiedIceFloorValue_a01:  
 	LDA.b RoomIndex : CMP.b #$91 : BEQ + : CMP.b #$92 : BEQ + : CMP.b #$93 : BEQ + ; mire basement currently broken - not sure why
 	LDA.b LinkState : CMP.b #$01 : BEQ + : CMP.b #$17 : BEQ + : CMP.b #$1C : BEQ +
 	LDA.b LinkSpeed : CMP.b #$02 : BEQ +
 	LDA.b LinkSlipping : BNE +
-		LDA.w $0348 : ORA.l IceModifier : AND.b #$01 : RTL
-	+ : LDA.w $0348 : AND.b #$01
+		LDA.w TileActIce : ORA.l IceModifier : AND.b #$01 : RTL
+	+ : LDA.w TileActIce : AND.b #$01
 RTL
 ;================================================================================
 CheckTabletSword:
@@ -116,7 +116,7 @@ GetSmithSword:
 		LDA.b #$7A
 		LDY.b #$01
 		JSL.l Sprite_ShowMessageUnconditional
-		LDA.b #$3C : STA.w $012E ; error sound
+		LDA.b #$3C : STA.w SFX2 ; error sound
 		SEP #$10
 		BRA .done
 

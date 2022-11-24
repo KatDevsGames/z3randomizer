@@ -117,10 +117,7 @@ HandleOneMindController:
 .no_multitap_switch
 
 .no_onemind
-	STZ.b $12
+	STZ.b NMIDoneFlag
 
 	JML $008034 ; reset frame loop
-
-
-
 

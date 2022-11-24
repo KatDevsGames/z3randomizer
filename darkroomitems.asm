@@ -1,6 +1,6 @@
 CheckReceivedItemPropertiesBeforeLoad:
     LDA.b RoomIndex : BEQ .normalCode
-    LDA.l $7EC005 : BNE .lightOff
+    LDA.l RoomFade : BNE .lightOff
     .normalCode
     LDA.l AddReceivedItemExpanded_properties, X ;Restore Rando Code
     RTL
@@ -22,6 +22,6 @@ CheckReceivedItemPropertiesBeforeLoad:
 
     SEP #$30
     PLB : PLY : PLX
-    INC.b $15
+    INC.b NMICGRAM
     LDA.b #$00
     RTL

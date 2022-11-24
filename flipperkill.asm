@@ -2,11 +2,12 @@
 ; Fake Flippers Softlock Fix
 ;--------------------------------------------------------------------------------
 
+; Written over and used by OnEnterWater hook.
 UnequipCapeQuiet: 
-    LDA.b #$20 : STA.w $02E2
-    STZ.w $037B
-    STZ.b $55
-    STZ.w $0360
+    LDA.b #$20 : STA.w PoofTimer
+    STZ.w NoDamage
+    STZ.b CapeOn
+    STZ.w LinkZap
 RTL
 
 protectff:
@@ -18,14 +19,14 @@ protectff:
 .yes_protect
 	REP #$30
 
-	LDA.b $20
+	LDA.b LinkPosY
 	AND.w #$1E00
 	ASL
 	ASL
 	ASL
 	STA.b Scrap06
 
-	LDA.b $22
+	LDA.b LinkPosX
 	AND.w #$1E00
 	ORA.b Scrap06
 
@@ -49,8 +50,8 @@ protectff:
 	LDA.b #$15
 	STA.b LinkState
 
-	STZ.b $2E
-	STZ.b $67
+	STZ.b LinkAnimationStep
+	STZ.b LinkWalkDirection
 
 	LDA.b #$02
 	STA.b LinkDirection

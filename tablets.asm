@@ -3,11 +3,11 @@
 ;--------------------------------------------------------------------------------
 ItemSet_EtherTablet:
 	PHA : LDA.l NpcFlags+1 : ORA.b #$01 : STA.l NpcFlags+1 : PLA
-RTL
+RTS
 ;--------------------------------------------------------------------------------
 ItemSet_BombosTablet:
 	PHA : LDA.l NpcFlags+1 : ORA.b #$02 : STA.l NpcFlags+1 : PLA
-RTL
+RTS
 ;--------------------------------------------------------------------------------
 ItemCheck_EtherTablet:
 	LDA.l NpcFlags+1 : AND.b #$01
@@ -17,24 +17,23 @@ ItemCheck_BombosTablet:
 	LDA.l NpcFlags+1 : AND.b #$02
 RTL
 ;--------------------------------------------------------------------------------
-SetTabletItem:
-	JSL.l GetSpriteID
-	PHA
-		LDA.b OverworldIndex : CMP.b #$03 : BEQ .ether ; if we're on the map where ether is, we're the ether tablet
-		.bombos
-		JSL.l ItemSet_BombosTablet : BRA .done
-		.ether
-		JSL.l ItemSet_EtherTablet
-		.done
-	PLA
-RTL
+SetTabletItemFlag:     
+        PHA
+                LDA.b OverworldIndex : CMP.b #$03 : BEQ .ether ; if we're on the map where ether is, we're the ether tablet
+                .bombos
+                JSR ItemSet_BombosTablet : BRA .done
+                .ether
+                JSR ItemSet_EtherTablet
+                .done
+        PLA
+RTS
 ;--------------------------------------------------------------------------------
 SpawnTabletItem:
 	JSL.l LoadOutdoorValue
 	PHA
 	JSL.l PrepDynamicTile
 
-	JSL.l SetTabletItem
+	JSL.l GetSpriteID
 
 	LDA.b #$EB
 	STA.l MiniGameTime
@@ -47,14 +46,15 @@ SpawnTabletItem:
 	LDA.b LinkPosY   : STA.w SpritePosYLow, Y
 	LDA.b LinkPosY+1 : STA.w SpritePosYHigh, Y
 
-	LDA.b #$00 : STA.w $0F20, Y
+	LDA.b #$00 : STA.w SpriteLayer, Y
 
-	LDA.b #$7F : STA.w $0F70, Y ; spawn WAY up high
+	LDA.b #$7F : STA.w SpriteZCoord, Y ; spawn WAY up high
 RTL
 ;--------------------------------------------------------------------------------
 MaybeUnlockTabletAnimation:
 	PHA : PHP
 		JSL.l IsMedallion : BCC +
+                        JSR SetTabletItemFlag
 			STZ.w MedallionFlag ; disable falling-medallion mode
 			STZ.w ForceSwordUp ; release link from item-up pose
 			LDA.b #$00 : STA.b LinkState ; set link to ground state
@@ -95,38 +95,18 @@ LoadNarrowObject:
 	LDA.l AddReceivedItemExpanded_wide_item_flag, X : STA.b ($92), Y ; AddReceiveItem.wide_item_flag?
 RTL
 ;--------------------------------------------------------------------------------
-DrawNarrowDroppedObject:
-    ; If it's a 16x16 sprite, we'll only draw one, otherwise we'll end up drawing
-    ; two 8x8 sprites stack on top of each other
-    CMP.b #$02 : BEQ .large_sprite
-    
-    REP #$20
-    
-    ; Shift Y coordinate 8 pixels down
-    LDA.b Scrap08 : STA.b Scrap00
-    
-    SEP #$20
-    
-    JSL.l Ancilla_SetOam_XY_Long
-    
-    ; always use the same character graphic (0x34)
-    LDA.b #$34 : STA.b ($90), Y : INY
-    
-    LDA.l AddReceivedItemExpanded_properties, X : BPL .valid_lower_properties
-    
-    LDA.b $74
-
-.valid_lower_properties
-
-    ASL A : ORA.b #$30 : STA.b ($90), Y 
-    
-    INY : PHY
-    
-    TYA : !SUB.b #$04 : LSR #2 : TAY
-    
-    LDA.b #$00 : STA.b ($92), Y
-    
-    PLY
-.large_sprite
-RTL
+CheckTabletItem:
 ;--------------------------------------------------------------------------------
+; Zero flag set = Item not collected
+; Zero flag clear = Item  collected
+;--------------------------------------------------------------------------------
+        JSL.l IsMedallion : BCS .tablet
+                LDA.l OverworldEventDataWRAM, X : AND.b #$40 ; What we wrote over
+                RTL
+        .tablet
+        LDA.b OverworldIndex : CMP.b #$03 : BEQ .ether
+                LDA.l NpcFlags+1 : AND.b #$02 : BNE .done
+        .ether
+        LDA.l NpcFlags+1 : AND.b #$01
+        .done
+RTL

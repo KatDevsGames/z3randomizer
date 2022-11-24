@@ -39,7 +39,7 @@ DungeonHoleEntranceTransition:
 	JSL EnableForceBlank
 	
 	LDA.l SilverArrowsAutoEquip : AND.b #$02 : BEQ +
-	LDA.w $010E : CMP.b #$7B : BNE + ; skip unless falling to ganon's room
+	LDA.w EntranceIndex : CMP.b #$7B : BNE + ; skip unless falling to ganon's room
 	LDA.l BowTracking : AND.b #$40 : BEQ + ; skip if we don't have silvers
 	LDA.l BowEquipment : BEQ + ; skip if we have no bow
 	CMP.b #$03 : !BGE + ; skip if the bow is already silver
@@ -53,7 +53,7 @@ DungeonStairsTransition:
 DungeonExitTransition:
 	LDA.l IceModifier : BEQ + ; ice physics
 		JSL Player_HaltDashAttackLong
-		LDA.b #$00 : STA.w $0301 ; stop item dashing
+		LDA.b #$00 : STA.w UseY1 ; stop item dashing
 	+
 	LDA.b #$0F : STA.b GameMode ; stop running through the transition
 StatTransitionCounter:
@@ -95,7 +95,7 @@ IncrementSmallKeysNoPrimary:
 		JSL.l UpdateKeys
 		LDA.b IndoorsFlag : BEQ + ; skip room check if outdoors
 			PHP : REP #$20 ; set 16-bit accumulator
-				LDA.w $048E : CMP.w #$0087 : BNE ++ ; hera basement
+				LDA.b RoomIndex : CMP.w #$0087 : BNE ++ ; hera basement
 					PLP : PHY : LDY.b #$24 : JSL.l FullInventoryExternal
 					JSR CountChestKey : PLY : BRA +
 				++
@@ -235,7 +235,7 @@ IncrementDamageTakenCounter_Arb:
 	PHP
 	LDA.l StatsLocked : BNE +
 	REP #$21
-	LDA.b $00
+	LDA.b Scrap00
 	AND.w #$00FF
 	ADC.l DamageCounter
 	BCC ++
@@ -253,7 +253,7 @@ IncrementMagicUseCounterByrna:
 	PHA : PHP
 	LDA.l StatsLocked : BNE +
 	REP #$21
-	LDA.b $00
+	LDA.b Scrap00
 	AND.w #$00FF
 	ADC.l MagicCounter
 	BCC ++
@@ -277,7 +277,7 @@ IncrementMagicUseCounterOne:
 ;--------------------------------------------------------------------------------
 IncrementOWMirror:
         PHA
-                LDA.b #$08 : STA.w $021B ; fail race game
+                LDA.b #$08 : STA.w RaceGameFlag ; fail race game
                 LDA.l StatsLocked : BNE +
                 LDA.l CurrentWorld : BEQ + ; only do this for DW->LW
                         LDA.l OverworldMirrors : INC : STA.l OverworldMirrors
@@ -287,7 +287,7 @@ JMP StatTransitionCounter
 ;--------------------------------------------------------------------------------
 IncrementUWMirror:
 	PHA
-		LDA.b #$00 : STA.l $7F5035 ; bandaid patch bug with mirroring away from text
+		LDA.b #$00 : STA.l AltTextFlag ; bandaid patch bug with mirroring away from text
 		LDA.l StatsLocked : BNE +
 		LDA.w DungeonID : CMP.b #$FF : BEQ + ; skip if we're in a cave or house
 			LDA.l UnderworldMirrors : INC : STA.l UnderworldMirrors
@@ -316,8 +316,8 @@ JMP StatTransitionCounter
 ;--------------------------------------------------------------------------------
 IndoorSubtileTransitionCounter:
         LDA.b #$01 : STA.l RedrawFlag ; set redraw flag for items
-        STZ.w $0646 ; stuff we wrote over
-        STZ.w $0642
+        STZ.w SomariaSwitchFlag ; stuff we wrote over
+        STZ.w SpriteRoomTag
 JMP StatTransitionCounter
 ;--------------------------------------------------------------------------------
 StatsFinalPrep:

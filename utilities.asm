@@ -447,8 +447,8 @@ DrawDynamicTile:
 		LDA.b #$00 : STA.l SpriteSkipEOR
 	PLB
 
-	LDA.b $90 : !ADD.b #$08 : STA.b $90 ; leave the pointer in the right spot to draw the shadow, if desired
-	LDA.b $92 : INC #2 : STA.b $92
+	LDA.b OAMPtr : !ADD.b #$08 : STA.b OAMPtr ; leave the pointer in the right spot to draw the shadow, if desired
+	LDA.b OAMPtr+2 : INC #2 : STA.b OAMPtr+2
 	PLA
 RTL
 ;--------------------------------------------------------------------------------
@@ -465,8 +465,8 @@ DrawDynamicTileNoShadow:
 	LDA.b #$08 : JSL.l OAM_AllocateFromRegionC
 
 	.draw
-	LDA.b #SpriteOAM>>0 : STA.b Scrap06
-	LDA.b #SpriteOAM>>8 : STA.b Scrap06
+	LDA.b #SpriteOAM>>0 : STA.b Scrap08
+	LDA.b #SpriteOAM>>8 : STA.b Scrap09
 	STZ.b Scrap07
 	LDA.b #$7E : PHB : PHA : PLB
 		LDA.b #$01 : STA.l SpriteSkipEOR
@@ -474,8 +474,8 @@ DrawDynamicTileNoShadow:
 		LDA.l Bob : BNE + : LDA.b #$00 : STA.l SpriteSkipEOR : + ; Bob fix is conditional
 	PLB
 
-	LDA.b $90 : !ADD.b #$08 : STA.b $90
-	LDA.b $92 : INC #2 : STA.b $92
+	LDA.b OAMPtr : !ADD.b #$08 : STA.b OAMPtr
+	LDA.b OAMPtr+2 : INC #2 : STA.b OAMPtr+2
 RTL
 ;--------------------------------------------------------------------------------
 
@@ -501,30 +501,30 @@ RTL
 ; out:	Carry - 1 = On Screen, 0 = Off Screen
 ;--------------------------------------------------------------------------------
 Sprite_IsOnscreen:
-    JSR _Sprite_IsOnscreen_DoWork
-	BCS +
-		REP #$20
-		LDA.b BG2H : PHA : !SUB.w #$0F : STA.b BG2H
-		LDA.b BG2V : PHA : !SUB.w #$0F : STA.b BG2V
-		SEP #$20
-			JSR _Sprite_IsOnscreen_DoWork
-		REP #$20
-		PLA : STA.b BG2V
-		PLA : STA.b BG2H
-		SEP #$20
-	+
+        JSR _Sprite_IsOnscreen_DoWork
+        BCS +
+                REP #$20
+                LDA.b BG2H : PHA : !SUB.w #$0F : STA.b BG2H
+                LDA.b BG2V : PHA : !SUB.w #$0F : STA.b BG2V
+                SEP #$20
+                JSR _Sprite_IsOnscreen_DoWork
+                REP #$20
+                PLA : STA.b BG2V
+                PLA : STA.b BG2H
+                SEP #$20
+        +
 RTL
 
 _Sprite_IsOnscreen_DoWork:
-    LDA.w SpritePosXLow, X : CMP.b BG2H
-    LDA.w SpritePosXHigh, X : SBC.b $E3 : BNE .offscreen
+        LDA.w SpritePosXLow, X : CMP.b BG2H
+        LDA.w SpritePosXHigh, X : SBC.b BG2H+1 : BNE .offscreen
 
-    LDA.w SpritePosYLow, X : CMP.b BG2V
-    LDA.w SpritePosYHigh, X : SBC.b $E9 : BNE .offscreen
-	SEC
+        LDA.w SpritePosYLow, X : CMP.b BG2V
+        LDA.w SpritePosYHigh, X : SBC.b BG2V+1 : BNE .offscreen
+        SEC
 RTS
-	.offscreen
-	CLC
+        .offscreen
+        CLC
 RTS
 ;--------------------------------------------------------------------------------
 
@@ -667,14 +667,14 @@ db #00, #01, #01, #02, #01, #02, #02, #03, #01, #02, #02, #03, #02, #03, #03, #0
 ;--------------------------------------------------------------------------------
 WriteVRAMStripe:
 	PHX
-		LDX $1000 ; get pointer
-		AND.w #$7F : STA.w $1002, X : INX #2 ; set destination
-	PLA : ASL : AND.w #$7FFF : ORA.w #$7000 : STA.w $1002, X : INX #2 ; set length and enable RLE
-	TYA : STA.w $1002, X : INX #2 ; set tile
+		LDX.w GFXStripes ; get pointer
+		AND.w #$7F : STA.w GFXStripes+2, X : INX #2 ; set destination
+	PLA : ASL : AND.w #$7FFF : ORA.w #$7000 : STA.w GFXStripes+2, X : INX #2 ; set length and enable RLE
+	TYA : STA.w GFXStripes+2, X : INX #2 ; set tile
 	SEP #$20 ; set 8-bit accumulator
-		LDA.b #$FF : STA.w $1002, X
-		STX.w $1000
-		LDA.b #01 : STA.b $14
+		LDA.b #$FF : STA.w GFXStripes+2, X
+		STX.w GFXStripes
+		LDA.b #01 : STA.b NMISTRIPES
 	REP #$20 ; set 16-bit accumulator
 RTL
 ;--------------------------------------------------------------------------------
@@ -687,9 +687,9 @@ RTL
 ;--------------------------------------------------------------------------------
 WriteVRAMBlock:
         PHX
-                LDX.w $1000 ; get pointer
-        AND.w #$7F : STA.w $1002, X : INX #2 ; set destination
-        PLA : ASL : AND.w #$3FFF : STA.w $1002, X : INX #2 ; set length
+        LDX.w GFXStripes ; get pointer
+        AND.w #$7F : STA.w GFXStripes+2, X : INX #2 ; set destination
+        PLA : ASL : AND.w #$3FFF : STA.w GFXStripes+2, X : INX #2 ; set length
 
         PHX
                 TYX ; set X to source
@@ -703,9 +703,9 @@ WriteVRAMBlock:
         PLX : TAX ; pull and promptly ignore, copying the value we just got over it
 
         SEP #$20 ; set 8-bit accumulator
-                LDA.b #$FF : STA.w $1002, X
-                STX.w $1000
-                LDA.b #01 : STA.w $14
+                LDA.b #$FF : STA.w GFXStripes+$02, X
+                STX.w GFXStripes
+                LDA.b #01 : STA.w NMISTRIPES
         REP #$20 ; set 16-bit accumulator
 RTL
 ;--------------------------------------------------------------------------------

@@ -25,7 +25,7 @@ RTL
 ; Randomize Bonk Keys
 ;--------------------------------------------------------------------------------
 LoadBonkItemGFX:
-	LDA.b #$08 : STA.w $0F50, X ; thing we wrote over
+	LDA.b #$08 : STA.w SpriteOAMProp, X ; thing we wrote over
 LoadBonkItemGFX_inner:
 	LDA.b #$00 : STA.l RedrawFlag
 	JSR LoadBonkItem

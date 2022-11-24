@@ -49,7 +49,7 @@ BgGraphicsLoading:
 
 ReloadingFloors:
     SEP #$30 ; 8 AXY
-    LDA.l $7EC2F8 ; Floor file that has been decompressed
+    LDA.l LastBGSet ; Floor file that has been decompressed
     TAY
     JSR ShouldOverrideFileLoad
     REP #$30 ; 16 AXY

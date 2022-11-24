@@ -16,7 +16,7 @@ Password_BeginInit:
 	JSL Vram_EraseTilemaps_triforce
 
 	JSL LoadCustomHudPalette ; replace the 2bpp palettes, and trigger upload
-	LDA.b #$07 : STA.b $14 ; have NMI load up the initial tilemap from Password_Tilemap
+	LDA.b #$07 : STA.b NMISTRIPES ; have NMI load up the initial tilemap from Password_Tilemap
 
 	INC.b GameSubMode
 RTL
@@ -37,7 +37,7 @@ Password_EndInit:
                 DEX : BPL -
 	+
 
-	LDA.b #$0F : STA.b $13
+	LDA.b #$0F : STA.b INIDISPQ
 	INC.b GameSubMode
 RTL
 
@@ -119,7 +119,7 @@ Password_Main:
 	JSR UpdatePasswordTiles
 
 	JSR PasswordSetNewCursors
-	LDA.b #$01 : STA.b $14
+	LDA.b #$01 : STA.b NMISTRIPES
 	PLB
 RTL
 .selectionValues

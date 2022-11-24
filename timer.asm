@@ -111,51 +111,51 @@ dw #$FFFF, #$7FFF
 ;--------------------------------------------------------------------------------
 DrawChallengeTimer:
 	LDA.l OHKOFlag : AND.w #$00FF : BEQ +
-                LDA.w #$2807 : STA.l $7EC790
-                LDA.w #$280A : STA.l $7EC792
-                LDA.w #$280B : STA.l $7EC794
-                LDA.w #$280C : STA.l $7EC796
+                LDA.w #$2807 : STA.l HUDTileMapBuffer+$90
+                LDA.w #$280A : STA.l HUDTileMapBuffer+$92
+                LDA.w #$280B : STA.l HUDTileMapBuffer+$94
+                LDA.w #$280C : STA.l HUDTileMapBuffer+$96
                 RTL
         +
-        LDA.w #$247F : STA.l $7EC790
-        STA.l $7EC792
-        STA.l $7EC794
-        STA.l $7EC796
+        LDA.w #$247F : STA.l HUDTileMapBuffer+$90
+        STA.l HUDTileMapBuffer+$92
+        STA.l HUDTileMapBuffer+$94
+        STA.l HUDTileMapBuffer+$96
         ++
 
         LDA.l TimerStyle : BNE + : RTL : + ; Hud Timer
-        LDA.w #$2807 : STA.l $7EC792    	
+        LDA.w #$2807 : STA.l HUDTileMapBuffer+$92    	
         LDA.l ClockStatus : AND.w #$0002 : BEQ + ; DNF / OKHO
 
 			LDA.l TimeoutBehavior : AND.w #$00FF : BNE ++ ; DNF
-				LDA.w #$2808 : STA.l $7EC794
-				LDA.w #$2809 : STA.l $7EC796
-				LDA.w #$247F : STA.l $7EC798
-				STA.l $7EC79A
+				LDA.w #$2808 : STA.l HUDTileMapBuffer+$94
+				LDA.w #$2809 : STA.l HUDTileMapBuffer+$96
+				LDA.w #$247F : STA.l HUDTileMapBuffer+$98
+				STA.l HUDTileMapBuffer+$9A
 				BRA +++
 			++ ; OHKO
-				LDA.w #$280A : STA.l $7EC794
-				LDA.w #$280B : STA.l $7EC796
-				LDA.w #$280C : STA.l $7EC798
-				LDA.w #$247F : STA.l $7EC79A
+				LDA.w #$280A : STA.l HUDTileMapBuffer+$94
+				LDA.w #$280B : STA.l HUDTileMapBuffer+$96
+				LDA.w #$280C : STA.l HUDTileMapBuffer+$98
+				LDA.w #$247F : STA.l HUDTileMapBuffer+$9A
 			+++
-			STA.l $7EC79C
-			STA.l $7EC79E
-			STA.l $7EC7A0
-			STA.l $7EC7A2
-			STA.l $7EC7A4
+			STA.l HUDTileMapBuffer+$9C
+			STA.l HUDTileMapBuffer+$9E
+			STA.l HUDTileMapBuffer+$A0
+			STA.l HUDTileMapBuffer+$A2
+			STA.l HUDTileMapBuffer+$A4
 			LDA.l TimerRestart : BNE +++ : RTL : +++
 			BRA ++
 		+ ; Show Timer
-	    	LDA.l ClockStatus : AND.w #$0001 : !ADD.w #$2804 : STA.l $7EC794
-			LDA.w ClockHours+2 : STA.l $7EC796
-			LDA.w ClockHours : STA.l $7EC798
-	    	LDA.w #$2806 : STA.l $7EC79A
-			LDA.w ClockMinutes+2 : STA.l $7EC79C
-			LDA.w ClockMinutes : STA.l $7EC79E
-	    	LDA.w #$2806 : STA.l $7EC7A0
-			LDA.w ClockSeconds+2 : STA.l $7EC7A2
-			LDA.w ClockSeconds : STA.l $7EC7A4
+	    	LDA.l ClockStatus : AND.w #$0001 : !ADD.w #$2804 : STA.l HUDTileMapBuffer+$94
+			LDA.w ClockHours+2 : STA.l HUDTileMapBuffer+$96
+			LDA.w ClockHours : STA.l HUDTileMapBuffer+$98
+	    	LDA.w #$2806 : STA.l HUDTileMapBuffer+$9A
+			LDA.w ClockMinutes+2 : STA.l HUDTileMapBuffer+$9C
+			LDA.w ClockMinutes : STA.l HUDTileMapBuffer+$9E
+	    	LDA.w #$2806 : STA.l HUDTileMapBuffer+$A0
+			LDA.w ClockSeconds+2 : STA.l HUDTileMapBuffer+$A2
+			LDA.w ClockSeconds : STA.l HUDTileMapBuffer+$A4
 		++
 		LDA.b FrameCounter : AND.w #$001F : BNE + : JSR CalculateTimer : +
 

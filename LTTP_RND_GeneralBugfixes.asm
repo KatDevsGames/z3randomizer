@@ -87,7 +87,6 @@ incsrc catfish.asm
 incsrc flute.asm
 incsrc dungeondrops.asm
 incsrc halfmagicbat.asm
-incsrc mantle.asm
 incsrc swordswap.asm
 incsrc stats.asm
 incsrc dialog.asm
@@ -298,12 +297,11 @@ warnpc $B08000
 ;================================================================================
 ;RAM
 ;See ram.asm for label assignments
-;$7E021B[0x1]: Used by race game instead of $0ABF to avoid witch item conflict
 ;$7EC900[0x1F00]: BigRAM buffer
 ;$7EF000[0x500]: SRAM mirror First 0x500 bytes of SRAM
 ;   See sram.asm for labels and assignments
 ;$7F5000[0x800]: Rando's main free ram region
-;   See tables.asm for specific assignments
+;   See ram.asm for specific assignments
 ;$7F6000[0x1000]: SRAM buffer mapped to vanilla save slots 1 and 2
 ;   See sram.asm for labels and assignments
 ;$7F7667[0x6719] - free ram

@@ -114,11 +114,11 @@ DrawPlayerFile:
 
 		; re-enable  Stripe Image format upload on this frame
 		; Value loaded must match what gets set by AltBufferTable
-		LDA.w #$0161 : STA.w $1002
+		LDA.w #$0161 : STA.w GFXStripes+2
 		BRA .done
 	.normal
 	STZ.w SkipOAM ; ensure core animated tile updates are not suppressed
-	LDA.w #$FFFF : STA.w $1002 ; Suppress Stripe Image format upload on this frame
+	LDA.w #$FFFF : STA.w GFXStripes+2 ; Suppress Stripe Image format upload on this frame
 .done
 	LDA.w #$0004 : STA.b Scrap02 ; thing we wrote over
 RTL
@@ -591,55 +591,55 @@ AltBufferTable:
     ;fill with the blank character
     LDA.w #$0188
     -
-        STA.w $1000, X
+        STA.w GFXStripes, X
         DEX : DEX : BNE -
 
     ; set vram offsets
-    LDA.w #$0161 : STA.w $1002 ;file 1 top row
-    LDA.w #$2161 : STA.w $1042 ;file 1 bottom row
-  
-    LDA.w #$4161 : STA.w $1082 ;gap row top
-    LDA.w #$6161 : STA.w $10C2 ;gap row bottom
-  
-    LDA.w #$8161 : STA.w $1102 ;file 2 top row
-    LDA.w #$A161 : STA.w $1142 ;file 2 bottom row
-  
-    LDA.w #$C161 : STA.w $1182 ;gap row top
-    LDA.w #$E161 : STA.w $11c2 ;gap row bottom
-  
-    LDA.w #$0162 : STA.w $1202 ;file 3 top row
-    LDA.w #$2162 : STA.w $1242 ;file 3 bottom row
-  
-    LDA.w #$4162 : STA.w $1282 ;extra gap row top
-    LDA.w #$6162 : STA.w $12c2 ;extra gap row bottom
+    LDA.w #$0161 : STA.w GFXStripes+$02 ;file 1 top row
+    LDA.w #$2161 : STA.w GFXStripes+$42 ;file 1 bottom row
 
-    LDA.w #$8162 : STA.w $1302 ;extra gap row top
-    LDA.w #$A162 : STA.w $1342 ;extra gap row bottom
-  
-    LDA.w #$C162 : STA.w $1382 ;extra gap row top
-    LDA.w #$E162 : STA.w $13C2 ;extra gap row bottom
+    LDA.w #$4161 : STA.w GFXStripes+$82 ;gap row top
+    LDA.w #$6161 : STA.w GFXStripes+$C2 ;gap row bottom
+
+    LDA.w #$8161 : STA.w GFXStripes+$0102 ;file 2 top row
+    LDA.w #$A161 : STA.w GFXStripes+$0142 ;file 2 bottom row
+
+    LDA.w #$C161 : STA.w GFXStripes+$0182 ;gap row top
+    LDA.w #$E161 : STA.w GFXStripes+$01C2 ;gap row bottom
+
+    LDA.w #$0162 : STA.w GFXStripes+$0202 ;file 3 top row
+    LDA.w #$2162 : STA.w GFXStripes+$0242 ;file 3 bottom row
+
+    LDA.w #$4162 : STA.w GFXStripes+$0282 ;extra gap row top
+    LDA.w #$6162 : STA.w GFXStripes+$02C2 ;extra gap row bottom
+
+    LDA.w #$8162 : STA.w GFXStripes+$0302 ;extra gap row top
+    LDA.w #$A162 : STA.w GFXStripes+$0342 ;extra gap row bottom
+
+    LDA.w #$C162 : STA.w GFXStripes+$0382 ;extra gap row top
+    LDA.w #$E162 : STA.w GFXStripes+$03C2 ;extra gap row bottom
 
     ; set lengths
     LDA.w #$3B00
-    STA.w $1004 ;file 1 top row
-    STA.w $1044 ;file 1 bottom row
-    STA.w $1084 ;gap row top
-    STA.w $10C4 ;gap row bottom
-    STA.w $1104 ;file 2 top row
-    STA.w $1144 ;file 2 bottom row
-    STA.w $1184 ;gap row top
-    STA.w $11C4 ;gap row bottom
-    STA.w $1204 ;file 3 top row
-    STA.w $1244 ;file 3 bottom row
-    STA.w $1284 ;extra gap row top
-    STA.w $12C4 ;extra gap row bottom
-    STA.w $1304 ;extra gap row top
-    STA.w $1344 ;extra gap row bottom
-    STA.w $1384 ;extra gap row top
-    STA.w $13C4 ;extra gap row bottom
+    STA.w GFXStripes+$04 ;file 1 top row
+    STA.w GFXStripes+$44 ;file 1 bottom row
+    STA.w GFXStripes+$84 ;gap row top
+    STA.w GFXStripes+$C4 ;gap row bottom
+    STA.w GFXStripes+$0104 ;file 2 top row
+    STA.w GFXStripes+$0144 ;file 2 bottom row
+    STA.w GFXStripes+$0184 ;gap row top
+    STA.w GFXStripes+$01C4 ;gap row bottom
+    STA.w GFXStripes+$0204 ;file 3 top row
+    STA.w GFXStripes+$0244 ;file 3 bottom row
+    STA.w GFXStripes+$0284 ;extra gap row top
+    STA.w GFXStripes+$02C4 ;extra gap row bottom
+    STA.w GFXStripes+$0304 ;extra gap row top
+    STA.w GFXStripes+$0344 ;extra gap row bottom
+    STA.w GFXStripes+$0384 ;extra gap row top
+    STA.w GFXStripes+$03C4 ;extra gap row bottom
 
     ; Set last packet marker
-    LDA.w #$00FF : STA.w $1402
+    LDA.w #$00FF : STA.w GFXStripes+$0402
 
     ; Draw Unlock option if applicable
     LDA.b GameMode : AND.w #$00FF : CMP.w #$0001 : BNE +
@@ -661,29 +661,29 @@ AltBufferTable_credits:
 	JSL AltBufferTable_noScreen3Change
 
 	REP #$20
-    LDA.w #$6168 : STA.w $1002 ;file 1 top row
-    LDA.w #$8168 : STA.w $1042 ;file 1 bottom row
-  
-    LDA.w #$A168 : STA.w $1082 ;gap row top
-    LDA.w #$C168 : STA.w $10C2 ;gap row bottom
-  
-    LDA.w #$E168 : STA.w $1102 ;file 2 top row
-    LDA.w #$0169 : STA.w $1142 ;file 2 bottom row
-  
-    LDA.w #$2169 : STA.w $1182 ;gap row top
-    LDA.w #$4169 : STA.w $11c2 ;gap row bottom
-  
-    LDA.w #$6169 : STA.w $1202 ;file 3 top row
-    LDA.w #$8169 : STA.w $1242 ;file 3 bottom row
-  
-    LDA.w #$A169 : STA.w $1282 ;extra gap row top
-    LDA.w #$C169 : STA.w $12c2 ;extra gap row bottom
+    LDA.w #$6168 : STA.w GFXStripes+$02 ;file 1 top row
+    LDA.w #$8168 : STA.w GFXStripes+$42 ;file 1 bottom row
 
-    LDA.w #$E169 : STA.w $1302 ;extra gap row top
-    LDA.w #$016A : STA.w $1342 ;extra gap row bottom
-  
-    LDA.w #$216A : STA.w $1382 ;extra gap row top
-    LDA.w #$416A : STA.w $13C2 ;extra gap row bottom
+    LDA.w #$A168 : STA.w GFXStripes+$82 ;gap row top
+    LDA.w #$C168 : STA.w GFXStripes+$C2 ;gap row bottom
+
+    LDA.w #$E168 : STA.w GFXStripes+$0102 ;file 2 top row
+    LDA.w #$0169 : STA.w GFXStripes+$0142 ;file 2 bottom row
+
+    LDA.w #$2169 : STA.w GFXStripes+$0182 ;gap row top
+    LDA.w #$4169 : STA.w GFXStripes+$01c2 ;gap row bottom
+
+    LDA.w #$6169 : STA.w GFXStripes+$0202 ;file 3 top row
+    LDA.w #$8169 : STA.w GFXStripes+$0242 ;file 3 bottom row
+
+    LDA.w #$A169 : STA.w GFXStripes+$0282 ;extra gap row top
+    LDA.w #$C169 : STA.w GFXStripes+$02C2 ;extra gap row bottom
+
+    LDA.w #$E169 : STA.w GFXStripes+$0302 ;extra gap row top
+    LDA.w #$016A : STA.w GFXStripes+$0342 ;extra gap row bottom
+
+    LDA.w #$216A : STA.w GFXStripes+$0382 ;extra gap row top
+    LDA.w #$416A : STA.w GFXStripes+$03C2 ;extra gap row bottom
 
     SEP #$20
 RTL
@@ -772,12 +772,12 @@ LoadCustomHudPalette:
 		LDX.b #$40
 		-
 		LDA.l GFX_HUD_Palette, X
-			STA.l $7EC500, X
+			STA.l PaletteBuffer, X
 			DEX : DEX
 		BPL -
 		SEP #$20
 
-		INC $15 ; ensure CGRAM gets updated
+		INC.b NMICGRAM ; ensure CGRAM gets updated
 	PLX : PLA
 RTL
 ;--------------------------------------------------------------------------------

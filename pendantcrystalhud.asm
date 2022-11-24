@@ -31,11 +31,11 @@ RTL
 HUDRebuildIndoor:
 	LDA.l GenericKeys : BEQ .normal
 	.generic
-	LDA.b #$00 : STA.l $7EC017
+	LDA.b #$00 : STA.l RoomDarkness
 	LDA.l CurrentGenericKeys ; generic key count
 RTL
 	.normal
-    LDA.b #$00 : STA.l $7EC017
+    LDA.b #$00 : STA.l RoomDarkness
     LDA.b #$FF ; don't show keys
 RTL
 ;================================================================================
@@ -186,7 +186,7 @@ RTL
 UpdateKeys:
 	PHX : PHP
 	SEP #$30 ; set 8-bit accumulator & index registers
-		LDA.w DungeonID : CMP.b $1F : !BLT .skip
+		LDA.w DungeonID : CMP.b TSWQ : !BLT .skip
 		
 		LSR : TAX ; get dungeon index and store to X
 	
@@ -219,39 +219,38 @@ RTL
 ;--------------------------------------------------------------------------------
 DrawBootsInMenuLocation:
 	LDA.l HUDDungeonItems : BNE +
-		LDA.w #$1608 : STA.b $00
+		LDA.w #$1608 : STA.b Scrap00
 		RTL
 	+
-	LDA.w #$1588 : STA.b $00
+	LDA.w #$1588 : STA.b Scrap00
 RTL
 ;--------------------------------------------------------------------------------
 DrawGlovesInMenuLocation:
 	LDA.l HUDDungeonItems : BNE +
-		LDA.w #$1610 : STA.b $00
+		LDA.w #$1610 : STA.b Scrap00
 		RTL
 	+
-	LDA.w #$1590 : STA.b $00
+	LDA.w #$1590 : STA.b Scrap00
 RTL
 ;--------------------------------------------------------------------------------
 DrawFlippersInMenuLocation:
 	LDA.l HUDDungeonItems : BNE +
-		LDA.w #$1618 : STA.b $00
+		LDA.w #$1618 : STA.b Scrap00
 		RTL
 	+
-	LDA.w #$1598 : STA.b $00
+	LDA.w #$1598 : STA.b Scrap00
 RTL
 ;--------------------------------------------------------------------------------
 DrawMoonPearlInMenuLocation:
 	LDA.l HUDDungeonItems : BNE +
-		LDA.w #$1620 : STA.b $00
+		LDA.w #$1620 : STA.b Scrap00
 		RTL
 	+
-	LDA.w #$15A0 : STA.b $00
+	LDA.w #$15A0 : STA.b Scrap00
 RTL
 ;--------------------------------------------------------------------------------
 DrawHUDDungeonItems:
 	LDA.l HUDDungeonItems : BNE .continue
-
 	RTL
 
 .dungeon_positions
@@ -328,12 +327,12 @@ DrawHUDDungeonItems:
 	; dungeon names
 	LDA.w #$2D50
 
-	LDY.w #0
+	LDY.w #00
 
 
 .next_dungeon_name
 	LDX.w .dungeon_positions,Y
-	STA.w $1646,X
+	STA.w GFXStripes+$0646,X
 
 	INC
 
@@ -344,9 +343,9 @@ DrawHUDDungeonItems:
 	LDX.w #$001E
 	LDA.w #$24F5
 
---	STA.w $1686,X
-	STA.w $16C6,X
-	STA.w $1706,X
+--	STA.w GFXStripes+$0686,X
+	STA.w GFXStripes+$06C6,X
+	STA.w GFXStripes+$0706,X
 
 	DEX : DEX : BPL --
 
@@ -361,7 +360,7 @@ DrawHUDDungeonItems:
 	LDA.l HUDDungeonItems : AND.w #$0001 : BEQ .skip_small_keys
 
 .draw_small_keys
-		LDA.w #$2810 : STA.w $1684 ; small keys icon
+		LDA.w #$2810 : STA.w GFXStripes+$0684 ; small keys icon
 
 		LDY.w #0
 
@@ -376,7 +375,7 @@ DrawHUDDungeonItems:
 
 		LDX.w .dungeon_positions,Y
 		ADC.w #$2816
-		STA.w $1686,X
+		STA.w GFXStripes+$0686,X
 
 		INY : INY
 		CPY.w #26 : BCC .next_small_key
@@ -389,7 +388,7 @@ DrawHUDDungeonItems:
 	LDA.l HUDDungeonItems : AND.w #$0002 : BEQ .skip_big_keys
 
 
-		LDA.w #$2811 : STA.w $16C4 ; big key icon
+		LDA.w #$2811 : STA.w GFXStripes+$06C4 ; big key icon
 
 		; use X so we can BIT
 		LDX.w #0
@@ -403,7 +402,7 @@ DrawHUDDungeonItems:
 
 		LDY.w .dungeon_positions,X
 		LDA.w #$2826
-		STA.w $16C6,Y
+		STA.w GFXStripes+$06C6,Y
 
 		; reload
 		LDA.l BigKeyField
@@ -417,7 +416,7 @@ DrawHUDDungeonItems:
 .skip_big_keys
 
 	LDA.l HUDDungeonItems : AND.w #$0010 : BEQ .skip_boss_kills
-		LDA.w #$280F : STA.w $1704 ; skull icon
+		LDA.w #$280F : STA.w GFXStripes+$0704 ; skull icon
 		LDY.w #0
 
 .next_boss_kill
@@ -428,7 +427,7 @@ DrawHUDDungeonItems:
 
 		LDA.w #$2826
 		LDX.w .dungeon_positions,Y
-		STA.w $1706,X
+		STA.w GFXStripes+$0706,X
 
 ..skip_boss_kill
 		INY : INY
@@ -446,7 +445,7 @@ DrawHUDDungeonItems:
 
 	; Maps
 	LDA.l HUDDungeonItems : AND.w #$0004 : BEQ .skip_maps
-		LDA.w #$2821 : STA.w $1684 ; map icon
+		LDA.w #$2821 : STA.w GFXStripes+$0684 ; map icon
 
 		; use X so we can BIT
 		LDX.w #0
@@ -460,7 +459,7 @@ DrawHUDDungeonItems:
 
 		LDY.w .dungeon_positions,X
 		LDA.w #$2826
-		STA.w $1686,Y
+		STA.w GFXStripes+$0686,Y
 
 		; reload
 		LDA.l MapField
@@ -475,7 +474,7 @@ DrawHUDDungeonItems:
 
 	; Compasses
 	LDA.l HUDDungeonItems : AND.w #$0008 : BEQ .skip_compasses
-		LDA.w #$2C20 : STA.w $16C4 ; compass icon
+		LDA.w #$2C20 : STA.w GFXStripes+$06C4 ; compass icon
 
 		; use X so we can BIT
 		LDX.w #0
@@ -489,7 +488,7 @@ DrawHUDDungeonItems:
 
 		LDY.w .dungeon_positions,X
 		LDA.w #$2826
-		STA.w $16C6,Y
+		STA.w GFXStripes+$06C6,Y
 
 		; reload
 		LDA.l CompassField
@@ -513,15 +512,15 @@ DrawPendantCrystalDiagram:
 		REP #$30 ; Set 16-bit accumulator & index registers
 		LDX.w #$0000 ; Paint entire box black & draw empty pendants and crystals
 		-
-		LDA.l .row0, X : STA.w $12EA, X
-		LDA.l .row1, X : STA.w $132A, X
-		LDA.l .row2, X : STA.w $136A, X
-		LDA.l .row3, X : STA.w $13AA, X
-		LDA.l .row4, X : STA.w $13EA, X
-		LDA.l .row5, X : STA.w $142A, X
-		LDA.l .row6, X : STA.w $146A, X
-		LDA.l .row7, X : STA.w $14AA, X
-		LDA.l .row8, X : STA.w $14EA, X
+		LDA.l .row0, X : STA.w GFXStripes+$02EA, X
+		LDA.l .row1, X : STA.w GFXStripes+$032A, X
+		LDA.l .row2, X : STA.w GFXStripes+$036A, X
+		LDA.l .row3, X : STA.w GFXStripes+$03AA, X
+		LDA.l .row4, X : STA.w GFXStripes+$03EA, X
+		LDA.l .row5, X : STA.w GFXStripes+$042A, X
+		LDA.l .row6, X : STA.w GFXStripes+$046A, X
+		LDA.l .row7, X : STA.w GFXStripes+$04AA, X
+		LDA.l .row8, X : STA.w GFXStripes+$04EA, X
 		INX #2 : CPX.w #$0014 : BCC -
 		
 		; pendants
@@ -529,59 +528,56 @@ DrawPendantCrystalDiagram:
 
 		  LSR : BCC + ; pendant of wisdom (red)
 			LDX.w #$252B
-			STX.w $13B6
-			INX : STX.w $13B8
-			INX : STX.w $13F6
-			INX : STX.w $13F8
+			STX.w GFXStripes+$03B6
+			INX : STX.w GFXStripes+$03B8
+			INX : STX.w GFXStripes+$03F6
+			INX : STX.w GFXStripes+$03F8
 
 		+ LSR : BCC + ; pendant of power (blue)
 			LDX.w #$2D2B
-			STX.w $13AE
-			INX : STX.w $13B0
-			INX : STX.w $13EE
-			INX : STX.w $13F0
+			STX.w GFXStripes+$03AE
+			INX : STX.w GFXStripes+$03B0
+			INX : STX.w GFXStripes+$03EE
+			INX : STX.w GFXStripes+$03F0
 
 		+ LSR : BCC + ; pendant of courage (green)
 			LDX.w #$3D2B
-			STX.w $1332
-			INX : STX.w $1334
-			INX : STX.w $1372
-			INX : STX.w $1374
+			STX.w GFXStripes+$0332
+			INX : STX.w GFXStripes+$0334
+			INX : STX.w GFXStripes+$0372
+			INX : STX.w GFXStripes+$0374
 		+
-
-
-
 		; crystals
 		LDA.l CrystalsField
 		LDX.w #$2D44
 		LDY.w #$2D45
 
 		  BIT.w #$0002 : BEQ + ; crystal 1
-			STX.w $14AC
-			STY.w $14AE
+			STX.w GFXStripes+$04AC
+			STY.w GFXStripes+$04AE
 		+ BIT.w #$0010 : BEQ + ; crystal 2
-			STX.w $146E
-			STY.w $1470
+			STX.w GFXStripes+$046E
+			STY.w GFXStripes+$0470
 		+ BIT.w #$0040 : BEQ + ; crystal 3
-			STX.w $14B0
-			STY.w $14B2
+			STX.w GFXStripes+$04B0
+			STY.w GFXStripes+$04B2
 		+ BIT.w #$0020 : BEQ + ; crystal 4
-			STX.w $1472
-			STY.w $1474
+			STX.w GFXStripes+$0472
+			STY.w GFXStripes+$0474
 		+ BIT.w #$0008 : BEQ + ; crystal 7
-			STX.w $14B8
-			STY.w $14BA
+			STX.w GFXStripes+$04B8
+			STY.w GFXStripes+$04BA
 		+ 
 
 		LDX.w #$2544
 		LDY.w #$2545
 
 		  BIT.w #$0004 : BEQ + ; crystal 5
-			STX.w $14B4
-			STY.w $14B6
+			STX.w GFXStripes+$04B4
+			STY.w GFXStripes+$04B6
 		+ BIT.w #$0001 : BEQ + ; crystal 6
-			STX.w $1476
-			STY.w $1478
+			STX.w GFXStripes+$0476
+			STY.w GFXStripes+$0478
 		+
 
 	PLB : PLP

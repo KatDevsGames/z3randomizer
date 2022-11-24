@@ -1,6 +1,6 @@
 OnPrepFileSelect:
 	LDA.b GameSubMode : CMP.b #$03 : BNE +
-		LDA.b #$06 : STA.b $14 ; thing we wrote over
+		LDA.b #$06 : STA.b NMISTRIPES ; thing we wrote over
 		RTL
 	+
 	JSL.l LoadAlphabetTilemap
@@ -15,7 +15,7 @@ OnDrawHud:
 JML.l ReturnFromOnDrawHud
 ;--------------------------------------------------------------------------------
 OnDungeonEntrance:
-	STA.l $7EC172 ; thing we wrote over
+	STA.l PegColor ; thing we wrote over
         JSL MaybeFlagCompassTotalEntrance
 RTL
 ;--------------------------------------------------------------------------------
@@ -33,7 +33,7 @@ OnDungeonExit:
 		JSL.l SQEGFix
 	PLP : PLA
 
-	STA.w DungeonID : STZ.w $04AC ; thing we wrote over
+	STA.w DungeonID : STZ.w Map16ChangeIndex ; thing we wrote over
 
 	PHA : PHP
 		JSL.l HUD_RebuildLong
@@ -44,8 +44,8 @@ RTL
 ;--------------------------------------------------------------------------------
 OnQuit:
 	JSL.l SQEGFix
-	LDA.b #$00 : STA.l $7F5035 ; bandaid patch bug with mirroring away from text
-	LDA.b #$10 : STA.b $1C ; thing we wrote over
+	LDA.b #$00 : STA.l AltTextFlag ; bandaid patch bug with mirroring away from text
+	LDA.b #$10 : STA.b MAINDESQ ; thing we wrote over
 RTL
 ;--------------------------------------------------------------------------------
 OnUncleItemGet:
@@ -123,13 +123,12 @@ OnFileLoad:
 		JSL.l OnNewFile
 		LDA.b #$FF : STA.l FileMarker
 	+
-	LDA.w $010A : BNE + ; don't adjust the worlds for "continue" or "save-continue"
-	LDA.l $7EC011 : BNE + ; don't adjust worlds if mosiac is enabled (Read: mirroring in dungeon)
+	LDA.w DeathReloadFlag : BNE + ; don't adjust the worlds for "continue" or "save-continue"
+	LDA.l MosaicLevel : BNE + ; don't adjust worlds if mosiac is enabled (Read: mirroring in dungeon)
 		JSL.l DoWorldFix
 	+
 	JSL.l MasterSwordFollowerClear
 	LDA.b #$FF : STA.l RNGLockIn ; reset rng item lock-in
-	LDA.b #$00 : STA.l $7F5001 ; mark fake flipper softlock as impossible
 	LDA.l GenericKeys : BEQ +
 		LDA.l CurrentGenericKeys : STA.l CurrentSmallKeys ; copy generic keys to key counter
 	+
@@ -148,14 +147,20 @@ OnNewFile:
 	PHX : PHP
 		; reset some values on new file that are otherwise only reset on hard reset
 		SEP #$20 ; set 8-bit accumulator
-		STZ.w $03C4 ; ancilla slot index
-		STZ.w $047A ; EG
-		STZ.w $0B08 : STZ $0B09 ; arc variable
-		STZ.w $0CFB ; enemies killed (pull trees)
-		STZ.w $0CFC ; times taken damage (pull trees)
-		STZ.w $0FC7 : STZ.w $0FC8 : STZ.w $0FC9 : STZ.w $0FCA : STZ.w $0FCB : STZ.w $0FCC : STZ.w $0FCD ; prize packs
-		LDA.b #$00 : STA.l $7EC011 ; mosaic
-		JSL InitRNGPointerTable ; boss RNG
+		STZ.w AncillaSearch
+		STZ.w LayerAdjustment ; EG
+		STZ.w ArcVariable : STZ.w ArcVariable+1
+		STZ.w TreePullKills
+		STZ.w TreePullHits
+		STZ.w PrizePackIndexes
+                STZ.w PrizePackIndexes+1
+                STZ.w PrizePackIndexes+2
+                STZ.w PrizePackIndexes+3
+                STZ.w PrizePackIndexes+4
+                STZ.w PrizePackIndexes+5
+                STZ.w PrizePackIndexes+6
+		LDA.b #$00 : STA.l MosaicLevel
+		JSL InitRNGPointerTable
 	PLP : PLX
 RTL
 ;--------------------------------------------------------------------------------
@@ -230,6 +235,6 @@ PostItemAnimation:
 			JSL.l IncrementChestTurnCounter
 	+
 
-    STZ.w ItemReceiptMethod : LDA.w $0C5E, X ; thing we wrote over to get here
+    STZ.w ItemReceiptMethod : LDA.w AncillaGet, X ; thing we wrote over to get here
 RTL
 ;--------------------------------------------------------------------------------

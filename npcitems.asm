@@ -61,7 +61,7 @@ ItemCheck_TreeKid3:
 	BRA .done
 	LDA.b #$05
 	.normal
-	LDA.w SpriteUnknown, X
+	LDA.w SpriteActivity, X
 	.done
 RTL
 
@@ -151,7 +151,7 @@ RTL
 ; Randomize 300 Rupee NPC
 ;--------------------------------------------------------------------------------
 Set300RupeeNPCItem:
-	INC.w SpriteUnknown, X ; thing we wrote over
+	INC.w SpriteActivity, X ; thing we wrote over
 
 	PHA : PHP
 	REP #$20 ; set 16-bit accumulator

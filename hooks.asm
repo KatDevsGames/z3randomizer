@@ -707,16 +707,16 @@ JMP DrawItem_finished
 org $0DECE6 ; <- 6ECE6 - equipment.asm : 1934 (SEP #$30)
 DrawItem_finished:
 org $0DEB48 ; <- 6EB48 - equipment.asm : 1784 (LDA $0000)
-LDA.w $0000, Y : STA.w $11F2
-LDA.w $0002, Y : STA.w $11F4
-LDA.w $0040, Y : STA.w $1232
-LDA.w $0042, Y : STA.w $1234
+LDA.w $0000, Y : STA.w GFXStripes+$01F2
+LDA.w $0002, Y : STA.w GFXStripes+$01F4
+LDA.w $0040, Y : STA.w GFXStripes+$0232
+LDA.w $0042, Y : STA.w GFXStripes+$0234
 ;---------------------------
 org $0DE24B ; <- 6E24B - equipment.asm : 951 (LDA $0000)
-LDA.w $0000, Y : STA.w $11F2
-LDA.w $0002, Y : STA.w $11F4
-LDA.w $0040, Y : STA.w $1232
-LDA.w $0042, Y : STA.w $1234
+LDA.w $0000, Y : STA.w GFXStripes+$01F2
+LDA.w $0002, Y : STA.w GFXStripes+$01F4
+LDA.w $0040, Y : STA.w GFXStripes+$0232
+LDA.w $0042, Y : STA.w GFXStripes+$0234
 ;--------------------------------------------------------------------------------
 org $0DE2DC ; <- 6E2DC - equipment.asm : 989 (LDA $F449, X : STA $122C, Y)
 JMP UpdateBottleMenu_return
@@ -1175,6 +1175,7 @@ JSL.l CheckTabletSword
 ;--------------------------------------------------------------------------------
 org $1DF086 ; <- EF086 - sprite_evil_barrier.asm:303 (LDA $7EF359 : CMP.b #$02 : BCS .anozap_from_player_attack)
 JSL.l GetSwordLevelForEvilBarrier
+;--------------------------------------------------------------------------------
 
 ;================================================================================
 ; Medallion Tablets
@@ -1189,6 +1190,9 @@ org $07859F ; <- 3859F - Bank07.asm : 965 (JSL AddPendantOrCrystal)
 JSL SpawnTabletItem
 org $07862A ; <- 3862A - Bank07.asm : 1064 (JSL AddPendantOrCrystal)
 JSL SpawnTabletItem
+;--------------------------------------------------------------------------------
+org $05EF1E ; LDA.l $7EF280,X : AND #$40
+JSL CheckTabletItem : NOP #2
 
 ;================================================================================
 ; Medallion Entrances
@@ -1937,7 +1941,7 @@ org $05F08A ; <- 2F08A - sprite_heart_upgrades.asm : 324 - (LDA $7EF36B : INC A 
 JSL.l HeartPieceGet
 JSL.l IsMedallion
 BCS + : BRA Sprite_EB_HeartPiece_handle_flags : + ; Don't change OW flags if we're
-STZ.w $0DD0,X : RTS                               ; getting a tablet item
+STZ.w SpriteAITable, X : RTS                      ; getting a tablet item
 ;--------------------------------------------------------------------------------
 org $06C0B0 ; <- 340B0 - sprite prep
 JSL.l HeartPieceSpritePrep
@@ -1950,8 +1954,8 @@ JSL.l HPItemReset
 ; Fake Flippers Softlock Fix + General Damage Hooks
 ;--------------------------------------------------------------------------------
 org $078091 ; <- 38091 - Bank07.asm:138 (LDA $037B : BNE .linkNotDamaged)
-LDA.w $0373 : STA.b Scrap00 : STZ.w $0373 ; store and zero damage
-LDA.w $037B : BNE LinkDamaged_linkNotDamaged ; skip if immune
+LDA.w DamageReceived : STA.b Scrap00 : STZ.w DamageReceived ; store and zero damage
+LDA.w NoDamage : BNE LinkDamaged_linkNotDamaged ; skip if immune
 ;--------------------------------------------------------------------------------
 org $0780C6 ; <- 380C6 - Bank07.asm:174 (LDA $7EF36D)
 JSL.l OnLinkDamaged
@@ -1982,7 +1986,7 @@ FakeFlipperProtection:
 org $0AB8E5 ; <- 538E5
 JSL.l FloodGateAndMasterSwordFollowerReset
 JSL.l IncrementFlute
-STZ $1000 : STZ $1001
+STZ.w GFXStripes : STZ.w GFXStripes+1
 NOP #26
 ;--------------------------------------------------------------------------------
 org $02AA87 ; <- 12A87
@@ -2213,10 +2217,10 @@ JSL ParadoxCaveGfxFix : NOP
 ;--------------------------------------------------------------------------------
 ; Change race game to use $021B instead of $0ABF for detecting cheating
 org $0DCB9D ; STZ.w $0ABF
-STZ.w $021B
+STZ.w RaceGameFlag
 
 org $0DCBFE ; LDA.w $0ABF
-LDA.w $021B
+LDA.w RaceGameFlag
 
 org $02BFE0 ; LDA.b #$01 : STA.w $0ABF
 JSL SetOverworldTransitionFlags : NOP

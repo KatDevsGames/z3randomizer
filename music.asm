@@ -71,10 +71,10 @@ PreOverworld_LoadProperties_ChooseMusic:
     +
 
     .lastCheck
-    LDA.w $0132 : CMP.b #$F2 : BNE +
-    CPX.w $0130 : BNE +
-        ; If the last played command ($0132) was half volume (#$F2)
-        ; and the actual song playing ($0130) is same as the one for this area (X)
+    LDA.w MusicControlQueue : CMP.b #$F2 : BNE +
+    CPX.w LastAPUCommand : BNE +
+        ; If the last played command (MusicControlQueue) was half volume (#$F2)
+        ; and the actual song playing (LastAPUCommand) is same as the one for this area (X)
         ; then play the full volume command (#F3) instead of restarting the song
         LDX.b #$F3
     +
@@ -94,21 +94,17 @@ Overworld_FinishMirrorWarp:
 
 .clear_hdma_table
 
-    STA.w $1B00, X : STA.w $1B40, X
-    STA.w $1B80, X : STA.w $1BC0, X
-    STA.w $1C00, X : STA.w $1C40, X
-    STA.w $1C80, X
+    STA.w IrisPtr+$0000, X : STA.w IrisPtr+$0040, X
+    STA.w IrisPtr+$0080, X : STA.w IrisPtr+$00C0, X
+    STA.w IrisPtr+$0100, X : STA.w IrisPtr+$0140, X
+    STA.w IrisPtr+$0180, X
 
     DEX #2 : BPL .clear_hdma_table
-
-    LDA.w #$0000 : STA.l $7EC007 : STA.l $7EC009
+    LDA.w #$0000 : STA.l FadeTimer : STA.l FadeDirection
 
     SEP #$20
-
-    JSL $00D7C8               ; $57C8 IN ROM
-
-    LDA.b #$80 : STA.b $9B
-
+    JSL $00D7C8
+    LDA.b #$80 : STA.b HDMAENQ
     LDX.b #$04  ; bunny theme
 
     ; if not inverted and light world, or inverted and dark world, skip moon pearl check
@@ -205,7 +201,7 @@ BirdTravel_LoadTargetAreaMusic:
     ; Misery Mire rain SFX
     CMP.b #$70 : BNE ++
         LDA.l OverworldEventDataWRAM+$70 : AND.b #$20 : BNE ++
-            LDA.b #$01 : CMP.w $0131 : BEQ +
+            LDA.b #$01 : CMP.w LastSFX1 : BEQ +
                 STA.w SFX1
             + : BRA .checkInverted
     ++

@@ -8,7 +8,7 @@
 StoreLastOverworldDoorID:
 	TXA : INC
 	STA.l PreviousOverworldDoor
-	LDA.l $1BBB73, X : STA.w $010E
+	LDA.l $1BBB73, X : STA.w EntranceIndex
 RTL
 ;--------------------------------------------------------------------------------
 
@@ -18,12 +18,12 @@ RTL
 CacheDoorFrameData:
 	LDA.l PreviousOverworldDoor : BEQ .originalBehaviour
 	DEC : ASL : TAX
-	LDA.l EntranceDoorFrameTable, X : STA.w $0696
-	LDA.l EntranceAltDoorFrameTable, X : STA.w $0698
+	LDA.l EntranceDoorFrameTable, X : STA.w TileMapEntranceDoors
+	LDA.l EntranceAltDoorFrameTable, X : STA.w TileMapTile32
 	BRA .done
 	.originalBehaviour
-		LDA.w $D724, X : STA.w $0696
-		STZ.w $0698
+		LDA.w $D724, X : STA.w TileMapEntranceDoors
+		STZ.w TileMapTile32
 	.done
 RTL
 ;--------------------------------------------------------------------------------

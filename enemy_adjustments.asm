@@ -11,16 +11,16 @@ NewBatInit:
 	CMP.b #$D0 : BEQ .light_world ;agahnim darkmaze
 
 	
-	LDA.b #$85 : STA.w $0CD2, X
-	LDA.b #$04 : STA.w $0E50, X
+	LDA.b #$85 : STA.w SpriteBump, X
+	LDA.b #$04 : STA.w SpriteHitPoints, X
 RTL
 	.light_world
-		LDA.b #$80 : STA.w $0CD2, X
-		LDA.b #$01 : STA.w $0E50, X
+		LDA.b #$80 : STA.w SpriteBump, X
+		LDA.b #$01 : STA.w SpriteHitPoints, X
 RTL
 ;--------------------------------------------------------------------------------
 NewFireBarDamage:
-        LDA.w $00EE : CMP.w $0F20, X : BNE .NotSameLayer
+        LDA.w $00EE : CMP.w SpriteLayer, X : BNE .NotSameLayer
                 JSL Sprite_AttemptDamageToPlayerPlusRecoilLong
                 RTL
 .NotSameLayer

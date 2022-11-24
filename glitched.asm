@@ -57,7 +57,7 @@ GetAgahnimSlot:
 		JML.l GetAgahnimSlotReturn
 ;--------------------------------------------------------------------------------
 GetAgahnimLightning:
-	INC.w $0E30, X ; thing we wrote over
+	INC.w SpriteAux, X ; thing we wrote over
 	LDA.b RoomIndex ; get room id
 	CMP.b #13 : BNE + ; Agahnim 2 room
 		LDA.b #$01 ; Use Agahnim 2

@@ -40,7 +40,7 @@ TryOpenTRock:
 RTL
 ;--------------------------------------------------------------------------------
 MedallionTrigger_Bombos:
-    STZ.b $50 ; stuff we wrote over
+    STZ.b Strafe ; stuff we wrote over
     STZ.w FreezeSprites
 	
 	PHA

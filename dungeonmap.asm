@@ -1,5 +1,5 @@
 DoDungeonMapBossIcon:
-	LDA.b $14
+	LDA.b NMISTRIPES
 	CMP.b #$09
 	BEQ .dungeonmap
 

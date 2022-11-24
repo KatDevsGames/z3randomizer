@@ -64,7 +64,7 @@ SpriteSwap_Palette_ArmorAndGloves:
 
 .loop
 
-    LDA.b [Scrap00] : STA.l $7EC300, X : STA.l $7EC500, X
+    LDA.b [Scrap00] : STA.l PaletteBufferAux, X : STA.l PaletteBuffer, X
     
     INC.b Scrap00 : INC.b Scrap00
     
@@ -76,7 +76,7 @@ SpriteSwap_Palette_ArmorAndGloves:
     
     
     PLB
-    INC $15
+    INC.b NMICGRAM
     PLA : PLY : PLX
     RTL
 }

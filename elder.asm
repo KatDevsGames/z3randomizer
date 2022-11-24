@@ -5,7 +5,7 @@ LDA.b OverworldIndex : CMP.b #$1B : BEQ .newCodeContinue
 JML $05F0CD
 .newCodeContinue
 PHB : PHK : PLB
-LDA.b #$07 : STA.w $0F50, X ;Palette 
+LDA.b #$07 : STA.w SpriteOAMProp, X ; Palette 
 JSR Elder_Draw
 JSL Sprite_PlayerCantPassThrough
 JSR Elder_Code
