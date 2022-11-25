@@ -1376,6 +1376,16 @@ org $1EF060 ; <- F7060 - sprite_shopkeeper.asm:242 (INC $0D80, X)
 JSL.l Set300RupeeNPCItem : NOP
 
 ;================================================================================
+; Tree Kid Fix
+;--------------------------------------------------------------------------------
+org $06B12B ; <- 3312B - tree status set - 418 - LDA NpcFlagsVanilla : ORA.b #$08 : STA NpcFlagsVanilla
+LDA.l NpcFlagsVanilla : AND.b #$F7 : STA.l NpcFlagsVanilla ; unset arboration instead of setting it
+;--------------------------------------------------------------------------------
+org $06B072 ; <- 33072 - FluteAardvark_InitialStateFromFluteState - 418 : dw FluteAardvark_AlreadyArborated
+db #$8B
+;================================================================================
+
+;================================================================================
 ; Glitched Mode Fixes
 ;--------------------------------------------------------------------------------
 org $0691AC ; <- 311AC - sprite_prep.asm:2453 (LDY $0FFF)

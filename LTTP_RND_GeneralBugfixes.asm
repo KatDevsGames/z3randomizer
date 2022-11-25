@@ -49,7 +49,6 @@ function hexto555(h) = ((((h&$FF)/8)<<10)|(((h>>8&$FF)/8)<<5)|(((h>>16&$FF)/8)<<
 ;================================================================================
 
 incsrc hooks.asm
-incsrc treekid.asm
 incsrc spriteswap.asm
 incsrc hashalphabethooks.asm
 incsrc sharedplayerpalettefix.asm
