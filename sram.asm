@@ -380,12 +380,12 @@ InverseChecksumWRAM: skip 2     ; Vanilla Inverse Checksum. Don't write unless c
 ; This $1000 byte segment is saved beginning where the second save file was in SRAM
 ; beginning at $700500
 ;--------------------------------------------------------------------------------
-base $7F6000                    ; $1000 byte buffer we place beginning at second save file
-ExtendedFileNameWRAM: skip 24   ; File name, 12 word-length characters.
-RoomPotData: skip 592           ; Table for expanded pot shuffle. One word per room.
-SpritePotData: skip 592         ; Table for expanded pot shuffle. One word per room.
-PurchaseCounts: skip 96         ; Keeps track of shop purchases
-PrivateBlock: skip 513          ; Reserved for 3rd party developers
+base $7F6000                     ; $1000 byte buffer we place beginning at second save file
+ExtendedFileNameWRAM: skip 24    ; File name, 12 word-length characters.
+RoomPotData: skip 592            ; Table for expanded pot shuffle. One word per room.
+SpritePotData: skip 592          ; Table for expanded pot shuffle. One word per room.
+PurchaseCounts: skip 96          ; Keeps track of shop purchases
+PrivateBlockPersistent: skip 513 ; Reserved for 3rd party developers
 
 ;================================================================================
 ; Direct SRAM Assignments ($700000 - $7080000)

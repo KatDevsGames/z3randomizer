@@ -550,7 +550,11 @@ skip $40                           ; Reserved for general dungeon tracking data.
 skip $40                           ; Unused
 skip $260                          ; Unused
 DialogBuffer: skip $100            ; Dialog Buffer
-
+                                   ;
+PrivateBlockWRAM = $7F7700         ; Reserved for 3rd party use. $500 bytes.
+                                   ; See also: $200 bytes at PrivateBlockPersistent, copied to SRAM.
+BigDecompressionBuffer = $7F8000   ; Reserved for large gfx decompression buffer. $5000 bytes.
+                                   ;
 MiniGameTime = $7FFE00             ; Time spent in mini game. 32-bits.
 MiniGameTimeFinal = $7FFE04        ; Final mini game time. 32 bits.
 
