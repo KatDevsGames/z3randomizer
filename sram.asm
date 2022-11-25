@@ -22,8 +22,14 @@ SaveDataWRAM = $7EF000
 ; 2 (southwest), and 1 (southeast), which is the same as they are laid out on the screen from
 ; left to right, top to bottom.
 ;
+; The .l sub-label should be used when the accumulator is in 16-bit mode and we want to
+; load both bytes or store to both bytes at once. The .high and .low sub-labels should be used
+; when in 8-bit mode and we only want to load or store one byte
+;
 ; Example: We can use RoomDataWRAM[$37].high to read or write the pot key in the first
-; floodable room in Swamp Palace ($04)
+; floodable room in Swamp Palace (bit $04). To check if a boss has been killed we can
+; take the room index for a boss room (e.g. $07 for Tower of Hera) and bitmask $FF00
+; like this: RoomDataWRAM[$07].l : AND #$FF00
 ;--------------------------------------------------------------------------------
 ; .high Byte:  d d d d b k u t
 ; .low Byte:   s e h c q q q q
