@@ -81,8 +81,6 @@ incsrc medallions.asm
 incsrc inventory.asm
 incsrc zelda.asm
 incsrc maidencrystals.asm
-incsrc zoraking.asm
-incsrc catfish.asm
 incsrc flute.asm
 incsrc dungeondrops.asm
 incsrc halfmagicbat.asm
