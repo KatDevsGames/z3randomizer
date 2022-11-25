@@ -271,7 +271,7 @@ db $09 : SKIP 1 : db $09 : SKIP 1 : db $09 : SKIP 1 : db $09 : SKIP 5 : db $05
 ; Remove code that tries to hide non-selected player files
 org $0CD435 ; <- 65435 - Bank0C.asm : 2772 (LDX.b #$64) [LDX.b #$50]
 LDX.b #$44
-LDA $D324, X
+LDA.w $D324, X
 org $0CD446 ; <- 65446 - Bank0C.asm : 2782 (LDX $C8 : CPX.b #$02 : BEQ BRANCH_11)
 db $80 ; BRA
 ;--------------------------------------------------------------------------------

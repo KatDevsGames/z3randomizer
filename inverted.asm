@@ -208,22 +208,22 @@ MirrorBonk:
 		LDX.w #$0000
 		.loop
 			LDA.l .bonkRectanglesTable, X ;Load X1
-			CMP LinkPosX : !BGE ++
+			CMP.b LinkPosX : !BGE ++
 			;IF X > X1
 			LDA.l .bonkRectanglesTable+2, X ; Load X2
-			CMP LinkPosX : !BLT ++ 
+			CMP.b LinkPosX : !BLT ++ 
 			;IF X < X2
 			LDA.l .bonkRectanglesTable+4, X ;Load Y1
-			CMP LinkPosY : !BGE ++
+			CMP.b LinkPosY : !BGE ++
 			;IF Y > Y1
 			LDA.l .bonkRectanglesTable+6, X ; Load Y2
-			CMP LinkPosY : !BLT ++ 
+			CMP.b LinkPosY : !BLT ++ 
 			;IF Y < Y2
 			;Bonk Here
 			PLB : PLP : PLX
 			BRA .forceBonk
                 ++
-                TXA : !ADD #$0008 : CMP #.tableEnd-.bonkRectanglesTable : BEQ .endLoop
+                TXA : !ADD #$0008 : CMP.w #.tableEnd-.bonkRectanglesTable : BEQ .endLoop
                 TAX
                 BRA .loop
                 .endbonkRectanglesTable

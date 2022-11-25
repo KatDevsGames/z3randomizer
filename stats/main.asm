@@ -229,7 +229,7 @@ RenderCreditsStatCounter:
     ; == Determine stat type ==
     LDA.w CreditsStats,y  ;   LLLL LLLL XXXX XTTL
     LSR
-    AND #$0003          ; TT
+    AND.w #$0003          ; TT
     CMP.w #$0000
     BEQ .normalStat
     JMP .timeStat
@@ -317,7 +317,7 @@ RenderCreditsStatCounter:
 ++  %StripeTile()
     
     LDA.l $7F5005
-    AND #$00FF
+    AND.w #$00FF
     CMP.b RemoveZero
     BNE +
     LDA.w #BlankTile

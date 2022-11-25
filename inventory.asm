@@ -55,7 +55,7 @@ RTL
 		LDA.l BoomerangEquipment : EOR.b #$03 : STA.l BoomerangEquipment ; swap blue & red boomerang
 		LDA.b #$20 : STA.w SFX3 ; menu select sound
 		JMP .captured
-	+ CMP #$01 : BNE + ; bow
+	+ CMP.b #$01 : BNE + ; bow
 		LDA.l BowTracking : AND.b #$C0 : CMP.b #$C0 : BNE .errorJump ; make sure we have both bows
 		PHX : LDX.b #$00 ; scan ancilla table for arrows
 			-- : CPX.b #$0A : !BGE ++
@@ -75,7 +75,7 @@ RTL
 	+ BRA +
 		.errorJump
 		BRA .errorJump2
-	+ CMP #$05 : BNE + ; powder
+	+ CMP.b #$05 : BNE + ; powder
 		LDA.l InventoryTracking : AND.b #$30 : CMP.b #$30 : BNE .errorJump ; make sure we have mushroom & magic powder
 		LDA.l PowderEquipment : EOR.b #$03 : STA.l PowderEquipment ; swap mushroom & magic powder
 		LDA.b #$20 : STA.w SFX3 ; menu select sound
@@ -83,7 +83,7 @@ RTL
 	+ BRA +
 		.errorJump2
 		BRA .error
-	+ CMP #$0D : BNE + ; flute
+	+ CMP.b #$0D : BNE + ; flute
 		LDA.w UseY2 : CMP.b #$01 : BEQ .midShovel ; inside a shovel animation, force the shovel & make error sound
 		LDA.l InventoryTracking : BIT.b #$04 : BEQ .error ; make sure we have shovel
 					  AND.b #$03 : BEQ .error ; make sure we have one of the flutes

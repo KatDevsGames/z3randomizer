@@ -311,7 +311,7 @@ DialogBombosTablet:
 RTL
 ;--------------------------------------------------------------------------------
 DialogSahasrahla:
-	LDA.l PendantsField : AND #$04 : BEQ + ;Check if player has green pendant
+	LDA.l PendantsField : AND.b #$04 : BEQ + ;Check if player has green pendant
 		LDA.b #$2F
         LDY.b #$00
 		JML Sprite_ShowMessageUnconditional
@@ -320,7 +320,7 @@ RTL
 ;--------------------------------------------------------------------------------
 DialogBombShopGuy:
 	LDY.b #$15
-	LDA.l CrystalsField : AND #$05 : CMP #$05 : BNE + ;Check if player has crystals 5 & 6
+	LDA.l CrystalsField : AND.b #$05 : CMP.b #$05 : BNE + ;Check if player has crystals 5 & 6
 		INY ; from 15 to 16
 	+
 	TYA

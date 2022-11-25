@@ -35,7 +35,7 @@ ItemCheck_MagicBat:
 RTL
 
 ItemCheck_OldMan:
-	LDA.l NpcFlags : AND.b #$01 : CMP #$01
+	LDA.l NpcFlags : AND.b #$01 : CMP.b #$01
 RTL
 
 ItemCheck_ZoraKing:

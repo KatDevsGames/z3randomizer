@@ -72,7 +72,7 @@ OverworldMap_CheckObject:
 			LDA.l MapField : ORA.l MapOverlay : AND.b #$02 : BNE +++
 				PHX
 					LDA.l .dw_map_offsets, X : TAX ; put map offset into X
-					LDA.l MapField, X : ORA MapOverlay, X
+					LDA.l MapField, X : ORA.l MapOverlay, X
 				PLX
 				AND.l .dw_map_masks, X : BNE +++
 				JMP .fail

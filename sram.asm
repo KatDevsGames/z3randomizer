@@ -29,7 +29,7 @@ SaveDataWRAM = $7EF000
 ; Example: We can use RoomDataWRAM[$37].high to read or write the pot key in the first
 ; floodable room in Swamp Palace (bit $04). To check if a boss has been killed we can
 ; take the room index for a boss room (e.g. $07 for Tower of Hera) and bitmask $FF00
-; like this: RoomDataWRAM[$07].l : AND #$FF00
+; like this: RoomDataWRAM[$07].l : AND.w #$FF00
 ;--------------------------------------------------------------------------------
 ; .high Byte:  d d d d b k u t
 ; .low Byte:   s e h c q q q q
@@ -658,7 +658,7 @@ endmacro
 %assertSRAM(RoomPotData, $7F6018)
 %assertSRAM(SpritePotData, $7F6268)
 %assertSRAM(PurchaseCounts, $7F64B8)
-%assertSRAM(PrivateBlock, $7F6518)
+%assertSRAM(PrivateBlockPersistent, $7F6518)
 
 ;================================================================================
 ; Direct SRAM Assertions

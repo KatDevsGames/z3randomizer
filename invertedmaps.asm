@@ -332,7 +332,7 @@ STA.w $28D2
 
 
 ; CHECK IF AGAHNIM 2 IS DEAD AND WE HAVE ALREADY LANDED
-LDA.w $7EF2DB : AND #$0020 : BEQ .agahnim2Alive
+LDA.w OverworldEventDataWRAM+$2B : AND.w #$0020 : BEQ .agahnim2Alive
 LDA.w #$046D : STA.w $243E
 LDA.w #$0E3A : STA.w $24BC
 LDA.w #$0E3B : STA.w $24BE
@@ -1007,7 +1007,7 @@ LDA.w #$0108 : STA.w $3C38
 
 ;Warp Tile agah defeated
 LDA.w #$0034 : STA.w $3BBE ;Tile when no warp
-LDA.l ProgressIndicator : AND #$00FF : CMP.w #$0003 : BNE .agahnimAlive
+LDA.l ProgressIndicator : AND.w #$00FF : CMP.w #$0003 : BNE .agahnimAlive
 LDA.w #$0212 : STA.w $3BBE ;warp
 .agahnimAlive
 

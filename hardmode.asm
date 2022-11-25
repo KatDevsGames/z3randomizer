@@ -84,10 +84,10 @@ GetItemDamageValue:
 	LDA.l $0db8f1,x ;what we wrote over
 RTL
 	.boomerang
-		LDA.l StunItemAction : AND #$01 : BNE .normal
+		LDA.l StunItemAction : AND.b #$01 : BNE .normal
 		BRA .noDamage
 	.hookshot
-		LDA.l StunItemAction : AND #$02 : BNE .normal
+		LDA.l StunItemAction : AND.b #$02 : BNE .normal
 	.noDamage
 	LDA.b #$00
 RTL
@@ -97,11 +97,11 @@ SearchAncilla:
 {
 	STA.b Scrap05
 	PHX 
-	LDX #$00
+	LDX.b #$00
 	.loop
 	LDA.w AncillaID, X 
 	INX : CPX #$0A : BEQ .notFound
-	CMP Scrap05 : BNE .loop
+	CMP.b Scrap05 : BNE .loop
 		LDA.b #$01
 		BRA .return
 	.notFound

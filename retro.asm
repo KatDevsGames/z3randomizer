@@ -71,7 +71,7 @@ ArrowGame:
 		.rupees
 			PHX
 			REP #$20 ; set 16-bit accumulator
-				LDA.l BowEquipment : DEC : AND #$0002 : TAX
+				LDA.l BowEquipment : DEC : AND.w #$0002 : TAX
 				LDA.l CurrentRupees : !ADD.l ArrowModeWoodArrowCost, X : STA.l CurrentRupees
 			SEP #$20 ; set 8-bit accumulator
 			PLX

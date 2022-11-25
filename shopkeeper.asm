@@ -112,7 +112,7 @@ SpritePrep_ShopKeeper:
 	-
 		LDA.l ShopTable+1, X : CMP.b RoomIndex : BNE +
 		LDA.l ShopTable+5, X : AND.w #$0040 : BNE ++
-			LDA.l PreviousOverworldDoor : AND #$00FF : CMP.l ShopTable+3, X : BNE +
+			LDA.l PreviousOverworldDoor : AND.w #$00FF : CMP.l ShopTable+3, X : BNE +
 		++
 			SEP #$20 ; set 8-bit accumulator
 			LDA.l ShopTable, X : STA.l ShopId

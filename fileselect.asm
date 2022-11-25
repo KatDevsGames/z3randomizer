@@ -690,7 +690,7 @@ RTL
 ;--------------------------------------------------------------------------------
 macro LayoutPriority(address)
 LDX.w #$003C
-- : LDA.w <address>, X : ORA #$2000 : STA.w <address>, X
+- : LDA.w <address>, X : ORA.w #$2000 : STA.w <address>, X
 DEX : DEX : BNE -
 endmacro
 

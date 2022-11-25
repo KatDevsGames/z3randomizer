@@ -263,6 +263,6 @@ Overworld_MosaicDarkWorldChecks:
 ;--------------------------------------------------------------------------------
 ; Check if the boss in ToH has been defeated (16-bit accumulator)
 CheckHeraBossDefeated:
-    LDA.l RoomDataWRAM[$07].l : AND #$FF00
+    LDA.l RoomDataWRAM[$07].l : AND.w #$FF00
     RTL
 ;--------------------------------------------------------------------------------

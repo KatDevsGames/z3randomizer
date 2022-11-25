@@ -4,7 +4,7 @@ ShouldOverrideFileLoad:
     BNE .no
 
     LDA.w DungeonID ; Dungeon number
-    CMP #$12 ; Ice Palace
+    CMP.b #$12 ; Ice Palace
     BEQ .yes
     .no
     CLC : RTS

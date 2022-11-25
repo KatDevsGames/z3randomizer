@@ -114,15 +114,15 @@
 ; Check if A has an overworld track
 ;--------------------------------------------------------------------------------
 IsOverworldTrack:
-    CMP #02 : BEQ .yes ;  2 - Hyrule Field
-    CMP #03 : BEQ .yes ;  3 - Time of Falling Rain
-    CMP #04 : BEQ .yes ;  4 - The Silly Pink Rabbit
-    CMP #05 : BEQ .yes ;  5 - Forest of Mystery
-    CMP #07 : BEQ .yes ;  7 - Kakariko Village
-    CMP #09 : BEQ .yes ;  9 - Dark Golden Land
-    CMP #15 : BEQ .yes ; 15 - Dark Woods
-    CMP #60 : BEQ .yes ; 60 - Light World OW (after ped pull)
-    CMP #61 : BEQ .yes ; 61 - Dark World OW (with all crystals)
+    CMP.b #02 : BEQ .yes ;  2 - Hyrule Field
+    CMP.b #03 : BEQ .yes ;  3 - Time of Falling Rain
+    CMP.b #04 : BEQ .yes ;  4 - The Silly Pink Rabbit
+    CMP.b #05 : BEQ .yes ;  5 - Forest of Mystery
+    CMP.b #07 : BEQ .yes ;  7 - Kakariko Village
+    CMP.b #09 : BEQ .yes ;  9 - Dark Golden Land
+    CMP.b #15 : BEQ .yes ; 15 - Dark Woods
+    CMP.b #60 : BEQ .yes ; 60 - Light World OW (after ped pull)
+    CMP.b #61 : BEQ .yes ; 61 - Dark World OW (with all crystals)
     .no
     CLC : RTS
 .yes

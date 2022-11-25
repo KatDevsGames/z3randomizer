@@ -20,7 +20,7 @@ Init_Primary:
 		INX
 		CPX.b #$FF : !BLT -
 	
-	LDX #$00
+	LDX.b #$00
 	-
 		LDA.l RomNameSRAM, X : CMP.w $FFC0, X : BNE .clear
 		INX
