@@ -3,8 +3,8 @@ ShouldOverrideFileLoad:
     CPY #$0A ; 0A = Ice/Mire floor file
     BNE .no
 
-    LDA $040C ; Dungeon number
-    CMP #$12 ; Ice Palace
+    LDA.w DungeonID ; Dungeon number
+    CMP.b #$12 ; Ice Palace
     BEQ .yes
     .no
     CLC : RTS
@@ -13,9 +13,9 @@ ShouldOverrideFileLoad:
 
 BgGraphicsLoading:
     ; Instructions overwritten
-    STZ $00
-    STX $01
-    STA $02
+    STZ.b Scrap00
+    STX.b Scrap01
+    STA.b Scrap02
 
     JSR ShouldOverrideFileLoad
     BCS .useSpecialIcePalaceFile
@@ -25,24 +25,22 @@ BgGraphicsLoading:
     ; We're loading the floor tiles in Ice Palace. Instead of the normal file,
     ; load another one that replaces the bridge tiles with the Bombos medallion
 
-    ;LDA $FFFFFF
-
     LDA.b #IcePalaceFloorGfx>>16
-    STA $02
+    STA.b Scrap02
     REP #$20
     LDA.w #IcePalaceFloorGfx
-    STA $00
+    STA.b Scrap00
     LDX.b #64*2 ; Tiles to load * 2
 -
     ; Unrolled loop to upload half a tile
-    LDA [$00] : STA $2118 : INC $00 : INC $00
-    LDA [$00] : STA $2118 : INC $00 : INC $00
-    LDA [$00] : STA $2118 : INC $00 : INC $00
-    LDA [$00] : STA $2118 : INC $00 : INC $00
-    LDA [$00] : STA $2118 : INC $00 : INC $00
-    LDA [$00] : STA $2118 : INC $00 : INC $00
-    LDA [$00] : STA $2118 : INC $00 : INC $00
-    LDA [$00] : STA $2118 : INC $00 : INC $00
+    LDA.b [$00] : STA.w VMDATAL : INC.b Scrap00 : INC.b Scrap00
+    LDA.b [$00] : STA.w VMDATAL : INC.b Scrap00 : INC.b Scrap00
+    LDA.b [$00] : STA.w VMDATAL : INC.b Scrap00 : INC.b Scrap00
+    LDA.b [$00] : STA.w VMDATAL : INC.b Scrap00 : INC.b Scrap00
+    LDA.b [$00] : STA.w VMDATAL : INC.b Scrap00 : INC.b Scrap00
+    LDA.b [$00] : STA.w VMDATAL : INC.b Scrap00 : INC.b Scrap00
+    LDA.b [$00] : STA.w VMDATAL : INC.b Scrap00 : INC.b Scrap00
+    LDA.b [$00] : STA.w VMDATAL : INC.b Scrap00 : INC.b Scrap00
     DEX
     BNE -
 
@@ -51,7 +49,7 @@ BgGraphicsLoading:
 
 ReloadingFloors:
     SEP #$30 ; 8 AXY
-    LDA $7EC2F8 ; Floor file that has been decompressed
+    LDA.l LastBGSet ; Floor file that has been decompressed
     TAY
     JSR ShouldOverrideFileLoad
     REP #$30 ; 16 AXY
@@ -76,6 +74,6 @@ ReloadingFloors:
     ; Pretend that we ran the original routine
     LDX.w #$0800
     LDA.w #$6600
-    STA $03
+    STA.b Scrap03
 
     JML ReloadingFloorsCancel

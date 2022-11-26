@@ -1,18 +1,17 @@
-!ValidKeyLoaded = "$7F509E"
 
 ;FS prefix means file_select, since these defines and macros are specific to this screen
 
-!FS_COLOR_BROWN = "$0000" ;(only used for: Shovel, hammer, powder)
-!FS_COLOR_RED = "$0400"
-!FS_COLOR_YELLOW = "$0800"
-!FS_COLOR_BLUE = "$0C00"
-!FS_COLOR_GRAY = "$1000" ;(Used to gray out items)
-!FS_COLOR_BOOTS = "$1400"
-!FS_COLOR_GREEN = "$1800"
-!FS_COLOR_BW = "$1C00"
+!FS_COLOR_BROWN = $0000 ;(only used for: Shovel, hammer, powder)
+!FS_COLOR_RED = $0400
+!FS_COLOR_YELLOW = $0800
+!FS_COLOR_BLUE = $0C00
+!FS_COLOR_GRAY = $1000 ;(Used to gray out items)
+!FS_COLOR_BOOTS = $1400
+!FS_COLOR_GREEN = $1800
+!FS_COLOR_BW = $1C00
 
-!FS_HFLIP = "$4000"
-!FS_VFLIP = "$8000"
+!FS_HFLIP = $4000
+!FS_VFLIP = $8000
 
 macro fs_draw8x8(screenrow,screencol)
 	;Note due to XKAS's screwy math this formula is misleading.
@@ -83,45 +82,45 @@ JMP DrawItemGray
 
 DrawBottle:
 	AND.w #$00FF : BNE +
-		LDX #FileSelectItems_empty_bottle
+		LDX.w #FileSelectItems_empty_bottle
 		JMP DrawItemGray
 	+ : DEC #2 : BNE +
-		LDX #FileSelectItems_empty_bottle
+		LDX.w #FileSelectItems_empty_bottle
 		JMP DrawItem
 	+ : DEC : BNE +
-		LDX #FileSelectItems_red_potion
+		LDX.w #FileSelectItems_red_potion
 		JMP DrawItem
 	+ : DEC : BNE +
-		LDX #FileSelectItems_green_potion
+		LDX.w #FileSelectItems_green_potion
 		JMP DrawItem
 	+ : DEC : BNE +
-		LDX #FileSelectItems_blue_potion
+		LDX.w #FileSelectItems_blue_potion
 		JMP DrawItem
 	+ : DEC : BNE +
-		LDX #FileSelectItems_fairy_bottle
+		LDX.w #FileSelectItems_fairy_bottle
 		JMP DrawItem
 	+ : DEC : BNE +
-		LDX #FileSelectItems_bee_bottle
+		LDX.w #FileSelectItems_bee_bottle
 		JMP DrawItem
 	+
-	LDX #FileSelectItems_good_bee_bottle
+	LDX.w #FileSelectItems_good_bee_bottle
 JMP DrawItem
 
 
 DrawPlayerFile:
-	LDA $1A : AND.w #$0001 : BNE .normal
+	LDA.b FrameCounter : AND.w #$0001 : BNE .normal
 		JSR DrawPlayerFileShared
-		INC $0710 ; Suppress animated tile updates for this frame
+		INC.w SkipOAM ; Suppress animated tile updates for this frame
 
 		; re-enable  Stripe Image format upload on this frame
 		; Value loaded must match what gets set by AltBufferTable
-		LDA.w #$0161 : STA $1002
+		LDA.w #$0161 : STA.w GFXStripes+2
 		BRA .done
 	.normal
-	STZ $0710 ; ensure core animated tile updates are not suppressed
-	LDA #$FFFF : STA.w $1002 ; Suppress Stripe Image format upload on this frame
+	STZ.w SkipOAM ; ensure core animated tile updates are not suppressed
+	LDA.w #$FFFF : STA.w GFXStripes+2 ; Suppress Stripe Image format upload on this frame
 .done
-	LDA.w #$0004 : STA $02 ; thing we wrote over
+	LDA.w #$0004 : STA.b Scrap02 ; thing we wrote over
 RTL
 
 
@@ -132,29 +131,29 @@ DrawPlayerFileShared:
 	LDA.b #FileSelectItems>>16 : PHA : PLB
 	REP #$20 ; restore 16 bit accumulator
 
-	LDA ExtendedFileNameSRAM+$08 : ORA.w #!FS_COLOR_BW
+	LDA.l ExtendedFileNameSRAM+$08 : ORA.w #!FS_COLOR_BW
 	%fs_draw8x16(6,5)
-	LDA ExtendedFileNameSRAM+$0A : ORA.w #!FS_COLOR_BW
+	LDA.l ExtendedFileNameSRAM+$0A : ORA.w #!FS_COLOR_BW
 	%fs_draw8x16(6,6)
-	LDA ExtendedFileNameSRAM+$0C : ORA.w #!FS_COLOR_BW
+	LDA.l ExtendedFileNameSRAM+$0C : ORA.w #!FS_COLOR_BW
 	%fs_draw8x16(6,7)
-	LDA ExtendedFileNameSRAM+$0E : ORA.w #!FS_COLOR_BW
+	LDA.l ExtendedFileNameSRAM+$0E : ORA.w #!FS_COLOR_BW
 	%fs_draw8x16(6,8)
 
-	LDA ExtendedFileNameSRAM+$10 : ORA.w #!FS_COLOR_BW
+	LDA.l ExtendedFileNameSRAM+$10 : ORA.w #!FS_COLOR_BW
 	%fs_draw8x16(9,5)
-	LDA ExtendedFileNameSRAM+$12 : ORA.w #!FS_COLOR_BW
+	LDA.l ExtendedFileNameSRAM+$12 : ORA.w #!FS_COLOR_BW
 	%fs_draw8x16(9,6)
-	LDA ExtendedFileNameSRAM+$14 : ORA.w #!FS_COLOR_BW
+	LDA.l ExtendedFileNameSRAM+$14 : ORA.w #!FS_COLOR_BW
 	%fs_draw8x16(9,7)
-	LDA ExtendedFileNameSRAM+$16 : ORA.w #!FS_COLOR_BW
+	LDA.l ExtendedFileNameSRAM+$16 : ORA.w #!FS_COLOR_BW
 	%fs_draw8x16(9,8)
 
 	JSR FileSelectDrawHudBar
 
 	; Bow
 	LDA.l BowTrackingSRAM : AND.w #$0040 : BEQ +
-		LDA EquipmentSRAM+$00 : AND.w #$00FF : BEQ ++
+		LDA.l EquipmentSRAM+$00 : AND.w #$00FF : BEQ ++
 			%fs_drawItem(3,12,FileSelectItems_silver_bow)
 			BRA .bow_end
 		++
@@ -327,10 +326,10 @@ DrawPlayerFileShared:
 		%fs_drawItem(9,26,FileSelectItems_heart_piece_3_of_4)
 	++
 
-	LDA EquipmentSRAM+$0108 : AND.w #$00FF
+	LDA.l EquipmentSRAM+$0108 : AND.w #$00FF
 	JSL.l HexToDec
-	LDA $7F5006 : AND.w #$00FF : !ADD.w #$210+!FS_COLOR_BW : %fs_draw8x8(11,26)
-	LDA $7F5007 : AND.w #$00FF : !ADD.w #$210+!FS_COLOR_BW : %fs_draw8x8(11,27)
+	LDA.l HexToDecDigit4 : AND.w #$00FF : !ADD.w #$210+!FS_COLOR_BW : %fs_draw8x8(11,26)
+	LDA.l HexToDecDigit5 : AND.w #$00FF : !ADD.w #$210+!FS_COLOR_BW : %fs_draw8x8(11,27)
 
 	; Boots
 	%fs_drawItemBasic(EquipmentSRAM+$15,3,28,FileSelectItems_boots)
@@ -353,21 +352,21 @@ DrawPlayerFileShared:
 	%fs_drawItemBasic(EquipmentSRAM+$17,9,28,FileSelectItems_pearl)
 
 	; Pendants
-	LDA EquipmentSRAM+$34 : AND.w #$0004 : BEQ +
+	LDA.l EquipmentSRAM+$34 : AND.w #$0004 : BEQ +
 		%fs_drawItem(12,12,FileSelectItems_green_pendant)
 		BRA ++
 	+
 		%fs_drawItem(12,12,FileSelectItems_no_pendant)
 	++
 
-	LDA EquipmentSRAM+$34 : AND.w #$0002 : BEQ +
+	LDA.l EquipmentSRAM+$34 : AND.w #$0002 : BEQ +
 		%fs_drawItem(12,14,FileSelectItems_blue_pendant)
 		BRA ++
 	+
 		%fs_drawItem(12,14,FileSelectItems_no_pendant)
 	++
 
-	LDA EquipmentSRAM+$34 : AND.w #$0001 : BEQ +
+	LDA.l EquipmentSRAM+$34 : AND.w #$0001 : BEQ +
 		%fs_drawItem(12,16,FileSelectItems_red_pendant)
 		BRA ++
 	+
@@ -375,49 +374,49 @@ DrawPlayerFileShared:
 	++
 
 	; Crystals
-	LDA EquipmentSRAM+$3A : AND.w #$0002 : BEQ +
+	LDA.l EquipmentSRAM+$3A : AND.w #$0002 : BEQ +
 		LDA.w #$0297|!FS_COLOR_BLUE
 		BRA ++
 	+
 		LDA.w #$0287|!FS_COLOR_GRAY
 	++ : %fs_draw16x8(13,18)
 
-	LDA EquipmentSRAM+$3A : AND.w #$0010 : BEQ +
+	LDA.l EquipmentSRAM+$3A : AND.w #$0010 : BEQ +
 		LDA.w #$0297|!FS_COLOR_BLUE
 		BRA ++
 	+
 		LDA.w #$0287|!FS_COLOR_GRAY
 	++ : %fs_draw16x8(12,19)
 
-	LDA EquipmentSRAM+$3A : AND.w #$0040 : BEQ +
+	LDA.l EquipmentSRAM+$3A : AND.w #$0040 : BEQ +
 		LDA.w #$0297|!FS_COLOR_BLUE
 		BRA ++
 	+
 		LDA.w #$0287|!FS_COLOR_GRAY
 	++ : %fs_draw16x8(13,20)
 
-	LDA EquipmentSRAM+$3A : AND.w #$0020 : BEQ +
+	LDA.l EquipmentSRAM+$3A : AND.w #$0020 : BEQ +
 		LDA.w #$0297|!FS_COLOR_BLUE
 		BRA ++
 	+
 		LDA.w #$0287|!FS_COLOR_GRAY
 	++ : %fs_draw16x8(12,21)
 
-	LDA EquipmentSRAM+$3A : AND.w #$0004 : BEQ +
+	LDA.l EquipmentSRAM+$3A : AND.w #$0004 : BEQ +
 		LDA.w #$0297|!FS_COLOR_RED
 		BRA ++
 	+
 		LDA.w #$0287|!FS_COLOR_GRAY
 	++ : %fs_draw16x8(13,22)
 
-	LDA EquipmentSRAM+$3A : AND.w #$0001 : BEQ +
+	LDA.l EquipmentSRAM+$3A : AND.w #$0001 : BEQ +
 		LDA.w #$0297|!FS_COLOR_RED
 		BRA ++
 	+
 		LDA.w #$0287|!FS_COLOR_GRAY
 	++ : %fs_draw16x8(12,23)
 
-	LDA EquipmentSRAM+$3A : AND.w #$0008 : BEQ +
+	LDA.l EquipmentSRAM+$3A : AND.w #$0008 : BEQ +
 		LDA.w #$0297|!FS_COLOR_BLUE
 		BRA ++
 	+
@@ -558,104 +557,103 @@ FileSelectItems:
 
 ;--------------------------------------------------------------------------------
 FileSelectDrawHudBar:
-	LDA #$029B|!FS_COLOR_GREEN : %fs_draw16x8(0,10)
-	LDA EquipmentSRAM+$22
+	LDA.w #$029B|!FS_COLOR_GREEN : %fs_draw16x8(0,10)
+	LDA.l DisplayRupeesSRAM
 	JSL.l HexToDec
-	LDA $7F5004 : AND.w #$00FF : !ADD.w #$210+!FS_COLOR_BW : %fs_draw8x8(1,9)
-	LDA $7F5005 : AND.w #$00FF : !ADD.w #$210+!FS_COLOR_BW : %fs_draw8x8(1,10)
-	LDA $7F5006 : AND.w #$00FF : !ADD.w #$210+!FS_COLOR_BW : %fs_draw8x8(1,11)
-	LDA $7F5007 : AND.w #$00FF : !ADD.w #$210+!FS_COLOR_BW : %fs_draw8x8(1,12)
+	LDA.l HexToDecDigit2 : AND.w #$00FF : !ADD.w #$210+!FS_COLOR_BW : %fs_draw8x8(1,9)
+	LDA.l HexToDecDigit3 : AND.w #$00FF : !ADD.w #$210+!FS_COLOR_BW : %fs_draw8x8(1,10)
+	LDA.l HexToDecDigit4 : AND.w #$00FF : !ADD.w #$210+!FS_COLOR_BW : %fs_draw8x8(1,11)
+	LDA.l HexToDecDigit5 : AND.w #$00FF : !ADD.w #$210+!FS_COLOR_BW : %fs_draw8x8(1,12)
 
-	LDA #$028B|!FS_COLOR_BLUE : %fs_draw16x8(0,14)
-	LDA EquipmentSRAM+$03 : AND.w #$00FF
+	LDA.w #$028B|!FS_COLOR_BLUE : %fs_draw16x8(0,14)
+	LDA.l BombsEquipmentSRAM : AND.w #$00FF
 	JSL.l HexToDec
-	LDA $7F5006 : AND.w #$00FF : !ADD.w #$210+!FS_COLOR_BW : %fs_draw8x8(1,14)
-	LDA $7F5007 : AND.w #$00FF : !ADD.w #$210+!FS_COLOR_BW : %fs_draw8x8(1,15)
+	LDA.l HexToDecDigit4 : AND.w #$00FF : !ADD.w #$210+!FS_COLOR_BW : %fs_draw8x8(1,14)
+	LDA.l HexToDecDigit5 : AND.w #$00FF : !ADD.w #$210+!FS_COLOR_BW : %fs_draw8x8(1,15)
 
 	LDA.l BowTrackingSRAM : AND.w #$0040 : BEQ +
-		LDA #$0299|!FS_COLOR_RED : %fs_draw16x8(0,17)
+		LDA.w #$0299|!FS_COLOR_RED : %fs_draw16x8(0,17)
 		BRA ++
 	+
-	LDA #$0289|!FS_COLOR_BROWN : %fs_draw16x8(0,17)
+	LDA.w #$0289|!FS_COLOR_BROWN : %fs_draw16x8(0,17)
 	++
-	LDA EquipmentSRAM+$37 : AND.w #$00FF
+	LDA.l CurrentArrowsSRAM : AND.w #$00FF
 	JSL.l HexToDec
-	LDA $7F5006 : AND.w #$00FF : !ADD.w #$210+!FS_COLOR_BW : %fs_draw8x8(1,17)
-	LDA $7F5007 : AND.w #$00FF : !ADD.w #$210+!FS_COLOR_BW : %fs_draw8x8(1,18)
+	LDA.l HexToDecDigit4 : AND.w #$00FF : !ADD.w #$210+!FS_COLOR_BW : %fs_draw8x8(1,17)
+	LDA.l HexToDecDigit5 : AND.w #$00FF : !ADD.w #$210+!FS_COLOR_BW : %fs_draw8x8(1,18)
 RTS
 ;--------------------------------------------------------------------------------
 AltBufferTable:
-    LDA.b #$02 : STA $210c ; Have Screen 3 use same tile area as screens 1
+    LDA.b #$02 : STA.w BG34NBA ; Have Screen 3 use same tile area as screens 1
 .noScreen3Change
     REP #$20
     LDX.w #$0400 ; 14 rows with 64 bytes (30 tiles * 2 + 4 byte header)
     ;fill with the blank character
     LDA.w #$0188
     -
-        STA $1000, X
+        STA.w GFXStripes, X
         DEX : DEX : BNE -
 
     ; set vram offsets
-    LDA.w #$0161 : STA $1002 ;file 1 top row
-    LDA.w #$2161 : STA $1042 ;file 1 bottom row
+    LDA.w #$0161 : STA.w GFXStripes+$02 ;file 1 top row
+    LDA.w #$2161 : STA.w GFXStripes+$42 ;file 1 bottom row
 
-    LDA.w #$4161 : STA $1082 ;gap row top
-    LDA.w #$6161 : STA $10C2 ;gap row bottom
+    LDA.w #$4161 : STA.w GFXStripes+$82 ;gap row top
+    LDA.w #$6161 : STA.w GFXStripes+$C2 ;gap row bottom
 
-    LDA.w #$8161 : STA $1102 ;file 2 top row
-    LDA.w #$A161 : STA $1142 ;file 2 bottom row
+    LDA.w #$8161 : STA.w GFXStripes+$0102 ;file 2 top row
+    LDA.w #$A161 : STA.w GFXStripes+$0142 ;file 2 bottom row
 
-    LDA.w #$C161 : STA $1182 ;gap row top
-    LDA.w #$E161 : STA $11c2 ;gap row bottom
+    LDA.w #$C161 : STA.w GFXStripes+$0182 ;gap row top
+    LDA.w #$E161 : STA.w GFXStripes+$01C2 ;gap row bottom
 
-    LDA.w #$0162 : STA $1202 ;file 3 top row
-    LDA.w #$2162 : STA $1242 ;file 3 bottom row
+    LDA.w #$0162 : STA.w GFXStripes+$0202 ;file 3 top row
+    LDA.w #$2162 : STA.w GFXStripes+$0242 ;file 3 bottom row
 
-    LDA.w #$4162 : STA $1282 ;extra gap row top
-    LDA.w #$6162 : STA $12c2 ;extra gap row bottom
+    LDA.w #$4162 : STA.w GFXStripes+$0282 ;extra gap row top
+    LDA.w #$6162 : STA.w GFXStripes+$02C2 ;extra gap row bottom
 
-	LDA.w #$8162 : STA $1302 ;extra gap row top
-    LDA.w #$A162 : STA $1342 ;extra gap row bottom
+    LDA.w #$8162 : STA.w GFXStripes+$0302 ;extra gap row top
+    LDA.w #$A162 : STA.w GFXStripes+$0342 ;extra gap row bottom
 
-	LDA.w #$C162 : STA $1382 ;extra gap row top
-    LDA.w #$E162 : STA $13C2 ;extra gap row bottom
+    LDA.w #$C162 : STA.w GFXStripes+$0382 ;extra gap row top
+    LDA.w #$E162 : STA.w GFXStripes+$03C2 ;extra gap row bottom
 
     ; set lengths
     LDA.w #$3B00
-    STA $1004 ;file 1 top row
-    STA $1044 ;file 1 bottom row
-    STA $1084 ;gap row top
-    STA $10C4 ;gap row bottom
-    STA $1104 ;file 2 top row
-    STA $1144 ;file 2 bottom row
-    STA $1184 ;gap row top
-    STA $11C4 ;gap row bottom
-    STA $1204 ;file 3 top row
-    STA $1244 ;file 3 bottom row
-    STA $1284 ;extra gap row top
-    STA $12C4 ;extra gap row bottom
-	STA $1304 ;extra gap row top
-    STA $1344 ;extra gap row bottom
-	STA $1384 ;extra gap row top
-    STA $13C4 ;extra gap row bottom
+    STA.w GFXStripes+$04 ;file 1 top row
+    STA.w GFXStripes+$44 ;file 1 bottom row
+    STA.w GFXStripes+$84 ;gap row top
+    STA.w GFXStripes+$C4 ;gap row bottom
+    STA.w GFXStripes+$0104 ;file 2 top row
+    STA.w GFXStripes+$0144 ;file 2 bottom row
+    STA.w GFXStripes+$0184 ;gap row top
+    STA.w GFXStripes+$01C4 ;gap row bottom
+    STA.w GFXStripes+$0204 ;file 3 top row
+    STA.w GFXStripes+$0244 ;file 3 bottom row
+    STA.w GFXStripes+$0284 ;extra gap row top
+    STA.w GFXStripes+$02C4 ;extra gap row bottom
+    STA.w GFXStripes+$0304 ;extra gap row top
+    STA.w GFXStripes+$0344 ;extra gap row bottom
+    STA.w GFXStripes+$0384 ;extra gap row top
+    STA.w GFXStripes+$03C4 ;extra gap row bottom
 
     ; Set last packet marker
-    LDA.w #$00FF : STA $1402
+    LDA.w #$00FF : STA.w GFXStripes+$0402
 
     ; Draw Unlock option if applicable
-	LDA $10 : AND.w #$00FF : CMP.w #$0001 : BNE +
-	LDA.l IsEncrypted : AND.w #$00FF : CMP.w #$0002 : BNE +
-	PHP : SEP #$30 : PHX : PHY : JSL ValidatePassword : PLY : PLX : PLP
-	AND.w #$00FF : BNE +
-		LDA.w #!FSTILE_U_TOP : %fs_draw8x16(14,5)
-		LDA.w #!FSTILE_N_TOP : %fs_draw8x16(14,6)
-		LDA.w #!FSTILE_L_TOP : %fs_draw8x16(14,7)
-		LDA.w #!FSTILE_O_TOP : %fs_draw8x16(14,8)
-		LDA.w #!FSTILE_C_TOP : %fs_draw8x16(14,9)
-		LDA.w #!FSTILE_K_TOP : %fs_draw8x16(14,10)
-	+
-
-	SEP #$20
+    LDA.b GameMode : AND.w #$00FF : CMP.w #$0001 : BNE +
+    LDA.l IsEncrypted : AND.w #$00FF : CMP.w #$0002 : BNE +
+    PHP : SEP #$30 : PHX : PHY : JSL ValidatePassword : PLY : PLX : PLP
+    AND.w #$00FF : BNE +
+	    LDA.w #!FSTILE_U_TOP : %fs_draw8x16(14,5)
+	    LDA.w #!FSTILE_N_TOP : %fs_draw8x16(14,6)
+	    LDA.w #!FSTILE_L_TOP : %fs_draw8x16(14,7)
+	    LDA.w #!FSTILE_O_TOP : %fs_draw8x16(14,8)
+	    LDA.w #!FSTILE_C_TOP : %fs_draw8x16(14,9)
+	    LDA.w #!FSTILE_K_TOP : %fs_draw8x16(14,10)
+    +
+    SEP #$20
 
 RTL
 ;--------------------------------------------------------------------------------
@@ -663,36 +661,36 @@ AltBufferTable_credits:
 	JSL AltBufferTable_noScreen3Change
 
 	REP #$20
-    LDA.w #$6168 : STA $1002 ;file 1 top row
-    LDA.w #$8168 : STA $1042 ;file 1 bottom row
+    LDA.w #$6168 : STA.w GFXStripes+$02 ;file 1 top row
+    LDA.w #$8168 : STA.w GFXStripes+$42 ;file 1 bottom row
 
-    LDA.w #$A168 : STA $1082 ;gap row top
-    LDA.w #$C168 : STA $10C2 ;gap row bottom
+    LDA.w #$A168 : STA.w GFXStripes+$82 ;gap row top
+    LDA.w #$C168 : STA.w GFXStripes+$C2 ;gap row bottom
 
-    LDA.w #$E168 : STA $1102 ;file 2 top row
-    LDA.w #$0169 : STA $1142 ;file 2 bottom row
+    LDA.w #$E168 : STA.w GFXStripes+$0102 ;file 2 top row
+    LDA.w #$0169 : STA.w GFXStripes+$0142 ;file 2 bottom row
 
-    LDA.w #$2169 : STA $1182 ;gap row top
-    LDA.w #$4169 : STA $11c2 ;gap row bottom
+    LDA.w #$2169 : STA.w GFXStripes+$0182 ;gap row top
+    LDA.w #$4169 : STA.w GFXStripes+$01c2 ;gap row bottom
 
-    LDA.w #$6169 : STA $1202 ;file 3 top row
-    LDA.w #$8169 : STA $1242 ;file 3 bottom row
+    LDA.w #$6169 : STA.w GFXStripes+$0202 ;file 3 top row
+    LDA.w #$8169 : STA.w GFXStripes+$0242 ;file 3 bottom row
 
-    LDA.w #$A169 : STA $1282 ;extra gap row top
-    LDA.w #$C169 : STA $12c2 ;extra gap row bottom
+    LDA.w #$A169 : STA.w GFXStripes+$0282 ;extra gap row top
+    LDA.w #$C169 : STA.w GFXStripes+$02C2 ;extra gap row bottom
 
-	LDA.w #$E169 : STA $1302 ;extra gap row top
-    LDA.w #$016A : STA $1342 ;extra gap row bottom
+    LDA.w #$E169 : STA.w GFXStripes+$0302 ;extra gap row top
+    LDA.w #$016A : STA.w GFXStripes+$0342 ;extra gap row bottom
 
-	LDA.w #$216A : STA $1382 ;extra gap row top
-    LDA.w #$416A : STA $13C2 ;extra gap row bottom
+    LDA.w #$216A : STA.w GFXStripes+$0382 ;extra gap row top
+    LDA.w #$416A : STA.w GFXStripes+$03C2 ;extra gap row bottom
 
     SEP #$20
 RTL
 ;--------------------------------------------------------------------------------
 macro LayoutPriority(address)
 LDX.w #$003C
-- : LDA.w <address>, X : ORA #$2000 : STA.w <address>, X
+- : LDA.w <address>, X : ORA.w #$2000 : STA.w <address>, X
 DEX : DEX : BNE -
 endmacro
 
@@ -718,47 +716,47 @@ RTL
 ;--------------------------------------------------------------------------------
 LoadFullItemTiles:
 	PHA : PHX
-		LDA $4300 : PHA ; preserve DMA parameters
-		LDA $4301 : PHA ; preserve DMA parameters
-		LDA $4302 : PHA ; preserve DMA parameters
-		LDA $4303 : PHA ; preserve DMA parameters
-		LDA $4304 : PHA ; preserve DMA parameters
-		LDA $4305 : PHA ; preserve DMA parameters
-		LDA $4306 : PHA ; preserve DMA parameters
+		LDA.w DMAP0 : PHA ; preserve DMA parameters
+		LDA.w BBAD0 : PHA ; preserve DMA parameters
+		LDA.w A1T0L : PHA ; preserve DMA parameters
+		LDA.w A1T0H : PHA ; preserve DMA parameters
+		LDA.w A1B0 : PHA ; preserve DMA parameters
+		LDA.w DAS0L : PHA ; preserve DMA parameters
+		LDA.w DAS0H : PHA ; preserve DMA parameters
 		;--------------------------------------------------------------------------------
-		LDA.b #$80 : STA $2115 ; write read increment on $2119
-		LDA.b #$01 : STA $4300 ; set DMA transfer direction A -> B, bus A auto increment, double-byte mode
-		LDA.b #$18 : STA $4301 ; set bus B destination to VRAM register
+		LDA.b #$80 : STA.w VMAIN ; write read increment on $2119
+		LDA.b #$01 : STA.w DMAP0 ; set DMA transfer direction A -> B, bus A auto increment, double-byte mode
+		LDA.b #$18 : STA.w BBAD0 ; set bus B destination to VRAM register
 
-		LDA.b #$00 : STA $2116 ; write VRAM destination address
-		LDA.b #$30 : STA $2117 ; write VRAM destination address
+		LDA.b #$00 : STA.w VMADDL ; write VRAM destination address
+		LDA.b #$30 : STA.w VMADDH ; write VRAM destination address
 
-		LDA.b #$31 : STA $4304 ; set bus A source bank
-		LDA.b #FileSelectNewGraphics : STA $4302 ; set bus A source address to ROM
-		LDA.b #FileSelectNewGraphics>>8 : STA $4303 ; set bus A source address to ROM
+		LDA.b #$31 : STA.w A1B0 ; set bus A source bank
+		LDA.b #FileSelectNewGraphics : STA.w A1T0L ; set bus A source address to ROM
+		LDA.b #FileSelectNewGraphics>>8 : STA.w A1T0H ; set bus A source address to ROM
 
-		LDA $2100 : PHA : LDA.b #$80 : STA $2100 ; save screen state & turn screen off
+		LDA.w INIDISP : PHA : LDA.b #$80 : STA.w INIDISP ; save screen state & turn screen off
 
-		STZ $4305 : LDA.b #$10 : STA $4306 ; set transfer size to 0x1000
-		LDA #$01 : STA $420B ; begin DMA transfer
+		STZ.w DAS0L : LDA.b #$10 : STA.w DAS0H ; set transfer size to 0x1000
+		LDA.b #$01 : STA.w MDMAEN ; begin DMA transfer
 
-		PLA : STA $2100 ; put screen back however it was before
+		PLA : STA.w INIDISP ; put screen back however it was before
 		;--------------------------------------------------------------------------------
-		PLA : STA $4306 ; restore DMA parameters
-		PLA : STA $4305 ; restore DMA parameters
-		PLA : STA $4304 ; restore DMA parameters
-		PLA : STA $4303 ; restore DMA parameters
-		PLA : STA $4302 ; restore DMA parameters
-		PLA : STA $4301 ; restore DMA parameters
-		PLA : STA $4300 ; restore DMA parameters
+		PLA : STA.w DAS0H ; restore DMA parameters
+		PLA : STA.w DAS0L ; restore DMA parameters
+		PLA : STA.w A1B0 ; restore DMA parameters
+		PLA : STA.w A1T0H ; restore DMA parameters
+		PLA : STA.w A1T0L ; restore DMA parameters
+		PLA : STA.w BBAD0 ; restore DMA parameters
+		PLA : STA.w DMAP0 ; restore DMA parameters
 	PLX : PLA
 RTL
 ;--------------------------------------------------------------------------------
 
 SetFileSelectPalette:
-	LDA $10 : CMP.b #$04 : BNE +
+	LDA.b GameMode : CMP.b #$04 : BNE +
 		; load the vanilla file select screen BG3 palette for naming screen
-		LDA.b #$01 : STA $0AB2
+		LDA.b #$01 : STA.w $0AB2
 		JSL.l Palette_Hud
 		BRA .done
 	+
@@ -774,12 +772,12 @@ LoadCustomHudPalette:
 		LDX.b #$40
 		-
 		LDA.l GFX_HUD_Palette, X
-			STA.l $7EC500, X
+			STA.l PaletteBuffer, X
 			DEX : DEX
 		BPL -
 		SEP #$20
 
-		INC $15 ; ensure CGRAM gets updated
+		INC.b NMICGRAM ; ensure CGRAM gets updated
 	PLX : PLA
 RTL
 ;--------------------------------------------------------------------------------
@@ -787,16 +785,16 @@ DrawPlayerFile_credits:
 	; see $6563C for drawing first file name and hearts
 	REP #$20 ; set 16 bit accumulator
 
-	LDA EquipmentSRAM+$99 : ORA.w #!FS_COLOR_BW
+	LDA.l EquipmentSRAM+$99 : ORA.w #!FS_COLOR_BW
 	%fs_draw8x16(3,5)
-	LDA EquipmentSRAM+$9B : ORA.w #!FS_COLOR_BW
+	LDA.l EquipmentSRAM+$9B : ORA.w #!FS_COLOR_BW
 	%fs_draw8x16(3,6)
-	LDA EquipmentSRAM+$9D : ORA.w #!FS_COLOR_BW
+	LDA.l EquipmentSRAM+$9D : ORA.w #!FS_COLOR_BW
 	%fs_draw8x16(3,7)
-	LDA EquipmentSRAM+$9F : ORA.w #!FS_COLOR_BW
+	LDA.l EquipmentSRAM+$9F : ORA.w #!FS_COLOR_BW
 	%fs_draw8x16(3,8)
-
-	LDA EquipmentSRAM+$2C : AND.w #$00FF : LSR #3 : STA $02
+ 
+	LDA.l EquipmentSRAM+$2C : AND.w #$00FF : LSR #3 : STA.b Scrap02
 	%fs_LDY_screenpos(0,20)
 	LDA.w #$028F|!FS_COLOR_RED
 	LDX.w #$000A
@@ -810,60 +808,61 @@ DrawPlayerFile_credits:
 		TYA : !ADD.w #$40-$14 : TAY
 		PLA
 	+
-	DEC $02 : BNE .nextHeart
+	DEC.b Scrap02 : BNE .nextHeart
 
 	JSR DrawPlayerFileShared
 RTL
 ;--------------------------------------------------------------------------------
 FSCursorUp:
-	LDA $C8 : BNE +
-		LDA #$04 ; up from file becomes delete
+	LDA.b FileSelectPosition : BNE +
+		LDA.b #$04 ; up from file becomes delete
 		BRA .done
-	+ : CMP #$03 : BNE +
-		LDA #$00 ; up from unlock is the file
+	+ : CMP.b #$03 : BNE +
+		LDA.b #$00 ; up from unlock is the file
 		BRA .done
 	+
 	LDA.l IsEncrypted : CMP.b #$02 : BNE +
-	LDA.l !ValidKeyLoaded : BNE +
-		LDA #$03 ; up from delete is unlock for password protected seeds
+	LDA.l ValidKeyLoaded : BNE +
+		LDA.b #$03 ; up from delete is unlock for password protected seeds
 		BRA .done
 	+
-	LDA #$00 ;otherwise up from delete is file
+	LDA.b #$00 ;otherwise up from delete is file
 	.done
-	STA $C8
+	STA.b FileSelectPosition
 RTL
+
 FSCursorDown:
-	LDA $C8 : BNE +
+	LDA.b FileSelectPosition : BNE +
 		LDA.l IsEncrypted : CMP.b #$02 : BNE ++
-		LDA.l !ValidKeyLoaded : BNE ++
-			LDA #$03 ; down from file is unlock for password protected seeds
+		LDA.l ValidKeyLoaded : BNE ++
+			LDA.b #$03 ; down from file is unlock for password protected seeds
 			BRA .done
 		++
-		LDA #$04  ;otherwise down from file is delete
+		LDA.b #$04  ;otherwise down from file is delete
 		BRA .done
-	+ : CMP #$03 : BNE +
-		LDA #$04 ; down from unlock is delete
+	+ : CMP.b #$03 : BNE +
+		LDA.b #$04 ; down from unlock is delete
 		BRA .done
 	+
-	LDA #$00 ; down from delete is file
+	LDA.b #$00 ; down from delete is file
 	.done
-	STA $C8
+	STA.b FileSelectPosition
 RTL
 ;--------------------------------------------------------------------------------
 FSSelectFile:
 	LDA.l IsEncrypted : CMP.b #$02 : BNE .normal
-		STZ $012E ; temporarily cancel file screen selection sound
+		STZ.w SFX2 ; temporarily cancel file screen selection sound
 		PHX : PHY
 			JSL ValidatePassword : BEQ .must_unlock
 		PLY : PLX
-		LDA.b #$2C : STA $012E ;file screen selection sound
+		LDA.b #$2C : STA.w SFX2 ;file screen selection sound
 	.normal
-	LDA.b #$F1 : STA $012C
+	LDA.b #$F1 : STA.w MusicControlRequest
 JML FSSelectFile_continue
 	.must_unlock
 	PLY : PLX
-	LDA #$03 : STA $C8 ;set cursor to unlock
-	LDA.b #$3C : STA $012E ; play error sound
+	LDA.b #$03 : STA.b FileSelectPosition ;set cursor to unlock
+	LDA.b #$3C : STA.w SFX2 ; play error sound
 JML FSSelectFile_return
 ;--------------------------------------------------------------------------------
 MaybeForceFileName:
@@ -873,8 +872,8 @@ MaybeForceFileName:
                 -
                 INX : INX
                 LDA.l StaticFileName, X : STA.l ExtendedFileNameSRAM, X
-                CPX #$16 : BEQ .done
-                CPX #$08 : BCS -
+                CPX.b #$16 : BEQ .done
+                CPX.b #$08 : BCS -
                 STA.l FileNameVanillaSRAM, X
                 BRA -
         .done

@@ -1,13 +1,10 @@
 
-!CryptoBuffer = "$7F5100"
-;!keyBase = "$7F50D0"
-
 ;--------------------------------------------------------------------------------
 LoadStaticDecryptionKey:
 	PHB : PHA : PHX : PHY : PHP
 	REP #$30 ; set 16-bit accumulator & index registers
 	LDX.w #StaticDecryptionKey  ; Source
-	LDY.w #!keyBase             ; Target
+	LDY.w #KeyBase             ; Target
 	LDA.w #$000F                ; Length
 	MVN $307F
 
@@ -23,65 +20,63 @@ RetrieveValueFromEncryptedTable:
 ;Returns result in A
 	PHX : PHY
 		PHA
-			LDY $04 : PHY : LDY $06 : PHY : LDY $08 : PHY
-			LDY $0A : PHY : LDY $0C : PHY : LDY $0E : PHY
+			LDY.b Scrap04 : PHY : LDY.b Scrap06 : PHY : LDY.b Scrap08 : PHY
+			LDY.b Scrap0A : PHY : LDY.b Scrap0C : PHY : LDY.b Scrap0E : PHY
 
 				AND.w #$FFF8 : TAY
-				LDA [$00], Y : STA.l !CryptoBuffer : INY #2
-				LDA [$00], Y : STA.l !CryptoBuffer+2 : INY #2
-				LDA [$00], Y : STA.l !CryptoBuffer+4 : INY #2
-				LDA [$00], Y : STA.l !CryptoBuffer+6
+				LDA.b [$00], Y : STA.l CryptoBuffer : INY #2
+				LDA.b [$00], Y : STA.l CryptoBuffer+2 : INY #2
+				LDA.b [$00], Y : STA.l CryptoBuffer+4 : INY #2
+				LDA.b [$00], Y : STA.l CryptoBuffer+6
 
-				LDA.w #$0002 : STA $04 ;set block size
+				LDA.w #$0002 : STA.b Scrap04 ;set block size
 
 				JSL.l XXTEA_Decode
 
-			PLA : STA $0E : PLA : STA $0C : PLA : STA $0A
-			PLA : STA $08 : PLA : STA $06 : PLA : STA $04
+			PLA : STA.b Scrap0E : PLA : STA.b Scrap0C : PLA : STA.b Scrap0A
+			PLA : STA.b Scrap08 : PLA : STA.b Scrap06 : PLA : STA.b Scrap04
 		PLA : AND.w #$0007 : TAX
-		LDA.l !CryptoBuffer, X
+		LDA.l CryptoBuffer, X
 		PHA
 			LDA.w #$0000
-			STA.l !CryptoBuffer
-			STA.l !CryptoBuffer+2
-			STA.l !CryptoBuffer+4
-			STA.l !CryptoBuffer+6
+			STA.l CryptoBuffer
+			STA.l CryptoBuffer+2
+			STA.l CryptoBuffer+4
+			STA.l CryptoBuffer+6
 		PLA
 	PLY : PLX
 RTL
 ;--------------------------------------------------------------------------------
-
-!ChestData = "$01E96C"
-!ChestData_Payload = "$1EABC" ; !ChestData+$0150
-
+ChestData = $01E96C
+ChestDataPayload = $01EABC ; ChestData+$0150
 ;--------------------------------------------------------------------------------
 GetChestData:
 	LDA.l IsEncrypted : BNE .encrypted
-		INC $0E : LDX.w #$FFFD ; what we wrote over
+		INC.b Scrap0E : LDX.w #$FFFD ; what we wrote over
 JML.l Dungeon_OpenKeyedObject_nextChest
 
 .encrypted
-		INC $0E : LDX.w #$FFFE
+		INC.b Scrap0E : LDX.w #$FFFE
 
 	.nextChest
 
 	INX #2 : CPX.w #$0150 : BEQ .couldntFindChest
-	LDA !ChestData, X : AND.w #$7FFF : CMP $A0 : BNE .nextChest
+	LDA.l ChestData, X : AND.w #$7FFF : CMP.b RoomIndex : BNE .nextChest
 
-	DEC $0E : BNE .nextChest
+	DEC.b Scrap0E : BNE .nextChest
 
-	LDA $00 : PHA : LDA $02 : PHA
+	LDA.b Scrap00 : PHA : LDA.b Scrap02 : PHA
 
-		LDA.w #!ChestData_Payload : STA $00
-		LDA.w #!ChestData_Payload>>16 : STA $02
+		LDA.w #ChestDataPayload : STA.b Scrap00
+		LDA.w #ChestDataPayload>>16 : STA.b Scrap02
 
 		TXA : LSR
 		JSL RetrieveValueFromEncryptedTable
-		STA $0C
+		STA.b Scrap0C
 
-	PLA : STA $02 : PLA : STA $00
+	PLA : STA.b Scrap02 : PLA : STA.b Scrap00
 
-	LDA !ChestData, X : ASL A : BCC .smallChest
+	LDA.l ChestData, X : ASL A : BCC .smallChest
 
 JML.l Dungeon_OpenKeyedObject_bigChest ;(bank01.asm line #13783)
 

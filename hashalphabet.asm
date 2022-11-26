@@ -1,41 +1,39 @@
 ;--------------------------------------------------------------------------------
-;Hash Alphabet
-!ALPHA_BOW = "#$0000"
-!ALPHA_BOOM = "#$0001"
-!ALPHA_HOOK = "#$0002"
-!ALPHA_BOMB = "#$0003"
-!ALPHA_SHROOM = "#$0004"
-!ALPHA_POWDER = "#$0005"
-!ALPHA_ROD = "#$0006"
-!ALPHA_PENDANT = "#$0007"
-!ALPHA_BOMBOS = "#$0008"
-!ALPHA_ETHER = "#$0009"
-!ALPHA_QUAKE = "#$000A"
-!ALPHA_LAMP = "#$000B"
-!ALPHA_HAMMER = "#$000C"
-!ALPHA_SHOVEL = "#$000D"
-!ALPHA_FLUTE = "#$000E"
-!ALPHA_NET = "#$000F"
-!ALPHA_BOOK = "#$0010"
-!ALPHA_BOTTLE = "#$0011"
-!ALPHA_POTION = "#$0012"
-!ALPHA_CANE = "#$0013"
-!ALPHA_CAPE = "#$0014"
-!ALPHA_MIRROR = "#$0015"
-!ALPHA_BOOTS = "#$0016"
-!ALPHA_GLOVES = "#$0017"
-!ALPHA_FLIPPERS = "#$0018"
-!ALPHA_PEARL = "#$0019"
-!ALPHA_SHIELD = "#$001A"
-!ALPHA_TUNIC = "#$001B"
-!ALPHA_HEART = "#$001C"
-!ALPHA_MAP = "#$001D"
-!ALPHA_COMPASS = "#$001E"
-!ALPHA_KEY = "#$001F"
+; Hash Alphabet
+; ALPHA_BOW = $0000
+; ALPHA_BOOM = $0001
+; ALPHA_HOOK = $0002
+; ALPHA_BOMB = $0003
+; ALPHA_SHROOM = $0004
+; ALPHA_POWDER = $0005
+; ALPHA_ROD = $0006
+; ALPHA_PENDANT = $0007
+; ALPHA_BOMBOS = $0008
+; ALPHA_ETHER = $0009
+; ALPHA_QUAKE = $000A
+; ALPHA_LAMP = $000B
+; ALPHA_HAMMER = $000C
+; ALPHA_SHOVEL = $000D
+; ALPHA_FLUTE = $000E
+; ALPHA_NET = $000F
+; ALPHA_BOOK = $0010
+; ALPHA_BOTTLE = $0011
+; ALPHA_POTION = $0012
+; ALPHA_CANE = $0013
+; ALPHA_CAPE = $0014
+; ALPHA_MIRROR = $0015
+; ALPHA_BOOTS = $0016
+; ALPHA_GLOVES = $0017
+; ALPHA_FLIPPERS = $0018
+; ALPHA_PEARL = $0019
+; ALPHA_SHIELD = $001A
+; ALPHA_TUNIC = $001B
+; ALPHA_HEART = $001C
+; ALPHA_MAP = $001D
+; ALPHA_COMPASS = $001E
+; ALPHA_KEY = $001F
 ;--------------------------------------------------------------------------------
 
-;--------------------------------------------------------------------------------
-!BIGRAM = "$7EC900";
 ;--------------------------------------------------------------------------------
 LoadAlphabetTilemap:
 	PHB : PHA : PHX : PHY : PHP
@@ -45,9 +43,9 @@ LoadAlphabetTilemap:
 
 		LDX.b #$00 : -
 			LDA.w FileSelect_PlayerSelectText_Top, X
-			STA !BIGRAM, X
+			STA.l BigRAM, X
 			INX #2
-		CPX #128 : !BLT -
+		CPX.b #128 : !BLT -
 
 		LDY.b #00
 		LDX.b #$00 : -
@@ -55,12 +53,12 @@ LoadAlphabetTilemap:
 			AND.w #$001F ; mask to alphabet of 32
 
 			ASL #3 : PHY : TAY
-			LDA.w HashAlphabetTiles,Y : STA !BIGRAM+24, X
-			LDA.w HashAlphabetTiles+2,Y : STA !BIGRAM+24+2, X
-			LDA.w HashAlphabetTiles+4,Y : STA !BIGRAM+24+64, X
-			LDA.w HashAlphabetTiles+6,Y : STA !BIGRAM+24+64+2, X
+			LDA.w HashAlphabetTiles,Y : STA.l BigRAM+24, X
+			LDA.w HashAlphabetTiles+2,Y : STA.l BigRAM+24+2, X
+			LDA.w HashAlphabetTiles+4,Y : STA.l BigRAM+24+64, X
+			LDA.w HashAlphabetTiles+6,Y : STA.l BigRAM+24+64+2, X
 			PLY : INX #6 : INY
-		CPX #25 : !BLT -
+		CPX.b #25 : !BLT -
 
 		SEP #$20 ;  8-bit accumulator
 
@@ -72,38 +70,38 @@ RTL
 ;--------------------------------------------------------------------------------
 DMAAlphabetTilemap:
 	PHA : PHX
-		LDA $4300 : PHA ; preserve DMA parameters
-		LDA $4301 : PHA ; preserve DMA parameters
-		LDA $4302 : PHA ; preserve DMA parameters
-		LDA $4303 : PHA ; preserve DMA parameters
-		LDA $4304 : PHA ; preserve DMA parameters
-		LDA $4305 : PHA ; preserve DMA parameters
-		LDA $4306 : PHA ; preserve DMA parameters
+		LDA.w DMAP0 : PHA ; preserve DMA parameters
+		LDA.w BBAD0 : PHA ; preserve DMA parameters
+		LDA.w A1T0L : PHA ; preserve DMA parameters
+		LDA.w A1T0H : PHA ; preserve DMA parameters
+		LDA.w A1B0 : PHA ; preserve DMA parameters
+		LDA.w DAS0L : PHA ; preserve DMA parameters
+		LDA.w DAS0H : PHA ; preserve DMA parameters
 		;--------------------------------------------------------------------------------
-		LDA.b #$01 : STA $4300 ; set DMA transfer direction A -> B, bus A auto increment, double-byte mode
-		LDA.b #$80 : STA $2115 ; write read increment on $2119
-		LDA.b #$18 : STA $4301 ; set bus B destination to VRAM register
+		LDA.b #$01 : STA.w DMAP0 ; set DMA transfer direction A -> B, bus A auto increment, double-byte mode
+		LDA.b #$80 : STA.w VMAIN ; write read increment on $2119
+		LDA.b #$18 : STA.w BBAD0 ; set bus B destination to VRAM register
 
-		LDA.b #$60 : STA $2116 ; write VRAM destination address
-		STA $2117 ; write VRAM destination address
+		LDA.b #$60 : STA.w VMADDL ; write VRAM destination address
+		STA.w VMADDH ; write VRAM destination address
 
-		LDA.b #!BIGRAM : STA $4302 ; set bus A source address to WRAM
-		LDA.b #!BIGRAM>>8 : STA $4303 ; set bus A source address to WRAM
-		LDA.b #!BIGRAM>>16 : STA $4304 ; set bus A source bank
+		LDA.b #BigRAM : STA.w A1T0L ; set bus A source address to WRAM
+		LDA.b #BigRAM>>8 : STA.w A1T0H ; set bus A source address to WRAM
+		LDA.b #BigRAM>>16 : STA.w A1B0 ; set bus A source bank
 
-		LDA.b #$80 : STA $4305 : STZ $4306 ; set transfer size to 0x40
+		LDA.b #$80 : STA.w DAS0L : STZ.w DAS0H ; set transfer size to 0x40
 
-		LDA $2100 : PHA : LDA.b #$80 : STA $2100 ; save screen state & turn screen off
-			LDA #$01 : STA $420B ; begin DMA transfer
-		PLA : STA $2100 ; put screen back however it was before
+		LDA.w INIDISP : PHA : LDA.b #$80 : STA.w INIDISP ; save screen state & turn screen off
+			LDA.b #$01 : STA.w MDMAEN ; begin DMA transfer
+		PLA : STA.w INIDISP ; put screen back however it was before
 		;--------------------------------------------------------------------------------
-		PLA : STA $4306 ; restore DMA parameters
-		PLA : STA $4305 ; restore DMA parameters
-		PLA : STA $4304 ; restore DMA parameters
-		PLA : STA $4303 ; restore DMA parameters
-		PLA : STA $4302 ; restore DMA parameters
-		PLA : STA $4301 ; restore DMA parameters
-		PLA : STA $4300 ; restore DMA parameters
+		PLA : STA.w DAS0H ; restore DMA parameters
+		PLA : STA.w DAS0L ; restore DMA parameters
+		PLA : STA.w A1B0 ; restore DMA parameters
+		PLA : STA.w A1T0H ; restore DMA parameters
+		PLA : STA.w A1T0L ; restore DMA parameters
+		PLA : STA.w BBAD0 ; restore DMA parameters
+		PLA : STA.w DMAP0 ; restore DMA parameters
 	PLX : PLA
 RTS
 ;--------------------------------------------------------------------------------

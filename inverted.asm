@@ -35,7 +35,7 @@ Overworld_CreatePyramidHoleModified:
 	JSL C9DE_LONG
 	JSL C9DE_LONG
 
-	LDA.w #$FFFF : STA $1012, Y
+	LDA.w #$FFFF : STA.w GFXStripes+$12, Y
 
 	JMP .ending
 .originalBehaviour
@@ -64,33 +64,33 @@ Overworld_CreatePyramidHoleModified:
 	JSL C9DE_LONG
 	JSL C9DE_LONG
 
-	LDA.w #$FFFF : STA $1012, Y
+	LDA.w #$FFFF : STA.w GFXStripes+$12, Y
 
 .ending
-	LDA.w #$3515 : STA $012D
+	LDA.w #$3515 : STA.w SFX1
 
 	SEP #$30
 
-	LDA OverworldEventDataWRAM+$5B : ORA.b #$20 : STA OverworldEventDataWRAM+$5B
+	LDA.l OverworldEventDataWRAM+$5B : ORA.b #$20 : STA.l OverworldEventDataWRAM+$5B
 
-	LDA.b #$03 : STA $012F
+	LDA.b #$03 : STA.w SFX3
 
-	LDA.b #$01 : STA $14
+	LDA.b #$01 : STA.b NMISTRIPES
 
 RTL
 ;------------------------------------------------------------------------------
 Draw_PyramidOverlay:
 	LDA.l InvertedMode : AND.w #$00FF : BNE .done
 .normal
-	LDA.w #$0E39 : STA $23BC
-	INC A        : STA $23BE
-	INC A        : STA $23C0
-	INC A        : STA $243C
-	INC A        : STA $243E
-	INC A        : STA $2440
-	INC A        : STA $24BC
-	INC A        : STA $24BE
-	INC A        : STA $24C0
+	LDA.w #$0E39 : STA.w $23BC
+	INC A        : STA.w $23BE
+	INC A        : STA.w $23C0
+	INC A        : STA.w $243C
+	INC A        : STA.w $243E
+	INC A        : STA.w $2440
+	INC A        : STA.w $24BC
+	INC A        : STA.w $24BE
+	INC A        : STA.w $24C0
 .done
 RTL
 ;------------------------------------------------------------------------------
@@ -130,43 +130,44 @@ db $02, $02, $02, $00, $08, $02, $02, $00, $00, $00, $00, $01, $00, $00, $20, $0
 db $02, $02, $02, $02, $02, $02, $02, $00, $00, $01, $01, $01, $02, $00, $08, $00
 
 Electric_Barrier:
-	LDA InvertedMode : BEQ .done
-		LDA OverworldEventDataWRAM, X : ORA #$40 : STA OverworldEventDataWRAM, X ;set barrier dead
+	LDA.l InvertedMode : BEQ .done
+		LDA.l OverworldEventDataWRAM, X : ORA.b #$40 : STA.l OverworldEventDataWRAM, X ;set barrier dead
 	.done
-	LDA OverworldEventDataWRAM, X ; what we wrote over
+	LDA.l OverworldEventDataWRAM, X ; what we wrote over
 RTL
 
 
 GanonTowerAnimation:
-	LDA InvertedMode : BEQ .done
-		LDA.b #$1B : STA $012F
-        STZ $04C6
-        STZ $B0
-        STZ $0710
-        STZ $02E4
-        
-        STZ $0FC1
-        
-        STZ $011A
-        STZ $011B
-        STZ $011C
-        STZ $011D
-		LDA.b #$02 : STA $012C
-        LDA.b #$09 : STA $012D
-		RTL
-	.done
-	    LDA.b #$05 : STA $04C6 ;what we wrote over
-        STZ $B0 ; (continued)
-	STZ $C8 ; (continued)
+        LDA.l InvertedMode : BEQ .done
+                LDA.b #$1B : STA.w SFX3
+        STZ.w OWEntranceCutscene
+        STZ.b SubSubModule
+        STZ.w SkipOAM
+        STZ.w CutsceneFlag
+
+        STZ.w FreezeSprites
+
+        STZ.w BG1ShakeV
+        STZ.w BG1ShakeV+1
+        STZ.w BG1ShakeH
+        STZ.w BG1ShakeH+1
+        LDA.b #$02 : STA.w MusicControlRequest
+        LDA.b #$09 : STA.w SFX1
+        RTL
+
+        .done
+        LDA.b #$05 : STA.w OWEntranceCutscene ; what we wrote over
+        STZ.b SubSubModule ; (continued)
+        STZ.b ScrapBufferBD+$0B ; (continued)
 RTL
 
 GanonTowerInvertedCheck:
 {
-	LDA InvertedMode : BEQ .done
-		LDA #$01 ; Load a random value so it doesn't BEQ
+	LDA.l InvertedMode : BEQ .done
+		LDA.b #$01 ; Load a random value so it doesn't BEQ
 	RTL
 	.done
-	LDA $8A : CMP.b #$43 ;what we wrote over
+	LDA.b OverworldIndex : CMP.b #$43 ;what we wrote over
 	RTL
 }
 
@@ -174,14 +175,14 @@ GanonTowerInvertedCheck:
 ;Hard coded rock removed in LW for Inverted mode
 HardcodedRocks:
 
-    LDA InvertedMode : AND.w #$00FF : BEQ .normalrocks
+    LDA.l InvertedMode : AND.w #$00FF : BEQ .normalrocks
         BRA .noRock2
     .normalrocks
-        LDA.w #$020F : LDX $8A : CPX.w #$0033 : BNE .noRock
-        STA $7E22A8
+        LDA.w #$020F : LDX.b OverworldIndex : CPX.w #$0033 : BNE .noRock
+        STA.l $7E22A8
     .noRock
         CPX.w #$002F : BNE .noRock2
-        STA $7E2BB2
+        STA.l $7E2BB2
     .noRock2
 RTL
 
@@ -194,44 +195,44 @@ TurtleRockPegSolved:
 RTL
 
 MirrorBonk:
-	; must preserve X/Y, and must preserve $00-$0F
-	LDA.l InvertedMode : BEQ .normal
+        ; must preserve X/Y, and must preserve $00-$0F
+        LDA.l InvertedMode : BEQ .normal
 
-    ; Goal: use $20 and $22 to decide to force a bonk
-	; if we want to bonk branch to .forceBonk
-	; otherwise fall through to .normal
+        ; Goal: use $20 and $22 to decide to force a bonk
+        ; if we want to bonk branch to .forceBonk
+        ; otherwise fall through to .normal
 		PHX : PHP
 		PHB : PHK : PLB
-		LDA $8A : AND.b #$40 : BEQ .endLoop ;World we're in? branch if we are in LW we don't want bonks
+		LDA.b OverworldIndex : AND.b #$40 : BEQ .endLoop ;World we're in? branch if we are in LW we don't want bonks
 		REP #$30
-		LDX #$0000
+		LDX.w #$0000
 		.loop
 			LDA.l .bonkRectanglesTable, X ;Load X1
-			CMP $22 : !BGE ++
+			CMP.b LinkPosX : !BGE ++
 			;IF X > X1
 			LDA.l .bonkRectanglesTable+2, X ; Load X2
-			CMP $22 : !BLT ++ 
+			CMP.b LinkPosX : !BLT ++ 
 			;IF X < X2
 			LDA.l .bonkRectanglesTable+4, X ;Load Y1
-			CMP $20 : !BGE ++
+			CMP.b LinkPosY : !BGE ++
 			;IF Y > Y1
 			LDA.l .bonkRectanglesTable+6, X ; Load Y2
-			CMP $20 : !BLT ++ 
+			CMP.b LinkPosY : !BLT ++ 
 			;IF Y < Y2
 			;Bonk Here
 			PLB : PLP : PLX
 			BRA .forceBonk
-		++
-		TXA : !ADD #$0008 : CMP #.tableEnd-.bonkRectanglesTable : BEQ .endLoop
-		TAX
-		BRA .loop
-		.endbonkRectanglesTable
+                ++
+                TXA : !ADD #$0008 : CMP.w #.tableEnd-.bonkRectanglesTable : BEQ .endLoop
+                TAX
+                BRA .loop
+                .endbonkRectanglesTable
 
-	.endLoop
-	PLB : PLP : PLX
+        .endLoop
+        PLB : PLP : PLX
 .normal
-    ;Not forcing a bonk, so the vanilla bonk detection run.
-	LDA $0C : ORA $0E
+        ;Not forcing a bonk, so the vanilla bonk detection run.
+        LDA.b Scrap0C : ORA.b Scrap0E
 JML.l MirrorBonk_NormalReturn
 .forceBonk
 JML.l MirrorBonk_BranchGamma

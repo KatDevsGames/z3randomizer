@@ -1,103 +1,101 @@
-!INVERTED_TEMP = $35
-
 RenderCharSetColorExtended_init:
-    stz !INVERTED_TEMP
+    stz.b Scrap0C
     jsl $00d84e
     rtl
 
 RenderCharSetColorExtended_close:
-    stz !INVERTED_TEMP
-    lda $010c
-    sta $10
+    stz.b Scrap0C
+    lda.w GameModeCache
+    sta.b GameMode
     rtl
 
 RenderCharSetColorExtended:
     pha
-    and #$10
-    cmp #$10
+    and.b #$10
+    cmp.b #$10
     beq .inverted
-    lda #$00
+    lda.b #$00
     bra .end
 .inverted
-    lda #$01
+    lda.b #$01
 .end
-    sta !INVERTED_TEMP
+    sta.b Scrap0C
     pla
-    and #$07 : asl : asl
+    and.b #$07 : asl : asl
     rtl
 
 RenderCharToMapExtended:
     phx : tya : asl #2 : tax
     lda.l FontProperties, x
-    and #$0001
+    and.w #$0001
     bne .uncompressed
 .compressed
     plx
-    lda #$0000
-    sta $00
-    lda #$007f
-    sta $02
-    lda #$0000
-    clc : adc #$0020
-    sta $03
-    lda #$007f
-    sta $05
+    lda.w #$0000
+    sta.b Scrap00
+    lda.w #$007f
+    sta.b Scrap02
+    lda.w #$0000
+    clc : adc.w #$0020
+    sta.b Scrap03
+    lda.w #$007f
+    sta.b Scrap05
     jml RenderCharToMapExtended_return
 
 .uncompressed    
     lda.l FontProperties+$2, x
     plx
-    clc : adc #(NewFont&$ffff)
-    sta $00
-    clc : adc #$0100
+    clc : adc.w #(NewFont&$ffff)
+    sta.b Scrap00
+    clc : adc.w #$0100
     pha
-    lda #(NewFont>>16)
-    sta $02
-    pla : sta $03
-    lda #(NewFont>>16)
-    sta $05
+    lda.w #(NewFont>>16)
+    sta.b Scrap02
+    pla : sta.b Scrap03
+    lda.w #(NewFont>>16)
+    sta.b Scrap05
     jml RenderCharToMapExtended_return
 
 RenderCharLookupWidthDraw:
     rep #$30
-    phx : lda $09 : and #$fffe : tax
+    phx : lda.b Scrap09 : and.w #$fffe : tax
     lda.l FontProperties, x
     bmi .thin
 .wide
     plx : sep #$30
-    lda $09 : and #$03 : tay
-    lda $fd7c, y : tay
+    lda.b Scrap09 : and.b #$03 : tay
+    lda.w $fd7c, y : tay
     jml RenderCharLookupWidthDraw_return
 .thin
-    xba : and #$004f : bne .vwf
+    xba : and.w #$004f : bne .vwf
     plx : sep #$30
-    lda $09 : and #$03 : phx : tax
+    lda.b Scrap09 : and.b #$03 : phx : tax
     lda.l RenderCharThinTable, x : tay : plx
     jml RenderCharLookupWidthDraw_return
 .vwf
-    and #$000f : tay
+    and.w #$000f : tay
     plx : sep #$30
-    lda $09 : and #$03 : phx : tax
-    cpx #$00 : bne +
+    lda.b Scrap09 : and.b #$03 : phx : tax
+    cpx.b #$00 : bne +
     tya : bra ++
 +   lda.l RenderCharThinTable, x
 ++  tay : plx : jml RenderCharLookupWidthDraw_return
 
 
 RenderCharLookupWidth:
-    phx : lda $09 : and #$fffe : tax
+    phx : lda.b Scrap09 : and.w #$fffe : tax
     lda.l FontProperties, x
     bmi .thin
 .wide
-    plx : lda $fd7c, x : clc
+    plx : lda.w $fd7c, x : clc
     rtl
 .thin
-    xba : and #$004f : bne .vwf
+    xba : and.w #$004f : bne .vwf
     plx : lda.l RenderCharThinTable, x : clc
     rtl
 .vwf
-    and #$000f     
-    plx : cpx #$0000 : beq + : lda.l RenderCharThinTable, x
+    and.w #$000f     
+    plx : cpx.w #$0000 : beq + : lda.l RenderCharThinTable, x
 +   clc : rtl
 
 RenderCharThinTable:
@@ -107,11 +105,11 @@ RenderCharExtended:
     pha
     asl : asl : tax
     lda.l FontProperties, x
-    and #$00ff
+    and.w #$00ff
     bne .renderUncompressed
 
 .renderOriginal
-    pla : asl : tax : asl : adc $0e
+    pla : asl : tax : asl : adc.b Scrap0E
     jml RenderCharExtended_returnOriginal
 
 .renderUncompressed
@@ -119,31 +117,31 @@ RenderCharExtended:
     lda.l FontProperties+$2, x
     tay
 
-    lda !INVERTED_TEMP
+    lda.b Scrap0C
     bne .inverted
 
-    ldx #$00000
+    ldx.w #$0000
 -
     lda.w NewFont, y
     sta.l $7EBFC0, x
     lda.w NewFont+$100, y
     sta.l $7EBFC0+$16, x
-    inx #2
-    iny #2
-    cpx #$0010
+    inx #02
+    iny #02
+    cpx.w #$0010
     bne -
     bra .end
 
 .inverted
-    ldx #$00000
+    ldx.w #$0000
 -
     lda.w NewFontInverted, y
     sta.l $7EBFC0, x
     lda.w NewFontInverted+$100, y
     sta.l $7EBFC0+$16, x
-    inx #2
-    iny #2
-    cpx #$0010
+    inx #02
+    iny #02
+    cpx.w #$0010
     bne -
 
 .end    

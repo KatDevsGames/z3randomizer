@@ -20,7 +20,7 @@ InitRoomDataWRAM:
 org $30B060 ; PC 0x183060
 InitATAltarRoom: dw $0000 ; aga curtains
 org $30B092 ; PC 0x183092
-InitSWBackEntryRoom: dw $0000 ; skull woods curtains (?)
+InitSWBackEntryRoom: dw $0000 ; skull woods curtains
 
 org $30B20C
 dw $F000, $F000 ; Pre-open kak bomb hut & brewery

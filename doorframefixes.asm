@@ -7,8 +7,8 @@
 ;--------------------------------------------------------------------------------
 StoreLastOverworldDoorID:
 	TXA : INC
-	STA $7F5099
-	LDA $1BBB73, X : STA $010E
+	STA.l PreviousOverworldDoor
+	LDA.l $1BBB73, X : STA.w EntranceIndex
 RTL
 ;--------------------------------------------------------------------------------
 
@@ -16,14 +16,14 @@ RTL
 ; CacheDoorFrameData
 ;--------------------------------------------------------------------------------
 CacheDoorFrameData:
-	LDA $7F5099 : BEQ .originalBehaviour
+	LDA.l PreviousOverworldDoor : BEQ .originalBehaviour
 	DEC : ASL : TAX
-	LDA EntranceDoorFrameTable, X : STA $0696
-	LDA EntranceAltDoorFrameTable, X : STA $0698
+	LDA.l EntranceDoorFrameTable, X : STA.w TileMapEntranceDoors
+	LDA.l EntranceAltDoorFrameTable, X : STA.w TileMapTile32
 	BRA .done
 	.originalBehaviour
-		LDA $D724, X : STA $0696
-		STZ $0698
+		LDA.w $D724, X : STA.w TileMapEntranceDoors
+		STZ.w TileMapTile32
 	.done
 RTL
 ;--------------------------------------------------------------------------------
@@ -32,8 +32,8 @@ RTL
 ; WalkDownIntoTavern
 ;--------------------------------------------------------------------------------
 WalkDownIntoTavern:
-	LDA $7F5099
+	LDA.l PreviousOverworldDoor
 	; tavern door has index 0x42 (saved off value is incremented by one)
-	CMP #$43
+	CMP.b #$43
 RTL
 ;--------------------------------------------------------------------------------

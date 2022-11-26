@@ -3,10 +3,10 @@
 ;================================================================================
 BeepLogic:
 	LDA.l HeartBeep : BEQ +
-	    STA $04CA
-	    LDA.b #$2B : STA $012E
+	    STA.w HeartBeepTimer
+	    LDA.b #$2B : STA.w SFX2
 RTL
 	+
-    LDA.b #$FF : STA $04CA
+    LDA.b #$FF : STA.w HeartBeepTimer
 RTL
 ;================================================================================

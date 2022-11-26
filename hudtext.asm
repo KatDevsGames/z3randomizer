@@ -9,17 +9,17 @@ PHP
 ; $7EC026 = When we find an empty item get set on 1
 ; $7EC027 = character data
 
-    LDX #$80 : STX $2100
+    LDX.b #$80 : STX.w INIDISP
     REP #$20
-    LDA #$6000+$0340 : STA $2116
+    LDA.w #$6000+$0340 : STA.w VMADDL
 
-    LDA.w #$C027 : STA $4342
-    LDX.b #$7E : STX $4344
-    LDA #$0040 : STA $4345
-    LDA #$1801 : STA $4340
-    LDX #$10 : STX $420B
+    LDA.w #$C027 : STA.w A1T4L
+    LDX.b #$7E : STX.w A1B4
+    LDA.w #$0040 : STA.w DAS4L
+    LDA.w #$1801 : STA.w DMAP4
+    LDX.b #$10 : STX.w MDMAEN
 
-    LDX #$0F : STX $2100
+    LDX.b #$0F : STX.w INIDISP
     PLP
 RTL
 }
@@ -28,17 +28,17 @@ RTL
 ClearBG:
 {
 PHP
-    LDX #$80 : STX $2100
+    LDX.b #$80 : STX.w INIDISP
     REP #$20
-    LDA #$6000+$0340 : STA $2116
-    LDA.w #clearTable : STA $4342
-    LDX.b #clearTable>>16 : STX $4344
+    LDA.w #$6000+$0340 : STA.w VMADDL
+    LDA.w #clearTable : STA.w A1T4L
+    LDX.b #clearTable>>16 : STX.w A1B4
 
-    LDA #$0040 : STA $4345
-    LDA #$1801 : STA $4340
-    LDX #$10 : STX $420B
+    LDA.w #$0040 : STA.w DAS4L
+    LDA.w #$1801 : STA.w DMAP4
+    LDX.b #$10 : STX.w MDMAEN
 
-    LDX #$0F : STX $2100
+    LDX.b #$0F : STX.w INIDISP
     PLP
 RTL
 }

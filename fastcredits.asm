@@ -1,21 +1,21 @@
 ;===================================================================================================
 
 FastCreditsCutsceneTimer:
-	BIT.b $F2-1 : BVC .slow
+	BIT.b Joy1B_All-1 : BVC .slow
 
 	LDA.w #$0001 : STA.b $50
 
-	LDA.b $C8
+	LDA.b ScrapBufferBD+$0B
 	CLC
 	ADC.w #$0004
 	AND.w #$FFFE
-	STA.b $C8
+	STA.b ScrapBufferBD+$0B
 	SEP #$20
 	RTL
 	
 
 .slow
-	INC.b $C8
+	INC.b ScrapBufferBD+$0B
 
 	SEP #$20
 	RTL
@@ -51,16 +51,16 @@ FastCreditsCutsceneScroll:
 	LDA.w $00E2,Y
 	CMP.l $0EC308,X ; compare to target
 
-	ROL.b $00 ; put carry in here
+	ROL.b Scrap00 ; put carry in here
 	LDA.l $0EC348,X ; get movement
 	BPL ++ ; if positive, leave saved carry alone
-	INC.b $00 ; otherwise, flip it
-++	ROR.b $00 ; recover carry
+	INC.b Scrap00 ; otherwise, flip it
+++	ROR.b Scrap00 ; recover carry
 
 	BCC ++ ; scroll if carry not set
 	LDA.w #$0000
 
-++	BIT.b $F2-1 : BVC .slow ; check for X held
+++	BIT.b Joy1B_All-1 : BVC .slow ; check for X held
 
 	AND.w #$FFFF ; get sign of A
 	BPL .positive
@@ -90,8 +90,8 @@ FastCreditsCutsceneScroll:
 FastCreditsCutsceneUnderworldX:
 	JSR FastCreditsCutsceneScrollX
 	CLC
-	ADC.b $E2
-	STA.b $E2
+	ADC.b BG2H
+	STA.b BG2H
 
 	RTL
 
@@ -99,15 +99,15 @@ FastCreditsCutsceneUnderworldX:
 FastCreditsCutsceneUnderworldY:
 	JSR FastCreditsCutsceneScrollY
 	CLC
-	ADC.b $E8
-	STA.b $E8
+	ADC.b BG2V
+	STA.b BG2V
 
 	RTL
 
 
 FastTextScroll:
-	LDA.b $1A
-	BIT.b $F2-1 : BVC .slow
+	LDA.b FrameCounter
+	BIT.b Joy1B_All-1 : BVC .slow
 
 	AND.w #$0000
 	RTL

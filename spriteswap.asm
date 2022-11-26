@@ -1,5 +1,5 @@
 org $008A01 ; 0xA01 - Bank00.asm (LDA.b #$10 : STA $4304 : STA $4314 : STA $4324)
-LDA $BC
+LDA.b PlayerSpriteBank
 
 org $1BEDF9
 JSL SpriteSwap_Palette_ArmorAndGloves ;4bytes
@@ -10,17 +10,15 @@ org $1BEE1B
 JSL SpriteSwap_Palette_ArmorAndGloves_part_two
 RTL
 
-!SPRITE_SWAP = "$7F50CD"
-;!STABLE_SCRATCH = "$7EC178"
-!BANK_BASE = "#$29"
+!BANK_BASE = $29
 
 org $BF8000
 SwapSpriteIfNecessary:
 	PHP
 		SEP #$20 ; set 8-bit accumulator
-		LDA !SPRITE_SWAP : BEQ + : !ADD !BANK_BASE : CMP $BC : BEQ +
-			STA $BC
-		    STZ $0710 ; Set Normal Sprite NMI
+		LDA.l SpriteSwapper : BEQ + : !ADD #!BANK_BASE : CMP.b PlayerSpriteBank : BEQ +
+			STA.b PlayerSpriteBank
+		    STZ.w SkipOAM ; Set Normal Sprite NMI
 			JSL.l SpriteSwap_Palette_ArmorAndGloves_part_two
 		+
 	PLP
@@ -29,17 +27,17 @@ RTL
 SpriteSwap_Palette_ArmorAndGloves:
 {
     ;DEDF9
-    LDA !SPRITE_SWAP : BNE .continue
-        LDA.b #$10 : STA $BC ; Load Original Sprite Location
+    LDA.l SpriteSwapper : BNE .continue
+        LDA.b #$10 : STA.b PlayerSpriteBank ; Load Original Sprite Location
         REP #$21
-        LDA ArmorEquipment
+        LDA.l ArmorEquipment
         JSL $1BEDFF ; Read Original Palette Code
     RTL
     .part_two
     SEP #$30
-    LDA !SPRITE_SWAP : BNE .continue
+    LDA.l SpriteSwapper : BNE .continue
         REP #$30
-        LDA GloveEquipment 
+        LDA.l GloveEquipment 
         JSL $1BEE21 ; Read Original Palette Code
     RTL
 
@@ -47,15 +45,13 @@ SpriteSwap_Palette_ArmorAndGloves:
 
     PHX : PHY : PHA
     ; Load armor palette
-        PHB : PHK : PLB
+    PHB : PHK : PLB
     REP #$20 ; set 16-bit accumulator
     
     ; Check what Link's armor value is.
-    LDA ArmorEquipment : AND.w #$00FF : TAX
+    LDA.l ArmorEquipment : AND.w #$00FF : TAX
     
-    ; (DEC06, X)
-    
-    LDA $1BEC06, X : AND.w #$00FF : ASL A : ADC.w #$F000 : STA $00
+    LDA.l $1BEC06, X : AND.w #$00FF : ASL A : ADC.w #$F000 : STA.b Scrap00
     ;replace D308 by 7000 and search
     REP #$10 ; set 16-bit index registers
     
@@ -64,13 +60,13 @@ SpriteSwap_Palette_ArmorAndGloves:
     
     TXY : TAX
     
-    LDA.b $BC : AND #$00FF : STA $02
+    LDA.b PlayerSpriteBank : AND.w #$00FF : STA.b Scrap02
 
 .loop
 
-    LDA [$00] : STA $7EC300, X : STA $7EC500, X
+    LDA.b [Scrap00] : STA.l PaletteBufferAux, X : STA.l PaletteBuffer, X
     
-    INC $00 : INC $00
+    INC.b Scrap00 : INC.b Scrap00
     
     INX #2
     
@@ -80,7 +76,7 @@ SpriteSwap_Palette_ArmorAndGloves:
     
     
     PLB
-    INC $15
+    INC.b NMICGRAM
     PLA : PLY : PLX
     RTL
 }

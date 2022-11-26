@@ -52,13 +52,13 @@ RTL
 	++ CMP.b #$FB : BNE ++ ; RNG Item (Multi)
 		JSL.l GetRNGItemMulti : JMP GetSpriteID
 	++ CMP.b #$FD : BNE ++ ; Progressive Armor
-		LDA ArmorEquipment : CMP.l ProgressiveArmorLimit : !BLT + ; Progressive Armor Limit
+		LDA.l ArmorEquipment : CMP.l ProgressiveArmorLimit : !BLT + ; Progressive Armor Limit
 			LDA.l ProgressiveArmorReplacement
 			JMP GetSpriteID
 		+
 		LDA.b #$04 : RTL
 	++ CMP.b #$FE : BNE ++ ; Progressive Sword
-		LDA HighestSword
+		LDA.l HighestSword
 		CMP.l ProgressiveSwordLimit : !BLT + ; Progressive Sword Limit
 			LDA.l ProgressiveSwordReplacement
 			JMP GetSpriteID
@@ -72,7 +72,7 @@ RTL
 			LDA.b #$46 : RTL
 		+
 	++ : CMP.b #$FF : BNE ++ ; Progressive Shield
-		LDA HighestShield
+		LDA.l HighestShield
 		CMP.l ProgressiveShieldLimit : !BLT + ; Progressive Shield Limit
 			LDA.l ProgressiveShieldReplacement
 			JMP GetSpriteID
@@ -83,7 +83,7 @@ RTL
 		+ ; Everything Else
 			LDA.b #$2E : RTL
 	++ : CMP.b #$F8 : BNE ++ ; Progressive Bow
-		LDA BowEquipment : INC : LSR
+		LDA.l BowEquipment : INC : LSR
 		CMP.l ProgressiveBowLimit : !BLT +
 			LDA.l ProgressiveBowReplacement
 			JMP GetSpriteID
@@ -181,7 +181,7 @@ GetSpritePalette:
 RTL
 	.specialHandling
 	CMP.b #$FD : BNE ++ ; Progressive Sword
-		LDA HighestSword
+		LDA.l HighestSword
 		CMP.l ProgressiveSwordLimit : !BLT + ; Progressive Sword Limit
 			LDA.l ProgressiveSwordReplacement
 			JMP GetSpritePalette
@@ -194,7 +194,7 @@ RTL
 		+ ; Everything Else
 			LDA.b #$08 : RTL
 	++ : CMP.b #$FE : BNE ++ ; Progressive Shield
-		LDA HighestShield
+		LDA.l HighestShield
 		CMP.l ProgressiveShieldLimit : !BLT + ; Progressive Shield Limit
 			LDA.l ProgressiveShieldReplacement
 			JMP GetSpritePalette
@@ -205,7 +205,7 @@ RTL
 		+ ; Everything Else
 			LDA.b #$08 : RTL
 	++ : CMP.b #$FF : BNE ++ ; Progressive Armor
-		LDA HighestMail
+		LDA.l HighestMail
                 CMP.l ProgressiveArmorLimit : !BLT + ; Progressive Armor Limit
 			LDA.l ProgressiveArmorReplacement
 			JMP GetSpritePalette
@@ -214,12 +214,12 @@ RTL
 		+ ; Everything Else
 			LDA.b #$02 : RTL
 	++ : CMP.b #$FC : BNE ++ ; Progressive Gloves
-		LDA GloveEquipment : BNE + ; No Gloves
+		LDA.l GloveEquipment : BNE + ; No Gloves
 			LDA.b #$02 : RTL
 		+ ; Everything Else
 			LDA.b #$08 : RTL
 	++ : CMP.b #$F8 : BNE ++ ; Progressive Bow
-		LDA BowEquipment : INC : LSR
+		LDA.l BowEquipment : INC : LSR
 		CMP.l ProgressiveBowLimit : !BLT +
 			LDA.l ProgressiveBowReplacement
 			JMP GetSpritePalette
@@ -306,19 +306,19 @@ IsNarrowSprite:
 			+ : JMP .continue
 		.notBottle
 	CMP.b #$5E : BNE ++ ; Progressive Sword
-		LDA HighestSword : CMP.l ProgressiveSwordLimit : !BLT + ; Progressive Sword Limit
+		LDA.l HighestSword : CMP.l ProgressiveSwordLimit : !BLT + ; Progressive Sword Limit
 			LDA.l ProgressiveSwordReplacement
 			JSL.l IsNarrowSprite
 			JMP .done
 		+ : JMP .continue
 	++ CMP.b #$5F : BNE ++ ; Progressive Shield
-		LDA HighestShield : BNE + : JMP .done ; No Shield
+		LDA.l HighestShield : BNE + : JMP .done ; No Shield
 		+ : CMP.l ProgressiveShieldLimit : !BLT .continue
 			LDA.l ProgressiveShieldReplacement
 			JSL.l IsNarrowSprite
 			JMP .done
 	++ CMP.b #$60 : BNE ++ ; Progressive Armor
-		LDA HighestMail : CMP.l ProgressiveArmorLimit : !BLT .continue
+		LDA.l HighestMail : CMP.l ProgressiveArmorLimit : !BLT .continue
 			LDA.l ProgressiveArmorReplacement
 			JSL.l IsNarrowSprite
 			JMP .done
@@ -329,7 +329,7 @@ IsNarrowSprite:
 		JSL.l GetRNGItemMulti
 	++ CMP.b #$64 : BEQ +               ; Progressive Bow
            CMP.b #$65 : BNE .continue       ; Progressive Bow (alt)
-                + : LDA BowEquipment : INC : LSR
+                + : LDA.l BowEquipment : INC : LSR
                 CMP.l ProgressiveBowLimit : !BLT +
 			LDA.l ProgressiveBowReplacement
 			JSL.l IsNarrowSprite
@@ -384,23 +384,21 @@ RTL
 ; LoadDynamicTileOAMTable
 ; in:	A - Loot ID
 ;-------------------------------------------------------------------------------- 20/847B
-!SPRITE_OAM = "$7EC025"
-;--------------------------------------------------------------------------------
 LoadDynamicTileOAMTable:
 	PHA : PHP
 
 	PHA
 		REP #$20 ; set 16-bit accumulator
-		LDA.w #$0000 : STA.l !SPRITE_OAM
-		               STA.l !SPRITE_OAM+2
-		LDA.w #$0200 : STA.l !SPRITE_OAM+6
+		LDA.w #$0000 : STA.l SpriteOAM
+		               STA.l SpriteOAM+2
+		LDA.w #$0200 : STA.l SpriteOAM+6
 		SEP #$20 ; set 8-bit accumulator
-		LDA.b #$24 : STA.l !SPRITE_OAM+4
+		LDA.b #$24 : STA.l SpriteOAM+4
 
-	LDA $01,s
+	LDA.b $01,s
 
 		JSL.l GetSpritePalette
-		STA !SPRITE_OAM+5 : STA !SPRITE_OAM+13
+		STA.l SpriteOAM+5 : STA.l SpriteOAM+13
 	PLA
 	JSL.l IsNarrowSprite : BCS .narrow
 
@@ -408,10 +406,10 @@ LoadDynamicTileOAMTable:
 
 	.narrow
 	REP #$20 ; set 16-bit accumulator
-	LDA.w #$0000 : STA.l !SPRITE_OAM+7
-	               STA.l !SPRITE_OAM+14
-	LDA.w #$0800 : STA.l !SPRITE_OAM+9
-	LDA.w #$3400 : STA.l !SPRITE_OAM+11
+	LDA.w #$0000 : STA.l SpriteOAM+7
+	               STA.l SpriteOAM+14
+	LDA.w #$0800 : STA.l SpriteOAM+9
+	LDA.w #$3400 : STA.l SpriteOAM+11
 
 	.done
 	PLP : PLA
@@ -425,35 +423,32 @@ RTS
 ;--------------------------------------------------------------------------------
 ; This wastes two OAM slots if you don't want a shadow - fix later - I wrote "fix later" over a year ago and it's still not fixed (Aug 6, 2017) - lol (May 25th, 2019)
 ;-------------------------------------------------------------------------------- 2084B8
-!SPRITE_OAM = "$7EC025"
-!SKIP_EOR = "$7F5008"
-;--------------------------------------------------------------------------------
 DrawDynamicTile:
 	JSL.l IsNarrowSprite : BCS .narrow
 
 	.full
-	LDA.b #$01 : STA $06
-	LDA #$0C : JSL.l OAM_AllocateFromRegionC
-	LDA #$02 : PHA
+	LDA.b #$01 : STA.b Scrap06
+	LDA.b #$0C : JSL.l OAM_AllocateFromRegionC
+	LDA.b #$02 : PHA
 	BRA .draw
 
 	.narrow
-	LDA.b #$02 : STA $06
-	LDA #$10 : JSL.l OAM_AllocateFromRegionC
-	LDA #$03 : PHA
+	LDA.b #$02 : STA.b Scrap06
+	LDA.b #$10 : JSL.l OAM_AllocateFromRegionC
+	LDA.b #$03 : PHA
 
 	.draw
-	LDA.b #!SPRITE_OAM>>0 : STA $08
-	LDA.b #!SPRITE_OAM>>8 : STA $09
-	STZ $07
-	LDA #$7E : PHB : PHA : PLB
-		LDA.b #$01 : STA.l !SKIP_EOR
+	LDA.b #SpriteOAM>>0 : STA.b Scrap08
+	LDA.b #SpriteOAM>>8 : STA.b Scrap09
+	STZ.b Scrap07
+	LDA.b #$7E : PHB : PHA : PLB
+		LDA.b #$01 : STA.l SpriteSkipEOR
 		JSL Sprite_DrawMultiple_quantity_preset
-		LDA.b #$00 : STA.l !SKIP_EOR
+		LDA.b #$00 : STA.l SpriteSkipEOR
 	PLB
 
-	LDA $90 : !ADD.b #$08 : STA $90 ; leave the pointer in the right spot to draw the shadow, if desired
-	LDA $92 : INC #2 : STA $92
+	LDA.b OAMPtr : !ADD.b #$08 : STA.b OAMPtr ; leave the pointer in the right spot to draw the shadow, if desired
+	LDA.b OAMPtr+2 : INC #2 : STA.b OAMPtr+2
 	PLA
 RTL
 ;--------------------------------------------------------------------------------
@@ -461,37 +456,36 @@ DrawDynamicTileNoShadow:
 	JSL.l IsNarrowSprite : BCS .narrow
 
 	.full
-	LDA.b #$01 : STA $06
-	LDA #$04 : JSL.l OAM_AllocateFromRegionC
+	LDA.b #$01 : STA.b Scrap06
+	LDA.b #$04 : JSL.l OAM_AllocateFromRegionC
 	BRA .draw
 
 	.narrow
-	LDA.b #$02 : STA $06
-	LDA #$08 : JSL.l OAM_AllocateFromRegionC
+	LDA.b #$02 : STA.b Scrap06
+	LDA.b #$08 : JSL.l OAM_AllocateFromRegionC
 
 	.draw
-	LDA.b #!SPRITE_OAM>>0 : STA $08
-	LDA.b #!SPRITE_OAM>>8 : STA $09
-	STZ $07
-	LDA #$7E : PHB : PHA : PLB
-		LDA.b #$01 : STA.l !SKIP_EOR
+	LDA.b #SpriteOAM>>0 : STA.b Scrap08
+	LDA.b #SpriteOAM>>8 : STA.b Scrap09
+	STZ.b Scrap07
+	LDA.b #$7E : PHB : PHA : PLB
+		LDA.b #$01 : STA.l SpriteSkipEOR
 		JSL Sprite_DrawMultiple_quantity_preset
-		LDA Bob : BNE + : LDA.b #$00 : STA.l !SKIP_EOR : + ; Bob fix is conditional
+		LDA.l Bob : BNE + : LDA.b #$00 : STA.l SpriteSkipEOR : + ; Bob fix is conditional
 	PLB
 
-	LDA $90 : !ADD.b #$08 : STA $90
-	LDA $92 : INC #2 : STA $92
+	LDA.b OAMPtr : !ADD.b #$08 : STA.b OAMPtr
+	LDA.b OAMPtr+2 : INC #2 : STA.b OAMPtr+2
 RTL
 ;--------------------------------------------------------------------------------
 
 ;--------------------------------------------------------------------------------
-!TILE_UPLOAD_OFFSET_OVERRIDE = "$7F5042"
 LoadModifiedTileBufferAddress:
 	PHA
-	LDA !TILE_UPLOAD_OFFSET_OVERRIDE : BEQ +
+	LDA.l TileUploadOffsetOverride : BEQ +
 		TAX
     	LDY.w #$0002
-		LDA.w #$0000 : STA !TILE_UPLOAD_OFFSET_OVERRIDE
+		LDA.w #$0000 : STA.l TileUploadOffsetOverride
 		BRA .done
 	+
     LDX.w #$2D40
@@ -507,30 +501,30 @@ RTL
 ; out:	Carry - 1 = On Screen, 0 = Off Screen
 ;--------------------------------------------------------------------------------
 Sprite_IsOnscreen:
-    JSR _Sprite_IsOnscreen_DoWork
-	BCS +
-		REP #$20
-		LDA $E2 : PHA : !SUB.w #$0F : STA $E2
-		LDA $E8 : PHA : !SUB.w #$0F : STA $E8
-		SEP #$20
-			JSR _Sprite_IsOnscreen_DoWork
-		REP #$20
-		PLA : STA $E8
-		PLA : STA $E2
-		SEP #$20
-	+
+        JSR _Sprite_IsOnscreen_DoWork
+        BCS +
+                REP #$20
+                LDA.b BG2H : PHA : !SUB.w #$0F : STA.b BG2H
+                LDA.b BG2V : PHA : !SUB.w #$0F : STA.b BG2V
+                SEP #$20
+                JSR _Sprite_IsOnscreen_DoWork
+                REP #$20
+                PLA : STA.b BG2V
+                PLA : STA.b BG2H
+                SEP #$20
+        +
 RTL
 
 _Sprite_IsOnscreen_DoWork:
-    LDA $0D10, X : CMP $E2
-    LDA $0D30, X : SBC $E3 : BNE .offscreen
+        LDA.w SpritePosXLow, X : CMP.b BG2H
+        LDA.w SpritePosXHigh, X : SBC.b BG2H+1 : BNE .offscreen
 
-    LDA $0D00, X : CMP $E8
-    LDA $0D20, X : SBC $E9 : BNE .offscreen
-	SEC
+        LDA.w SpritePosYLow, X : CMP.b BG2V
+        LDA.w SpritePosYHigh, X : SBC.b BG2V+1 : BNE .offscreen
+        SEC
 RTS
-	.offscreen
-	CLC
+        .offscreen
+        CLC
 RTS
 ;--------------------------------------------------------------------------------
 
@@ -543,80 +537,63 @@ RTS
 ;--------------------------------------------------------------------------------
 ; Copied from bank $06
 ;--------------------------------------------------------------------------------
-!spr_y_lo = $00
-!spr_y_hi = $01
-
-!spr_x_lo = $02
-!spr_x_hi = $03
-
-!spr_y_screen_rel = $06
-!spr_x_screen_rel = $07
-;--------------------------------------------------------------------------------
 Sprite_GetScreenRelativeCoords:
-	STY $0B
+	STY.b Scrap0B
 
-	STA $08
+	STA.b Scrap08
 
-	LDA $0D00, X : STA $00
-	!SUB $E8     : STA $06
-	LDA $0D20, X : STA $01
+	LDA.w SpritePosYLow, X : STA.b Scrap00
+	!SUB.b BG2V       : STA.b Scrap06
+	LDA.w SpritePosYHigh, X : STA.b Scrap01
 
-	LDA $0D10, X : STA $02
-	!SUB $E2     : STA $07
-	LDA $0D30, X : STA $03
+	LDA.w SpritePosXLow, X : STA.b Scrap02 
+	!SUB.b BG2H       : STA.b Scrap07
+	LDA.w SpritePosXHigh, X : STA.b Scrap03
 RTL
 ;--------------------------------------------------------------------------------
 
 ;--------------------------------------------------------------------------------
 ; SkipDrawEOR - Shims in Bank05.asm : 2499
 ;--------------------------------------------------------------------------------
-!SKIP_EOR = "$7F5008"
-;--------------------------------------------------------------------------------
 SkipDrawEOR:
-	LDA.l !SKIP_EOR : BEQ .normal
-	LDA.w #$0000 : STA.l !SKIP_EOR
-	LDA $04 : AND.w #$F0FF : STA $04
+	LDA.l SpriteSkipEOR : BEQ .normal
+	LDA.w #$0000 : STA.l SpriteSkipEOR
+	LDA.w Scrap04 : AND.w #$F0FF : STA.w Scrap04
 	.normal
-	LDA ($08), Y : EOR $04 ; thing we wrote over
+	LDA.b ($08), Y : EOR.w Scrap04 ; thing we wrote over
 RTL
 ;--------------------------------------------------------------------------------
 
 ;--------------------------------------------------------------------------------
 ; HexToDec
 ; in:	A(w) - Word to Convert
-; out:	$7F5003 - $7F5007 (high - low)
+; out:	HexToDecDigit1 - HexToDecDigit5 (high - low)
 ;--------------------------------------------------------------------------------
 HexToDec:
 	PHA
 	PHA
 		LDA.w #$9090
-		STA $04 : STA $06 ; temporarily store our decimal values here for speed
+		STA.b Scrap04 : STA.b Scrap06 ; temporarily store our decimal values here for speed
 	PLA
-; as far as i can tell we never convert a value larger than 9999, no point in wasting time on this?
-;	-
-;		CMP.w #10000 : !BLT +
-;		INC $03
-;		!SUB.w #10000 : BRA -
-;	+
 	-
 		CMP.w #1000 : !BLT +
-		INC $04
+		INC.b Scrap04
 		!SUB.w #1000 : BRA -
 	+ -
 		CMP.w #100 : !BLT +
-		INC $05
+		INC.b Scrap05
 		!SUB.w #100 : BRA -
 	+ -
 		CMP.w #10 : !BLT +
-		INC $06
+		INC.b Scrap06
 		!SUB.w #10 : BRA -
 	+ -
 		CMP.w #1 : !BLT +
-		INC $07
+		INC.b Scrap07
 		!SUB.w #1 : BRA -
 	+
-	LDA.b $04 : STA $7F5004 ; move to digit storage
-	LDA.b $06 : STA $7F5006
+	LDA.b Scrap04 : STA.l HexToDecDigit2 ; move to digit storage
+	LDA.b Scrap06 : STA.l HexToDecDigit4
 	PLA
 RTL
 
@@ -649,33 +626,33 @@ db #00, #01, #01, #02, #01, #02, #02, #03, #01, #02, #02, #03, #02, #03, #03, #0
 ;--------------------------------------------------------------------------------
 ; HexToDec
 ; in:	A(w) - Word to Convert
-; out:	$7F5003 - $7F5007 (high - low)
+; out:	HexToDecDigit1 - HexToDecDigit5 (high - low)
 ;--------------------------------------------------------------------------------
 ;HexToDec:
 ;	PHA
 ;	PHA
 ;		LDA.w #$9090
-;		STA $7F5003 : STA $7F5005 : STA $7F5006 ; clear digit storage
+;		STA.l HexToDecDigit1 : STA.l HexToDecDigit3 : STA.l HexToDecDigit4 ; clear digit storage
 ;	PLA
 ;	-
 ;		CMP.w #10000 : !BLT +
-;		PHA : SEP #$20 : LDA $7F5003 : INC : STA $7F5003 : REP #$20 : PLA
+;		PHA : SEP #$20 : LDA.l HexToDecDigit1 : INC : STA.l HexToDecDigit1 : REP #$20 : PLA
 ;		!SUB.w #10000 : BRA -
 ;	+ -
 ;		CMP.w #1000 : !BLT +
-;		PHA : SEP #$20 : LDA $7F5004 : INC : STA $7F5004 : REP #$20 : PLA
+;		PHA : SEP #$20 : LDA.l HexToDecDigit2 : INC : STA.l HexToDecDigit2 : REP #$20 : PLA
 ;		!SUB.w #1000 : BRA -
 ;	+ -
 ;		CMP.w #100 : !BLT +
-;		PHA : SEP #$20 : LDA $7F5005 : INC : STA $7F5005 : REP #$20 : PLA
+;		PHA : SEP #$20 : LDA.l HexToDecDigit3 : INC : STA.l HexToDecDigit3 : REP #$20 : PLA
 ;		!SUB.w #100 : BRA -
 ;	+ -
 ;		CMP.w #10 : !BLT +
-;		PHA : SEP #$20 : LDA $7F5006 : INC : STA $7F5006 : REP #$20 : PLA
+;		PHA : SEP #$20 : LDA.l HexToDecDigit4 : INC : STA.l HexToDecDigit4 : REP #$20 : PLA
 ;		!SUB.w #10 : BRA -
 ;	+ -
 ;		CMP.w #1 : !BLT +
-;		PHA : SEP #$20 : LDA $7F5007 : INC : STA $7F5007 : REP #$20 : PLA
+;		PHA : SEP #$20 : LDA.l HexToDecDigit5 : INC : STA.l HexToDecDigit5 : REP #$20 : PLA
 ;		!SUB.w #1 : BRA -
 ;	+
 ;	PLA
@@ -690,14 +667,14 @@ db #00, #01, #01, #02, #01, #02, #02, #03, #01, #02, #02, #03, #02, #03, #03, #0
 ;--------------------------------------------------------------------------------
 WriteVRAMStripe:
 	PHX
-		LDX $1000 ; get pointer
-		AND.w #$7F : STA $1002, X : INX #2 ; set destination
-	PLA : ASL : AND.w #$7FFF : ORA.w #$7000 : STA $1002, X : INX #2 ; set length and enable RLE
-	TYA : STA $1002, X : INX #2 ; set tile
+		LDX.w GFXStripes ; get pointer
+		AND.w #$7F : STA.w GFXStripes+2, X : INX #2 ; set destination
+	PLA : ASL : AND.w #$7FFF : ORA.w #$7000 : STA.w GFXStripes+2, X : INX #2 ; set length and enable RLE
+	TYA : STA.w GFXStripes+2, X : INX #2 ; set tile
 	SEP #$20 ; set 8-bit accumulator
-		LDA.b #$FF : STA $1002, X
-		STX $1000
-		LDA.b #01 : STA $14
+		LDA.b #$FF : STA.w GFXStripes+2, X
+		STX.w GFXStripes
+		LDA.b #01 : STA.b NMISTRIPES
 	REP #$20 ; set 16-bit accumulator
 RTL
 ;--------------------------------------------------------------------------------
@@ -709,27 +686,27 @@ RTL
 ; in:	Y(w) - Address of Data to Copy
 ;--------------------------------------------------------------------------------
 WriteVRAMBlock:
-	PHX
-		LDX $1000 ; get pointer
-		AND.w #$7F : STA $1002, X : INX #2 ; set destination
-	PLA : ASL : AND.w #$3FFF : STA $1002, X : INX #2 ; set length
+        PHX
+        LDX.w GFXStripes ; get pointer
+        AND.w #$7F : STA.w GFXStripes+2, X : INX #2 ; set destination
+        PLA : ASL : AND.w #$3FFF : STA.w GFXStripes+2, X : INX #2 ; set length
 
-	PHX
-		TYX ; set X to source
-		PHA
-			TXA : !ADD #$1002 : TAY ; set Y to dest
-		PLA
-		;A is already the value we need for mvn
-		MVN $7F7E ; currently we transfer from our buffers in 7F to the vram buffer in 7E
+        PHX
+                TYX ; set X to source
+                PHA
+                        TXA : !ADD #$1002 : TAY ; set Y to dest
+                PLA
+                ;A is already the value we need for mvn
+                MVN $7F7E ; currently we transfer from our buffers in 7F to the vram buffer in 7E
 
-		!ADD 1, s ; add the length in A to the stack pointer on the top of the stack
-	PLX : TAX ; pull and promptly ignore, copying the value we just got over it
+                !ADD 1, s ; add the length in A to the stack pointer on the top of the stack
+        PLX : TAX ; pull and promptly ignore, copying the value we just got over it
 
-	SEP #$20 ; set 8-bit accumulator
-		LDA.b #$FF : STA $1002, X
-		STX $1000
-		LDA.b #01 : STA $14
-	REP #$20 ; set 16-bit accumulator
+        SEP #$20 ; set 8-bit accumulator
+                LDA.b #$FF : STA.w GFXStripes+$02, X
+                STX.w GFXStripes
+                LDA.b #01 : STA.w NMISTRIPES
+        REP #$20 ; set 16-bit accumulator
 RTL
 ;--------------------------------------------------------------------------------
 ;Byte 1   byte 2  Byte 3   byte 4

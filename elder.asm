@@ -1,11 +1,11 @@
 NewElderCode:
 {
-LDA $8A : CMP #$1B : BEQ .newCodeContinue
+LDA.b OverworldIndex : CMP.b #$1B : BEQ .newCodeContinue
 ;Restore Jump we can keep the RTL so JML
 JML $05F0CD
 .newCodeContinue
 PHB : PHK : PLB
-LDA.b #$07 : STA $0F50, X ;Palette 
+LDA.b #$07 : STA.w SpriteOAMProp, X ; Palette 
 JSR Elder_Draw
 JSL Sprite_PlayerCantPassThrough
 JSR Elder_Code
@@ -17,12 +17,12 @@ RTL
     Elder_Draw:
     {
 
-        LDA.b #$02 : STA $06 : STZ $07 ;Number of Tiles
+        LDA.b #$02 : STA.b Scrap06 : STZ.b Scrap07 ;Number of Tiles
         
-        LDA $0DC0, X : ASL #04
+        LDA.w SpriteGFXControl, X : ASL #04
         
-        ADC.b #.animation_states : STA $08
-        LDA.b #.animation_states>>8 : ADC.b #$00 : STA $09
+        ADC.b #.animation_states : STA.b Scrap08
+        LDA.b #.animation_states>>8 : ADC.b #$00 : STA.b Scrap09
         
         JSL Sprite_DrawMultiple_player_deferred
         JSL Sprite_DrawShadowLong
@@ -46,11 +46,11 @@ RTL
         LDA.l TurnInGoalItems : AND.w #$00FF : BNE +
             .despawn
             SEP #$20
-            STZ $0DD0, X ; despawn self
+            STZ.w SpriteAITable, X ; despawn self
             RTS
         +
         SEP #$20
-        LDA.b $11
+        LDA.b GameSubMode
         BNE .done
         LDA.b #$96
         LDY.b #$01
@@ -66,6 +66,6 @@ RTL
         
         .done
         SEP #$20
-        LDA.b $1A : LSR #5 : AND.b #$01 : STA.w $0DC0, X
+        LDA.b FrameCounter : LSR #5 : AND.b #$01 : STA.w SpriteGFXControl, X
         RTS
     }

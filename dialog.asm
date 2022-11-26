@@ -2,200 +2,138 @@
 ; Dialog Pointer Override
 ;--------------------------------------------------------------------------------
 DialogOverride:
-	LDA $7F5035 : BEQ .skip
-	LDA $7F5700, X ; use alternate buffer
+	LDA.l AltTextFlag : BEQ .skip
+	LDA.l DialogBuffer, X ; use alternate buffer
 RTL
 	.skip
-    LDA $7F1200, X
+    LDA.l DecompressionBuffer+$1200, X
 RTL
-;--------------------------------------------------------------------------------
-; $7F5035 - Alternate Text Pointer Flag ; 0=Disable
-; $7F5036 - Padding Byte (Must be Zero)
-; $7F5700 - $7F57FF - Dialog Buffer
-;--------------------------------------------------------------------------------
+
 ResetDialogPointer:
-	STZ $1CF0 : STZ $1CF1 ; reset decompression buffer
-	LDA.b #$00 : STA $7F5035 ; zero out the alternate flag
-	LDA.b #$1C : STA $1CE9 ; thing we wrote over
+	STZ.w TextID : STZ.w TextID+1 ; reset decompression buffer
+	LDA.b #$00 : STA.l AltTextFlag ; zero out the alternate flag
+	LDA.b #$1C : STA.w DelayTimer ; thing we wrote over
 RTL
-;--------------------------------------------------------------------------------
-;macro LoadDialog(index,table)
-;	PHA : PHX : PHY
-;	PHB : PHK : PLB
-;	LDA $00 : PHA
-;	LDA $01 : PHA
-;	LDA $02 : PHA
-;		LDA.b #$01 : STA $7F5035 ; set flag
-;
-;		LDA <index> : ASL : !ADD.l <index> : TAX ; get quote offset *3, move to X
-;		LDA <table>, X : STA $00 ; write pointer to direct page
-;		LDA <table>+1, X : STA $01
-;		LDA <table>+2, X : STA $02
-;
-;		LDX.b #$00 : LDY.b #$00
-;		-
-;			LDA [$00], Y ; load the next character from the pointer
-;			STA $7F5700, X ; write to the buffer
-;			INX : INY
-;		CMP.b #$7F : BNE -
-;	PLA : STA $02
-;	PLA : STA $01
-;	PLA : STA $00
-;	PLB
-;	PLY : PLX : PLA
-;endmacro
-;--------------------------------------------------------------------------------
-;macro LoadDialogAddress(address)
-;	PHA : PHX : PHY
-;	PHP
-;	PHB : PHK : PLB
-;		SEP #$30 ; set 8-bit accumulator and index registers
-;		LDA $00 : PHA
-;		LDA $01 : PHA
-;		LDA $02 : PHA
-;			LDA.b #$01 : STA $7F5035 ; set flag
-;
-;			LDA.b #<address> : STA $00 ; write pointer to direct page
-;			LDA.b #<address>>>8 : STA $01
-;			LDA.b #<address>>>16 : STA $02
-;
-;			LDX.b #$00 : LDY.b #$00
-;			-
-;				LDA [$00], Y ; load the next character from the pointer
-;				STA $7F5700, X ; write to the buffer
-;				INX : INY
-;			CMP.b #$7F : BNE -
-;		PLA : STA $02
-;		PLA : STA $01
-;		PLA : STA $00
-;	PLB
-;	PLP
-;	PLY : PLX : PLA
-;endmacro
-;--------------------------------------------------------------------------------
-!OFFSET_POINTER = "$7F5094"
-!OFFSET_RETURN = "$7F5096"
-!DIALOG_BUFFER = "$7F5700"
+
 macro LoadDialogAddress(address)
 	PHA : PHX : PHY
 	PHP
 	PHB : PHK : PLB
 		SEP #$20 ; set 8-bit accumulator
 		REP #$10 ; set 16-bit index registers
-		PEI ($00)
-		LDA $02 : PHA
-			STZ $1CF0 : STZ $1CF1 ; reset decompression buffer
-			LDA.b #$01 : STA $7F5035 ; set flag
+		PEI.b ($00)
+		LDA.b Scrap02 : PHA
+			STZ.w TextID : STZ.w TextID+1 ; reset decompression buffer
+			LDA.b #$01 : STA.l AltTextFlag ; set flag
 			%CopyDialog(<address>)
-		PLA : STA $02
+		PLA : STA.b Scrap02
 		REP #$20
-		PLA : STA $00
+		PLA : STA.b Scrap00
 	PLB
 	PLP
 	PLY : PLX : PLA
 endmacro
 ;--------------------------------------------------------------------------------
 macro CopyDialog(address)
-	LDA.b #<address> : STA $00 ; write pointer to direct page
-	LDA.b #<address>>>8 : STA $01
-	LDA.b #<address>>>16 : STA $02
+	LDA.b #<address> : STA.b Scrap00 ; write pointer to direct page
+	LDA.b #<address>>>8 : STA.b Scrap01
+	LDA.b #<address>>>16 : STA.b Scrap02
 	%CopyDialogIndirect()
 endmacro
 ;--------------------------------------------------------------------------------
 macro CopyDialogIndirect()
-	REP #$20 : LDA !OFFSET_POINTER : TAX : LDY.w #$0000 : SEP #$20 ; copy 2-byte offset pointer to X and set Y to 0
+	REP #$20 : LDA.l DialogOffsetPointer : TAX : LDY.w #$0000 : SEP #$20 ; copy 2-byte offset pointer to X and set Y to 0
 	?loop:
-		LDA [$00], Y ; load the next character from the pointer
-		STA !DIALOG_BUFFER, X ; write to the buffer
+		LDA.b [$00], Y ; load the next character from the pointer
+		STA.l DialogBuffer, X ; write to the buffer
 		INX : INY
 	CMP.b #$7F : BNE ?loop
 	REP #$20 ; set 16-bit accumulator
-	TXA : INC : STA !OFFSET_RETURN ; copy out X into
-	LDA.w #$0000 : STA !OFFSET_POINTER
+	TXA : INC : STA.l DialogReturnPointer ; copy out X into
+	LDA.w #$0000 : STA.l DialogOffsetPointer
 	SEP #$20 ; set 8-bit accumulator
 endmacro
 ;--------------------------------------------------------------------------------
 LoadDialogAddressIndirect:
-	STZ $1CF0 : STZ $1CF1 ; reset decompression buffer
-	LDA.b #$01 : STA $7F5035 ; set flag
+	STZ.w TextID : STZ.w TextID+1 ; reset decompression buffer
+	LDA.b #$01 : STA.l AltTextFlag ; set flag
 	%CopyDialogIndirect()
-	;%LoadDialogAddress(UncleText)
 RTL
 ;--------------------------------------------------------------------------------
-!ITEM_TEMPORARY = "$7F5040"
 FreeDungeonItemNotice:
-	STA !ITEM_TEMPORARY
+        STA.w ScratchBufferV
 
-	PHA : PHX : PHY
-	PHP
-	PHB : PHK : PLB
-		SEP #$20 ; set 8-bit accumulator
-		REP #$10 ; set 16-bit index registers
-		PEI ($00)
-		LDA $02 : PHA
+        PHA : PHX : PHY
+        PHP
+        PHB : PHK : PLB
+        SEP #$20 ; set 8-bit accumulator
+        REP #$10 ; set 16-bit index registers
+        PEI.b (Scrap00)
+        LDA.b Scrap02 : PHA
+        LDA.w ScratchBufferNV : PHA
+        LDA.w ScratchBufferNV+1 : PHA
 	;--------------------------------
 
 	LDA.l FreeItemText : BNE + : JMP .skip : +
 
-	LDA #$00 : STA $7F5010 ; initialize scratch
+	LDA.b #$00 : STA.w ScratchBufferNV ; initialize scratch
 	LDA.l FreeItemText : AND.b #$01 : BEQ + ; show message for general small key
-	LDA !ITEM_TEMPORARY : CMP.b #$24 : BNE + ; general small key
+	LDA.w ScratchBufferV : CMP.b #$24 : BNE + ; general small key
 		%CopyDialog(Notice_SmallKeyOf)
-		LDA !OFFSET_RETURN : DEC #2 : STA !OFFSET_POINTER
+		LDA.l DialogReturnPointer : DEC #2 : STA.l DialogOffsetPointer
 		%CopyDialog(Notice_Self)
 		JMP .done
 	+ : LDA.l FreeItemText : AND.b #$02 : BEQ + ; show message for general compass
-	LDA !ITEM_TEMPORARY : CMP.b #$25 : BNE + ; general compass
+	LDA.w ScratchBufferV : CMP.b #$25 : BNE + ; general compass
 		%CopyDialog(Notice_CompassOf)
-		LDA !OFFSET_RETURN : DEC #2 : STA !OFFSET_POINTER
+		LDA.l DialogReturnPointer : DEC #2 : STA.l DialogOffsetPointer
 		%CopyDialog(Notice_Self)
 		JMP .done
 	+ : LDA.l FreeItemText : AND.b #$04 : BEQ + ; show message for general map
-	LDA !ITEM_TEMPORARY : CMP.b #$33 : BNE + ; general map
+	LDA.w ScratchBufferV : CMP.b #$33 : BNE + ; general map
 		%CopyDialog(Notice_MapOf)
-		LDA !OFFSET_RETURN : DEC #2 : STA !OFFSET_POINTER
+		LDA.l DialogReturnPointer : DEC #2 : STA.l DialogOffsetPointer
 		%CopyDialog(Notice_Self)
 		JMP .done
 	+ : LDA.l FreeItemText : AND.b #$08 : BEQ + ; show message for general big key
-	LDA !ITEM_TEMPORARY : CMP.b #$32 : BNE + ; general big key
+	LDA.w ScratchBufferV : CMP.b #$32 : BNE + ; general big key
 		%CopyDialog(Notice_BigKeyOf)
-		LDA !OFFSET_RETURN : DEC #2 : STA !OFFSET_POINTER
+		LDA.l DialogReturnPointer : DEC #2 : STA.l DialogOffsetPointer
 		%CopyDialog(Notice_Self)
 		JMP .done
 	+
 	LDA.l FreeItemText : AND.b #$04 : BEQ + ; show message for dungeon map
-	LDA !ITEM_TEMPORARY : AND.b #$F0 ; looking at high bits only
+	LDA.w ScratchBufferV : AND.b #$F0 ; looking at high bits only
 	CMP.b #$70 : BNE + ; map of...
 		%CopyDialog(Notice_MapOf)
 		JMP .dungeon
 	+ : LDA.l FreeItemText : AND.b #$02 : BEQ + ; show message for dungeon compass
-	LDA !ITEM_TEMPORARY : AND.b #$F0 : CMP.b #$80 : BNE + ; compass of...
+	LDA.w ScratchBufferV : AND.b #$F0 : CMP.b #$80 : BNE + ; compass of...
 		%CopyDialog(Notice_CompassOf)
 		JMP .dungeon
 	+ : LDA.l FreeItemText : AND.b #$08 : BEQ + ; show message for dungeon big key
-	LDA !ITEM_TEMPORARY : AND.b #$F0 : CMP.b #$90 : BNE + ; big key of...
+	LDA.w ScratchBufferV : AND.b #$F0 : CMP.b #$90 : BNE + ; big key of...
 		%CopyDialog(Notice_BigKeyOf)
 		BRA .dungeon
 	+ : LDA.l FreeItemText : AND.b #$01 : BEQ + ; show message for dungeon small key
-	LDA !ITEM_TEMPORARY : AND.b #$F0 : CMP.b #$A0 : BNE + ; small key of...
-		LDA !ITEM_TEMPORARY : CMP.b #$AF : BNE ++ : JMP .skip : ++
+	LDA.w ScratchBufferV : AND.b #$F0 : CMP.b #$A0 : BNE + ; small key of...
+		LDA.w ScratchBufferV : CMP.b #$AF : BNE ++ : JMP .skip : ++
 		%CopyDialog(Notice_SmallKeyOf)
-		PLA : AND.b #$0F : STA $7F5020 : LDA.b #$0F : !SUB $7F5020 : PHA
-		LDA #$01 : STA $7F5010 ; set up a flip for small keys
+		LDA.b #$01 : STA.w ScratchBufferNV ; set up a flip for small keys
 		BRA .dungeon
 	+
 	JMP .skip ; it's not something we are going to give a notice for
 
 	.dungeon
-	LDA !OFFSET_RETURN : DEC #2 : STA !OFFSET_POINTER
-	LDA !ITEM_TEMPORARY
+	LDA.l DialogReturnPointer : DEC #2 : STA.l DialogOffsetPointer
+	LDA.w ScratchBufferV
 	AND.b #$0F ; looking at low bits only
-	STA $7F5011
-	LDA $7F5010 : BEQ +
-		LDA $7F5010
-		LDA #$0F : !SUB $7F5011 : STA $7F5011 ; flip the values for small keys
+	STA.w ScratchBufferNV+1
+	LDA.w ScratchBufferNV : BEQ +
+		LDA.w ScratchBufferNV
+		LDA.b #$0F : !SUB.w ScratchBufferNV+1 : STA.w ScratchBufferNV+1 ; flip the values for small keys
 	+
-	LDA $7F5011
+	LDA.w ScratchBufferNV+1
 	CMP.b #$00 : BNE + ; ...light world
 		%CopyDialog(Notice_LightWorld) : JMP .done
 	+ : CMP.b #$01 : BNE + ; ...dark world
@@ -231,30 +169,31 @@ FreeDungeonItemNotice:
 	+
 	.done
 
-	STZ $1CF0 : STZ $1CF1 ; reset decompression buffer
-	LDA.b #$01 : STA $7F5035 ; set alternate dialog flag
-	STA $7F509F
+	STZ.w TextID : STZ.w TextID+1 ; reset decompression buffer
+	LDA.b #$01 : STA.l AltTextFlag ; set alternate dialog flag
+	STA.l TextBoxDefer
 
 	;--------------------------------
 	.skip
-		PLA : STA $02
-		REP #$20
-		PLA : STA $00
-	PLB
-	PLP
-	PLY : PLX : PLA
-	;JSL.l Main_ShowTextMessage_Alt ; .skip can be here so long as this line remains commented out
+        PLA : STA.w ScratchBufferNV+1
+        PLA : STA.w ScratchBufferNV
+        PLA : STA.b Scrap02
+        REP #$20
+        PLA : STA.b Scrap00
+        PLB
+        PLP
+        PLY : PLX : PLA
 RTL
 
 ;--------------------------------------------------------------------------------
 DialogResetSelectionIndex:
     JSL.l Attract_DecompressStoryGfx ; what we wrote over
-    STZ $1CE8
+    STZ.w MessageCursor
 RTL
 ;--------------------------------------------------------------------------------
 DialogItemReceive:
 	BCS .nomessage ; if doubling the item value overflowed it must be a rando item
-	CPY #$98 : BCC ++ ;if the item is $4C or greater it must be a rando item
+	CPY.b #$98 : BCC ++ ;if the item is $4C or greater it must be a rando item
 .nomessage
 	LDA.w #$FFFF
 
@@ -267,11 +206,11 @@ RTL
 ;--------------------------------------------------------------------------------
 DialogFairyThrow:
 	LDA.l Restrict_Ponds : BEQ .normal
-	LDA BottleContentsOne
-        ORA BottleContentsTwo : ORA BottleContentsThree : ORA BottleContentsFour : BNE .normal
+	LDA.l BottleContentsOne
+        ORA.l BottleContentsTwo : ORA.l BottleContentsThree : ORA.l BottleContentsFour : BNE .normal
 	
 	.noInventory
-	LDA $0D80, X : !ADD #$08 : STA $0D80, X
+	LDA.w SpriteActivity, X : !ADD #$08 : STA.w SpriteActivity, X
 	LDA.b #$51
 	LDY.b #$01
 RTL
@@ -286,7 +225,7 @@ DialogGanon1:
 	LDA.w #$018C
 	BCC +
 	LDA.w #$016D
-+	STA $1CF0
++	STA.w TextID
 	SEP #$20
 	JSL.l Sprite_ShowMessageMinimal_Alt
 RTL
@@ -322,22 +261,22 @@ DialogGanon2:
     +
         LDA.w #$016E
     ++
-	STA $1CF0
+	STA.w TextID
 	SEP #$20
     JSL.l Sprite_ShowMessageMinimal_Alt
 RTL
 ;--------------------------------------------------------------------------------
 DialogEtherTablet:
 	PHA
-	LDA $0202 : CMP.b #$0F : BEQ + ; Show normal text if book is not equipped
+	LDA.w ItemCursor : CMP.b #$0F : BEQ + ; Show normal text if book is not equipped
 	-
 	PLA : JML Sprite_ShowMessageUnconditional ; Wacky Hylian Text
 	+
-	BIT $F4 : BVC - ; Show normal text if Y is not pressed
+	BIT.b Joy1A_New : BVC - ; Show normal text if Y is not pressed
 	LDA.l AllowHammerTablets : BEQ ++
-		LDA HammerEquipment : BEQ .yesText : BRA .noText
+		LDA.l HammerEquipment : BEQ .yesText : BRA .noText
 	++
-		LDA SwordEquipment : CMP.b #$FF : BEQ .yesText : CMP.b #$02 : BCS .noText
+		LDA.l SwordEquipment : CMP.b #$FF : BEQ .yesText : CMP.b #$02 : BCS .noText
 	;++
 	.yesText
 	PLA
@@ -351,15 +290,15 @@ RTL
 ;--------------------------------------------------------------------------------
 DialogBombosTablet:
 	PHA
-	LDA $0202 : CMP.b #$0F : BEQ + ; Show normal text if book is not equipped
+	LDA.w ItemCursor : CMP.b #$0F : BEQ + ; Show normal text if book is not equipped
 	-
 	PLA : JML Sprite_ShowMessageUnconditional ; Wacky Hylian Text
 	+
-	BIT $F4 : BVC - ; Show normal text if Y is not pressed
+	BIT.b Joy1A_New : BVC - ; Show normal text if Y is not pressed
 	LDA.l AllowHammerTablets : BEQ ++
-		LDA HammerEquipment : BEQ .yesText : BRA .noText
+		LDA.l HammerEquipment : BEQ .yesText : BRA .noText
 	++
-		LDA SwordEquipment : CMP.b #$FF : BEQ .yesText : CMP.b #$02 : !BGE .noText
+		LDA.l SwordEquipment : CMP.b #$FF : BEQ .yesText : CMP.b #$02 : !BGE .noText
 	;++
 	.yesText
 	PLA 
@@ -372,7 +311,7 @@ DialogBombosTablet:
 RTL
 ;--------------------------------------------------------------------------------
 DialogSahasrahla:
-	LDA.l PendantsField : AND #$04 : BEQ + ;Check if player has green pendant
+	LDA.l PendantsField : AND.b #$04 : BEQ + ;Check if player has green pendant
 		LDA.b #$2F
         LDY.b #$00
 		JML Sprite_ShowMessageUnconditional
@@ -381,7 +320,7 @@ RTL
 ;--------------------------------------------------------------------------------
 DialogBombShopGuy:
 	LDY.b #$15
-	LDA.l CrystalsField : AND #$05 : CMP #$05 : BNE + ;Check if player has crystals 5 & 6
+	LDA.l CrystalsField : AND.b #$05 : CMP.b #$05 : BNE + ;Check if player has crystals 5 & 6
 		INY ; from 15 to 16
 	+
 	TYA
@@ -399,54 +338,54 @@ AgahnimAsksAboutPed:
 	BNE .vanilla
 
 	LDA.b #$8C ; message 018C for no ped
-	STA.w $1CF0
+	STA.w TextID
 
 .vanilla
 	JML $05FA8E ; Sprite_ShowMessageMinimal
 ;--------------------------------------------------------------------------------
 Main_ShowTextMessage_Alt:
 	; Are we in text mode? If so then end the routine.
-	LDA $10 : CMP.b #$0E : BEQ .already_in_text_mode
+	LDA.b GameMode : CMP.b #$0E : BEQ .already_in_text_mode
 Sprite_ShowMessageMinimal_Alt:
-	STZ $11
+	STZ.b GameSubMode
 
 	PHX : PHY
-	PEI ($00)
-	LDA.b $02 : PHA
+	PEI.b (Scrap00)
+	LDA.b Scrap02 : PHA
 
-	LDA.b #$1C : STA.b $02
+	LDA.b #$1C : STA.b Scrap02
 	REP #$30
-		LDA.w $1CF0 : ASL : TAX
+		LDA.w TextID : ASL : TAX
 		LDA.l $7F71C0, X
-		STA.b $00
+		STA.b Scrap00
 	SEP #$30
 
 	LDY.b #$00
-	      LDA [$00], Y : CMP.b #$FE : BNE +
-	INY : LDA [$00], Y : CMP.b #$6E : BNE +
-	INY : LDA [$00], Y :            : BNE +
-	INY : LDA [$00], Y : CMP.b #$FE : BNE +
-	INY : LDA [$00], Y : CMP.b #$6B : BNE +
-	INY : LDA [$00], Y : CMP.b #$04 : BNE +
-		STZ $1CE8
+	      LDA.b [Scrap00], Y : CMP.b #$FE : BNE +
+	INY : LDA.b [Scrap00], Y : CMP.b #$6E : BNE +
+	INY : LDA.b [Scrap00], Y :            : BNE +
+	INY : LDA.b [Scrap00], Y : CMP.b #$FE : BNE +
+	INY : LDA.b [Scrap00], Y : CMP.b #$6B : BNE +
+	INY : LDA.b [Scrap00], Y : CMP.b #$04 : BNE +
+		STZ.w MessageCursor
 		JMP .end
 	+
 
-	STZ $0223   ; Otherwise set it so we are in text mode.
-	STZ $1CD8   ; Initialize the step in the submodule
+	STZ.w MessageJunk   ; Otherwise set it so we are in text mode.
+	STZ.w MessageSubModule
 
 	; Go to text display mode (as opposed to maps, etc)
-	LDA.b #$02 : STA $11
+	LDA.b #$02 : STA.b GameSubMode
 
 	; Store the current module in the temporary location.
-	LDA $10 : STA $010C
+	LDA.b GameMode : STA.w GameModeCache
 
 	; Switch the main module ($10) to text mode.
-	LDA.b #$0E : STA $10
+	LDA.b #$0E : STA.b GameMode
 	.end
-	PLA : STA.b $02
-	PLA : STA.b $01
-	PLA : STA.b $00
+	PLA : STA.b Scrap02
+	PLA : STA.b Scrap01
+	PLA : STA.b Scrap00
 	PLY : PLX
 
 Main_ShowTextMessage_Alt_already_in_text_mode:
@@ -458,15 +397,15 @@ CalculateSignIndex:
   ; And we do this in a way that will likely give the right value even 
   ; with major glitches.
 
-  LDA $8A : ASL A : TAY ;what we wrote over
+  LDA.b OverworldIndex : ASL A : TAY ;what we wrote over
 
-  LDA $0712 : BEQ .done ; If a small map, we can skip these calculations.
+  LDA.w OWScreenSize : BEQ .done ; If a small map, we can skip these calculations.
 
-  LDA $21 : AND.w #$0002 : ASL #2 : EOR $8A : AND.w #$0008 : BEQ +
+  LDA.b LinkPosY+1 : AND.w #$0002 : ASL #2 : EOR.b OverworldIndex : AND.w #$0008 : BEQ +
   	TYA : !ADD.w #$0010 : TAY  ;add 16 if we are in lower half of big screen.
   + 
 
-  LDA $23 : AND.w #$0002 : LSR : EOR $8A : AND.w #$0001 : BEQ +
+  LDA.b LinkPosX+1 : AND.w #$0002 : LSR : EOR.b OverworldIndex : AND.w #$0001 : BEQ +
   TYA : INC #2 : TAY  ;add 16 if we are in lower half of big screen.
   +
   ; ensure even if things go horribly wrong, we don't read the sign out of bounds and crash:
@@ -474,6 +413,112 @@ CalculateSignIndex:
 
 .done
 RTL
+
+;================================================================
+; Contributor: Myramong
+;================================================================
+Sprite_ShowSolicitedMessageIfPlayerFacing_Alt:
+{
+	STA.w TextID
+	STY.w TextID+1
+
+	JSL Sprite_CheckDamageToPlayerSameLayerLong : BCC .alpha
+	JSL Sprite_CheckIfPlayerPreoccupied : BCS .alpha
+
+	LDA.b Joy1B_New : BPL .alpha
+	LDA.w SpriteTimerE, X : BNE .alpha
+	LDA.b LinkJumping : CMP.b #$02 : BEQ .alpha
+
+	JSL Sprite_DirectionToFacePlayerLong : PHX : TYX
+
+	; Make sure that the sprite is facing towards the player, otherwise
+	; talking can't happen. (What sprites actually use this???)
+	LDA.l $05E1A3, X : PLX : CMP.b LinkDirection : BNE .not_facing_each_other
+
+	PHY
+
+	LDA.w TextID
+	LDY.w TextID+1
+
+	; Check what room we're in so we know which npc we're talking to
+        LDA.b RoomIndex
+        CMP.b #$05 : BEQ .SahasrahlaDialogs
+        CMP.b #$1C : BEQ .BombShopGuyDialog
+        BRA .SayNothing
+
+	.SahasrahlaDialogs
+		REP #$20 : LDA.l MapReveal_Sahasrahla : ORA.l MapOverlay : STA.l MapOverlay : SEP #$20
+		JSL DialogSahasrahla : BRA .SayNothing
+
+	.BombShopGuyDialog
+		REP #$20 : LDA.l MapReveal_BombShop : ORA.l MapOverlay : STA.l MapOverlay : SEP #$20
+		JSL DialogBombShopGuy
+
+	.SayNothing
+
+	LDA.b #$40 : STA.w SpriteTimerE, X
+
+	PLA : EOR.b #$03
+
+	SEC
+
+	RTL
+
+.not_facing_each_other
+.alpha
+
+	LDA.w SpriteMoveDirection, X
+
+	CLC
+
+	RTL
+}
+;================================================================
+Sprite_ShowSolicitedMessageIfPlayerFacing_PreserveMessage:
+{
+	PHY
+	PHA
+
+	JSL Sprite_CheckDamageToPlayerSameLayerLong : BCC .alpha
+	JSL Sprite_CheckIfPlayerPreoccupied : BCS .alpha
+
+	LDA.b Joy1B_New : BPL .alpha
+	LDA.w SpriteTimerE, X : BNE .alpha
+	LDA.b LinkJumping : CMP.b #$02 : BEQ .alpha
+
+	JSL Sprite_DirectionToFacePlayerLong : PHX : TYX
+
+	; Make sure that the sprite is facing towards the player, otherwise
+	; talking can't happen. (What sprites actually use this???)
+	LDA.l $05E1A3, X : PLX : CMP.b LinkDirection : BNE .not_facing_each_other
+
+	PLA : XBA : PLA
+
+	PHY
+
+	TAY : XBA
+	
+	JSL Sprite_ShowMessageUnconditional
+
+	LDA.b #$40 : STA.w SpriteTimerE, X
+
+	PLA : EOR.b #$03
+
+	SEC
+
+	RTL
+
+.not_facing_each_other
+.alpha
+	PLY
+	PLA
+
+	LDA.w SpriteMoveDirection, X
+
+	CLC
+
+	RTL
+}
 
 ;--------------------------------------------------------------------------------
 ; A0 - A9 - 0 - 9

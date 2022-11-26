@@ -1,21 +1,14 @@
-;--------------------------------------------------------------------------------
-; $7F5010 - Scratch Space (Callee Preserved)
-;--------------------------------------------------------------------------------
-!GOAL_DRAW_ADDRESS = "$7EC72A"
-;--------------------------------------------------------------------------------
-; DrawGoalIndicator moved to newhud.asm
-;--------------------------------------------------------------------------------
 GoalItemGanonCheck:
-	LDA $0E20, X : CMP.b #$D6 : BNE .success ; skip if not ganon
+	LDA.w SpriteTypeTable, X : CMP.b #$D6 : BNE .success ; skip if not ganon
 		JSL.l CheckGanonVulnerability
 		BCS .success
 
 		.fail
-		LDA $0D80, X : CMP.b #17 : !BLT .success ; decmial 17 because Acmlm's chart is decimal
+		LDA.w SpriteActivity, X : CMP.b #17 : !BLT .success ; decmial 17 because Acmlm's chart is decimal
 		LDA.b #$00
 RTL
 		.success
-		LDA $44 : CMP.b #$80 ; thing we wrote over
+		LDA.b OAMOffsetY : CMP.b #$80 ; thing we wrote over
 RTL
 ;--------------------------------------------------------------------------------
 ;Carry clear = ganon invincible
@@ -125,12 +118,12 @@ GetRequiredCrystalsInX:
 RTL
 ;--------------------------------------------------------------------------------
 CheckEnoughCrystalsForGanon:
-	LDA CrystalCounter
+	LDA.l CrystalCounter
 	CMP.l NumberOfCrystalsRequiredForGanon
 RTL
 ;--------------------------------------------------------------------------------
 CheckEnoughCrystalsForTower:
-	LDA CrystalCounter
+	LDA.l CrystalCounter
 	CMP.l NumberOfCrystalsRequiredForTower
 RTL
 
@@ -145,13 +138,13 @@ CheckAgaForPed:
 	BEQ .force_blue_ball
 
 .vanilla ; run vanilla check for phase
-	LDA.w $0E30, X
+	LDA.w SpriteAux, X
 	CMP.b #$02
 	RTL
 
 .force_blue_ball
-	LDA.b #$01 : STA.w $0DA0, Y
-	LDA.b #$20 : STA.w $0DF0, Y
+	LDA.b #$01 : STA.w SpriteAuxTable, Y
+	LDA.b #$20 : STA.w SpriteTimer, Y
 	CLC ; skip the RNG check
 	RTL
 
@@ -182,7 +175,7 @@ CheckForCrystalBossesDefeated:
 	REP #$30
 
 	; count of number of bosses killed
-	STZ.b $00
+	STZ.b Scrap00
 
 	LDY.w #10
 
@@ -202,7 +195,7 @@ CheckForCrystalBossesDefeated:
 	AND.w #$0800
 	BEQ ++
 
-	INC.b $00
+	INC.b Scrap00
 
 ++	DEY
 	BPL .next_check
@@ -210,7 +203,7 @@ CheckForCrystalBossesDefeated:
 	SEP #$30
 	PLY : PLX : PLB
 
-	LDA.b $00 : CMP.l NumberOfCrystalsRequiredForGanon
+	LDA.b Scrap00 : CMP.l NumberOfCrystalsRequiredForGanon
 
 
 	RTS

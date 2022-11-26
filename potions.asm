@@ -2,32 +2,31 @@
 ; $7F5092 - Potion Animation Busy Flags (Health)
 ; $7F5093 - Potion Animation Busy Flags (Magic)
 ;--------------------------------------------------------------------------------
-!BUSY_HEALTH = $7F5092
 RefillHealth:
 	REP #$20 ; set 16-bit accumulator
-	LDA $A0 ; these are all decimal because i got them that way
+	LDA.b RoomIndex ; these are all decimal because i got them that way
 	CMP.w #279 : BNE + ; Spike Cave bottles work normally
 		SEP #$20 ; set 8-bit accumulator
-		LDA #$A0
+		LDA.b #$A0
 		BRA .done
 	+
 	SEP #$20 ; set 8-bit accumulator
 	LDA.l PotionHealthRefill : CMP.b #$A0 : !BGE .done
-		LDA !BUSY_HEALTH : BNE ++
+		LDA.l BusyHealth : BNE ++
 			LDA.l PotionHealthRefill ; load refill amount
 			!ADD CurrentHealth ; add to current health
-			CMP MaximumHealth : !BLT +++ : LDA MaximumHealth : +++
-			STA !BUSY_HEALTH
+			CMP.l MaximumHealth : !BLT +++ : LDA.l MaximumHealth : +++
+			STA.l BusyHealth
 		++
 
-		LDA CurrentHealth : CMP.l !BUSY_HEALTH : !BLT ++
-			LDA.b #$00 : STA HeartsFiller
-			LDA $020A : BNE .notDone
-			LDA.b #$00 : STA !BUSY_HEALTH
+		LDA.l CurrentHealth : CMP.l BusyHealth : !BLT ++
+			LDA.b #$00 : STA.l HeartsFiller
+			LDA.w $020A : BNE .notDone
+			LDA.b #$00 : STA.l BusyHealth
 			SEC
 			RTL
 		++
-			LDA.b #$08 : STA HeartsFiller ; refill some health
+			LDA.b #$08 : STA.l HeartsFiller ; refill some health
 			.notDone
 			CLC
 			RTL
@@ -35,54 +34,53 @@ RefillHealth:
 
     ; Check goal health versus actual health.
     ; if(actual < goal) then branch.
-    LDA CurrentHealth : CMP MaximumHealth : BCC .refillAllHealth
-    LDA MaximumHealth : STA CurrentHealth
-    LDA.b #$00 : STA HeartsFiller
+    LDA.l CurrentHealth : CMP.l MaximumHealth : BCC .refillAllHealth
+    LDA.l MaximumHealth : STA.l CurrentHealth
+    LDA.b #$00 : STA.l HeartsFiller
     ; ??? not sure what purpose this branch serves.
-    LDA $020A : BNE .beta
+    LDA.w $020A : BNE .beta
         SEC
     RTL
 .refillAllHealth
     ; Fill up ze health.
-    LDA.b #$A0 : STA HeartsFiller
+    LDA.b #$A0 : STA.l HeartsFiller
 .beta
     CLC
 RTL
 ;--------------------------------------------------------------------------------
-!BUSY_MAGIC = $7F5093
 RefillMagic:
 	REP #$20 ; set 16-bit accumulator
-	LDA $A0 ; these are all decimal because i got them that way
+	LDA.b RoomIndex ; these are all decimal because i got them that way
 	CMP.w #279 : BNE + ; Spike Cave bottles work normally
 		SEP #$20 ; set 8-bit accumulator
-		LDA #$80
+		LDA.b #$80
 		BRA .done
 	+
 	SEP #$20 ; set 8-bit accumulator
 	LDA.l PotionMagicRefill : CMP.b #$80 : !BGE .done
-		LDA !BUSY_MAGIC : BNE ++
+		LDA.l BusyMagic : BNE ++
 			LDA.l PotionMagicRefill ; load refill amount
 			!ADD CurrentMagic ; add to current magic
 			CMP.b #$80 : !BLT +++ : LDA.b #$80 : +++
-			STA !BUSY_MAGIC
+			STA.l BusyMagic
 		++
 
-		LDA CurrentMagic : CMP.l !BUSY_MAGIC : !BLT ++
-			LDA.b #$00 : STA !BUSY_MAGIC
+		LDA.l CurrentMagic : CMP.l BusyMagic : !BLT ++
+			LDA.b #$00 : STA.l BusyMagic
 			SEC
 			RTL
 		++
-			LDA.b #$01 : STA MagicFiller ; refill some magic
+			LDA.b #$01 : STA.l MagicFiller ; refill some magic
 			CLC
 			RTL
 	.done
 
     SEP #$30
     ; Check if Link's magic meter is full
-    LDA CurrentMagic : CMP.b #$80
+    LDA.l CurrentMagic : CMP.b #$80
     BCS .itsFull
     ; Tell the magic meter to fill up until it's full.
-    LDA.b #$80 : STA MagicFiller
+    LDA.b #$80 : STA.l MagicFiller
     SEP #$30
     RTL
 .itsFull

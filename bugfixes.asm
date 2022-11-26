@@ -2,8 +2,8 @@
 
 ;--------------------------------------------------------------------------------
 AssignKiki:
-    LDA.b #$00 : STA FollowerDropped ; defuse bomb
-    LDA.b #$0A : STA FollowerIndicator ; assign kiki as follower
+    LDA.b #$00 : STA.l FollowerDropped ; defuse bomb
+    LDA.b #$0A : STA.l FollowerIndicator ; assign kiki as follower
 RTL
 ;--------------------------------------------------------------------------------
 
@@ -11,10 +11,9 @@ RTL
 ; Name: AllowSQ
 ; Returns: Accumulator = 0 if S&Q is disallowed, 1 if allowed
 ;--------------------------------------------------------------------------------
-!ITEM_BUSY = "$7F5091"
 AllowSQ:
-	LDA ProgressIndicator : BEQ .done ; thing we overwrote - check if link is in his bed
-	LDA !ITEM_BUSY : EOR #$01
+	LDA.l ProgressIndicator : BEQ .done ; thing we overwrote - check if link is in his bed
+	LDA.l BusyItem : EOR.b #$01
 	.done
 RTL
 ;--------------------------------------------------------------------------------
@@ -23,8 +22,8 @@ RTL
 ;0 = Reset Music
 ;1 = Don't Reset Music
 MSMusicReset:
-	LDA $8A : CMP.b #$80 : BNE +
-		LDA $23
+	LDA.b OverworldIndex : CMP.b #$80 : BNE +
+		LDA.b LinkPosX+1
 	+
 RTL
 ;--------------------------------------------------------------------------------
@@ -32,11 +31,11 @@ RTL
 ;--------------------------------------------------------------------------------
 ;0 = Become (Perma)bunny
 DecideIfBunny:
-	LDA MoonPearlEquipment : BNE .done
-	LDA CurrentWorld : AND.b #$40
+	LDA.l MoonPearlEquipment : BNE .done
+	LDA.l CurrentWorld : AND.b #$40
 	PHA : LDA.l InvertedMode : BNE .inverted
 	.normal
-		PLA : EOR #$40
+		PLA : EOR.b #$40
 		BRA .done
 	.inverted
 		PLA
@@ -47,9 +46,9 @@ RTL
 DecideIfBunnyByScreenIndex:
 	; If indoors we don't have a screen index. Return non-bunny to make mirror-based
 	; superbunny work
-	LDA $1B : BNE .done
-	LDA MoonPearlEquipment : BNE .done
-	LDA $8A : AND.b #$40 : PHA
+	LDA.b IndoorsFlag : BNE .done
+	LDA.l MoonPearlEquipment : BNE .done
+	LDA.b OverworldIndex : AND.b #$40 : PHA
 	LDA.l InvertedMode : BNE .inverted
 	.normal
 		PLA : EOR #$40
@@ -59,20 +58,11 @@ DecideIfBunnyByScreenIndex:
 	.done
 RTL
 ;--------------------------------------------------------------------------------
-
-;--------------------------------------------------------------------------------
-;ReadInventoryPond:
-;	CPX.b #$1B : BNE + : LDA.b #$01 : RTL : +
-;	LDA EquipmentWRAM, X
-;RTL
-;--------------------------------------------------------------------------------
-
-;--------------------------------------------------------------------------------
 FixBunnyOnExitToLightWorld:
-    LDA.w $02E0 : BEQ +
+    LDA.w BunnyFlag : BEQ +
         JSL.l DecideIfBunny : BEQ +
-        STZ $5D ; set player mode to Normal
-        STZ $02E0 : STZ $56 ; return player graphics to normal
+        STZ.b LinkState ; set player mode to Normal
+        STZ.w BunnyFlag : STZ.b BunnyFlagDP ; return player graphics to normal
     +
 RTS
 ;--------------------------------------------------------------------------------
@@ -83,17 +73,17 @@ RTS
 FixAga2Bunny:
     LDA.l FixFakeWorld :  BEQ + ; Only use this fix is fakeworld fix is in use
         LDA.l InvertedMode : BEQ +++
-            LDA.b #$00 : STA CurrentWorld ; Switch to light world
+            LDA.b #$00 : STA.l CurrentWorld ; Switch to light world
             BRA ++
         +++
-        LDA.b #$40 : STA CurrentWorld ; Switch to dark world
+        LDA.b #$40 : STA.l CurrentWorld ; Switch to dark world
     ++
 	JSL DecideIfBunny : BNE +
 		JSR MakeBunny
-		LDA.b #$04 : STA.w $012C ; play bunny music
+		LDA.b #$04 : STA.w MusicControlRequest ; play bunny music
 		BRA .done
 	+
-	LDA.b #$09 : STA.w $012C ; what we wrote over
+	LDA.b #$09 : STA.w MusicControlRequest ; what we wrote over
 	.done
 RTL
 ;--------------------------------------------------------------------------------
@@ -101,8 +91,8 @@ RTL
 ;--------------------------------------------------------------------------------
 MakeBunny:
     PHX : PHY
-	LDA.b #$17 : STA $5D ; set player mode to permabunny
-	LDA.b #$01 : STA $02E0 : STA $56 ; make player look like bunny
+	LDA.b #$17 : STA.b LinkState ; set player mode to permabunny
+	LDA.b #$01 : STA.w BunnyFlag : STA.b BunnyFlagDP ; make player look like bunny
 	JSL LoadGearPalettes_bunny
     PLY : PLX
 RTS
@@ -130,27 +120,27 @@ RTS
 ; Fix for SQ jumping causing accidental Exploration Glitch
 SQEGFix:
 	LDA.l Bugfix_PodEG : BEQ ++
-	STZ.w $047A ; disarm exploration glitch
+	STZ.w LayerAdjustment ; disarm exploration glitch
 ++	RTL
 
 ;--------------------------------------------------------------------------------
 ; Fix crystal not spawning when using somaria vs boss
 TryToSpawnCrystalUntilSuccess:
-	STX $02D8 ; what we overwrote
+	STX.w ItemReceiptID ; what we overwrote
 	JSL AddAncillaLong : BCS .failed ; a clear carry flag indicates success
 .spawned
-	STZ $AE ; the "trying to spawn crystal" flag
-	STZ $AF ; the "trying to spawn pendant" flag
+	STZ.b RoomTag ; the "trying to spawn crystal" flag
+	STZ.b RoomTag+1 ; the "trying to spawn pendant" flag
 .failed
 RTL
 
 ;--------------------------------------------------------------------------------
 ; Fix crystal not spawning when using somaria vs boss
 WallmasterCameraFix:
-	STZ $A7    ; disable vertical camera scrolling for current room
+	STZ.b CameraBoundV    ; disable vertical camera scrolling for current room
 	REP #$20
-	STZ $0618  ; something about scrolling, setting these to 0 tricks the game 
-	STZ $061A  ; into thinking we're at the edge of the room so it doesn't scroll.
+	STZ.w CameraScrollN  ; something about scrolling, setting these to 0 tricks the game 
+	STZ.w CameraScrollS  ; into thinking we're at the edge of the room so it doesn't scroll.
 	SEP #$20
 	JML Sound_SetSfx3PanLong ; what we wrote over, also this will RTL
 
@@ -158,8 +148,8 @@ WallmasterCameraFix:
 ; Fix losing glove colors
 LoadActualGearPalettesWithGloves:
 REP #$20
-LDA SwordEquipment : STA $0C
-LDA ArmorEquipment : AND.w #$00FF
+LDA.l SwordEquipment : STA.b Scrap0C
+LDA.l ArmorEquipment : AND.w #$00FF
 JSL LoadGearPalettes_variable
 JSL SpriteSwap_Palette_ArmorAndGloves_part_two
 RTL
@@ -167,24 +157,24 @@ RTL
 ;--------------------------------------------------------------------------------
 ; Fix Bunny Palette Map Bug
 LoadGearPalette_safe_for_bunny:
-LDA $10 
+LDA.b GameMode 
 CMP.w #$030E : BEQ .new ; opening dungeon map
 CMP.w #$070E : BEQ .new ; opening overworld map
 .original
 -
-	LDA [$00]
-	STA $7EC300, X
-	STA $7EC500, X
-	INC $00 : INC $00
+	LDA.b [Scrap00]
+	STA.l PaletteBufferAux, X
+	STA.l PaletteBuffer, X
+	INC.b Scrap00 : INC.b Scrap00
 	INX #2
 	DEY
 	BPL -
 RTL
 .new
 -
-	LDA [$00]
-	STA $7EC500, X
-	INC $00 : INC $00
+	LDA.b [Scrap00]
+	STA.l PaletteBuffer, X
+	INC.b Scrap00 : INC.b Scrap00
 	INX #2
 	DEY
 	BPL -
@@ -193,16 +183,16 @@ RTL
 ;--------------------------------------------------------------------------------
 ; Fix pedestal pull overlay
 PedestalPullOverlayFix:
-LDA.b #$09 : STA $039F, X	; the thing we wrote over
-LDA $1B : BNE +
-	LDA $8A : CMP.b #$80 : BNE +
-		LDA $8C : CMP.b #$97
+LDA.b #$09 : STA.w AncillaGeneral, X ; the thing we wrote over
+LDA.b IndoorsFlag : BNE +
+        LDA.b OverworldIndex : CMP.b #$80 : BNE +
+                LDA.b OverlayID : CMP.b #$97
 +
 RTL
 
 ;--------------------------------------------------------------------------------
 FixJingleGlitch:
-	LDA.b $11
+	LDA.b GameSubMode
 	BEQ .set_doors
 
 	LDA.l AllowAccidentalMajorGlitch
@@ -210,7 +200,7 @@ FixJingleGlitch:
 
 .set_doors
 	LDA.b #$05
-	STA.b $11
+	STA.b GameSubMode
 
 .exit
 	RTL
@@ -222,7 +212,36 @@ pushpc
 pullpc
 ;--------------------------------------------------------------------------------
 SetOverworldTransitionFlags:
-	LDA #$01
-	STA $0ABF ; used by witch
-	STA $021B ; used by race game
+	LDA.b #$01
+	STA.w OWTransitionFlag
+	STA.w RaceGameFlag
 	RTL
+;--------------------------------------------------------------------------------
+ParadoxCaveGfxFix:
+    ; Always upload line unless you're moving into paradox cave (0x0FF) from above (0x0EF)
+    LDA.b IndoorsFlag  : BEQ .uploadLine
+    LDX.b RoomIndex    : CPX.w #$00FF : BNE .uploadLine
+    LDX.b PreviousRoom : CPX.w #$00EF : BNE .uploadLine
+
+    ;Ignore uploading four specific lines of tiles to VRAM
+    LDX.w VRAMUploadAddress
+    ; Line 1
+    CPX.w #$1800 : BEQ .skipMostOfLine
+    ; Line 2
+    CPX.w #$1A00 : BEQ .skipMostOfLine
+    ; Line 3
+    CPX.w #$1C00 : BEQ .uploadLine
+    ; Line 4
+    CPX.w #$1E00 : BEQ .uploadLine
+
+.uploadLine
+    LDA.b #$01 : STA.w MDMAEN
+
+.skipLine
+    RTL
+
+.skipMostOfLine
+    ; Set line length to 192 bytes (the first 6 8x8 tiles in the line)
+    LDX.w #$00C0 : STX.w DAS0L
+    BRA .uploadLine
+;--------------------------------------------------------------------------------

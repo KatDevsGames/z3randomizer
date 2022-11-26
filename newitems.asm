@@ -48,25 +48,6 @@
 ; 0xF1 - freestanding heart 2 / boss heart / npc
 ; 0xF3 - tablet/pedestal
 ;--------------------------------------------------------------------------------
-;GetAnimatedSpriteGfxFile:
-;    LDY.b #$32
-;    CMP.b #$39 : BCS +      ; If tile index >= 0x39, use sprite file 0x32 (Blank file)
-;
-;    LDY.b #$5D
-;
-;    CMP.b #$23 : BEQ +      ; If tile index is 0x23 (Pendant)...
-;    CMP.b #$37 : BCS +      ; ...or tile index >= 0x37, use sprite file 0x5D (Pendant, Boots, 20 Rupees)
-;
-;    LDY.b #$5C
-;
-;    CMP.b #$0C : BEQ +      ; If tile index is 0x0C (Flute)...
-;    CMP.b #$24 : BCS +      ; ...or tile index >= 24, use sprite file 0x5C (Rupees, Crystal, Heart Piece ... ...)
-;
-;    ; Otherwise, use sprite file 0x5B (Medallions, Mirror, Flippers, Lantern, Compass...)
-;    LDY.b #$5B
-;+
-;JML GetAnimatedSpriteGfxFile_return
-;--------------------------------------------------------------------------------
 GetAnimatedSpriteGfxFile:
     CMP.b #$0C : BNE +
 		LDY.b #$5C : JML GetAnimatedSpriteGfxFile_return
@@ -119,7 +100,7 @@ dw $0A50 ; Power Star
 
 GetAnimatedSpriteBufferPointer:
 	;PHB : PHK : PLB
-	LDA.b $00 : ADC.l GetAnimatedSpriteBufferPointer_table, X
+	LDA.b Scrap00 : ADC.l GetAnimatedSpriteBufferPointer_table, X
 	;PLB
 RTL
 ;--------------------------------------------------------------------------------
@@ -146,30 +127,29 @@ endmacro
 ;carry set if caught
 ;incsrc eventdata.asm
 ProcessEventItems:
-	;STA $FFFFFF
-	LDA $00 : PHA
-	LDA $01 : PHA
-	LDA $02 : PHA
+	LDA.b Scrap00 : PHA
+	LDA.b Scrap01 : PHA
+	LDA.b Scrap02 : PHA
 	PHY : PHP
 	PHB : LDA.b #$AF : PHA : PLB
-		LDA $02D8
+		LDA.w ItemReceiptID
 		CMP.b #$E0 : BNE +
 			REP #$30 ; set 16-bit accumulator & index registers
-			LDA RNGItem : ASL : TAX
-			LDA.l EventDataOffsets, X : !ADD #EventDataTable : STA $00
+			LDA.l RNGItem : ASL : TAX
+			LDA.l EventDataOffsets, X : !ADD #EventDataTable : STA.b Scrap00
 
 			SEP #$20 ; set 8-bit accumulator
-			LDA.b #$AF : STA $02
+			LDA.b #$AF : STA.b Scrap02
 
 			JSL.l LoadDialogAddressIndirect
-			LDA RNGItem : INC : STA RNGItem
+			LDA.l RNGItem : INC : STA.l RNGItem
 
 			SEP #$10 ; set 8-bit index registers
                         REP #$20 ; set 16-bit accumulator
-			LDA GoalItemRequirement : BEQ ++
-			LDA GoalCounter : INC : STA GoalCounter
-			CMP GoalItemRequirement : !BLT ++
-			LDA TurnInGoalItems : AND.w #$00FF : BNE ++
+			LDA.l GoalItemRequirement : BEQ ++
+			LDA.l GoalCounter : INC : STA.l GoalCounter
+			CMP.l GoalItemRequirement : !BLT ++
+			LDA.l TurnInGoalItems : AND.w #$00FF : BNE ++
 				JSL.l ActivateGoal
 			++
                         SEP #$20 ; set 8-bit accumulator
@@ -179,71 +159,71 @@ ProcessEventItems:
 	.done
 	PLB
 	PLP : PLY
-	PLA : STA $02
-	PLA : STA $01
-	PLA : STA $00
+	PLA : STA.b Scrap02
+	PLA : STA.b Scrap01
+	PLA : STA.b Scrap00
 RTS
 ;--------------------------------------------------------------------------------
 AddReceivedItemExpandedGetItem:
 	PHX
 
-	LDA $02D8 ; check inventory
+	LDA.w ItemReceiptID ; check inventory
 	JSL.l FreeDungeonItemNotice
 	CMP.b #$0B : BNE + ; Bow
-		LDA BowTracking : AND.b #$40 : BEQ ++
+		LDA.l BowTracking : AND.b #$40 : BEQ ++
 		LDA.l SilverArrowsUseRestriction : BNE ++
-			LDA.b #03 : STA BowEquipment ; set bow to silver
+			LDA.b #03 : STA.l BowEquipment ; set bow to silver
 		++
 		JMP .done
 	+ CMP.b #$3B : BNE + ; Silver Bow
 		LDA.l SilverArrowsUseRestriction : BNE .noequip
 		LDA.l SilverArrowsAutoEquip : AND.b #$01 : BEQ .noequip
-		LDA ArrowsFiller : BNE ++ ; check arrows
+		LDA.l ArrowsFiller : BNE ++ ; check arrows
 			LDA.b #$03 : BRA +++ ; bow without arrow
 		++
 			LDA.b #$04 ; bow with arrow
 		+++
-		STA BowEquipment
+		STA.l BowEquipment
 		.noequip
-		LDA BowTracking : ORA #$40 : STA BowTracking ; mark silver bow on y-toggle
+		LDA.l BowTracking : ORA.b #$40 : STA.l BowTracking ; mark silver bow on y-toggle
 		JMP .done
 	+ CMP.b #$4C : BNE + ; 50 bombs
-		LDA.b #50 : STA BombCapacity ; upgrade bombs
-		LDA.b #50 : STA BombsFiller ; fill bombs
+		LDA.b #50 : STA.l BombCapacity ; upgrade bombs
+		LDA.b #50 : STA.l BombsFiller ; fill bombs
 		JMP .done
 	+ CMP.b #$4D : BNE + ; 70 arrows
-		LDA.b #70 : STA ArrowCapacity ; upgrade arrows
-		LDA.b #70 : STA ArrowsFiller ; fill arrows
+		LDA.b #70 : STA.l ArrowCapacity ; upgrade arrows
+		LDA.b #70 : STA.l ArrowsFiller ; fill arrows
 		JMP .done
 	+ CMP.b #$4E : BNE + ; 1/2 magic
-		LDA MagicConsumption : CMP #$02 : !BGE ++
-			INC : STA MagicConsumption ; upgrade magic
+		LDA.l MagicConsumption : CMP.b #$02 : !BGE ++
+			INC : STA.l MagicConsumption ; upgrade magic
 		++
-		LDA.b #$80 : STA MagicFiller ; fill magic
+		LDA.b #$80 : STA.l MagicFiller ; fill magic
 		JMP .done
 	+ CMP.b #$4F : BNE + ; 1/4 magic
-		LDA.b #$02 : STA MagicConsumption ; upgrade magic
-		LDA.b #$80 : STA MagicFiller ; fill magic
+		LDA.b #$02 : STA.l MagicConsumption ; upgrade magic
+		LDA.b #$80 : STA.l MagicFiller ; fill magic
 		JMP .done
 	+ CMP.b #$50 : BNE + ; Master Sword (Safe)
-		LDA SwordEquipment : CMP.b #$02 : !BGE + ; skip if we have a better sword
-		LDA.b #$02 : STA SwordEquipment ; set master sword
+		LDA.l SwordEquipment : CMP.b #$02 : !BGE + ; skip if we have a better sword
+		LDA.b #$02 : STA.l SwordEquipment ; set master sword
 		JMP .done
 	+ CMP.b #$51 : BNE + ; +5 Bombs
-		LDA BombCapacity : !ADD.b #$05 : STA BombCapacity ; upgrade bombs +5
-		LDA.l Upgrade5BombsRefill : STA BombsFiller ; fill bombs
+		LDA.l BombCapacity : !ADD.b #$05 : STA.l BombCapacity ; upgrade bombs +5
+		LDA.l Upgrade5BombsRefill : STA.l BombsFiller ; fill bombs
 		JMP .done
 	+ CMP.b #$52 : BNE + ; +10 Bombs
-		LDA BombCapacity : !ADD.b #$0A : STA BombCapacity ; upgrade bombs +10
-		LDA.l Upgrade10BombsRefill : STA BombsFiller ; fill bombs
+		LDA.l BombCapacity : !ADD.b #$0A : STA.l BombCapacity ; upgrade bombs +10
+		LDA.l Upgrade10BombsRefill : STA.l BombsFiller ; fill bombs
 		JMP .done
 	+ CMP.b #$53 : BNE + ; +5 Arrows
-		LDA ArrowCapacity : !ADD.b #$05 : STA ArrowCapacity ; upgrade arrows +5
-		LDA.l Upgrade5ArrowsRefill : STA ArrowsFiller ; fill arrows
+		LDA.l ArrowCapacity : !ADD.b #$05 : STA.l ArrowCapacity ; upgrade arrows +5
+		LDA.l Upgrade5ArrowsRefill : STA.l ArrowsFiller ; fill arrows
 		JMP .done
 	+ CMP.b #$54 : BNE + ; +10 Arrows
-		LDA ArrowCapacity : !ADD.b #$0A : STA ArrowCapacity ; upgrade arrows +10
-		LDA.l Upgrade10ArrowsRefill : STA ArrowsFiller ; fill arrows
+		LDA.l ArrowCapacity : !ADD.b #$0A : STA.l ArrowCapacity ; upgrade arrows +10
+		LDA.l Upgrade10ArrowsRefill : STA.l ArrowsFiller ; fill arrows
 		JMP .done
 	+ CMP.b #$55 : BNE + ; Programmable Object 1
 		%ProgrammableItemLogic(1)
@@ -257,34 +237,34 @@ AddReceivedItemExpandedGetItem:
 	+ CMP.b #$58 : BNE + ; Upgrade-Only Sivler Arrows
 		LDA.l SilverArrowsUseRestriction : BNE +++
 		LDA.l SilverArrowsAutoEquip : AND.b #$01 : BEQ +++
-			LDA BowEquipment : BEQ ++ : CMP.b #$03 : !BGE ++
-				!ADD.b #$02 : STA BowEquipment ; switch to silver bow
+			LDA.l BowEquipment : BEQ ++ : CMP.b #$03 : !BGE ++
+				!ADD.b #$02 : STA.l BowEquipment ; switch to silver bow
 			++
 		+++
 		LDA.l ArrowMode : BEQ ++
-			LDA.b #$01 : STA ArrowsFiller
+			LDA.b #$01 : STA.l ArrowsFiller
 		++
 	+ CMP.b #$59 : BNE + ; 1 Rupoor
-		REP #$20 : LDA CurrentRupees : !SUB RupoorDeduction : STA CurrentRupees : SEP #$20 ; Take 1 rupee
+		REP #$20 : LDA.l CurrentRupees : !SUB RupoorDeduction : STA.l CurrentRupees : SEP #$20 ; Take 1 rupee
 		JMP .done
 	+ CMP.b #$5A : BNE + ; Null Item
 		JMP .done
 	+ CMP.b #$5B : BNE + ; Red Clock
 		REP #$20 ; set 16-bit accumulator
-		LDA ChallengeTimer : !ADD.l RedClockAmount : STA ChallengeTimer
-		LDA ChallengeTimer+2 : ADC.l RedClockAmount+2 : STA ChallengeTimer+2
+		LDA.l ChallengeTimer : !ADD.l RedClockAmount : STA.l ChallengeTimer
+		LDA.l ChallengeTimer+2 : ADC.l RedClockAmount+2 : STA.l ChallengeTimer+2
 		SEP #$20 ; set 8-bit accumulator
 		JMP .done
 	+ CMP.b #$5C : BNE + ; Blue Clock
 		REP #$20 ; set 16-bit accumulator
-		LDA ChallengeTimer : !ADD.l BlueClockAmount : STA ChallengeTimer
-		LDA ChallengeTimer+2 : ADC.l BlueClockAmount+2 : STA ChallengeTimer+2
+		LDA.l ChallengeTimer : !ADD.l BlueClockAmount : STA.l ChallengeTimer
+		LDA.l ChallengeTimer+2 : ADC.l BlueClockAmount+2 : STA.l ChallengeTimer+2
 		SEP #$20 ; set 8-bit accumulator
 		JMP .done
 	+ CMP.b #$5D : BNE + ; Green Clock
 		REP #$20 ; set 16-bit accumulator
-		LDA ChallengeTimer : !ADD.l GreenClockAmount : STA ChallengeTimer
-		LDA ChallengeTimer+2 : ADC.l GreenClockAmount+2 : STA ChallengeTimer+2
+		LDA.l ChallengeTimer : !ADD.l GreenClockAmount : STA.l ChallengeTimer
+		LDA.l ChallengeTimer+2 : ADC.l GreenClockAmount+2 : STA.l ChallengeTimer+2
 		SEP #$20 ; set 8-bit accumulator
 		JMP .done
 	+ CMP.b #$5E : BNE + ; Progressive Sword
@@ -332,73 +312,67 @@ AddReceivedItemExpandedGetItem:
 	;	JSL.l ItemGetServiceRequest
 	;	JMP .done
 	+ CMP.b #$70 : !BLT + : CMP.b #$80 : !BGE + ; Free Map
-		AND #$0F : CMP #$08 : !BGE ++
+		AND.b #$0F : CMP.b #$08 : !BGE ++
 			%ValueShift()
-			ORA MapField : STA MapField ; Map 1
+			ORA.l MapField : STA.l MapField ; Map 1
 			JMP .done
 		++
 			!SUB #$08
 			%ValueShift()
 			BIT.b #$C0 : BEQ +++ : LDA.b #$C0 : +++ ; Make Hyrule Castle / Sewers Count for Both
-			ORA MapField+1 : STA MapField+1 ; Map 2
+			ORA.l MapField+1 : STA.l MapField+1 ; Map 2
 		JMP .done
 	+ CMP.b #$80 : !BLT + : CMP.b #$90 : !BGE + ; Free Compass
-		AND #$0F : CMP #$08 : !BGE ++
+		AND.b #$0F : CMP.b #$08 : !BGE ++
 			%ValueShift()
-			ORA CompassField : STA CompassField ; Compass 1
+			ORA.l CompassField : STA.l CompassField ; Compass 1
 			JMP .done
 		++
 			!SUB #$08
 			%ValueShift()
 			BIT.b #$C0 : BEQ +++ : LDA.b #$C0 : +++ ; Make Hyrule Castle / Sewers Count for Both
-			ORA CompassField+1 : STA CompassField+1 ; Compass 2
+			ORA.l CompassField+1 : STA.l CompassField+1 ; Compass 2
 		JMP .done
 	+ CMP.b #$90 : !BLT + : CMP.b #$A0 : !BGE + ; Free Big Key
-		AND #$0F : CMP #$08 : !BGE ++
+		AND.b #$0F : CMP.b #$08 : !BGE ++
 			%ValueShift()
-			ORA BigKeyField : STA BigKeyField ; Big Key 1
+			ORA.l BigKeyField : STA.l BigKeyField ; Big Key 1
 			JMP .done
 		++
 			!SUB #$08
 			%ValueShift()
 			BIT.b #$C0 : BEQ +++ : LDA.b #$C0 : +++ ; Make Hyrule Castle / Sewers Count for Both
-			ORA BigKeyField+1 : STA BigKeyField+1 ; Big Key 2
+			ORA.l BigKeyField+1 : STA.l BigKeyField+1 ; Big Key 2
 		JMP .done
 	+ CMP.b #$A0 : !BLT + : CMP.b #$B0 : !BGE + ; Free Small Key
-		AND #$0F : TAX
-		LDA DungeonKeys, X : INC : STA DungeonKeys, X ; Increment Key Count
+		AND.b #$0F : TAX
+		LDA.l DungeonKeys, X : INC : STA.l DungeonKeys, X ; Increment Key Count
 
 		CPX.b #$00 : BNE ++
-			STA HyruleCastleKeys ; copy HC to sewers
+			STA.l HyruleCastleKeys ; copy HC to sewers
 		++ : CPX.b #$01 : BNE ++
-			STA SewerKeys ; copy sewers to HC
+			STA.l SewerKeys ; copy sewers to HC
 		++
 
 		LDA.l GenericKeys : BEQ +
 		.generic
-			LDA CurrentSmallKeys : INC : STA CurrentSmallKeys
+			LDA.l CurrentSmallKeys : INC : STA.l CurrentSmallKeys
 			JMP .done
 		.normal
-			TXA : ASL : CMP $040C : BNE ++
-				LDA CurrentSmallKeys : INC : STA CurrentSmallKeys
+			TXA : ASL : CMP.w DungeonID : BNE ++
+				LDA.l CurrentSmallKeys : INC : STA.l CurrentSmallKeys
 			++
 			JMP .done
 	+
 	.done
 	PLX
-	LDA $02E9 : CMP.b #$01 ; thing we wrote over
+	LDA.w ItemReceiptMethod : CMP.b #$01 ; thing we wrote over
 RTL
 ; #$70 - Maps
 ; #$80 - Compasses
 ; #$90 - Big Keys
 ; #$A0 - Small Keys
 ;--------------------------------------------------------------------------------
-!SCRATCH_AREA = "$7F5020"
-!SINGLE_INDEX_TEMP = "$7F5020"
-!SINGLE_INDEX_OFFSET_TEMP = "$7F5021"
-!SINGLE_INDEX_BITMASK_TEMP = "$7F5022"
-!LOCK_IN = "$7F5090"
-!ITEM_BUSY = "$7F5091"
 ;2B:Bottle Already Filled w/ Red Potion
 ;2C:Bottle Already Filled w/ Green Potion
 ;2D:Bottle Already Filled w/ Blue Potion
@@ -410,97 +384,97 @@ AddReceivedItemExpanded:
 	PHA : PHX
 		JSL.l PreItemGet
 
-		LDA $02D8 ; Item Value
+		LDA.w ItemReceiptID ; Item Value
 		JSR AttemptItemSubstitution
-		STA $02D8
+		STA.w ItemReceiptID
 
 		JSR IncrementItemCounters
 
 		CMP.b #$16 : BNE ++ ; Bottle
 			JSR.w CountBottles : CMP.l BottleLimit : !BLT +++
-				LDA.l BottleLimitReplacement : STA $02D8
+				LDA.l BottleLimitReplacement : STA.w ItemReceiptID
 			+++ : JMP .done
 		++ : CMP.b #$2B : BNE ++ ; Red Potion w/bottle
 			JSR.w CountBottles : CMP.l BottleLimit : !BLT +++
-				LDA.l BottleLimitReplacement : STA $02D8
+				LDA.l BottleLimitReplacement : STA.w ItemReceiptID
 			+++ : JMP .done
 		++ : CMP.b #$2C : BNE ++ ; Green Potion w/bottle
 			JSR.w CountBottles : CMP.l BottleLimit : !BLT +++
-				LDA.l BottleLimitReplacement : STA $02D8
+				LDA.l BottleLimitReplacement : STA.w ItemReceiptID
 			+++ : JMP .done
 		++ : CMP.b #$2D : BNE ++ ; Blue Potion w/bottle
 			JSR.w CountBottles : CMP.l BottleLimit : !BLT +++
-				LDA.l BottleLimitReplacement : STA $02D8
+				LDA.l BottleLimitReplacement : STA.w ItemReceiptID
 			+++ : JMP .done
 		++ : CMP.b #$3C : BNE ++ ; Bee w/bottle
 			JSR.w CountBottles : CMP.l BottleLimit : !BLT +++
-				LDA.l BottleLimitReplacement : STA $02D8
+				LDA.l BottleLimitReplacement : STA.w ItemReceiptID
 			+++ : JMP .done
 		++ : CMP.b #$3D : BNE ++ ; Fairy w/bottle
 			JSR.w CountBottles : CMP.l BottleLimit : !BLT +++
-				LDA.l BottleLimitReplacement : STA $02D8
+				LDA.l BottleLimitReplacement : STA.w ItemReceiptID
 			+++ : JMP .done
 		++ : CMP.b #$48 : BNE ++ ; Gold Bee w/bottle
 			JSR.w CountBottles : CMP.l BottleLimit : !BLT +++
-				LDA.l BottleLimitReplacement : STA $02D8
+				LDA.l BottleLimitReplacement : STA.w ItemReceiptID
 			+++ : JMP .done
 		++ : CMP.b #$4E : BNE ++ ; Progressive Magic
-			LDA MagicConsumption : BEQ +++
-				LDA.b #$4F : STA $02D8
+			LDA.l MagicConsumption : BEQ +++
+				LDA.b #$4F : STA.w ItemReceiptID
 			+++ : JMP .done
 		++ : CMP.b #$5E : BNE ++ ; Progressive Sword
-			LDA HighestSword : CMP.l ProgressiveSwordLimit : !BLT +
-				LDA.l ProgressiveSwordReplacement : STA $02D8 : JMP .done
+			LDA.l HighestSword : CMP.l ProgressiveSwordLimit : !BLT +
+				LDA.l ProgressiveSwordReplacement : STA.w ItemReceiptID : JMP .done
 			+ : CMP.b #$00 : BNE + ; No Sword
-				LDA.b #$49 : STA $02D8 : JMP .done
+				LDA.b #$49 : STA.w ItemReceiptID : JMP .done
 			+ : CMP.b #$01 : BNE + ; Fighter Sword
-				LDA.b #$50 : STA $02D8 : JMP .done
+				LDA.b #$50 : STA.w ItemReceiptID : JMP .done
 			+ : CMP.b #$02 : BNE + ; Master Sword
-				LDA.b #$02 : STA $02D8 : JMP .done
+				LDA.b #$02 : STA.w ItemReceiptID : JMP .done
 			+ ; Everything Else
-				LDA.b #$03 : STA $02D8 : JMP .done
+				LDA.b #$03 : STA.w ItemReceiptID : JMP .done
 		++ : CMP.b #$5F : BNE ++ ; Progressive Shield
-			LDA HighestShield : CMP.l ProgressiveShieldLimit : !BLT +
-				LDA.l ProgressiveShieldReplacement : STA $02D8 : JMP .done
+			LDA.l HighestShield : CMP.l ProgressiveShieldLimit : !BLT +
+				LDA.l ProgressiveShieldReplacement : STA.w ItemReceiptID : JMP .done
 			+ : CMP.b #$00 : BNE + ; No Shield
-				LDA.b #$04 : STA $02D8 : JMP .done
+				LDA.b #$04 : STA.w ItemReceiptID : JMP .done
 			+ : CMP.b #$01 : BNE + ; Fighter Shield
-				LDA.b #$05 : STA $02D8 : JMP .done
+				LDA.b #$05 : STA.w ItemReceiptID : JMP .done
 			+ ; Everything Else
-				LDA.b #$06 : STA $02D8 : JMP .done
+				LDA.b #$06 : STA.w ItemReceiptID : JMP .done
 		++ : CMP.b #$60 : BNE ++ ; Progressive Armor
-			LDA HighestMail : CMP.l ProgressiveArmorLimit : !BLT +
-				LDA.l ProgressiveArmorReplacement : STA $02D8 : JMP .done
+			LDA.l HighestMail : CMP.l ProgressiveArmorLimit : !BLT +
+				LDA.l ProgressiveArmorReplacement : STA.w ItemReceiptID : JMP .done
 			+ : CMP.b #$00 : BNE + ; No Armor
-				LDA.b #$22 : STA $02D8 : JMP .done
+				LDA.b #$22 : STA.w ItemReceiptID : JMP .done
 			+ ; Everything Else
-				LDA.b #$23 : STA $02D8 : JMP .done
+				LDA.b #$23 : STA.w ItemReceiptID : JMP .done
 		++ : CMP.b #$61 : BNE ++ ; Progressive Lifting Glove
-			LDA GloveEquipment : BNE + ; No Lift
-				LDA.b #$1B : STA $02D8 : BRA .done
+			LDA.l GloveEquipment : BNE + ; No Lift
+				LDA.b #$1B : STA.w ItemReceiptID : BRA .done
 			+ ; Everything Else
-				LDA.b #$1C : STA $02D8 : BRA .done
+				LDA.b #$1C : STA.w ItemReceiptID : BRA .done
 		++ : CMP.b #$64 : BNE ++ : -- ; Progressive Bow
-			LDA BowEquipment : INC : LSR : CMP.l ProgressiveBowLimit : !BLT +
-				LDA.l ProgressiveBowReplacement : STA $02D8 : JMP .done
+			LDA.l BowEquipment : INC : LSR : CMP.l ProgressiveBowLimit : !BLT +
+				LDA.l ProgressiveBowReplacement : STA.w ItemReceiptID : JMP .done
 			+ : CMP.b #$00 : BNE + ; No Bow
-				LDA.b #$3A : STA $02D8 : BRA .done
+				LDA.b #$3A : STA.w ItemReceiptID : BRA .done
 			+ ; Any Bow
-				LDA.b #$3B : STA $02D8 : BRA .done
+				LDA.b #$3B : STA.w ItemReceiptID : BRA .done
 		++ : CMP.b #$65 : BNE ++ ; Progressive Bow 2
-			LDA.l BowTracking : ORA #$20 : STA.l BowTracking
+			LDA.l BowTracking : ORA.b #$20 : STA.l BowTracking
 			BRA --
 		; ++ : CMP.b #$FE : BNE ++ ; Server Request (Null Chest)
 		;	JSL ChestItemServiceRequest
 		;	BRA .done
 		++ : CMP.b #$62 : BNE ++ ; RNG Item (Single)
-			JSL.l GetRNGItemSingle : STA $02D8
+			JSL.l GetRNGItemSingle : STA.w ItemReceiptID
 			XBA : JSR.w MarkRNGItemSingle
-			LDA #$FF : STA !LOCK_IN ; clear lock-in
+			LDA.b #$FF : STA.l RNGLockIn ; clear lock-in
 			BRA .done
 		++ : CMP.b #$63 : BNE ++ ; RNG Item (Multi)
-			JSL.l GetRNGItemMulti : STA $02D8
-			LDA #$FF : STA !LOCK_IN ; clear lock-in
+			JSL.l GetRNGItemMulti : STA.w ItemReceiptID
+			LDA.b #$FF : STA.l RNGLockIn ; clear lock-in
 			BRA .done
 		++
 		.done
@@ -892,37 +866,24 @@ Link_ReceiveItemAlternatesExpanded:
 ;--------------------------------------------------------------------------------
 .loadAlternate
 	PHB : PHK : PLB
-		;TYA : JSR IncrementItemCounters
-		;LDA Link_ReceiveItemAlternatesExpanded, Y : STA $03
-		TYA : JSR AttemptItemSubstitution : STA $03
-		CPY $03 : BNE + : LDA.b #$FF : STA $03 : +
+		TYA : JSR AttemptItemSubstitution : STA.b Scrap03
+		CPY.b Scrap03 : BNE + : LDA.b #$FF : STA.b Scrap03 : +
 	PLB
 RTL
-;--------------------------------------------------------------------------------
-;DrawHUDSilverArrows:
-;	LDA BowEquipment : AND.w #$00FF : BNE +
-;		LDA BowTracking : AND.w #$0040 : BEQ +
-;	        LDA.w #$2810 : STA $11C8
-;	        LDA.w #$2811 : STA $11CA
-;	        LDA.w #$2820 : STA $1208
-;	        LDA.w #$2821 : STA $120A
-;	+
-;	LDA.w #$11CE : STA $00 ; thing we wrote over
-;RTL
 ;--------------------------------------------------------------------------------
 ;Return BowEquipment but also draw silver arrows if you have the upgrade even if you don't have the bow
 CheckHUDSilverArrows:
 	LDA.l ArrowMode : BEQ .normal
 	.rupee_arrows
 		JSL.l DrawHUDArrows
-		LDA BowEquipment
+		LDA.l BowEquipment
 		RTL
 	.normal
-	LDA BowEquipment : BNE +
-		LDA BowTracking : AND.b #$40 : BEQ ++
+	LDA.l BowEquipment : BNE +
+		LDA.l BowTracking : AND.b #$40 : BEQ ++
 			JSL.l DrawHUDArrows
 		++
-		LDA BowEquipment
+		LDA.l BowEquipment
 	+
 RTL
 ;--------------------------------------------------------------------------------
@@ -930,73 +891,68 @@ DrawHUDArrows:
 LDA.l ArrowMode : BEQ .normal
 	.rupee_arrows
 
-	LDA CurrentArrows : BEQ .none ; assuming silvers will increment this. if we go with something else, reorder these checks
-	LDA BowEquipment : BNE +
-	LDA BowTracking : AND.b #$40 : BNE .silver
+	LDA.l CurrentArrows : BEQ .none ; assuming silvers will increment this. if we go with something else, reorder these checks
+	LDA.l BowEquipment : BNE +
+	LDA.l BowTracking : AND.b #$40 : BNE .silver
 	BRA .wooden
 	+ CMP.b #03 : !BGE .silver
 
 	.wooden
-	LDA.b #$A7 : STA $7EC720 ; draw wooden arrow marker
-	LDA.b #$20 : STA $7EC721
-	LDA.b #$A9 : STA $7EC722
-	LDA.b #$20 : STA $7EC723
+	LDA.b #$A7 : STA.l HUDTileMapBuffer+$20 ; draw wooden arrow marker
+	LDA.b #$20 : STA.l HUDTileMapBuffer+$21
+	LDA.b #$A9 : STA.l HUDTileMapBuffer+$22
+	LDA.b #$20 : STA.l HUDTileMapBuffer+$23
 RTL
 	.normal ; in normal arrow mode this function is only ever called for silvers
 	.silver
-	LDA.b #$86 : STA $7EC720 ; draw silver arrow marker
-	LDA.b #$24 : STA $7EC721
-	LDA.b #$87 : STA $7EC722
-	LDA.b #$24 : STA $7EC723
+	LDA.b #$86 : STA.l HUDTileMapBuffer+$20 ; draw silver arrow marker
+	LDA.b #$24 : STA.l HUDTileMapBuffer+$21
+	LDA.b #$87 : STA.l HUDTileMapBuffer+$22
+	LDA.b #$24 : STA.l HUDTileMapBuffer+$23
 RTL
 	.none
-	LDA.b #$7F : STA $7EC720 ; draw no arrow marker
-	LDA.b #$24 : STA $7EC721
-	LDA.b #$7F : STA $7EC722
-	LDA.b #$24 : STA $7EC723
+	LDA.b #$7F : STA.l HUDTileMapBuffer+$20 ; draw no arrow marker
+	LDA.b #$24 : STA.l HUDTileMapBuffer+$21
+	LDA.b #$7F : STA.l HUDTileMapBuffer+$22
+	LDA.b #$24 : STA.l HUDTileMapBuffer+$23
 RTL
 ;--------------------------------------------------------------------------------
-!SCRATCH_AREA = "$7F5020"
-!SINGLE_INDEX_TEMP = "$7F5020"
-!SINGLE_INDEX_OFFSET_TEMP = "$7F5021"
-!SINGLE_INDEX_BITMASK_TEMP = "$7F5022"
-!LOCK_IN = "$7F5090"
 GetRNGItemSingle:
 	PHY
-		LDA !LOCK_IN : CMP.b #$FF : BEQ + : TAX : XBA : LDA.l RNGSingleItemTable, X : RTL : +
+		LDA.l RNGLockIn : CMP.b #$FF : BEQ + : TAX : XBA : LDA.l RNGSingleItemTable, X : RTL : +
 		LDX.b #$00
 		.single_reroll
 			JSL.l GetRandomInt : AND.b #$7F ; select random value
-			INX : CPX #$7F : !BLT + : LDA.b #$00 : BRA +++ : + ; default to 0 if too many attempts
+			INX : CPX.b #$7F : !BLT + : LDA.b #$00 : BRA +++ : + ; default to 0 if too many attempts
 			CMP.l RNGSingleTableSize : !BGE .single_reroll
 		+++
 
-		STA !SINGLE_INDEX_TEMP ; put our index value here
-		LDX #$00
+		STA.w ScratchBufferV ; put our index value here
+		LDX.b #$00
 		TAY
 		.recheck
 			TYA
 			JSR.w CheckSingleItem : BEQ .single_unused ; already used
-				LDA !SINGLE_INDEX_TEMP : INC ; increment index
+				LDA.w ScratchBufferV : INC ; increment index
 				CMP.l RNGSingleTableSize : !BLT +++ : LDA.b #$00 : +++ ; rollover index if needed
-				STA !SINGLE_INDEX_TEMP ; store index
+				STA.w ScratchBufferV ; store index
 				INX : TAY : TXA : CMP.l RNGSingleTableSize : !BLT .recheck
 				LDA.b #$5A ; everything is gone, default to null item - MAKE THIS AN OPTION FOR THIS AND THE OTHER ONE
 				BRA .single_done
 		.single_unused
-			LDA !SINGLE_INDEX_TEMP
+			LDA.w ScratchBufferV
 		.single_done
 			TAX : LDA.l RNGSingleItemTable, X
-			XBA : LDA.l !SINGLE_INDEX_TEMP : STA !LOCK_IN : XBA
+			XBA : LDA.w ScratchBufferV : STA.l RNGLockIn : XBA
 	PLY
 RTL
 ;--------------------------------------------------------------------------------
 CheckSingleItem:
 	LSR #3 : TAX
-	LDA.l RNGItem, X : STA !SINGLE_INDEX_BITMASK_TEMP ; load value to temporary
+	LDA.l RNGItem, X : STA.w ScratchBufferV+2 ; load value to temporary
 	PHX
-		LDA !SINGLE_INDEX_TEMP : AND #$07 : TAX ; load 0-7 part into X
-		LDA !SINGLE_INDEX_BITMASK_TEMP
+		LDA.w ScratchBufferV : AND.b #$07 : TAX ; load 0-7 part into X
+		LDA.w ScratchBufferV+2
 		---
 		CPX.b #$00 : BEQ +++
 			LSR
@@ -1008,12 +964,10 @@ CheckSingleItem:
 RTS
 ;--------------------------------------------------------------------------------
 MarkRNGItemSingle:
-	;STA !SINGLE_INDEX_TEMP
-
-	LSR #3 : STA !SINGLE_INDEX_OFFSET_TEMP : TAX
+	LSR #3 : STA.w ScratchBufferV+1 : TAX
 	LDA.l RNGItem, X
-	STA.l !SINGLE_INDEX_BITMASK_TEMP
-	LDA.l !SINGLE_INDEX_TEMP : AND #$07 : TAX ; load 0-7 part into X
+	STA.w ScratchBufferV+2
+	LDA.w ScratchBufferV : AND.b #$07 : TAX ; load 0-7 part into X
 	LDA.b #01
 	---
 	CPX.b #$00 : BEQ +++
@@ -1023,21 +977,21 @@ MarkRNGItemSingle:
 	+++
 
 	PHA
-		LDA.l !SINGLE_INDEX_OFFSET_TEMP : TAX
+		LDA.w ScratchBufferV+1 : TAX
 	PLA
-	ORA.l !SINGLE_INDEX_BITMASK_TEMP
+	ORA.w ScratchBufferV+2
 	STA.l RNGItem, X
 RTS
 ;--------------------------------------------------------------------------------
 GetRNGItemMulti:
-	LDA !LOCK_IN : CMP #$FF : BEQ + : TAX : XBA : LDA.l RNGMultiItemTable, X : RTL : +
+	LDA.l RNGLockIn : CMP.b #$FF : BEQ + : TAX : XBA : LDA.l RNGMultiItemTable, X : RTL : +
 	LDX.b #$00
 	- ; reroll
 		JSL.l GetRandomInt : AND.b #$7F ; select random value
-		INX : CPX #$7F : !BLT + : LDA.b 00 : BRA .done : + ; default to 0 if too many attempts
+		INX : CPX.b #$7F : !BLT + : LDA.b 00 : BRA .done : + ; default to 0 if too many attempts
 		CMP.l RNGMultiTableSize : !BGE -
 	.done
-	STA !LOCK_IN
+	STA.l RNGLockIn
 	TAX : XBA : LDA.l RNGMultiItemTable, X
 RTL
 ;--------------------------------------------------------------------------------
@@ -1047,11 +1001,11 @@ IncrementItemCounters:
 		-
 			LDA.l ItemSubstitutionRules, X
 			CMP.b #$FF : BEQ .exit
-			CMP 1,s : BNE .noMatch
+			CMP.b 1,s : BNE .noMatch
 				.match
 					PHX
 						TXA : LSR #2 : TAX
-						LDA ItemLimitCounts, X : INC : STA ItemLimitCounts, X
+						LDA.l ItemLimitCounts, X : INC : STA.l ItemLimitCounts, X
 					PLX
 					BEQ .exit
 				.noMatch
@@ -1062,53 +1016,52 @@ IncrementItemCounters:
 RTS
 ;--------------------------------------------------------------------------------
 AttemptItemSubstitution:
-	PHX : PHA
-	LDX.b #$00
-	-
-		LDA.l ItemSubstitutionRules, X
-		CMP.b #$FF : BEQ .exit
-		CMP 1,s : BNE .noMatch
-			.match
-				PHX
-					TXA : LSR #2 : TAX
-					LDA ItemLimitCounts, X
-				PLX
-				CMP.l ItemSubstitutionRules+1, X : !BLT +
-					LDA.l ItemSubstitutionRules+2, X : STA 1,s
-				+
-				BEQ .exit
-			.noMatch
-				INX #4
-	BRA -
-.exit
-	PLA : PLX
+        PHX : PHA
+        LDX.b #$00
+        -
+                LDA.l ItemSubstitutionRules, X
+                CMP.b #$FF : BEQ .exit
+                CMP.b 1,s : BNE .noMatch
+                        .match
+                        PHX
+                        TXA : LSR #2 : TAX
+                        LDA.l ItemLimitCounts, X
+                        PLX
+                        CMP.l ItemSubstitutionRules+1, X : !BLT +
+                                LDA.l ItemSubstitutionRules+2, X : STA.b 1,s
+                        +: BEQ .exit
+                        .noMatch
+                                INX #4
+                                BRA -
+        .exit
+        PLA : PLX
 RTS
 ;--------------------------------------------------------------------------------
 CountBottles:
-    PHX
+        PHX
         LDX.b #$00
-        LDA BottleContentsOne : BEQ ++ : INX
-        ++ : LDA BottleContentsTwo : BEQ ++ : INX
-        ++ : LDA BottleContentsThree : BEQ ++ : INX
-        ++ : LDA BottleContentsFour : BEQ ++ : INX
+        LDA.l BottleContentsOne : BEQ ++ : INX
+        ++ : LDA.l BottleContentsTwo : BEQ ++ : INX
+        ++ : LDA.l BottleContentsThree : BEQ ++ : INX
+        ++ : LDA.l BottleContentsFour : BEQ ++ : INX
         ++
         TXA
     PLX
 RTS
 ;--------------------------------------------------------------------------------
 ActivateGoal:
-    STZ $11
-    STZ $B0
+        STZ.b GameSubMode
+        STZ.b SubSubModule
 JML.l StatsFinalPrep
 ;--------------------------------------------------------------------------------
 ChestPrep:
-	LDA.b #$01 : STA $02E9
+	LDA.b #$01 : STA.w ItemReceiptMethod
         JSL.l IncrementChestCounter
 	LDA.l ServerRequestMode : BEQ +
 		JSL.l ChestItemServiceRequest
 		RTL
 	+
-    LDY $0C ; get item value
+    LDY.b Scrap0C ; get item value
 	SEC
 RTL
 ;--------------------------------------------------------------------------------
@@ -1116,44 +1069,44 @@ RTL
 ; counts on
 MaybeFlagCompassTotalPickup:
         LDA.l CompassMode : AND.b #$0F : BEQ .done
-        LDA $040C : CMP #$FF : BEQ .done
-        LSR : STA $04 : LDA #$0F : !SUB $04 ; Compute flag "index"
-        CPY #$25 : BEQ .setFlag             ; Set flag if it's a compass for this dungeon
-                STA $04
-                TYA : AND #$0F : CMP $04 : BNE .done ; Check if compass is for this dungeon
+        LDA.w DungeonID : CMP.b #$FF : BEQ .done
+        LSR : STA.b Scrap04 : LDA.b #$0F : !SUB Scrap04    ; Compute flag "index"
+        CPY.b #$25 : BEQ .setFlag                          ; Set flag if it's a compass for this dungeon
+                STA.b Scrap04
+                TYA : AND.b #$0F : CMP.b Scrap04 : BNE .done ; Check if compass is for this dungeon
                         .setFlag
-                        CMP #$08 : !BGE ++
+                        CMP.b #$08 : !BGE ++
                                 %ValueShift()
-                                ORA CompassCountDisplay : STA CompassCountDisplay
+                                ORA.l CompassCountDisplay : STA.l CompassCountDisplay
                                 BRA .done
                         ++
                                 !SUB #$08
                                 %ValueShift()
                                 BIT.b #$C0 : BEQ + : LDA.b #$C0 : + ; Make Hyrule Castle / Sewers Count for Both
-                                ORA CompassCountDisplay+1 : STA CompassCountDisplay+1
+                                ORA.l CompassCountDisplay+1 : STA.l CompassCountDisplay+1
         .done
 RTL
 ;--------------------------------------------------------------------------------
 ; Set the compass count display flag if we're entering a dungeon and alerady have
 ; that compass
 MaybeFlagCompassTotalEntrance:
-        LDX $040C : CPX #$FF : BEQ .done ; Skip if we're not entering dungeon
+        LDX.w DungeonID : CPX.b #$FF : BEQ .done         ; Skip if we're not entering dungeon
         LDA.l CompassMode : AND.w #$000F : BEQ .done ; Skip if we're not showing compass counts
         CMP.w #$0002 : BEQ .countShown
-                LDA CompassField : AND.l DungeonItemMasks, X : BEQ .done ; skip if we don't have compass
+                LDA.l CompassField : AND.l DungeonItemMasks, X : BEQ .done ; skip if we don't have compass
                 .countShown
                 SEP #$20
-                TXA : LSR : STA.b $04 : LDA.b #$0F : !SUB $04 ; Compute flag "index"
-                CMP #$08 : !BGE ++
+                TXA : LSR : STA.b Scrap04 : LDA.b #$0F : !SUB Scrap04 ; Compute flag index
+                CMP.b #$08 : !BGE ++
                         %ValueShift()
-                        ORA CompassCountDisplay : STA CompassCountDisplay
+                        ORA.l CompassCountDisplay : STA.l CompassCountDisplay
                         REP #$20
                         BRA .done
                 ++
                         !SUB #$08
                         %ValueShift()
                         BIT.b #$C0 : BEQ + : LDA.b #$C0 : + ; Make Hyrule Castle / Sewers Count for Both
-                        ORA CompassCountDisplay+1 : STA CompassCountDisplay+1
+                        ORA.l CompassCountDisplay+1 : STA.l CompassCountDisplay+1
                         REP #$20
         .done
 RTL

@@ -1,5 +1,5 @@
 DoDungeonMapBossIcon:
-	LDA.b $14
+	LDA.b NMISTRIPES
 	CMP.b #$09
 	BEQ .dungeonmap
 
@@ -9,15 +9,8 @@ DoDungeonMapBossIcon:
 
 .dungeonmap
 
-	LDX.w $040C
+	LDX.w DungeonID
 	BMI .cave
-
-;	LDA.l DungeonMapIcons
-;	AND.b #$01
-;	BNE ++
-;
-;	INC ; so it's not equal to $01
-;	BRA .cave
 
 	; get dungeon boss room
 ++	REP #$30
@@ -57,7 +50,7 @@ DoDungeonMapBossIcon:
 
 .match
 	LDA.b #$80
-	STA.w $2121
+	STA.w CGADD
 
 	REP #$30
 
@@ -74,14 +67,14 @@ DoDungeonMapBossIcon:
 	ASL ; x128 for graphics
 	ASL
 	ADC.w #BossMapIconGFX
-	STA.w $4312
+	STA.w A1T1L
 
 	PHY
 	LDY.w #32
 
 	SEP #$20
 --	LDA.l .boss_palettes,X
-	STA.w $2122
+	STA.w CGDATA
 	INX
 	DEY
 	BNE --
@@ -94,24 +87,24 @@ DoDungeonMapBossIcon:
 	SEP #$10
 
 	LDA.w #$1801
-	STA.w $4310
+	STA.w DMAP1
 
 	LDX.b #BossMapIconGFX>>16
-	STX.w $4314
+	STX.w A1B1
 
 	LDA.w #$A060>>1
-	STA.w $2116
+	STA.w VMADDL
 	LDA.w #$0040
-	STA.w $4315
+	STA.w DAS1L
 
 	LDX.b #$02
-	STX.w $420B
+	STX.w MDMAEN
 
-	STA.w $4315
+	STA.w DAS1L
 	LDA.w #$A260>>1
-	STA.w $2116
+	STA.w VMADDL
 
-	STX.w $420B
+	STX.w MDMAEN
 
 	; done
 	SEP #$30

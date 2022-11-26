@@ -1,64 +1,58 @@
 NewDrawHud:
-SEP #$30
+        SEP #$30
 ;================================================================================
 ; Draw bomb count
-!BOMBCOUNT_DRAW_ADDRESS = "$7EC75A"
-!INFINITE_BOMBS = "$7F50C9"
 ;================================================================================
 
-	LDA !INFINITE_BOMBS : BNE .infinite_bombs
+	LDA.l InfiniteBombs : BNE .infinite_bombs
 	.finite_bombs
 		LDA.l BombsEquipment ; bombs
 		JSR HudHexToDec2Digit ;requires 8 bit registers!
 		REP #$20
-		LDX.b $06 : TXA : ORA.w #$2400 : STA !BOMBCOUNT_DRAW_ADDRESS ; Draw bombs 10 digit
-		LDX.b $07 : TXA : ORA.w #$2400 : STA !BOMBCOUNT_DRAW_ADDRESS+2 ; Draw bombs 1 digit
+		LDX.b Scrap06 : TXA : ORA.w #$2400 : STA.l HUDBombCount ; Draw bombs 10 digit
+		LDX.b Scrap07 : TXA : ORA.w #$2400 : STA.l HUDBombCount+2 ; Draw bombs 1 digit
 		BRA +
 
 	.infinite_bombs
 		REP #$20
-		LDA.w #$2431 : STA !BOMBCOUNT_DRAW_ADDRESS ; infinity (left half)
-		INC A        : STA !BOMBCOUNT_DRAW_ADDRESS+2 ; infinity (right half)
+		LDA.w #$2431 : STA.l HUDBombCount ; infinity (left half)
+		INC A        : STA.l HUDBombCount+2 ; infinity (right half)
 	+
 
 ;================================================================================
 ; Draw rupee counter
-!RUPEE_DRAW_ADDRESS = "$7EC750"
 ;================================================================================
 	
 	LDA.l DisplayRupees ; Drawing bombs (above) always ends with 16-bit A, so, no need to REP here
 	JSR HudHexToDec4Digit
-	LDX.b $04 : TXA : ORA.w #$2400 : STA !RUPEE_DRAW_ADDRESS	; 1000s
-	LDX.b $05 : TXA : ORA.w #$2400 : STA !RUPEE_DRAW_ADDRESS+2	;  100s
-	LDX.b $06 : TXA : ORA.w #$2400 : STA !RUPEE_DRAW_ADDRESS+4	;   10s
-	LDX.b $07 : TXA : ORA.w #$2400 : STA !RUPEE_DRAW_ADDRESS+6	;    1s
+	LDX.b Scrap04 : TXA : ORA.w #$2400 : STA.l HUDRupees   ; 1000s
+	LDX.b Scrap05 : TXA : ORA.w #$2400 : STA.l HUDRupees+2 ;  100s
+	LDX.b Scrap06 : TXA : ORA.w #$2400 : STA.l HUDRupees+4 ;   10s
+	LDX.b Scrap07 : TXA : ORA.w #$2400 : STA.l HUDRupees+6 ;    1s
 	
 ;================================================================================
 ; Draw arrow count
-!ARROWCOUNT_DRAW_ADDRESS = "$7EC760"
-!INFINITE_ARROWS = "$7F50C8"
 ;================================================================================
 
 	SEP #$20
 	LDA.l ArrowMode : BNE +
-		LDA !INFINITE_ARROWS : BNE .infinite_arrows
+		LDA.l InfiniteArrows : BNE .infinite_arrows
 		.finite_arrows
 			LDA.l CurrentArrows ; arrows
 			JSR HudHexToDec2Digit
 			REP #$20
-			LDX.b $06 : TXA : ORA.w #$2400 : STA !ARROWCOUNT_DRAW_ADDRESS ; Draw arrows 10 digit
-			LDX.b $07 : TXA : ORA.w #$2400 : STA !ARROWCOUNT_DRAW_ADDRESS+2 ; Draw arrows  1 digit
+			LDX.b Scrap06 : TXA : ORA.w #$2400 : STA.l HUDArrowCount ; Draw arrows 10 digit
+			LDX.b Scrap07 : TXA : ORA.w #$2400 : STA.l HUDArrowCount+2 ; Draw arrows  1 digit
 			BRA +
 		
 		.infinite_arrows
 			REP #$20
-			LDA.w #$2431 : STA !ARROWCOUNT_DRAW_ADDRESS ; infinity (left half)
-			INC A        : STA !ARROWCOUNT_DRAW_ADDRESS+2 ; infinity (right half)
+			LDA.w #$2431 : STA.l HUDArrowCount ; infinity (left half)
+			INC A        : STA.l HUDArrowCount+2 ; infinity (right half)
 	+
 	
 ;================================================================================
 ; Draw Goal Item Indicator
-!GOAL_DRAW_ADDRESS = "$7EC72A"
 ;================================================================================
 
 	REP #$20
@@ -67,38 +61,36 @@ SEP #$30
         LDA.l GoalCounter
         JSR HudHexToDec4Digit
 
-	LDA.l GoalItemIcon : STA.l !GOAL_DRAW_ADDRESS ; draw star icon
+	LDA.l GoalItemIcon : STA.l HUDGoalIndicator ; draw star icon
 	
-	LDX.b $05 : TXA : ORA.w #$2400 : STA !GOAL_DRAW_ADDRESS+2 ; draw 100's digit
-	LDX.b $06 : TXA : ORA.w #$2400 : STA !GOAL_DRAW_ADDRESS+4 ; draw 10's digit
-	LDX.b $07 : TXA : ORA.w #$2400 : STA !GOAL_DRAW_ADDRESS+6 ; draw 1's digit
+	LDX.b Scrap05 : TXA : ORA.w #$2400 : STA.l HUDGoalIndicator+2 ; draw 100's digit
+	LDX.b Scrap06 : TXA : ORA.w #$2400 : STA.l HUDGoalIndicator+4 ; draw 10's digit
+	LDX.b Scrap07 : TXA : ORA.w #$2400 : STA.l HUDGoalIndicator+6 ; draw 1's digit
 	
 	LDA.l GoalItemRequirement : CMP.w #$FFFF : BEQ .skip
 		LDA.l GoalItemRequirement
 		JSR HudHexToDec4Digit
-		LDA.w #$2830 : STA !GOAL_DRAW_ADDRESS+8 ; draw slash
-		LDX.b $05 : TXA : ORA.w #$2400 : STA !GOAL_DRAW_ADDRESS+10 ; draw 100's digit
-		LDX.b $06 : TXA : ORA.w #$2400 : STA !GOAL_DRAW_ADDRESS+12 ; draw 10's digit
-		LDX.b $07 : TXA : ORA.w #$2400 : STA !GOAL_DRAW_ADDRESS+14 ; draw 1's digit
+		LDA.w #$2830 : STA.l HUDGoalIndicator+8 ; draw slash
+		LDX.b Scrap05 : TXA : ORA.w #$2400 : STA.l HUDGoalIndicator+10 ; draw 100's digit
+		LDX.b Scrap06 : TXA : ORA.w #$2400 : STA.l HUDGoalIndicator+12 ; draw 10's digit
+		LDX.b Scrap07 : TXA : ORA.w #$2400 : STA.l HUDGoalIndicator+14 ; draw 1's digit
 		BRA .done
 	.skip
 		LDA.w #$207F ; transparent tile
-		STA !GOAL_DRAW_ADDRESS+8
-		STA !GOAL_DRAW_ADDRESS+10
-		STA !GOAL_DRAW_ADDRESS+12
+		STA.l HUDGoalIndicator+8
+		STA.l HUDGoalIndicator+10
+		STA.l HUDGoalIndicator+12
 	.done
 	
 ;================================================================================
 ; Draw Dungeon Compass Counts
 ;================================================================================
-	LDA.l CompassMode : AND #$00FF : BEQ + ; skip if CompassMode is 0.
+	LDA.l CompassMode : AND.w #$00FF : BEQ + ; skip if CompassMode is 0.
 		JSL.l DrawDungeonCompassCounts ; compasses.asm
 	+
 
 ;================================================================================
 ; Draw key count
-!KEY_DIGITS_ADDRESS = "$7EC764"
-!KEY_ICON_ADDRESS = "$7EC726"
 ;================================================================================
 	SEP #$20
 	LDA.l CurrentSmallKeys : CMP.b #$FF : BEQ .not_in_dungeon
@@ -106,21 +98,21 @@ SEP #$30
 		JSR HudHexToDec2Digit : REP #$20
 		
 		; if 10s digit is 0, draw transparent tile instead of 0
-		LDX.b $06 : TXA : CPX.b #$90 : BNE +
+		LDX.b Scrap06 : TXA : CPX.b #$90 : BNE +
 			LDA.w #$007F 
 		+
-		ORA.w #$2400 : STA !KEY_DIGITS_ADDRESS
+		ORA.w #$2400 : STA.l HUDKeyDigits
 		
 		; 1s digit
-		LDX.b $07 : TXA : ORA.w #$2400 : STA !KEY_DIGITS_ADDRESS+2
+		LDX.b Scrap07 : TXA : ORA.w #$2400 : STA.l HUDKeyDigits+2
 		BRA .done_keys
 		
 	.not_in_dungeon
 	REP #$20
 	
 	;in the overworld, draw transparent tiles instead of key count
-	LDA.w #$247F : STA !KEY_DIGITS_ADDRESS : STA !KEY_DIGITS_ADDRESS+2
-	STA !KEY_ICON_ADDRESS
+	LDA.w #$247F : STA.l HUDKeyDigits : STA.l HUDKeyDigits+2
+	STA.l HUDKeyIcon
 	
 	.done_keys
 
@@ -130,19 +122,18 @@ SEP #$30
 ;--------------------------------------------------------------------------------
 ; Draw pendant/crystal icon
 ;--------------------------------------------------------------------------------
-!PRIZE_ICON = $7EC742
 !P_ICON = $296C
 !C_ICON = $295F
 
 	SEP #$20
-	LDA.b $1B : BEQ .noprize
+	LDA.b IndoorsFlag : BEQ .noprize
 
-	LDX.w $040C
+	LDX.w DungeonID
 	CPX #$1A : !BGE .noprize
 	CPX #$04 : !BLT .noprize
 	CPX #$08 : BEQ .noprize
 
-	LDA $10 : CMP #$12 : BEQ .noprize
+	LDA.b GameMode : CMP.b #$12 : BEQ .noprize
 
 	LDA.l MapMode
 	REP #$20
@@ -169,54 +160,53 @@ SEP #$30
 	LDA.w #$207F
 
 .doneprize
-	STA.l !PRIZE_ICON
+	STA.l HUDPrizeIcon
 
 ;--------------------------------------------------------------------------------
 ; Draw Magic Meter
-!INFINITE_MAGIC = "$7F50CA"
-!DrawMagicMeter_mp_tilemap = "$0DFE0F" 
+DrawMagicMeter_mp_tilemap = $0DFE0F
 ;--------------------------------------------------------------------------------
-	LDA CurrentMagic : AND #$00FF ; crap we wrote over when placing the hook for OnDrawHud
+	LDA.l CurrentMagic : AND.w #$00FF ; crap we wrote over when placing the hook for OnDrawHud
 	!ADD #$0007
-	AND #$FFF8
+	AND.w #$FFF8
 	TAX						 ; end of crap
 	
-	LDA !INFINITE_MAGIC : AND.w #$00FF : BNE + : JMP .green : +
-	SEP #$20 : LDA.b #$80 : STA CurrentMagic : REP #$30 ; set magic to max
+	LDA.l InfiniteMagic : AND.w #$00FF : BNE + : JMP .green : +
+	SEP #$20 : LDA.b #$80 : STA.l CurrentMagic : REP #$30 ; set magic to max
 	LDX.w #$0080 ; load full magic meter graphics
-	LDA $1A : AND.w #$000C : LSR #2
+	LDA.b FrameCounter : AND.w #$000C : LSR #2
 	BEQ .red
 	CMP.w #0001 : BEQ .yellow
 	CMP.w #0002 : BNE + : JMP .green : +
 	.blue
-	    LDA !DrawMagicMeter_mp_tilemap+0, X : AND.w #$EFFF : STA $7EC746
-	    LDA !DrawMagicMeter_mp_tilemap+2, X : AND.w #$EFFF : STA $7EC786
-	    LDA !DrawMagicMeter_mp_tilemap+4, X : AND.w #$EFFF : STA $7EC7C6
-	    LDA !DrawMagicMeter_mp_tilemap+6, X : AND.w #$EFFF : STA $7EC806
-		RTL
+	    LDA.l DrawMagicMeter_mp_tilemap+0, X : AND.w #$EFFF : STA.l HUDTileMapBuffer+$46
+	    LDA.l DrawMagicMeter_mp_tilemap+2, X : AND.w #$EFFF : STA.l HUDTileMapBuffer+$86
+	    LDA.l DrawMagicMeter_mp_tilemap+4, X : AND.w #$EFFF : STA.l HUDTileMapBuffer+$C6
+	    LDA.l DrawMagicMeter_mp_tilemap+6, X : AND.w #$EFFF : STA.l HUDTileMapBuffer+$06
+            RTL
 	.red
-	    LDA !DrawMagicMeter_mp_tilemap+0, X : AND.w #$E7FF : STA $7EC746
-	    LDA !DrawMagicMeter_mp_tilemap+2, X : AND.w #$E7FF : STA $7EC786
-	    LDA !DrawMagicMeter_mp_tilemap+4, X : AND.w #$E7FF : STA $7EC7C6
-	    LDA !DrawMagicMeter_mp_tilemap+6, X : AND.w #$E7FF : STA $7EC806
-		RTL
+	    LDA.l DrawMagicMeter_mp_tilemap+0, X : AND.w #$E7FF : STA.l HUDTileMapBuffer+$46
+	    LDA.l DrawMagicMeter_mp_tilemap+2, X : AND.w #$E7FF : STA.l HUDTileMapBuffer+$86
+	    LDA.l DrawMagicMeter_mp_tilemap+4, X : AND.w #$E7FF : STA.l HUDTileMapBuffer+$C6
+	    LDA.l DrawMagicMeter_mp_tilemap+6, X : AND.w #$E7FF : STA.l HUDTileMapBuffer+$06
+            RTL
 	.yellow
-	    LDA !DrawMagicMeter_mp_tilemap+0, X : AND.w #$EBFF : STA $7EC746
-	    LDA !DrawMagicMeter_mp_tilemap+2, X : AND.w #$EBFF : STA $7EC786
-	    LDA !DrawMagicMeter_mp_tilemap+4, X : AND.w #$EBFF : STA $7EC7C6
-	    LDA !DrawMagicMeter_mp_tilemap+6, X : AND.w #$EBFF : STA $7EC806
-		RTL
+	    LDA.l DrawMagicMeter_mp_tilemap+0, X : AND.w #$EBFF : STA.l HUDTileMapBuffer+$46
+	    LDA.l DrawMagicMeter_mp_tilemap+2, X : AND.w #$EBFF : STA.l HUDTileMapBuffer+$86
+	    LDA.l DrawMagicMeter_mp_tilemap+4, X : AND.w #$EBFF : STA.l HUDTileMapBuffer+$C6
+	    LDA.l DrawMagicMeter_mp_tilemap+6, X : AND.w #$EBFF : STA.l HUDTileMapBuffer+$0106
+            RTL
 	.orange
-	    LDA !DrawMagicMeter_mp_tilemap+0, X : AND.w #$E3FF : STA $7EC746
-	    LDA !DrawMagicMeter_mp_tilemap+2, X : AND.w #$E3FF : STA $7EC786
-	    LDA !DrawMagicMeter_mp_tilemap+4, X : AND.w #$E3FF : STA $7EC7C6
-	    LDA !DrawMagicMeter_mp_tilemap+6, X : AND.w #$E3FF : STA $7EC806
-		RTL
+	    LDA.l DrawMagicMeter_mp_tilemap+0, X : AND.w #$E3FF : STA.l HUDTileMapBuffer+$46
+	    LDA.l DrawMagicMeter_mp_tilemap+2, X : AND.w #$E3FF : STA.l HUDTileMapBuffer+$86
+	    LDA.l DrawMagicMeter_mp_tilemap+4, X : AND.w #$E3FF : STA.l HUDTileMapBuffer+$C6
+	    LDA.l DrawMagicMeter_mp_tilemap+6, X : AND.w #$E3FF : STA.l HUDTileMapBuffer+$0106
+            RTL
 	.green
-	    LDA !DrawMagicMeter_mp_tilemap+0, X : STA $7EC746
-	    LDA !DrawMagicMeter_mp_tilemap+2, X : STA $7EC786
-	    LDA !DrawMagicMeter_mp_tilemap+4, X : STA $7EC7C6
-	    LDA !DrawMagicMeter_mp_tilemap+6, X : STA $7EC806
+	    LDA.l DrawMagicMeter_mp_tilemap+0, X : STA.l HUDTileMapBuffer+$46
+	    LDA.l DrawMagicMeter_mp_tilemap+2, X : STA.l HUDTileMapBuffer+$86
+	    LDA.l DrawMagicMeter_mp_tilemap+4, X : STA.l HUDTileMapBuffer+$C6
+	    LDA.l DrawMagicMeter_mp_tilemap+6, X : STA.l HUDTileMapBuffer+$0106
 RTL
 
 ;================================================================================
@@ -231,53 +221,26 @@ HudHexToDec4Digit:
 		INY
 		SBC.w #1000 : BRA -
 	+
-	STY $04 : LDY #$90 ; Store 1000s digit & reset Y
+	STY.b Scrap04 : LDY.b #$90 ; Store 1000s digit & reset Y
 	-
 		CMP.w #100 : !BLT +
 		INY
 		SBC.w #100 : BRA -
 	+
-	STY $05 : LDY #$90 ; Store 100s digit & reset Y
+	STY.b Scrap05 : LDY.b #$90 ; Store 100s digit & reset Y
 	-
 		CMP.w #10 : !BLT +
 		INY
 		SBC.w #10 : BRA -
 	+ 
-	STY $06 : LDY #$90 ; Store 10s digit & reset Y
+	STY.b Scrap06 : LDY.b #$90 ; Store 10s digit & reset Y
 	CMP.w #1 : !BLT +
 	-
 		INY
 		DEC : BNE -
 	+
-	STY $07 ; Store 1s digit
+	STY.b Scrap07 ; Store 1s digit
 RTS
-
-;================================================================================
-; 8-bit registers
-; in:	A(b) - Byte to Convert
-; out:	$05 - $07 (high - low)
-;================================================================================
-;HudHexToDec3Digit: ; this may be overkill, could have used the 4 digit one...
-;	LDY.b #$90
-;	-
-;		CMP.b #100 : !BLT +
-;		INY
-;		SBC.b #100 : BRA -
-;	+
-;	STY $05 : LDY.b #$90 ; Store 100s digit and reset Y
-;	-
-;		CMP.b #10 : !BLT +
-;		INY
-;		SBC.b #10 : BRA -
-;	+
-;	STY $06 : LDY #$90 ; Store 10s digit and reset Y
-;	CMP.b #1 : !BLT +
-;	-
-;		INY
-;		DEC : BNE -
-;	+
-;	STY $07	; Store 1s digit
-;RTS
 
 ;================================================================================
 ; 8-bit registers
@@ -291,11 +254,11 @@ HudHexToDec2Digit:
 		INY
 		SBC.b #10 : BRA -
 	+ 
-	STY $06 : LDY #$90 ; Store 10s digit and reset Y
+	STY.b Scrap06 : LDY.b #$90 ; Store 10s digit and reset Y
 	CMP.b #1 : !BLT +
 	-
 		INY
 		DEC : BNE -
 	+
-	STY $07	; Store 1s digit
+	STY.b Scrap07 ; Store 1s digit
 RTS

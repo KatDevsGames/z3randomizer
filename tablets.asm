@@ -2,71 +2,68 @@
 ; Randomize Tablets
 ;--------------------------------------------------------------------------------
 ItemSet_EtherTablet:
-	PHA : LDA NpcFlags+1 : ORA.b #$01 : STA NpcFlags+1 : PLA
-RTL
+	PHA : LDA.l NpcFlags+1 : ORA.b #$01 : STA.l NpcFlags+1 : PLA
+RTS
 ;--------------------------------------------------------------------------------
 ItemSet_BombosTablet:
-	PHA : LDA NpcFlags+1 : ORA.b #$02 : STA NpcFlags+1 : PLA
-RTL
+	PHA : LDA.l NpcFlags+1 : ORA.b #$02 : STA.l NpcFlags+1 : PLA
+RTS
 ;--------------------------------------------------------------------------------
 ItemCheck_EtherTablet:
-	LDA NpcFlags+1 : AND.b #$01
+	LDA.l NpcFlags+1 : AND.b #$01
 RTL
 ;--------------------------------------------------------------------------------
 ItemCheck_BombosTablet:
-	LDA NpcFlags+1 : AND.b #$02
+	LDA.l NpcFlags+1 : AND.b #$02
 RTL
 ;--------------------------------------------------------------------------------
-SetTabletItem:
-	JSL.l GetSpriteID
-	PHA
-		LDA $8A : CMP.b #$03 : BEQ .ether ; if we're on the map where ether is, we're the ether tablet
-		.bombos
-		JSL.l ItemSet_BombosTablet : BRA .done
-		.ether
-		JSL.l ItemSet_EtherTablet
-		.done
-	PLA
-RTL
+SetTabletItemFlag:     
+        PHA
+                LDA.b OverworldIndex : CMP.b #$03 : BEQ .ether ; if we're on the map where ether is, we're the ether tablet
+                .bombos
+                JSR ItemSet_BombosTablet : BRA .done
+                .ether
+                JSR ItemSet_EtherTablet
+                .done
+        PLA
+RTS
 ;--------------------------------------------------------------------------------
 SpawnTabletItem:
-;	JSL.l HeartPieceGet
-;RTL
 	JSL.l LoadOutdoorValue
 	PHA
 	JSL.l PrepDynamicTile
-	
-	LDA.b #$01 : STA !FORCE_HEART_SPAWN : STA !SKIP_HEART_SAVE
-	JSL.l SetTabletItem
-	
+
+	JSL.l GetSpriteID
+
 	LDA.b #$EB
-	STA $7FFE00
+	STA.l MiniGameTime
 	JSL Sprite_SpawnDynamically
 
-	PLA : STA $0E80, Y ; Store item type
-	LDA $22 : STA $0D10, Y
-	LDA $23 : STA $0D30, Y
+	PLA : STA.w SpriteItemType, Y ; Store item type
+	LDA.b LinkPosX   : STA.w SpritePosXLow, Y
+	LDA.b LinkPosX+1 : STA.w SpritePosXHigh, Y
+  
+	LDA.b LinkPosY   : STA.w SpritePosYLow, Y
+	LDA.b LinkPosY+1 : STA.w SpritePosYHigh, Y
 
-	LDA $20 : STA $0D00, Y
-	LDA $21 : STA $0D20, Y
+	LDA.b #$00 : STA.w SpriteLayer, Y
 
-	LDA.b #$00 : STA $0F20, Y
-	
-	LDA.b #$7F : STA $0F70, Y ; spawn WAY up high
+	LDA.b #$7F : STA.w SpriteZCoord, Y ; spawn WAY up high
 RTL
 ;--------------------------------------------------------------------------------
 MaybeUnlockTabletAnimation:
 	PHA : PHP
 		JSL.l IsMedallion : BCC +
-			STZ $0112 ; disable falling-medallion mode
-			STZ $03EF ; release link from item-up pose
-			LDA.b #$00 : STA $5D ; set link to ground state
-			
+                        JSR SetTabletItemFlag
+			STZ.w MedallionFlag ; disable falling-medallion mode
+			STZ.w ForceSwordUp ; release link from item-up pose
+			LDA.b #$00 : STA.b LinkState ; set link to ground state
+
 			REP #$20 ; set 16-bit accumulator
-				LDA $8A : CMP.w #$0030 : BNE ++ ; Desert
+				LDA.b OverworldIndex : CMP.w #$0030 : BNE ++ ; Desert
 					SEP #$20 ; set 8-bit accumulator
-					LDA.b #$02 : STA $2F ; face link forward
-					LDA.b #$3C : STA $46 ; lock link for 60f
+					LDA.b #$02 : STA.b LinkDirection ; face link forward
+					LDA.b #$3C : STA.b $46 ; lock link for 60f
 				++
 			SEP #$20 ; set 8-bit accumulator
 		+
@@ -75,15 +72,15 @@ RTL
 ;--------------------------------------------------------------------------------
 IsMedallion:
 	REP #$20 ; set 16-bit accumulator
-	LDA $8A
+	LDA.b OverworldIndex
 	CMP.w #$03 : BNE + ; Death Mountain
-		LDA $22 : CMP.w #1890 : !BGE ++
+		LDA.b LinkPosX : CMP.w #1890 : !BGE ++
 			SEC
 			JMP .done
 		++
 		BRA .false
 	+ CMP.w #$30 : BNE + ; Desert
-		LDA $22 : CMP.w #512 : !BLT ++
+		LDA.b LinkPosX : CMP.w #512 : !BLT ++
 			SEC
 			JMP .done
 		++
@@ -95,41 +92,21 @@ IsMedallion:
 RTL
 ;--------------------------------------------------------------------------------
 LoadNarrowObject:
-	LDA.l AddReceivedItemExpanded_wide_item_flag, X : STA ($92), Y ; AddReceiveItem.wide_item_flag?
+	LDA.l AddReceivedItemExpanded_wide_item_flag, X : STA.b ($92), Y ; AddReceiveItem.wide_item_flag?
 RTL
 ;--------------------------------------------------------------------------------
-DrawNarrowDroppedObject:
-    ; If it's a 16x16 sprite, we'll only draw one, otherwise we'll end up drawing
-    ; two 8x8 sprites stack on top of each other
-    CMP.b #$02 : BEQ .large_sprite
-    
-    REP #$20
-    
-    ; Shift Y coordinate 8 pixels down
-    LDA $08 : STA $00
-    
-    SEP #$20
-    
-    JSL.l Ancilla_SetOam_XY_Long
-    
-    ; always use the same character graphic (0x34)
-    LDA.b #$34 : STA ($90), Y : INY
-    
-    LDA.l AddReceivedItemExpanded_properties, X : BPL .valid_lower_properties
-    
-    LDA $74
-
-.valid_lower_properties
-
-    ASL A : ORA.b #$30 : STA ($90), Y 
-    
-    INY : PHY
-    
-    TYA : !SUB.b #$04 : LSR #2 : TAY
-    
-    LDA.b #$00 : STA ($92), Y
-    
-    PLY
-.large_sprite
-RTL
+CheckTabletItem:
 ;--------------------------------------------------------------------------------
+; Zero flag set = Item not collected
+; Zero flag clear = Item  collected
+;--------------------------------------------------------------------------------
+        JSL.l IsMedallion : BCS .tablet
+                LDA.l OverworldEventDataWRAM, X : AND.b #$40 ; What we wrote over
+                RTL
+        .tablet
+        LDA.b OverworldIndex : CMP.b #$03 : BEQ .ether
+                LDA.l NpcFlags+1 : AND.b #$02 : BNE .done
+        .ether
+        LDA.l NpcFlags+1 : AND.b #$01
+        .done
+RTL

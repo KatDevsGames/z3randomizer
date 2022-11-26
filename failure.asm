@@ -1,9 +1,9 @@
 pushtable
 
-table "bsodencode.txt"
+table "data/bsodencode.txt"
 
 ; Uncomment this to force a crash to test message
-;pushpc : org $008132 : db 0 : pullpc
+; pushpc : org $008132 : db 0 : pullpc
 
 ;===================================================================================================
 
@@ -11,29 +11,29 @@ DontUseZSNES:
 	SEP #$35 ; sets carry and I flag too
 
 	LDA.b #$00
-	STA.l $4200 ; disable NMI and IRQ
-	STA.l $420C ; disable HDMA
+	STA.l NMITIMEN ; disable NMI and IRQ
+	STA.l HDMAEN ; disable HDMA
 
 	ROR ; A = 0x80 from carry
-	STA.l $2100
-	STA.l $2115
+	STA.l INIDISP
+	STA.l VMAIN
 
 	; Empty VRAM
-	LDA.b #AllZeros>>16 : STA.l $4304
+	LDA.b #AllZeros>>16 : STA.l A1B0
 
 	REP #$20
 
 	LDA.w #AllZeros
-	STA.l $4302
+	STA.l A1T0L
 
 	LDA.w #$1809
-	STA.l $4300
+	STA.l DMAP0
 
 	LDA.w #$0000
-	STA.l $4305
+	STA.l DAS0L
 
 	LDA.w #$0001
-	STA.l $420B
+	STA.l MDMAEN
 
 	JSR ConfigurePPUForFailureReport
 	JSR ConfigureBSODVWF
@@ -43,7 +43,7 @@ DontUseZSNES:
 	JSR DrawVWFMessage
 
 	LDA.w #$0F0F
-	STA.w $2100
+	STA.w INIDISP
 
 --	BRA --
 
@@ -77,29 +77,29 @@ Crashed:
 	SEP #$35 ; sets carry and I flag too
 
 	LDA.b #$00
-	STA.l $4200 ; disable NMI and IRQ
-	STA.l $420C ; disable HDMA
+	STA.l NMITIMEN ; disable NMI and IRQ
+	STA.l HDMAEN ; disable HDMA
 
 	ROR ; A = 0x80 from carry
-	STA.l $2100
-	STA.l $2115
+	STA.l INIDISP
+	STA.l VMAIN
 
 	; Empty VRAM
-	LDA.b #AllZeros>>16 : STA.l $4304
+	LDA.b #AllZeros>>16 : STA.l A1B0
 
 	REP #$38
 
 	LDA.w #AllZeros
-	STA.l $4302
+	STA.l A1T0L
 
 	LDA.w #$1809
-	STA.l $4300
+	STA.l DMAP0
 
 	LDA.w #$0000
-	STA.l $4305
+	STA.l DAS0L
 
 	LDA.w #$0001
-	STA.l $420B
+	STA.l MDMAEN
 
 ;===================================================================================================
 
@@ -113,32 +113,32 @@ Crashed:
 
 	; stack pointer
 	LDA.w #$0C38>>1
-	STA.b $2116
+	STA.b VMADDL
 
 	TSC
 	XBA
 	AND.w #$00FF
 	ORA.w #$0100
-	STA.b $2118
+	STA.b VMDATAL
 
 	TSC
 	AND.w #$00FF
 	ORA.w #$0100
-	STA.l $2118
+	STA.l VMDATAL
 
 	; game module
 	LDA.w #$0C78>>1
-	STA.b $2116
+	STA.b VMADDL
 
-	LDA.l $10
+	LDA.l GameMode
 	AND.w #$00FF
 	ORA.w #$0100
-	STA.b $2118
+	STA.b VMDATAL
 
-	LDA.l $11
+	LDA.l GameSubMode
 	AND.w #$00FF
 	ORA.w #$0100
-	STA.b $2118
+	STA.b VMDATAL
 
 ;---------------------------------------------------------------------------------------------------
 
@@ -176,7 +176,7 @@ Crashed:
 
 .next_row
 	STA.l $7F0004
-	STA.b $2116
+	STA.b VMADDL
 
 	LDY.w #20
 
@@ -194,7 +194,7 @@ Crashed:
 	AND.w #$01FF
 
 .in_stack
-	STA.b $2118
+	STA.b VMDATAL
 
 	DEX
 	TXA
@@ -235,15 +235,9 @@ Crashed:
 	JSR DrawVWFMessage
 
 	LDA.w #$0F0F
-	STA.w $2100
+	STA.w INIDISP
 
 --	BRA --
-
-;	LDA.w #$0000
-;	TCD
-;
-;	TSC
-
 
 BSODMessage:
 	db "A fatal error has occurred and resulted in an", $80
@@ -260,11 +254,11 @@ BSODMessage:
 ;===================================================================================================
 
 DrawVWFMessage:
-	STA.b $06
+	STA.b Scrap06
 
 .next
-	LDA.b ($06)
-	INC.b $06
+	LDA.b (Scrap06)
+	INC.b Scrap06
 	AND.w #$00FF
 	CMP.w #$0080
 	BEQ .done_row
@@ -284,26 +278,26 @@ DrawVWFMessage:
 	ASL
 	TAX
 	LDA.w .row_offset,X
-	STA.w $2116
+	STA.w VMADDL
 
 	INC.b VWFR
 
 	LDA.w #$1800
-	STA.w $4300
+	STA.w DMAP0
 	
 	LDA.w #20*16
-	STA.w $4305
+	STA.w DAS0L
 
 	LDA.w #$1000
-	STA.w $4302
+	STA.w A1T0L
 
 	SEP #$20
 
-	STZ.w $2115
-	STZ.w $4304
+	STZ.w VMAIN
+	STZ.w A1B0
 
 	LDA.b #$01
-	STA.w $420B
+	STA.w MDMAEN
 
 	REP #$20
 
@@ -347,7 +341,7 @@ DrawFailureVWFChar:
 	ASL
 	ASL
 	ADC.w #BSODFontGFX
-	STA.b $08
+	STA.b Scrap08
 
 	LDA.b VWFP
 	AND.w #$FFF8
@@ -402,23 +396,23 @@ LoadBSODHexFont:
 	REP #$20
 
 	LDA.w #BSODHex
-	STA.w $4302
+	STA.w A1T0L
 
 	LDA.w #$1801
-	STA.w $4300
+	STA.w DMAP0
 
 	LDA.w #$1000
-	STA.w $4305
+	STA.w DAS0L
 
 	LDA.w #$2800
-	STA.w $2116
+	STA.w VMADDL
 
 	SEP #$20
 	LDA.b #BSODHex>>16
-	STA.w $4304
+	STA.w A1B0
 
 	LDA.b #$01
-	STA.w $420B
+	STA.w MDMAEN
 
 	REP #$30
 
@@ -437,21 +431,21 @@ ConfigureBSODVWF:
 	LDX.b #$FF
 	LDY.b #$7F
 
-	STZ.b $2121
-	STZ.b $2122 : STZ.b $2122
+	STZ.b CGADD
+	STZ.b CGDATA : STZ.b CGDATA
 
-	STX.b $2122 : STY.b $2122
+	STX.b CGDATA : STY.b CGDATA
 
 	LDA.b #$05
-	STA.b $2121
+	STA.b CGADD
 
-	LDA.b #$11 : STA.b $2122 : STY.b $2122
+	LDA.b #$11 : STA.b CGDATA : STY.b CGDATA
 
-	LDA.b #$21 : STA.b $2121
-	STX.b $2122 : STY.b $2122
+	LDA.b #$21 : STA.b CGADD
+	STX.b CGDATA : STY.b CGDATA
 
-	LDA.b #$25 : STA.b $2121
-	LDA.b #$11 : STA.b $2122 : STY.b $2122
+	LDA.b #$25 : STA.b CGADD
+	LDA.b #$11 : STA.b CGDATA : STY.b CGDATA
 
 	REP #$30
 
@@ -473,14 +467,14 @@ ConfigureBSODVWF:
 
 .start
 	STA.w $20
-	STA.b $2116
+	STA.b VMADDL
 
 	PLA
 
 	LDY.w #30
 
 .next_char
-	STA.b $2118
+	STA.b VMDATAL
 	INC
 	DEY
 	BNE .next_char
@@ -516,39 +510,39 @@ ConfigurePPUForFailureReport:
 	PHK
 	PLB
 
-	STZ.w $2105 ; BG mode 0
-	STZ.w $2106 ; no mosaic
-	STZ.w $2107 ; BG1 tilemap to $0000
-	STZ.w $212D
+	STZ.w BGMODE ; BG mode 0
+	STZ.w MOSAIC ; no mosaic
+	STZ.w BG1SC ; BG1 tilemap to $0000
+	STZ.w TS
 
-	STZ.w $210D : STZ.w $210D
-	STZ.w $210E : STZ.w $210E
-	STZ.w $210F : STZ.w $210F
-	STZ.w $2110 : STZ.w $2110
+	STZ.w BG1HOFS : STZ.w BG1HOFS
+	STZ.w BG1VOFS : STZ.w BG1VOFS
+	STZ.w BG2HOFS : STZ.w BG2HOFS
+	STZ.w BG2VOFS : STZ.w BG2VOFS
 
 
-	STZ.w $2123
-	STZ.w $2131
-	STZ.w $2133
+	STZ.w W12SEL
+	STZ.w CGADSUB
+	STZ.w SETINI
 
 	LDA.b #$04
-	STA.w $2108 ; BG1 tilemap to $0800
+	STA.w BG2SC ; BG1 tilemap to $0800
 
 	LDA.b #$21
-	STA.w $210B
+	STA.w BG12NBA
 
 	LDA.b #$03
-	STA.w $212C
+	STA.w TM
 
 	RTS
 
 ;===================================================================================================
 
 BSODHex:
-incbin "bsodhex.2bpp"
+incbin "data/bsodhex.2bpp"
 
 BSODFontGFX:
-incbin "bsodfont.1bpp"
+incbin "data/bsodfont.1bpp"
 
 BSODCharWidths:
 	; [space]
