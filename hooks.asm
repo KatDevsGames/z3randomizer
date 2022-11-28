@@ -1116,6 +1116,13 @@ JSL.l CheckCloseItemMenu
 org $0DEE70 ; <- 6EE70 - equipment.asm : 2137
 JSL.l PrepItemScreenBigKey : NOP
 ;--------------------------------------------------------------------------------
+org $0DDEA5 ; LDA.b Joy1A_New : BEQ .wait_for_button 
+JSL.l HandleEmptyMenu : RTS
+org $0DEB3C ; LDA.w ItemCursor : AND.w #$00FF
+JML.l MaybeDrawEquippedItem : NOP #2
+org $0DE363 ; LDA.b #$04 : STA.w SubModuleInterface
+JSL.l RestoreMenu_SetSubModule : NOP
+;--------------------------------------------------------------------------------
 org $08D395 ; <- 45395 - ancilla_bird_travel_intro.asm : 253
 JSL.l UpgradeFlute : NOP #2
 ;--------------------------------------------------------------------------------
