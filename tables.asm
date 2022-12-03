@@ -1061,13 +1061,22 @@ org $308358
 AllowAccidentalMajorGlitch:
 db $00
 ;--------------------------------------------------------------------------------
-; GFX pointer (0x180359 - 0x18035B)
+; GFX pointers (0x180359 - 0x18035B)
 ; For 3rd party sprite stuff
 ;--------------------------------------------------------------------------------
 org $308359
 dl GfxPalettes
+
+org $30835C
+dl ItemReceiptGraphicsOffsets
+
+org $30835F
+dl ItemReceiptGraphicsOffsets
+
+; reserving up to 7F for more pointers as needed
+
 ;================================================================================
-; 0x18035C - 0x1814FF (unused)
+; 0x180380 - 0x1814FF (unused)
 ;================================================================================
 ; $309500 (0x181500) - $309FFF (0x181FFF) original 0x39C bytes
 ; Replacement Ending Sequence Text Data
@@ -1430,14 +1439,14 @@ db $04
 ;org $06B2AA ; <- 332AA sprite_smithy_bros.asm : 152 (JSL Sprite_ShowSolicitedMessageIfPlayerFacing)
 ;JSL Sprite_ShowMessageFromPlayerContact ; Inverted uses Sprite_ShowMessageFromPlayerContact
 ;;---------------------------------------------------------------------------------
-org $00886e ; <- Bank00.asm : 1050 (LDA Overworld_TileAttr, X)
+org $00886E ; <- Bank00.asm : 1050 (LDA Overworld_TileAttr, X)
 LDA.l Overworld_TileAttr, X ; use "JML InvertedTileAttributeLookup" for inverted
 Overworld_GetTileAttrAtLocation_continue:
 ;================================================================================
 org $0DDBEC ; <- 6DBEC
-dw #10000 ; Rupee Limit +1
+dw 10000 ; Rupee Limit +1
 org $0DDBF1 ; <- 6DBF1
-dw #9999 ; Rupee Limit
+dw 9999 ; Rupee Limit
 ;================================================================================
 ;2B:Bottle Already Filled w/ Red Potion
 ;2C:Bottle Already Filled w/ Green Potion

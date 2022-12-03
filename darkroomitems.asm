@@ -2,12 +2,12 @@ CheckReceivedItemPropertiesBeforeLoad:
     LDA.b RoomIndex : BEQ .normalCode
     LDA.l RoomFade : BNE .lightOff
     .normalCode
-    LDA.l AddReceivedItemExpanded_properties, X ;Restore Rando Code
+    LDA.l ItemReceipts_palette, X ;Restore Rando Code
     RTL
 
 .lightOff
     PHX : PHY : PHB
-    LDA.l AddReceivedItemExpanded_properties, X ; get palette
+    LDA.l ItemReceipts_palette, X ; get palette
 
     REP #$30
     AND.w #$0007 ; mask out palette

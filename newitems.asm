@@ -39,7 +39,7 @@
 ; #$80 - Compasses
 ; #$90 - Big Keys
 ; #$A0 - Small Keys
-; #$FE - Server Request (Asychronous Chest)
+; #$FE - Server Request (Asynchronous Chest)
 ; #$FF - Null Chest
 ;--------------------------------------------------------------------------------
 ; Service Indexes
@@ -76,7 +76,7 @@ GetAnimatedSpriteBufferPointer_table:
 dw $09C0, $0030, $0060, $0090, $00C0, $0300, $0318, $0330
 dw $0348, $0360, $0378, $0390, $0930, $03F0, $0420, $0450
 
-dw $0468, $0600, $0630, $0660, $0690, $06C0, $06F0, $0720 ; disassembly (incorrectly?) says this is $0270
+dw $0468, $0600, $0630, $0660, $0690, $06C0, $06F0, $0720
 dw $0750, $0768, $0900, $0930, $0960, $0990, $09F0, $0000
 
 dw $00F0, $0A20, $0A50, $0660, $0600, $0618, $0630, $0648
@@ -486,313 +486,6 @@ AddReceivedItemExpanded:
 ;--------------------------------------------------------------------------------
 ;DATA AddReceivedItemExpanded
 {
-; This is a temporary measure for Fish to have consistent addresses
-org $A08800
-
-.y_offsets
-    db -5, -5, -5, -5, -5, -4, -4, -5
-    db -5, -4, -4, -4, -2, -4, -4, -4
-
-    db -4, -4, -4, -4, -4, -4, -4, -4
-    db -4, -4, -4, -4, -4, -4, -4, -4
-
-    db -4, -4, -4, -5, -4, -4, -4, -4
-    db -4, -4, -2, -4, -4, -4, -4, -4
-
-    db -4, -4, -4, -4, -2, -2, -2, -4
-    db -4, -4, -4, -4, -4, -4, -4, -4
-
-    db -4, -4, -2, -2, -4, -2, -4, -4
-    db -4, -5, -4, -4
-	;new
-	db -4, -4, -4, -4
-	db -5 ; Master Sword (Safe)
-	db -4, -4, -4, -4 ; +5/+10 Bomb Arrows
-	db -4, -4, -4 ; 3x Programmable Item
-	db -4 ; Upgrade-Only Sivler Arrows
-	db -4 ; 1 Rupoor
-	db -4 ; Null Item
-	db -4, -4, -4 ; Red, Blue & Green Clocks
-	db -4, -4, -4, -4 ; Progressive Sword, Shield, Armor & Gloves
-	db -4, -4 ; RNG Single & Multi
-	db -4, -4 ; Progressive Bow x2
-	db -4, -4, -4, -4 ; Unused
-	db -4, -4, -4 ; Goal Item Single, Multi & Alt Multi
-	db -4, -4, -4 ; Unused
-	db -4, -4, -4, -4, -4, -4, -4, -4, -4, -4, -4, -4, -4, -4, -4, -4 ; Free Map
-	db -4, -4, -4, -4, -4, -4, -4, -4, -4, -4, -4, -4, -4, -4, -4, -4 ; Free Compass
-	db -4, -4, -4, -4, -4, -4, -4, -4, -4, -4, -4, -4, -4, -4, -4, -4 ; Free Big Key
-	db -4, -4, -4, -4, -4, -4, -4, -4, -4, -4, -4, -4, -4, -4, -4, -4 ; Free Small Key
-	db -4, -4, -4, -4, -4, -4, -4, -4, -4, -4, -4, -4, -4, -4, -4, -4 ; Unused
-	db -4, -4, -4, -4, -4, -4, -4, -4, -4, -4, -4, -4, -4, -4, -4, -4 ; Unused
-	db -4, -4, -4, -4, -4, -4, -4, -4, -4, -4, -4, -4, -4, -4, -4, -4 ; Unused
-	db -4, -4, -4, -4, -4, -4, -4, -4, -4, -4, -4, -4, -4, -4, -4, -4 ; Unused
-
-.x_offsets
-    db  4,  4,  4,  4,  4,  0,  0,  4
-    db  4,  4,  4,  4,  5,  0,  0,  0
-
-    db  0,  0,  0,  4,  0,  4,  0,  0
-    db  4,  0,  0,  0,  0,  0,  0,  0
-
-    db  0,  0,  0,  0,  4,  0,  0,  0
-    db  0,  0,  5,  0,  0,  0,  0,  0
-
-    db  0,  0,  0,  0,  4,  4,  4,  0
-    db  0,  0,  0,  0,  0,  0,  0,  0
-
-    db  0,  0,  4,  4,  0,  4,  0,  0
-    db  0,  4,  0,  0
-	;new
-	db  0,  0,  0,  0
-	db  4 ; Master Sword (Safe)
-	db  0,  0,  0,  0 ; +5/+10 Bomb Arrows
-	db  0,  0,  0 ; 3x Programmable Item
-	db  0 ; Upgrade-Only Sivler Arrows
-	db  4 ; 1 Rupoor
-	db  0 ; Null Item
-	db  0, 0, 0 ; Red, Blue & Green Clocks
-	db  0, 0, 0, 0 ; Progressive Sword, Shield, Armor & Gloves
-	db  0, 0 ; RNG Single & Multi
-	db  0, 0 ; Progressive Bow x2
-	db  0, 0, 0, 0 ; Unused
-	db  0, 0, 0 ; Goal Item Single, Multi & Alt Multi
-	db  0, 0, 0 ; Unused
-	db  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ; Free Map
-	db  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ; Free Compass
-	db  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ; Free Big Key
-	;db  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ; *EVENT*
-	db  4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4 ; Free Small Key
-	db  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ; Unused
-	db  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ; Unused
-	db  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ; Unused
-	db  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ; Unused
-
-.item_graphics_indices
-    db $06, $18, $18, $18, $2D, $20, $2E, $09
-    db $09, $0A, $08, $05, $10, $0B, $2C, $1B
-
-    db $1A, $1C, $14, $19, $0C, $07, $1D, $2F
-    db $07, $15, $12, $0D, $0D, $0E, $11, $17
-
-    db $28, $27, $04, $04, $0F, $16, $03, $13
-    db $01, $1E, $10, $00, $00, $00, $00, $00
-
-    db $00, $30, $22, $21, $24, $24, $24, $23
-    db $23, $23, $29, $2A, $2C, $2B, $03, $03
-
-    db $34, $35, $31, $33, $02, $32, $36, $37
-    db $2C, $06, $0C, $38
-	;new
-	db $39, $3A, $3B, $3C
-	;5x
-	db $18 ; Master Sword (Safe)
-	db $3D, $3E, $3F, $40 ; +5/+10 Bomb Arrows
-	db $00, $00, $00 ; 3x Programmable Item
-	db $41 ; Upgrade-Only Sivler Arrows
-	db $24 ; 1 Rupoor
-	db $47 ; Null Item
-	db $48, $48, $48 ; Red, Blue & Green Clocks
-	db $FF, $FF, $04, $0D ; Progressive Sword, Shield, Armor & Gloves
-	db $FF, $FF ; RNG Single & Multi
-	db $FF, $FF ; Progressive Bow x2
-	db $FF, $FF, $FF, $FF ; Unused
-	db $49, $4A, $49 ; Goal Item Single, Multi & Alt Multi
-	db $FF, $FF, $FF ; Unused
-	db $21, $21, $21, $21, $21, $21, $21, $21, $21, $21, $21, $21, $21, $21, $21, $21 ; Free Map
-	db $16, $16, $16, $16, $16, $16, $16, $16, $16, $16, $16, $16, $16, $16, $16, $16 ; Free Compass
-	db $22, $22, $22, $22, $22, $22, $22, $22, $22, $22, $22, $22, $22, $22, $22, $22 ; Free Big Key
-	db $0F, $0F, $0F, $0F, $0F, $0F, $0F, $0F, $0F, $0F, $0F, $0F, $0F, $0F, $0F, $0F ; Free Small Key
-	;db $49, $49, $49, $49, $49, $49, $49, $49, $49, $49, $49, $49, $49, $49, $49, $49 ; *EVENT*
-	;db $49, $49, $49, $49, $49, $49, $49, $49, $49, $49, $49, $49, $49, $49, $49, $49 ; *EVENT*
-	;db $49, $49, $49, $49, $49, $49, $49, $49, $49, $49, $49, $49, $49, $49, $49, $49 ; *EVENT*
-	;db $49, $49, $49, $49, $49, $49, $49, $49, $49, $49, $49, $49, $49, $49, $49, $49 ; *EVENT*
-
-	db $49, $49, $49, $49, $49, $49, $49, $49, $49, $49, $49, $49, $49, $49, $49, $49 ; Unused
-	db $49, $49, $49, $49, $49, $49, $49, $49, $49, $49, $49, $49, $49, $49, $49, $49 ; Unused
-	db $49, $49, $49, $49, $49, $49, $49, $49, $49, $49, $49, $49, $49, $49, $49, $49 ; Unused
-	db $49, $49, $49, $49, $49, $49, $49, $49, $49, $49, $49, $49, $49, $49, $49, $49 ; Unused
-
-.wide_item_flag
-    db $00, $00, $00, $00, $00, $02, $02, $00
-    db $00, $00, $00, $00, $00, $02, $02, $02
-
-    db $02, $02, $02, $00, $02, $00, $02, $02
-    db $00, $02, $02, $02, $02, $02, $02, $02
-
-    db $02, $02, $02, $02, $00, $02, $02, $02
-    db $02, $02, $00, $02, $02, $02, $02, $02
-
-    db $02, $02, $02, $02, $00, $00, $00, $02
-    db $02, $02, $02, $02, $02, $02, $02, $02
-
-    db $02, $02, $00, $00, $02, $00, $02, $02
-    db $02, $00, $02, $02
-	;new
-	db $02, $02, $02, $02
-	db $00 ; Master Sword (Safe)
-	db $02, $02, $02, $02 ; +5/+10 Bomb Arrows
-	db $02, $02, $02 ; 3x Programmable Item
-	db $02 ; Upgrade-Only Sivler Arrows
-	db $00 ; 1 Rupoor
-	db $02 ; Null Item
-	db $02, $02, $02 ; Red, Blue & Green Clocks
-	db $02, $02, $02, $02 ; Progressive Sword, Shield, Armor & Gloves
-	db $02, $02 ; RNG Single & Multi
-	db $02, $02 ; Progressive Bow x2
-	db $02, $02, $02, $02 ; Unused
-	db $02, $02, $02 ; Goal Item Single, Multi & Alt Multi
-	db $02, $02, $02 ; Unused
-	db $02, $02, $02, $02, $02, $02, $02, $02, $02, $02, $02, $02, $02, $02, $02, $02 ; Free Map
-	db $02, $02, $02, $02, $02, $02, $02, $02, $02, $02, $02, $02, $02, $02, $02, $02 ; Free Compass
-	db $02, $02, $02, $02, $02, $02, $02, $02, $02, $02, $02, $02, $02, $02, $02, $02 ; Free Big Key
-	db $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00 ; Free Small Key
-
-	db $02, $02, $02, $02, $02, $02, $02, $02, $02, $02, $02, $02, $02, $02, $02, $02 ; Unused
-	db $02, $02, $02, $02, $02, $02, $02, $02, $02, $02, $02, $02, $02, $02, $02, $02 ; Unused
-	db $02, $02, $02, $02, $02, $02, $02, $02, $02, $02, $02, $02, $02, $02, $02, $02 ; Unused
-	db $02, $02, $02, $02, $02, $02, $02, $02, $02, $02, $02, $02, $02, $02, $02, $02 ; Unused
-	db $02, $02, $02, $02, $02, $02, $02, $02, $02, $02, $02, $02, $02, $02, $02, $02 ; Unused
-
-.properties
-    db  5, -1,  5,  5,  5,  5,  5,  1
-    db  2,  1,  1,  1,  2,  2,  2,  4
-
-    db  4,  4,  1,  1,  2,  1,  1,  1
-    db  2,  1,  2,  1,  4,  4,  2,  1
-
-    db  6,  1,  2,  1,  2,  2,  1,  2
-    db  2,  4,  1,  1,  4,  2,  1,  4
-
-    db  2,  2,  4,  4,  4,  2,  1,  4
-    db  1,  2,  2,  1,  2,  2,  1,  1
-
-    db  4,  4,  1,  2,  2,  4,  4,  4
-    db  2,  5,  2,  1
-	;new
-	db  4,  4,  4,  4
-	db  5 ; Master Sword (Safe)
-	db  4,  4,  4,  4 ; +5/+10 Bomb Arrows
-	db  4,  4,  4 ; 3x Programmable Item
-	db  1 ; Upgrade-Only Sivler Arrows
-	db  3 ; 1 Rupoor
-	db  1 ; Null Item
-	db  1, 2, 4 ; Red, Blue & Green Clocks
-	db  $FF, $FF, $FF, $FF ; Progressive Sword, Shield, Armor & Gloves
-	db  $FF, $FF ; RNG Single & Multi
-	db  0, 0 ; Progressive Bow
-	db  0, 0, 0, 0 ; Unused
-	db  4, 4, 4 ; Goal Item Single, Multi & Alt Multi
-	db  0, 0, 0 ; Unused
-	db  4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4 ; Free Map
-	db  2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2 ; Free Compass
-	db  4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4 ; Free Big Key
-	db  4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4 ; Free Small Key
-	db  4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4 ; Unused
-	db  4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4 ; Unused
-	db  4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4 ; Unused
-	db  4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4 ; Unused
-	db  4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4 ; Unused
-
-; \item Target SRAM addresses for items you receive
-.item_target_addr
-    dw $F359, $F359, $F359, $F359, $F35A, $F35A, $F35A, $F345
-    dw $F346, $F34B, $F342, $F340, $F341, $F344, $F35C, $F347
-
-    dw $F348, $F349, $F34A, $F34C, $F34C, $F350, $F35C, $F36B
-    dw $F351, $F352, $F353, $F354, $F354, $F34E, $F356, $F357
-
-    dw $F37A, $F34D, $F35B, $F35B, $F36F, $F364, $F36C, $F375
-    dw $F375, $F344, $F341, $F35C, $F35C, $F35C, $F36D, $F36E
-
-    dw $F36E, $F375, $F366, $F368, $F360, $F360, $F360, $F374
-    dw $F374, $F374, $F340, $F340, $F35C, $F35C, $F36C, $F36C
-
-    dw $F360, $F360, $F372, $F376, $F376, $F373, $F360, $F360
-    dw $F35C, $F359, $F34C, $F355
-	;new
-	dw $F375, $F376, $F373, $F373
-	dw $F359 ; Master Sword (Safe)
-	dw $F375, $F375, $F376, $F376 ; +5/+10 Bomb Arrows
-	dw $F41A, $F41C, $F41E ; 3x Programmable Item
-	dw $F340 ; Upgrade-Only Silver Arrows
-	dw $F360 ; 1 Rupoor
-	dw $F36A ; Null Item
-	dw $F454, $F454, $F454 ; Red, Blue & Green Clocks
-	dw $F359, $F35A, $F35B, $F354 ; Progressive Sword, Shield, Armor & Gloves
-	dw $F36A, $F36A ; RNG Single & Multi
-	dw $F340, $F340 ; Progressive Bow x2
-	dw $F36A, $F36A, $F36A, $F36A ; Unused
-	dw $F36A, $F36A, $F36A ; Goal Item Single, Multi & Alt Multi
-	dw $F36A, $F36A, $F36A ; Unused
-	dw $F36A, $F36A, $F36A, $F36A, $F36A, $F36A, $F36A, $F36A, $F36A, $F36A, $F36A, $F36A, $F36A, $F36A, $F36A, $F36A ; Free Map
-	dw $F36A, $F36A, $F36A, $F36A, $F36A, $F36A, $F36A, $F36A, $F36A, $F36A, $F36A, $F36A, $F36A, $F36A, $F36A, $F36A ; Free Compass
-	dw $F36A, $F36A, $F36A, $F36A, $F36A, $F36A, $F36A, $F36A, $F36A, $F36A, $F36A, $F36A, $F36A, $F36A, $F36A, $F36A ; Free Big Key
-	dw $F36A, $F36A, $F36A, $F36A, $F36A, $F36A, $F36A, $F36A, $F36A, $F36A, $F36A, $F36A, $F36A, $F36A, $F36A, $F36A ; Free Small Key
-	dw $F36A, $F36A, $F36A, $F36A, $F36A, $F36A, $F36A, $F36A, $F36A, $F36A, $F36A, $F36A, $F36A, $F36A, $F36A, $F36A ; Unused
-	dw $F36A, $F36A, $F36A, $F36A, $F36A, $F36A, $F36A, $F36A, $F36A, $F36A, $F36A, $F36A, $F36A, $F36A, $F36A, $F36A ; Unused
-	dw $F36A, $F36A, $F36A, $F36A, $F36A, $F36A, $F36A, $F36A, $F36A, $F36A, $F36A, $F36A, $F36A, $F36A, $F36A, $F36A ; Unused
-	dw $F36A, $F36A, $F36A, $F36A, $F36A, $F36A, $F36A, $F36A, $F36A, $F36A, $F36A, $F36A, $F36A, $F36A, $F36A, $F36A ; Unused
-	dw $F36A, $F36A, $F36A, $F36A, $F36A, $F36A, $F36A, $F36A, $F36A, $F36A, $F36A, $F36A, $F36A, $F36A, $F36A, $F36A ; Unused
-}
-
-; DATA Values to write to the above SRAM locations.
-{
-.item_values
-    db $01, $02, $03, $04, $01, $02, $03, $01
-    db $01, $01, $01, $01, $01, $02, $FF, $01
-
-    db $01, $01, $01, $01, $02, $01, $FF, $FF
-    db $01, $01, $02, $01, $02, $01, $01, $01
-
-    db $FF, $01, $FF, $02, $FF, $FF, $FF, $FF
-    db $FF, $FF, $02, $FF, $FF, $FF, $FF, $FF
-
-    db $FF, $FF, $FF, $FF, $FF, $FB, $EC, $FF
-    db $FF, $FF, $01, $03, $FF, $FF, $FF, $FF
-
-    db $9C, $CE, $FF, $01, $0A, $FF, $FF, $FF
-    db $FF, $01, $03, $01
-	;new
-	db $32, $46, $80, $80
-	db $02 ; Master Sword (Safe)
-	db $FF, $FF, $FF, $FF ; +5/+10 Bomb Arrows
-	db $FF, $FF, $FF ; 3x Programmable Item
-	db $FF ; Upgrade-Only Sivler Arrows
-	db $FF ; 1 Rupoor
-	db $FF ; Null Item
-	db $FF, $FF, $FF ; Red, Blue & Green Clocks
-	db $FF, $FF, $FF, $FF ; Progressive Sword, Shield, Armor & Gloves
-	db $FF, $FF ; RNG Single & Multi
-	db $FF, $FF ; Progressive Bow
-	db $FF, $FF, $FF, $FF ; Unused
-	db $FF, $FF, $FF ; Goal Item Single, Multi & Alt Multi
-	db $FF, $FF, $FF ; Unused
-	db $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF ; Free Map
-	db $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF ; Free Compass
-	db $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF ; Free Big Key
-	db $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF ; Free Small Key
-	db $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF ; Unused
-	db $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF ; Unused
-	db $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF ; Unused
-	db $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF ; Unused
-	db $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF ; Unused
-
-    ;0x00 - Sewer Passage
-    ;0x02 - Hyrule Castle
-    ;0x04 - Eastern Palace
-    ;0x06 - Desert Palace
-    ;0x08 - Hyrule Castle 2
-    ;0x0A - Swamp Palace
-    ;0x0C - Dark Palace
-    ;0x0E - Misery Mire
-    ;0x10 - Skull Woods
-    ;0x12 - Ice Palace
-    ;0x14 - Tower of Hera
-    ;0x16 - Gargoyle's Domain
-    ;0x18 - Turtle Rock
-    ;0x1A - Ganon's Tower
-
 .item_masks ; these are dungeon correlations to $7EF364 - $7EF369 so it knows where to store compasses, etc
     ; sewers and castle get 2 bits active so that they can share their items elegantly
     dw $C000, $C000, $2000, $1000, $0800, $0400, $0200, $0100
@@ -815,6 +508,290 @@ org $A08800
     dw $3EC0, $0AD0, $082C, $1003, $A905, $8D02, $0309, $20C0
     dw $44D0
 }
+
+ItemReceipts:
+	.offset_y  : fillbyte $00   : fill 256
+	.offset_x  : fillbyte $00   : fill 256
+	.graphics  : fillbyte $00   : fill 256 ; item_graphics_indices
+	.width     : fillbyte $00   : fill 256 ; wide_item_flag
+	.palette   : fillbyte $00   : fill 256 ; properties
+	.target    : fillword $0000 : fill 256*2 ; item_target_addr
+	.value     : fillbyte $00   : fill 256 ; item_values
+
+
+macro ReceiptProps(id, y, x, gfx, width, pal, sram, value)
+	pushpc
+
+	org ItemReceipts_offset_y+<id>      : db <y>
+	org ItemReceipts_offset_x+<id>      : db <x>
+	org ItemReceipts_graphics+<id>      : db <gfx>
+	org ItemReceipts_width+<id>         : db <width>
+	org ItemReceipts_palette+<id>       : db <pal>
+	org ItemReceipts_target+<id>+<id>   : dw <sram>
+	org ItemReceipts_value+<id>         : db <value>
+
+	pullpc
+
+endmacro
+
+%ReceiptProps($00, -5, 0, $06, 2, $02, $F359, $01) ; 00 - Fighter sword
+%ReceiptProps($01, -5, 4, $18, 0, $FF, $F359, $02) ; 01 - Master sword - TODO gfx value?
+%ReceiptProps($02, -5, 4, $18, 0, $05, $F359, $03) ; 02 - Tempered sword - TODO gfx value?
+%ReceiptProps($03, -5, 4, $18, 0, $05, $F359, $04) ; 03 - Butter sword - TODO gfx value?
+%ReceiptProps($04, -5, 4, $2D, 0, $05, $F35A, $01) ; 04 - Fighter shield
+%ReceiptProps($05, -4, 0, $20, 2, $05, $F35A, $02) ; 05 - Fire shield
+%ReceiptProps($06, -4, 0, $2E, 2, $05, $F35A, $03) ; 06 - Mirror shield
+%ReceiptProps($07, -5, 4, $09, 0, $01, $F345, $01) ; 07 - Fire rod
+%ReceiptProps($08, -5, 4, $09, 0, $02, $F346, $01) ; 08 - Ice rod
+%ReceiptProps($09, -4, 4, $0A, 0, $01, $F34B, $01) ; 09 - Hammer
+%ReceiptProps($0A, -4, 4, $08, 0, $01, $F342, $01) ; 0A - Hookshot
+%ReceiptProps($0B, -4, 4, $05, 0, $01, $F340, $01) ; 0B - Bow
+%ReceiptProps($0C, -2, 5, $10, 0, $02, $F341, $01) ; 0C - Boomerang
+%ReceiptProps($0D, -4, 0, $0B, 2, $02, $F344, $02) ; 0D - Powder
+%ReceiptProps($0E, -4, 0, $2C, 2, $02, $F35C, $FF) ; 0E - Bottle refill (bee)
+%ReceiptProps($0F, -4, 0, $1B, 2, $04, $F347, $01) ; 0F - Bombos
+%ReceiptProps($10, -4, 0, $1A, 2, $04, $F348, $01) ; 10 - Ether
+%ReceiptProps($11, -4, 0, $1C, 2, $04, $F349, $01) ; 11 - Quake
+%ReceiptProps($12, -4, 0, $14, 2, $01, $F34A, $01) ; 12 - Lamp
+%ReceiptProps($13, -4, 4, $19, 0, $01, $F34C, $01) ; 13 - Shovel
+%ReceiptProps($14, -4, 0, $0C, 2, $02, $F34C, $02) ; 14 - Flute
+%ReceiptProps($15, -4, 4, $07, 0, $01, $F350, $01) ; 15 - Somaria
+%ReceiptProps($16, -4, 0, $1D, 2, $01, $F35C, $FF) ; 16 - Bottle
+%ReceiptProps($17, -4, 0, $2F, 2, $01, $F36B, $FF) ; 17 - Heart piece
+%ReceiptProps($18, -4, 4, $07, 0, $02, $F351, $01) ; 18 - Byrna
+%ReceiptProps($19, -4, 0, $15, 2, $01, $F352, $01) ; 19 - Cape
+%ReceiptProps($1A, -4, 0, $12, 2, $02, $F353, $02) ; 1A - Mirror
+%ReceiptProps($1B, -4, 0, $0D, 2, $01, $F354, $01) ; 1B - Glove
+%ReceiptProps($1C, -4, 0, $0D, 2, $04, $F354, $02) ; 1C - Mitts
+%ReceiptProps($1D, -4, 0, $0E, 2, $04, $F34E, $01) ; 1D - Book
+%ReceiptProps($1E, -4, 0, $11, 2, $02, $F356, $01) ; 1E - Flippers
+%ReceiptProps($1F, -4, 0, $17, 2, $01, $F357, $01) ; 1F - Pearl
+%ReceiptProps($20, -4, 0, $28, 2, $06, $F37A, $FF) ; 20 - Crystal
+%ReceiptProps($21, -4, 0, $27, 2, $01, $F34D, $01) ; 21 - Net
+%ReceiptProps($22, -4, 0, $04, 2, $02, $F35B, $FF) ; 22 - Blue mail
+%ReceiptProps($23, -5, 0, $04, 2, $01, $F35B, $02) ; 23 - Red mail
+%ReceiptProps($24, -4, 4, $0F, 0, $02, $F36F, $FF) ; 24 - Small key
+%ReceiptProps($25, -4, 0, $16, 2, $02, $F364, $FF) ; 25 - Compbutt
+%ReceiptProps($26, -4, 0, $03, 2, $01, $F36C, $FF) ; 26 - Heart container from 4/4
+%ReceiptProps($27, -4, 0, $13, 2, $02, $F375, $FF) ; 27 - Bomb
+%ReceiptProps($28, -4, 0, $01, 2, $02, $F375, $FF) ; 28 - 3 bombs
+%ReceiptProps($29, -4, 0, $1E, 2, $04, $F344, $FF) ; 29 - Mushroom
+%ReceiptProps($2A, -2, 5, $10, 0, $01, $F341, $02) ; 2A - Red boomerang
+%ReceiptProps($2B, -4, 0, $00, 2, $01, $F35C, $FF) ; 2B - Full bottle (red)
+%ReceiptProps($2C, -4, 0, $00, 2, $04, $F35C, $FF) ; 2C - Full bottle (green)
+%ReceiptProps($2D, -4, 0, $00, 2, $02, $F35C, $FF) ; 2D - Full bottle (blue)
+%ReceiptProps($2E, -4, 0, $00, 2, $01, $F36D, $FF) ; 2E - Potion refill (red)
+%ReceiptProps($2F, -4, 0, $00, 2, $04, $F36E, $FF) ; 2F - Potion refill (green)
+%ReceiptProps($30, -4, 0, $00, 2, $02, $F36E, $FF) ; 30 - Potion refill (blue)
+%ReceiptProps($31, -4, 0, $30, 2, $02, $F375, $FF) ; 31 - 10 bombs
+%ReceiptProps($32, -4, 0, $22, 2, $04, $F366, $FF) ; 32 - Big key
+%ReceiptProps($33, -4, 0, $21, 2, $04, $F368, $FF) ; 33 - Map
+%ReceiptProps($34, -2, 4, $24, 0, $04, $F360, $FF) ; 34 - 1 rupee
+%ReceiptProps($35, -2, 4, $24, 0, $02, $F360, $FB) ; 35 - 5 rupees
+%ReceiptProps($36, -2, 4, $24, 0, $01, $F360, $EC) ; 36 - 20 rupees
+%ReceiptProps($37, -4, 0, $23, 2, $04, $F374, $FF) ; 37 - Green pendant
+%ReceiptProps($38, -4, 0, $23, 2, $01, $F374, $FF) ; 38 - Blue pendant
+%ReceiptProps($39, -4, 0, $23, 2, $02, $F374, $FF) ; 39 - Red pendant
+%ReceiptProps($3A, -4, 0, $29, 2, $02, $F340, $01) ; 3A - Tossed bow
+%ReceiptProps($3B, -4, 0, $2A, 2, $01, $F340, $03) ; 3B - Silvers
+%ReceiptProps($3C, -4, 0, $2C, 2, $02, $F35C, $FF) ; 3C - Full bottle (bee)
+%ReceiptProps($3D, -4, 0, $2B, 2, $02, $F35C, $FF) ; 3D - Full bottle (fairy)
+%ReceiptProps($3E, -4, 0, $03, 2, $01, $F36C, $FF) ; 3E - Boss heart
+%ReceiptProps($3F, -4, 0, $03, 2, $01, $F36C, $FF) ; 3F - Sanc heart
+%ReceiptProps($40, -4, 0, $34, 2, $04, $F360, $9C) ; 40 - 100 rupees
+%ReceiptProps($41, -4, 0, $35, 2, $04, $F360, $CE) ; 41 - 50 rupees
+%ReceiptProps($42, -2, 4, $31, 0, $01, $F372, $FF) ; 42 - Heart
+%ReceiptProps($43, -2, 4, $33, 0, $02, $F376, $01) ; 43 - Arrow
+%ReceiptProps($44, -4, 0, $02, 2, $02, $F376, $0A) ; 44 - 10 arrows
+%ReceiptProps($45, -2, 4, $32, 0, $04, $F373, $FF) ; 45 - Small magic
+%ReceiptProps($46, -4, 0, $36, 2, $04, $F360, $FF) ; 46 - 300 rupees
+%ReceiptProps($47, -4, 0, $37, 2, $04, $F360, $FF) ; 47 - 20 rupees green
+%ReceiptProps($48, -4, 0, $2C, 2, $02, $F35C, $FF) ; 48 - Full bottle (good bee)
+%ReceiptProps($49, -5, 4, $06, 0, $05, $F359, $01) ; 49 - Tossed fighter sword
+%ReceiptProps($4A, -4, 0, $0C, 2, $02, $F34C, $03) ; 4A - Bottle refill (good bee)
+%ReceiptProps($4B, -4, 0, $38, 2, $01, $F355, $01) ; 4B - Boots
+%ReceiptProps($4C, -4, 0, $39, 2, $04, $F375, $32) ; 4C - Bomb capacity (50)
+%ReceiptProps($4D, -4, 0, $3A, 2, $04, $F376, $46) ; 4D - Arrow capacity (70)
+%ReceiptProps($4E, -4, 0, $3B, 2, $F9, $F373, $80) ; 4E - 1/2 magic
+%ReceiptProps($4F, -4, 0, $3C, 2, $04, $F373, $80) ; 4F - 1/4 magic
+%ReceiptProps($50, -5, 4, $18, 0, $05, $F359, $02) ; 50 - Safe master sword - TODO gfx value
+%ReceiptProps($51, -4, 0, $3D, 2, $04, $F375, $FF) ; 51 - Bomb capacity (+5)
+%ReceiptProps($52, -4, 0, $3E, 2, $04, $F375, $FF) ; 52 - Bomb capacity (+10)
+%ReceiptProps($53, -4, 0, $3F, 2, $04, $F376, $FF) ; 53 - Arrow capacity (+5)
+%ReceiptProps($54, -4, 0, $40, 2, $04, $F376, $FF) ; 54 - Arrow capacity (+10)
+%ReceiptProps($55, -4, 0, $00, 2, $04, $F41A, $FF) ; 55 - Programmable item 1
+%ReceiptProps($56, -4, 0, $00, 2, $04, $F41C, $FF) ; 56 - Programmable item 2
+%ReceiptProps($57, -4, 0, $00, 2, $04, $F41E, $FF) ; 57 - Programmable item 3
+%ReceiptProps($58, -4, 0, $41, 2, $01, $F340, $FF) ; 58 - Upgrade-only silver arrows
+%ReceiptProps($59, -4, 4, $24, 0, $03, $F360, $FF) ; 59 - Rupoor
+%ReceiptProps($5A, -4, 0, $47, 2, $01, $F36A, $FF) ; 5A - Nothing
+%ReceiptProps($5B, -4, 0, $48, 2, $01, $F454, $FF) ; 5B - Red clock
+%ReceiptProps($5C, -4, 0, $48, 2, $02, $F454, $FF) ; 5C - Blue clock
+%ReceiptProps($5D, -4, 0, $48, 2, $04, $F454, $FF) ; 5D - Green clock
+%ReceiptProps($5E, -4, 0, $FE, 2, $FF, $F359, $FF) ; 5E - Progressive sword
+%ReceiptProps($5F, -4, 0, $FF, 2, $FF, $F35A, $FF) ; 5F - Progressive shield
+%ReceiptProps($60, -4, 0, $FD, 2, $FF, $F35B, $FF) ; 60 - Progressive armor
+%ReceiptProps($61, -4, 0, $0D, 2, $FF, $F354, $FF) ; 61 - Progressive glove
+%ReceiptProps($62, -4, 0, $FF, 2, $FF, $F36A, $FF) ; 62 - RNG pool item (single)
+%ReceiptProps($63, -4, 0, $FF, 2, $FF, $F36A, $FF) ; 63 - RNG pool item (multi)
+%ReceiptProps($64, -4, 0, $FF, 2, $00, $F340, $FF) ; 64 - Progressive bow
+%ReceiptProps($65, -4, 0, $FF, 2, $00, $F340, $FF) ; 65 - Progressive bow
+%ReceiptProps($66, -4, 0, $FF, 2, $00, $F36A, $FF) ; 66 - 
+%ReceiptProps($67, -4, 0, $FF, 2, $00, $F36A, $FF) ; 67 - 
+%ReceiptProps($68, -4, 0, $FF, 2, $00, $F36A, $FF) ; 68 - 
+%ReceiptProps($69, -4, 0, $FF, 2, $00, $F36A, $FF) ; 69 - 
+%ReceiptProps($6A, -4, 0, $49, 2, $04, $F36A, $FF) ; 6A - Triforce
+%ReceiptProps($6B, -4, 0, $4A, 2, $04, $F36A, $FF) ; 6B - Power star
+%ReceiptProps($6C, -4, 0, $49, 2, $04, $F36A, $FF) ; 6C - 
+%ReceiptProps($6D, -4, 0, $FF, 2, $00, $F36A, $FF) ; 6D - Server request item
+%ReceiptProps($6E, -4, 0, $FF, 2, $00, $F36A, $FF) ; 6E - Server request item (dungeon drop)
+%ReceiptProps($6F, -4, 0, $FF, 2, $00, $F36A, $FF) ; 6F - 
+%ReceiptProps($70, -4, 0, $21, 2, $04, $F36A, $FF) ; 70 - Map of Light World
+%ReceiptProps($71, -4, 0, $21, 2, $04, $F36A, $FF) ; 71 - Map of Dark World
+%ReceiptProps($72, -4, 0, $21, 2, $04, $F36A, $FF) ; 72 - Map of Ganon's Tower
+%ReceiptProps($73, -4, 0, $21, 2, $04, $F36A, $FF) ; 73 - Map of Turtle Rock
+%ReceiptProps($74, -4, 0, $21, 2, $04, $F36A, $FF) ; 74 - Map of Thieves' Town
+%ReceiptProps($75, -4, 0, $21, 2, $04, $F36A, $FF) ; 75 - Map of Tower of Hera
+%ReceiptProps($76, -4, 0, $21, 2, $04, $F36A, $FF) ; 76 - Map of Ice Palace
+%ReceiptProps($77, -4, 0, $21, 2, $04, $F36A, $FF) ; 77 - Map of Skull Woods
+%ReceiptProps($78, -4, 0, $21, 2, $04, $F36A, $FF) ; 78 - Map of Misery Mire
+%ReceiptProps($79, -4, 0, $21, 2, $04, $F36A, $FF) ; 79 - Map of Dark Palace
+%ReceiptProps($7A, -4, 0, $21, 2, $04, $F36A, $FF) ; 7A - Map of Swamp Palace
+%ReceiptProps($7B, -4, 0, $21, 2, $04, $F36A, $FF) ; 7B - Map of Agahnim's Tower
+%ReceiptProps($7C, -4, 0, $21, 2, $04, $F36A, $FF) ; 7C - Map of Desert Palace
+%ReceiptProps($7D, -4, 0, $21, 2, $04, $F36A, $FF) ; 7D - Map of Eastern Palace
+%ReceiptProps($7E, -4, 0, $21, 2, $04, $F36A, $FF) ; 7E - Map of Hyrule Castle
+%ReceiptProps($7F, -4, 0, $21, 2, $04, $F36A, $FF) ; 7F - Map of Sewers
+%ReceiptProps($80, -4, 0, $16, 2, $02, $F36A, $FF) ; 80 - Compass of Light World
+%ReceiptProps($81, -4, 0, $16, 2, $02, $F36A, $FF) ; 81 - Compass of Dark World
+%ReceiptProps($82, -4, 0, $16, 2, $02, $F36A, $FF) ; 82 - Compass of Ganon's Tower
+%ReceiptProps($83, -4, 0, $16, 2, $02, $F36A, $FF) ; 83 - Compass of Turtle Rock
+%ReceiptProps($84, -4, 0, $16, 2, $02, $F36A, $FF) ; 84 - Compass of Thieves' Town
+%ReceiptProps($85, -4, 0, $16, 2, $02, $F36A, $FF) ; 85 - Compass of Tower of Hera
+%ReceiptProps($86, -4, 0, $16, 2, $02, $F36A, $FF) ; 86 - Compass of Ice Palace
+%ReceiptProps($87, -4, 0, $16, 2, $02, $F36A, $FF) ; 87 - Compass of Skull Woods
+%ReceiptProps($88, -4, 0, $16, 2, $02, $F36A, $FF) ; 88 - Compass of Misery Mire
+%ReceiptProps($89, -4, 0, $16, 2, $02, $F36A, $FF) ; 89 - Compass of Dark Palace
+%ReceiptProps($8A, -4, 0, $16, 2, $02, $F36A, $FF) ; 8A - Compass of Swamp Palace
+%ReceiptProps($8B, -4, 0, $16, 2, $02, $F36A, $FF) ; 8B - Compass of Agahnim's Tower
+%ReceiptProps($8C, -4, 0, $16, 2, $02, $F36A, $FF) ; 8C - Compass of Desert Palace
+%ReceiptProps($8D, -4, 0, $16, 2, $02, $F36A, $FF) ; 8D - Compass of Eastern Palace
+%ReceiptProps($8E, -4, 0, $16, 2, $02, $F36A, $FF) ; 8E - Compass of Hyrule Castle
+%ReceiptProps($8F, -4, 0, $16, 2, $02, $F36A, $FF) ; 8F - Compass of Sewers
+%ReceiptProps($90, -4, 0, $22, 2, $04, $F36A, $FF) ; 90 - Skull key
+%ReceiptProps($91, -4, 0, $22, 2, $04, $F36A, $FF) ; 91 - Reserved
+%ReceiptProps($92, -4, 0, $22, 2, $04, $F36A, $FF) ; 92 - Big key of Ganon's Tower
+%ReceiptProps($93, -4, 0, $22, 2, $04, $F36A, $FF) ; 93 - Big key of Turtle Rock
+%ReceiptProps($94, -4, 0, $22, 2, $04, $F36A, $FF) ; 94 - Big key of Thieves' Town
+%ReceiptProps($95, -4, 0, $22, 2, $04, $F36A, $FF) ; 95 - Big key of Tower of Hera
+%ReceiptProps($96, -4, 0, $22, 2, $04, $F36A, $FF) ; 96 - Big key of Ice Palace
+%ReceiptProps($97, -4, 0, $22, 2, $04, $F36A, $FF) ; 97 - Big key of Skull Woods
+%ReceiptProps($98, -4, 0, $22, 2, $04, $F36A, $FF) ; 98 - Big key of Misery Mire
+%ReceiptProps($99, -4, 0, $22, 2, $04, $F36A, $FF) ; 99 - Big key of Dark Palace
+%ReceiptProps($9A, -4, 0, $22, 2, $04, $F36A, $FF) ; 9A - Big key of Swamp Palace
+%ReceiptProps($9B, -4, 0, $22, 2, $04, $F36A, $FF) ; 9B - Big key of Agahnim's Tower
+%ReceiptProps($9C, -4, 0, $22, 2, $04, $F36A, $FF) ; 9C - Big key of Desert Palace
+%ReceiptProps($9D, -4, 0, $22, 2, $04, $F36A, $FF) ; 9D - Big key of Eastern Palace
+%ReceiptProps($9E, -4, 0, $22, 2, $04, $F36A, $FF) ; 9E - Big key of Hyrule Castle
+%ReceiptProps($9F, -4, 0, $22, 2, $04, $F36A, $FF) ; 9F - Big key of Sewers
+%ReceiptProps($A0, -4, 4, $0F, 0, $04, $F36A, $FF) ; A0 - Small key of Sewers
+%ReceiptProps($A1, -4, 4, $0F, 0, $04, $F36A, $FF) ; A1 - Small key of Hyrule Castle
+%ReceiptProps($A2, -4, 4, $0F, 0, $04, $F36A, $FF) ; A2 - Small key of Eastern Palace
+%ReceiptProps($A3, -4, 4, $0F, 0, $04, $F36A, $FF) ; A3 - Small key of Desert Palace
+%ReceiptProps($A4, -4, 4, $0F, 0, $04, $F36A, $FF) ; A4 - Small key of Agahnim's Tower
+%ReceiptProps($A5, -4, 4, $0F, 0, $04, $F36A, $FF) ; A5 - Small key of Swamp Palace
+%ReceiptProps($A6, -4, 4, $0F, 0, $04, $F36A, $FF) ; A6 - Small key of Dark Palace
+%ReceiptProps($A7, -4, 4, $0F, 0, $04, $F36A, $FF) ; A7 - Small key of Misery Mire
+%ReceiptProps($A8, -4, 4, $0F, 0, $04, $F36A, $FF) ; A8 - Small key of Skull Woods
+%ReceiptProps($A9, -4, 4, $0F, 0, $04, $F36A, $FF) ; A9 - Small key of Ice Palace
+%ReceiptProps($AA, -4, 4, $0F, 0, $04, $F36A, $FF) ; AA - Small key of Tower of Hera
+%ReceiptProps($AB, -4, 4, $0F, 0, $04, $F36A, $FF) ; AB - Small key of Thieves' Town
+%ReceiptProps($AC, -4, 4, $0F, 0, $04, $F36A, $FF) ; AC - Small key of Turtle Rock
+%ReceiptProps($AD, -4, 4, $0F, 0, $04, $F36A, $FF) ; AD - Small key of Ganon's Tower
+%ReceiptProps($AE, -4, 4, $0F, 0, $04, $F36A, $FF) ; AE - Reserved
+%ReceiptProps($AF, -4, 4, $0F, 0, $04, $F36A, $FF) ; AF - Generic small key
+%ReceiptProps($B0, -4, 0, $49, 2, $04, $F36A, $FF) ; B0 - 
+%ReceiptProps($B1, -4, 0, $49, 2, $04, $F36A, $FF) ; B1 - 
+%ReceiptProps($B2, -4, 0, $49, 2, $04, $F36A, $FF) ; B2 - 
+%ReceiptProps($B3, -4, 0, $49, 2, $04, $F36A, $FF) ; B3 - 
+%ReceiptProps($B4, -4, 0, $49, 2, $04, $F36A, $FF) ; B4 - 
+%ReceiptProps($B5, -4, 0, $49, 2, $04, $F36A, $FF) ; B5 - 
+%ReceiptProps($B6, -4, 0, $49, 2, $04, $F36A, $FF) ; B6 - 
+%ReceiptProps($B7, -4, 0, $49, 2, $04, $F36A, $FF) ; B7 - 
+%ReceiptProps($B8, -4, 0, $49, 2, $04, $F36A, $FF) ; B8 - 
+%ReceiptProps($B9, -4, 0, $49, 2, $04, $F36A, $FF) ; B9 - 
+%ReceiptProps($BA, -4, 0, $49, 2, $04, $F36A, $FF) ; BA - 
+%ReceiptProps($BB, -4, 0, $49, 2, $04, $F36A, $FF) ; BB - 
+%ReceiptProps($BC, -4, 0, $49, 2, $04, $F36A, $FF) ; BC - 
+%ReceiptProps($BD, -4, 0, $49, 2, $04, $F36A, $FF) ; BD - 
+%ReceiptProps($BE, -4, 0, $49, 2, $04, $F36A, $FF) ; BE - 
+%ReceiptProps($BF, -4, 0, $49, 2, $04, $F36A, $FF) ; BF - 
+%ReceiptProps($C0, -4, 0, $49, 2, $04, $F36A, $FF) ; C0 - 
+%ReceiptProps($C1, -4, 0, $49, 2, $04, $F36A, $FF) ; C1 - 
+%ReceiptProps($C2, -4, 0, $49, 2, $04, $F36A, $FF) ; C2 - 
+%ReceiptProps($C3, -4, 0, $49, 2, $04, $F36A, $FF) ; C3 - 
+%ReceiptProps($C4, -4, 0, $49, 2, $04, $F36A, $FF) ; C4 - 
+%ReceiptProps($C5, -4, 0, $49, 2, $04, $F36A, $FF) ; C5 - 
+%ReceiptProps($C6, -4, 0, $49, 2, $04, $F36A, $FF) ; C6 - 
+%ReceiptProps($C7, -4, 0, $49, 2, $04, $F36A, $FF) ; C7 - 
+%ReceiptProps($C8, -4, 0, $49, 2, $04, $F36A, $FF) ; C8 - 
+%ReceiptProps($C9, -4, 0, $49, 2, $04, $F36A, $FF) ; C9 - 
+%ReceiptProps($CA, -4, 0, $49, 2, $04, $F36A, $FF) ; CA - 
+%ReceiptProps($CB, -4, 0, $49, 2, $04, $F36A, $FF) ; CB - 
+%ReceiptProps($CC, -4, 0, $49, 2, $04, $F36A, $FF) ; CC - 
+%ReceiptProps($CD, -4, 0, $49, 2, $04, $F36A, $FF) ; CD - 
+%ReceiptProps($CE, -4, 0, $49, 2, $04, $F36A, $FF) ; CE - 
+%ReceiptProps($CF, -4, 0, $49, 2, $04, $F36A, $FF) ; CF - 
+%ReceiptProps($D0, -4, 0, $49, 2, $04, $F36A, $FF) ; D0 - 
+%ReceiptProps($D1, -4, 0, $49, 2, $04, $F36A, $FF) ; D1 - 
+%ReceiptProps($D2, -4, 0, $49, 2, $04, $F36A, $FF) ; D2 - 
+%ReceiptProps($D3, -4, 0, $49, 2, $04, $F36A, $FF) ; D3 - 
+%ReceiptProps($D4, -4, 0, $49, 2, $04, $F36A, $FF) ; D4 - 
+%ReceiptProps($D5, -4, 0, $49, 2, $04, $F36A, $FF) ; D5 - 
+%ReceiptProps($D6, -4, 0, $49, 2, $04, $F36A, $FF) ; D6 - 
+%ReceiptProps($D7, -4, 0, $49, 2, $04, $F36A, $FF) ; D7 - 
+%ReceiptProps($D8, -4, 0, $49, 2, $04, $F36A, $FF) ; D8 - 
+%ReceiptProps($D9, -4, 0, $49, 2, $04, $F36A, $FF) ; D9 - 
+%ReceiptProps($DA, -4, 0, $49, 2, $04, $F36A, $FF) ; DA - 
+%ReceiptProps($DB, -4, 0, $49, 2, $04, $F36A, $FF) ; DB - 
+%ReceiptProps($DC, -4, 0, $49, 2, $04, $F36A, $FF) ; DC - 
+%ReceiptProps($DD, -4, 0, $49, 2, $04, $F36A, $FF) ; DD - 
+%ReceiptProps($DE, -4, 0, $49, 2, $04, $F36A, $FF) ; DE - 
+%ReceiptProps($DF, -4, 0, $49, 2, $04, $F36A, $FF) ; DF - 
+%ReceiptProps($E0, -4, 0, $49, 2, $04, $F36A, $FF) ; E0 - 
+%ReceiptProps($E1, -4, 0, $49, 2, $04, $F36A, $FF) ; E1 - 
+%ReceiptProps($E2, -4, 0, $49, 2, $04, $F36A, $FF) ; E2 - 
+%ReceiptProps($E3, -4, 0, $49, 2, $04, $F36A, $FF) ; E3 - 
+%ReceiptProps($E4, -4, 0, $49, 2, $04, $F36A, $FF) ; E4 - 
+%ReceiptProps($E5, -4, 0, $49, 2, $04, $F36A, $FF) ; E5 - 
+%ReceiptProps($E6, -4, 0, $49, 2, $04, $F36A, $FF) ; E6 - 
+%ReceiptProps($E7, -4, 0, $49, 2, $04, $F36A, $FF) ; E7 - 
+%ReceiptProps($E8, -4, 0, $49, 2, $04, $F36A, $FF) ; E8 - 
+%ReceiptProps($E9, -4, 0, $49, 2, $04, $F36A, $FF) ; E9 - 
+%ReceiptProps($EA, -4, 0, $49, 2, $04, $F36A, $FF) ; EA - 
+%ReceiptProps($EB, -4, 0, $49, 2, $04, $F36A, $FF) ; EB - 
+%ReceiptProps($EC, -4, 0, $49, 2, $04, $F36A, $FF) ; EC - 
+%ReceiptProps($ED, -4, 0, $49, 2, $04, $F36A, $FF) ; ED - 
+%ReceiptProps($EE, -4, 0, $49, 2, $04, $F36A, $FF) ; EE - 
+%ReceiptProps($EF, -4, 0, $49, 2, $04, $F36A, $FF) ; EF - 
+%ReceiptProps($F0, -4, 0, $49, 2, $04, $F36A, $FF) ; F0 - 
+%ReceiptProps($F1, -4, 0, $49, 2, $04, $F36A, $FF) ; F1 - 
+%ReceiptProps($F2, -4, 0, $49, 2, $04, $F36A, $FF) ; F2 - 
+%ReceiptProps($F3, -4, 0, $49, 2, $04, $F36A, $FF) ; F3 - 
+%ReceiptProps($F4, -4, 0, $49, 2, $04, $F36A, $FF) ; F4 - 
+%ReceiptProps($F5, -4, 0, $49, 2, $04, $F36A, $FF) ; F5 - 
+%ReceiptProps($F6, -4, 0, $49, 2, $04, $F36A, $FF) ; F6 - 
+%ReceiptProps($F7, -4, 0, $49, 2, $04, $F36A, $FF) ; F7 - 
+%ReceiptProps($F8, -4, 0, $49, 2, $04, $F36A, $FF) ; F8 - 
+%ReceiptProps($F9, -4, 0, $49, 2, $04, $F36A, $FF) ; F9 - 
+%ReceiptProps($FA, -4, 0, $49, 2, $04, $F36A, $FF) ; FA - 
+%ReceiptProps($FB, -4, 0, $49, 2, $04, $F36A, $FF) ; FB - 
+%ReceiptProps($FC, -4, 0, $49, 2, $04, $F36A, $FF) ; FC - 
+%ReceiptProps($FD, -4, 0, $49, 2, $04, $F36A, $FF) ; FD - 
+%ReceiptProps($FE, -4, 0, $49, 2, $04, $F36A, $FF) ; FE - Server request (async)
+%ReceiptProps($FF, -4, 0, $49, 2, $04, $F36A, $FF) ; FF - 
+
+
 ;--------------------------------------------------------------------------------
 BottleListExpanded:
     db $16, $2B, $2C, $2D, $3D, $3C, $48
@@ -1021,14 +998,14 @@ AttemptItemSubstitution:
         -
                 LDA.l ItemSubstitutionRules, X
                 CMP.b #$FF : BEQ .exit
-                CMP.b 1,s : BNE .noMatch
+                CMP.b 1,S : BNE .noMatch
                         .match
                         PHX
                         TXA : LSR #2 : TAX
                         LDA.l ItemLimitCounts, X
                         PLX
                         CMP.l ItemSubstitutionRules+1, X : !BLT +
-                                LDA.l ItemSubstitutionRules+2, X : STA.b 1,s
+                                LDA.l ItemSubstitutionRules+2, X : STA.b 1,S
                         +: BEQ .exit
                         .noMatch
                                 INX #4

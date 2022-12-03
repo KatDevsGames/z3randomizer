@@ -51,19 +51,21 @@ ItemCheck_TreeKid:
 RTL
 
 ItemCheck_TreeKid2:
-	LDA.l NpcFlags : AND.b #$08 : LSR #$02 ; FluteAardvark_InitialStateFromFluteState - 225: LDA FluteEquipment : AND.b #$03
+	LDA.l NpcFlags : AND.b #$08 : CMP.b #$08 ; FluteAardvark_InitialStateFromFluteState - 225: LDA FluteEquipment : AND.b #$03
 RTL
 
 ItemCheck_TreeKid3:
 	JSL $0DD030 ; FluteAardvark_Draw - thing we wrote over
 	LDA.l NpcFlags : AND.b #$08
-	BEQ .normal
-	BRA .done
+	BNE .done
+
 	LDA.b #$05
-	.normal
+
+.normal
 	LDA.w SpriteActivity, X
-	.done
-RTL
+
+.done
+	RTL
 
 ItemCheck_Sahasrala:
 	LDA.l NpcFlags : AND.b #$10
@@ -74,7 +76,7 @@ ItemCheck_Library:
 RTL
 
 ItemCheck_Mushroom:
-	LDA.l NpcFlags+1 : ROL #4 ; does the same thing as below
+	LDA.l NpcFlags+1 : AND.b #$10 : CMP.b #$10 ; does the same thing as below
 RTL
 
 ItemCheck_Powder:

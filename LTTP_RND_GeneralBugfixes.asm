@@ -68,6 +68,7 @@ incsrc floodgatesoftlock.asm
 incsrc heartpieces.asm
 incsrc npcitems.asm
 incsrc utilities.asm
+incsrc hextodec.asm
 incsrc flipperkill.asm
 incsrc pendantcrystalhud.asm
 incsrc potions.asm
@@ -162,6 +163,8 @@ endif
 warnpc $A58000
 
 org $A28000
+incsrc decompresseditemgraphics.asm
+
 
 org $A38000
 incsrc stats/main.asm
@@ -198,9 +201,7 @@ incbin "data/c2807_v4.gfx"
 warnpc $31A800
 
 org $31A800
-GFX_New_Items:
-incbin "data/newitems.gfx"
-;incbin eventitems.gfx ; *EVENT*
+
 warnpc $31B000
 
 org $31B000
@@ -320,18 +321,11 @@ db GFX_HUD_Items>>8
 org $00D25A ; 0x525A - HUD Items L
 db GFX_HUD_Items
 
-; this used to be a pointer to a dummy file
-org $00D065 ; 005065 - New Items H
-db GFX_New_Items>>16
-org $00D144 ; 005114 - New Items M
-db GFX_New_Items>>8
-org $00D223 ; 005223 - New Items L
-db GFX_New_Items
-
 org $00D09D ; 0x509D - HUD Main H
 db GFX_HUD_Main>>16
 org $00D17C ; 0x517C - HUD Main M
 db GFX_HUD_Main>>8
 org $00D25B ; 0x525B - HUD Main L
 db GFX_HUD_Main
+
 ;================================================================================

@@ -92,7 +92,7 @@ IsMedallion:
 RTL
 ;--------------------------------------------------------------------------------
 LoadNarrowObject:
-	LDA.l AddReceivedItemExpanded_wide_item_flag, X : STA.b ($92), Y ; AddReceiveItem.wide_item_flag?
+	LDA.l ItemReceipts_width, X : STA.b ($92), Y ; AddReceiveItem.wide_item_flag?
 RTL
 ;--------------------------------------------------------------------------------
 CheckTabletItem:

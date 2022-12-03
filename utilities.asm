@@ -35,120 +35,134 @@ GetSpriteID:
 	.normal
 		
 	PHX
-	PHB : PHK : PLB
-	;--------
-	TAX : LDA.l .gfxSlots, X ; look up item gfx
-	PLB : PLX
-	CMP.b #$F8 : !BGE .specialHandling
-RTL
-	.specialHandling
-	CMP.b #$F9 : BNE ++ ; Progressive Magic
-		LDA.l MagicConsumption : BNE +++
-			LDA.b #$3B : RTL ; Half Magic
-		+++
-			LDA.b #$3C : RTL ; Quarter Magic
-	++ CMP.b #$FA : BNE ++ ; RNG Item (Single)
-		JSL.l GetRNGItemSingle : JMP GetSpriteID
-	++ CMP.b #$FB : BNE ++ ; RNG Item (Multi)
-		JSL.l GetRNGItemMulti : JMP GetSpriteID
-	++ CMP.b #$FD : BNE ++ ; Progressive Armor
-		LDA.l ArmorEquipment : CMP.l ProgressiveArmorLimit : !BLT + ; Progressive Armor Limit
-			LDA.l ProgressiveArmorReplacement
-			JMP GetSpriteID
-		+
-		LDA.b #$04 : RTL
-	++ CMP.b #$FE : BNE ++ ; Progressive Sword
-		LDA.l HighestSword
-		CMP.l ProgressiveSwordLimit : !BLT + ; Progressive Sword Limit
-			LDA.l ProgressiveSwordReplacement
-			JMP GetSpriteID
-		+ : CMP.b #$00 : BNE + ; No Sword
-			LDA.b #$43 : RTL
-		+ : CMP.b #$01 : BNE + ; Fighter Sword
-			LDA.b #$44 : RTL
-		+ : CMP.b #$02 : BNE + ; Master Sword
-			LDA.b #$45 : RTL
-		+ ; CMP.b #$03 : BNE + ; Tempered Sword
-			LDA.b #$46 : RTL
-		+
-	++ : CMP.b #$FF : BNE ++ ; Progressive Shield
-		LDA.l HighestShield
-		CMP.l ProgressiveShieldLimit : !BLT + ; Progressive Shield Limit
-			LDA.l ProgressiveShieldReplacement
-			JMP GetSpriteID
-		+ : CMP.b #$00 : BNE + ; No Shield
-			LDA.b #$2D : RTL
-		+ : CMP.b #$01 : BNE + ; Fighter Shield
-			LDA.b #$20 : RTL
-		+ ; Everything Else
-			LDA.b #$2E : RTL
-	++ : CMP.b #$F8 : BNE ++ ; Progressive Bow
-		LDA.l BowEquipment : INC : LSR
-		CMP.l ProgressiveBowLimit : !BLT +
-			LDA.l ProgressiveBowReplacement
-			JMP GetSpriteID
-		+ : CMP.b #$00 : BNE + ; No Bow
-			LDA.b #$29 : RTL
-		+ ; Any Bow
-			LDA.b #$2A : RTL
-	++
+	TAX : LDA.l ItemReceipts_graphics, X ; look up item gfx
+	PLX
+	CMP.b #$F8 : !BGE .special_handling
 RTL
 
-;DATA - Loot Identifier to Sprite ID
-{
-	.gfxSlots
-    db $06, $44, $45, $46, $2D, $20, $2E, $09
-    db $09, $0A, $08, $05, $10, $0B, $2C, $1B
+;---------------------------------------------------------------------------------------------------
 
-    db $1A, $1C, $14, $19, $0C, $07, $1D, $2F
-    db $07, $15, $12, $0D, $0D, $0E, $11, $17
+.special_handling
+	PHX
+	AND.b #$07
+	ASL
+	TAX
 
-    db $28, $27, $04, $04, $0F, $16, $03, $13
-    db $01, $1E, $10, $00, $00, $00, $00, $00
+	REP #$20
+	LDA.l .handlers,X
 
-    db $00, $30, $22, $21, $24, $24, $24, $23
-    db $23, $23, $29, $2A, $2C, $2B, $03, $03
+	PLX
+	PHA
 
-    db $34, $35, $31, $33, $02, $32, $36, $37
-	db $2C, $43, $0C, $38, $39, $3A, $F9, $3C
-	; db $2C, $06, $0C, $38, $FF, $FF, $FF, $FF
+	SEP #$20
+	RTS
 
-	;5x
-	db $44 ; Safe Master Sword
-	db $3D, $3E, $3F, $40 ; Bomb & Arrow +5/+10
-	db $2C, $00, $00 ; 3x Programmable Item
-	db $41 ; Upgrade-Only Silver Arrows
-	db $24 ; 1 Rupoor
-	db $47 ; Null Item
-	db $48, $48, $48 ; Red, Blue & Green Clocks
-	db $FE, $FF ; Progressive Sword & Shield
+.handlers
+	dw .handler_F8-1
+	dw .handler_F9-1
+	dw .handler_FA-1
+	dw .handler_FB-1
+	dw .handler_FC-1
+	dw .handler_FD-1
+	dw .handler_FE-1
+	dw .handler_FF-1
 
-	;6x
-	db $FD, $0D ; Progressive Armor & Gloves
-	db $FA, $FB ; RNG Single & Multi
-	db $F8, $F8 ; Progressive Bow x2
-	db $FF, $FF, $FF, $FF ; Unused
-	db $49, $4A, $49 ; Goal Item Single, Multi & Alt Multi
-	db $39, $39, $39 ; Server Request F0, F1, F2
+;---------------------------------------------------------------------------------------------------
 
-	;7x
-	db $21, $21, $21, $21, $21, $21, $21, $21, $21, $21, $21, $21, $21, $21, $21, $21 ; Free Map
+.handler_F8
+	LDA.l BowEquipment
+	INC
+	LSR
+	CMP.l ProgressiveBowLimit
+	BCC ++
 
-	;8x
-	db $16, $16, $16, $16, $16, $16, $16, $16, $16, $16, $16, $16, $16, $16, $16, $16 ; Free Compass
+	LDA.l ProgressiveBowReplacement
+	JMP GetSpriteID
 
-	;9x
-	db $22, $22, $22, $22, $22, $22, $22, $22, $22, $22, $22, $22, $22, $22, $22, $22 ; Free Big Key
+++	CMP.b #$00
+	LDA.b #$29
+	ADC.b #$00
+	RTL
 
-	;Ax
-	db $0F, $0F, $0F, $0F, $0F, $0F, $0F, $0F, $0F, $0F, $0F, $0F, $0F, $0F, $0F, $0F ; Free Small Key
+;---------------------------------------------------------------------------------------------------
 
-	db $49, $49, $49, $49, $49, $49, $49, $49, $49, $49, $49, $49, $49, $49, $49, $49 ; Unused
-	db $49, $49, $49, $49, $49, $49, $49, $49, $49, $49, $49, $49, $49, $49, $49, $49 ; Unused
-	db $49, $49, $49, $49, $49, $49, $49, $49, $49, $49, $49, $49, $49, $49, $49, $49 ; Unused
-	db $49, $49, $49, $49, $49, $49, $49, $49, $49, $49, $49, $49, $49, $49, $49, $49 ; Unused
-	db $49, $49, $49, $49, $49, $49, $49, $49, $49, $49, $49, $49, $49, $49, $49, $49 ; Reserved
-}
+.handler_F9
+	LDA.l MagicConsumption
+	CMP.b #$00
+	LDA.b #$3B
+	ADC.b #$00
+	RTL
+
+;---------------------------------------------------------------------------------------------------
+
+.handler_FA
+	JSL GetRNGItemSingle
+	JMP GetSpriteID
+
+;---------------------------------------------------------------------------------------------------
+
+.handler_FB
+	JSL GetRNGItemMulti
+	JMP GetSpriteID
+
+;---------------------------------------------------------------------------------------------------
+
+.handler_FC
+	RTL
+
+;---------------------------------------------------------------------------------------------------
+
+.handler_FD
+	LDA.l ArmorEquipment
+	CMP.l ProgressiveArmorLimit
+	BCC ++
+
+	LDA.l ProgressiveArmorReplacement
+	JMP GetSpriteID
+
+++	LDA.b #$04
+	RTL
+
+;---------------------------------------------------------------------------------------------------
+
+.handler_FE
+	LDA.l HighestSword
+	CMP.l ProgressiveSwordLimit
+	BCC ++
+
+	LDA.l ProgressiveSwordReplacement
+	JMP GetSpriteID
+
+	; 00 => 43
+	; 01 => 44
+	; 02 => 45
+	; 03 => 46
+++	ADC.b #$43
+	RTL
+
+;---------------------------------------------------------------------------------------------------
+
+.handler_FF
+	LDA.l HighestShield
+	CMP.l ProgressiveShieldLimit
+	BCC ++
+
+	LDA.l ProgressiveShieldReplacement
+	JMP GetSpriteID
+
+++	CMP.b #$01 ; no shield
+	BEQ .fighter_shield ; if exactly 1
+
+	; if 0 => 2D (carry is clear)
+	; all others are 2E (carry set for +1)
+	LDA.b #$2D
+	ADC.b #$00
+	RTL
+
+.fighter_shield
+	LDA.b #$20
+	RTL
+
 ;--------------------------------------------------------------------------------
 
 ;--------------------------------------------------------------------------------
@@ -173,66 +187,158 @@ GetSpritePalette:
 			+
 		PLA : .notBottle
 	PHX
-	PHB : PHK : PLB
-	;--------
 	TAX : LDA.l GfxPalettes, X ; look up item gfx
-	PLB : PLX
-	CMP.b #$F8 : !BGE .specialHandling
+	PLX
+	CMP.b #$F8 : !BGE .special_handling
 RTL
-	.specialHandling
-	CMP.b #$FD : BNE ++ ; Progressive Sword
-		LDA.l HighestSword
-		CMP.l ProgressiveSwordLimit : !BLT + ; Progressive Sword Limit
-			LDA.l ProgressiveSwordReplacement
-			JMP GetSpritePalette
-		+ : CMP.b #$00 : BNE + ; No Sword
-			LDA.b #$04 : RTL
-		+ : CMP.b #$01 : BNE + ; Fighter Sword
-			LDA.b #$04 : RTL
-		+ : CMP.b #$02 : BNE + ; Master Sword
-			LDA.b #$02 : RTL
-		+ ; Everything Else
-			LDA.b #$08 : RTL
-	++ : CMP.b #$FE : BNE ++ ; Progressive Shield
-		LDA.l HighestShield
-		CMP.l ProgressiveShieldLimit : !BLT + ; Progressive Shield Limit
-			LDA.l ProgressiveShieldReplacement
-			JMP GetSpritePalette
-		+ : CMP.b #$00 : BNE + ; No Shield
-			LDA.b #$04 : RTL
-		+ : CMP.b #$01 : BNE + ; Fighter Shield
-			LDA.b #$02 : RTL
-		+ ; Everything Else
-			LDA.b #$08 : RTL
-	++ : CMP.b #$FF : BNE ++ ; Progressive Armor
-		LDA.l HighestMail
-                CMP.l ProgressiveArmorLimit : !BLT + ; Progressive Armor Limit
-			LDA.l ProgressiveArmorReplacement
-			JMP GetSpritePalette
-		+ : CMP.b #$00 : BNE + ; Green Tunic
-			LDA.b #$04 : RTL
-		+ ; Everything Else
-			LDA.b #$02 : RTL
-	++ : CMP.b #$FC : BNE ++ ; Progressive Gloves
-		LDA.l GloveEquipment : BNE + ; No Gloves
-			LDA.b #$02 : RTL
-		+ ; Everything Else
-			LDA.b #$08 : RTL
-	++ : CMP.b #$F8 : BNE ++ ; Progressive Bow
-		LDA.l BowEquipment : INC : LSR
-		CMP.l ProgressiveBowLimit : !BLT +
-			LDA.l ProgressiveBowReplacement
-			JMP GetSpritePalette
-		+ : CMP.b #$00 : BNE + ; No Bow
-			LDA.b #$08 : RTL
-		+ ; Any Bow
-			LDA.b #$02 : RTL
-	++ : CMP.b #$FA : BNE ++ ; RNG Item (Single)
-		JSL.l GetRNGItemSingle : JMP GetSpritePalette
-	++ : CMP.b #$FB : BNE ++ ; RNG Item (Multi)
-		JSL.l GetRNGItemMulti : JMP GetSpritePalette
-	++
-RTL
+
+;---------------------------------------------------------------------------------------------------
+
+.special_handling
+	PHX
+	AND.b #$07
+	ASL
+	TAX
+
+	REP #$20
+	LDA.l .handlers,X
+
+	PLX
+	PHA
+
+	SEP #$20
+	RTS
+
+.handlers
+	dw .handler_F8-1
+	dw .handler_F9-1
+	dw .handler_FA-1
+	dw .handler_FB-1
+	dw .handler_FC-1
+	dw .handler_FD-1
+	dw .handler_FE-1
+	dw .handler_FF-1
+
+;---------------------------------------------------------------------------------------------------
+
+.handler_F8
+	LDA.l BowEquipment
+	INC
+	LSR
+	CMP.l ProgressiveBowLimit
+	BCC ++
+
+	LDA.l ProgressiveBowReplacement
+	JMP GetSpritePalette
+
+++	CMP.b #$00
+	BNE ++
+
+	LDA.b #$08
+	RTL
+
+++	LDA.b #$02
+	RTL
+
+	LDA.b #$29
+	ADC.b #$00
+	RTL
+
+;---------------------------------------------------------------------------------------------------
+
+.handler_F9
+	RTL
+
+;---------------------------------------------------------------------------------------------------
+
+.handler_FA
+	JSL GetRNGItemSingle
+	JMP GetSpritePalette
+;---------------------------------------------------------------------------------------------------
+
+.handler_FB
+	JSL GetRNGItemMulti
+	JMP GetSpritePalette
+
+;---------------------------------------------------------------------------------------------------
+
+.handler_FC
+	LDA.l GloveEquipment
+	BNE ++
+
+	LDA.b #$02
+	RTL
+
+++	LDA.b #$08
+	RTL
+
+;---------------------------------------------------------------------------------------------------
+
+.handler_FD
+	LDA.l HighestSword
+	CMP.l ProgressiveSwordLimit
+	BCC ++
+
+	LDA.l ProgressiveSwordReplacement
+	JMP GetSpritePalette
+
+	; 00 => 04
+	; 01 => 04
+	; 02 => 02
+	; 03 => 08
+++	CMP.b #$02
+	BEQ ++ ; 2 exits with 2
+
+	LDA.b #$04
+	BCC ++ ; 0 or 1 get 4
+
+	; everything else is 8
+	ASL
+
+++	RTL
+
+;---------------------------------------------------------------------------------------------------
+
+.handler_FE
+	LDA.l HighestShield
+	CMP.l ProgressiveShieldLimit
+	BCC ++
+
+	LDA.l ProgressiveShieldReplacement
+	JMP GetSpritePalette
+
+	; 0 => 4
+	; 1 => 2
+	; 2 => 8
+++	CMP.b #$01 ; no shield
+	BEQ .fighter_shield ; if exactly 1, ASL for 2
+
+	LDA.b #$04 ; load 4 for 0
+	BCC ++ ; exit if < 1, otherwise, ASL for 8
+
+.fighter_shield
+	ASL
+++	RTL
+
+;---------------------------------------------------------------------------------------------------
+
+.handler_FF
+	LDA.l ArmorEquipment
+	CMP.l ProgressiveArmorLimit
+	BCC ++
+
+	LDA.l ProgressiveArmorReplacement
+	JMP GetSpritePalette
+
+++	CMP.b #$01 ; carry set means nonzero
+	LDA.b #$02
+	BCS ++ ; nonzero gets 2
+
+	ASL ; ASL for 4 if zero
+
+++	RTL
+
+;---------------------------------------------------------------------------------------------------
 
 ;DATA - Loot Identifier to Sprite Palette
 {
@@ -375,7 +481,8 @@ PrepDynamicTile:
 	PHA : PHX : PHY
 	JSR.w LoadDynamicTileOAMTable
 	JSL.l GetSpriteID ; convert loot id to sprite id
-	JSL.l GetAnimatedSpriteTile_variable
+	;JSL.l GetAnimatedSpriteTile_variable
+	JSL TransferItemReceiptToBuffer_using_GraphicsID
 	PLY : PLX : PLA
 RTL
 ;--------------------------------------------------------------------------------
@@ -501,13 +608,13 @@ RTL
 ; out:	Carry - 1 = On Screen, 0 = Off Screen
 ;--------------------------------------------------------------------------------
 Sprite_IsOnscreen:
-        JSR _Sprite_IsOnscreen_DoWork
+        JSR .check_sprite
         BCS +
                 REP #$20
                 LDA.b BG2H : PHA : !SUB.w #$0F : STA.b BG2H
                 LDA.b BG2V : PHA : !SUB.w #$0F : STA.b BG2V
                 SEP #$20
-                JSR _Sprite_IsOnscreen_DoWork
+                JSR .check_sprite
                 REP #$20
                 PLA : STA.b BG2V
                 PLA : STA.b BG2H
@@ -515,7 +622,7 @@ Sprite_IsOnscreen:
         +
 RTL
 
-_Sprite_IsOnscreen_DoWork:
+.check_sprite
         LDA.w SpritePosXLow, X : CMP.b BG2H
         LDA.w SpritePosXHigh, X : SBC.b BG2H+1 : BNE .offscreen
 
@@ -558,44 +665,12 @@ RTL
 SkipDrawEOR:
 	LDA.l SpriteSkipEOR : BEQ .normal
 	LDA.w #$0000 : STA.l SpriteSkipEOR
-	LDA.w Scrap04 : AND.w #$F0FF : STA.w Scrap04
+	LDA.w #$0F00 : TRB.b Scrap04
 	.normal
 	LDA.b ($08), Y : EOR.w Scrap04 ; thing we wrote over
 RTL
 ;--------------------------------------------------------------------------------
 
-;--------------------------------------------------------------------------------
-; HexToDec
-; in:	A(w) - Word to Convert
-; out:	HexToDecDigit1 - HexToDecDigit5 (high - low)
-;--------------------------------------------------------------------------------
-HexToDec:
-	PHA
-	PHA
-		LDA.w #$9090
-		STA.b Scrap04 : STA.b Scrap06 ; temporarily store our decimal values here for speed
-	PLA
-	-
-		CMP.w #1000 : !BLT +
-		INC.b Scrap04
-		!SUB.w #1000 : BRA -
-	+ -
-		CMP.w #100 : !BLT +
-		INC.b Scrap05
-		!SUB.w #100 : BRA -
-	+ -
-		CMP.w #10 : !BLT +
-		INC.b Scrap06
-		!SUB.w #10 : BRA -
-	+ -
-		CMP.w #1 : !BLT +
-		INC.b Scrap07
-		!SUB.w #1 : BRA -
-	+
-	LDA.b Scrap04 : STA.l HexToDecDigit2 ; move to digit storage
-	LDA.b Scrap06 : STA.l HexToDecDigit4
-	PLA
-RTL
 
 ;--------------------------------------------------------------------------------
 ; CountBits

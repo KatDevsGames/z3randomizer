@@ -9,8 +9,8 @@ NewDrawHud:
 		LDA.l BombsEquipment ; bombs
 		JSR HudHexToDec2Digit ;requires 8 bit registers!
 		REP #$20
-		LDX.b Scrap06 : TXA : ORA.w #$2400 : STA.l HUDBombCount ; Draw bombs 10 digit
-		LDX.b Scrap07 : TXA : ORA.w #$2400 : STA.l HUDBombCount+2 ; Draw bombs 1 digit
+		LDX.b Scrap06 : TXA : ORA.w #$2490 : STA.l HUDBombCount ; Draw bombs 10 digit
+		LDX.b Scrap07 : TXA : ORA.w #$2490 : STA.l HUDBombCount+2 ; Draw bombs 1 digit
 		BRA +
 
 	.infinite_bombs
@@ -25,10 +25,10 @@ NewDrawHud:
 	
 	LDA.l DisplayRupees ; Drawing bombs (above) always ends with 16-bit A, so, no need to REP here
 	JSR HudHexToDec4Digit
-	LDX.b Scrap04 : TXA : ORA.w #$2400 : STA.l HUDRupees   ; 1000s
-	LDX.b Scrap05 : TXA : ORA.w #$2400 : STA.l HUDRupees+2 ;  100s
-	LDX.b Scrap06 : TXA : ORA.w #$2400 : STA.l HUDRupees+4 ;   10s
-	LDX.b Scrap07 : TXA : ORA.w #$2400 : STA.l HUDRupees+6 ;    1s
+	LDX.b Scrap04 : TXA : ORA.w #$2490 : STA.l HUDRupees   ; 1000s
+	LDX.b Scrap05 : TXA : ORA.w #$2490 : STA.l HUDRupees+2 ;  100s
+	LDX.b Scrap06 : TXA : ORA.w #$2490 : STA.l HUDRupees+4 ;   10s
+	LDX.b Scrap07 : TXA : ORA.w #$2490 : STA.l HUDRupees+6 ;    1s
 	
 ;================================================================================
 ; Draw arrow count
@@ -41,8 +41,8 @@ NewDrawHud:
 			LDA.l CurrentArrows ; arrows
 			JSR HudHexToDec2Digit
 			REP #$20
-			LDX.b Scrap06 : TXA : ORA.w #$2400 : STA.l HUDArrowCount ; Draw arrows 10 digit
-			LDX.b Scrap07 : TXA : ORA.w #$2400 : STA.l HUDArrowCount+2 ; Draw arrows  1 digit
+			LDX.b Scrap06 : TXA : ORA.w #$2490 : STA.l HUDArrowCount ; Draw arrows 10 digit
+			LDX.b Scrap07 : TXA : ORA.w #$2490 : STA.l HUDArrowCount+2 ; Draw arrows  1 digit
 			BRA +
 		
 		.infinite_arrows
@@ -63,17 +63,17 @@ NewDrawHud:
 
 	LDA.l GoalItemIcon : STA.l HUDGoalIndicator ; draw star icon
 	
-	LDX.b Scrap05 : TXA : ORA.w #$2400 : STA.l HUDGoalIndicator+2 ; draw 100's digit
-	LDX.b Scrap06 : TXA : ORA.w #$2400 : STA.l HUDGoalIndicator+4 ; draw 10's digit
-	LDX.b Scrap07 : TXA : ORA.w #$2400 : STA.l HUDGoalIndicator+6 ; draw 1's digit
+	LDX.b Scrap05 : TXA : ORA.w #$2490 : STA.l HUDGoalIndicator+2 ; draw 100's digit
+	LDX.b Scrap06 : TXA : ORA.w #$2490 : STA.l HUDGoalIndicator+4 ; draw 10's digit
+	LDX.b Scrap07 : TXA : ORA.w #$2490 : STA.l HUDGoalIndicator+6 ; draw 1's digit
 	
 	LDA.l GoalItemRequirement : CMP.w #$FFFF : BEQ .skip
 		LDA.l GoalItemRequirement
 		JSR HudHexToDec4Digit
 		LDA.w #$2830 : STA.l HUDGoalIndicator+8 ; draw slash
-		LDX.b Scrap05 : TXA : ORA.w #$2400 : STA.l HUDGoalIndicator+10 ; draw 100's digit
-		LDX.b Scrap06 : TXA : ORA.w #$2400 : STA.l HUDGoalIndicator+12 ; draw 10's digit
-		LDX.b Scrap07 : TXA : ORA.w #$2400 : STA.l HUDGoalIndicator+14 ; draw 1's digit
+		LDX.b Scrap05 : TXA : ORA.w #$2490 : STA.l HUDGoalIndicator+10 ; draw 100's digit
+		LDX.b Scrap06 : TXA : ORA.w #$2490 : STA.l HUDGoalIndicator+12 ; draw 10's digit
+		LDX.b Scrap07 : TXA : ORA.w #$2490 : STA.l HUDGoalIndicator+14 ; draw 1's digit
 		BRA .done
 	.skip
 		LDA.w #$207F ; transparent tile
@@ -98,13 +98,13 @@ NewDrawHud:
 		JSR HudHexToDec2Digit : REP #$20
 		
 		; if 10s digit is 0, draw transparent tile instead of 0
-		LDX.b Scrap06 : TXA : CPX.b #$90 : BNE +
+		LDX.b Scrap06 : TXA : BNE +
 			LDA.w #$007F 
 		+
-		ORA.w #$2400 : STA.l HUDKeyDigits
+		ORA.w #$2490 : STA.l HUDKeyDigits
 		
 		; 1s digit
-		LDX.b Scrap07 : TXA : ORA.w #$2400 : STA.l HUDKeyDigits+2
+		LDX.b Scrap07 : TXA : ORA.w #$2490 : STA.l HUDKeyDigits+2
 		BRA .done_keys
 		
 	.not_in_dungeon
@@ -215,31 +215,16 @@ RTL
 ; out:	$04 - $07 (high - low)
 ;================================================================================
 HudHexToDec4Digit:
-	LDY.b #$90
-	-
-		CMP.w #1000 : !BLT +
-		INY
-		SBC.w #1000 : BRA -
-	+
-	STY.b Scrap04 : LDY.b #$90 ; Store 1000s digit & reset Y
-	-
-		CMP.w #100 : !BLT +
-		INY
-		SBC.w #100 : BRA -
-	+
-	STY.b Scrap05 : LDY.b #$90 ; Store 100s digit & reset Y
-	-
-		CMP.w #10 : !BLT +
-		INY
-		SBC.w #10 : BRA -
-	+ 
-	STY.b Scrap06 : LDY.b #$90 ; Store 10s digit & reset Y
-	CMP.w #1 : !BLT +
-	-
-		INY
-		DEC : BNE -
-	+
-	STY.b Scrap07 ; Store 1s digit
+	JSL HexToDec
+
+	REP #$20
+
+	LDA.l HexToDecDigit2
+	STA.b Scrap04
+
+	LDA.l HexToDecDigit4
+	STA.b Scrap06
+
 RTS
 
 ;================================================================================
@@ -248,17 +233,27 @@ RTS
 ; out:	$06 - $07 (high - low)
 ;================================================================================
 HudHexToDec2Digit:
-	LDY.b #$90
-	-
-		CMP.b #10 : !BLT +
-		INY
-		SBC.b #10 : BRA -
-	+ 
-	STY.b Scrap06 : LDY.b #$90 ; Store 10s digit and reset Y
-	CMP.b #1 : !BLT +
-	-
-		INY
-		DEC : BNE -
-	+
-	STY.b Scrap07 ; Store 1s digit
-RTS
+	PHP
+
+	REP #$30
+	PHX
+
+	AND.w #$00FF
+	ASL
+	TAX
+
+	SEP #$20
+	LDA.l FastHexTable,X
+	AND.b #$0F
+	STA.b Scrap07
+
+	LDA.l FastHexTable,X
+	LSR
+	LSR
+	LSR
+	LSR
+	STA.b Scrap06
+
+	PLX
+	PLP
+	RTS

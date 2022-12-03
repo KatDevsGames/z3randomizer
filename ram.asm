@@ -186,6 +186,8 @@ RaceGameFlag = $7E021B            ;
                                   ;
 MessageJunk = $7E0223             ; Zeroed but never used (?)
                                   ;
+CoolScratch = $7E0224             ; 0x5C bytes of free ram
+                                  ;
 ItemReceiptID = $7E02D8           ;
 ItemReceiptPose = $7E02DA         ; $00 = No pose | $01 = One hand up | $02 = Two hands up
                                   ;
@@ -263,6 +265,12 @@ SkipOAM = $7E0710                 ; Set to skip OAM updates. High byte written $
 OWScreenSize = $7E0712            ; Flags overworld screen size.
                                   ;
 OWTransitionFlag = $7E0ABF        ; Used for certain transitions like smith, witch, etc.
+                                  ;
+ItemGFXPtr = $7E0AFA              ; Pointer for item receipt graphics transfers
+                                  ; $0000       - no transfer, do nothing
+                                  ; bit 7 reset - offset into ROM table
+                                  ; bit 7 set   - explicit bank7 address
+ItemGFXTgt = $7E0AFC              ; target VRAM address
                                   ;
 ArcVariable = $7E0B08             ; Arc variable. Word length.
 OverlordXLow = $7E0B08            ; $08 bytes.
@@ -381,6 +389,8 @@ ScratchBufferV = $7E1EB0          ; Volatile scratch buffer. Can clobber at will
 
 TileUploadBuffer = $7EA180        ; 0x300 bytes
                                   ;
+ItemGetGFX = $7EBD40              ; Item receipt graphics location
+                                  ;
 RoomFade = $7EC005                ; Flags fade to black on room transitions. Word length.
 FadeTimer = $7EC007               ; Timer for transition fading and mosaics. Word length.
 FadeDirection = $7EC009           ; Word length
@@ -444,6 +454,9 @@ BigRAM = $7EC900                  ; Big buffer of free ram (0x1F00)
 ; Bank 7F
 ;--------------------------------------------------------------------------------
 DecompressionBuffer = $7F0000      ; Decompression Buffer. $2000 bytes.
+
+DecompBuffer2 = $7F4000            ; Another buffer
+
 
 base $7F5000
 RedrawFlag: skip 1                 ;
@@ -554,6 +567,9 @@ DialogBuffer: skip $100            ; Dialog Buffer
 PrivateBlockWRAM = $7F7700         ; Reserved for 3rd party use. $500 bytes.
                                    ; See also: $200 bytes at PrivateBlockPersistent, copied to SRAM.
 BigDecompressionBuffer = $7F8000   ; Reserved for large gfx decompression buffer. $5000 bytes.
+                                   ; KEEP THIS AT $8000+
+                                   ; its location at an address with bit 7 set is used for detecting
+                                   ; ROM location versus RAM locations
                                    ;
 MiniGameTime = $7FFE00             ; Time spent in mini game. 32-bits.
 MiniGameTimeFinal = $7FFE04        ; Final mini game time. 32 bits.

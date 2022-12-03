@@ -624,13 +624,13 @@ JSL.l EndingSequenceTableLookupOverride : NOP #2
 ;================================================================================
 ; Master Sword Overlay Fix
 ;--------------------------------------------------------------------------------
-org $0987b2 ; <- ancilla_init.asm : 1051 (LDA.b #$09)
+org $0987B2 ; <- ancilla_init.asm : 1051 (LDA.b #$09)
 JSL.l PedestalPullOverlayFix
 
-org $0987b8 ; <- ancilla_init.asm : 1055 (STA $039F, X)
+org $0987B8 ; <- ancilla_init.asm : 1055 (STA $039F, X)
 NOP #3
 
-org $0987df ; <- ancilla_init.asm : 1077 (STA $039F, X)
+org $0987DF ; <- ancilla_init.asm : 1077 (STA $039F, X)
 NOP #3
 ;--------------------------------------------------------------------------------
 
@@ -886,43 +886,47 @@ org $0799F7 ; 399F7 - Bank07.asm:4107 (JSL AddReceivedItem)
 JSL.l AddReceivedItemExpanded
 
 org $098611 ; 48611 - ancilla_init.asm:720 (LDA .item_target_addr+0, X)
-LDA.w AddReceivedItemExpanded_item_target_addr+0, X
+LDA.w ItemReceipts_target+0, X
 org $098616 ; 48616 - ancilla_init.asm:721 (LDA .item_target_addr+1, X)
-LDA.w AddReceivedItemExpanded_item_target_addr+1, X
+LDA.w ItemReceipts_target+1, X
 org $09861F ; 4861F - ancilla_init.asm:724 (LDA .item_values, Y)
-LDA.w AddReceivedItemExpanded_item_values, Y
+LDA.w ItemReceipts_value, Y
 
 org $098627 ; 48627 - ancilla_init.asm:731 (LDA .item_target_addr+0, X)
-LDA.w AddReceivedItemExpanded_item_target_addr+0, X
+LDA.w ItemReceipts_target+0, X
 org $09862C ; 4862C - ancilla_init.asm:722 (LDA .item_target_addr+1, X)
-LDA.w AddReceivedItemExpanded_item_target_addr+1, X
+LDA.w ItemReceipts_target+1, X
 org $098635 ; 48635 - ancilla_init.asm:727 (LDA .item_values, Y)
-LDA.w AddReceivedItemExpanded_item_values, Y
+LDA.w ItemReceipts_value, Y
 
 org $0986AA ; 486AA - ancilla_init.asm:848 (LDA .item_masks, X)
 LDA.w AddReceivedItemExpanded_item_masks, X
 
 org $098769 ; 48769 - ancilla_init.asm:1005 (LDA .item_graphics_indices, Y)
-LDA.w AddReceivedItemExpanded_item_graphics_indices, Y
+LDA.w ItemReceipts_graphics, Y
+
+org $09878C
+JSL TransferItemReceiptToBuffer_using_GraphicsID
+
 
 org $09884D ; 4884D - ancilla_init.asm:1137 (LDA $836C, Y)
-LDA.w AddReceivedItemExpanded_y_offsets, Y
+LDA.w ItemReceipts_offset_y, Y
 org $09885B ; 4885B - ancilla_init.asm:1139 (LDA .x_offsets, X) - I think the disassembly is wrong here, should have been LDA .x_offsets, Y
-LDA.w AddReceivedItemExpanded_x_offsets, Y
+LDA.w ItemReceipts_offset_x, Y
 
 org $0988B7 ; 488B7 - ancilla_init.asm:1199 (LDA .wide_item_flag, Y)
-LDA.w AddReceivedItemExpanded_wide_item_flag, Y
+LDA.w ItemReceipts_width, Y
 
 org $0988EF ; 488EF - ancilla_init.asm:1248 (LDA $836C, Y)
-LDA.w AddReceivedItemExpanded_y_offsets, Y
+LDA.w ItemReceipts_offset_y, Y
 org $098908 ; 48908 - ancilla_init.asm:1258 (LDA .x_offsets, Y)
-LDA.w AddReceivedItemExpanded_x_offsets, Y
+LDA.w ItemReceipts_offset_x, Y
 
 org $08C6C8 ; 446C8 - ancilla_receive_item.asm:538 (LDA AddReceiveItem.properties, X)
 JSL CheckReceivedItemPropertiesBeforeLoad
 
 org $08C6DE ; 446DE - ancilla_receive_item.asm:550 (LDA .wide_item_flag, X)
-LDA.l AddReceivedItemExpanded_wide_item_flag, X
+LDA.l ItemReceipts_width, X
 
 org $08C6F9 ; 446F9 - ancilla_receive_item.asm:570 (LDA AddReceiveItem.properties, X)
 JSL CheckReceivedItemPropertiesBeforeLoad
