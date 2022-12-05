@@ -145,7 +145,6 @@ incsrc hashalphabet.asm
 incsrc inverted.asm
 incsrc invertedmaps.asm
 incsrc newhud.asm
-incsrc compasses.asm
 incsrc save.asm
 incsrc password.asm
 incsrc enemy_adjustments.asm

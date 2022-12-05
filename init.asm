@@ -67,8 +67,24 @@ Init_PostRAMClear:
 
 	JSL MSUInit
 	JSL InitRNGPointerTable
-	JSL InitCompassTotalsRAM
+	JSR InitCompassTotalsRAM
 	JSL DecompressAllItemGraphics
 
 
 JML $00D463	; The original target of the jump table that we hijacked
+
+;---------------------------------------------------------------------------------------------------
+
+InitCompassTotalsRAM:
+	LDX.b #$0F
+
+.next
+	LDA.l CompassTotalsROM,X
+	STA.l CompassTotalsWRAM,X
+
+	DEX
+	BPL .next
+
+	RTS
+
+;===================================================================================================

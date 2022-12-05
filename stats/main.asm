@@ -212,7 +212,7 @@ endmacro
 
 !ColonOffset = $83
 !PeriodOffset = $80
-BlankTile = $883D
+BlankCreditsTile = $883D
 
 RenderCreditsStatCounter:
     PHB
@@ -309,7 +309,7 @@ RenderCreditsStatCounter:
     AND.w #$00FF
     CMP.b RemoveZero
     BNE +
-    LDA.w #BlankTile
+    LDA.w #BlankCreditsTile
     BRA ++
 +   DEC.b RemoveZero
     CLC
@@ -320,7 +320,7 @@ RenderCreditsStatCounter:
     AND.w #$00FF
     CMP.b RemoveZero
     BNE +
-    LDA.w #BlankTile
+    LDA.w #BlankCreditsTile
     BRA ++
 +   DEC.b RemoveZero
     CLC
@@ -331,7 +331,7 @@ RenderCreditsStatCounter:
     AND.w #$00FF
     CMP.b RemoveZero
     BNE +
-    LDA.w #BlankTile
+    LDA.w #BlankCreditsTile
     BRA ++
 +   DEC.b RemoveZero
     CLC

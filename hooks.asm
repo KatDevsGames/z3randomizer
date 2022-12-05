@@ -905,10 +905,6 @@ LDA.w AddReceivedItemExpanded_item_masks, X
 org $098769 ; 48769 - ancilla_init.asm:1005 (LDA .item_graphics_indices, Y)
 LDA.w ItemReceipts_graphics, Y
 
-org $09878C
-JSL TransferItemReceiptToBuffer_using_GraphicsID
-
-
 org $09884D ; 4884D - ancilla_init.asm:1137 (LDA $836C, Y)
 LDA.w ItemReceipts_offset_y, Y
 org $09885B ; 4885B - ancilla_init.asm:1139 (LDA .x_offsets, X) - I think the disassembly is wrong here, should have been LDA .x_offsets, Y
@@ -2489,3 +2485,36 @@ if !FEATURE_NEW_TEXT
     org $0EF285
         JSL RenderCharSetColorExtended_close : NOP
 endif
+
+;===================================================================================================
+; Item decompression/loading
+;===================================================================================================
+; mushroom - are these even necessary in rando?
+org $0283CF : JSL TransferItemReceiptToBuffer_using_GraphicsID
+org $02ADB6 : JSL TransferItemReceiptToBuffer_using_GraphicsID
+org $02ADE9 : JSL TransferItemReceiptToBuffer_using_GraphicsID
+
+; big key
+org $069261 : JSL TransferItemReceiptToBuffer_using_GraphicsID
+
+; falling items
+org $08CAE9 : JSL TransferItemReceiptToBuffer_using_GraphicsID
+org $098BD2 : JSL TransferItemReceiptToBuffer_using_GraphicsID
+
+; misc
+org $09878C : JSL TransferItemReceiptToBuffer_using_GraphicsID
+
+; pond items
+org $098A4D : JSL TransferItemReceiptToBuffer_using_GraphicsID
+org $098AEE : JSL TransferItemReceiptToBuffer_using_GraphicsID
+
+; flute
+org $098C85 : JSL TransferItemReceiptToBuffer_using_GraphicsID
+
+; gt cutscene
+org $099BBE : JSL TransferItemReceiptToBuffer_using_GraphicsID
+
+
+
+
+
