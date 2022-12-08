@@ -37,7 +37,28 @@ TransferItemReceiptToBuffer_using_GraphicsID:
 	REP #$30
 	BRA ++
 
-;---------------------------------------------------------------------------------------------------
+;===================================================================================================
+
+TransferRupeesProperly:
+	PHP
+	PHB
+
+	REP #$31
+	PHX
+	PHY
+
+	AND.w #$00FF
+	SBC.w #$0023
+
+	XBA
+	LSR
+	LSR
+	LSR
+	ADC.w #BigDecompressionBuffer+$800
+
+	BRA TransferItemReceiptToBuffer_using_ExplicitBufferAddress
+
+;===================================================================================================
 
 TransferItemReceiptToBuffer_using_ReceiptID:
 	PHP
@@ -51,14 +72,14 @@ TransferItemReceiptToBuffer_using_ReceiptID:
 	ASL
 	TAX
 	LDA.l ItemReceiptGraphicsOffsets,X
-	BMI .wram_buffer
+	BMI TransferItemReceiptToBuffer_using_ExplicitBufferAddress
 
 .rom_address
 	ADC.w #ItemReceiptGraphicsROM
 	PHK
 	BRA .continue
 
-.wram_buffer
+#TransferItemReceiptToBuffer_using_ExplicitBufferAddress:
 	PEA.w $7F7F
 	PLB
 

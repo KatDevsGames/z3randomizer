@@ -2504,6 +2504,10 @@ org $098BD2 : JSL TransferItemReceiptToBuffer_using_GraphicsID
 ; misc
 org $09878C : JSL TransferItemReceiptToBuffer_using_GraphicsID
 
+; rupees
+org $08C6A0 : JSL TransferRupeesProperly
+
+
 ; pond items
 org $098A4D : JSL TransferItemReceiptToBuffer_using_GraphicsID
 org $098AEE : JSL TransferItemReceiptToBuffer_using_GraphicsID
