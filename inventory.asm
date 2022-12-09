@@ -29,7 +29,7 @@
 ;--------------------------------------------------------------------------------
 ProcessMenuButtons:
 	LDA.b Joy1A_New : BIT.b #$40 : BNE .y_pressed ; check for P1 Y-button
-			  BIT #$20 : BNE .sel_pressed ; check for P1 Select button
+			  BIT.b #$20 : BNE .sel_pressed ; check for P1 Select button
 	LDA.b Joy1A_All : BIT.b #$20 : BNE .sel_held
 	.sel_unheld
 		LDA.l HudFlag : AND.b #$20 : BEQ +

@@ -177,6 +177,7 @@ CheckCloseItemMenu:
 RTL
 ;================================================================================
 ShowDungeonItems:
+        REP #$30
 	LDA.w DungeonID : AND.w #$00FF : CMP.w #$00FF : BNE + : RTL : + ; return normal result if outdoors or in a cave
 	LDA.l HudFlag : AND.w #$0020 ; check hud flag
 	BEQ + : LDA.w #$0000 : RTL : + ; if set, send the zero onwards
@@ -655,3 +656,38 @@ dw $A8FB, $A8F9, $A8F9, $A8F9, $A8F9, $A8F9, $A8F9, $A8F9, $A8F9, $E8FB
 ;0x1C - ??? possibly unused. (Were they planning two extra dungeons perhaps?)
 ;0x1E - ??? possibly unused.
 ;================================================================================
+HandleEmptyMenu:
+        LDA.b Joy1A_New : BIT.b #$DF : BNE .close_menu ; Not select, close menu
+                          BIT.b #$20 : BNE .sel_pressed
+        LDA.b Joy1A_All : BIT.b #$20 : BNE .wait_for_change
+		LDA.l HudFlag : AND.b #$20 : BEQ .wait_for_change ; HUD flag off, skip drawing work
+		LDA.l HudFlag : AND.b #$DF : STA.l HudFlag ; Unset without select
+		LDA.b IndoorsFlag : BEQ ++ ; skip if outdoors
+			LDA.b #$20 : STA.w SFX3
+                        ++
+                        LDA.b #$0C : BRA .done
+        .sel_pressed
+        LDA.l HudFlag : ORA.b #$20 : STA.l HudFlag
+        LDA.b #$20 : STA.w SFX3
+        LDA.b #$0C : BRA .done
+        .wait_for_change
+        LDA.b #$03 : BRA .done
+        .close_menu
+        LDA.b #$06
+        .done
+        STA.w SubModuleInterface
+RTL
+;-------------------------------------------------------------------------------
+MaybeDrawEquippedItem:
+        LDA.w ItemCursor : BEQ +
+                JML.l ItemMenu_DrawEquippedYItem+$07
+        +
+JML.l ItemMenu_DrawEquippedYItem_exit
+;-------------------------------------------------------------------------------
+RestoreMenu_SetSubModule:
+        LDA.w ItemCursor : BEQ +
+                LDA.b #$04 : STA.w SubModuleInterface
+                RTL
+        +
+        LDA.b #$03 : STA.w SubModuleInterface
+RTL
