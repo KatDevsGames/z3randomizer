@@ -256,7 +256,11 @@ endif
 
 org $328000
 Extra_Text_Table:
-incsrc itemtext.asm
+if !FEATURE_NEW_TEXT
+    incsrc itemtext_lower.asm
+else
+    incsrc itemtext.asm
+endif
 
 incsrc externalhooks.asm
 ;================================================================================

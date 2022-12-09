@@ -2,4 +2,4 @@
 
 rm ../working.sfc
 cp ../alttp.sfc ../working.sfc
-asar LTTP_RND_GeneralBugfixes.asm ../working.sfc
+./bin/linux/asar -DFEATURE_NEW_TEXT=1 LTTP_RND_GeneralBugfixes.asm ../working.sfc
