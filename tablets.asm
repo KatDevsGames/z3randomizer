@@ -76,13 +76,13 @@ IsMedallion:
 	CMP.w #$03 : BNE + ; Death Mountain
 		LDA.b LinkPosX : CMP.w #1890 : !BGE ++
 			SEC
-			JMP .done
+			BRA .done
 		++
 		BRA .false
 	+ CMP.w #$30 : BNE + ; Desert
 		LDA.b LinkPosX : CMP.w #512 : !BLT ++
 			SEC
-			JMP .done
+			BRA .done
 		++
 	+
 	.false
@@ -104,9 +104,5 @@ CheckTabletItem:
                 LDA.l OverworldEventDataWRAM, X : AND.b #$40 ; What we wrote over
                 RTL
         .tablet
-        LDA.b OverworldIndex : CMP.b #$03 : BEQ .ether
-                LDA.l NpcFlags+1 : AND.b #$02 : BNE .done
-        .ether
-        LDA.l NpcFlags+1 : AND.b #$01
-        .done
+        TDC
 RTL
