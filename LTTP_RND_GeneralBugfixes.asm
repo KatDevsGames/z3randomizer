@@ -59,7 +59,6 @@ incsrc vanillalabels.asm
 
 ;org $208000 ; bank #$20
 org $A08000 ; bank #$A0
-incsrc newitems.asm ; LEAVE THIS AS FIRST
 incsrc itemdowngrade.asm
 incsrc bugfixes.asm
 incsrc darkworldspawn.asm
@@ -67,7 +66,6 @@ incsrc lampmantlecone.asm
 incsrc floodgatesoftlock.asm
 incsrc heartpieces.asm
 incsrc npcitems.asm
-incsrc utilities.asm
 incsrc hextodec.asm
 incsrc flipperkill.asm
 incsrc pendantcrystalhud.asm
@@ -163,7 +161,8 @@ warnpc $A58000
 
 org $A28000
 incsrc decompresseditemgraphics.asm
-
+incsrc newitems.asm
+incsrc utilities.asm
 
 org $A38000
 incsrc stats/main.asm

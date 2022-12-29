@@ -33,8 +33,6 @@ SpawnTabletItem:
 	PHA
 	JSL.l PrepDynamicTile
 
-	JSL.l GetSpriteID
-
 	LDA.b #$EB
 	STA.l MiniGameTime
 	JSL Sprite_SpawnDynamically

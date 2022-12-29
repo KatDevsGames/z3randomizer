@@ -264,6 +264,9 @@ TileMapTile32 = $7E0698           ; Tilemap location of new tile32 objects, such
 SkipOAM = $7E0710                 ; Set to skip OAM updates. High byte written $FF with exploding walls
 OWScreenSize = $7E0712            ; Flags overworld screen size.
                                   ;
+OAMBuffer = $7E0800               ; Main OAM buffer sent to OAM. $200 bytes.
+OAMBuffer2 = $7E0A00              ;
+                                  ;
 OWTransitionFlag = $7E0ABF        ; Used for certain transitions like smith, witch, etc.
                                   ;
 ItemGFXPtr = $7E0AFA              ; Pointer for item receipt graphics transfers
@@ -737,6 +740,8 @@ endmacro
 %assertRAM(TileMapTile32, $7E0698)
 %assertRAM(SkipOAM, $7E0710)
 %assertRAM(OWScreenSize, $7E0712)
+%assertRAM(OAMBuffer, $7E0800)
+%assertRAM(OAMBuffer2, $7E0A00)
 %assertRAM(OWTransitionFlag, $7E0ABF)
 %assertRAM(TreePullKills, $7E0CFB)
 %assertRAM(TreePullHits, $7E0CFC)

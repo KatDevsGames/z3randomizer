@@ -257,19 +257,24 @@ NewHUD_DrawMagicMeter:
 	TAY
 
 	LDA.b FrameCounter
-	AND.b #$0C
+        REP #$30
+	AND.w #$000C
 	LSR
+        BRA .recolor
 
 .set_index ; this branch is always 0000 when taken
+        REP #$30
+        TDC
+        .recolor
 	TAX
 
 	LDA.l MagicMeterColorMasks,X
 
 	TYX
-	TAY : AND.l DrawMagicMeter_mp_tilemap+0,X : STA.w HUDTileMapBuffer+$046
-	TYA : AND.l DrawMagicMeter_mp_tilemap+0,X : STA.w HUDTileMapBuffer+$086
-	TYA : AND.l DrawMagicMeter_mp_tilemap+0,X : STA.w HUDTileMapBuffer+$0C6
-	TYA : AND.l DrawMagicMeter_mp_tilemap+0,X : STA.w HUDTileMapBuffer+$106
+	TAY : AND.l DrawMagicMeter_mp_tilemap+0,X : STA.l HUDTileMapBuffer+$046
+	TYA : AND.l DrawMagicMeter_mp_tilemap+2,X : STA.l HUDTileMapBuffer+$086
+	TYA : AND.l DrawMagicMeter_mp_tilemap+4,X : STA.l HUDTileMapBuffer+$0C6
+	TYA : AND.l DrawMagicMeter_mp_tilemap+6,X : STA.l HUDTileMapBuffer+$106
 
 ;===================================================================================================
 
@@ -338,3 +343,13 @@ HUDHex4Digit:
 	RTS
 
 ;===================================================================================================
+
+HUDHex2Digit_Long:
+        JSR HUDHex2Digit
+        REP #$20
+RTL
+
+HUDHex4Digit_Long:
+        JSR HUDHex4Digit
+        REP #$20
+RTL

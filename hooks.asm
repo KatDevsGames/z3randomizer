@@ -883,7 +883,8 @@ org $00D557 ; 5557 - Bank00.asm:3486 (LDA $00 : ADC $D469, X)
 JSL.l GetAnimatedSpriteBufferPointer : NOP
 
 org $0799F7 ; 399F7 - Bank07.asm:4107 (JSL AddReceivedItem)
-JSL.l AddReceivedItemExpanded
+JSL.l AddReceivedItemLong
+;JSL.l AddReceivedItemExpanded
 
 org $098611 ; 48611 - ancilla_init.asm:720 (LDA .item_target_addr+0, X)
 LDA.w ItemReceipts_target+0, X
@@ -900,7 +901,7 @@ org $098635 ; 48635 - ancilla_init.asm:727 (LDA .item_values, Y)
 LDA.w ItemReceipts_value, Y
 
 org $0986AA ; 486AA - ancilla_init.asm:848 (LDA .item_masks, X)
-LDA.w AddReceivedItemExpanded_item_masks, X
+LDA.w DungeonItemMasks, X
 
 org $098769 ; 48769 - ancilla_init.asm:1005 (LDA .item_graphics_indices, Y)
 LDA.w ItemReceipts_graphics, Y
@@ -927,8 +928,8 @@ LDA.l ItemReceipts_width, X
 org $08C6F9 ; 446F9 - ancilla_receive_item.asm:570 (LDA AddReceiveItem.properties, X)
 JSL CheckReceivedItemPropertiesBeforeLoad
 
-org $08C70F ; 4470F - ancilla_receive_item.asm : 582 - (LDA.b #$00 : STA ($92), Y)
-JSL.l LoadNarrowObject
+;org $08C70F ; 4470F - ancilla_receive_item.asm : 582 - (LDA.b #$00 : STA ($92), Y)
+;JSL.l LoadNarrowObject
 
 org $0985ED ; 485ED - ancilla_init.asm:693 (LDA $02E9 : CMP.b #$01)
 JSL.l AddReceivedItemExpandedGetItem : NOP
@@ -1949,6 +1950,7 @@ JSL.l DrawHeartPieceGFX
 ;--------------------------------------------------------------------------------
 org $05F08A ; <- 2F08A - sprite_heart_upgrades.asm : 324 - (LDA $7EF36B : INC A : AND.b #$03 : STA $7EF36B : BNE .got_4_piecese) item determination
 JSL.l HeartPieceGet
+JSL.l DynamicDrawCleanup
 JSL.l IsMedallion
 BCS + : BRA Sprite_EB_HeartPiece_handle_flags : + ; Don't change OW flags if we're
 STZ.w SpriteAITable, X : RTS                      ; getting a tablet item
@@ -2517,8 +2519,4 @@ org $098C85 : JSL TransferItemReceiptToBuffer_using_GraphicsID
 
 ; gt cutscene
 org $099BBE : JSL TransferItemReceiptToBuffer_using_GraphicsID
-
-
-
-
 

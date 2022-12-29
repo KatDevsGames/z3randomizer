@@ -61,17 +61,20 @@ TransferRupeesProperly:
 ;===================================================================================================
 
 TransferItemReceiptToBuffer_using_ReceiptID:
-	PHP
-	PHB
+	PHP : PHB
 
 	REP #$30
-	PHX
-	PHY
+	PHX : PHY
 
 ++	AND.w #$00FF
-	ASL
-	TAX
+	ASL : TAX
+
+        LDA.l BusyItem : BNE +
+        LDA.l StandingItemGraphicsOffsets,X
+        BRA .have_address
++
 	LDA.l ItemReceiptGraphicsOffsets,X
+.have_address
 	BMI TransferItemReceiptToBuffer_using_ExplicitBufferAddress
 
 .rom_address
@@ -525,21 +528,21 @@ Unrolled3BPPConvert:
 ;===================================================================================================
 
 ItemReceiptGraphicsOffsets:
-	dw $0860                               ; 00 - Fighter sword
-	dw BigDecompressionBuffer+$11C0        ; 01 - Master sword
-	dw BigDecompressionBuffer+$11C0        ; 02 - Tempered sword
-	dw BigDecompressionBuffer+$11C0        ; 03 - Butter sword
-	dw BigDecompressionBuffer+$09E0        ; 04 - Fighter shield
-	dw BigDecompressionBuffer+$1940        ; 05 - Fire shield
-	dw BigDecompressionBuffer+$0C80        ; 06 - Mirror shield
-	dw BigDecompressionBuffer+$1C80        ; 07 - Fire rod
-	dw BigDecompressionBuffer+$1C80        ; 08 - Ice rod
+	dw $0860                               ; 00 - Fighter Sword and Shield
+	dw BigDecompressionBuffer+$11C0        ; 01 - Master Sword
+	dw BigDecompressionBuffer+$11C0        ; 01 - Tempered Sword
+	dw BigDecompressionBuffer+$11C0        ; 03 - Butter Sword
+	dw BigDecompressionBuffer+$09E0        ; 04 - Fighter Shield
+	dw BigDecompressionBuffer+$1940        ; 05 - Fire Shield
+	dw BigDecompressionBuffer+$0C80        ; 06 - Mirror Shield
+	dw BigDecompressionBuffer+$1C80        ; 07 - Fire Rod
+	dw BigDecompressionBuffer+$1C80        ; 08 - Ice Rod
 	dw BigDecompressionBuffer+$1CA0        ; 09 - Hammer
 	dw BigDecompressionBuffer+$1C60        ; 0A - Hookshot
 	dw BigDecompressionBuffer+$1C00        ; 0B - Bow
 	dw BigDecompressionBuffer+$1DE0        ; 0C - Boomerang
 	dw BigDecompressionBuffer+$1CC0        ; 0D - Powder
-	dw BigDecompressionBuffer+$09A0        ; 0E - Bottle refill (bee)
+	dw BigDecompressionBuffer+$09A0        ; 0E - Bottle Refill (bee)
 	dw BigDecompressionBuffer+$1440        ; 0F - Bombos
 	dw BigDecompressionBuffer+$1400        ; 10 - Ether
 	dw BigDecompressionBuffer+$1480        ; 11 - Quake
@@ -548,7 +551,7 @@ ItemReceiptGraphicsOffsets:
 	dw BigDecompressionBuffer+$0C40        ; 14 - Flute
 	dw BigDecompressionBuffer+$1C40        ; 15 - Somaria
 	dw BigDecompressionBuffer+$14C0        ; 16 - Bottle
-	dw BigDecompressionBuffer+$0C00        ; 17 - Heart piece
+	dw BigDecompressionBuffer+$0C00        ; 17 - Heartpiece
 	dw BigDecompressionBuffer+$1C40        ; 18 - Byrna
 	dw BigDecompressionBuffer+$1100        ; 19 - Cape
 	dw BigDecompressionBuffer+$1040        ; 1A - Mirror
@@ -559,11 +562,11 @@ ItemReceiptGraphicsOffsets:
 	dw BigDecompressionBuffer+$1180        ; 1F - Pearl
 	dw BigDecompressionBuffer+$08A0        ; 20 - Crystal
 	dw BigDecompressionBuffer+$0860        ; 21 - Net
-	dw BigDecompressionBuffer+$1900        ; 22 - Blue mail
-	dw BigDecompressionBuffer+$1900        ; 23 - Red mail
-	dw BigDecompressionBuffer+$1DC0        ; 24 - Small key
+	dw BigDecompressionBuffer+$1900        ; 22 - Blue Mail
+	dw BigDecompressionBuffer+$1900        ; 23 - Red Mail
+	dw BigDecompressionBuffer+$1DC0        ; 24 - Small Key
 	dw BigDecompressionBuffer+$1140        ; 25 - Compbutt
-	dw BigDecompressionBuffer+$18C0        ; 26 - Heart container from 4/4
+	dw BigDecompressionBuffer+$18C0        ; 26 - Heart Container from 4/4
 	dw BigDecompressionBuffer+$1080        ; 27 - Bomb
 	dw BigDecompressionBuffer+$1840        ; 28 - 3 bombs
 	dw BigDecompressionBuffer+$1540        ; 29 - Mushroom
@@ -615,12 +618,12 @@ ItemReceiptGraphicsOffsets:
 	dw $0                                  ; 55 - Programmable item 1
 	dw $0                                  ; 56 - Programmable item 2
 	dw $0                                  ; 57 - Programmable item 3
-	dw $0                                  ; 58 - Upgrade-only silver arrows
+	dw $05E0                               ; 58 - Upgrade-only silver arrows
 	dw $0                                  ; 59 - Rupoor
 	dw $0020                               ; 5A - Nothing
-	dw $0                                  ; 5B - Red clock
-	dw $0                                  ; 5C - Blue clock
-	dw $0                                  ; 5D - Green clock
+	dw $0DE0                               ; 5B - Red clock
+	dw $0DE0                               ; 5C - Blue clock
+	dw $0DE0                               ; 5D - Green clock
 	dw $0                                  ; 5E - Progressive sword
 	dw $0                                  ; 5F - Progressive shield
 	dw $0                                  ; 60 - Progressive armor
@@ -629,16 +632,16 @@ ItemReceiptGraphicsOffsets:
 	dw $0                                  ; 63 - RNG pool item (multi)
 	dw $0                                  ; 64 - Progressive bow
 	dw $0                                  ; 65 - Progressive bow
-	dw $0                                  ; 66 - 
-	dw $0                                  ; 67 - 
-	dw $0                                  ; 68 - 
-	dw $0                                  ; 69 - 
+	dw $0                                  ; 66 -
+	dw $0                                  ; 67 -
+	dw $0                                  ; 68 -
+	dw $0                                  ; 69 -
 	dw $0060                               ; 6A - Triforce
-	dw $0                                  ; 6B - Power star
-	dw $0                                  ; 6C - 
+	dw $11E0                               ; 6B - Power star
+	dw $0                                  ; 6C -
 	dw $0                                  ; 6D - Server request item
 	dw $0                                  ; 6E - Server request item (dungeon drop)
-	dw $0                                  ; 6F - 
+	dw $0                                  ; 6F -
 
 	dw BigDecompressionBuffer+$1580        ; 70 - Map of Light World
 	dw BigDecompressionBuffer+$1580        ; 71 - Map of Dark World
@@ -708,85 +711,354 @@ ItemReceiptGraphicsOffsets:
 	dw $0                                  ; AE - Reserved
 	dw BigDecompressionBuffer+$1DC0        ; AF - Generic small key
 
-	dw $0                                  ; B0 - 
-	dw $0                                  ; B1 - 
-	dw $0                                  ; B2 - 
-	dw $0                                  ; B3 - 
-	dw $0                                  ; B4 - 
-	dw $0                                  ; B5 - 
-	dw $0                                  ; B6 - 
-	dw $0                                  ; B7 - 
-	dw $0                                  ; B8 - 
-	dw $0                                  ; B9 - 
-	dw $0                                  ; BA - 
-	dw $0                                  ; BB - 
-	dw $0                                  ; BC - 
-	dw $0                                  ; BD - 
-	dw $0                                  ; BE - 
-	dw $0                                  ; BF - 
-	dw $0                                  ; C0 - 
-	dw $0                                  ; C1 - 
-	dw $0                                  ; C2 - 
-	dw $0                                  ; C3 - 
-	dw $0                                  ; C4 - 
-	dw $0                                  ; C5 - 
-	dw $0                                  ; C6 - 
-	dw $0                                  ; C7 - 
-	dw $0                                  ; C8 - 
-	dw $0                                  ; C9 - 
-	dw $0                                  ; CA - 
-	dw $0                                  ; CB - 
-	dw $0                                  ; CC - 
-	dw $0                                  ; CD - 
-	dw $0                                  ; CE - 
-	dw $0                                  ; CF - 
-	dw $0                                  ; D0 - 
-	dw $0                                  ; D1 - 
-	dw $0                                  ; D2 - 
-	dw $0                                  ; D3 - 
-	dw $0                                  ; D4 - 
-	dw $0                                  ; D5 - 
-	dw $0                                  ; D6 - 
-	dw $0                                  ; D7 - 
-	dw $0                                  ; D8 - 
-	dw $0                                  ; D9 - 
-	dw $0                                  ; DA - 
-	dw $0                                  ; DB - 
-	dw $0                                  ; DC - 
-	dw $0                                  ; DD - 
-	dw $0                                  ; DE - 
-	dw $0                                  ; DF - 
-	dw $0                                  ; E0 - 
-	dw $0                                  ; E1 - 
-	dw $0                                  ; E2 - 
-	dw $0                                  ; E3 - 
-	dw $0                                  ; E4 - 
-	dw $0                                  ; E5 - 
-	dw $0                                  ; E6 - 
-	dw $0                                  ; E7 - 
-	dw $0                                  ; E8 - 
-	dw $0                                  ; E9 - 
-	dw $0                                  ; EA - 
-	dw $0                                  ; EB - 
-	dw $0                                  ; EC - 
-	dw $0                                  ; ED - 
-	dw $0                                  ; EE - 
-	dw $0                                  ; EF - 
-	dw $0                                  ; F0 - 
-	dw $0                                  ; F1 - 
-	dw $0                                  ; F2 - 
-	dw $0                                  ; F3 - 
-	dw $0                                  ; F4 - 
-	dw $0                                  ; F5 - 
-	dw $0                                  ; F6 - 
-	dw $0                                  ; F7 - 
-	dw $0                                  ; F8 - 
-	dw $0                                  ; F9 - 
-	dw $0                                  ; FA - 
-	dw $0                                  ; FB - 
-	dw $0                                  ; FC - 
-	dw $0                                  ; FD - 
+	dw $0                                  ; B0 -
+	dw $0                                  ; B1 -
+	dw $0                                  ; B2 -
+	dw $0                                  ; B3 -
+	dw $0                                  ; B4 -
+	dw $0                                  ; B5 -
+	dw $0                                  ; B6 -
+	dw $0                                  ; B7 -
+	dw $0                                  ; B8 -
+	dw $0                                  ; B9 -
+	dw $0                                  ; BA -
+	dw $0                                  ; BB -
+	dw $0                                  ; BC -
+	dw $0                                  ; BD -
+	dw $0                                  ; BE -
+	dw $0                                  ; BF -
+	dw $0                                  ; C0 -
+	dw $0                                  ; C1 -
+	dw $0                                  ; C2 -
+	dw $0                                  ; C3 -
+	dw $0                                  ; C4 -
+	dw $0                                  ; C5 -
+	dw $0                                  ; C6 -
+	dw $0                                  ; C7 -
+	dw $0                                  ; C8 -
+	dw $0                                  ; C9 -
+	dw $0                                  ; CA -
+	dw $0                                  ; CB -
+	dw $0                                  ; CC -
+	dw $0                                  ; CD -
+	dw $0                                  ; CE -
+	dw $0                                  ; CF -
+	dw $0                                  ; D0 -
+	dw $0                                  ; D1 -
+	dw $0                                  ; D2 -
+	dw $0                                  ; D3 -
+	dw $0                                  ; D4 -
+	dw $0                                  ; D5 -
+	dw $0                                  ; D6 -
+	dw $0                                  ; D7 -
+	dw $0                                  ; D8 -
+	dw $0                                  ; D9 -
+	dw $0                                  ; DA -
+	dw $0                                  ; DB -
+	dw $0                                  ; DC -
+	dw $0                                  ; DD -
+	dw $0                                  ; DE -
+	dw $0                                  ; DF -
+	dw $0                                  ; E0 -
+	dw $0                                  ; E1 -
+	dw $0                                  ; E2 -
+	dw $0                                  ; E3 -
+	dw $0                                  ; E4 -
+	dw $0                                  ; E5 -
+	dw $0                                  ; E6 -
+	dw $0                                  ; E7 -
+	dw $0                                  ; E8 -
+	dw $0                                  ; E9 -
+	dw $0                                  ; EA -
+	dw $0                                  ; EB -
+	dw $0                                  ; EC -
+	dw $0                                  ; ED -
+	dw $0                                  ; EE -
+	dw $0                                  ; EF -
+	dw $0                                  ; F0 -
+	dw $0                                  ; F1 -
+	dw $0                                  ; F2 -
+	dw $0                                  ; F3 -
+	dw $0                                  ; F4 -
+	dw $0                                  ; F5 -
+	dw $0                                  ; F6 -
+	dw $0                                  ; F7 -
+	dw $0                                  ; F8 -
+	dw $0                                  ; F9 -
+	dw $0                                  ; FA -
+	dw $0                                  ; FB -
+	dw $0                                  ; FC -
+	dw $0                                  ; FD -
 	dw $0                                  ; FE - Server request (async)
-	dw $0                                  ; FF - 
+	dw $0                                  ; FF -
 
 ;===================================================================================================
+; The table below is for "standing" items, either in heart piece locations, boss heart locations
+; or shops etc. Generally we do not and shouldn't use different gfx for this purpose, so this is
+; mostly a copy of the previous table. However some items, such as swords, use a separate sprite
+; for receipt and non-receipt drawing.
+;===================================================================================================
+StandingItemGraphicsOffsets:
+	dw $0860                               ; 00 - Fighter Sword and Shield
+	dw $00E0                               ; 01 - Master Sword
+	dw $0120                               ; 02 - Tempered Sword
+	dw $0160                               ; 03 - Butter Sword
+	dw BigDecompressionBuffer+$09E0        ; 04 - Fighter Shield
+	dw BigDecompressionBuffer+$1940        ; 05 - Fire Shield
+	dw BigDecompressionBuffer+$0C80        ; 06 - Mirror Shield
+	dw BigDecompressionBuffer+$1C80        ; 07 - Fire Rod
+	dw BigDecompressionBuffer+$1C80        ; 08 - Ice Rod
+	dw BigDecompressionBuffer+$1CA0        ; 09 - Hammer
+	dw BigDecompressionBuffer+$1C60        ; 0A - Hookshot
+	dw BigDecompressionBuffer+$1C00        ; 0B - Bow
+	dw BigDecompressionBuffer+$1DE0        ; 0C - Boomerang
+	dw BigDecompressionBuffer+$1CC0        ; 0D - Powder
+	dw BigDecompressionBuffer+$09A0        ; 0E - Bottle Refill (bee)
+	dw BigDecompressionBuffer+$1440        ; 0F - Bombos
+	dw BigDecompressionBuffer+$1400        ; 10 - Ether
+	dw BigDecompressionBuffer+$1480        ; 11 - Quake
+	dw BigDecompressionBuffer+$10C0        ; 12 - Lamp
+	dw BigDecompressionBuffer+$11E0        ; 13 - Shovel
+	dw BigDecompressionBuffer+$0C40        ; 14 - Flute
+	dw BigDecompressionBuffer+$1C40        ; 15 - Somaria
+	dw BigDecompressionBuffer+$14C0        ; 16 - Bottle
+	dw BigDecompressionBuffer+$0C00        ; 17 - Heartpiece
+	dw BigDecompressionBuffer+$1C40        ; 18 - Byrna
+	dw BigDecompressionBuffer+$1100        ; 19 - Cape
+	dw BigDecompressionBuffer+$1040        ; 1A - Mirror
+	dw BigDecompressionBuffer+$1D40        ; 1B - Glove
+	dw BigDecompressionBuffer+$1D40        ; 1C - Mitts
+	dw BigDecompressionBuffer+$1D80        ; 1D - Book
+	dw BigDecompressionBuffer+$1000        ; 1E - Flippers
+	dw BigDecompressionBuffer+$1180        ; 1F - Pearl
+	dw BigDecompressionBuffer+$08A0        ; 20 - Crystal
+	dw BigDecompressionBuffer+$0860        ; 21 - Net
+	dw BigDecompressionBuffer+$1900        ; 22 - Blue Mail
+	dw BigDecompressionBuffer+$1900        ; 23 - Red Mail
+	dw BigDecompressionBuffer+$1DC0        ; 24 - Small Key
+	dw BigDecompressionBuffer+$1140        ; 25 - Compbutt
+	dw BigDecompressionBuffer+$18C0        ; 26 - Heart Container from 4/4
+	dw BigDecompressionBuffer+$1080        ; 27 - Bomb
+	dw BigDecompressionBuffer+$1840        ; 28 - 3 bombs
+	dw BigDecompressionBuffer+$1540        ; 29 - Mushroom
+	dw BigDecompressionBuffer+$1DE0        ; 2A - Red boomerang
+	dw BigDecompressionBuffer+$1500        ; 2B - Full bottle (red)
+	dw BigDecompressionBuffer+$1500        ; 2C - Full bottle (green)
+	dw BigDecompressionBuffer+$1500        ; 2D - Full bottle (blue)
+	dw BigDecompressionBuffer+$1500        ; 2E - Potion refill (red)
+	dw BigDecompressionBuffer+$1500        ; 2F - Potion refill (green)
+	dw BigDecompressionBuffer+$1500        ; 30 - Potion refill (blue)
+	dw BigDecompressionBuffer+$1D00        ; 31 - 10 bombs
+	dw BigDecompressionBuffer+$15C0        ; 32 - Big key
+	dw BigDecompressionBuffer+$1580        ; 33 - Map
+	dw BigDecompressionBuffer+$0800        ; 34 - 1 rupee
+	dw BigDecompressionBuffer+$0800        ; 35 - 5 rupees
+	dw BigDecompressionBuffer+$0800        ; 36 - 20 rupees
+	dw BigDecompressionBuffer+$0080        ; 37 - Green pendant
+	dw BigDecompressionBuffer+$0080        ; 38 - Blue pendant
+	dw BigDecompressionBuffer+$0080        ; 39 - Red pendant
+	dw BigDecompressionBuffer+$0920        ; 3A - Tossed bow
+	dw BigDecompressionBuffer+$08E0        ; 3B - Silvers
+	dw BigDecompressionBuffer+$09A0        ; 3C - Full bottle (bee)
+	dw BigDecompressionBuffer+$0960        ; 3D - Full bottle (fairy)
+	dw BigDecompressionBuffer+$18C0        ; 3E - Boss heart
+	dw BigDecompressionBuffer+$18C0        ; 3F - Sanc heart
+	dw BigDecompressionBuffer+$0D20        ; 40 - 100 rupees
+	dw BigDecompressionBuffer+$0D60        ; 41 - 50 rupees
+	dw BigDecompressionBuffer+$0CC0        ; 42 - Heart
+	dw BigDecompressionBuffer+$0DD0        ; 43 - Arrow
+	dw BigDecompressionBuffer+$1880        ; 44 - 10 arrows
+	dw BigDecompressionBuffer+$0CE0        ; 45 - Small magic
+	dw BigDecompressionBuffer+$0DA0        ; 46 - 300 rupees
+	dw BigDecompressionBuffer+$0000        ; 47 - 20 rupees green
+	dw BigDecompressionBuffer+$09A0        ; 48 - Full bottle (good bee)
+	dw BigDecompressionBuffer+$1C20        ; 49 - Tossed fighter sword
+	dw BigDecompressionBuffer+$09A0        ; 4A - Bottle refill (good bee)
+	dw BigDecompressionBuffer+$0040        ; 4B - Boots
+
+	; Rando items
+	dw $04A0                               ; 4C - Bomb capacity (50)
+	dw $05A0                               ; 4D - Arrow capacity (70)
+	dw $01A0                               ; 4E - 1/2 magic
+	dw $01E0                               ; 4F - 1/4 magic
+	dw $00E0                               ; 50 - Safe master sword
+	dw $0420                               ; 51 - Bomb capacity (+5)
+	dw $0460                               ; 52 - Bomb capacity (+10)
+	dw $0520                               ; 53 - Arrow capacity (+5)
+	dw $0560                               ; 54 - Arrow capacity (+10)
+	dw $0                                  ; 55 - Programmable item 1
+	dw $0                                  ; 56 - Programmable item 2
+	dw $0                                  ; 57 - Programmable item 3
+	dw $05E0                               ; 58 - Upgrade-only silver arrows
+	dw $0                                  ; 59 - Rupoor
+	dw $0020                               ; 5A - Nothing
+	dw $0DE0                               ; 5B - Red clock
+	dw $0DE0                               ; 5C - Blue clock
+	dw $0DE0                               ; 5D - Green clock
+	dw $0                                  ; 5E - Progressive sword
+	dw $0                                  ; 5F - Progressive shield
+	dw $0                                  ; 60 - Progressive armor
+	dw $0                                  ; 61 - Progressive glove
+	dw $0                                  ; 62 - RNG pool item (single)
+	dw $0                                  ; 63 - RNG pool item (multi)
+	dw $0                                  ; 64 - Progressive bow
+	dw $0                                  ; 65 - Progressive bow
+	dw $0                                  ; 66 -
+	dw $0                                  ; 67 -
+	dw $0                                  ; 68 -
+	dw $0                                  ; 69 -
+	dw $0060                               ; 6A - Triforce
+	dw $11E0                               ; 6B - Power star
+	dw $0                                  ; 6C -
+	dw $0                                  ; 6D - Server request item
+	dw $0                                  ; 6E - Server request item (dungeon drop)
+	dw $0                                  ; 6F -
+
+	dw BigDecompressionBuffer+$1580        ; 70 - Map of Light World
+	dw BigDecompressionBuffer+$1580        ; 71 - Map of Dark World
+	dw BigDecompressionBuffer+$1580        ; 72 - Map of Ganon's Tower
+	dw BigDecompressionBuffer+$1580        ; 73 - Map of Turtle Rock
+	dw BigDecompressionBuffer+$1580        ; 74 - Map of Thieves' Town
+	dw BigDecompressionBuffer+$1580        ; 75 - Map of Tower of Hera
+	dw BigDecompressionBuffer+$1580        ; 76 - Map of Ice Palace
+	dw BigDecompressionBuffer+$1580        ; 77 - Map of Skull Woods
+	dw BigDecompressionBuffer+$1580        ; 78 - Map of Misery Mire
+	dw BigDecompressionBuffer+$1580        ; 79 - Map of Dark Palace
+	dw BigDecompressionBuffer+$1580        ; 7A - Map of Swamp Palace
+	dw BigDecompressionBuffer+$1580        ; 7B - Map of Agahnim's Tower
+	dw BigDecompressionBuffer+$1580        ; 7C - Map of Desert Palace
+	dw BigDecompressionBuffer+$1580        ; 7D - Map of Eastern Palace
+	dw BigDecompressionBuffer+$1580        ; 7E - Map of Hyrule Castle
+	dw BigDecompressionBuffer+$1580        ; 7F - Map of Sewers
+
+	dw BigDecompressionBuffer+$1140        ; 80 - Compass of Light World
+	dw BigDecompressionBuffer+$1140        ; 81 - Compass of Dark World
+	dw BigDecompressionBuffer+$1140        ; 82 - Compass of Ganon's Tower
+	dw BigDecompressionBuffer+$1140        ; 83 - Compass of Turtle Rock
+	dw BigDecompressionBuffer+$1140        ; 84 - Compass of Thieves' Town
+	dw BigDecompressionBuffer+$1140        ; 85 - Compass of Tower of Hera
+	dw BigDecompressionBuffer+$1140        ; 86 - Compass of Ice Palace
+	dw BigDecompressionBuffer+$1140        ; 87 - Compass of Skull Woods
+	dw BigDecompressionBuffer+$1140        ; 88 - Compass of Misery Mire
+	dw BigDecompressionBuffer+$1140        ; 89 - Compass of Dark Palace
+	dw BigDecompressionBuffer+$1140        ; 8A - Compass of Swamp Palace
+	dw BigDecompressionBuffer+$1140        ; 8B - Compass of Agahnim's Tower
+	dw BigDecompressionBuffer+$1140        ; 8C - Compass of Desert Palace
+	dw BigDecompressionBuffer+$1140        ; 8D - Compass of Eastern Palace
+	dw BigDecompressionBuffer+$1140        ; 8E - Compass of Hyrule Castle
+	dw BigDecompressionBuffer+$1140        ; 8F - Compass of Sewers
+	dw $0                                  ; 90 - Skull key
+	dw $0                                  ; 91 - Reserved
+
+	dw BigDecompressionBuffer+$15C0        ; 92 - Big key of Ganon's Tower
+	dw BigDecompressionBuffer+$15C0        ; 93 - Big key of Turtle Rock
+	dw BigDecompressionBuffer+$15C0        ; 94 - Big key of Thieves' Town
+	dw BigDecompressionBuffer+$15C0        ; 95 - Big key of Tower of Hera
+	dw BigDecompressionBuffer+$15C0        ; 96 - Big key of Ice Palace
+	dw BigDecompressionBuffer+$15C0        ; 97 - Big key of Skull Woods
+	dw BigDecompressionBuffer+$15C0        ; 98 - Big key of Misery Mire
+	dw BigDecompressionBuffer+$15C0        ; 99 - Big key of Dark Palace
+	dw BigDecompressionBuffer+$15C0        ; 9A - Big key of Swamp Palace
+	dw BigDecompressionBuffer+$15C0        ; 9B - Big key of Agahnim's Tower
+	dw BigDecompressionBuffer+$15C0        ; 9C - Big key of Desert Palace
+	dw BigDecompressionBuffer+$15C0        ; 9D - Big key of Eastern Palace
+	dw BigDecompressionBuffer+$15C0        ; 9E - Big key of Hyrule Castle
+	dw BigDecompressionBuffer+$15C0        ; 9F - Big key of Sewers
+
+	dw BigDecompressionBuffer+$1DC0        ; A0 - Small key of Sewers
+	dw BigDecompressionBuffer+$1DC0        ; A1 - Small key of Hyrule Castle
+	dw BigDecompressionBuffer+$1DC0        ; A2 - Small key of Eastern Palace
+	dw BigDecompressionBuffer+$1DC0        ; A3 - Small key of Desert Palace
+	dw BigDecompressionBuffer+$1DC0        ; A4 - Small key of Agahnim's Tower
+	dw BigDecompressionBuffer+$1DC0        ; A5 - Small key of Swamp Palace
+	dw BigDecompressionBuffer+$1DC0        ; A6 - Small key of Dark Palace
+	dw BigDecompressionBuffer+$1DC0        ; A7 - Small key of Misery Mire
+	dw BigDecompressionBuffer+$1DC0        ; A8 - Small key of Skull Woods
+	dw BigDecompressionBuffer+$1DC0        ; A9 - Small key of Ice Palace
+	dw BigDecompressionBuffer+$1DC0        ; AA - Small key of Tower of Hera
+	dw BigDecompressionBuffer+$1DC0        ; AB - Small key of Thieves' Town
+	dw BigDecompressionBuffer+$1DC0        ; AC - Small key of Turtle Rock
+	dw BigDecompressionBuffer+$1DC0        ; AD - Small key of Ganon's Tower
+	dw $0                                  ; AE - Reserved
+	dw BigDecompressionBuffer+$1DC0        ; AF - Generic small key
+
+	dw $0                                  ; B0 -
+	dw $0                                  ; B1 -
+	dw $0                                  ; B2 -
+	dw $0                                  ; B3 -
+	dw $0                                  ; B4 -
+	dw $0                                  ; B5 -
+	dw $0                                  ; B6 -
+	dw $0                                  ; B7 -
+	dw $0                                  ; B8 -
+	dw $0                                  ; B9 -
+	dw $0                                  ; BA -
+	dw $0                                  ; BB -
+	dw $0                                  ; BC -
+	dw $0                                  ; BD -
+	dw $0                                  ; BE -
+	dw $0                                  ; BF -
+	dw $0                                  ; C0 -
+	dw $0                                  ; C1 -
+	dw $0                                  ; C2 -
+	dw $0                                  ; C3 -
+	dw $0                                  ; C4 -
+	dw $0                                  ; C5 -
+	dw $0                                  ; C6 -
+	dw $0                                  ; C7 -
+	dw $0                                  ; C8 -
+	dw $0                                  ; C9 -
+	dw $0                                  ; CA -
+	dw $0                                  ; CB -
+	dw $0                                  ; CC -
+	dw $0                                  ; CD -
+	dw $0                                  ; CE -
+	dw $0                                  ; CF -
+	dw $0                                  ; D0 -
+	dw $0                                  ; D1 -
+	dw $0                                  ; D2 -
+	dw $0                                  ; D3 -
+	dw $0                                  ; D4 -
+	dw $0                                  ; D5 -
+	dw $0                                  ; D6 -
+	dw $0                                  ; D7 -
+	dw $0                                  ; D8 -
+	dw $0                                  ; D9 -
+	dw $0                                  ; DA -
+	dw $0                                  ; DB -
+	dw $0                                  ; DC -
+	dw $0                                  ; DD -
+	dw $0                                  ; DE -
+	dw $0                                  ; DF -
+	dw $0                                  ; E0 -
+	dw $0                                  ; E1 -
+	dw $0                                  ; E2 -
+	dw $0                                  ; E3 -
+	dw $0                                  ; E4 -
+	dw $0                                  ; E5 -
+	dw $0                                  ; E6 -
+	dw $0                                  ; E7 -
+	dw $0                                  ; E8 -
+	dw $0                                  ; E9 -
+	dw $0                                  ; EA -
+	dw $0                                  ; EB -
+	dw $0                                  ; EC -
+	dw $0                                  ; ED -
+	dw $0                                  ; EE -
+	dw $0                                  ; EF -
+	dw $0                                  ; F0 -
+	dw $0                                  ; F1 -
+	dw $0                                  ; F2 -
+	dw $0                                  ; F3 -
+	dw $0                                  ; F4 -
+	dw $0                                  ; F5 -
+	dw $0                                  ; F6 -
+	dw $0                                  ; F7 -
+	dw $0                                  ; F8 -
+	dw $0                                  ; F9 -
+	dw $0                                  ; FA -
+	dw $0                                  ; FB -
+	dw $0                                  ; FC -
+	dw $0                                  ; FD -
+	dw $0                                  ; FE - Server request (async)
+	dw $0                                  ; FF -

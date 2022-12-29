@@ -480,9 +480,8 @@ RTL
 PrepDynamicTile:
 	PHA : PHX : PHY
 	JSR.w LoadDynamicTileOAMTable
-	JSL.l GetSpriteID ; convert loot id to sprite id
-	;JSL.l GetAnimatedSpriteTile_variable
-	JSL TransferItemReceiptToBuffer_using_GraphicsID
+	JSL TransferItemReceiptToBuffer_using_ReceiptID
+        SEP #$30
 	PLY : PLX : PLA
 RTL
 ;--------------------------------------------------------------------------------
@@ -799,3 +798,21 @@ RTL
 ;This feature makes it easy to draw the same tile repeatedly. If this bit is set, the length bits should be set to 2 times the number of copies of the tile to upload. (Without subtracting 1!)
 ;It is followed by a single tile (word).  Combining this this with the D bit makes it easy to draw large horizontal or vertical runs of a tile without using much space. Geat for erasing or drawing horizontal or verical box edges.
 ;================================================================================
+
+
+DynamicDrawCleanup:
+        PHA
+        REP #$20
+        LDA.w #$F000
+        STA.w OAMBuffer
+        STA.w OAMBuffer+$04
+        STA.w OAMBuffer+$08
+        STA.w OAMBuffer+$0C
+        STZ.w OAMBuffer+$02
+        STZ.w OAMBuffer+$06
+        STZ.w OAMBuffer+$0A
+        STZ.w OAMBuffer+$0E
+        SEP #$20
+        PLA
+RTL
+

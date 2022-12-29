@@ -12,7 +12,6 @@ HeartPieceGet:
 
         .skipLoad
 
-        STZ.w ItemReceiptMethod ; 0 = Receiving item from an NPC or message
 
         CPY.b #$26 : BNE .notHeart ; don't add a 1/4 heart if it's not a heart piece
         LDA.l HeartPieceQuarter : INC A : AND.b #$03 : STA.l HeartPieceQuarter : BNE .unfinished_heart ; add up heart quarters
@@ -21,6 +20,8 @@ HeartPieceGet:
         .notHeart
         .giveItem
         JSL.l $0791B3 ; Player_HaltDashAttackLong
+        STZ.w ItemReceiptMethod ; 0 = Receiving item from an NPC or message
+
         JSL.l Link_ReceiveItem
         CLC ; return false
         JMP .done ; finished
@@ -41,7 +42,6 @@ HeartContainerGet:
 		; if for any reason the item value is 0 reload it, just in case
 		JSL.l LoadHeartContainerRoomValue : TAY
 	+
-
 	BRA HeartPieceGet_skipLoad
 ;--------------------------------------------------------------------------------
 DrawHeartPieceGFX:
