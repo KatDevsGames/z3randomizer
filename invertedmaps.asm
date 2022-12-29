@@ -14,8 +14,8 @@ Overworld_LoadNewTiles:
     ; Pyramid sign
     LDA.l InvertedMode : AND.w #$00FF : BNE +
     LDA.b OverworldIndex : AND.w #$00FF : CMP.w #$005B : BNE +
-        LDA.w #$0101 : STA.w $7E27B6 ; Moved sign near statue
-        LDA.w #$05C2 : STA.w $7E27B4 ; added a pyramid peg on the left of the sign
+        LDA.w #$0101 : STA.l $7E27B6 ; Moved sign near statue
+        LDA.w #$05C2 : STA.l $7E27B4 ; added a pyramid peg on the left of the sign
     +
 
     SEP #$30
