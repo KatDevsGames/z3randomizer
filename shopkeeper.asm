@@ -332,7 +332,7 @@ Shopkepeer_CallOriginal:
 	LDA.b #ShopkeeperJumpTable>>8 : PHA
 	LDA.b #ShopkeeperJumpTable : PHA
     LDA.w SpriteItemType, X
-    JML.l UseImplicitRegIndexedLocalJumpTable
+    JML.l JumpTableLocal
 ;--------------------------------------------------------------------------------
 Sprite_ShopKeeper:
 

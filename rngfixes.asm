@@ -35,9 +35,8 @@ RTL
 RTL
 ;--------------------------------------------------------------------------------
 FixChestCounterForChestGame:
-	JSL.l DecrementItemCounter
-	JSL.l $0DBA71
-RTL
+	JSL DecrementItemCounter
+	JML $8DBA71
 ;--------------------------------------------------------------------------------
 RNG_Lanmolas1:
 	LDA.b #$00 : BRA _rng_done
@@ -129,20 +128,20 @@ InitRNGPointerTable:
 	PLP : PLX
 RTL
 .rngDefaults
-dw #$0000 ; 00 = Lanmolas 1
-dw #$0040 ; 01 = Moldorm 1
-dw #$0080 ; 02 = Agahnim 1
-dw #$00C0 ; 03 = Helmasaur
-dw #$0100 ; 04 = Arrghus
-dw #$0140 ; 05 = Mothula
-dw #$0180 ; 06 = Kholdstare
-dw #$01C0 ; 07 = Vitreous
-dw #$0200 ; 08 = Trinexx
-dw #$0240 ; 09 = Lanmolas 2
-dw #$0280 ; 10 = Moldorm 2
-dw #$02C0 ; 11 = Agahnim 2
-dw #$0300 ; 12 = Agahnim 2 Phantoms
-dw #$0340 ; 13 = Ganon
-dw #$0380 ; 14 = Ganon Extra Warp
-dw #$03C0 ; 15 = Standard Escape Enemy Drops
+dw $0000 ; 00 = Lanmolas 1
+dw $0040 ; 01 = Moldorm 1
+dw $0080 ; 02 = Agahnim 1
+dw $00C0 ; 03 = Helmasaur
+dw $0100 ; 04 = Arrghus
+dw $0140 ; 05 = Mothula
+dw $0180 ; 06 = Kholdstare
+dw $01C0 ; 07 = Vitreous
+dw $0200 ; 08 = Trinexx
+dw $0240 ; 09 = Lanmolas 2
+dw $0280 ; 10 = Moldorm 2
+dw $02C0 ; 11 = Agahnim 2
+dw $0300 ; 12 = Agahnim 2 Phantoms
+dw $0340 ; 13 = Ganon
+dw $0380 ; 14 = Ganon Extra Warp
+dw $03C0 ; 15 = Standard Escape Enemy Drops
 ;--------------------------------------------------------------------------------

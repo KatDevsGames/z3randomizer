@@ -341,7 +341,7 @@ AgahnimAsksAboutPed:
 	STA.w TextID
 
 .vanilla
-	JML $05FA8E ; Sprite_ShowMessageMinimal
+	JML $85FA8E ; Sprite_ShowMessageMinimal
 ;--------------------------------------------------------------------------------
 Main_ShowTextMessage_Alt:
 	; Are we in text mode? If so then end the routine.
@@ -433,7 +433,7 @@ Sprite_ShowSolicitedMessageIfPlayerFacing_Alt:
 
 	; Make sure that the sprite is facing towards the player, otherwise
 	; talking can't happen. (What sprites actually use this???)
-	LDA.l $05E1A3, X : PLX : CMP.b LinkDirection : BNE .not_facing_each_other
+	LDA.l $85E1A3, X : PLX : CMP.b LinkDirection : BNE .not_facing_each_other
 
 	PHY
 
@@ -490,7 +490,7 @@ Sprite_ShowSolicitedMessageIfPlayerFacing_PreserveMessage:
 
 	; Make sure that the sprite is facing towards the player, otherwise
 	; talking can't happen. (What sprites actually use this???)
-	LDA.l $05E1A3, X : PLX : CMP.b LinkDirection : BNE .not_facing_each_other
+	LDA.l $85E1A3, X : PLX : CMP.b LinkDirection : BNE .not_facing_each_other
 
 	PLA : XBA : PLA
 

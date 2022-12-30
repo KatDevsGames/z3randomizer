@@ -2,7 +2,7 @@
 ; Frame Hook
 ;--------------------------------------------------------------------------------
 FrameHookAction:
-        JSL $0080B5 ; Module_MainRouting
+        JSL $8080B5 ; Module_MainRouting
         JSL CheckMusicLoadRequest
         PHP : REP #$30 : PHA
         SEP #$20	

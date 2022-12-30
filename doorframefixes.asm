@@ -8,7 +8,7 @@
 StoreLastOverworldDoorID:
 	TXA : INC
 	STA.l PreviousOverworldDoor
-	LDA.l $1BBB73, X : STA.w EntranceIndex
+	LDA.l $9BBB73, X : STA.w EntranceIndex
 RTL
 ;--------------------------------------------------------------------------------
 

@@ -3,7 +3,7 @@
 ;--------------------------------------------------------------------------------
 DropSafeDungeon:
 	LDA.w DungeonID : CMP.b #$08 : BEQ +
-		LDA.l $01C6FC, X : JML Sprite_SpawnFallingItem
+		LDA.l $81C6FC, X : JML Sprite_SpawnFallingItem
 	+
 RTL
 ;--------------------------------------------------------------------------------

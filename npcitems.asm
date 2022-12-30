@@ -55,7 +55,7 @@ ItemCheck_TreeKid2:
 RTL
 
 ItemCheck_TreeKid3:
-	JSL $0DD030 ; FluteAardvark_Draw - thing we wrote over
+	JSL $8DD030 ; FluteAardvark_Draw - thing we wrote over
 	LDA.l NpcFlags : AND.b #$08
 	BNE .done
 
@@ -176,7 +176,7 @@ RTL
 ; Randomize Zora King
 ;--------------------------------------------------------------------------------
 LoadZoraKingItemGFX:
-    LDA.l $1DE1C3 ; location randomizer writes zora item to
+    LDA.l $9DE1C3 ; location randomizer writes zora item to
 	JML.l PrepDynamicTile
 ;--------------------------------------------------------------------------------
 JumpToSplashItemTarget:
@@ -188,17 +188,17 @@ JumpToSplashItemTarget:
 ; Randomize Catfish
 ;--------------------------------------------------------------------------------
 LoadCatfishItemGFX:
-        LDA.l $1DE185 ; location randomizer writes catfish item to
+        LDA.l $9DE185 ; location randomizer writes catfish item to
         JML PrepDynamicTile
 ;--------------------------------------------------------------------------------
 DrawThrownItem:
         LDA.b OverworldIndex : CMP.b #$81 : BNE .catfish
                 .zora
                 LDA.b #$01 : STA.l RedrawFlag
-                LDA.l $1DE1C3 ; location randomizer writes zora item to
+                LDA.l $9DE1C3 ; location randomizer writes zora item to
                 BRA .draw
                 .catfish
-                LDA.l $1DE185 ; location randomizer writes catfish item to
+                LDA.l $9DE185 ; location randomizer writes catfish item to
                 .draw
                 JML DrawDynamicTile
 ;--------------------------------------------------------------------------------

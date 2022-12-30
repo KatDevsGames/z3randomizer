@@ -33,7 +33,7 @@ DecrementSaveCounter:
 RTL
 ;--------------------------------------------------------------------------------
 DungeonHoleWarpTransition:
-	LDA.l $01C31F, X
+	LDA.l $81C31F, X
 	BRA StatTransitionCounter
 DungeonHoleEntranceTransition:
 	JSL EnableForceBlank

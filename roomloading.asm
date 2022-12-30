@@ -7,7 +7,7 @@ LoadRoomHook:
         LDX.b RoomIndex ; Room ID
         LDA.l RoomCallbackTable, X
     SEP #$10 ; 8 bit XY
-    JSL UseImplicitRegIndexedLongJumpTable
+    JSL JumpTableLong
 ; Callback routines:
     dl NoCallback ; 00
     dl IcePalaceBombosSE ; 01

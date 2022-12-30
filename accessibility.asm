@@ -153,7 +153,7 @@ RestoreBgEther:
             INX #2 : CPX.b #$10 : BNE -
             BRA ++
         ++
-JML $02FF51 ; Bank0E.asm : 3936 vanilla restore routine after loop which RTLs
+JML $82FF51 ; Bank0E.asm : 3936 vanilla restore routine after loop which RTLs
 ;================================================================================
 DDMConditionalLightning:
         LDA.l DisableFlashing 
@@ -161,7 +161,7 @@ DDMConditionalLightning:
         BNE +
             LDA.w Scrap
             LDX.b #$02
-            JML $07FA7F ; Bank0E.asm : 4738 vanilla loop equivalent to below beginning at LDY #$00
+            JML $87FA7F ; Bank0E.asm : 4738 vanilla loop equivalent to below beginning at LDY #$00
         +
             LDA.b Scrap00 : LDX.b #$02 : LDY.b #$00
         -
@@ -172,7 +172,7 @@ DDMConditionalLightning:
             LDA.w $F523, Y : LDA.l PaletteBuffer+$F0, X
             INY #2
             INX #2 : CPX.b #$10 : BNE -
-            JML $07FAAC ; Bank0E.asm : 4754 both branches converge here
+            JML $87FAAC ; Bank0E.asm : 4754 both branches converge here
 ;================================================================================
 ConditionalGTFlash:
         LDA.l DisableFlashing : REP #$20 : BNE +
@@ -222,17 +222,17 @@ LoadElectroPalette:
         LDA.w #$0404 : STA.b Scrap0E
         LDA.w #$001B : STA.b Scrap02
         SEP #$10
-        LDX.b Scrap0C : LDA.l $1BEBB4, X : AND.w #$00FF : ADC.w #$D630
+        LDX.b Scrap0C : LDA.l $9BEBB4, X : AND.w #$00FF : ADC.w #$D630
         REP #$10 : LDX.w #$01B2 : LDY.w #$0002
         JSR ConditionalLoadGearPalette
         SEP #$10
         LDX.b Scrap0D
-        LDA.l $1BEBC1, X : AND.w #$00FF : ADC.w #$D648
+        LDA.l $9BEBC1, X : AND.w #$00FF : ADC.w #$D648
         REP #$10 : LDX.w #$01B8 : LDY.w #$0003
         JSR ConditionalLoadGearPalette
         SEP #$10
         LDX.b Scrap0E
-        LDA.l $1BEC06, X : AND.w #$00FF : ASL A : ADC.w #$D308
+        LDA.l $9BEC06, X : AND.w #$00FF : ASL A : ADC.w #$D308
         REP #$10 : LDX.w #$01E2 : LDY.w #$000E
         JSR ConditionalLoadGearPalette
         SEP #$30

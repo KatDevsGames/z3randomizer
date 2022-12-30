@@ -29,7 +29,7 @@ LockAgahnimDoors:
 			LDA.w #$0001 : RTL ;Keep the door locked
 		++
 		SEP #$30
-		JSL $099B6F ;Add tower break seal
+		JSL $899B6F ;Add tower break seal
 		REP #$30
 		LDA.w #$0001 ;Prevent door from opening that frame otherwise it glitchy
 		RTL
@@ -142,11 +142,11 @@ JML.l AllowStartFromExitReturn
 
 	.doStart
 
-	LDA.l $028481, X ;Module_LocationMenu_starting_points
+	LDA.l $828481, X ;Module_LocationMenu_starting_points
 	ASL : TAX
 
-	LDA.l $02D8D2, X : STA.b RoomIndex
-	LDA.l $02D8D3, X : STA.b RoomIndex+1
+	LDA.l $82D8D2, X : STA.b RoomIndex
+	LDA.l $82D8D3, X : STA.b RoomIndex+1
 
 	; Go to pre-overworld mode
 	LDA.b #$08 : STA.b GameMode
@@ -165,9 +165,9 @@ RTL
 CheckHole:
 	LDX.w #$0024
 	.nextHoleClassic
-		LDA.b Scrap00   : CMP.l $1BB800, X
+		LDA.b Scrap00   : CMP.l $9BB800, X
 		BNE .wrongMap16Classic
-		LDA.b OverworldIndex : CMP.l $1BB826, X
+		LDA.b OverworldIndex : CMP.l $9BB826, X
 		BEQ .matchedHoleClassic
 	.wrongMap16Classic
 		DEX #2 : BPL .nextHoleClassic

@@ -255,9 +255,9 @@ endmacro
 FastSpriteDecomp:
 	SEP #$30
 
-	LDA.l $00CFC0,X : PHA : PLB ; bank
-	LDA.l $00D09F,X : XBA ; high
-	LDA.l $00D17E,X ; low
+	LDA.l $80CFC0,X : PHA : PLB ; bank
+	LDA.l $80D09F,X : XBA ; high
+	LDA.l $80D17E,X ; low
 
 	REP #$10
 
@@ -334,7 +334,6 @@ FastSpriteDecomp:
 	ASL
 	ASL
 	ASL
-	AND.b #$E0
 	STA.b DecompTestByte
 
 	LDA.b DecompCommand
@@ -395,19 +394,24 @@ FastSpriteDecomp:
 	STY.b DecompSaveY
 
 	LDY.b DecompSize
+	DEY
 
 .next_word
 	STA.l DecompBuffer2,X
 
 	INX
-	DEY
-	BEQ .done_restore_y
-
 	INX
-	DEY
-	BNE .next_word
 
-.done_restore_y
+	DEY
+	DEY
+	BPL .next_word
+
+	INY
+	BEQ .not_too_far
+
+	DEX
+
+.not_too_far
 	SEP #$20
 
 	LDY.b DecompSaveY

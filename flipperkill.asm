@@ -4,10 +4,10 @@
 
 ; Written over and used by OnEnterWater hook.
 UnequipCapeQuiet: 
-    LDA.b #$20 : STA.w PoofTimer
-    STZ.w NoDamage
-    STZ.b CapeOn
-    STZ.w LinkZap
+	LDA.b #$20 : STA.w PoofTimer
+	STZ.w NoDamage
+	STZ.b CapeOn
+	STZ.w LinkZap
 RTL
 
 protectff:
@@ -43,7 +43,7 @@ protectff:
 	BMI .special_overworld
 
 	AND.b #$3F
-	CMP.l $02A4E3,X
+	CMP.l $82A4E3,X
 	BEQ ++
 
 .protect

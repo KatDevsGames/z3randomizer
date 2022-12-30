@@ -1,3 +1,18 @@
+CheckZSNES:
+	SEP #$28
+	LDA.b #$FF
+	CLC
+	ADC.b #$FF
+	CMP.b #$64
+	REP #$28
+	BEQ .zsnes
+	LDA.w #$01FF : TCS ; thing we wrote over - initialize stack
+	JML ReturnCheckZSNES
+.zsnes
+	JML DontUseZSNES
+
+;===================================================================================================
+
 pushtable
 
 table "data/bsodencode.txt"

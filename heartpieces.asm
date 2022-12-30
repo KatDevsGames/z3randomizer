@@ -19,7 +19,7 @@ HeartPieceGet:
 
         .notHeart
         .giveItem
-        JSL.l $0791B3 ; Player_HaltDashAttackLong
+        JSL.l $8791B3 ; Player_HaltDashAttackLong
         STZ.w ItemReceiptMethod ; 0 = Receiving item from an NPC or message
 
         JSL.l Link_ReceiveItem
@@ -155,7 +155,7 @@ LoadHeartPieceRoomValue:
 RTL
 ;--------------------------------------------------------------------------------
 HPItemReset:
-	JSL $09AD58 ; GiveRupeeGift - thing we wrote over
+	JSL $89AD58 ; GiveRupeeGift - thing we wrote over
 	PHA : LDA.b #$01 : STA.l RedrawFlag : PLA
 RTL
 ;--------------------------------------------------------------------------------
@@ -378,9 +378,9 @@ RTL
 ;#13 - Ganon's Tower - Agahnim II
 ;#0 - Pyramid of Power - Ganon
 ;--------------------------------------------------------------------------------
-;JSL $06DD40 ; DashKey_Draw
-;JSL $06DBF8 ; Sprite_PrepAndDrawSingleLargeLong
-;JSL $06DC00 ; Sprite_PrepAndDrawSingleSmallLong ; draw first cell correctly
-;JSL $00D51B ; GetAnimatedSpriteTile
-;JSL $00D52D ; GetAnimatedSpriteTile.variable
+;JSL $86DD40 ; DashKey_Draw
+;JSL $86DBF8 ; Sprite_PrepAndDrawSingleLargeLong
+;JSL $86DC00 ; Sprite_PrepAndDrawSingleSmallLong ; draw first cell correctly
+;JSL $80D51B ; GetAnimatedSpriteTile
+;JSL $80D52D ; GetAnimatedSpriteTile.variable
 ;================================================================================

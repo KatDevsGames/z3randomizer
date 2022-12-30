@@ -1,4 +1,4 @@
-org $328000
+org $B28000
 ; You have found
 ; the map of
 Notice_MapOf:

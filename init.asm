@@ -71,7 +71,7 @@ Init_PostRAMClear:
 	JSL DecompressAllItemGraphics
 
 
-JML $00D463	; The original target of the jump table that we hijacked
+JML $80D463	; The original target of the jump table that we hijacked
 
 ;---------------------------------------------------------------------------------------------------
 

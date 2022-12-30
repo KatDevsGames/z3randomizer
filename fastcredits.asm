@@ -49,10 +49,10 @@ FastCreditsCutsceneScrollY:
 
 FastCreditsCutsceneScroll:
 	LDA.w $00E2,Y
-	CMP.l $0EC308,X ; compare to target
+	CMP.l $8EC308,X ; compare to target
 
 	ROL.b Scrap00 ; put carry in here
-	LDA.l $0EC348,X ; get movement
+	LDA.l $8EC348,X ; get movement
 	BPL ++ ; if positive, leave saved carry alone
 	INC.b Scrap00 ; otherwise, flip it
 ++	ROR.b Scrap00 ; recover carry

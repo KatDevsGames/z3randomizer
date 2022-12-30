@@ -1,6 +1,6 @@
 RenderCharSetColorExtended_init:
     stz.b Scrap0C
-    jsl $00d84e
+    jsl $80d84e
     rtl
 
 RenderCharSetColorExtended_close:
