@@ -5,32 +5,32 @@ lorom
 
 ;================================================================================
 
-;org $00FFC0 ; <- 7FC0 - Bank00.asm : 9173 (db "THE LEGEND OF ZELDA  " ; 21 bytes)
+;org $80FFC0 ; <- 7FC0 - Bank00.asm : 9173 (db "THE LEGEND OF ZELDA  " ; 21 bytes)
 ;db $23, $4E
 
-org $00FFD5 ; <- 7FD5 - Bank00.asm : 9175 (db $20   ; rom layout)
+org $80FFD5 ; <- 7FD5 - Bank00.asm : 9175 (db $20   ; rom layout)
 db $30 ; set fast lorom
 
-;org $00FFD6 ; <- 7FD6 - Bank00.asm : 9176 (db $02   ; cartridge type)
+;org $80FFD6 ; <- 7FD6 - Bank00.asm : 9176 (db $02   ; cartridge type)
 ;db $55 ; enable S-RTC
 
-org $00FFD7 ; <- 7FD7 - Bank00.asm : 9177 (db $0A   ; rom size)
+org $80FFD7 ; <- 7FD7 - Bank00.asm : 9177 (db $0A   ; rom size)
 db $0B ; mark rom as 16mbit
 
-org $00FFD8 ; <- 7FD8 - Bank00.asm : 9178 (db $03   ; ram size (sram size))
+org $80FFD8 ; <- 7FD8 - Bank00.asm : 9178 (db $03   ; ram size (sram size))
 db $05 ; mark sram as 32k
 
 org $BFFFFF ; <- 1FFFFF
 db $00 ; expand file to 2mb
 
-org $1FFFF8 ; <- FFFF8 timestamp rom
+org $9FFFF8 ; <- FFFF8 timestamp rom
 db $20, $19, $08, $31 ; year/month/day
 
 ;================================================================================
 !ROM_VERSION_LOW ?= 1  ; ROM version (two 16-bit integers)
 !ROM_VERSION_HIGH ?= 2 ;
 
-org $00FFE0 ; Unused hardware vector
+org $80FFE0 ; Unused hardware vector
 RomVersion:
 dw !ROM_VERSION_LOW
 dw !ROM_VERSION_HIGH
@@ -98,7 +98,7 @@ warnpc $A18000
 
 org $9C8000 ; text tables for translation
 incbin "data/i18n_en.bin"
-warnpc $1CF356
+warnpc $9CF356
 
 org $A18000 ; static mapping area
 incsrc framehook.asm
@@ -109,7 +109,7 @@ incsrc hud.asm
 warnpc $A18800
 
 org $A18800 ; static mapping area
-incsrc zsnes.asm
+
 warnpc $A19000
 
 org $A1A000 ; static mapping area. Referenced by front end. Do not move.
@@ -248,9 +248,9 @@ if !FEATURE_NEW_TEXT
 	NewFontInverted:
 	incbin "data/newfont_inverted.bin"
 
-	org $0CD7DF
+	org $8CD7DF
 	incbin "data/text_unscramble1.bin"
-	org $0CE4D5
+	org $8CE4D5
 	incbin "data/text_unscramble2.bin"
 endif
 
@@ -313,18 +313,18 @@ warnpc $B08000
 ;$70:6000 (8K) Scratch buffers
 ;================================================================================
 
-org $00D09C ; 0x509C - HUD Items H
+org $80D09C ; 0x509C - HUD Items H
 db GFX_HUD_Items>>16
-org $00D17B ; 0x517B - HUD Items M
+org $80D17B ; 0x517B - HUD Items M
 db GFX_HUD_Items>>8
-org $00D25A ; 0x525A - HUD Items L
+org $80D25A ; 0x525A - HUD Items L
 db GFX_HUD_Items
 
-org $00D09D ; 0x509D - HUD Main H
+org $80D09D ; 0x509D - HUD Main H
 db GFX_HUD_Main>>16
-org $00D17C ; 0x517C - HUD Main M
+org $80D17C ; 0x517C - HUD Main M
 db GFX_HUD_Main>>8
-org $00D25B ; 0x525B - HUD Main L
+org $80D25B ; 0x525B - HUD Main L
 db GFX_HUD_Main
 
 ;================================================================================

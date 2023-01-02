@@ -293,16 +293,23 @@ FastSpriteDecomp:
 ; Putting some commands up here for branch distance
 ;---------------------------------------------------------------------------------------------------
 .nonrepeating
+	REP #$21
+	TYA
+	ADC.b DecompSize
+	ORA.w #$8000
+	STA.b DecompSize
+
+	SEP #$20
+
+.next_nonrepeating
 	%GetNextByte()
+
 	STA.l DecompBuffer2,X
 
 	INX
 
-	DEC.b DecompSize+0
-	BNE .nonrepeating
-
-	DEC.b DecompSize+1
-	BPL .nonrepeating
+	CPY.b DecompSize
+	BNE .next_nonrepeating
 
 	BRA .next_command
 
@@ -427,7 +434,12 @@ FastSpriteDecomp:
 
 	TAY
 
-	PHB
+	LDA.b DecompSize
+	BNE ++
+
+	DEC.b DecompSize+1
+
+++	PHB
 	LDA.b #$7F
 	PHA
 	PLB
