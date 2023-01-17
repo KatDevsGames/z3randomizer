@@ -724,3 +724,8 @@ RTL
 ;This feature makes it easy to draw the same tile repeatedly. If this bit is set, the length bits should be set to 2 times the number of copies of the tile to upload. (Without subtracting 1!)
 ;It is followed by a single tile (word).  Combining this this with the D bit makes it easy to draw large horizontal or vertical runs of a tile without using much space. Geat for erasing or drawing horizontal or verical box edges.
 ;================================================================================
+TransferVRAMStripes:
+        JSL.l TransferNumericStripes
+        JSL.l DoDungeonMapBossIcon
+        LDA.b NMISTRIPES : CMP.b #$01 ; What we wrote over
+RTL
