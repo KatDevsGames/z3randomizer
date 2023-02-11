@@ -1965,12 +1965,10 @@ JSL OnOWTransition : BRA ++ : NOP #34 : ++
 ;================================================================================
 ;Inverted mode tile map update (executed right after the original tile load)
 ;--------------------------------------------------------------------------------
-org $82ED51 ; <- 16D51
-JSL Overworld_LoadNewTiles : NOP #2
-;--------------------------------------------------------------------------------
-;Same as above
-org $82EC2E ;<- 016C2E
-JSL Overworld_LoadNewTiles : NOP #2
+org $82ED51
+JSL Overworld_LoadNewTiles : BRA ++ : ++
+org $82EC2E
+JSL Overworld_LoadNewTiles : BRA ++ : ++
 ;================================================================================
 org $87A3E2 ;<- 3A3E2 Bank07.asm:5764 (LDA.b #$80 : STA $03F0)
 JSL FreeDuckCheck : BEQ +
