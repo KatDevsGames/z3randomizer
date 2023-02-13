@@ -374,8 +374,8 @@ DrawPlayerFileShared:
 
 	LDA.l EquipmentSRAM+$0108 : AND.w #$00FF
 	JSL.l HexToDec
-	LDA.l HexToDecDigit4 : AND.w #$00FF : !ADD.w #$210+!FS_COLOR_BW : %fs_draw8x8(11,26)
-	LDA.l HexToDecDigit5 : AND.w #$00FF : !ADD.w #$210+!FS_COLOR_BW : %fs_draw8x8(11,27)
+	LDA.l HexToDecDigit4 : AND.w #$00FF : ORA.w #!FS_COLOR_BW|$02A0 : %fs_draw8x8(11,26)
+	LDA.l HexToDecDigit5 : AND.w #$00FF : ORA.w #!FS_COLOR_BW|$02A0 : %fs_draw8x8(11,27)
 
 	; Boots
 	%fs_drawItemBasic(EquipmentSRAM+$15,3,28,FileSelectItems_boots)
