@@ -110,11 +110,57 @@ JMP DrawItem
 DrawPlayerFile:
 	LDA.b FrameCounter : AND.w #$0001 : BNE .normal
 		JSR DrawPlayerFileShared
+
 		INC.w SkipOAM ; Suppress animated tile updates for this frame
 
 		; re-enable  Stripe Image format upload on this frame
 		; Value loaded must match what gets set by AltBufferTable
 		LDA.w #$0161 : STA.w GFXStripes+2
+
+		LDA.w #$C000>>1
+		XBA
+		STA.w GFXStripes+$0402
+
+		LDA.w #$C03E>>1
+		XBA
+		STA.w GFXStripes+$0408
+
+		LDA.w #$C000|57
+		XBA
+		STA.w GFXStripes+$0404
+		STA.w GFXStripes+$040A
+	
+		LDA.w #$12BF
+		STA.w GFXStripes+$0406
+		ORA.w #$4000
+		STA.w GFXStripes+$040C
+	
+		LDA.w #$C0C6>>1
+		XBA
+		STA.w GFXStripes+$040E
+
+		LDA.w #$4001
+		XBA
+		STA.w GFXStripes+$0410
+
+		LDA.l DisableFlashing
+		AND.w #$00FF
+		BEQ .flashing
+
+		LDA.w #$26BE
+		BRA .draw_access_icon
+
+.flashing
+		LDA.w #$0188
+		NOP ; 2 cycles wasted to be equal
+
+.draw_access_icon
+		STA.w GFXStripes+$0412
+
+		LDA.w #$FFFF
+		STA.w GFXStripes+$0414
+
+
 		BRA .done
 	.normal
 	STZ.w SkipOAM ; ensure core animated tile updates are not suppressed

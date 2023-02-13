@@ -219,7 +219,7 @@ warnpc $B1D001
 
 org $B1D000
 FileSelectNewGraphics:
-incbin "data/fileselect.chr.gfx"
+incbin "data/fileselectgfx.2bpp"
 warnpc $B1E001
 
 org $B1E000

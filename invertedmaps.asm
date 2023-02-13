@@ -74,7 +74,7 @@ Overworld_LoadNewTiles:
 
 	BRA .next_tile
 
-	; when using commands, the parameters will never have bit-15 set
+	; when using commands, list parameters will never have bit-15 set
 	; so we use that as our sentinel in data lists
 	; we could encode the size for everything
 	; but that makes adjustments more burdensome
@@ -107,7 +107,6 @@ Overworld_LoadNewTiles:
 
 	; dw !OWW_StripeRLEINC|!OWW_<direction>|RLESize(<size>)
 	; dw <tile>, <start>
-	;    use !SKIP to not place a tile but continue the stripe
 	!OWW_StripeRLEINC              = $8002
 	dw .stripe_rle_inc              ; 02
 
@@ -170,6 +169,7 @@ Overworld_LoadNewTiles:
 
 .inverted_skip
 	LDX.w $0000,Y
+
 	INY
 	INY
 
@@ -279,7 +279,6 @@ Overworld_LoadNewTiles:
 	BNE --
 
 	RTS
-
 
 ;---------------------------------------------------------------------------------------------------
 
@@ -422,6 +421,8 @@ dw .map3C     ; 3C
 dw $0000      ; 3D
 dw $0000      ; 3E
 dw $0000      ; 3F
+
+; dark world
 dw $0000      ; 40
 dw $0000      ; 41
 dw $0000      ; 42
@@ -1208,7 +1209,7 @@ dw $0000      ; 7F
 	dw $015E, $2E14
 	dw $0174, $2E16
 
-RTS
+	dw !OWW_END
 
 ;---------------------------------------------------------------------------------------------------
 
