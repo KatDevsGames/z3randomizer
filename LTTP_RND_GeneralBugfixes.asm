@@ -220,7 +220,7 @@ warnpc $31D001
 
 org $31D000
 FileSelectNewGraphics:
-incbin "data/fileselect.chr.gfx"
+incbin "data/fileselectgfx.2bpp"
 warnpc $31E001
 
 org $31E000
