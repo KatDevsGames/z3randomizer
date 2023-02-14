@@ -3,6 +3,12 @@
 ;================================================================================
 lorom
 
+;===================================================================================================
+
+; THIS NEEDS TO BE THE FIRST INCLUDE BECAUSE IT CHANGES THINGS EVERYWHERE
+; If this were to be included later, it would almost certainly overwrite other changes
+incsrc "fastrom.asm"
+
 ;================================================================================
 
 ;org $80FFC0 ; <- 7FC0 - Bank00.asm : 9173 (db "THE LEGEND OF ZELDA  " ; 21 bytes)

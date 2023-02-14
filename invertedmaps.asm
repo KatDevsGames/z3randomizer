@@ -7,7 +7,6 @@ OWWriteCommand = $08
 
 ;---------------------------------------------------------------------------------------------------
 
-
 function OWW_RLESize(s) = s<<8
 
 !OWW_STOP             = $8000
@@ -53,7 +52,7 @@ Overworld_LoadNewTiles:
 	; format:
 	;   dw <tile>, <pos>
 	; or if bit 15 is set
-	;   dw <command>
+	;   dw <command>, <params>...
 	; commands are:
 	;   1sss ssss dccc cccc
 	;     s - size (if applicable)
@@ -357,6 +356,7 @@ Overworld_LoadNewTiles:
 ;===================================================================================================
 
 OverworldMapChangePointers:
+; light world
 dw $0000      ; 00
 dw $0000      ; 01
 dw $0000      ; 02

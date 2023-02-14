@@ -1,9 +1,12 @@
 ;================================================================================
 ; Init Hook
+; this needs to be a JML, otherwise we're not using fast ROM when we return
 ;--------------------------------------------------------------------------------
-org $80802F ; <- 2F - Bank00.asm : 45
-JSL Init_Primary
+org $80802F
+JML Init_Primary
 NOP
+ReturnFromInit:
+
 org $8CC1AC ; <- 63 D4 00 - Bank0C.asm:8 (dl Tagalong_LoadGfx)
 dl Init_PostRAMClear
 ;--------------------------------------------------------------------------------
@@ -48,6 +51,19 @@ org $8089C2
 dw $FFFF, $FFFF, $FFFF, $FFFF
 dw $FFFF, $FFFF, $FFFF, $FFFF
 dw $FFFF, $FFFF, $FFFF, $FFFF
+
+;===================================================================================================
+; fastrom interrupts
+;===================================================================================================
+org $00FFEA : dw NMIBounce
+org $00FFEE : dw IRQBounce
+
+org $8098AB
+
+NMIBounce: JML $8080C9
+IRQBounce: JML $8082D8
+
+warnpc $8098C0
 
 ;================================================================================
 ; BSOD for BRK and COP opcodes
@@ -2483,3 +2499,39 @@ org $898C85 : JSL TransferItemReceiptToBuffer_using_GraphicsID
 ; gt cutscene
 org $899BBE : JSL TransferItemReceiptToBuffer_using_GraphicsID
 
+;===================================================================================================
+; gratuitous NOPs removed for speed
+;===================================================================================================
+org $1D8E75 : RTS
+
+org $1DB5D8 : JML.l $9DB5DF
+org $1DB605 : JML.l $9DB60C
+org $1DBBF1 : JML.l $9DBBF8
+org $1DBC19 : JML.l $9DBC20
+org $1DC072 : JMP.w $9DC079
+org $1DC0A5 : JMP.w $9DC0AC
+org $1DED3B : JML.l $9DED42
+org $1DED7A : JML.l $9DED81
+
+org $05B55E : JMP ++ : ++
+org $05B580 : JMP ++ : ++
+
+org $05B5BE : RTS
+
+org $0DD7AD : JMP ++ : ++
+org $0DD7CB : JMP ++ : ++
+
+org $1E8A85 : RTS
+
+org $1E8955 : LDA 1,S : NOP
+org $1E8973 : LDA 1,S : NOP
+org $1E89AF : LDA 1,S : NOP
+org $1E89D5 : LDA 1,S : NOP
+org $1EB797 : LDA 1,S : NOP
+org $1EB7D1 : LDA 1,S : NOP
+org $1ED0A9 : LDA 1,S : NOP
+
+org $1ED122 : JMP ++ : ++
+org $1ED141 : JMP ++ : ++
+
+;===================================================================================================
