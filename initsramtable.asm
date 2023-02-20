@@ -131,9 +131,9 @@ InitFollowerDropped: skip 1             ; PC 0x1833D3
 
 org $30B3D9 ; PC 0x1833D9 - 0x1833F0
 StaticFileName: ; The validity value ($55AA) must be written manually on SRAM init at $7003E1
-dw $0181, $0162, $0168, $018C
-dw $0166, $014E, $0162, $018C
-dw $0165, $0162, $0167, $018C
+dw $0181, $0068, $006E, $018C
+dw $0166, $0064, $0068, $018C
+dw $0165, $0068, $006D, $018C
 
 org $30B401 ; PC 0x183401
 InitDeathCounter:
