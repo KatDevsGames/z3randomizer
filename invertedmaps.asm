@@ -332,7 +332,7 @@ STA.w $28D2
 
 
 ; CHECK IF AGAHNIM 2 IS DEAD AND WE HAVE ALREADY LANDED
-LDA.w OverworldEventDataWRAM+$2B : AND.w #$0020 : BEQ .agahnim2Alive
+LDA.w OverworldEventDataWRAM+$5B : AND.w #$0020 : BEQ .agahnim2Alive
 LDA.w #$046D : STA.w $243E
 LDA.w #$0E3A : STA.w $24BC
 LDA.w #$0E3B : STA.w $24BE
