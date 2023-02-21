@@ -105,13 +105,11 @@ OnFileCreation:
 
         ; Set validity value and do some cleanup. Jump to checksum.
         LDA.w #$55AA : STA.l FileValiditySRAM
+        JSL.l WriteNewFileChecksum
         STZ.b Scrap00
         STZ.b Scrap01
-        LDX.b Scrap00
-        LDY.w #$0000
-        TYA
 
-JML.l InitializeSaveFile_build_checksum
+JML.l InitializeSaveFile_done
 ;--------------------------------------------------------------------------------
 OnFileLoad:
 	REP #$10 ; set 16 bit index registers

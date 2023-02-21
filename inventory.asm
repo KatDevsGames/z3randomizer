@@ -175,7 +175,6 @@ macro BottomHalf(address)
 endmacro
 ;--------------------------------------------------------------------------------
 FullInventoryExternal:
-	LDA.l StatsLocked : BEQ + : RTL : +
 	PHA : PHX : PHP : JMP AddInventory_incrementCounts
 ;--------------------------------------------------------------------------------
 AddInventory:
@@ -225,8 +224,6 @@ AddInventory:
 	+
 
 	.incrementCounts
-	LDA.l StatsLocked : BEQ + : JMP .done : +
-
 	; don't count any of this stuff
 	CPY.b #$20 : BNE + : JMP .itemCounts : + ; Crystal
 	CPY.b #$26 : BNE + : JMP .itemCounts : + ; Heart Piece Completion Heart
