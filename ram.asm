@@ -544,8 +544,9 @@ RxStatus: skip 1                   ;
 TxBuffer: skip $7F                 ;
 TxStatus: skip 1                   ;
 skip $10                           ; Unused
-CompassTotalsWRAM: skip $10        ; skip $10
-skip $40                           ; Reserved for general dungeon tracking data. May have over
+CompassTotalsWRAM: skip $10        ; \ Compass and map dungeon HUD display totals. Placed in WRAM
+MapTotalsWRAM: skip $10            ; / on boot for tracking.
+skip $30                           ; Reserved for general dungeon tracking data. May have over
                                    ; allocated here. Feel free to reassign.
 skip $40                           ; Unused
 skip $260                          ; Unused
@@ -913,6 +914,7 @@ endmacro
 %assertRAM(TxBuffer, $7F5380)
 %assertRAM(TxStatus, $7F53FF)
 %assertRAM(CompassTotalsWRAM, $7F5410)
+%assertRAM(MapTotalsWRAM, $7F5420)
 %assertRAM(DialogBuffer, $7F5700)
 %assertRAM(MiniGameTime, $7FFE00)
 %assertRAM(MiniGameTimeFinal, $7FFE04)

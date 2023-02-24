@@ -408,6 +408,7 @@ AddInventory:
 		JSR .incrementBigKey
 		JMP .done
 	+ CPY.b #$33 : BNE + ; Map
+                JSL MaybeFlagMapTotalPickup
 		JSR .incrementMap
 		JMP .done
 	+ CPY.b #$37 : !BLT + ; Items $37 - $39 - Pendants
@@ -492,6 +493,7 @@ AddInventory:
 		JMP .done
 	+ CPY.b #$70 : !BLT + ; Items $70 - $7F - Free Maps
 	  CPY.b #$80 : !BGE +
+                JSL MaybeFlagMapTotalPickup
 		JSR .incrementMap
 		JMP .done
 	+ CPY.b #$80 : !BLT + ; Items $80 - $8F - Free Compasses
