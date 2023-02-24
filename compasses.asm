@@ -5,9 +5,7 @@ DrawDungeonItemCounts:
 	LDA.w DungeonID : AND.w #$00FE : TAX ; force dungeon ID to be multiple of 2
 	PLA
 	CPX.b #$1B : BCS .done ; Skip if not in a valid dungeon ID
-        TXA : LSR : TAX : BNE +
-                INC ; Count sewer as Hyrule Castle
-        +
+
         JSR.w DrawCompassCounts
         JSR.w DrawMapCounts
 	.done
@@ -16,9 +14,12 @@ RTL
 DrawCompassCounts:
         PHX
 	LDA.l CompassMode : BIT.w #$0002 : BNE + ; if CompassMode==2, we don't check for the compass
-		LDA.l CompassField : AND.l DungeonItemMasks, X ; Load compass values to A, mask with dungeon item masks
+		LDA.l CompassField : AND.w DungeonItemMasks, X ; Load compass values to A, mask with dungeon item masks
 		BEQ .done ; skip if we don't have compass
 	+
+        TXA : LSR : TAX : BNE +
+                INC ; Count sewer as Hyrule Castle
+        +
         LDA.l CompassTotalsWRAM, X : AND.w #$00FF
         SEP #$20
 	JSR HudHexToDec2Digit
@@ -41,9 +42,12 @@ RTS
 DrawMapCounts:
         PHX
 	LDA.l MapHUDMode : BIT.w #$0002 : BNE + ; if MapHUDMode==2, we don't check for map
-		LDA.l MapField : AND.l DungeonItemMasks, X ; Load map values to A, mask with dungeon item masks
+		LDA.l MapField : AND.w DungeonItemMasks, X ; Load map values to A, mask with dungeon item masks
 		BEQ .done ; skip if we don't have map
 	+
+        TXA : LSR : TAX : BNE +
+                INC ; Count sewer as Hyrule Castle
+        +
         LDA.l MapTotalsWRAM, X : AND.w #$00FF
         SEP #$20
 	JSR HudHexToDec2Digit
