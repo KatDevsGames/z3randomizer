@@ -317,7 +317,8 @@ HeartPieceCounter: skip 1       ; Total Number of heartpieces collected (integer
 CrystalCounter: skip 1          ; Total Number of crystals collected (integer)
 DungeonsCompleted: skip 2       ; Bitfield indicating whether a dungeon's prize has been collected.
                                 ; This has the same shape as the dungeon item bitfields.
-skip 44                         ; Unused
+MapCountDisplay: skip 2         ;
+skip 42                         ; Unused
 ServiceSequence:                ; See servicerequest.asm
 ServiceSequenceRx: skip 8       ; Service sequence receive
 ServiceSequenceTx: skip 8       ; Service sequence transmit
@@ -602,6 +603,7 @@ endmacro
 %assertSRAM(HeartPieceCounter, $7EF470)
 %assertSRAM(CrystalCounter, $7EF471)
 %assertSRAM(DungeonsCompleted, $7EF472)
+%assertSRAM(MapCountDisplay, $7EF474)
 ;--------------------------------------------------------------------------------
 %assertSRAM(ServiceSequence, $7EF4A0)
 %assertSRAM(ServiceSequenceRx, $7EF4A0)

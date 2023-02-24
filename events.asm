@@ -16,7 +16,7 @@ JML.l ReturnFromOnDrawHud
 ;--------------------------------------------------------------------------------
 OnDungeonEntrance:
 	STA.l PegColor ; thing we wrote over
-        JSL MaybeFlagCompassTotalEntrance
+        JSL MaybeFlagDungeonTotalsEntrance
 RTL
 ;--------------------------------------------------------------------------------
 OnPlayerDead:

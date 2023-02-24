@@ -1087,14 +1087,23 @@ MaybeFlagCompassTotalPickup:
         .done
 RTL
 ;--------------------------------------------------------------------------------
-; Set the compass count display flag if we're entering a dungeon and alerady have
-; that compass
-MaybeFlagCompassTotalEntrance:
-        LDX.w DungeonID : CPX.b #$FF : BEQ .done         ; Skip if we're not entering dungeon
-        LDA.l CompassMode : AND.w #$000F : BEQ .done ; Skip if we're not showing compass counts
-        CMP.w #$0002 : BEQ .countShown
+; Set the dungeon item count display flags if we're entering a dungeon and have the
+; corresponding dungeon item
+MaybeFlagDungeonTotalsEntrance:
+        LDX.w DungeonID : CPX.b #$FF : BEQ .done ; Skip if we're not entering dungeon
+        LDA.l CompassMode : AND.w #$000F : BEQ .maps ; Skip if we're not showing compass counts
+                JSR.w FlagCompassCount
+        .maps
+        LDA.l MapHUDMode : AND.w #$000F : BEQ .done
+                LDX.w DungeonID
+                JSR.w FlagMapCount
+        .done
+RTL
+;--------------------------------------------------------------------------------
+FlagCompassCount:
+        CMP.w #$0002 : BEQ .compassShown
                 LDA.l CompassField : AND.l DungeonItemMasks, X : BEQ .done ; skip if we don't have compass
-                .countShown
+                .compassShown
                 SEP #$20
                 TXA : LSR : STA.b Scrap04 : LDA.b #$0F : !SUB Scrap04 ; Compute flag index
                 CMP.b #$08 : !BGE ++
@@ -1109,5 +1118,46 @@ MaybeFlagCompassTotalEntrance:
                         ORA.l CompassCountDisplay+1 : STA.l CompassCountDisplay+1
                         REP #$20
         .done
+RTS
+;--------------------------------------------------------------------------------
+FlagMapCount:
+        CMP.w #$0002 : BEQ .mapShown
+                LDA.l MapField : AND.l DungeonItemMasks, X : BEQ .done ; skip if we don't have map
+                .mapShown
+                SEP #$20
+                TXA : LSR : STA.b Scrap04 : LDA.b #$0F : !SUB Scrap04 ; Compute flag index
+                CMP.b #$08 : !BGE ++
+                        %ValueShift()
+                        ORA.l MapCountDisplay : STA.l MapCountDisplay
+                        REP #$20
+                        BRA .done
+                ++
+                        !SUB #$08
+                        %ValueShift()
+                        BIT.b #$C0 : BEQ + : LDA.b #$C0 : + ; Make Hyrule Castle / Sewers Count for Both
+                        ORA.l MapCountDisplay+1 : STA.l MapCountDisplay+1
+                        REP #$20
+        .done
+RTS
+;--------------------------------------------------------------------------------
+MaybeFlagMapTotalPickup:
+        LDA.l MapMode : AND.b #$0F : BEQ .done
+        LDA.w DungeonID : CMP.b #$FF : BEQ .done
+        LSR : STA.b Scrap04 : LDA.b #$0F : !SUB Scrap04 ; Compute flag "index"
+        CPY.b #$25 : BEQ .setFlag                       ; Set flag if it's a compass for this dungeon
+                STA.b Scrap04
+                TYA : AND.b #$0F : CMP.b Scrap04 : BNE .done ; Check if map is for this dungeon
+                        .setFlag
+                        CMP.b #$08 : !BGE ++
+                                %ValueShift()
+                                ORA.l MapCountDisplay : STA.l MapCountDisplay
+                                BRA .done
+                        ++
+                                !SUB #$08
+                                %ValueShift()
+                                BIT.b #$C0 : BEQ + : LDA.b #$C0 : + ; Make Hyrule Castle / Sewers Count for Both
+                                ORA.l MapCountDisplay+1 : STA.l MapCountDisplay+1
+        .done
 RTL
 ;--------------------------------------------------------------------------------
+

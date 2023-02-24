@@ -42,11 +42,16 @@ DungeonItemMasks: ; these are dungeon correlations to $7EF364 - $7EF369 so it kn
     dw $8000, $4000, $2000, $1000, $0800, $0400, $0200, $0100
     dw $0080, $0040, $0020, $0010, $0008, $0004
 ;--------------------------------------------------------------------------------
-InitCompassTotalsRAM:
-        LDX.b #$00
+InitDungeonCounts:
+        LDX.b #$0F
         -
                 LDA.l CompassTotalsROM, X : STA.l CompassTotalsWRAM, X
-                INX
-                CPX.b #$0F : !BLT -
+                DEX
+        BPL -
+        LDX.b #$0F
+        -
+                LDA.l ChestKeys, X : STA.l MapTotalsWRAM, X
+                DEX
+        BPL -
 RTL
 
