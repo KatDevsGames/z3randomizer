@@ -85,7 +85,9 @@ NewDrawHud:
 ;================================================================================
 ; Draw Dungeon Compass Counts
 ;================================================================================
-	JSL.l DrawDungeonItemCounts ; compasses.asm
+        LDA.l CompassMode : ORA.l MapHUDMode : BIT #$0003 : BEQ +
+                JSL.l DrawDungeonItemCounts ; compasses.asm
+        +
 
 ;================================================================================
 ; Draw key count
