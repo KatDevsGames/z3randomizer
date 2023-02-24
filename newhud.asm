@@ -85,9 +85,7 @@ NewDrawHud:
 ;================================================================================
 ; Draw Dungeon Compass Counts
 ;================================================================================
-	LDA.l CompassMode : AND.w #$00FF : BEQ + ; skip if CompassMode is 0.
-		JSL.l DrawDungeonCompassCounts ; compasses.asm
-	+
+	JSL.l DrawDungeonItemCounts ; compasses.asm
 
 ;================================================================================
 ; Draw key count
