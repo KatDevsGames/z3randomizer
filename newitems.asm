@@ -1141,10 +1141,10 @@ FlagMapCount:
 RTS
 ;--------------------------------------------------------------------------------
 MaybeFlagMapTotalPickup:
-        LDA.l MapMode : AND.b #$0F : BEQ .done
+        LDA.l MapHUDMode : AND.b #$0F : BEQ .done
         LDA.w DungeonID : CMP.b #$FF : BEQ .done
         LSR : STA.b Scrap04 : LDA.b #$0F : !SUB Scrap04 ; Compute flag "index"
-        CPY.b #$25 : BEQ .setFlag                       ; Set flag if it's a compass for this dungeon
+        CPY.b #$33 : BEQ .setFlag                       ; Set flag if it's a compass for this dungeon
                 STA.b Scrap04
                 TYA : AND.b #$0F : CMP.b Scrap04 : BNE .done ; Check if map is for this dungeon
                         .setFlag
