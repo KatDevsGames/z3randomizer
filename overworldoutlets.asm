@@ -60,7 +60,6 @@ FindOutletID:
 	db $4A ; 1018
 	db $FF ; 1019
 
-
 ; Lost Woods Gamble                 ; 0x4F
 ; Snitch Lady (West)                ; 0x50
 ; Snitch Lady (East)                ; 0x51
@@ -128,6 +127,8 @@ FindOutletID:
 ; Checkerboard Cave                 ; 0x8F
 ; Dark World Hammer Peg Cave        ; 0x90
 ; Chicken hut                       ; 0x91
+; Dam                               ; 0x92
+; C-Shaped House                    ; 0x93
 
 NewOutletData:
 .overworld_id
@@ -279,10 +280,10 @@ NewOutletData:
 	db $30 ; 0x8F
 	db $62 ; 0x90
 	db $18 ; 0x91
+	db $3B ; 0x92
+	db $58 ; 0x93
 
 	; Reserved
-	db $00 ; 0x92
-	db $00 ; 0x93
 	db $00 ; 0x94
 	db $00 ; 0x95
 	db $00 ; 0x96
@@ -542,10 +543,10 @@ NewOutletData:
 	dw $00C8 ; 0x8F
 	dw $0894 ; 0x90
 	dw $1120 ; 0x91
+	dw $040A ; 0x92
+	dw $09D8 ; 0x93
 
 	; Reserved
-	dw $0000 ; 0x92
-	dw $0000 ; 0x93
 	dw $0000 ; 0x94
 	dw $0000 ; 0x95
 	dw $0000 ; 0x96
@@ -805,11 +806,10 @@ NewOutletData:
 	dw $0C0A ; 0x8F
 	dw $091E ; 0x90
 	dw $0837 ; 0x91
+	dw $0E8A ; 0x92
+	dw $0744 ; 0x93
 
 	; Reserved
-	dw $0000 ; 0x91
-	dw $0000 ; 0x92
-	dw $0000 ; 0x93
 	dw $0000 ; 0x94
 	dw $0000 ; 0x95
 	dw $0000 ; 0x96
@@ -1069,10 +1069,10 @@ NewOutletData:
 	dw $024A ; 0x8F
 	dw $0492 ; 0x90
 	dw $0106 ; 0x91
+	dw $06FA ; 0x92
+	dw $02CE ; 0x93
 
 	; Reserved
-	dw $0000 ; 0x92
-	dw $0000 ; 0x93
 	dw $0000 ; 0x94
 	dw $0000 ; 0x95
 	dw $0000 ; 0x96
@@ -1332,10 +1332,10 @@ NewOutletData:
 	dw $0C67 ; 0x8F
 	dw $09A6 ; 0x90
 	dw $0888 ; 0x91
+	dw $0ED8 ; 0x92
+	dw $0797 ; 0x93
 
 	; Reserved
-	dw $0000 ; 0x92
-	dw $0000 ; 0x93
 	dw $0000 ; 0x94
 	dw $0000 ; 0x95
 	dw $0000 ; 0x96
@@ -1595,10 +1595,10 @@ NewOutletData:
 	dw $02C8 ; 0x8F
 	dw $0508 ; 0x90
 	dw $0188 ; 0x91
+	dw $0778 ; 0x92
+	dw $0348 ; 0x93
 
 	; Reserved
-	dw $0000 ; 0x92
-	dw $0000 ; 0x93
 	dw $0000 ; 0x94
 	dw $0000 ; 0x95
 	dw $0000 ; 0x96
@@ -1858,10 +1858,10 @@ NewOutletData:
 	dw $0C77 ; 0x8F
 	dw $098B ; 0x90
 	dw $08A4 ; 0x91
+	dw $0EF7 ; 0x92
+	dw $07B3 ; 0x93
 
 	; Reserved
-	dw $0000 ; 0x92
-	dw $0000 ; 0x93
 	dw $0000 ; 0x94
 	dw $0000 ; 0x95
 	dw $0000 ; 0x96
@@ -2121,10 +2121,10 @@ NewOutletData:
 	dw $02CF ; 0x8F
 	dw $050F ; 0x90
 	dw $0193 ; 0x91
+	dw $077F ; 0x92
+	dw $0353 ; 0x93
 
 	; Reserved
-	dw $0000 ; 0x92
-	dw $0000 ; 0x93
 	dw $0000 ; 0x94
 	dw $0000 ; 0x95
 	dw $0000 ; 0x96
@@ -2384,10 +2384,10 @@ NewOutletData:
 	db $06 ; 0x8F
 	db $00 ; 0x90
 	db $07 ; 0x91
+	db $06 ; 0x92
+	db $0A ; 0x93
 
 	; Reserved
-	db $00 ; 0x92
-	db $00 ; 0x93
 	db $00 ; 0x94
 	db $00 ; 0x95
 	db $00 ; 0x96
@@ -2647,10 +2647,10 @@ NewOutletData:
 	db $FA ; 0x8F
 	db $00 ; 0x90
 	db $F9 ; 0x91
+	db $FA ; 0x92
+	db $F6 ; 0x93
 
 	; Reserved
-	db $00 ; 0x92
-	db $00 ; 0x93
 	db $00 ; 0x94
 	db $00 ; 0x95
 	db $00 ; 0x96
@@ -2910,10 +2910,10 @@ NewOutletData:
 	dw $0000 ; 0x8F
 	dw $0000 ; 0x90
 	dw $1530 ; 0x91
+	dw $0000 ; 0x92
+	dw $0DE8 ; 0x93
 
 	; Reserved
-	dw $0000 ; 0x92
-	dw $0000 ; 0x93
 	dw $0000 ; 0x94
 	dw $0000 ; 0x95
 	dw $0000 ; 0x96
@@ -3173,10 +3173,10 @@ NewOutletData:
 	dw $0000 ; 0x8F
 	dw $0000 ; 0x90
 	dw $0000 ; 0x91
-
-	; Reserved
 	dw $0000 ; 0x92
 	dw $0000 ; 0x93
+
+	; Reserved
 	dw $0000 ; 0x94
 	dw $0000 ; 0x95
 	dw $0000 ; 0x96
