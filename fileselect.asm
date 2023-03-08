@@ -129,7 +129,7 @@ DrawPlayerFile:
 		STA.w GFXStripes+$0404
 		STA.w GFXStripes+$040A
 	
-		LDA.w #$12BF
+		LDA.w #$0188 ; change back to 12BF to restore the border
 		STA.w GFXStripes+$0406
 		ORA.w #$4000
 		STA.w GFXStripes+$040C
