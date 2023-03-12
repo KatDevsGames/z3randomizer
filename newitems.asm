@@ -348,11 +348,11 @@ AddReceivedItemExpandedGetItem:
 		AND.b #$0F : TAX
 		LDA.l DungeonKeys, X : INC : STA.l DungeonKeys, X ; Increment Key Count
 
-		CPX.b #$00 : BNE ++
-			STA.l HyruleCastleKeys ; copy HC to sewers
-		++ : CPX.b #$01 : BNE ++
-			STA.l SewerKeys ; copy sewers to HC
-		++
+                CPX.b #$00 : BNE ++
+                        STA.l HyruleCastleKeys ; copy HC to sewers
+                ++ : CPX.b #$01 : BNE ++
+                        STA.l SewerKeys ; copy sewers to HC
+                ++
 
 		LDA.l GenericKeys : BEQ +
 		.generic
