@@ -187,7 +187,7 @@ RTL
 UpdateKeys:
         PHX : PHP
         SEP #$30 ; set 8-bit accumulator & index registers
-                LDA.w DungeonID : CMP.b TSWQ : !BLT .skip
+                LDA.w DungeonID : CMP.b #$1F : !BGE .skip
                 LSR : TAX ; get dungeon index and store to X
                 LDA.l DungeonKeys, X : INC : STA.l DungeonKeys, X
 
