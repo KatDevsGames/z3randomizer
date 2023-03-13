@@ -811,12 +811,18 @@ RTL
 ; SaveKeys:
 ;--------------------------------------------------------------------------------
 SaveKeys:
-	PHA
-	LDA.l GenericKeys : BEQ +
-		PLA : STA.l CurrentGenericKeys
-		RTL
-	+
-	PLA : STA.l DungeonKeys, X
+        PHA
+        LDA.l GenericKeys : BEQ +
+                PLA : STA.l CurrentGenericKeys
+                RTL
+        +
+        PLA : STA.l DungeonKeys, X
+        CPX.b #$00 : BNE +
+                STA.l HyruleCastleKeys ; copy HC to sewers
+        +
+        CPX.b #$01 : BNE +
+                STA.l SewerKeys ; copy sewers to HC
+        +
 RTL
 ;--------------------------------------------------------------------------------
 
