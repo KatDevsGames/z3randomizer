@@ -185,23 +185,19 @@ ShowDungeonItems:
 RTL
 ;--------------------------------------------------------------------------------
 UpdateKeys:
-	PHX : PHP
-	SEP #$30 ; set 8-bit accumulator & index registers
-		LDA.w DungeonID : CMP.b TSWQ : !BLT .skip
-		
-		LSR : TAX ; get dungeon index and store to X
-	
-		LDA.l CurrentSmallKeys ; load current key count
-		STA.l DungeonKeys, X ; save to main counts
-		
-		CPX.b #$00 : BNE +
-			STA.l HyruleCastleKeys ; copy HC to sewers
-		+ : CPX.b #$01 : BNE +
-			STA.l SewerKeys ; copy sewers to HC
-		+
-		.skip
-	JSL.l PostItemGet
-	PLP : PLX
+        PHX : PHP
+        SEP #$30 ; set 8-bit accumulator & index registers
+                LDA.w DungeonID : CMP.b #$1F : !BGE .skip
+                LSR : TAX ; get dungeon index and store to X
+                LDA.l DungeonKeys, X : INC : STA.l DungeonKeys, X
+
+                CPX.b #$00 : BNE +
+                        STA.l HyruleCastleKeys ; copy HC to sewers
+                + : CPX.b #$01 : BNE +
+                        STA.l SewerKeys ; copy sewers to HC
+                +
+                .skip
+        PLP : PLX
 RTL
 ;$37C = Sewer Passage
 ;$37D = Hyrule Castle

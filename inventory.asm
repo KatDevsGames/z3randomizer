@@ -379,7 +379,7 @@ AddInventory:
                 LDX.b #$02
                 JSR .incrementMail
 	+ CPY.b #$24 : BNE + ; Small Key
-		JSR .incrementKey
+		JSR .incrementVanillaKey
 		JMP .done
 	+ CPY.b #$25 : BNE + ; Compass
                 JSL MaybeFlagCompassTotalPickup
@@ -614,6 +614,10 @@ RTS
 .incrementKeyLong
 	JSR .incrementKey
 RTL
+
+.incrementVanillaKey
+        LDA.l SmallKeyCounter : INC : STA.l SmallKeyCounter
+        JSL.l UpdateKeys
 
 .incrementKey
         LDA.l SmallKeyCounter : INC : STA.l SmallKeyCounter
