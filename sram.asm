@@ -172,7 +172,7 @@ CurrentGenericKeys: skip 1      ; Generic small keys
 ;================================================================================
 ; Tracking & Indicators ($7EF38C - $7EF3F0)
 ;--------------------------------------------------------------------------------
-InventoryTracking: skip 2       ; b r m p n s k f  - - - - - - o q (bitfield)
+InventoryTracking: skip 2       ; - - - - - - o q  b r m p n s k f (bitfield)
                                 ; b = Blue Boomerang   | r = Red Boomerang  | m = Mushroom Current
                                 ; p = Magic Powder     | n = Mushroom Past  | s = Shovel
                                 ; k = Inactive Flute   | f = Active Flute   | o = Any bomb acquired

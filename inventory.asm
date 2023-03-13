@@ -2,7 +2,7 @@
 ; Inventory Updates
 ;================================================================================
 ; InventoryTracking
-; brmpnskf ------oq
+; ------oq brmpnskf
 ; b = blue boomerang   | -
 ; r = red boomerang    | -
 ; m = mushroom current | -
