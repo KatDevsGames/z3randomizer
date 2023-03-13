@@ -189,7 +189,7 @@ UpdateKeys:
         SEP #$30 ; set 8-bit accumulator & index registers
                 LDA.w DungeonID : CMP.b #$1F : !BGE .skip
                 LSR : TAX ; get dungeon index and store to X
-                LDA.l DungeonKeys, X : INC : STA.l DungeonKeys, X
+                LDA.l CurrentSmallKeys : STA.l DungeonKeys, X
 
                 CPX.b #$00 : BNE +
                         STA.l HyruleCastleKeys ; copy HC to sewers

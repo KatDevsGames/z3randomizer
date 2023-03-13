@@ -119,6 +119,7 @@ CountChestKey: ; called by neighbor functions
                 CPY.b #$24 : BEQ +  ; small key for this dungeon - use DungeonID
                         CPY.b #$A0 : !BLT .end ; Ignore most items
                         CPY.b #$AE : !BGE .end ; Ignore reserved key and generic key
+                        TYA : AND.B #$0F
                         TAX : BRA .count  ; use Key id instead of DungeonID (Keysanity)
                 +
                 LDA.w DungeonID : LSR : TAX
