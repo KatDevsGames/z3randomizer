@@ -234,7 +234,7 @@ DrawPlayerFileShared:
 	; %fs_drawItemBasic(EquipmentSRAM+$03,3,18,FileSelectItems_bombs)
 
 	; Powder
-	LDA.l InventoryTrackingSRAM : AND.w #$1000 : BEQ +
+	LDA.l InventoryTrackingSRAM : AND.w #$0010 : BEQ +
 		%fs_drawItem(3,20,FileSelectItems_powder)
 		BRA ++
 	+
@@ -242,7 +242,7 @@ DrawPlayerFileShared:
 	++
 
 	; Mushroom
-	LDA.l InventoryTrackingSRAM : AND.w #$2800 : BEQ +
+	LDA.l InventoryTrackingSRAM : AND.w #$0028 : BEQ +
 		%fs_drawItem(3,18,FileSelectItems_mushroom)
 		BRA ++
 	+
@@ -250,7 +250,7 @@ DrawPlayerFileShared:
 	++
 
 	; Flute
-	LDA.l InventoryTrackingSRAM : AND.w #$0300 : BEQ +
+	LDA.l InventoryTrackingSRAM : AND.w #$0003 : BEQ +
 		%fs_drawItem(7,16,FileSelectItems_flute)
 		BRA ++
 	+
@@ -258,7 +258,7 @@ DrawPlayerFileShared:
 	++
 
 	; Shovel
-	LDA.l InventoryTrackingSRAM : AND.w #$0400 : BEQ +
+	LDA.l InventoryTrackingSRAM : AND.w #$0004 : BEQ +
 		%fs_drawItem(9,12,FileSelectItems_shovel)
 		BRA ++
 	+
