@@ -120,7 +120,7 @@ db #$01 ; #$00 = Off - #$01 = On (default)
 ;--------------------------------------------------------------------------------
 ; 0x180039 (Unused)
 ;--------------------------------------------------------------------------------
-org $30803A ; PC 0x18003B - PC 0x18003C
+org $30803A ; PC 0x18003A-0x18003C
 MapHUDMode:
 db #$00 ; #$00 = Off (default) - #$01 = Display Dungeon Count w/Map - #$02 = Display Dungeon Count Always
 MapMode:

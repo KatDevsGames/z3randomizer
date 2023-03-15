@@ -13,7 +13,7 @@ RTL
 
 DrawCompassCounts:
         PHX
-	LDA.l CompassMode : BEQ .done
+	LDA.l CompassMode : AND.w #$00FF : BEQ .done
                 BIT.w #$0002 : BNE + ; if CompassMode==2, we don't check for the compass
 		        LDA.l CompassField : AND.l DungeonItemMasks, X ; Load compass values to A, mask with dungeon item masks
 		        BEQ .done ; skip if we don't have compass
@@ -40,7 +40,7 @@ RTS
 
 DrawMapCounts:
         PHX
-	LDA.l MapHUDMode : BEQ .done
+	LDA.l MapHUDMode : AND.w #$00FF : BEQ .done
                 BIT.w #$0002 : BNE + ; if MapHUDMode==2, we don't check for map
 		        LDA.l MapField : AND.l DungeonItemMasks, X ; Load map values to A, mask with dungeon item masks
 		        BEQ .done ; skip if we don't have map
