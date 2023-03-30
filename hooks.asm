@@ -2378,6 +2378,9 @@ db $00, $00
 ;================================================================================
 ; Fast credits
 
+org $8EC2B1
+JSL FlagFastCredits
+
 org $82A096
 JSL DumbFlagForMSU
 
