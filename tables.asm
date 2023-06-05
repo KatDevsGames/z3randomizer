@@ -118,7 +118,9 @@ org $308038 ; PC 0x180038
 LampConeSewers:
 db #$01 ; #$00 = Off - #$01 = On (default)
 ;--------------------------------------------------------------------------------
-; 0x180039 (Unused)
+org $308039 ; PC 0x180039
+ItemCounterHUD:
+db $00 ; $00 = Off | $01 = Display TotalItemCounter / TotalItemCount display on HUD
 ;--------------------------------------------------------------------------------
 org $30803A ; PC 0x18003A-0x18003C
 MapHUDMode:
@@ -144,6 +146,9 @@ db #$00
 ; #$06 = Light Speed
 ; #$07 = Require All Crystals and Crystal Bosses
 ; #$08 = Require All Crystal Bosses only
+; #$09 = Require All Dungeons No Agahnim
+; #$0A = Require 100% Item Collection
+; #$0B = Require 100% Item Collection and All Dungeons
 ;--------------------------------------------------------------------------------
 org $30803F ; PC 0x18003F
 HammerableGanon:
@@ -927,6 +932,10 @@ db #$01 ; #$00 = Instant win if last goal item collected. $01 = (Default) must t
 org $308195 ; PC 0x180195
 ByrnaCaveSpikeDamage:
 db #$08 ; #$08 = 1 Heart (default) - #$02 = 1/4 Heart
+;--------------------------------------------------------------------------------
+org $308196 ; PC 0x180196-0x180197
+TotalItemCount: ; Total item count for HUD. Only counts items that use "item get" animation.
+dw $00D8        ; 216
 ;--------------------------------------------------------------------------------
 ; 0x180196 - 0x1801FF (unused)
 ;================================================================================

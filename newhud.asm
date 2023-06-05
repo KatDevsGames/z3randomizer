@@ -163,6 +163,38 @@ NewDrawHud:
 	STA.l HUDPrizeIcon
 
 ;--------------------------------------------------------------------------------
+; Draw pendant/crystal icon
+;--------------------------------------------------------------------------------
+        LDA.l ItemCounterHUD : AND.w #$00FF : BNE + : JMP.w .item_counter_done : +
+		LDA.w #$2830 : STA.l HUDGoalIndicator+8 ; draw slash
+                LDA.l TotalItemCount : CMP.w #1000 : BCC .item_three_digits
+                        JSR.w HudHexToDec4Digit
+                        LDX.b Scrap04 : TXA : ORA.w #$2400 : STA.l HUDGoalIndicator+10 ; 1000's digit
+                        LDX.b Scrap05 : TXA : ORA.w #$2400 : STA.l HUDGoalIndicator+12 ; 100's digit
+                        LDX.b Scrap06 : TXA : ORA.w #$2400 : STA.l HUDGoalIndicator+14 ; 10's digit
+                        LDX.b Scrap07 : TXA : ORA.w #$2400 : STA.l HUDGoalIndicator+16 ; 1's digit
+                        
+                        LDA.l TotalItemCounter
+                        JSR.w HudHexToDec4Digit
+                        LDX.b Scrap04 : TXA : ORA.w #$2400 : STA.l HUDGoalIndicator+0 ; 1000's digit
+                        LDX.b Scrap05 : TXA : ORA.w #$2400 : STA.l HUDGoalIndicator+2 ; 100's digit
+                        LDX.b Scrap06 : TXA : ORA.w #$2400 : STA.l HUDGoalIndicator+4 ; 10's digit
+                        LDX.b Scrap07 : TXA : ORA.w #$2400 : STA.l HUDGoalIndicator+6 ; 1's digit
+                        BRA .item_counter_done
+                .item_three_digits
+                JSR.w HudHexToDec4Digit
+                LDX.b Scrap05 : TXA : ORA.w #$2400 : STA.l HUDGoalIndicator+10 ; 100's digit
+                LDX.b Scrap06 : TXA : ORA.w #$2400 : STA.l HUDGoalIndicator+12 ; 10's digit
+                LDX.b Scrap07 : TXA : ORA.w #$2400 : STA.l HUDGoalIndicator+14 ; 1's digit
+                        
+                LDA.l TotalItemCounter
+                JSR.w HudHexToDec4Digit
+                LDX.b Scrap05 : TXA : ORA.w #$2400 : STA.l HUDGoalIndicator+2 ; 100's digit
+                LDX.b Scrap06 : TXA : ORA.w #$2400 : STA.l HUDGoalIndicator+4 ; 10's digit
+                LDX.b Scrap07 : TXA : ORA.w #$2400 : STA.l HUDGoalIndicator+6 ; 1's digit
+.item_counter_done
+
+;--------------------------------------------------------------------------------
 ; Draw Magic Meter
 DrawMagicMeter_mp_tilemap = $0DFE0F
 ;--------------------------------------------------------------------------------
