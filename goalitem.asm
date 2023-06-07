@@ -40,7 +40,7 @@ CheckGanonVulnerability:
 	dw .bosses_only
 	dw .all_dungeons_no_agahnim
 	dw .all_items
-	dw .all_items_all_dungeons
+	dw .completionist
 
 ; 00 = always vulnerable
 .vulnerable
@@ -102,7 +102,7 @@ CheckGanonVulnerability:
         RTS
 
 ; 0A = 100% item collection rate and all dungeons
-.all_items_all_dungeons
+.completionist
         REP #$20
         LDA.l TotalItemCounter : CMP.l TotalItemCount
         SEP #$20

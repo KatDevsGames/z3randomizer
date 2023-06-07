@@ -156,6 +156,7 @@ incsrc darkroomitems.asm
 incsrc fastcredits.asm
 incsrc msu.asm
 incsrc dungeonmap.asm
+incsrc hextodec.asm
 if !FEATURE_NEW_TEXT
     incsrc textrenderer.asm
 endif

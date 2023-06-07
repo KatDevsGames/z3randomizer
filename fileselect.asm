@@ -370,10 +370,10 @@ DrawPlayerFileShared:
 		%fs_drawItem(9,26,FileSelectItems_heart_piece_3_of_4)
 	++
 
-	LDA.l EquipmentSRAM+$0108 : AND.w #$00FF
-	JSL.l HexToDec
-	LDA.l HexToDecDigit4 : AND.w #$00FF : !ADD.w #$210+!FS_COLOR_BW : %fs_draw8x8(11,26)
-	LDA.l HexToDecDigit5 : AND.w #$00FF : !ADD.w #$210+!FS_COLOR_BW : %fs_draw8x8(11,27)
+	LDA.l EquipmentSRAM+$0130 : AND.w #$00FF
+	JSL.l HUDHex2Digit_Long
+	TXA : AND.w #$00FF : !ADD.w #$0210+!FS_COLOR_BW : %fs_draw8x8(11,26)
+	TYA : AND.w #$00FF : !ADD.w #$0210+!FS_COLOR_BW : %fs_draw8x8(11,27)
 
 	; Boots
 	%fs_drawItemBasic(EquipmentSRAM+$15,3,28,FileSelectItems_boots)
@@ -601,30 +601,30 @@ FileSelectItems:
 
 ;--------------------------------------------------------------------------------
 FileSelectDrawHudBar:
-	LDA.w #$029B|!FS_COLOR_GREEN : %fs_draw16x8(0,10)
-	LDA.l DisplayRupeesSRAM
-	JSL.l HexToDec
-	LDA.l HexToDecDigit2 : AND.w #$00FF : !ADD.w #$210+!FS_COLOR_BW : %fs_draw8x8(1,9)
-	LDA.l HexToDecDigit3 : AND.w #$00FF : !ADD.w #$210+!FS_COLOR_BW : %fs_draw8x8(1,10)
-	LDA.l HexToDecDigit4 : AND.w #$00FF : !ADD.w #$210+!FS_COLOR_BW : %fs_draw8x8(1,11)
-	LDA.l HexToDecDigit5 : AND.w #$00FF : !ADD.w #$210+!FS_COLOR_BW : %fs_draw8x8(1,12)
+        LDA.w #$029B|!FS_COLOR_GREEN : %fs_draw16x8(0,10)
+        LDA.l DisplayRupeesSRAM
+        JSL.l HUDHex4Digit_Long
+        LDA.b Scrap04 : AND.w #$00FF : !ADD.w #$210+!FS_COLOR_BW : %fs_draw8x8(1,9)
+        LDA.b Scrap05 : AND.w #$00FF : !ADD.w #$210+!FS_COLOR_BW : %fs_draw8x8(1,10)
+        LDA.b Scrap06 : AND.w #$00FF : !ADD.w #$210+!FS_COLOR_BW : %fs_draw8x8(1,11)
+        LDA.b Scrap07 : AND.w #$00FF : !ADD.w #$210+!FS_COLOR_BW : %fs_draw8x8(1,12)
 
-	LDA.w #$028B|!FS_COLOR_BLUE : %fs_draw16x8(0,14)
-	LDA.l BombsEquipmentSRAM : AND.w #$00FF
-	JSL.l HexToDec
-	LDA.l HexToDecDigit4 : AND.w #$00FF : !ADD.w #$210+!FS_COLOR_BW : %fs_draw8x8(1,14)
-	LDA.l HexToDecDigit5 : AND.w #$00FF : !ADD.w #$210+!FS_COLOR_BW : %fs_draw8x8(1,15)
+        LDA.w #$028B|!FS_COLOR_BLUE : %fs_draw16x8(0,14)
+        LDA.l BombsEquipmentSRAM : AND.w #$00FF
+        JSL.l HUDHex2Digit_Long
+        TYA : AND.w #$00FF : !ADD.w #$210+!FS_COLOR_BW : %fs_draw8x8(1,14)
+        TXA : AND.w #$00FF : !ADD.w #$210+!FS_COLOR_BW : %fs_draw8x8(1,15)
 
-	LDA.l BowTrackingSRAM : AND.w #$0040 : BEQ +
-		LDA.w #$0299|!FS_COLOR_RED : %fs_draw16x8(0,17)
-		BRA ++
-	+
-	LDA.w #$0289|!FS_COLOR_BROWN : %fs_draw16x8(0,17)
-	++
-	LDA.l CurrentArrowsSRAM : AND.w #$00FF
-	JSL.l HexToDec
-	LDA.l HexToDecDigit4 : AND.w #$00FF : !ADD.w #$210+!FS_COLOR_BW : %fs_draw8x8(1,17)
-	LDA.l HexToDecDigit5 : AND.w #$00FF : !ADD.w #$210+!FS_COLOR_BW : %fs_draw8x8(1,18)
+        LDA.l BowTrackingSRAM : AND.w #$0040 : BEQ +
+                LDA.w #$0299|!FS_COLOR_RED : %fs_draw16x8(0,17)
+                BRA ++
+        +
+        LDA.w #$0289|!FS_COLOR_BROWN : %fs_draw16x8(0,17)
+        ++
+        LDA.l CurrentArrowsSRAM : AND.w #$00FF
+        JSL.l HUDHex2Digit_Long
+        TYA : AND.w #$00FF : !ADD.w #$210+!FS_COLOR_BW : %fs_draw8x8(1,17)
+        TXA : AND.w #$00FF : !ADD.w #$210+!FS_COLOR_BW : %fs_draw8x8(1,18)
 RTS
 ;--------------------------------------------------------------------------------
 AltBufferTable:
