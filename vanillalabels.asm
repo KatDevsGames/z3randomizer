@@ -101,6 +101,7 @@ DrawEquipment = $0DED29 ; returns short
 HUD_RebuildLong = $0DFA78
 HUD_RebuildIndoor_Palace = $0DFA88
 HUD_RebuildLong2 = $0DFA88
+RebuildHUD_update = $0DFAA5
 Messaging_Text = $0EEE10
 Overworld_TileAttr = $0FFD94
 Overworld_DrawPersistentMap16 = $1BC97C

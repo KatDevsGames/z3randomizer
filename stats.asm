@@ -83,6 +83,7 @@ IncrementSmallKeys:
 		JSL.l UpdateKeys
 		PHY : LDY.b #24 : JSL.l FullInventoryExternal : PLY
 		JSL.l HUD_RebuildLong
+                INC.w UpdateHUD
 	PLX
 RTL
 ;--------------------------------------------------------------------------------
@@ -102,6 +103,7 @@ IncrementSmallKeysNoPrimary:
 			PLP
 		+
 		JSL.l HUD_RebuildLong
+                INC.w UpdateHUD
 	PLX
 RTL
 ;--------------------------------------------------------------------------------

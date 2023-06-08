@@ -155,6 +155,7 @@ JML.l AllowStartFromExitReturn
 	STZ.b SubSubModule
 	STZ.w DeathReloadFlag
 	STZ.w RespawnFlag
+        INC.w UpdateHUD
 
 	JSL Equipment_SearchForEquippedItemLong
 	JSL HUD_RebuildLong2

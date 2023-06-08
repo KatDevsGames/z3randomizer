@@ -64,6 +64,8 @@ NewHUD_DrawArrows:
 
 ;================================================================================
 NewHUD_DrawGoal:
+        LDA.w UpdateHUD : BEQ .no_goal
+        
         REP #$20
 
         LDA.l GoalItemRequirement : BEQ .no_goal
@@ -122,6 +124,7 @@ NewHUD_DrawKeys:
 
 ;================================================================================
 NewHUD_DrawDungeonCounters:
+        LDA.w UpdateHUD : BEQ NewHUD_DrawPrizeIcon
         LDA.l CompassMode : ORA.l MapHUDMode : BIT.b #$03 : BEQ NewHUD_DrawPrizeIcon
         LDX.b IndoorsFlag : BNE +
         JMP.w NewHUD_DrawMagicMeter
@@ -129,7 +132,7 @@ NewHUD_DrawDungeonCounters:
         SEP #$30
         ; extra hard safeties for getting dungeon ID to prevent crashes
         LDA.w DungeonID
-        CPX.b #$1B : BCS NewHUD_DrawPrizeIcon ; Skip if not in a valid dungeon ID
+        CMP.b #$1B : BCS NewHUD_DrawPrizeIcon ; Skip if not in a valid dungeon ID
         AND.b #$FE : TAX
         LSR : TAY
         PHX : PHY
@@ -141,6 +144,8 @@ NewHUD_DrawDungeonCounters:
 
 ;================================================================================
 NewHUD_DrawPrizeIcon:
+        REP #$10
+        SEP #$20
 	LDA.b GameMode
 	CMP.b #$12
 	BEQ .no_prize
@@ -151,7 +156,7 @@ NewHUD_DrawPrizeIcon:
 	CMP.b #$08 : BNE .dungeon
 
 .no_prize
-	LDY.w #BlankTile
+	LDY.w #!BlankTile
 	BRA .draw_prize
 
 .dungeon
@@ -162,16 +167,17 @@ NewHUD_DrawPrizeIcon:
 	LDA.l MapMode
 
 	REP #$30
+        BEQ .prize
 
 	LDA.l MapField
 	AND.l DungeonItemMasks,X
 
-	SEP #$20
 	BEQ .no_prize
 
+        .prize
 	TYX
 	LDA.l CrystalPendantFlags_2,X
-	AND.b #$40
+	AND.w #$0040
 	BNE .crystal
 
 	LDY.w #!PTile
@@ -182,6 +188,38 @@ NewHUD_DrawPrizeIcon:
 
 .draw_prize
 	STY.w HUDPrizeIcon
+
+;================================================================================
+NewHUD_DrawItemCounter:
+        LDA.w UpdateHUD : BEQ NewHUD_DrawMagicMeter
+        LDA.l ItemCounterHUD : AND.w #$00FF : BEQ NewHUD_DrawMagicMeter
+        LDA.w #!SlashTile : STA.w HUDGoalIndicator+$08
+        LDA.l TotalItemCount : CMP.w #1000 : BCS .item_four_digits
+        LDA.w TotalItemCountTiles+$02 : STA.w HUDGoalIndicator+$0A
+        LDA.w TotalItemCountTiles+$04 : STA.w HUDGoalIndicator+$0C
+        LDA.w TotalItemCountTiles+$06 : STA.w HUDGoalIndicator+$0E
+
+        LDA.w TotalItemCounter
+        JSR.w HUDHex4Digit
+        LDA.b $05 : TAX : STX.w HUDGoalIndicator+$02
+        LDA.b $06 : TAX : STX.w HUDGoalIndicator+$04
+        LDA.b $07 : TAX : STX.w HUDGoalIndicator+$06
+        BRA NewHUD_DrawMagicMeter
+
+        .item_four_digits
+        LDA.w TotalItemCountTiles+$00 : STA.w HUDGoalIndicator+$0A
+        LDA.w TotalItemCountTiles+$02 : STA.w HUDGoalIndicator+$0C
+        LDA.w TotalItemCountTiles+$04 : STA.w HUDGoalIndicator+$0E
+        LDA.w TotalItemCountTiles+$06 : STA.w HUDGoalIndicator+$10
+
+        LDA.w TotalItemCounter
+        JSR.w HUDHex4Digit
+        LDA.b $04 : TAX : STX.w HUDGoalIndicator+$00
+        LDA.b $05 : TAX : STX.w HUDGoalIndicator+$02
+        LDA.b $06 : TAX : STX.w HUDGoalIndicator+$04
+        LDA.b $07 : TAX : STX.w HUDGoalIndicator+$06
+
+
 
 ;================================================================================
 DrawMagicMeter_mp_tilemap = $0DFE0F
@@ -197,7 +235,7 @@ NewHUD_DrawMagicMeter:
 
 .infinite_magic
         LDA.b #$80
-        STA.l CurrentMagic
+        STA.w CurrentMagic
         TAY
 
         LDA.b FrameCounter
@@ -215,13 +253,14 @@ NewHUD_DrawMagicMeter:
         LDA.l MagicMeterColorMasks,X
 
         TYX
-        TAY : AND.l DrawMagicMeter_mp_tilemap+0,X : STA.l HUDTileMapBuffer+$046
-        TYA : AND.l DrawMagicMeter_mp_tilemap+2,X : STA.l HUDTileMapBuffer+$086
-        TYA : AND.l DrawMagicMeter_mp_tilemap+4,X : STA.l HUDTileMapBuffer+$0C6
-        TYA : AND.l DrawMagicMeter_mp_tilemap+6,X : STA.l HUDTileMapBuffer+$106
+        TAY : AND.l DrawMagicMeter_mp_tilemap+0,X : STA.w HUDTileMapBuffer+$046
+        TYA : AND.l DrawMagicMeter_mp_tilemap+2,X : STA.w HUDTileMapBuffer+$086
+        TYA : AND.l DrawMagicMeter_mp_tilemap+4,X : STA.w HUDTileMapBuffer+$0C6
+        TYA : AND.l DrawMagicMeter_mp_tilemap+6,X : STA.w HUDTileMapBuffer+$106
 
 ;================================================================================
 NewHUD_DoneDrawing:
+        STZ.w UpdateHUD
         PLB
 RTL
 
@@ -239,6 +278,7 @@ DrawCompassCounts:
 
         ; no compass needed if this bit is set
         BIT.b #$02 : BNE .draw_compass_count
+        REP #$20
         LDA.l CompassField : AND.l DungeonItemMasks,X : BEQ .done
 
 .draw_compass_count
@@ -268,6 +308,7 @@ DrawMapCounts:
 
         ; no map needed if this bit is set
         BIT.b #$02 : BNE .draw_map_count
+        REP #$20
         LDA.l MapField : AND.l DungeonItemMasks,X : BEQ .done
 
 .draw_map_count
@@ -275,6 +316,7 @@ DrawMapCounts:
         INX
 
 .not_sewers
+        SEP #$20
         LDA.l DungeonCollectedKeys, X
         PHA
 

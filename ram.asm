@@ -354,6 +354,8 @@ DelayTimer = $7E1CE9              ;
                                   ;
 TextID = $7E1CF0                  ; Message ID and page. Word length.
                                   ;
+UpdateHUD = $7E1E03               ; Flag used to mark HUD updates and avoid heavy code segments.
+                                  ;
 ToastBuffer = $7E1E0E             ; Multiworld buffer. Word length.
                                   ;
 MSUResumeTime = $7E1E6B           ; Mirrored MSU block
@@ -439,6 +441,7 @@ HUDArrowCount = $7EC760           ;
 HUDKeyDigits = $7EC764            ;
                                   ;
 BigRAM = $7EC900                  ; Big buffer of free ram (0x1F00)
+TotalItemCountTiles = $7ECB00     ; Cached total item count tiles for HUD. Four words high to low.
 
 ;================================================================================
 ; Bank 7F

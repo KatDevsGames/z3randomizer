@@ -17,18 +17,23 @@ RTL
 ;================================================================================
 HUDRebuildIndoorHole:
 	PHA
+        INC.w UpdateHUD
 	LDA.l GenericKeys : BEQ .normal
 	.generic
 	PLA
 	LDA.l CurrentGenericKeys ; generic key count
-	JSL.l HUD_RebuildIndoor_Palace
+        STA.l CurrentSmallKeys
+        JSL.l RebuildHUD_update
 RTL
 	.normal
 	PLA
-	JSL.l HUD_RebuildIndoor_Palace
+
+        STA.l CurrentSmallKeys
+        JSL.l RebuildHUD_update
 RTL
 ;================================================================================
 HUDRebuildIndoor:
+        INC.w UpdateHUD
 	LDA.l GenericKeys : BEQ .normal
 	.generic
 	LDA.b #$00 : STA.l RoomDarkness
@@ -170,6 +175,7 @@ RaiseHudMenu:
 RTL
 ;================================================================================
 CheckCloseItemMenu:
+        INC.w UpdateHUD
 	LDA.l MenuCollapse : BNE + 
 		LDA.b Joy1A_New : AND.b #$10 : RTL
 	+

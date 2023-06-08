@@ -117,11 +117,6 @@ DrawChallengeTimer:
                 LDA.w #$280C : STA.l HUDTileMapBuffer+$96
                 RTL
         +
-        LDA.w #$247F : STA.l HUDTileMapBuffer+$90
-        STA.l HUDTileMapBuffer+$92
-        STA.l HUDTileMapBuffer+$94
-        STA.l HUDTileMapBuffer+$96
-        ++
 
         LDA.l TimerStyle : BNE + : RTL : + ; Hud Timer
         LDA.w #$2807 : STA.l HUDTileMapBuffer+$92    	

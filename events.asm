@@ -17,6 +17,7 @@ JML.l ReturnFromOnDrawHud
 OnDungeonEntrance:
 	STA.l PegColor ; thing we wrote over
         JSL MaybeFlagDungeonTotalsEntrance
+        INC.w UpdateHUD
 RTL
 ;--------------------------------------------------------------------------------
 OnPlayerDead:
@@ -37,6 +38,7 @@ OnDungeonExit:
 
 	PHA : PHP
 		JSL.l HUD_RebuildLong
+                INC.w UpdateHUD
 		JSL.l FloodGateResetInner
 		JSL.l SetSilverBowMode
 	PLP : PLA
