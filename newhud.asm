@@ -191,6 +191,7 @@ NewHUD_DrawPrizeIcon:
 
 ;================================================================================
 NewHUD_DrawItemCounter:
+        REP #$20
         LDA.w UpdateHUD : BEQ NewHUD_DrawMagicMeter
         LDA.l ItemCounterHUD : AND.w #$00FF : BEQ NewHUD_DrawMagicMeter
         LDA.w #!SlashTile : STA.w HUDGoalIndicator+$08
@@ -282,6 +283,7 @@ DrawCompassCounts:
         LDA.l CompassField : AND.l DungeonItemMasks,X : BEQ .done
 
 .draw_compass_count
+        SEP #$20
         TYX : BNE .not_sewers
         INX
 
@@ -301,6 +303,7 @@ DrawCompassCounts:
         STY.w HUDTileMapBuffer+$94 : STX.w HUDTileMapBuffer+$96
 
 .done
+        SEP #$20
 RTS
 ;================================================================================
 DrawMapCounts:
@@ -312,11 +315,11 @@ DrawMapCounts:
         LDA.l MapField : AND.l DungeonItemMasks,X : BEQ .done
 
 .draw_map_count
+        SEP #$20
         TYX : BNE .not_sewers
         INX
 
 .not_sewers
-        SEP #$20
         LDA.l DungeonCollectedKeys, X
         PHA
 
@@ -332,6 +335,7 @@ DrawMapCounts:
         STX.w HUDTileMapBuffer+$A2
 
 .done
+        SEP #$20
 RTS
 ;================================================================================
 ; Exits with:

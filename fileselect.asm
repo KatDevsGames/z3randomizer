@@ -372,8 +372,8 @@ DrawPlayerFileShared:
 
 	LDA.l EquipmentSRAM+$0130 : AND.w #$00FF
 	JSL.l HUDHex2Digit_Long
-	TXA : AND.w #$00FF : !ADD.w #$0210+!FS_COLOR_BW : %fs_draw8x8(11,26)
-	TYA : AND.w #$00FF : !ADD.w #$0210+!FS_COLOR_BW : %fs_draw8x8(11,27)
+        TYA : AND.w #$00FF : !ADD.w #$0210+!FS_COLOR_BW : %fs_draw8x8(11,26)
+        TXA : AND.w #$00FF : !ADD.w #$0210+!FS_COLOR_BW : %fs_draw8x8(11,27)
 
 	; Boots
 	%fs_drawItemBasic(EquipmentSRAM+$15,3,28,FileSelectItems_boots)

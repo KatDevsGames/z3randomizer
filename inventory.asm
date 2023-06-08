@@ -616,7 +616,6 @@ RTS
 RTL
 
 .incrementVanillaKey
-        LDA.l SmallKeyCounter : INC : STA.l SmallKeyCounter
         JSL.l UpdateKeys
 
 .incrementKey

@@ -11,6 +11,7 @@ LoadBombCount16:
 	.infinite
 RTL
 StoreBombCount:
+        INC.w UpdateHUD
 	PHA : LDA.l InfiniteBombs : BEQ .finite
 	.infinite
 		PLA : LDA.b #$01 : RTL
@@ -18,6 +19,7 @@ StoreBombCount:
 		PLA : STA.l BombsEquipment
 RTL
 SearchForEquippedItem:
+        INC.w UpdateHUD
 	LDA.l InfiniteBombs : BEQ +
 		LDA.b #$01 : LDX.b #$00 : RTL
 	+

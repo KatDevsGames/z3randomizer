@@ -1381,6 +1381,8 @@ org $0DF1AB
 JSR.w RebuildHUD_update
 org $0DDFC8
 JSR.w RebuildHUD_update
+org $0DDB88 ; Don't rebuild HUD twice on icon refresh
+NOP #3      ; Not sure why this is here
 ;================================================================================
 ; 300 Rupee NPC
 ;--------------------------------------------------------------------------------

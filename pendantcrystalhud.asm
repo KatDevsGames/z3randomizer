@@ -22,14 +22,11 @@ HUDRebuildIndoorHole:
 	.generic
 	PLA
 	LDA.l CurrentGenericKeys ; generic key count
-        STA.l CurrentSmallKeys
-        JSL.l RebuildHUD_update
+        JSL.l HUD_RebuildIndoor_Palace
 RTL
 	.normal
 	PLA
-
-        STA.l CurrentSmallKeys
-        JSL.l RebuildHUD_update
+        JSL.l HUD_RebuildIndoor_Palace
 RTL
 ;================================================================================
 HUDRebuildIndoor:
