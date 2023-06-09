@@ -875,9 +875,9 @@ RTL
 CheckHUDSilverArrows:
         LDA.l ArrowMode : BNE .rupee_bow
                 LDA.l BowEquipment : TAX : BEQ .nobow
-                JSL.l DrawHUDArrows_normal
-                TXA
-                RTL
+                        JSL.l DrawHUDArrows_normal
+                        TXA
+                        RTL
         .rupee_bow
         LDA.l BowEquipment : TAX
         JSL.l DrawHUDArrows_rupee_arrows
