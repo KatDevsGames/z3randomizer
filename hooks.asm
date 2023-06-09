@@ -1358,9 +1358,7 @@ JSL.l DrawMagicHeader
 BRA + : NOP #15 : +
 ;--------------------------------------------------------------------------------
 org $0DFB29 ; <- headsup_display.asm : 688 (LDA.b #$86 : STA $7EC71E)
-JSL.l DrawHUDArrows : BRA +
-	NOP #18
-+
+BRA + : NOP #$1C : +
 ;--------------------------------------------------------------------------------
 org $01CF67 ; <- CF67 - Bank01.asm : 11625 (STA $7EF36F)
 JSL.l DecrementSmallKeys
