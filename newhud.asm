@@ -296,6 +296,7 @@ DrawCompassCounts:
         JSR HUDHex2Digit
         STY.w HUDTileMapBuffer+$9A : STX.w HUDTileMapBuffer+$9C
 
+        LDX.w #!BlankTile : STX.w HUDTileMapBuffer+$92
         LDX.w #!SlashTile : STX.w HUDTileMapBuffer+$98 
 
         PLA

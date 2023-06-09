@@ -110,14 +110,19 @@ dw #$003C, #$0000
 dw #$FFFF, #$7FFF
 ;--------------------------------------------------------------------------------
 DrawChallengeTimer:
-	LDA.l OHKOFlag : AND.w #$00FF : BEQ +
-                LDA.w #$2807 : STA.l HUDTileMapBuffer+$90
-                LDA.w #$280A : STA.l HUDTileMapBuffer+$92
-                LDA.w #$280B : STA.l HUDTileMapBuffer+$94
-                LDA.w #$280C : STA.l HUDTileMapBuffer+$96
-                RTL
-        +
-
+        JSR.w CheckOHKO : BCC ++
+	        AND.w #$00FF : BEQ +
+                        LDA.w #$2807 : STA.l HUDTileMapBuffer+$90
+                        LDA.w #$280A : STA.l HUDTileMapBuffer+$92
+                        LDA.w #$280B : STA.l HUDTileMapBuffer+$94
+                        LDA.w #$280C : STA.l HUDTileMapBuffer+$96
+                        RTL
+                +
+                LDA.w #$247F : STA.l HUDTileMapBuffer+$90
+                STA.l HUDTileMapBuffer+$92
+                STA.l HUDTileMapBuffer+$94
+                STA.l HUDTileMapBuffer+$96
+        ++
         LDA.l TimerStyle : BNE + : RTL : + ; Hud Timer
         LDA.w #$2807 : STA.l HUDTileMapBuffer+$92    	
         LDA.l ClockStatus : AND.w #$0002 : BEQ + ; DNF / OKHO
@@ -165,4 +170,17 @@ OHKOTimer:
 	+
 	LDA.l CurrentHealth
 RTL
+;--------------------------------------------------------------------------------
+CheckOHKO:
+        SEP #$20
+        LDA.l OHKOFlag : CMP.l OHKOCached : BNE .change
+                REP #$20
+                CLC
+                RTS
+        .change
+        STA.l OHKOCached
+        INC.w UpdateHUD
+        REP #$20
+        SEC
+RTS
 ;--------------------------------------------------------------------------------
