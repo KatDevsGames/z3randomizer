@@ -29,19 +29,19 @@ OnPlayerDead:
 RTL
 ;--------------------------------------------------------------------------------
 OnDungeonExit:
-	PHA : PHP
-		SEP #$20 ; set 8-bit accumulator
-		JSL.l SQEGFix
-	PLP : PLA
+        PHA : PHP
+        SEP #$20 ; set 8-bit accumulator
+        JSL.l SQEGFix
+        PLP : PLA
 
-	STA.w DungeonID : STZ.w Map16ChangeIndex ; thing we wrote over
+        STA.w DungeonID : STZ.w Map16ChangeIndex ; thing we wrote over
 
-	PHA : PHP
-		JSL.l HUD_RebuildLong
-                INC.w UpdateHUD
-		JSL.l FloodGateResetInner
-		JSL.l SetSilverBowMode
-	PLP : PLA
+        PHA : PHP
+        JSL.l HUD_RebuildLong
+        INC.w UpdateHUD
+        JSL.l FloodGateResetInner
+        JSL.l SetSilverBowMode
+        PLP : PLA
 RTL
 ;--------------------------------------------------------------------------------
 OnQuit:
@@ -79,6 +79,7 @@ RTL
 ;--------------------------------------------------------------------------------
 OnAga2Defeated:
         JSL.l Dungeon_SaveRoomData_justKeys ; thing we wrote over, make sure this is first
+        LDA.b #$FF : STA.w DungeonID
         LDA.b #$01 : STA.l Aga2Duck
         JML.l IncrementAgahnim2Sword
 ;--------------------------------------------------------------------------------
@@ -195,12 +196,13 @@ OnLinkDamagedFromPitOutdoors:
 	JML.l OHKOTimer ; make sure this is last
 ;--------------------------------------------------------------------------------
 OnOWTransition:
-	JSL.l FloodGateReset
-	JSL.l StatTransitionCounter
-	PHP
-	SEP #$20 ; set 8-bit accumulator
-	LDA.b #$FF : STA.l RNGLockIn ; clear lock-in
-	PLP
+        JSL.l FloodGateReset
+        JSL.l StatTransitionCounter
+        PHP
+        SEP #$20 ; set 8-bit accumulator
+        LDA.b #$FF : STA.l RNGLockIn ; clear lock-in
+        INC.w UpdateHUD
+        PLP
 RTL
 ;--------------------------------------------------------------------------------
 OnLoadDuckMap:

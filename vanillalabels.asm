@@ -70,6 +70,7 @@ AddAncillaLong = $099D04
 Ancilla_CheckIfAlreadyExistsLong = $099D1A
 Sprite_SetSpawnedCoords = $09AE64
 GiveRupeeGift = $09AD58
+Overworld_LoadOverlayAndMap = $0AB96C
 OverworldMap_InitGfx = $0ABA4F
 OverworldMap_DarkWorldTilemap = $0ABA99
 OverworldMap_LoadSprGfx = $0ABAB9
