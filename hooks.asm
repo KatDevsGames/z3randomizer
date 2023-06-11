@@ -1380,6 +1380,17 @@ org $0DDFC8
 JSR.w RebuildHUD_update
 org $0DDB88 ; Don't rebuild HUD twice on icon refresh
 NOP #3      ; Not sure why this is here
+;--------------------------------------------------------------------------------
+org $07A205
+JSL.l RebuildHUD_update_long
+org $0AEF62
+JSL.l RebuildHUD_update_long
+;--------------------------------------------------------------------------------
+org $0DFFE1
+RebuildHUD_update_long:
+JSR.w RebuildHUD_update : RTL
+warnpc $0E8000
+
 ;================================================================================
 ; 300 Rupee NPC
 ;--------------------------------------------------------------------------------

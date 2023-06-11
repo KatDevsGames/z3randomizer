@@ -172,7 +172,6 @@ RaiseHudMenu:
 RTL
 ;================================================================================
 CheckCloseItemMenu:
-        INC.w UpdateHUD
 	LDA.l MenuCollapse : BNE + 
 		LDA.b Joy1A_New : AND.b #$10 : RTL
 	+
@@ -690,3 +689,4 @@ RestoreMenu_SetSubModule:
         +
         LDA.b #$03 : STA.w SubModuleInterface
 RTL
+;-------------------------------------------------------------------------------

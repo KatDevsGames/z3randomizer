@@ -147,10 +147,11 @@ NewHUD_DrawPrizeIcon:
         REP #$10
         SEP #$20
 	LDA.b GameMode
-	CMP.b #$12
-	BEQ .no_prize
-
-	LDA.w DungeonID
+        CMP.b #$12 : BEQ .no_prize
+        CMP.b #$0E : BEQ +
+        LDA.w UpdateHUD : BEQ NewHUD_DrawItemCounter
+	+
+        LDA.w DungeonID
 	CMP.b #$1A : BCS .no_prize
 	CMP.b #$04 : BCC .no_prize
 	CMP.b #$08 : BNE .dungeon
