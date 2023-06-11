@@ -354,6 +354,8 @@ DelayTimer = $7E1CE9              ;
                                   ;
 TextID = $7E1CF0                  ; Message ID and page. Word length.
                                   ;
+UpdateHUD = $7E1E03               ; Flag used to mark HUD updates and avoid heavy code segments.
+                                  ;
 ToastBuffer = $7E1E0E             ; Multiworld buffer. Word length.
                                   ;
 MSUResumeTime = $7E1E6B           ; Mirrored MSU block
@@ -439,6 +441,7 @@ HUDArrowCount = $7EC760           ;
 HUDKeyDigits = $7EC764            ;
                                   ;
 BigRAM = $7EC900                  ; Big buffer of free ram (0x1F00)
+TotalItemCountTiles = $7ECB00     ; Cached total item count tiles for HUD. Four words high to low.
 
 ;================================================================================
 ; Bank 7F
@@ -525,7 +528,7 @@ OHKOFlag: skip 1                   ; Any non-zero write sets OHKO mode
 SpriteSwapper: skip 1              ; Loads new link sprite and glove/armor palette. No gfx or
                                    ; code currently in base ROM for this.
 BootsModifier: skip 1              ; $01 = Give dash ability
-skip 1                             ; Unused
+OHKOCached: skip 1                 ; "Old" OHKO flag state. Used to detect changes.
                                    ; Crypto Block ($7F50D0 - $7F51FF)
 KeyBase: skip $10                  ;
 y: skip 4                          ;

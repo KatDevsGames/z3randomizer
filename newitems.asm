@@ -873,26 +873,26 @@ RTL
 ;--------------------------------------------------------------------------------
 ;Return BowEquipment but also draw silver arrows if you have the upgrade even if you don't have the bow
 CheckHUDSilverArrows:
-	LDA.l ArrowMode : BEQ .normal
-	.rupee_arrows
-		JSL.l DrawHUDArrows
-		LDA.l BowEquipment
-		RTL
-	.normal
-	LDA.l BowEquipment : BNE +
-		LDA.l BowTracking : AND.b #$40 : BEQ ++
-			JSL.l DrawHUDArrows
-		++
-		LDA.l BowEquipment
-	+
-RTL
+        LDA.l ArrowMode : BNE .rupee_bow
+                LDA.l BowEquipment : TAX : BEQ .nobow
+                        JSL.l DrawHUDArrows_normal
+                        TXA
+                        RTL
+        .rupee_bow
+        LDA.l BowEquipment : TAX
+        JSL.l DrawHUDArrows_rupee_arrows
+        TXA
+        RTL
+        .nobow
+        JSL.l DrawHUDArrows_silverscheck
+        TXA
+        RTL
 ;--------------------------------------------------------------------------------
 DrawHUDArrows:
-LDA.l ArrowMode : BEQ .normal
 	.rupee_arrows
-
 	LDA.l CurrentArrows : BEQ .none ; assuming silvers will increment this. if we go with something else, reorder these checks
-	LDA.l BowEquipment : BNE +
+	TXA : BNE +
+        .silverscheck
 	LDA.l BowTracking : AND.b #$40 : BNE .silver
 	BRA .wooden
 	+ CMP.b #03 : !BGE .silver
@@ -902,8 +902,12 @@ LDA.l ArrowMode : BEQ .normal
 	LDA.b #$20 : STA.l HUDTileMapBuffer+$21
 	LDA.b #$A9 : STA.l HUDTileMapBuffer+$22
 	LDA.b #$20 : STA.l HUDTileMapBuffer+$23
+        .skip
 RTL
-	.normal ; in normal arrow mode this function is only ever called for silvers
+	.normal
+        TXA
+        CMP.b #$03 : BCS .silver
+        BRA .wooden
 	.silver
 	LDA.b #$86 : STA.l HUDTileMapBuffer+$20 ; draw silver arrow marker
 	LDA.b #$24 : STA.l HUDTileMapBuffer+$21

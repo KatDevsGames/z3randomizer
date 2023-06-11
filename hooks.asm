@@ -368,7 +368,6 @@ STA.l StalfosBombDamage
 ;--------------------------------------------------------------------------------
 org $0AB76E ; <- 5376E - Bank0A.asm : 30 (JSL OverworldMap_InitGfx)
 JSL.l OnLoadDuckMap
-;--------------------------------------------------------------------------------
 
 ;================================================================================
 ; Infinite Bombs / Arrows / Magic
@@ -1358,9 +1357,7 @@ JSL.l DrawMagicHeader
 BRA + : NOP #15 : +
 ;--------------------------------------------------------------------------------
 org $0DFB29 ; <- headsup_display.asm : 688 (LDA.b #$86 : STA $7EC71E)
-JSL.l DrawHUDArrows : BRA +
-	NOP #18
-+
+BRA + : NOP #$16 : +
 ;--------------------------------------------------------------------------------
 org $01CF67 ; <- CF67 - Bank01.asm : 11625 (STA $7EF36F)
 JSL.l DecrementSmallKeys
@@ -1376,6 +1373,23 @@ MVN $217E
 ;--------------------------------------------------------------------------------
 org $0DFB1F ; 6FB1F - headsup_display.asm : 681 (LDA $7EF340 : BEQ .hastNoBow)
 JSL.l CheckHUDSilverArrows
+;--------------------------------------------------------------------------------
+org $0DF1AB
+JSR.w RebuildHUD_update
+org $0DDFC8
+JSR.w RebuildHUD_update
+org $0DDB88 ; Don't rebuild HUD twice on icon refresh
+NOP #3      ; Not sure why this is here
+;--------------------------------------------------------------------------------
+org $07A205
+JSL.l RebuildHUD_update_long
+org $0AEF62
+JSL.l RebuildHUD_update_long
+;--------------------------------------------------------------------------------
+org $0DFFE1
+RebuildHUD_update_long:
+JSR.w RebuildHUD_update : RTL
+warnpc $0E8000
 
 ;================================================================================
 ; 300 Rupee NPC

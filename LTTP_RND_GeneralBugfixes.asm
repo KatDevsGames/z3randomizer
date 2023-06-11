@@ -28,7 +28,7 @@ db #$20, #$19, #$08, #$31 ; year/month/day
 
 ;================================================================================
 !ROM_VERSION_LOW ?= 1  ; ROM version (two 16-bit integers)
-!ROM_VERSION_HIGH ?= 2 ;
+!ROM_VERSION_HIGH ?= 3 ;
 
 org $00FFE0 ; Unused hardware vector
 RomVersion:
@@ -156,6 +156,7 @@ incsrc darkroomitems.asm
 incsrc fastcredits.asm
 incsrc msu.asm
 incsrc dungeonmap.asm
+incsrc hextodec.asm
 if !FEATURE_NEW_TEXT
     incsrc textrenderer.asm
 endif

@@ -17,18 +17,20 @@ RTL
 ;================================================================================
 HUDRebuildIndoorHole:
 	PHA
+        INC.w UpdateHUD
 	LDA.l GenericKeys : BEQ .normal
 	.generic
 	PLA
 	LDA.l CurrentGenericKeys ; generic key count
-	JSL.l HUD_RebuildIndoor_Palace
+        JSL.l HUD_RebuildIndoor_Palace
 RTL
 	.normal
 	PLA
-	JSL.l HUD_RebuildIndoor_Palace
+        JSL.l HUD_RebuildIndoor_Palace
 RTL
 ;================================================================================
 HUDRebuildIndoor:
+        INC.w UpdateHUD
 	LDA.l GenericKeys : BEQ .normal
 	.generic
 	LDA.b #$00 : STA.l RoomDarkness
@@ -687,3 +689,4 @@ RestoreMenu_SetSubModule:
         +
         LDA.b #$03 : STA.w SubModuleInterface
 RTL
+;-------------------------------------------------------------------------------
