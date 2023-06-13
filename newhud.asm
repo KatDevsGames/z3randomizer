@@ -353,3 +353,93 @@ HUDHex4Digit_Long:
         JSR HUDHex4Digit
         REP #$20
 RTL
+
+;===================================================================================================
+
+UpdateHearts:
+	PHB
+
+	REP #$20
+
+	SEP #$10
+
+	LDX.b #$7E
+	PHX
+	PLB
+
+	LDA.w $7EF36C
+	LSR
+	LSR
+	LSR
+	AND.w #$1F1F
+
+
+	TAX
+	XBA
+	TAY
+
+	LDA.w #HUDTileMapBuffer+$068
+	STA.b $07
+	STA.b $09
+
+.next_filled_heart
+	CPX.b #$01
+	BMI .done_hearts
+
+	LDA.w #$24A0
+
+	CPY.b #$01
+	BPL .add_heart
+
+	INC
+	INC
+
+.add_heart
+	STA.b ($07)
+
+	DEY
+	DEX
+
+	LDA.b $07
+	INC
+	INC
+	CMP.w #HUDTileMapBuffer+$07C
+	BEQ .next_row
+
+	CMP.w #HUDTileMapBuffer+$0BC
+	BNE .fine
+
+.next_row
+	ADC.w #$002B
+
+.fine
+	STA.b $07
+
+	CPY.b #$00
+	BNE .next_filled_heart
+
+	STA.b $09
+	BRA .next_filled_heart
+
+.done_hearts
+	LDA.w $7EF36D
+	AND.w #$0007
+	BEQ .skip_partial
+
+	CMP.w #$0005
+	LDA.w #$24A0
+	BCS .more_than_half
+
+	INC
+
+.more_than_half
+
+	STA.b ($09)
+
+.skip_partial
+	SEP #$30
+
+	PLB
+	RTL
+
+;===================================================================================================

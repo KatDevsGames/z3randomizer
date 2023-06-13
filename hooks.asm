@@ -1343,6 +1343,10 @@ JSL RNG_Enemy_Drops
 ;================================================================================
 ; HUD Changes
 ;--------------------------------------------------------------------------------
+org $8DFDCB
+JSL UpdateHearts
+RTS
+
 org $8DFC4C ; <- 6FC4C - headsup_display.asm : 836 (LDA $7EF36E : AND.w #$00FF : ADD.w #$0007 : AND.w #$FFF8 : TAX)
 JML OnDrawHud : NOP #197 ; why? it's not hurting anyone lol
 ReturnFromOnDrawHud:
