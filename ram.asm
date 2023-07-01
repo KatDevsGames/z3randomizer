@@ -273,7 +273,7 @@ ItemGFXPtr = $7E0AFA              ; Pointer for item receipt graphics transfers
                                   ; $0000       - no transfer, do nothing
                                   ; bit 7 reset - offset into ROM table
                                   ; bit 7 set   - explicit bank7 address
-ItemGFXTgt = $7E0AFC              ; target VRAM address
+ItemGFXTarget = $7E0AFC           ; target VRAM address
                                   ;
 ArcVariable = $7E0B08             ; Arc variable. Word length.
 OverlordXLow = $7E0B08            ; $08 bytes.

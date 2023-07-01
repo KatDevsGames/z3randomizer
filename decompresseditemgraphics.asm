@@ -114,7 +114,7 @@ TransferItemReceiptToBuffer_using_ReceiptID:
 
 ;===================================================================================================
 
-TransferItemReceiptToVRAM:
+TransferItemToVRAM:
 	REP #$21
 	SEP #$10
 
@@ -128,9 +128,9 @@ TransferItemReceiptToVRAM:
 	LDX.b #ItemReceiptGraphicsROM>>16
 
 .set_address
-	STA.w $4202
+	STA.w $4302
 	ADC.w #$0200
-	STA.w $4212
+	STA.w $4312
 
 	STX.w $4304
 	STX.w $4314
@@ -146,7 +146,7 @@ TransferItemReceiptToVRAM:
 	STA.w $4305
 	STA.w $4315
 
-	LDA.w ItemGFXTgt
+	LDA.w ItemGFXTarget
 	STA.w $2116
 
 	LDX.b #$01
@@ -159,6 +159,7 @@ TransferItemReceiptToVRAM:
 	STX.w $420B
 
 	STZ.w ItemGFXPtr
+	STZ.w ItemGFXTarget
 
 .exit
 	RTL
@@ -888,7 +889,7 @@ StandingItemGraphicsOffsets:
 	dw BigDecompressionBuffer+$0DA0        ; 46 - 300 rupees
 	dw BigDecompressionBuffer+$0000        ; 47 - 20 rupees green
 	dw BigDecompressionBuffer+$09A0        ; 48 - Full bottle (good bee)
-	dw BigDecompressionBuffer+$1C20        ; 49 - Tossed fighter sword
+	dw $00A0                               ; 49 - Tossed fighter sword
 	dw BigDecompressionBuffer+$09A0        ; 4A - Bottle refill (good bee)
 	dw BigDecompressionBuffer+$0040        ; 4B - Boots
 

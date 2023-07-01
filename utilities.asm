@@ -6,7 +6,8 @@
 ; out:	A - Sprite GFX ID
 ;--------------------------------------------------------------------------------
 GetSpriteID:
-	JSR AttemptItemSubstitution
+	JSR.w AttemptItemSubstitution
+	JSR.w ResolveLootID
 	CMP.b #$16 : BEQ .bottle ; Bottle
 	CMP.b #$2B : BEQ .bottle ; Red Potion w/bottle
 	CMP.b #$2C : BEQ .bottle ; Green Potion w/bottle
@@ -37,133 +38,7 @@ GetSpriteID:
 	PHX
 	TAX : LDA.l ItemReceipts_graphics, X ; look up item gfx
 	PLX
-	CMP.b #$F8 : !BGE .special_handling
 RTL
-
-;---------------------------------------------------------------------------------------------------
-
-.special_handling
-	PHX
-	AND.b #$07
-	ASL
-	TAX
-
-	REP #$20
-	LDA.l .handlers,X
-
-	PLX
-	PHA
-
-	SEP #$20
-	RTS
-
-.handlers
-	dw .handler_F8-1
-	dw .handler_F9-1
-	dw .handler_FA-1
-	dw .handler_FB-1
-	dw .handler_FC-1
-	dw .handler_FD-1
-	dw .handler_FE-1
-	dw .handler_FF-1
-
-;---------------------------------------------------------------------------------------------------
-
-.handler_F8
-	LDA.l BowEquipment
-	INC
-	LSR
-	CMP.l ProgressiveBowLimit
-	BCC ++
-
-	LDA.l ProgressiveBowReplacement
-	JMP GetSpriteID
-
-++	CMP.b #$00
-	LDA.b #$29
-	ADC.b #$00
-	RTL
-
-;---------------------------------------------------------------------------------------------------
-
-.handler_F9
-	LDA.l MagicConsumption
-	CMP.b #$00
-	LDA.b #$3B
-	ADC.b #$00
-	RTL
-
-;---------------------------------------------------------------------------------------------------
-
-.handler_FA
-	JSL GetRNGItemSingle
-	JMP GetSpriteID
-
-;---------------------------------------------------------------------------------------------------
-
-.handler_FB
-	JSL GetRNGItemMulti
-	JMP GetSpriteID
-
-;---------------------------------------------------------------------------------------------------
-
-.handler_FC
-	RTL
-
-;---------------------------------------------------------------------------------------------------
-
-.handler_FD
-	LDA.l ArmorEquipment
-	CMP.l ProgressiveArmorLimit
-	BCC ++
-
-	LDA.l ProgressiveArmorReplacement
-	JMP GetSpriteID
-
-++	LDA.b #$04
-	RTL
-
-;---------------------------------------------------------------------------------------------------
-
-.handler_FE
-	LDA.l HighestSword
-	CMP.l ProgressiveSwordLimit
-	BCC ++
-
-	LDA.l ProgressiveSwordReplacement
-	JMP GetSpriteID
-
-	; 00 => 43
-	; 01 => 44
-	; 02 => 45
-	; 03 => 46
-++	ADC.b #$43
-	RTL
-
-;---------------------------------------------------------------------------------------------------
-
-.handler_FF
-	LDA.l HighestShield
-	CMP.l ProgressiveShieldLimit
-	BCC ++
-
-	LDA.l ProgressiveShieldReplacement
-	JMP GetSpriteID
-
-++	CMP.b #$01 ; no shield
-	BEQ .fighter_shield ; if exactly 1
-
-	; if 0 => 2D (carry is clear)
-	; all others are 2E (carry set for +1)
-	LDA.b #$2D
-	ADC.b #$00
-	RTL
-
-.fighter_shield
-	LDA.b #$20
-	RTL
-
-;--------------------------------------------------------------------------------
 
 ;--------------------------------------------------------------------------------
 ; GetSpritePalette
@@ -172,6 +47,8 @@ RTL
 ;--------------------------------------------------------------------------------
 GetSpritePalette:
 	JSR AttemptItemSubstitution
+	JSR.w ResolveLootID
+        .resolved
 	CMP.b #$16 : BEQ .bottle ; Bottle
 	CMP.b #$2B : BEQ .bottle ; Red Potion w/bottle
 	CMP.b #$2C : BEQ .bottle ; Green Potion w/bottle
@@ -189,154 +66,7 @@ GetSpritePalette:
 	PHX
 	TAX : LDA.l GfxPalettes, X ; look up item gfx
 	PLX
-	CMP.b #$F8 : !BGE .special_handling
 RTL
-
-;---------------------------------------------------------------------------------------------------
-
-.special_handling
-	PHX
-	AND.b #$07
-	ASL
-	TAX
-
-	REP #$20
-	LDA.l .handlers,X
-
-	PLX
-	PHA
-
-	SEP #$20
-	RTS
-
-.handlers
-	dw .handler_F8-1
-	dw .handler_F9-1
-	dw .handler_FA-1
-	dw .handler_FB-1
-	dw .handler_FC-1
-	dw .handler_FD-1
-	dw .handler_FE-1
-	dw .handler_FF-1
-
-;---------------------------------------------------------------------------------------------------
-
-.handler_F8
-	LDA.l BowEquipment
-	INC
-	LSR
-	CMP.l ProgressiveBowLimit
-	BCC ++
-
-	LDA.l ProgressiveBowReplacement
-	JMP GetSpritePalette
-
-++	CMP.b #$00
-	BNE ++
-
-	LDA.b #$08
-	RTL
-
-++	LDA.b #$02
-	RTL
-
-	LDA.b #$29
-	ADC.b #$00
-	RTL
-
-;---------------------------------------------------------------------------------------------------
-
-.handler_F9
-	RTL
-
-;---------------------------------------------------------------------------------------------------
-
-.handler_FA
-	JSL GetRNGItemSingle
-	JMP GetSpritePalette
-;---------------------------------------------------------------------------------------------------
-
-.handler_FB
-	JSL GetRNGItemMulti
-	JMP GetSpritePalette
-
-;---------------------------------------------------------------------------------------------------
-
-.handler_FC
-	LDA.l GloveEquipment
-	BNE ++
-
-	LDA.b #$02
-	RTL
-
-++	LDA.b #$08
-	RTL
-
-;---------------------------------------------------------------------------------------------------
-
-.handler_FD
-	LDA.l HighestSword
-	CMP.l ProgressiveSwordLimit
-	BCC ++
-
-	LDA.l ProgressiveSwordReplacement
-	JMP GetSpritePalette
-
-	; 00 => 04
-	; 01 => 04
-	; 02 => 02
-	; 03 => 08
-++	CMP.b #$02
-	BEQ ++ ; 2 exits with 2
-
-	LDA.b #$04
-	BCC ++ ; 0 or 1 get 4
-
-	; everything else is 8
-	ASL
-
-++	RTL
-
-;---------------------------------------------------------------------------------------------------
-
-.handler_FE
-	LDA.l HighestShield
-	CMP.l ProgressiveShieldLimit
-	BCC ++
-
-	LDA.l ProgressiveShieldReplacement
-	JMP GetSpritePalette
-
-	; 0 => 4
-	; 1 => 2
-	; 2 => 8
-++	CMP.b #$01 ; no shield
-	BEQ .fighter_shield ; if exactly 1, ASL for 2
-
-	LDA.b #$04 ; load 4 for 0
-	BCC ++ ; exit if < 1, otherwise, ASL for 8
-
-.fighter_shield
-	ASL
-++	RTL
-
-;---------------------------------------------------------------------------------------------------
-
-.handler_FF
-	LDA.l ArmorEquipment
-	CMP.l ProgressiveArmorLimit
-	BCC ++
-
-	LDA.l ProgressiveArmorReplacement
-	JMP GetSpritePalette
-
-++	CMP.b #$01 ; carry set means nonzero
-	LDA.b #$02
-	BCS ++ ; nonzero gets 2
-
-	ASL ; ASL for 4 if zero
-
-++	RTL
 
 ;---------------------------------------------------------------------------------------------------
 
@@ -478,11 +208,12 @@ RTL
 ; in:	A - Loot ID
 ;-------------------------------------------------------------------------------- 20/8477
 PrepDynamicTile:
-	PHA : PHX : PHY
+	PHA : PHX : PHY : PHB
+	JSR.w ResolveLootID
 	JSR.w LoadDynamicTileOAMTable
 	JSL TransferItemReceiptToBuffer_using_ReceiptID
         SEP #$30
-	PLY : PLX : PLA
+	PLB : PLY : PLX : PLA
 RTL
 ;--------------------------------------------------------------------------------
 
@@ -503,7 +234,7 @@ LoadDynamicTileOAMTable:
 
 	LDA.b $01,s
 
-		JSL.l GetSpritePalette
+		JSL.l GetSpritePalette_resolved
 		STA.l SpriteOAM+5 : STA.l SpriteOAM+13
 	PLA
 	JSL.l IsNarrowSprite : BCS .narrow

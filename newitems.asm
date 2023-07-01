@@ -125,6 +125,35 @@ macro ValueShift()
 	BRA ?start : ?end:
 endmacro
 ;--------------------------------------------------------------------------------
+GetDungeonBitByID:
+        LDA.w #$8000
+        CPX.w #$0000 : BEQ .castle
+                DEX
+                -
+                        LSR
+                        DEX
+                BPL -
+                RTS
+
+        .castle
+        LSR
+RTS
+;--------------------------------------------------------------------------------
+GetDungeonBitByOffset:
+        LDA.w #$0001
+        CPX.w #$000E : BEQ .castle
+        CPX.w #$000F : BEQ .castle
+                DEX
+                -
+                        ASL
+                        DEX
+                BPL -
+                RTS
+
+        .castle
+        LDA.w #$00C0
+RTS
+;--------------------------------------------------------------------------------
 ;carry clear if pass
 ;carry set if caught
 ;incsrc eventdata.asm
@@ -167,312 +196,405 @@ ProcessEventItems:
 RTS
 ;--------------------------------------------------------------------------------
 AddReceivedItemLong:
-        JSR ResolveReceipt
+        JSR.w ResolveReceipt
         PHB : PHK
 JML AddReceivedItem+2
 
 AddReceivedItemExpandedGetItem:
-	PHX
+	PHX : PHB
 
-	LDA.w ItemReceiptID ; check inventory
-        ;JSR ResolveReceipt
+	LDA.w ItemReceiptID
 	JSL.l FreeDungeonItemNotice
         JSR ItemBehavior
+        SEP #$30
 
-        PLX
+        PLB : PLX
 	LDA.w ItemReceiptMethod : CMP.b #$01 ; thing we wrote over
 RTL
-
 
 ItemBehavior:
         REP #$30
         AND #$00FF : ASL :  TAX
-        LDA.l ItemReceipts_behavior, X : STA.w ScratchBufferV
-        SEP #$30
-        JMP.w (ScratchBufferV)
+        SEP #$20
+        JMP.w (ItemReceipts_behavior,X)
 
         .skip
-                RTS
-        .bow
-                LDA.l BowTracking : ORA.b #$80 : STA.l BowTracking
-		LDA.l SilverArrowsUseRestriction : BNE ++
-			LDA.b #03 : STA.l BowEquipment ; set bow to silver
-		++
-                RTS
-        .bow_and_arrows
-                LDA.l BowTracking : ORA.l ScratchBufferV+6 : STA.l BowTracking
-		BIT.b #$40 : BEQ +
-		LDA.l SilverArrowsUseRestriction : BNE +
-			LDA.b #03 : STA.l BowEquipment ; set bow to silver
-		+
-		RTS
-        .silver_bow
-                LDA.l BowTracking : ORA.l ScratchBufferV+6 : STA.l BowTracking
-		LDA.l SilverArrowsUseRestriction : BNE .noequip
-		LDA.l SilverArrowsAutoEquip : AND.b #$01 : BEQ .noequip
-		LDA.l ArrowsFiller : BNE + ; check arrows
-			LDA.b #$03 : BRA ++ ; bow without arrow
-		+
-			LDA.b #$04 ; bow with arrow
-		++
-		STA.l BowEquipment
-		.noequip
-		LDA.l BowTracking : ORA.b #$40 : STA.l BowTracking ; mark silver bow on y-toggle
-		RTS
-        .bombs_50
-		LDA.b #50 : STA.l BombCapacity ; upgrade bombs
-		LDA.b #50 : STA.l BombsFiller ; fill bombs
-		RTS
-        .arrows_70
-		LDA.b #70 : STA.l ArrowCapacity ; upgrade arrows
-		LDA.b #70 : STA.l ArrowsFiller ; fill arrows
-		RTS
-        .magic_2
-		LDA.l MagicConsumption : CMP.b #$02 : !BGE +
-			INC : STA.l MagicConsumption ; upgrade magic
-		+
-		LDA.b #$80 : STA.l MagicFiller ; fill magic
-                RTS
-        .magic_4
-		LDA.b #$02 : STA.l MagicConsumption ; upgrade magic
-		LDA.b #$80 : STA.l MagicFiller ; fill magic
-		RTS
-        .master_sword_safe
-		LDA.l SwordEquipment : CMP.b #$02 : !BGE + ; skip if we have a better sword
-		        LDA.b #$02 : STA.l SwordEquipment ; set master sword
-                +
-		RTS
-        .bombs_5
-		LDA.l BombCapacity : !ADD.b #$05 : STA.l BombCapacity ; upgrade bombs +5
-		LDA.l Upgrade5BombsRefill : STA.l BombsFiller ; fill bombs
-                RTS
-        .bombs_10
-		LDA.l BombCapacity : !ADD.b #$0A : STA.l BombCapacity ; upgrade bombs +10
-		LDA.l Upgrade10BombsRefill : STA.l BombsFiller ; fill bombs
-		RTS
-        .arrows_5
-		LDA.l ArrowCapacity : !ADD.b #$05 : STA.l ArrowCapacity ; upgrade arrows +5
-		LDA.l Upgrade5ArrowsRefill : STA.l ArrowsFiller ; fill arrows
-		RTS
-        .arrows_10
-		LDA.l ArrowCapacity : !ADD.b #$0A : STA.l ArrowCapacity ; upgrade arrows +10
-		LDA.l Upgrade10ArrowsRefill : STA.l ArrowsFiller ; fill arrows
-		RTS
-        .programmable_1
-		%ProgrammableItemLogic(1)
-		RTS
-        .programmable_2
-		%ProgrammableItemLogic(2)
-		RTS
-        .programmable_3
-		%ProgrammableItemLogic(3)
-		RTS
-        .silver_arrows
-                LDA.l BowTracking : ORA.b #$40 : STA.l BowTracking
-		LDA.l SilverArrowsUseRestriction : BNE ++
-		LDA.l SilverArrowsAutoEquip : AND.b #$01 : BEQ ++
-			LDA.l BowEquipment : BEQ ++ : CMP.b #$03 : !BGE +
-				!ADD.b #$02 : STA.l BowEquipment ; switch to silver bow
-			+
-		++
-		LDA.l ArrowMode : BEQ +
-			LDA.b #$01 : STA.l ArrowsFiller
-		+
-                RTS
-        .rupoor
-		REP #$20 : LDA.l CurrentRupees : !SUB RupoorDeduction : STA.l CurrentRupees : SEP #$20 ; Take 1 rupee
-		RTS
-        .null
-		RTS
-        .red_clock
-		REP #$20 ; set 16-bit accumulator
-		LDA.l ChallengeTimer : !ADD.l RedClockAmount : STA.l ChallengeTimer
-		LDA.l ChallengeTimer+2 : ADC.l RedClockAmount+2 : STA.l ChallengeTimer+2
-		SEP #$20 ; set 8-bit accumulator
-		RTS
-        .blue_clock
-		REP #$20 ; set 16-bit accumulator
-		LDA.l ChallengeTimer : !ADD.l BlueClockAmount : STA.l ChallengeTimer
-		LDA.l ChallengeTimer+2 : ADC.l BlueClockAmount+2 : STA.l ChallengeTimer+2
-		SEP #$20 ; set 8-bit accumulator
-		RTS
-        .green_clock
-		REP #$20 ; set 16-bit accumulator
-		LDA.l ChallengeTimer : !ADD.l GreenClockAmount : STA.l ChallengeTimer
-		LDA.l ChallengeTimer+2 : ADC.l GreenClockAmount+2 : STA.l ChallengeTimer+2
-		SEP #$20 ; set 8-bit accumulator
-		RTS
-        .triforce
-		JSL.l ActivateGoal
-		RTS
-        .goal_item
-                REP #$20 ; set 16-bit accumulator
-		LDA.l GoalItemRequirement : BEQ +
-		LDA.l GoalCounter : INC : STA.l GoalCounter
-		CMP.w GoalItemRequirement : !BLT +
-		LDA.l TurnInGoalItems : AND.w #$00FF : BNE +
-				JSL.l ActivateGoal
-		+
-                SEP #$20 ; set 8-bit accumulator
-		RTS
-        .request_F0
-		JSL.l ItemGetServiceRequest_F0
-		RTS
-        .request_F1
-		JSL.l ItemGetServiceRequest_F1
-		RTS
-        .request_F2
-		JSL.l ItemGetServiceRequest_F2
-		RTS
-        .request_async
-                ; JSL.l ItemGetServiceRequest
-                RTS
-        .free_map
-		AND.b #$0F : CMP.b #$08 : !BGE +
-			%ValueShift()
-			ORA.l MapField : STA.l MapField ; Map 1
-			RTS
-		+
-			!SUB #$08
-			%ValueShift()
-			ORA.l MapField+1 : STA.l MapField+1 ; Map 2
-		RTS
-        .hc_map
-                LDA.b #$C0 : ORA.l MapField+1 : STA.l MapField+1
-                RTS
-        .free_compass
-		AND.b #$0F : CMP.b #$08 : !BGE ++
-			%ValueShift()
-			ORA.l CompassField : STA.l CompassField ; Compass 1
-			RTS
-		++
-			!SUB #$08
-			%ValueShift()
-			ORA.l CompassField+1 : STA.l CompassField+1 ; Compass 2
-		RTS
-        .hc_compass
-                LDA.b #$C0 : ORA.l CompassField+1 : STA.l CompassField+1
-                RTS
-        .free_bigkey
-		AND.b #$0F : CMP.b #$08 : !BGE ++
-			%ValueShift()
-			ORA.l BigKeyField : STA.l BigKeyField ; Big Key 1
-			RTS
-		++
-			!SUB #$08
-			%ValueShift()
-			ORA.l BigKeyField+1 : STA.l BigKeyField+1 ; Big Key 2
-		RTS
-        .hc_bigkey
-                LDA.b #$C0 : ORA.l BigKeyField+1 : STA.l BigKeyField+1
-                RTS
-        .free_smallkey
-                AND.b #$0F : TAX
-                LDA.l DungeonKeys, X : INC : STA.l DungeonKeys, X ; Increment Key Count
-                RTS
-        .hc_smallkey
-                LDA.l HyruleCastleKeys : INC : STA.l HyruleCastleKeys
-                LDA.l SewerKeys : INC : STA.l SewerKeys
-                RTS
-        .generic_smallkey
-                LDA.l GenericKeys : BEQ .normal
-			LDA.l CurrentSmallKeys : INC : STA.l CurrentSmallKeys
-			RTS
-                .normal
-                LDA.w DungeonID : CMP.b #$FF : BEQ .done
-                        LSR : TAX
-                        LDA.l DungeonKeys, X : INC : STA.l DungeonKeys, X
-                .done
-                RTS
+        RTS
 
-;--------------------------------------------------------------------------------
-;2B:Bottle Already Filled w/ Red Potion
-;2C:Bottle Already Filled w/ Green Potion
-;2D:Bottle Already Filled w/ Blue Potion
-;3C:Bottle Already Filled w/ Bee
-;3D:Bottle Already Filled w/ Fairy
-;48:Bottle Already Filled w/ Gold Bee
+        .bow
+        LDA.l BowTracking : ORA.b #$80 : STA.l BowTracking
+        BIT #$40 : BNE .silversbow
+                LDA.b #$01 : STA.l BowEquipment
+        RTS
+
+        .silversbow
+        LDA.l SilverArrowsUseRestriction : BNE +
+                LDA.b #03 : STA.l BowEquipment ; set bow to silver
+        +
+        LDA.b #$01 : STA.l BowEquipment
+        RTS
+
+        .dungeon_compass
+        REP #$20
+        LDA.w DungeonID : LSR : TAX
+        JSR.w GetDungeonBitByID
+        ORA.l CompassField : STA.l CompassField
+        SEP #$20
+        RTS
+
+        .dungeon_bigkey
+        REP #$20
+        LDA.w DungeonID : LSR : TAX
+        JSR.w GetDungeonBitByID
+        ORA.l BigKeyField : STA.l BigKeyField
+        SEP #$20
+        RTS
+
+        .dungeon_map
+        REP #$20
+        LDA.w DungeonID : LSR : TAX
+        JSR.w GetDungeonBitByID
+        ORA.l MapField : STA.l MapField
+        SEP #$20
+        RTS
+
+        .bow_and_arrows
+        BIT.b #$40 : BEQ +
+        LDA.l SilverArrowsUseRestriction : BNE +
+                LDA.b #03 : STA.l BowEquipment ; set bow to silver
+        +
+        RTS
+
+        .silver_bow
+        LDA.b #$04 : ORA.l BowTracking : STA.l BowTracking
+        LDA.l SilverArrowsUseRestriction : BNE .noequip
+        LDA.l SilverArrowsAutoEquip : AND.b #$01 : BEQ .noequip
+        LDA.l ArrowsFiller : BNE + ; check arrows
+                        LDA.b #$03 : BRA ++ ; bow without arrow
+                +
+                LDA.b #$04 ; bow with arrow
+        ++
+        STA.l BowEquipment
+        .noequip
+        LDA.l BowTracking : ORA.b #$40 : STA.l BowTracking ; mark silver bow on y-toggle
+        RTS
+
+        .bombs_50
+        LDA.b #50 : STA.l BombCapacity ; upgrade bombs
+        LDA.b #50 : STA.l BombsFiller ; fill bombs
+        RTS
+
+        .arrows_70
+        LDA.b #70 : STA.l ArrowCapacity ; upgrade arrows
+        LDA.b #70 : STA.l ArrowsFiller ; fill arrows
+        RTS
+
+        .magic_2
+        LDA.l MagicConsumption : CMP.b #$02 : !BGE +
+                INC : STA.l MagicConsumption ; upgrade magic
+        +
+        LDA.b #$80 : STA.l MagicFiller ; fill magic
+        RTS
+
+        .magic_4
+        LDA.b #$02 : STA.l MagicConsumption ; upgrade magic
+        LDA.b #$80 : STA.l MagicFiller ; fill magic
+        RTS
+
+        .master_sword_safe
+        LDA.l SwordEquipment : CMP.b #$02 : !BGE + ; skip if we have a better sword
+                LDA.b #$02 : STA.l SwordEquipment ; set master sword
+        +
+        RTS
+
+        .bombs_5
+        LDA.l BombCapacity : !ADD.b #$05 : STA.l BombCapacity ; upgrade bombs +5
+        LDA.l Upgrade5BombsRefill : STA.l BombsFiller ; fill bombs
+        RTS
+
+        .bombs_10
+        LDA.l BombCapacity : !ADD.b #$0A : STA.l BombCapacity ; upgrade bombs +10
+        LDA.l Upgrade10BombsRefill : STA.l BombsFiller ; fill bombs
+        RTS
+
+        .arrows_5
+        LDA.l ArrowCapacity : !ADD.b #$05 : STA.l ArrowCapacity ; upgrade arrows +5
+        LDA.l Upgrade5ArrowsRefill : STA.l ArrowsFiller ; fill arrows
+        RTS
+
+        .arrows_10
+        LDA.l ArrowCapacity : !ADD.b #$0A : STA.l ArrowCapacity ; upgrade arrows +10
+        LDA.l Upgrade10ArrowsRefill : STA.l ArrowsFiller ; fill arrows
+        RTS
+
+        .programmable_1
+        %ProgrammableItemLogic(1)
+        RTS
+
+        .programmable_2
+        %ProgrammableItemLogic(2)
+        RTS
+
+        .programmable_3
+        %ProgrammableItemLogic(3)
+        RTS
+
+        .silver_arrows
+        LDA.l BowTracking : ORA.b #$40 : STA.l BowTracking
+        LDA.l SilverArrowsUseRestriction : BNE ++
+        LDA.l SilverArrowsAutoEquip : AND.b #$01 : BEQ ++
+                LDA.l BowEquipment : BEQ ++ : CMP.b #$03 : !BGE +
+                        !ADD.b #$02 : STA.l BowEquipment ; switch to silver bow
+                +
+        ++
+        LDA.l ArrowMode : BEQ +
+                LDA.b #$01 : STA.l ArrowsFiller
+        +
+        RTS
+
+        .rupoor
+        REP #$20 : LDA.l CurrentRupees : !SUB RupoorDeduction : STA.l CurrentRupees : SEP #$20 ; Take 1 rupee
+        RTS
+
+        .null
+        RTS
+
+        .red_clock
+        REP #$20 ; set 16-bit accumulator
+        LDA.l ChallengeTimer : !ADD.l RedClockAmount : STA.l ChallengeTimer
+        LDA.l ChallengeTimer+2 : ADC.l RedClockAmount+2 : STA.l ChallengeTimer+2
+        SEP #$20 ; set 8-bit accumulator
+        RTS
+
+        .blue_clock
+        REP #$20 ; set 16-bit accumulator
+        LDA.l ChallengeTimer : !ADD.l BlueClockAmount : STA.l ChallengeTimer
+        LDA.l ChallengeTimer+2 : ADC.l BlueClockAmount+2 : STA.l ChallengeTimer+2
+        SEP #$20 ; set 8-bit accumulator
+        RTS
+
+        .green_clock
+        REP #$20 ; set 16-bit accumulator
+        LDA.l ChallengeTimer : !ADD.l GreenClockAmount : STA.l ChallengeTimer
+        LDA.l ChallengeTimer+2 : ADC.l GreenClockAmount+2 : STA.l ChallengeTimer+2
+        SEP #$20 ; set 8-bit accumulator
+        RTS
+
+        .triforce
+        JSL.l ActivateGoal
+        RTS
+
+        .goal_item
+        REP #$20 ; set 16-bit accumulator
+        LDA.l GoalItemRequirement : BEQ +
+        LDA.l GoalCounter : INC : STA.l GoalCounter
+        CMP.w GoalItemRequirement : !BLT +
+        LDA.l TurnInGoalItems : AND.w #$00FF : BNE +
+                JSL.l ActivateGoal
+        +
+        SEP #$20 ; set 8-bit accumulator
+        RTS
+
+        .request_F0
+        JSL.l ItemGetServiceRequest_F0
+        RTS
+
+        .request_F1
+        JSL.l ItemGetServiceRequest_F1
+        RTS
+
+        .request_F2
+        JSL.l ItemGetServiceRequest_F2
+        RTS
+
+        .request_async
+        ; JSL.l ItemGetServiceRequest
+        RTS
+
+        .free_map
+        REP #$20
+        AND.w #$000F : LSR : TAX
+        JSR.w GetDungeonBitByOffset
+        ORA.l MapField : STA.l MapField
+        SEP #$20
+        RTS
+
+        .hc_map
+        LDA.b #$C0 : ORA.l MapField+1 : STA.l MapField+1
+        RTS
+
+        .free_compass
+        REP #$20
+        AND.w #$000F : LSR : TAX
+        JSR.w GetDungeonBitByOffset
+        ORA.l CompassField : STA.l CompassField
+        SEP #$20
+        RTS
+
+        .hc_compass
+        LDA.b #$C0 : ORA.l CompassField+1 : STA.l CompassField+1
+        RTS
+
+        .free_bigkey
+        REP #$20
+        AND.w #$000F : LSR : TAX
+        JSR.w GetDungeonBitByOffset
+        ORA.l BigKeyField : STA.l BigKeyField
+        SEP #$20
+        RTS
+
+        .hc_bigkey
+        LDA.b #$C0 : ORA.l BigKeyField+1 : STA.l BigKeyField+1
+        RTS
+
+        .free_smallkey
+        REP #$20
+        AND.w #$000F : TAX
+        LDA.l DungeonKeys, X : INC : STA.l DungeonKeys, X ; Increment Key Count
+        RTS
+
+        .hc_smallkey
+        LDA.l HyruleCastleKeys : INC : STA.l HyruleCastleKeys
+        LDA.l SewerKeys : INC : STA.l SewerKeys
+        RTS
+
+        .generic_smallkey
+        LDA.l GenericKeys : BEQ .normal
+                LDA.l CurrentSmallKeys : INC : STA.l CurrentSmallKeys
+                RTS
+        .normal
+        LDA.w DungeonID : CMP.b #$FF : BEQ .done
+                LSR : TAX
+                LDA.l DungeonKeys, X : INC : STA.l DungeonKeys, X
+        .done
+        RTS
+
 ResolveReceipt:
         PHA : PHX
         PHK : PLB
         JSL.l PreItemGet
         LDA.w ItemReceiptID ; Item Value
         .get_item
-        JSR AttemptItemSubstitution
-        LDX.b #ItemReceipts>>16 : STX.w ScratchBufferV+2
-        REP #$30
-        AND.w #$00FF : ASL : TAX
-        LDA.w ItemReceipts_resolution, X
-        STA.w ScratchBufferV
-        SEP #$30
-        JMP.w (ScratchBufferV)
+        JSR.w AttemptItemSubstitution
+        JSR.w HandleBowTracking ; Progressive bows get resolved to new loot id
+        JSR.w ResolveLootID
         .have_item
-
-        JSR IncrementItemCounters
         STA.w ItemReceiptID
+        JSR IncrementItemCounters
         PLX : PLA
         RTS
-        ;PHB : PHK ; we're skipping the corresponding instructions to grab the data bank
-        ;JML.l AddReceivedItem+2
-.items
-        .skip
-                LDA.w ItemReceiptID
-                JMP.w .have_item
-        .bottles
-                JSR.w CountBottles : CMP.l BottleLimit : !BLT +
-                        LDA.l BottleLimitReplacement
-                        JMP.w .get_item
-                +
-                LDA.w ItemReceiptID
-                JMP.w .have_item
-        .magic
-                LDA.l MagicConsumption : BEQ +
-                        LDA.b #$4F : JMP.w .have_item
-                + : LDA.b #$4E
-                JMP.w .have_item
-        .swords
-                LDA.l HighestSword : CMP.l ProgressiveSwordLimit : BCC +
-                        LDA.l ProgressiveSwordReplacement : JMP.w .get_item
-                +
-                ADC.b #$43 : JMP.w .have_item
-        .shields
-                LDA.l HighestShield : CMP.l ProgressiveShieldLimit : BCC +
-                        LDA.l ProgressiveShieldReplacement : JMP.w .get_item
-                +
-                ADC.b #$04 : JMP.w .have_item
-        .armor
-                LDA.l HighestMail : CMP.l ProgressiveArmorLimit : BCC +
-                        LDA.l ProgressiveArmorReplacement : JMP.w .get_item
-                +
-                ADC.b #$22 : JMP.w .have_item
-        .gloves
-                LDA.l GloveEquipment : BNE + ; No Lift
-                        LDA.b #$1B : JMP.w .have_item
-                + : LDA.b #$1C : JMP.w .have_item ; Everything Else
-        .progressive_bow
-                LDA.b #$80 : STA.l ScratchBufferV+6
-                BRA .both_bows
-        .progressive_bow_2
-                LDA.b #$20 : STA.l ScratchBufferV+6
-        .both_bows
-                LDA.l BowEquipment : INC : LSR : CMP.l ProgressiveBowLimit : !BLT +
-                        LDA.l ProgressiveBowReplacement : JMP.w .get_item
-                + : CMP.b #$00 : BNE + ; No Bow
-                        LDA.b #$3A : JMP.w .have_item
-                + : LDA.b #$3B : JMP.w .have_item ; Any Bow
-        .null_chest
-                ; JSL ChestItemServiceRequest
-                JMP.w .have_item
-        .rng_single
-                JSL.l GetRNGItemSingle : STA.w ScratchBufferV+6
-                XBA : JSR.w MarkRNGItemSingle
-                LDA.b #$FF : STA.l RNGLockIn ; clear lock-in
-                LDA.w ScratchBufferV+6 : JMP.w .get_item
-        .rng_multi
-                JSL.l GetRNGItemMulti : STA.w ScratchBufferV+6
-                LDA.b #$FF : STA.l RNGLockIn ; clear lock-in
-                LDA.w ScratchBufferV+6 : JMP.w .get_item
 
+ResolveLootID:
+; In: A - Loot ID
+; Out: A - Resolved Loot ID
+; Caller is responsible for running AttemptItemSubstitution prior if applicable.
+
+        PHX : PHB
+        PHK : PLB
+        .get_item
+        TAY
+        REP #$30
+        AND.w #$00FF : ASL : TAX
+        SEP #$30
+        TYA
+        JMP.w (ItemReceipts_resolution,X)
+        .have_item
+        PLB : PLX
+        RTS
+
+        .skip
+        JMP.w .have_item
+
+        .bottles
+        JSR.w CountBottles : CMP.l BottleLimit : !BLT +
+                LDA.l BottleLimitReplacement
+                JMP.w .get_item
+        +
+        LDA.w ItemReceiptID
+        JMP.w .have_item
+
+        .magic
+        LDA.l MagicConsumption : TAX
+        LDA.w ResolveLootID_magic_ids,X
+        JMP.w .have_item
+        ..ids
+        db $4E, $4F, $4F
+
+        .swords
+        LDA.l HighestSword : CMP.l ProgressiveSwordLimit : BCC +
+                LDA.l ProgressiveSwordReplacement
+                JMP.w .get_item
+        +
+        TAX
+        LDA.w ResolveLootID_swords_ids,X
+        JMP.w .have_item
+        ..ids
+        db $49, $01, $02, $03, $03
+
+        .shields
+        LDA.l HighestShield : CMP.l ProgressiveShieldLimit : BCC +
+                LDA.l ProgressiveShieldReplacement
+                JMP.w .get_item
+        +
+        TAX
+        LDA.w ResolveLootID_shields_ids,X
+        JMP.w .have_item
+        ..ids
+        db $04, $05, $06, $06
+
+        .armor
+        LDA.l HighestMail : CMP.l ProgressiveArmorLimit : BCC +
+                LDA.l ProgressiveArmorReplacement
+                JMP.w .get_item
+        +
+        LDA.w ResolveLootID_armor_ids,X
+        JMP.w .have_item
+        ..ids
+        db $22, $23, $23
+
+        .gloves
+        LDA.l GloveEquipment : TAX
+        LDA.w ResolveLootID_gloves_ids,X
+        JMP.w .have_item
+        ..ids
+        db $1B, $1C, $1C
+
+        .progressive_bow
+        LDA.l BowEquipment : INC : LSR : CMP.l ProgressiveBowLimit : BCC +
+                LDA.l ProgressiveBowReplacement
+                JMP.w .get_item
+        +
+        TAX
+        LDA.w ResolveLootID_bows_ids,X
+        JMP.w .get_item
+
+        .progressive_bow_2
+        LDA.l BowEquipment : INC : LSR : CMP.l ProgressiveBowLimit : BCC +
+                LDA.l ProgressiveBowReplacement
+                JMP.w .get_item
+        +
+        TAX
+        LDA.w ResolveLootID_bows_ids,X
+        JMP.w .get_item
+
+        .bows
+        ..ids
+        db $3A, $3B, $3B
+
+        .null_chest
+        ; JSL ChestItemServiceRequest
+        JMP.w .have_item
+
+        .rng_single
+        JSL.l GetRNGItemSingle : STA.w ScratchBufferV+6
+        XBA : JSR.w MarkRNGItemSingle
+        LDA.b #$FF : STA.l RNGLockIn ; clear lock-in
+        LDA.w ScratchBufferV+6 : JMP.w .get_item
+
+        .rng_multi
+        JSL.l GetRNGItemMulti : STA.w ScratchBufferV+6
+        LDA.b #$FF : STA.l RNGLockIn ; clear lock-in
+        LDA.w ScratchBufferV+6 : JMP.w .get_item
 
 ;--------------------------------------------------------------------------------
 ;DATA AddReceivedItemExpanded
@@ -526,7 +648,7 @@ macro ReceiptProps(id, y, x, gfx, width, pal, sram, value, pal_override, behavio
 	org ItemReceipts_value+<id>           : db <value>
 	org ItemReceipts_pal_override+<id>    : db <pal_override>
 	org ItemReceipts_behavior+<id>+<id>   : dw ItemBehavior_<behavior>
-	org ItemReceipts_resolution+<id>+<id> : dw ResolveReceipt_<res>
+	org ItemReceipts_resolution+<id>+<id> : dw ResolveLootID_<res>
 
 	pullpc
 
@@ -569,7 +691,7 @@ endmacro
 %ReceiptProps($22, -4, 0, $04, 2, $02, $F35B, $FF, $00, skip, skip) ; 22 - Blue mail
 %ReceiptProps($23, -5, 0, $04, 2, $01, $F35B, $02, $00, skip, skip) ; 23 - Red mail
 %ReceiptProps($24, -4, 4, $0F, 0, $02, $F36F, $FF, $00, skip, skip) ; 24 - Small key
-%ReceiptProps($25, -4, 0, $16, 2, $02, $F364, $FF, $00, skip, skip) ; 25 - Compass
+%ReceiptProps($25, -4, 0, $16, 2, $02, $F364, $FF, $00, dungeon_compass, skip) ; 25 - Compass
 %ReceiptProps($26, -4, 0, $03, 2, $01, $F36C, $FF, $00, skip, skip) ; 26 - Heart container from 4/4
 %ReceiptProps($27, -4, 0, $13, 2, $02, $F375, $FF, $00, skip, skip) ; 27 - Bomb
 %ReceiptProps($28, -4, 0, $01, 2, $02, $F375, $FF, $00, skip, skip) ; 28 - 3 bombs
@@ -582,8 +704,8 @@ endmacro
 %ReceiptProps($2F, -4, 0, $00, 2, $04, $F36E, $FF, $00, skip, bottles) ; 2F - Potion refill (green)
 %ReceiptProps($30, -4, 0, $00, 2, $02, $F36E, $FF, $00, skip, bottles) ; 30 - Potion refill (blue)
 %ReceiptProps($31, -4, 0, $30, 2, $02, $F375, $FF, $00, skip, skip) ; 31 - 10 bombs
-%ReceiptProps($32, -4, 0, $22, 2, $04, $F366, $FF, $00, skip, skip) ; 32 - Big key
-%ReceiptProps($33, -4, 0, $21, 2, $04, $F368, $FF, $00, skip, skip) ; 33 - Map
+%ReceiptProps($32, -4, 0, $22, 2, $04, $F366, $FF, $00, dungeon_bigkey, skip) ; 32 - Big key
+%ReceiptProps($33, -4, 0, $21, 2, $04, $F368, $FF, $00, dungeon_map, skip) ; 33 - Map
 %ReceiptProps($34, -2, 4, $24, 0, $04, $F360, $FF, $00, skip, skip) ; 34 - 1 rupee
 %ReceiptProps($35, -2, 4, $24, 0, $02, $F360, $FB, $00, skip, skip) ; 35 - 5 rupees
 %ReceiptProps($36, -2, 4, $24, 0, $01, $F360, $EC, $00, skip, skip) ; 36 - 20 rupees
@@ -613,7 +735,7 @@ endmacro
 %ReceiptProps($4E, -4, 0, $3B, 2, $04, $F373, $80, $00, magic_2, magic) ; 4E - 1/2 magic
 %ReceiptProps($4F, -4, 0, $3C, 2, $04, $F373, $80, $00, magic_4, magic) ; 4F - 1/4 magic
 %ReceiptProps($50, -5, 4, $18, 0, $05, $F359, $02, $00, master_sword_safe, skip) ; 50 - Safe master sword - TODO gfx value
-%ReceiptProps($51, -4, 0, $39, 2, $04, $F375, $FF, $00, bombs_5, skip) ; 51 - Bomb capacity (+5)
+%ReceiptProps($51, -4, 0, $42, 2, $04, $F375, $FF, $00, bombs_5, skip) ; 51 - Bomb capacity (+5)
 %ReceiptProps($52, -4, 0, $3E, 2, $04, $F375, $FF, $00, bombs_10, skip) ; 52 - Bomb capacity (+10)
 %ReceiptProps($53, -4, 0, $3F, 2, $04, $F376, $FF, $00, arrows_5, skip) ; 53 - Arrow capacity (+5)
 %ReceiptProps($54, -4, 0, $40, 2, $04, $F376, $FF, $00, arrows_10, skip) ; 54 - Arrow capacity (+10)
@@ -844,6 +966,20 @@ Link_ReceiveItemAlternatesExpanded:
 		CPY.b Scrap03 : BNE + : LDA.b #$FF : STA.b Scrap03 : +
 	PLB
 RTL
+;--------------------------------------------------------------------------------
+HandleBowTracking:
+; In: A - Item Receipt ID
+        CMP.b #$64 : BEQ .prog_one
+        CMP.b #$65 : BEQ .prog_two
+                RTS
+        .prog_one
+        LDA.b #$80
+        BRA .done
+        .prog_two
+        LDA.b #$20
+        .done
+        ORA.l BowTracking : STA.l BowTracking
+RTS
 ;--------------------------------------------------------------------------------
 ;Return BowEquipment but also draw silver arrows if you have the upgrade even if you don't have the bow
 CheckHUDSilverArrows:

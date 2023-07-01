@@ -3,6 +3,7 @@
 ; 286 - Northeast Dark Swamp Cave
 ;--------------------------------------------------------------------------------
 !FREE_TILE_BUFFER = $1180
+!FREE_TILE = $5A40
 ; A = Tile ID
 macro UploadOAM(dest)
 	PHA : PHP
@@ -17,7 +18,7 @@ macro UploadOAM(dest)
 
 	LDA.b $01,s
 
-		JSL.l GetSpritePalette
+		JSL.l GetSpritePalette_resolved
 		STA.l SpriteOAM+5 : STA.l SpriteOAM+13
 	PLA
 	JSL.l IsNarrowSprite : BCS .narrow
@@ -174,9 +175,9 @@ SpritePrep_ShopKeeper:
 	JMP -
 	.stop
 	
-	LDA.b #Shopkeeper_UploadVRAMTilesLong>>16 : STA.w NMIAux+2
-	LDA.b #Shopkeeper_UploadVRAMTilesLong>>8 : STA.w NMIAux+1
-	LDA.b #Shopkeeper_UploadVRAMTilesLong>>0 : STA.w NMIAux
+	;LDA.b #Shopkeeper_UploadVRAMTilesLong>>16 : STA.w NMIAux+2
+	;LDA.b #Shopkeeper_UploadVRAMTilesLong>>8 : STA.w NMIAux+1
+	;LDA.b #Shopkeeper_UploadVRAMTilesLong>>0 : STA.w NMIAux
 
 	.done
 	LDA.l ShopType : BIT.b #$20 : BEQ .notTakeAll ; Take-all
@@ -218,113 +219,20 @@ dw $0100, $0000
 ; X - Tile Buffer Offset
 ; Y - Item ID
 LoadTile:
-	TXA : !ADD.w #!FREE_TILE_BUFFER : STA.l TileUploadOffsetOverride ; load offset from X
-	SEP #$30 ; set 8-bit accumulator & index registers
-	TYA ; load item ID from Y
-	JSL.l GetSpriteID ; convert loot id to sprite id
-	JSL.l GetAnimatedSpriteTile_variable
+	TXA : LSR #2 : !ADD.w #!FREE_TILE : STA.w ItemGFXTarget  ; load offset from X
+        ;SEP #$30
+	TYA : ASL : TAX
+        LDA.l StandingItemGraphicsOffsets,X : STA.w ItemGFXPtr
+        JSL.l TransferItemToVRAM
+        TDC
+	;JSL.l GetSpriteID ; convert loot id to sprite id
+	;JSL.l GetAnimatedSpriteTile_variable
 	REP #$10 ; set 16-bit index registers
+        SEP #$20
 RTS
 ;--------------------------------------------------------------------------------
 ;ShopInventory, X
 ;[id][$lo][$hi][purchase_counter]
-;--------------------------------------------------------------------------------
-Shopkeeper_UploadVRAMTilesLong:
-	JSR.w Shopkeeper_UploadVRAMTiles
-RTL
-Shopkeeper_UploadVRAMTiles:
-		LDA.w DMAP0 : PHA ; preserve DMA parameters
-		LDA.w BBAD0 : PHA ; preserve DMA parameters
-		LDA.w A1T0L : PHA ; preserve DMA parameters
-		LDA.w A1T0H : PHA ; preserve DMA parameters
-		LDA.w A1B0 : PHA ; preserve DMA parameters
-		LDA.w DAS0L : PHA ; preserve DMA parameters
-		LDA.w DAS0H : PHA ; preserve DMA parameters
-		;--------------------------------------------------------------------------------
-		LDA.b #$01 : STA.w DMAP0 ; set DMA transfer direction A -> B, bus A auto increment, double-byte mode
-		LDA.b #$18 : STA.w BBAD0 ; set bus B destination to VRAM register
-		LDA.b #$80 : STA.w VMAIN ; set VRAM to increment by 2 on high register write
-
-		LDA.b #$80 : STA.w A1T0L ; set bus A source address to tile buffer
-		LDA.b #$A1 : STA.w A1T0H
-		LDA.b #$7E : STA.w A1B0
-
-		LDA.l ShopType : AND.b #$10 : BNE .special
-		JMP .normal
-
-	.special
-
-		LDA.b #$40 : STA.w DAS0L : STZ.b DAS0H ; set transfer size to 0x40
-		LDA.b #$40 : STA.w VMADDL ; set VRAM register destination address
-		LDA.b #$5A : STA.w VMADDH
-		LDA.b #$01 : STA.w MDMAEN ; begin DMA transfer
- 
-		LDA.b #$40 : STA.w DAS0L : STZ.b DAS0H ; set transfer size to 0x40
-		LDA.b #$40 : STA.w VMADDL ; set VRAM register destination address
-		LDA.b #$5B : STA.w VMADDH
-		LDA.b #$01 : STA.w MDMAEN ; begin DMA transfer
-
-		LDA.b #$40 : STA.w DAS0L : STZ.b DAS0H ; set transfer size to 0x40
-		LDA.b #$60 : STA.w VMADDL ; set VRAM register destination address
-		LDA.b #$5A : STA.w VMADDH
-		LDA.b #$01 : STA.w MDMAEN ; begin DMA transfer
-
-		LDA.b #$40 : STA.w DAS0L : STZ.b DAS0H ; set transfer size to 0x40
-		LDA.b #$60 : STA.w VMADDL ; set VRAM register destination address
-		LDA.b #$5B : STA.w VMADDH
-		LDA.b #$01 : STA.w MDMAEN ; begin DMA transfer
-
-		LDA.b #$40 : STA.w DAS0L : STZ.b DAS0H ; set transfer size to 0x40
-		LDA.b #$80 : STA.w VMADDL ; set VRAM register destination address
-		LDA.b #$5A : STA.w VMADDH
-		LDA.b #$01 : STA.w MDMAEN ; begin DMA transfer
-
-		LDA.b #$40 : STA.w DAS0L : STZ.b DAS0H ; set transfer size to 0x40
-		LDA.b #$80 : STA.w VMADDL ; set VRAM register destination address
-		LDA.b #$5B : STA.w VMADDH
-		LDA.b #$01 : STA.w MDMAEN ; begin DMA transfer
-		JMP .end
-
-	.normal 
-		LDA.b #$40 : STA.w DAS0L : STZ.b DAS0H ; set transfer size to 0x40
-		LDA.b #$60 : STA.w VMADDL ; set VRAM register destination address
-		LDA.b #$5C : STA.w VMADDH
-		LDA.b #$01 : STA.w MDMAEN ; begin DMA transfer
-
-		LDA.b #$40 : STA.w DAS0L : STZ.b DAS0H ; set transfer size to 0x40
-		LDA.b #$60 : STA.w VMADDL ; set VRAM register destination address
-		LDA.b #$5D : STA.w VMADDH
-		LDA.b #$01 : STA.w MDMAEN ; begin DMA transfer
-
-		LDA.b #$40 : STA.w DAS0L : STZ.b DAS0H ; set transfer size to 0x40
-		LDA.b #$80 : STA.w VMADDL ; set VRAM register destination address
-		LDA.b #$5C : STA.w VMADDH
-		LDA.b #$01 : STA.w MDMAEN ; begin DMA transfer
-
-		LDA.b #$40 : STA.w DAS0L : STZ.b DAS0H ; set transfer size to 0x40
-		LDA.b #$80 : STA.w VMADDL ; set VRAM register destination address
-		LDA.b #$5D : STA.w VMADDH
-		LDA.b #$01 : STA.w MDMAEN ; begin DMA transfer
-
-		LDA.b #$40 : STA.w DAS0L : STZ.b DAS0H ; set transfer size to 0x40
-		LDA.b #$A0 : STA.w VMADDL ; set VRAM register destination address
-		LDA.b #$5C : STA.w VMADDH
-		LDA.b #$01 : STA.w MDMAEN ; begin DMA transfer
-
-		LDA.b #$40 : STA.w DAS0L : STZ.b DAS0H ; set transfer size to 0x40
-		LDA.b #$A0 : STA.w VMADDL ; set VRAM register destination address
-		LDA.b #$5D : STA.w VMADDH
-		LDA.b #$01 : STA.w MDMAEN ; begin DMA transfer
-		;--------------------------------------------------------------------------------
-	.end
-		PLA : STA.w DAS0H ; restore DMA parameters
-		PLA : STA.w DAS0L ; restore DMA parameters
-		PLA : STA.w A1B0 ; restore DMA parameters
-		PLA : STA.w A1T0H ; restore DMA parameters
-		PLA : STA.w A1T0L ; restore DMA parameters
-		PLA : STA.w BBAD0 ; restore DMA parameters
-		PLA : STA.w DMAP0 ; restore DMA parameters
-RTS
 ;--------------------------------------------------------------------------------
 Shopkepeer_CallOriginal:
 	PLA : PLA : PLA
@@ -686,7 +594,7 @@ Shopkeeper_DrawNextItem:
 	STA.l SpriteOAM+4
 
 	LDA.l ShopInventory, X ; get item palette
-	JSL.l GetSpritePalette : STA.l SpriteOAM+5
+	JSL.l GetSpritePalette_resolved : STA.l SpriteOAM+5
 
 	LDA.b #$00 : STA.l SpriteOAM+6
 

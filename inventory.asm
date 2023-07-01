@@ -14,7 +14,7 @@
 ;--------------------------------------------------------------------------------
 ; BowTracking
 ; Item Tracking Slot #2
-; bsp-----
+; -------- bsp-----
 ; b = bow
 ; s = silver arrow bow
 ; p = 2nd progressive bow
