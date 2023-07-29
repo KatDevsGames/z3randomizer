@@ -2555,8 +2555,8 @@ db $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF
 ; 0x186C00 - 186FFE (unused)
 ;--------------------------------------------------------------------------------
 org $B0EFFF ; PC 0x186FFF
-BallNChainDungeon:
-db $02
+BallNChainDungeon: ; Dungeon ID where ball n chain guard is located. Write
+db $02             ; $FF to count ball and chain item for collection stats.
 
 org $B0F000 ; PC 0x187000-0x18700F
 CompassTotalsROM:

@@ -78,31 +78,35 @@ IncrementSmallKeys:
 	STA.l CurrentSmallKeys ; thing we wrote over, write small key count
 	PHX
 		LDA.l StatsLocked : BNE +
-			JSL AddInventory_incrementKeyLong
+                        LDA.l SmallKeyCounter : INC : STA.l SmallKeyCounter
 		+
 		JSL.l UpdateKeys
-		PHY : LDY.b #24 : JSL.l FullInventoryExternal : PLY
+		PHY : LDY.b #24 : JSL.l AddInventory : PLY
 		JSL.l HUD_RebuildLong
 	PLX
 RTL
 ;--------------------------------------------------------------------------------
 IncrementSmallKeysNoPrimary:
-	STA.l CurrentSmallKeys ; thing we wrote over, write small key count
-	PHX
-		LDA.l StatsLocked : BNE +
-			JSL AddInventory_incrementKeyLong
-		+
-		JSL.l UpdateKeys
-		LDA.b IndoorsFlag : BEQ + ; skip room check if outdoors
-			PHP : REP #$20 ; set 16-bit accumulator
-				LDA.b RoomIndex : CMP.w #$0087 : BNE ++ ; hera basement
-					PLP : PHY : LDY.b #$24 : JSL.l FullInventoryExternal
-					JSR CountChestKey : PLY : BRA +
-				++
-			PLP
-		+
-		JSL.l HUD_RebuildLong
-	PLX
+        STA.l CurrentSmallKeys ; thing we wrote over, write small key count
+        PHX
+        LDA.l StatsLocked : BNE +
+                LDA.l SmallKeyCounter : INC : STA.l SmallKeyCounter
+        +
+        JSL.l UpdateKeys
+        LDA.b IndoorsFlag : BEQ + ; skip room check if outdoors
+                PHP : REP #$20 ; set 16-bit accumulator
+                LDA.b RoomIndex : CMP.w #$0087 : BNE ++ ; hera basement
+                        PLP : PHY
+                        LDY.b #$24
+                        JSL.l AddInventory
+                        JSR CountChestKey
+                        PLY
+                        BRA +
+                ++
+                PLP
+        +
+        JSL.l HUD_RebuildLong
+        PLX
 RTL
 ;--------------------------------------------------------------------------------
 DecrementSmallKeys:
@@ -150,7 +154,7 @@ RTL
 IncrementAgahnim2Sword:
 	PHA
 		LDA.l StatsLocked : BNE +
-			JSL AddInventory_incrementBossSwordLong
+			JSL.l IncrementBossSword
 		+
 	PLA
 RTL
@@ -209,12 +213,14 @@ DecrementItemCounter:
 RTL
 ;--------------------------------------------------------------------------------
 IncrementBigChestCounter:
-	JSL.l Dungeon_SaveRoomQuadrantData ; thing we wrote over
-	PHA
-		LDA.l StatsLocked : BNE +
-			%BottomHalf(BigKeysBigChests)
-		+
-	PLA
+        JSL.l Dungeon_SaveRoomQuadrantData ; thing we wrote over
+        PHA
+        LDA.l StatsLocked : BNE +
+                LDA.l BigKeysBigChests : INC : AND.b #$0F : TAX
+                LDA.l BigKeysBigChests : AND.b #$F0 : STA.l BigKeysBigChests
+                TXA : ORA.l BigKeysBigChests : STA.l BigKeysBigChests
+        +
+        PLA
 RTL
 ;--------------------------------------------------------------------------------
 IncrementDamageTakenCounter_Eight:
@@ -327,7 +333,7 @@ StatsFinalPrep:
 		LDA.l StatsLocked : BNE .ramPostOnly
 		INC : STA.l StatsLocked
 	
-		JSL.l AddInventory_incrementBossSwordLong
+		JSL.l IncrementBossSword
 	
 		LDA.l HighestMail : INC : STA.l HighestMail ; add green mail to mail count
 		

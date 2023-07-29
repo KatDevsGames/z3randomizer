@@ -5,30 +5,16 @@ HeartPieceGet:
         PHX : PHY
         LDY.w SpriteItemType, X ; load item value into Y register
         BNE +
-                ; if for any reason the item value is 0 reload it, just in case
                 JSL.l LoadHeartPieceRoomValue : TAY
         +
         JSL.l MaybeMarkDigSpotCollected
-
         .skipLoad
-
-
-        CPY.b #$26 : BNE .notHeart ; don't add a 1/4 heart if it's not a heart piece
-        LDA.l HeartPieceQuarter : INC A : AND.b #$03 : STA.l HeartPieceQuarter : BNE .unfinished_heart ; add up heart quarters
-        BRA .giveItem
-
-        .notHeart
-        .giveItem
+        CPY.b #$26 : BNE .not_heart ; don't add a 1/4 heart if it's not a heart piece
+                LDA.l HeartPieceQuarter : INC A : AND.b #$03 : STA.l HeartPieceQuarter
+        .not_heart
         JSL.l $8791B3 ; Player_HaltDashAttackLong
         STZ.w ItemReceiptMethod ; 0 = Receiving item from an NPC or message
-
         JSL.l Link_ReceiveItem
-        CLC ; return false
-        JMP .done ; finished
-
-        .unfinished_heart
-        SEC ; return true
-        .done
         JSL MaybeUnlockTabletAnimation
 
         PLY : PLX
@@ -36,10 +22,8 @@ RTL
 ;--------------------------------------------------------------------------------
 HeartContainerGet:
 	PHX : PHY
-	JSL.l AddInventory_incrementBossSwordLong
-	LDY.w SpriteItemType, X ; load item value into Y register
-	BNE +
-		; if for any reason the item value is 0 reload it, just in case
+	JSL.l IncrementBossSword
+	LDY.w SpriteItemType, X : BNE +
 		JSL.l LoadHeartContainerRoomValue : TAY
 	+
 	BRA HeartPieceGet_skipLoad

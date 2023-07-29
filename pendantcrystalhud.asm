@@ -186,7 +186,7 @@ RTL
 UpdateKeys:
 	PHX : PHP
 	SEP #$30 ; set 8-bit accumulator & index registers
-		LDA.w DungeonID : CMP.b TSWQ : !BLT .skip
+		LDA.w DungeonID : CMP.b #$1F : !BLT .skip
 		
 		LSR : TAX ; get dungeon index and store to X
 	
@@ -285,7 +285,7 @@ DrawHUDDungeonItems:
 
 
 .dungeon_bitmasks
-		dw $4000 ; Hyrule Castle
+		dw $C000 ; Hyrule Castle
 		dw $2000 ; Eastern
 		dw $1000 ; Desert
 		dw $0020 ; Hera

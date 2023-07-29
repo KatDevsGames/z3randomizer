@@ -125,35 +125,6 @@ macro ValueShift()
 	BRA ?start : ?end:
 endmacro
 ;--------------------------------------------------------------------------------
-GetDungeonBitByID:
-        LDA.w #$8000
-        CPX.w #$0000 : BEQ .castle
-                DEX
-                -
-                        LSR
-                        DEX
-                BPL -
-                RTS
-
-        .castle
-        LSR
-RTS
-;--------------------------------------------------------------------------------
-GetDungeonBitByOffset:
-        LDA.w #$0001
-        CPX.w #$000E : BEQ .castle
-        CPX.w #$000F : BEQ .castle
-                DEX
-                -
-                        ASL
-                        DEX
-                BPL -
-                RTS
-
-        .castle
-        LDA.w #$00C0
-RTS
-;--------------------------------------------------------------------------------
 ;carry clear if pass
 ;carry set if caught
 ;incsrc eventdata.asm
@@ -221,6 +192,126 @@ ItemBehavior:
         .skip
         RTS
 
+        .blue_boomerang
+        LDA.l InventoryTracking : ORA.b #$80
+        BRA .store_inventory_tracking
+
+        .red_boomerang
+        LDA.l InventoryTracking : ORA.b #$40
+        BRA .store_inventory_tracking
+        
+        .mushroom
+        LDA.l InventoryTracking : ORA.b #$28
+        BRA .store_inventory_tracking
+
+        .powder
+        LDA.l InventoryTracking : ORA.b #$10
+        BRA .store_inventory_tracking
+
+        .flute_inactive
+        LDA.l InventoryTracking : ORA.b #$02
+        BRA .store_inventory_tracking
+
+        .flute_active
+        LDA.l InventoryTracking : ORA.b #$01
+        BRA .store_inventory_tracking
+        
+        .store_inventory_tracking
+        STA.l InventoryTracking
+        RTS
+
+        .fighter_sword_shield
+        SEP #$10
+        LDX.b #$01
+        JSR .increment_sword
+        JSR .increment_shield
+        REP #$10
+        RTS
+
+        .master_sword
+        SEP #$10
+        LDX.b #$02
+        JSR .increment_sword
+        REP #$10
+        RTS
+
+        .tempered_sword
+        SEP #$10
+        LDX.b #$03
+        JSR .increment_sword
+        REP #$10
+        RTS
+
+        .gold_sword
+        SEP #$10
+        LDX.b #$04
+        JSR .increment_sword
+        REP #$10
+        RTS
+
+        .fighter_shield
+        SEP #$10
+        LDX.b #$01
+        JSR .increment_shield
+        REP #$10
+        RTS
+
+        .red_shield
+        SEP #$10
+        LDX.b #$02
+        JSR .increment_shield
+        REP #$10
+        RTS
+
+        .mirror_shield
+        SEP #$10
+        LDX.b #$03
+        JSR .increment_shield
+        REP #$10
+        RTS
+
+        .blue_mail
+        SEP #$10
+        LDX.b #$01
+        JSR .increment_mail
+        REP #$10
+        RTS
+
+        .red_mail
+        SEP #$10
+        LDX.b #$02
+        JSR .increment_mail
+        REP #$10
+        RTS
+
+        .fighter_sword
+        SEP #$10
+        LDX.b #$01
+        JSR .increment_sword
+        REP #$10
+        RTS
+
+        .prog_sword
+        SEP #$10
+        LDA.l SwordEquipment : INC : TAX
+        JSR .increment_sword
+        REP #$10
+        RTS
+
+        .prog_shield
+        SEP #$10
+        LDA.l ShieldEquipment : INC : TAX
+        JSR .increment_shield
+        REP #$10
+        RTS
+
+        .prog_mail
+        SEP #$10
+        LDA.l ArmorEquipment : INC : TAX
+        JSR .increment_mail
+        REP #$10
+        RTS
+
         .bow
         LDA.l BowTracking : ORA.b #$80 : STA.l BowTracking
         BIT #$40 : BNE .silversbow
@@ -236,27 +327,34 @@ ItemBehavior:
 
         .dungeon_compass
         REP #$20
-        LDA.w DungeonID : LSR : TAX
-        JSR.w GetDungeonBitByID
-        ORA.l CompassField : STA.l CompassField
-        SEP #$20
-        RTS
+        LDA.w DungeonID : CMP.w #$0003 : BCC ..hc_sewers
+        TAX
+        LDA.l DungeonMask,X : ORA.l CompassField : STA.l CompassField
+        JMP.w .increment_compass
+        ..hc_sewers
+        LDA.w #$C000 : ORA.l CompassField : STA.l CompassField
+        JMP.w .increment_compass
+
 
         .dungeon_bigkey
         REP #$20
-        LDA.w DungeonID : LSR : TAX
-        JSR.w GetDungeonBitByID
-        ORA.l BigKeyField : STA.l BigKeyField
-        SEP #$20
-        RTS
+        LDA.w DungeonID : CMP.w #$0003 : BCC ..hc_sewers
+        TAX
+        LDA.l DungeonMask,X : ORA.l BigKeyField : STA.l BigKeyField
+        JMP.w .increment_bigkey
+        ..hc_sewers
+        LDA.w #$C000 : ORA.l BigKeyField : STA.l BigKeyField
+        JMP.w .increment_bigkey
 
         .dungeon_map
         REP #$20
-        LDA.w DungeonID : LSR : TAX
-        JSR.w GetDungeonBitByID
-        ORA.l MapField : STA.l MapField
-        SEP #$20
-        RTS
+        LDA.w DungeonID : CMP.w #$0003 : BCC ..hc_sewers
+        TAX
+        LDA.l DungeonMask,X : ORA.l MapField : STA.l MapField
+        JMP.w .increment_map
+        ..hc_sewers
+        LDA.w #$C000 : ORA.l MapField : STA.l MapField
+        JMP.w .increment_map
 
         .bow_and_arrows
         BIT.b #$40 : BEQ +
@@ -302,9 +400,12 @@ ItemBehavior:
         RTS
 
         .master_sword_safe
+        SEP #$10
         LDA.l SwordEquipment : CMP.b #$02 : !BGE + ; skip if we have a better sword
                 LDA.b #$02 : STA.l SwordEquipment ; set master sword
         +
+        LDX.b #$02
+        JSR .increment_sword
         RTS
 
         .bombs_5
@@ -413,50 +514,57 @@ ItemBehavior:
 
         .free_map
         REP #$20
-        AND.w #$000F : LSR : TAX
-        JSR.w GetDungeonBitByOffset
-        ORA.l MapField : STA.l MapField
+        AND.w #$000F : ASL : TAX
+        LDA.w DungeonItemIDMap,X : TAX
+        LDA.l DungeonMask,X : ORA.l MapField : STA.l MapField
         SEP #$20
-        RTS
+        JMP.w .increment_map
 
         .hc_map
         LDA.b #$C0 : ORA.l MapField+1 : STA.l MapField+1
-        RTS
+        JMP.w .increment_map
 
         .free_compass
         REP #$20
-        AND.w #$000F : LSR : TAX
-        JSR.w GetDungeonBitByOffset
-        ORA.l CompassField : STA.l CompassField
+        AND.w #$000F : ASL : TAX
+        LDA.w DungeonItemIDMap,X : TAX
+        LDA.l DungeonMask,X : ORA.l CompassField : STA.l CompassField
         SEP #$20
-        RTS
+        JMP.w .increment_compass
 
         .hc_compass
         LDA.b #$C0 : ORA.l CompassField+1 : STA.l CompassField+1
-        RTS
+        JMP.w .increment_compass
 
         .free_bigkey
         REP #$20
-        AND.w #$000F : LSR : TAX
-        JSR.w GetDungeonBitByOffset
-        ORA.l BigKeyField : STA.l BigKeyField
+        AND.w #$000F : ASL : TAX
+        LDA.w DungeonItemIDMap,X : TAX
+        LDA.l DungeonMask,X : ORA.l BigKeyField : STA.l BigKeyField
         SEP #$20
-        RTS
+        JMP.w .increment_bigkey
 
         .hc_bigkey
         LDA.b #$C0 : ORA.l BigKeyField+1 : STA.l BigKeyField+1
-        RTS
+        JMP.w .increment_bigkey
 
         .free_smallkey
         REP #$20
         AND.w #$000F : TAX
-        LDA.l DungeonKeys, X : INC : STA.l DungeonKeys, X ; Increment Key Count
+        ASL : CMP.w DungeonID : BEQ .same_dungeon
+                LSR : TAX
+                LDA.l DungeonKeys,X : INC : STA.l DungeonKeys,X
+                RTS
+        .same_dungeon
+        SEP #$20
+        LDA.l CurrentSmallKeys : INC : STA.l CurrentSmallKeys
         RTS
 
         .hc_smallkey
-        LDA.l HyruleCastleKeys : INC : STA.l HyruleCastleKeys
-        LDA.l SewerKeys : INC : STA.l SewerKeys
-        RTS
+        LDA.w DungeonID : CMP.b #$03 : BCC .same_dungeon
+                LDA.l HyruleCastleKeys : INC : STA.l HyruleCastleKeys
+                LDA.l SewerKeys : INC : STA.l SewerKeys
+                RTS
 
         .generic_smallkey
         LDA.l GenericKeys : BEQ .normal
@@ -464,8 +572,50 @@ ItemBehavior:
                 RTS
         .normal
         LDA.w DungeonID : CMP.b #$FF : BEQ .done
-                LSR : TAX
-                LDA.l DungeonKeys, X : INC : STA.l DungeonKeys, X
+                LDA.l CurrentSmallKeys : INC : STA.l CurrentSmallKeys
+
+        .increment_sword
+        LDA.l HighestSword
+        INC : STA.b Scrap04 : CPX.b Scrap04 : !BLT + ; don't increment unless we're getting a better sword
+                TXA : STA.l HighestSword
+        +
+        RTS
+
+        .increment_shield
+        LDA.l HighestShield
+        INC : STA.b Scrap04 : CPX.b Scrap04 : !BLT + ; don't increment unless we're getting a better shield
+                TXA : STA.l HighestShield
+        +
+        RTS
+
+        .increment_mail
+        LDA.l HighestMail
+        INC : STA.b Scrap04 : CPX.b Scrap04 : !BLT +   ; don't increment unless we're getting a better mail
+                TXA : STA.l HighestMail
+        +
+        RTS
+
+        .increment_bigkey
+        SEP #$30
+        LDA.l BigKeysBigChests
+        CLC : ADC.b #$10
+        STA.l BigKeysBigChests
+        RTS
+
+        .increment_map
+        SEP #$30
+        LDA.l MapsCompasses
+        CLC : ADC.b #$10
+        STA.l MapsCompasses
+        RTS
+
+        .increment_compass
+        SEP #$30
+        LDA.l MapsCompasses : INC : AND.b #$0F : TAX
+        LDA.l MapsCompasses : AND.b #$F0 : STA.l MapsCompasses
+        TXA : ORA.l MapsCompasses : STA.l MapsCompasses
+        JSL MaybeFlagCompassTotalPickup
+
         .done
         RTS
 
@@ -520,19 +670,21 @@ ResolveLootID:
         ..ids
         db $4E, $4F, $4F
 
-        .swords
-        LDA.l HighestSword : CMP.l ProgressiveSwordLimit : BCC +
+        .prog_sword
+        LDA.l HighestSword
+        CMP.l ProgressiveSwordLimit : BCC +
                 LDA.l ProgressiveSwordReplacement
                 JMP.w .get_item
         +
         TAX
-        LDA.w ResolveLootID_swords_ids,X
+        LDA.w ResolveLootID_prog_sword_ids,X
         JMP.w .have_item
         ..ids
-        db $49, $01, $02, $03, $03
+        db $49, $50, $02, $03, $03
 
         .shields
-        LDA.l HighestShield : CMP.l ProgressiveShieldLimit : BCC +
+        LDA.l HighestShield
+        CMP.l ProgressiveShieldLimit : BCC +
                 LDA.l ProgressiveShieldReplacement
                 JMP.w .get_item
         +
@@ -543,7 +695,8 @@ ResolveLootID:
         db $04, $05, $06, $06
 
         .armor
-        LDA.l HighestMail : CMP.l ProgressiveArmorLimit : BCC +
+        LDA.l HighestMail
+        CMP.l ProgressiveArmorLimit : BCC +
                 LDA.l ProgressiveArmorReplacement
                 JMP.w .get_item
         +
@@ -551,6 +704,7 @@ ResolveLootID:
         JMP.w .have_item
         ..ids
         db $22, $23, $23
+
 
         .gloves
         LDA.l GloveEquipment : TAX
@@ -565,6 +719,7 @@ ResolveLootID:
                 JMP.w .get_item
         +
         TAX
+        LDA.b #$80 : STA.l BowTrackingFlags
         LDA.w ResolveLootID_bows_ids,X
         JMP.w .get_item
 
@@ -574,6 +729,7 @@ ResolveLootID:
                 JMP.w .get_item
         +
         TAX
+        LDA.b #$20 : STA.l BowTrackingFlags
         LDA.w ResolveLootID_bows_ids,X
         JMP.w .get_item
 
@@ -654,27 +810,27 @@ macro ReceiptProps(id, y, x, gfx, width, pal, sram, value, pal_override, behavio
 
 endmacro
 
-%ReceiptProps($00, -5, 0, $06, 2, $02, $F359, $01, $00, skip, skip) ; 00 - Fighter sword & Shield
-%ReceiptProps($01, -5, 4, $18, 0, $FF, $F359, $02, $00, skip, skip) ; 01 - Master sword - TODO gfx value?
-%ReceiptProps($02, -5, 4, $18, 0, $05, $F359, $03, $00, skip, skip) ; 02 - Tempered sword - TODO gfx value?
-%ReceiptProps($03, -5, 4, $18, 0, $05, $F359, $04, $00, skip, skip) ; 03 - Butter sword - TODO gfx value?
-%ReceiptProps($04, -5, 4, $2D, 0, $05, $F35A, $01, $01, skip, skip) ; 04 - Fighter shield
-%ReceiptProps($05, -4, 0, $20, 2, $05, $F35A, $02, $01, skip, skip) ; 05 - Fire shield
-%ReceiptProps($06, -4, 0, $2E, 2, $05, $F35A, $03, $01, skip, skip) ; 06 - Mirror shield
+%ReceiptProps($00, -5, 0, $06, 2, $02, $F359, $01, $00, fighter_sword_shield, skip) ; 00 - Fighter sword & Shield
+%ReceiptProps($01, -5, 4, $18, 0, $FF, $F359, $02, $00, master_sword, skip) ; 01 - Master sword
+%ReceiptProps($02, -5, 4, $18, 0, $05, $F359, $03, $00, tempered_sword, skip) ; 02 - Tempered sword
+%ReceiptProps($03, -5, 4, $18, 0, $05, $F359, $04, $00, gold_sword, skip) ; 03 - Golden sword
+%ReceiptProps($04, -5, 4, $2D, 0, $05, $F35A, $01, $01, fighter_shield, skip) ; 04 - Fighter shield
+%ReceiptProps($05, -4, 0, $20, 2, $05, $F35A, $02, $01, red_shield, skip) ; 05 - Fire shield
+%ReceiptProps($06, -4, 0, $2E, 2, $05, $F35A, $03, $01, mirror_shield, skip) ; 06 - Mirror shield
 %ReceiptProps($07, -5, 4, $09, 0, $01, $F345, $01, $00, skip, skip) ; 07 - Fire rod
 %ReceiptProps($08, -5, 4, $09, 0, $02, $F346, $01, $00, skip, skip) ; 08 - Ice rod
 %ReceiptProps($09, -4, 4, $0A, 0, $01, $F34B, $01, $00, skip, skip) ; 09 - Hammer
 %ReceiptProps($0A, -4, 4, $08, 0, $01, $F342, $01, $00, skip, skip) ; 0A - Hookshot
 %ReceiptProps($0B, -4, 4, $05, 0, $01, $F340, $01, $00, bow, skip) ; 0B - Bow
-%ReceiptProps($0C, -2, 5, $10, 0, $02, $F341, $01, $00, skip, skip) ; 0C - Blue Boomerang
-%ReceiptProps($0D, -4, 0, $0B, 2, $02, $F344, $02, $00, skip, skip) ; 0D - Powder
+%ReceiptProps($0C, -2, 5, $10, 0, $02, $F341, $01, $00, blue_boomerang, skip) ; 0C - Blue Boomerang
+%ReceiptProps($0D, -4, 0, $0B, 2, $02, $F344, $02, $00, powder, skip) ; 0D - Powder
 %ReceiptProps($0E, -4, 0, $2C, 2, $02, $F35C, $FF, $00, skip, skip) ; 0E - Bottle refill (bee)
 %ReceiptProps($0F, -4, 0, $1B, 2, $04, $F347, $01, $00, skip, skip) ; 0F - Bombos
 %ReceiptProps($10, -4, 0, $1A, 2, $04, $F348, $01, $00, skip, skip) ; 10 - Ether
 %ReceiptProps($11, -4, 0, $1C, 2, $04, $F349, $01, $00, skip, skip) ; 11 - Quake
 %ReceiptProps($12, -4, 0, $14, 2, $01, $F34A, $01, $00, skip, skip) ; 12 - Lamp
 %ReceiptProps($13, -4, 4, $19, 0, $01, $F34C, $01, $00, skip, skip) ; 13 - Shovel
-%ReceiptProps($14, -4, 0, $0C, 2, $02, $F34C, $02, $00, skip, skip) ; 14 - Flute
+%ReceiptProps($14, -4, 0, $0C, 2, $02, $F34C, $02, $00, flute_inactive, skip) ; 14 - Flute
 %ReceiptProps($15, -4, 4, $07, 0, $01, $F350, $01, $00, skip, skip) ; 15 - Somaria
 %ReceiptProps($16, -4, 0, $1D, 2, $01, $F35C, $FF, $00, skip, bottles) ; 16 - Bottle
 %ReceiptProps($17, -4, 0, $2F, 2, $01, $F36B, $FF, $00, skip, skip) ; 17 - Heart piece
@@ -688,15 +844,15 @@ endmacro
 %ReceiptProps($1F, -4, 0, $17, 2, $01, $F357, $01, $00, skip, skip) ; 1F - Pearl
 %ReceiptProps($20, -4, 0, $28, 2, $06, $F37A, $FF, $01, skip, skip) ; 20 - Crystal
 %ReceiptProps($21, -4, 0, $27, 2, $01, $F34D, $01, $00, skip, skip) ; 21 - Net
-%ReceiptProps($22, -4, 0, $04, 2, $02, $F35B, $FF, $00, skip, skip) ; 22 - Blue mail
-%ReceiptProps($23, -5, 0, $04, 2, $01, $F35B, $02, $00, skip, skip) ; 23 - Red mail
+%ReceiptProps($22, -4, 0, $04, 2, $02, $F35B, $FF, $00, blue_mail, skip) ; 22 - Blue mail
+%ReceiptProps($23, -5, 0, $04, 2, $01, $F35B, $02, $00, red_mail, skip) ; 23 - Red mail
 %ReceiptProps($24, -4, 4, $0F, 0, $02, $F36F, $FF, $00, skip, skip) ; 24 - Small key
 %ReceiptProps($25, -4, 0, $16, 2, $02, $F364, $FF, $00, dungeon_compass, skip) ; 25 - Compass
 %ReceiptProps($26, -4, 0, $03, 2, $01, $F36C, $FF, $00, skip, skip) ; 26 - Heart container from 4/4
 %ReceiptProps($27, -4, 0, $13, 2, $02, $F375, $FF, $00, skip, skip) ; 27 - Bomb
 %ReceiptProps($28, -4, 0, $01, 2, $02, $F375, $FF, $00, skip, skip) ; 28 - 3 bombs
-%ReceiptProps($29, -4, 0, $1E, 2, $04, $F344, $FF, $00, skip, skip) ; 29 - Mushroom
-%ReceiptProps($2A, -2, 5, $10, 0, $01, $F341, $02, $00, skip, skip) ; 2A - Red boomerang
+%ReceiptProps($29, -4, 0, $1E, 2, $04, $F344, $FF, $00, mushroom, skip) ; 29 - Mushroom
+%ReceiptProps($2A, -2, 5, $10, 0, $01, $F341, $02, $00, red_boomerang, skip) ; 2A - Red boomerang
 %ReceiptProps($2B, -4, 0, $00, 2, $01, $F35C, $FF, $00, skip, bottles) ; 2B - Full bottle (red)
 %ReceiptProps($2C, -4, 0, $00, 2, $04, $F35C, $FF, $00, skip, bottles) ; 2C - Full bottle (green)
 %ReceiptProps($2D, -4, 0, $00, 2, $02, $F35C, $FF, $00, skip, bottles) ; 2D - Full bottle (blue)
@@ -727,14 +883,15 @@ endmacro
 %ReceiptProps($46, -4, 0, $36, 2, $04, $F360, $FF, $00, skip, skip) ; 46 - 300 rupees
 %ReceiptProps($47, -4, 0, $37, 2, $04, $F360, $FF, $00, skip, skip) ; 47 - 20 rupees green
 %ReceiptProps($48, -4, 0, $2C, 2, $02, $F35C, $FF, $00, skip, skip) ; 48 - Full bottle (good bee)
-%ReceiptProps($49, -5, 4, $06, 0, $05, $F359, $01, $00, skip, skip) ; 49 - Tossed fighter sword
-%ReceiptProps($4A, -4, 0, $0C, 2, $02, $F34C, $03, $00, skip, skip) ; 4A - Active Flute
+%ReceiptProps($49, -5, 4, $06, 0, $05, $F359, $01, $00, fighter_sword, skip) ; 49 - Tossed fighter sword
+%ReceiptProps($50, -5, 4, $06, 0, $05, $F359, $01, $00, skip, skip) ; 50 - Master Sword (safe)
+%ReceiptProps($4A, -4, 0, $0C, 2, $02, $F34C, $03, $00, flute_active, skip) ; 4A - Active Flute
 %ReceiptProps($4B, -4, 0, $38, 2, $01, $F355, $01, $00, skip, skip) ; 4B - Boots
 %ReceiptProps($4C, -4, 0, $39, 2, $04, $F375, $32, $00, bombs_50, skip) ; 4C - Bomb capacity (50)
 %ReceiptProps($4D, -4, 0, $3A, 2, $04, $F376, $46, $00, arrows_70, skip) ; 4D - Arrow capacity (70)
 %ReceiptProps($4E, -4, 0, $3B, 2, $04, $F373, $80, $00, magic_2, magic) ; 4E - 1/2 magic
 %ReceiptProps($4F, -4, 0, $3C, 2, $04, $F373, $80, $00, magic_4, magic) ; 4F - 1/4 magic
-%ReceiptProps($50, -5, 4, $18, 0, $05, $F359, $02, $00, master_sword_safe, skip) ; 50 - Safe master sword - TODO gfx value
+%ReceiptProps($50, -5, 4, $18, 0, $05, $F359, $02, $00, master_sword_safe, skip) ; 50 - Safe master sword
 %ReceiptProps($51, -4, 0, $42, 2, $04, $F375, $FF, $00, bombs_5, skip) ; 51 - Bomb capacity (+5)
 %ReceiptProps($52, -4, 0, $3E, 2, $04, $F375, $FF, $00, bombs_10, skip) ; 52 - Bomb capacity (+10)
 %ReceiptProps($53, -4, 0, $3F, 2, $04, $F376, $FF, $00, arrows_5, skip) ; 53 - Arrow capacity (+5)
@@ -748,9 +905,9 @@ endmacro
 %ReceiptProps($5B, -4, 0, $4B, 2, $01, $F454, $FF, $00, red_clock, skip) ; 5B - Red clock
 %ReceiptProps($5C, -4, 0, $4B, 2, $02, $F454, $FF, $00, blue_clock, skip) ; 5C - Blue clock
 %ReceiptProps($5D, -4, 0, $4B, 2, $04, $F454, $FF, $00, green_clock, skip) ; 5D - Green clock
-%ReceiptProps($5E, -4, 0, $FE, 2, $FF, $F359, $FF, $00, skip, swords) ; 5E - Progressive sword
-%ReceiptProps($5F, -4, 0, $FF, 2, $FF, $F35A, $FF, $01, skip, shields) ; 5F - Progressive shield
-%ReceiptProps($60, -4, 0, $FD, 2, $FF, $F35B, $FF, $00, skip, armor) ; 60 - Progressive armor
+%ReceiptProps($5E, -4, 0, $FE, 2, $FF, $F359, $FF, $00, prog_sword, prog_sword) ; 5E - Progressive sword
+%ReceiptProps($5F, -4, 0, $FF, 2, $FF, $F35A, $FF, $01, prog_shield, shields) ; 5F - Progressive shield
+%ReceiptProps($60, -4, 0, $FD, 2, $FF, $F35B, $FF, $00, prog_mail, armor) ; 60 - Progressive armor
 %ReceiptProps($61, -4, 0, $0D, 2, $FF, $F354, $FF, $00, skip, gloves) ; 61 - Progressive glove
 %ReceiptProps($62, -4, 0, $FF, 2, $FF, $F36A, $FF, $00, skip, rng_single) ; 62 - RNG pool item (single)
 %ReceiptProps($63, -4, 0, $FF, 2, $FF, $F36A, $FF, $00, skip, rng_multi) ; 63 - RNG pool item (multi)
@@ -792,7 +949,7 @@ endmacro
 %ReceiptProps($87, -4, 0, $16, 2, $02, $F36A, $FF, $00, free_compass, skip) ; 87 - Compass of Skull Woods
 %ReceiptProps($88, -4, 0, $16, 2, $02, $F36A, $FF, $00, free_compass, skip) ; 88 - Compass of Misery Mire
 %ReceiptProps($89, -4, 0, $16, 2, $02, $F36A, $FF, $00, free_compass, skip) ; 89 - Compass of Dark Palace
-%ReceiptProps($8A, -4, 0, $16, 2, $02, $F36A, $FF, $00, free_compass, skip) ; 8A - Compass of Swamp Palace
+%ReceiptProps($8A, -4, 0, $16, 2, $02, $F36A, $FF, $00, free_compass, skip) ; 8A - Compass of4Swamp Palace
 %ReceiptProps($8B, -4, 0, $16, 2, $02, $F36A, $FF, $00, free_compass, skip) ; 8B - Compass of Agahnim's Tower
 %ReceiptProps($8C, -4, 0, $16, 2, $02, $F36A, $FF, $00, free_compass, skip) ; 8C - Compass of Desert Palace
 %ReceiptProps($8D, -4, 0, $16, 2, $02, $F36A, $FF, $00, free_compass, skip) ; 8D - Compass of Eastern Palace
@@ -1221,3 +1378,21 @@ MaybeFlagCompassTotalEntrance:
         .done
 RTL
 ;--------------------------------------------------------------------------------
+DungeonItemIDMap: ; Maps lower four bits of our new dungeon items to DungeonID
+db $FFFF
+db $FFFF
+db $001A ; GT
+db $0018 ; TR
+db $0016 ; TT
+db $0014 ; TH
+db $0012 ; IP
+db $0010 ; SW
+db $000E ; MM
+db $000C ; PD
+db $000A ; SP
+db $0008 ; CT
+db $0006 ; DP
+db $0004 ; EP
+db $0002 ; HC
+db $0000 ; SW
+

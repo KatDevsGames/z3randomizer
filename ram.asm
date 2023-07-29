@@ -477,7 +477,7 @@ BossKills: skip 1                  ;
 LagTime: skip 4                    ; Computed during stats preparation for display
 RupeesCollected: skip 2            ; Computed during stats preparation for display
 NonChestCounter: skip 2            ; Computed during stats preparation for display
-skip 2                             ; Unused
+BowTrackingFlags: skip 2           ; Stores tracking bits for progressive bows before resolution to concrete item.
 TileUploadOffsetOverride: skip 2   ; Offset override for loading sprite gfx
 skip 3                             ;
 skip 9                             ;

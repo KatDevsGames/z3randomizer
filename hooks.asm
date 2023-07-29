@@ -1744,7 +1744,7 @@ JSL DialogResetSelectionIndex
 ;----------------------------------------------------
 ;-- Agahnim 1 Defeated
 org $868475 ; <- 30475 Bank06.asm : 762 - (JSL Sprite_ShowMessageMinimal)
-JSL AddInventory_incrementBossSwordLong
+JSL IncrementBossSword
 ;----------------------------------------------------------
 ;-- We'll take your sword
 org $86B4F3 ; <- 334F3 sprite_smithy_bros.asm : 556 (JSL Sprite_ShowMessageUnconditional)

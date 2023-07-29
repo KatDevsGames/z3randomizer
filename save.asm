@@ -14,11 +14,13 @@ WriteSaveChecksumAndBackup:
         STA.l InverseChecksumSRAM
 
         PHB
-        LDA.w #$14FF                  ; \
-        LDX.w #CartridgeSRAM&$FFFF    ;  | Copies $1500 bytes from beginning of cart SRAM to 
-        LDY.w #SaveBackupSRAM&$FFFF   ;  | $704000
-        MVN !SRAMBank, !SRAMBank      ; /
+        LDA.w #$14FF             ; \
+        LDX.w #CartridgeSRAM     ;  | Copies $1500 bytes from beginning of cart SRAM to 
+        LDY.w #SaveBackupSRAM    ;  | $704000
+        MVN !SRAMBank, !SRAMBank ; /
         PLB
+        TDC
+        TAX
 
 RTL
 ;--------------------------------------------------------------------------------
@@ -51,10 +53,10 @@ ValidateSRAM:
                         TDC : STA.l FileValiditySRAM ; Delete save by way of zeroing validity marker
                         BRA .goodchecksum : +
                 PHB
-                LDA.w #$14FF                  ; \
-                LDX.w #SaveBackupSRAM&$FFFF   ;  | Copies $1500 bytes from backup on cart SRAM to 
-                LDY.w #CartridgeSRAM&$FFFF    ;  | main save location at $700000
-                MVN !SRAMBank, !SRAMBank      ; /
+                LDA.w #$14FF             ; \
+                LDX.w #SaveBackupSRAM    ;  | Copies $1500 bytes from backup on cart SRAM to 
+                LDY.w #CartridgeSRAM     ;  | main save location at $700000
+                MVN !SRAMBank, !SRAMBank ; /
                 PLB
 
         .goodchecksum
@@ -131,88 +133,23 @@ RTL
 ;--------------------------------------------------------------------------------
 CopyExtendedSaveFileToWRAM:
         PHA
-        SEP #$30
-                LDA.w DMAP0 : PHA ; preserve DMA parameters
-                LDA.w BBAD0 : PHA ; preserve DMA parameters
-                LDA.w A1T0L : PHA ; preserve DMA parameters
-                LDA.w A1T0H : PHA ; preserve DMA parameters
-                LDA.w A1B0 : PHA ; preserve DMA parameters
-                LDA.w DAS0L : PHA ; preserve DMA parameters
-                LDA.w DAS0H : PHA ; preserve DMA parameters
-                ;--------------------------------------------------------------------------------
-                STZ.w NMITIMEN ; Disable NMI, V/H, joypad
-                STZ.w HDMAEN ; Disable HDMA
-                LDA.b #$00 : STA.w DMAP0 ; set DMA transfer direction A -> B, bus A auto increment, single-byte mode
-
-                LDA.b #$80 : STA.w BBAD0 ; set bus B source to WRAM register
-
-                LDA.b #$00 : STA.w WMADDL ; set WRAM register source address
-                LDA.b #$60 : STA.w WMADDH
-                LDA.b #$7F : STA.w WMADDB
-
-                STZ.w A1T0L ; set bus A destination address to SRAM
-                LDA.b #$05 : STA.w A1T0H
-                LDA.b #$70 : STA.w A1B0
-
-                LDA.b #$00 : STA.w DAS0L ; set transfer size to 0x1000
-                LDA.b #$10 : STA.w DAS0H ; STZ DAS0B
-
-                LDA.b #$01 : STA.w MDMAEN  ; begin DMA transfer
-                LDA.b #$81 : STA.w NMITIMEN ; Re-enable NMI and joypad
-                ;--------------------------------------------------------------------------------
-                PLA : STA.w DAS0H ; restore DMA parameters
-                PLA : STA.w DAS0L ; restore DMA parameters
-                PLA : STA.w A1B0 ; restore DMA parameters
-                PLA : STA.w A1T0H ; restore DMA parameters
-                PLA : STA.w A1T0L ; restore DMA parameters
-                PLA : STA.w BBAD0 ; restore DMA parameters
-                PLA : STA.w DMAP0 ; restore DMA parameters
-        REP #$30
+        PHB
+        LDA.w #$0FFF
+        LDX.w #ExtendedSaveDataSRAM
+        LDY.w #ExtendedSaveDataWRAM
+        MVN $7F, !SRAMBank
+        PLB
         PLA
-        STA.l $7EC00D ; what we wrote over
+        STA.l $7EC00D ; What we wrote over. Keep this write last.
 RTL
 ;--------------------------------------------------------------------------------
 CopyExtendedWRAMSaveFileToSRAM:
-        PHA
         PHB
-        SEP #$30
-        LDA.b #$00 : PHA : PLB
-                LDA.w DMAP0 : PHA ; preserve DMA parameters
-                LDA.w BBAD0 : PHA ; preserve DMA parameters
-                LDA.w A1T0L : PHA ; preserve DMA parameters
-                LDA.w A1T0H : PHA ; preserve DMA parameters
-                LDA.w A1B0 : PHA ; preserve DMA parameters
-                LDA.w DAS0L : PHA ; preserve DMA parameters
-                LDA.w DAS0H : PHA ; preserve DMA parameters
-                ;--------------------------------------------------------------------------------
-                STZ.w NMITIMEN ; Disable NMI, V/H, joypad
-                STZ.w HDMAEN ; Disable HDMA
-                LDA.b #$80 : STA.w DMAP0 ; set DMA transfer direction B -> A, bus A auto increment, single-byte mode
-
-                STA.w BBAD0 ; set bus B source to WRAM register
-
-                LDA.b #$00 : STA.w WMADDL ; set WRAM register source address
-                LDA.b #$60 : STA.w WMADDH
-                LDA.b #$7F : STA.w WMADDB
-
-                STZ.w A1T0L ; set bus A destination address to SRAM
-                LDA.b #$05 : STA.w A1T0H
-                LDA.b #$70 : STA.w A1B0
-
-                LDA.b #$10 : STA.w DAS0L ; set transfer size to 0xB00
-                LDA.b #$0B : STA.w DAS0H ; STZ DAS0B
-
-                LDA.b #$01 : STA.w MDMAEN ; begin DMA transfer
-                LDA.b #$81 : STA.w NMITIMEN; Re-enable NMI and joypad
-                ;--------------------------------------------------------------------------------
-                PLA : STA.w DAS0H ; restore DMA parameters
-                PLA : STA.w DAS0L ; restore DMA parameters
-                PLA : STA.w A1B0 ; restore DMA parameters
-                PLA : STA.w A1T0H ; restore DMA parameters
-                PLA : STA.w A1T0L ; restore DMA parameters
-                PLA : STA.w BBAD0 ; restore DMA parameters
-                PLA : STA.w DMAP0 ; restore DMA parameters
-        REP #$30
+        LDA.w #$0FFF
+        LDX.w #ExtendedSaveDataSRAM
+        LDY.w #ExtendedSaveDataWRAM
+        MVN !SRAMBank, $7F
         PLB
-        PLA
+        TDC
+        TAX
 RTL
