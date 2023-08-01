@@ -1,18 +1,42 @@
 ;--------------------------------------------------------------------------------
 WriteSaveChecksumAndBackup:
-        LDX.w #$0000 : TXA : - ; Checksum first $04FE bytes
-                CLC : ADC.l SaveDataWRAM, X
-                INX #2
-        CPX.w #$04FE : BNE -
-        LDX.w #$0000 : - ; Checksum extended save data
-                CLC : ADC.l ExtendedFileNameWRAM, X
-                INX #2
-        CPX.w #$0FFE : BNE -
+        TDC
+        CLC
+        LDX.w #$004FC
+        -
+                ADC.l SaveDataWRAM, X
+                DEX #2
+        BPL -
+        LDX.w #$0FFE
+        -
+                ADC.l ExtendedFileNameWRAM, X
+                DEX #2
+        BPL -
         STA.b Scrap00
         LDA.w #$5A5A
         SEC : SBC.b Scrap00
         STA.l InverseChecksumSRAM
+        BRA .backup_save
 
+        .from_sram
+        TDC
+        CLC
+        LDX.w #$004FC
+        -
+                ADC.l CartridgeSRAM, X
+                DEX #2
+        BPL -
+        LDX.w #$0FFE
+        -
+                ADC.l ExtendedFileNameSRAM, X
+                DEX #2
+        BPL -
+        STA.b Scrap00
+        LDA.w #$5A5A
+        SEC : SBC.b Scrap00
+        STA.l InverseChecksumSRAM
+        
+        .backup_save
         PHB
         LDA.w #$14FF             ; \
         LDX.w #CartridgeSRAM     ;  | Copies $1500 bytes from beginning of cart SRAM to 
@@ -21,31 +45,37 @@ WriteSaveChecksumAndBackup:
         PLB
         TDC
         TAX
-
 RTL
 ;--------------------------------------------------------------------------------
 ValidateSRAM:
         REP #$30
-        LDX.w #$0000 : TXA : - ; Checksum first $04FE bytes
-                CLC : ADC.l CartridgeSRAM, X
-                INX #2
-        CPX.w #$04FE : BNE -
-        LDX.w #$0000 : - ; Checksum extended save data
-                CLC : ADC.l ExtendedFileNameSRAM, X
-                INX #2
-        CPX.w #$0FFE : BNE -
+        TDC
+        CLC
+        LDX.w #$04FC
+        -
+                ADC.l CartridgeSRAM, X
+                DEX #2
+        BPL -
+        LDX.w #$0FFE
+        -
+                ADC.l ExtendedFileNameSRAM, X
+                DEX #2
+        BPL -
         STA.b Scrap00
         LDA.w #$5A5A
         SEC : SBC.b Scrap00
         CMP.l InverseChecksumSRAM : BEQ .goodchecksum
-                LDX.w #$0000 : TXA : - ; Do the same for the backup save
-                        CLC : ADC.l SaveBackupSRAM, X
-                        INX #2
-                CPX.w #$04FE : BNE -
-                LDX.w #$0000 : -
-                        CLC : ADC.l SaveBackupSRAM+$500, X
-                        INX #2
-                CPX.w #$0FFE : BNE -
+                TDC
+                LDX.w #$04FC
+                -
+                        ADC.l SaveBackupSRAM, X
+                        DEX #2
+                BPL -
+                LDX.w #$0FFE 
+                -
+                        ADC.l SaveBackupSRAM+$500, X
+                        DEX #2
+                BPL -
                 STA.b Scrap00
                 LDA.w #$5A5A
                 SEC : SBC.b Scrap00

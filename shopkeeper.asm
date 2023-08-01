@@ -1,40 +1,6 @@
-;--------------------------------------------------------------------------------
-; 291 - Moldorm Cave
-; 286 - Northeast Dark Swamp Cave
-;--------------------------------------------------------------------------------
 !FREE_TILE_BUFFER = $1180
 !FREE_TILE = $5A40
-; A = Tile ID
-macro UploadOAM(dest)
-	PHA : PHP
 
-	PHA
-		REP #$20 ; set 16-bit accumulator
-		LDA.w #$0000 : STA.l SpriteOAM
-		               STA.l SpriteOAM+2
-		LDA.w #$0200 : STA.l SpriteOAM+6
-		SEP #$20 ; set 8-bit accumulator
-		LDA.b <dest> : STA.l SpriteOAM+4
-
-	LDA.b $01,s
-
-		JSL.l GetSpritePalette_resolved
-		STA.l SpriteOAM+5 : STA.l SpriteOAM+13
-	PLA
-	JSL.l IsNarrowSprite : BCS .narrow
-
-	BRA .done
-
-	.narrow
-	REP #$20 ; set 16-bit accumulator
-	LDA.w #$0000 : STA.l SpriteOAM+7
-	               STA.l SpriteOAM+14
-	LDA.w #$0800 : STA.l SpriteOAM+9
-	LDA.w #$3400 : STA.l SpriteOAM+11
-
-	.done
-	PLP : PLA
-endmacro
 ;--------------------------------------------------------------------------------
 ; $0A : Digit Offset
 ; $0C-$0D : Value to Display
@@ -593,19 +559,25 @@ Shopkeeper_DrawNextItem:
 
 	STA.l SpriteOAM+4
 
-	LDA.l ShopInventory, X ; get item palette
+	LDA.l ShopInventory, X
+        PHX
 	JSL.l GetSpritePalette_resolved : STA.l SpriteOAM+5
+        PLX
 
 	LDA.b #$00 : STA.l SpriteOAM+6
 
-	LDA.l ShopInventory, X ; get item palette
-	JSL.l IsNarrowSprite : BCS .narrow
+	LDA.l ShopInventory, X
+        PHX
+        TAX
+        LDA.l SpriteProperties_standing_width,X : BEQ .narrow
 	.full
+                PLX
 		LDA.b #$02
 		STA.l SpriteOAM+7
 		LDA.b #$01
 		BRA ++
 	.narrow
+                PLX
 		LDA.b #$00
 		STA.l SpriteOAM+7
 		JSR.w PrepNarrowLower

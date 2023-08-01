@@ -64,7 +64,7 @@ FixBunnyOnExitToLightWorld:
         STZ.b LinkState ; set player mode to Normal
         STZ.w BunnyFlag : STZ.b BunnyFlagDP ; return player graphics to normal
     +
-RTS
+RTL
 ;--------------------------------------------------------------------------------
 
 ;--------------------------------------------------------------------------------

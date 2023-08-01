@@ -3,8 +3,9 @@
 ;--------------------------------------------------------------------------------
 LoadLibraryItemGFX:
         %GetPossiblyEncryptedItem(LibraryItem, SpriteItemValues)
+        JSL.l ResolveLootIDLong
         STA.w SpriteItemType, X ; Store item type
-        JSL.l PrepDynamicTile
+        JSL.l PrepDynamicTile_loot_resolved
 RTL
 ;--------------------------------------------------------------------------------
 DrawLibraryItemGFX:

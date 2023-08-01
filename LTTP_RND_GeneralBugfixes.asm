@@ -82,7 +82,6 @@ incsrc tablets.asm
 incsrc fairyfixes.asm
 incsrc rngfixes.asm
 incsrc medallions.asm
-incsrc inventory.asm
 incsrc zelda.asm
 incsrc maidencrystals.asm
 incsrc flute.asm
@@ -155,7 +154,6 @@ incsrc hudtext.asm
 incsrc servicerequest.asm
 incsrc elder.asm
 incsrc toast.asm
-incsrc darkroomitems.asm
 incsrc fastcredits.asm
 incsrc msu.asm
 incsrc dungeonmap.asm
@@ -166,9 +164,17 @@ endif
 warnpc $A58000
 
 org $A28000
+ItemReceiptGraphicsROM:
+; we need some empty space here so that 0000 can mean nothing
+fillbyte $00 : fill 32
+incbin "data/customitems.4bpp"
+warnpc $A2B000
+org $A2B000
+incsrc itemdatatables.asm ; Statically mapped
 incsrc decompresseditemgraphics.asm
 incsrc newitems.asm
 incsrc utilities.asm
+incsrc inventory.asm
 
 org $A38000
 incsrc stats/main.asm
@@ -269,6 +275,10 @@ incsrc externalhooks.asm
 org $919100 ; PC 0x89100
 incbin "data/map_icons.gfx"
 warnpc $919401
+;================================================================================
+org $9BB1E0
+incsrc custompalettes.asm
+warnpc $9BB880
 ;================================================================================
 org $AF8000 ; PC 0x178000
 Static_RNG: ; each line below is 512 bytes of rng

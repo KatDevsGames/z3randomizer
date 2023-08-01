@@ -127,12 +127,21 @@ FreeDungeonItemNotice:
 	.dungeon
 	LDA.l DialogReturnPointer : DEC #2 : STA.l DialogOffsetPointer
 	LDA.w ScratchBufferV
-	AND.b #$0F ; looking at low bits only
+	AND.b #$0F
 	STA.w ScratchBufferNV+1
 	LDA.w ScratchBufferNV : BEQ +
 		LDA.w ScratchBufferNV
 		LDA.b #$0F : !SUB.w ScratchBufferNV+1 : STA.w ScratchBufferNV+1 ; flip the values for small keys
 	+
+	LDA.w ScratchBufferNV+1
+        ASL : TAX
+        REP #$20
+        LDA.l DungeonItemIDMap,X : CMP.w DungeonID : BNE +
+                SEP #$20
+		%CopyDialog(Notice_Self)
+                JMP.w .done
+        +
+        SEP #$20
 	LDA.w ScratchBufferNV+1
 	CMP.b #$00 : BNE + ; ...light world
 		%CopyDialog(Notice_LightWorld) : JMP .done

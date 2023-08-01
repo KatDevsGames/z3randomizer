@@ -267,6 +267,8 @@ OWScreenSize = $7E0712            ; Flags overworld screen size.
 OAMBuffer = $7E0800               ; Main OAM buffer sent to OAM. $200 bytes.
 OAMBuffer2 = $7E0A00              ;
                                   ;
+TransparencyFlag = $7E0ABD        ; Flags transparency effects e.g. in Thieves Town Hellway
+                                  ;
 OWTransitionFlag = $7E0ABF        ; Used for certain transitions like smith, witch, etc.
                                   ;
 ItemGFXPtr = $7E0AFA              ; Pointer for item receipt graphics transfers
@@ -742,6 +744,7 @@ endmacro
 %assertRAM(OWScreenSize, $7E0712)
 %assertRAM(OAMBuffer, $7E0800)
 %assertRAM(OAMBuffer2, $7E0A00)
+%assertRAM(TransparencyFlag, $7E0ABD)
 %assertRAM(OWTransitionFlag, $7E0ABF)
 %assertRAM(TreePullKills, $7E0CFB)
 %assertRAM(TreePullHits, $7E0CFC)

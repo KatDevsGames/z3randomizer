@@ -77,6 +77,7 @@ OverworldMap_LoadSprGfx                                    = $8ABAB9
 NameFile_MakeScreenVisible                                 = $8CD7D1
 InitializeSaveFile                                         = $8CDB3E
 InitializeSaveFile_build_checksum                          = $8CDBC0
+InitializeSaveFile_checksum_done                           = $8CDBDB
 GetRandomInt                                               = $8DBA71
 OAM_AllocateFromRegionA                                    = $8DBA80
 OAM_AllocateFromRegionB                                    = $8DBA84
@@ -115,14 +116,21 @@ Sprite_GetEmptyBottleIndex                                 = $9EDE28
 Sprite_PlayerCantPassThrough                               = $9EF4E7
 
 ;===================================================================================================
-;---------------------------------------------------------------------------------------------------
-;===================================================================================================
 ; Local routines (use JSR)
 ;===================================================================================================
-;---------------------------------------------------------------------------------------------------
-;===================================================================================================
 Chicken_SpawnAvengerChicken                                = $86A7DB
+Link_PerformOpenChest_no_replacement                       = $87B59F
 DrawProgressIcons                                          = $8DE9C8
 DrawEquipment                                              = $8DED29
 
 ;===================================================================================================
+; Palettes
+;===================================================================================================
+PalettesVanillaBank                                               = $9B0000
+PalettesVanilla_none                                              = $9B0000
+PalettesVanilla_red_melon                                         = $9BD218
+PalettesVanilla_blue_ice                                          = $9BD236
+PalettesVanilla_green_blue_guard                                  = $9BD272
+PalettesVanilla_dark_world_melon                                  = $9BD290
+PalettesVanilla_blue_dark_ice                                     = $9BD2BC
+PalettesVanilla_spraux09                                          = $9BD47E

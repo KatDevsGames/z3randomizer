@@ -30,14 +30,15 @@ RTS
 ;--------------------------------------------------------------------------------
 SpawnTabletItem:
 	JSL.l LoadOutdoorValue
-	PHA
-	JSL.l PrepDynamicTile
+        JSL.l ResolveLootIDLong
+	STA.w SpriteItemType, Y
+	JSL.l PrepDynamicTile_loot_resolved
 
 	LDA.b #$EB
 	STA.l MiniGameTime
 	JSL Sprite_SpawnDynamically
 
-	PLA : STA.w SpriteItemType, Y ; Store item type
+	LDA.w SpriteItemType, Y ; Store item type
 	LDA.b LinkPosX   : STA.w SpritePosXLow, Y
 	LDA.b LinkPosX+1 : STA.w SpritePosXHigh, Y
   
@@ -90,7 +91,7 @@ IsMedallion:
 RTL
 ;--------------------------------------------------------------------------------
 LoadNarrowObject:
-	LDA.l ItemReceipts_width, X : STA.b ($92), Y ; AddReceiveItem.wide_item_flag?
+	LDA.l SpriteProperties_standing_width, X : STA.b ($92), Y ; AddReceiveItem.wide_item_flag?
 RTL
 ;--------------------------------------------------------------------------------
 CheckTabletItem:

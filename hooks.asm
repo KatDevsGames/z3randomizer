@@ -887,7 +887,6 @@ JSL GetAnimatedSpriteBufferPointer : NOP
 
 org $8799F7 ; 399F7 - Bank07.asm:4107 (JSL AddReceivedItem)
 JSL AddReceivedItemLong
-;JSL AddReceivedItemExpanded
 
 org $898611 ; 48611 - ancilla_init.asm:720 (LDA .item_target_addr+0, X)
 LDA.w ItemReceipts_target+0, X
@@ -915,7 +914,7 @@ org $89885B ; 4885B - ancilla_init.asm:1139 (LDA .x_offsets, X) - I think the di
 LDA.w ItemReceipts_offset_x, Y
 
 org $8988B7 ; 488B7 - ancilla_init.asm:1199 (LDA .wide_item_flag, Y)
-LDA.w ItemReceipts_width, Y
+LDA.w SpriteProperties_chest_width, Y
 
 org $8988EF ; 488EF - ancilla_init.asm:1248 (LDA $836C, Y)
 LDA.w ItemReceipts_offset_y, Y
@@ -926,7 +925,7 @@ org $88C6C8 ; 446C8 - ancilla_receive_item.asm:538 (LDA AddReceiveItem.propertie
 JSL CheckReceivedItemPropertiesBeforeLoad
 
 org $88C6DE ; 446DE - ancilla_receive_item.asm:550 (LDA .wide_item_flag, X)
-LDA.l ItemReceipts_width, X
+LDA.l SpriteProperties_chest_width, X
 
 org $88C6F9 ; 446F9 - ancilla_receive_item.asm:570 (LDA AddReceiveItem.properties, X)
 JSL CheckReceivedItemPropertiesBeforeLoad
@@ -938,7 +937,7 @@ org $8985ED ; 485ED - ancilla_init.asm:693 (LDA $02E9 : CMP.b #$01)
 JSL AddReceivedItemExpandedGetItem : NOP
 
 org $87B57D ; 3B57D - Bank07.asm:8527 (LDA Link_ReceiveItemAlternates, Y : STA $03)
-JSL Link_ReceiveItemAlternatesExpanded_loadAlternate : NOP
+BRA Link_PerformOpenChest_no_replacement
 ;--------------------------------------------------------------------------------
 org $89892E ; 4892E - ancilla_init.asm:1307 (LDA BottleList, X)
 LDA.w BottleListExpanded, X
@@ -1931,7 +1930,7 @@ JSL HeartPieceGet
 JSL DynamicDrawCleanup
 JSL IsMedallion
 BCS + : BRA Sprite_EB_HeartPiece_handle_flags : + ; Don't change OW flags if we're
-STZ.w SpriteAITable, X : RTS					  ; getting a tablet item
+STZ.w SpriteAITable, X : RTS                      ; getting a tablet item
 ;--------------------------------------------------------------------------------
 org $86C0B0 ; <- 340B0 - sprite prep
 JSL HeartPieceSpritePrep

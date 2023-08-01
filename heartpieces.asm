@@ -29,32 +29,30 @@ HeartContainerGet:
 	BRA HeartPieceGet_skipLoad
 ;--------------------------------------------------------------------------------
 DrawHeartPieceGFX:
-	PHP
-	JSL.l Sprite_IsOnscreen : BCC .offscreen
-	
-	PHA : PHY
-	LDA.l RedrawFlag : BEQ .skipInit ; skip init if already ready
-	JSL.l HeartPieceSpritePrep
-	JMP .done ; don't draw on the init frame
-	
-	.skipInit
-	LDA.w SpriteItemType, X ; Retrieve stored item type
-
-	.skipLoad
-	
-	PHA
-		JSL.l IsNarrowSprite : BCC +
-		LDA.w SpriteControl, X : ORA.b #$20 : STA.w SpriteControl, X
-	+
-    PLA
-	
-	JSL.l DrawDynamicTile
-	JSL.l Sprite_DrawShadowLong 
-	
-	.done
-	PLY : PLA
-	.offscreen
-	PLP
+        PHP
+        JSL.l Sprite_IsOnscreen : BCC .offscreen
+                PHA : PHY
+                LDA.l RedrawFlag : BEQ .skipInit ; skip init if already ready
+                        JSL.l HeartPieceSpritePrep
+                        JMP .done ; don't draw on the init frame
+                .skipInit
+                LDA.w SpriteItemType, X ; Retrieve stored item type
+                .skipLoad
+                PHA : PHX
+                TAX
+                LDA.l SpriteProperties_standing_width,X : BNE +
+                        LDA.w SpriteControl, X : ORA.b #$20 : STA.w SpriteControl, X
+                        PLX : PLA
+                        BRA .draw
+                +
+                PLX : PLA
+                .draw
+                JSL.l DrawDynamicTile
+                JSL.l Sprite_DrawShadowLong 
+                .done
+                PLY : PLA
+        .offscreen
+        PLP
 RTL
 ;--------------------------------------------------------------------------------
 DrawHeartContainerGFX:
@@ -109,9 +107,10 @@ HeartPieceSpritePrep:
 	LDA.b LinkState : CMP.b #$14 : BEQ .skip ; skip if we're mid-mirror
 
 	LDA.b #$00 : STA.l RedrawFlag
-	JSL.l LoadHeartPieceRoomValue ; load item type
-	STA.w SpriteItemType, X ; Store item type
-	JSL.l PrepDynamicTile
+	JSL.l LoadHeartPieceRoomValue
+        JSL.l ResolveLootIDLong
+	STA.w SpriteItemType, X
+	JSL.l PrepDynamicTile_loot_resolved
 	
 	.skip
 	PLA
@@ -122,8 +121,9 @@ HeartContainerSpritePrep:
 	
 	LDA.b #$00 : STA.l RedrawFlag
 	JSL.l LoadHeartContainerRoomValue ; load item type
+        JSL.l ResolveLootIDLong
 	STA.w SpriteItemType, X ; Store item type
-	JSL.l PrepDynamicTile
+	JSL.l PrepDynamicTile_loot_resolved
 	
 	PLA
 RTL
