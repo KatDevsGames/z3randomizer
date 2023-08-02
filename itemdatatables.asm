@@ -79,8 +79,8 @@ endmacro
 %ReceiptProps($35, -2, 4, $24, $F360, $FF, skip, skip) ; 35 - 5 rupees
 %ReceiptProps($36, -2, 4, $24, $F360, $EC, skip, skip) ; 36 - 20 rupees
 %ReceiptProps($37, -4, 0, $23, $F374, $FF, skip, skip) ; 37 - Green pendant
-%ReceiptProps($38, -4, 0, $23, $F374, $FF, skip, skip) ; 38 - Red pendant
-%ReceiptProps($39, -4, 0, $23, $F374, $FF, skip, skip) ; 39 - Blue pendant
+%ReceiptProps($38, -4, 0, $39, $F374, $FF, skip, skip) ; 38 - Red pendant
+%ReceiptProps($39, -4, 0, $39, $F374, $FF, skip, skip) ; 39 - Blue pendant
 %ReceiptProps($3A, -4, 0, $29, $F340, $01, bow_and_arrows, skip) ; 3A - Bow And Arrows
 %ReceiptProps($3B, -4, 0, $2A, $F340, $03, silver_bow, skip) ; 3B - Silver Bow
 %ReceiptProps($3C, -4, 0, $2C, $F35C, $FF, skip, skip) ; 3C - Full bottle (bee)
@@ -305,7 +305,7 @@ endmacro
 %SpriteProps($00, 2, 2, $02, $02, PalettesVanilla_blue_ice+$0E)         ; 00 - Fighter sword & Shield
 %SpriteProps($01, 0, 2, $05, $05, PalettesCustom_master_sword)          ; 01 - Master sword
 %SpriteProps($02, 0, 2, $05, $01, PalettesCustom_tempered_sword)        ; 02 - Tempered sword
-%SpriteProps($03, 0, 2, $05, $05, PalettesCustom_golden_sword)          ; 03 - Golden sword
+%SpriteProps($03, 0, 2, $05, $04, PalettesCustom_golden_sword)          ; 03 - Golden sword
 %SpriteProps($04, 0, 0, $80, $80, PalettesCustom_fighter_shield)        ; 04 - Fighter shield
 %SpriteProps($05, 2, 2, $80, $80, PalettesCustom_red_shield)            ; 05 - Fire shield
 %SpriteProps($06, 2, 2, $80, $80, PalettesCustom_mirror_shield)         ; 06 - Mirror shield
@@ -890,7 +890,7 @@ ItemReceiptGraphicsOffsets:
 	dw BigDecompressionBuffer+$0800        ; 34 - 1 rupee
 	dw BigDecompressionBuffer+$0800        ; 35 - 5 rupees
 	dw BigDecompressionBuffer+$0800        ; 36 - 20 rupees
-	dw BigDecompressionBuffer+$0080        ; 37 - Green pendant
+	dw $0820                               ; 37 - Green pendant
 	dw BigDecompressionBuffer+$0080        ; 38 - Blue pendant
 	dw BigDecompressionBuffer+$0080        ; 39 - Red pendant
 	dw BigDecompressionBuffer+$0920        ; 3A - Tossed bow
@@ -1161,7 +1161,7 @@ StandingItemGraphicsOffsets:
 	dw BigDecompressionBuffer+$0800        ; 34 - 1 rupee
 	dw BigDecompressionBuffer+$0800        ; 35 - 5 rupees
 	dw BigDecompressionBuffer+$0800        ; 36 - 20 rupees
-	dw BigDecompressionBuffer+$0080        ; 37 - Green pendant
+	dw $0820                               ; 37 - Green pendant
 	dw BigDecompressionBuffer+$0080        ; 38 - Blue pendant
 	dw BigDecompressionBuffer+$0080        ; 39 - Red pendant
 	dw BigDecompressionBuffer+$0920        ; 3A - Tossed bow

@@ -34,7 +34,7 @@ db $20, $19, $08, $31 ; year/month/day
 
 ;================================================================================
 !ROM_VERSION_LOW ?= 1  ; ROM version (two 16-bit integers)
-!ROM_VERSION_HIGH ?= 2 ;
+!ROM_VERSION_HIGH ?= 3 ;
 
 org $80FFE0 ; Unused hardware vector
 RomVersion:
@@ -71,7 +71,6 @@ incsrc lampmantlecone.asm
 incsrc floodgatesoftlock.asm
 incsrc heartpieces.asm
 incsrc npcitems.asm
-incsrc hextodec.asm
 incsrc flipperkill.asm
 incsrc pendantcrystalhud.asm
 incsrc potions.asm
@@ -157,7 +156,7 @@ incsrc toast.asm
 incsrc fastcredits.asm
 incsrc msu.asm
 incsrc dungeonmap.asm
-
+incsrc hextodec.asm
 if !FEATURE_NEW_TEXT
 	incsrc textrenderer.asm
 endif
@@ -268,7 +267,11 @@ endif
 
 org $B28000
 Extra_Text_Table:
-incsrc itemtext.asm
+if !FEATURE_NEW_TEXT
+    incsrc itemtext_lower.asm
+else
+    incsrc itemtext.asm
+endif
 
 incsrc externalhooks.asm
 ;================================================================================

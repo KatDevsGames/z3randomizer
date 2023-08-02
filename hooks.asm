@@ -280,6 +280,7 @@ db $09 : SKIP 5 : db $09 : SKIP 1 : db $09 : SKIP 1 : db $09 : SKIP 1 : db $09 :
 db $09 : SKIP 1 : db $09 : SKIP 1 : db $09 : SKIP 1 : db $09 : SKIP 5 : db $05
 ;--------------------------------------------------------------------------------
 
+
 ;================================================================================
 ; Delete file Screen
 ;--------------------------------------------------------------------------------
@@ -382,7 +383,6 @@ STA.l StalfosBombDamage
 ;--------------------------------------------------------------------------------
 org $8AB76E ; <- 5376E - Bank0A.asm : 30 (JSL OverworldMap_InitGfx)
 JSL OnLoadDuckMap
-;--------------------------------------------------------------------------------
 
 ;================================================================================
 ; Infinite Bombs / Arrows / Magic
@@ -908,6 +908,9 @@ LDA.w DungeonItemMasks, X
 org $898769 ; 48769 - ancilla_init.asm:1005 (LDA .item_graphics_indices, Y)
 LDA.w ItemReceipts_graphics, Y
 
+org $898811
+JSL.l SetItemRiseTimer
+
 org $89884D ; 4884D - ancilla_init.asm:1137 (LDA $836C, Y)
 LDA.w ItemReceipts_offset_y, Y
 org $89885B ; 4885B - ancilla_init.asm:1139 (LDA .x_offsets, X) - I think the disassembly is wrong here, should have been LDA .x_offsets, Y
@@ -1119,8 +1122,15 @@ JSL CheckCloseItemMenu
 org $8DEE70 ; <- 6EE70 - equipment.asm : 2137
 JSL PrepItemScreenBigKey : NOP
 ;--------------------------------------------------------------------------------
+org $0DDEA5 ; LDA.b Joy1A_New : BEQ .wait_for_button 
+JSL.l HandleEmptyMenu : RTS
+org $0DEB3C ; LDA.w ItemCursor : AND.w #$00FF
+JML.l MaybeDrawEquippedItem : NOP #2
+org $0DE363 ; LDA.b #$04 : STA.w SubModuleInterface
+JSL.l RestoreMenu_SetSubModule : NOP
+;--------------------------------------------------------------------------------
 org $88D395 ; <- 45395 - ancilla_bird_travel_intro.asm : 253
-JSL UpgradeFlute : NOP #2
+JSL.l UpgradeFlute : NOP #2
 ;--------------------------------------------------------------------------------
 org $85E4D7 ; <- 2E4D7 - sprite_witch.asm : 213
 JSL RemoveMushroom : NOP #2
@@ -1357,9 +1367,7 @@ JSL DrawMagicHeader
 BRA + : NOP #15 : +
 ;--------------------------------------------------------------------------------
 org $8DFB29 ; <- headsup_display.asm : 688 (LDA.b #$86 : STA $7EC71E)
-JSL DrawHUDArrows : BRA +
-	NOP #18
-+
+JSL DrawHUDArrows : BRA + : NOP #18 : +
 ;--------------------------------------------------------------------------------
 org $81CF67 ; <- CF67 - Bank01.asm : 11625 (STA $7EF36F)
 JSL DecrementSmallKeys
@@ -1375,6 +1383,23 @@ MVN $A17E
 ;--------------------------------------------------------------------------------
 org $8DFB1F ; 6FB1F - headsup_display.asm : 681 (LDA $7EF340 : BEQ .hastNoBow)
 JSL CheckHUDSilverArrows
+;--------------------------------------------------------------------------------
+org $8DF1AB
+JSR.w RebuildHUD_update
+org $8DDFC8
+JSR.w RebuildHUD_update
+org $8DDB88 ; Don't rebuild HUD twice on icon refresh
+NOP #3      ; Not sure why this is here
+;--------------------------------------------------------------------------------
+org $87A205
+JSL.l RebuildHUD_update_long
+org $8AEF62
+JSL.l RebuildHUD_update_long
+;--------------------------------------------------------------------------------
+org $8DFFE1
+RebuildHUD_update_long:
+JSR.w RebuildHUD_update : RTL
+warnpc $8E8000
 
 ;================================================================================
 ; 300 Rupee NPC
@@ -2467,11 +2492,16 @@ if !FEATURE_NEW_TEXT
 		JSL RenderCharSetColorExtended_close : NOP
 endif
 
+;================================================================================
+; VRAM
+;--------------------------------------------------------------------------------
+org $008BE5 ; hijack stripes
+JSL.l TransferVRAMStripes
+
 ;===================================================================================================
 ; Fix fairy palette on file select
 ;===================================================================================================
 org $9BF029+1 : db $10
-
 
 ;===================================================================================================
 ; Item decompression/loading

@@ -83,6 +83,7 @@ IncrementSmallKeys:
 		JSL.l UpdateKeys
 		PHY : LDY.b #24 : JSL.l AddInventory : PLY
 		JSL.l HUD_RebuildLong
+                INC.w UpdateHUD
 	PLX
 RTL
 ;--------------------------------------------------------------------------------
@@ -119,21 +120,25 @@ CountChestKeyLong: ; called from ItemDowngradeFix in itemdowngrade.asm
 RTL
 ;--------------------------------------------------------------------------------
 CountChestKey: ; called by neighbor functions
-	PHA : PHX
-		CPY.b #$24 : BEQ +  ; small key for this dungeon - use DungeonID
-			CPY.b #$A0 : !BLT .end ; Ignore most items
-			CPY.b #$AE : !BGE .end ; Ignore reserved key and generic key
-			TYA : AND.B #$0F : BNE ++ ; If this is an HC key, instead count it as a sewers key
-				INC
-			++ TAX : BRA .count  ; use Key id instead of DungeonID (Keysanity)
-		+ LDA.w DungeonID : LSR
-		BNE +
-			INC ; combines HC and Sewer counts
-		+ TAX
-		.count
-		LDA.l DungeonCollectedKeys, X : INC : STA.l DungeonCollectedKeys, X
-   .end
-	PLX : PLA
+        PHA : PHX
+                CPY.b #$24 : BEQ +  ; small key for this dungeon - use DungeonID
+                        CPY.b #$A0 : !BLT .end ; Ignore most items
+                        CPY.b #$AE : !BGE .end ; Ignore reserved key and generic key
+                        TYA : AND.B #$0F
+                        TAX : BRA .count  ; use Key id instead of DungeonID (Keysanity)
+                +
+                LDA.w DungeonID : LSR : TAX
+                .count
+                LDA.l DungeonCollectedKeys, X : INC : STA.l DungeonCollectedKeys, X
+
+                CPX.b #$00 : BNE +
+                        STA.l HCCollectedKeys ; copy HC to sewers
+                +
+                CPX.b #$01 : BNE +
+                        STA.l SewerCollectedKeys ; copy sewers to HC
+                +
+        .end
+        PLX : PLA
 RTS
 ;--------------------------------------------------------------------------------
 CountBonkItem: ; called from GetBonkItem in bookofmudora.asm

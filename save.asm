@@ -99,6 +99,21 @@ ValidateSRAM:
 	SEP #$30
 RTL
 ;--------------------------------------------------------------------------------
+WriteNewFileChecksum:
+        LDX.w #$0000 : TXA : - ; Checksum first $04FE bytes
+                CLC : ADC.l CartridgeSRAM, X
+                INX #2
+        CPX.w #$04FE : BNE -
+        LDX.w #$0000 : - ; Checksum extended save data
+                CLC : ADC.l ExtendedFileNameSRAM, X
+                INX #2
+        CPX.w #$0FFE : BNE -
+        STA.b Scrap00
+        LDA.w #$5A5A
+        SEC : SBC.b Scrap00
+        STA.l InverseChecksumSRAM
+RTL
+;--------------------------------------------------------------------------------
 ClearExtendedSaveFile:
         STA.l $700400, X ; what we wrote over
         STA.l $700500, X

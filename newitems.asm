@@ -772,26 +772,26 @@ RTS
 ;--------------------------------------------------------------------------------
 ;Return BowEquipment but also draw silver arrows if you have the upgrade even if you don't have the bow
 CheckHUDSilverArrows:
-	LDA.l ArrowMode : BEQ .normal
-	.rupee_arrows
-		JSL.l DrawHUDArrows
-		LDA.l BowEquipment
-		RTL
-	.normal
-	LDA.l BowEquipment : BNE +
-		LDA.l BowTracking : AND.b #$40 : BEQ ++
-			JSL.l DrawHUDArrows
-		++
-		LDA.l BowEquipment
-	+
-RTL
+        LDA.l ArrowMode : BNE .rupee_bow
+                LDA.l BowEquipment : TAX : BEQ .nobow
+                        JSL.l DrawHUDArrows_normal
+                        TXA
+                        RTL
+        .rupee_bow
+        LDA.l BowEquipment : TAX
+        JSL.l DrawHUDArrows_rupee_arrows
+        TXA
+        RTL
+        .nobow
+        JSL.l DrawHUDArrows_silverscheck
+        TXA
+        RTL
 ;--------------------------------------------------------------------------------
 DrawHUDArrows:
-LDA.l ArrowMode : BEQ .normal
 	.rupee_arrows
-
 	LDA.l CurrentArrows : BEQ .none ; assuming silvers will increment this. if we go with something else, reorder these checks
-	LDA.l BowEquipment : BNE +
+	TXA : BNE +
+        .silverscheck
 	LDA.l BowTracking : AND.b #$40 : BNE .silver
 	BRA .wooden
 	+ CMP.b #03 : !BGE .silver
@@ -801,8 +801,12 @@ LDA.l ArrowMode : BEQ .normal
 	LDA.b #$20 : STA.l HUDTileMapBuffer+$21
 	LDA.b #$A9 : STA.l HUDTileMapBuffer+$22
 	LDA.b #$20 : STA.l HUDTileMapBuffer+$23
+        .skip
 RTL
-	.normal ; in normal arrow mode this function is only ever called for silvers
+	.normal
+        TXA
+        CMP.b #$03 : BCS .silver
+        BRA .wooden
 	.silver
 	LDA.b #$86 : STA.l HUDTileMapBuffer+$20 ; draw silver arrow marker
 	LDA.b #$24 : STA.l HUDTileMapBuffer+$21
@@ -986,14 +990,23 @@ MaybeFlagCompassTotalPickup:
         .done
 RTL
 ;--------------------------------------------------------------------------------
-; Set the compass count display flag if we're entering a dungeon and alerady have
-; that compass
-MaybeFlagCompassTotalEntrance:
-        LDX.w DungeonID : CPX.b #$FF : BEQ .done         ; Skip if we're not entering dungeon
-        LDA.l CompassMode : AND.w #$000F : BEQ .done ; Skip if we're not showing compass counts
-        CMP.w #$0002 : BEQ .countShown
+; Set the dungeon item count display flags if we're entering a dungeon and have the
+; corresponding dungeon item
+MaybeFlagDungeonTotalsEntrance:
+        LDX.w DungeonID : CPX.b #$FF : BEQ .done ; Skip if we're not entering dungeon
+        LDA.l CompassMode : AND.w #$000F : BEQ .maps ; Skip if we're not showing compass counts
+                JSR.w FlagCompassCount
+        .maps
+        LDA.l MapHUDMode : AND.w #$000F : BEQ .done
+                LDX.w DungeonID
+                JSR.w FlagMapCount
+        .done
+RTL
+;--------------------------------------------------------------------------------
+FlagCompassCount:
+        CMP.w #$0002 : BEQ .compassShown
                 LDA.l CompassField : AND.l DungeonItemMasks, X : BEQ .done ; skip if we don't have compass
-                .countShown
+                .compassShown
                 SEP #$20
                 TXA : LSR : STA.b Scrap04 : LDA.b #$0F : !SUB Scrap04 ; Compute flag index
                 CMP.b #$08 : !BGE ++
@@ -1007,6 +1020,46 @@ MaybeFlagCompassTotalEntrance:
                         BIT.b #$C0 : BEQ + : LDA.b #$C0 : + ; Make Hyrule Castle / Sewers Count for Both
                         ORA.l CompassCountDisplay+1 : STA.l CompassCountDisplay+1
                         REP #$20
+        .done
+RTS
+;--------------------------------------------------------------------------------
+FlagMapCount:
+        CMP.w #$0002 : BEQ .mapShown
+                LDA.l MapField : AND.l DungeonItemMasks, X : BEQ .done ; skip if we don't have map
+                .mapShown
+                SEP #$20
+                TXA : LSR : STA.b Scrap04 : LDA.b #$0F : !SUB Scrap04 ; Compute flag index
+                CMP.b #$08 : !BGE ++
+                        %ValueShift()
+                        ORA.l MapCountDisplay : STA.l MapCountDisplay
+                        REP #$20
+                        BRA .done
+                ++
+                        !SUB #$08
+                        %ValueShift()
+                        BIT.b #$C0 : BEQ + : LDA.b #$C0 : + ; Make Hyrule Castle / Sewers Count for Both
+                        ORA.l MapCountDisplay+1 : STA.l MapCountDisplay+1
+                        REP #$20
+        .done
+RTS
+;--------------------------------------------------------------------------------
+MaybeFlagMapTotalPickup:
+        LDA.l MapHUDMode : AND.b #$0F : BEQ .done
+        LDA.w DungeonID : CMP.b #$FF : BEQ .done
+        LSR : STA.b Scrap04 : LDA.b #$0F : !SUB Scrap04 ; Compute flag "index"
+        CPY.b #$33 : BEQ .setFlag                       ; Set flag if it's a compass for this dungeon
+                STA.b Scrap04
+                TYA : AND.b #$0F : CMP.b Scrap04 : BNE .done ; Check if map is for this dungeon
+                        .setFlag
+                        CMP.b #$08 : !BGE ++
+                                %ValueShift()
+                                ORA.l MapCountDisplay : STA.l MapCountDisplay
+                                BRA .done
+                        ++
+                                !SUB #$08
+                                %ValueShift()
+                                BIT.b #$C0 : BEQ + : LDA.b #$C0 : + ; Make Hyrule Castle / Sewers Count for Both
+                                ORA.l MapCountDisplay+1 : STA.l MapCountDisplay+1
         .done
 RTL
 ;--------------------------------------------------------------------------------

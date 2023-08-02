@@ -172,7 +172,7 @@ CurrentGenericKeys: skip 1      ; Generic small keys
 ;================================================================================
 ; Tracking & Indicators ($7EF38C - $7EF3F0)
 ;--------------------------------------------------------------------------------
-InventoryTracking: skip 2       ; b r m p n s k f  - - - - - - o q (bitfield)
+InventoryTracking: skip 2       ; - - - - - - o q  b r m p n s k f (bitfield)
                                 ; b = Blue Boomerang   | r = Red Boomerang  | m = Mushroom Current
                                 ; p = Magic Powder     | n = Mushroom Past  | s = Shovel
                                 ; k = Inactive Flute   | f = Active Flute   | o = Any bomb acquired
@@ -317,7 +317,8 @@ HeartPieceCounter: skip 1       ; Total Number of heartpieces collected (integer
 CrystalCounter: skip 1          ; Total Number of crystals collected (integer)
 DungeonsCompleted: skip 2       ; Bitfield indicating whether a dungeon's prize has been collected.
                                 ; This has the same shape as the dungeon item bitfields.
-skip 44                         ; Unused
+MapCountDisplay: skip 2         ;
+skip 42                         ; Unused
 ServiceSequence:                ; See servicerequest.asm
 ServiceSequenceRx: skip 8       ; Service sequence receive
 ServiceSequenceTx: skip 8       ; Service sequence transmit
@@ -604,6 +605,7 @@ endmacro
 %assertSRAM(HeartPieceCounter, $7EF470)
 %assertSRAM(CrystalCounter, $7EF471)
 %assertSRAM(DungeonsCompleted, $7EF472)
+%assertSRAM(MapCountDisplay, $7EF474)
 ;--------------------------------------------------------------------------------
 %assertSRAM(ServiceSequence, $7EF4A0)
 %assertSRAM(ServiceSequenceRx, $7EF4A0)

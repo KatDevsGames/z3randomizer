@@ -130,7 +130,7 @@ DrawPlayerFile:
 		STA.w GFXStripes+$0404
 		STA.w GFXStripes+$040A
 	
-		LDA.w #$12BF
+		LDA.w #$0188 ; change back to 12BF to restore the border
 		STA.w GFXStripes+$0406
 		ORA.w #$4000
 		STA.w GFXStripes+$040C
@@ -156,11 +156,8 @@ DrawPlayerFile:
 
 .draw_access_icon
 		STA.w GFXStripes+$0412
-
 		LDA.w #$FFFF
 		STA.w GFXStripes+$0414
-
-
 		BRA .done
 	.normal
 	STZ.w SkipOAM ; ensure core animated tile updates are not suppressed
@@ -244,7 +241,7 @@ DrawPlayerFileShared:
 	++
 
 	; Mushroom
-	LDA.l InventoryTrackingSRAM : AND.w #$0008 : BEQ +
+	LDA.l InventoryTrackingSRAM : AND.w #$0028 : BEQ +
 		%fs_drawItem(3,18,FileSelectItems_mushroom)
 		BRA ++
 	+
@@ -372,7 +369,7 @@ DrawPlayerFileShared:
 		%fs_drawItem(9,26,FileSelectItems_heart_piece_3_of_4)
 	++
 
-	LDA.l EquipmentSRAM+$0108 : AND.w #$00FF
+	LDA.l EquipmentSRAM+$0130 : AND.w #$00FF
 	JSL.l HexToDec
 	LDA.l HexToDecDigit4 : AND.w #$00FF : ORA.w #!FS_COLOR_BW|$02A0 : %fs_draw8x8(11,26)
 	LDA.l HexToDecDigit5 : AND.w #$00FF : ORA.w #!FS_COLOR_BW|$02A0 : %fs_draw8x8(11,27)

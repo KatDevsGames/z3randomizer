@@ -97,6 +97,7 @@ Equipment_SearchForEquippedItemLong                        = $8DE395
 HUD_RebuildLong                                            = $8DFA78
 HUD_RebuildIndoor_Palace                                   = $8DFA88
 HUD_RebuildLong2                                           = $8DFA88
+RebuildHUD_update                                          = $8DFAA5
 Messaging_Text                                             = $8EEE10
 Overworld_TileAttr                                         = $8FFD94
 Overworld_DrawPersistentMap16                              = $9BC97C
@@ -121,6 +122,9 @@ Sprite_PlayerCantPassThrough                               = $9EF4E7
 Chicken_SpawnAvengerChicken                                = $86A7DB
 Link_PerformOpenChest_no_replacement                       = $87B59F
 DrawProgressIcons                                          = $8DE9C8
+ItemMenu_DrawEquippedYItem                                 = $8DEB3A
+ItemMenu_DrawEquippedYItem_exit                            = $8DECE6
+ItemMenu_DrawEquipment_dungeonitems                        = $8DEDCC
 DrawEquipment                                              = $8DED29
 
 ;===================================================================================================

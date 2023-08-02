@@ -760,7 +760,6 @@ dw $0000      ; 7F
 	dw $0034, $28D0
 	dw $0034, $28D2
 
-
 	dw !OWW_CustomCommand, .map1B_check_aga
 
 	dw $046D, $243E

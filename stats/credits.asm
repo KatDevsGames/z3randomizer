@@ -443,7 +443,7 @@ CreditsLineBlank:
 
 %blankline()
 
-%bigcredits("MIKETRETHEWEY         IBAZLY")
+%bigcredits("MATRETHEWEY           IBAZLY")
 
 %blankline()
 %bigcredits("FISH_WAFFLE64        KRELBEL")

@@ -7,7 +7,7 @@
 ;--------------------------------------------------------------------------------
 ProcessMenuButtons:
 	LDA.b Joy1A_New : BIT.b #$40 : BNE .y_pressed ; check for P1 Y-button
-			  BIT #$20 : BNE .sel_pressed ; check for P1 Select button
+			  BIT.b #$20 : BNE .sel_pressed ; check for P1 Select button
 	LDA.b Joy1A_All : BIT.b #$20 : BNE .sel_held
 	.sel_unheld
 		LDA.l HudFlag : AND.b #$20 : BEQ +
@@ -193,20 +193,19 @@ RTS
 DungeonIncrement:
 	LDA.b IndoorsFlag : BEQ .count
 	LDA.w DungeonID : CMP.b #$FF : BEQ .count
-
-        CMP.l BallNChainDungeon : BNE +
-		CPY.b #$32 : BEQ .ballchain_bigkey
-	+
-        CMP.b #$04 : BCS +
-                LDA.l SewersLocations : INC : STA.l SewersLocations : STA.l HCLocations
-                BRA .count
-        +
-        LSR : TAX : LDA.l DungeonLocationsChecked, X : INC : STA.l DungeonLocationsChecked, X
-	CPX.b #$0D : BNE +
-		LDA.l BigKeyField : BIT.b #$04 : BNE ++
-                        LDA.l PreGTBKLocations : INC : STA.l PreGTBKLocations
-		++
-	+
+                CMP.l BallNChainDungeon : BNE +
+                        CPY.b #$32 : BEQ .ballchain_bigkey
+	        +
+                CMP.b #$04 : BCS +
+                        LDA.l SewersLocations : INC : STA.l SewersLocations : STA.l HCLocations
+                        BRA .count
+                +
+                LSR : TAX : LDA.l DungeonLocationsChecked, X : INC : STA.l DungeonLocationsChecked, X
+	        CPX.b #$0D : BNE +
+                        LDA.l BigKeyField : BIT.b #$04 : BNE ++
+                                LDA.l PreGTBKLocations : INC : STA.l PreGTBKLocations
+                        ++
+	        +
         .count
         CLC
 RTS
@@ -328,6 +327,7 @@ Link_ReceiveItem_HUDRefresh:
 	+
 
 	JSL.l HUD_RefreshIconLong ; thing we wrote over
+        INC.w UpdateHUD
 	JSL.l PostItemGet
 RTL
 ;--------------------------------------------------------------------------------
@@ -342,6 +342,7 @@ HandleBombAbsorbtion:
 		LDA.b #$04 : STA.w ItemCursor ; set selected item to bombs
 		LDA.b #$01 : STA.w CurrentYItem ; set selected item to bombs
 		JSL.l HUD_RebuildLong
+                INC.w UpdateHUD
 	+
 RTL
 ;--------------------------------------------------------------------------------
@@ -450,12 +451,18 @@ RTL
 ; SaveKeys:
 ;--------------------------------------------------------------------------------
 SaveKeys:
-	PHA
-	LDA.l GenericKeys : BEQ +
-		PLA : STA.l CurrentGenericKeys
-		RTL
-	+
-	PLA : STA.l DungeonKeys, X
+        PHA
+        LDA.l GenericKeys : BEQ +
+                PLA : STA.l CurrentGenericKeys
+                RTL
+        +
+        PLA : STA.l DungeonKeys, X
+        CPX.b #$00 : BNE +
+                STA.l HyruleCastleKeys ; copy HC to sewers
+        +
+        CPX.b #$01 : BNE +
+                STA.l SewerKeys ; copy sewers to HC
+        +
 RTL
 ;--------------------------------------------------------------------------------
 

@@ -16,7 +16,8 @@ JML.l ReturnFromOnDrawHud
 ;--------------------------------------------------------------------------------
 OnDungeonEntrance:
 	STA.l PegColor ; thing we wrote over
-        JSL MaybeFlagCompassTotalEntrance
+        JSL MaybeFlagDungeonTotalsEntrance
+        INC.w UpdateHUD
 RTL
 ;--------------------------------------------------------------------------------
 OnPlayerDead:
@@ -28,18 +29,19 @@ OnPlayerDead:
 RTL
 ;--------------------------------------------------------------------------------
 OnDungeonExit:
-	PHA : PHP
-		SEP #$20 ; set 8-bit accumulator
-		JSL.l SQEGFix
-	PLP : PLA
+        PHA : PHP
+        SEP #$20 ; set 8-bit accumulator
+        JSL.l SQEGFix
+        PLP : PLA
 
-	STA.w DungeonID : STZ.w Map16ChangeIndex ; thing we wrote over
+        STA.w DungeonID : STZ.w Map16ChangeIndex ; thing we wrote over
 
-	PHA : PHP
-		JSL.l HUD_RebuildLong
-		JSL.l FloodGateResetInner
-		JSL.l SetSilverBowMode
-	PLP : PLA
+        PHA : PHP
+        JSL.l HUD_RebuildLong
+        INC.w UpdateHUD
+        JSL.l FloodGateResetInner
+        JSL.l SetSilverBowMode
+        PLP : PLA
 RTL
 ;--------------------------------------------------------------------------------
 OnQuit:
@@ -77,6 +79,7 @@ RTL
 ;--------------------------------------------------------------------------------
 OnAga2Defeated:
         JSL.l Dungeon_SaveRoomData_justKeys ; thing we wrote over, make sure this is first
+        LDA.b #$FF : STA.w DungeonID
         LDA.b #$01 : STA.l Aga2Duck
         JML.l IncrementAgahnim2Sword
 ;--------------------------------------------------------------------------------
@@ -108,9 +111,6 @@ OnFileCreation:
         JSL.l WriteSaveChecksumAndBackup_from_sram
         STZ.b Scrap00
         STZ.b Scrap01
-        LDX.b Scrap00
-        LDY.w #$0000
-        TYA
 
 JML.l InitializeSaveFile_checksum_done
 ;--------------------------------------------------------------------------------
@@ -196,12 +196,13 @@ OnLinkDamagedFromPitOutdoors:
 	JML.l OHKOTimer ; make sure this is last
 ;--------------------------------------------------------------------------------
 OnOWTransition:
-	JSL.l FloodGateReset
-	JSL.l StatTransitionCounter
-	PHP
-	SEP #$20 ; set 8-bit accumulator
-	LDA.b #$FF : STA.l RNGLockIn ; clear lock-in
-	PLP
+        JSL.l FloodGateReset
+        JSL.l StatTransitionCounter
+        PHP
+        SEP #$20 ; set 8-bit accumulator
+        LDA.b #$FF : STA.l RNGLockIn ; clear lock-in
+        INC.w UpdateHUD
+        PLP
 RTL
 ;--------------------------------------------------------------------------------
 OnLoadDuckMap:
@@ -223,19 +224,40 @@ PostItemGet:
 RTL
 ;--------------------------------------------------------------------------------
 PostItemAnimation:
-	LDA.b #$00 : STA.l BusyItem ; mark item as finished
+        LDA.b #$00 : STA.l BusyItem ; mark item as finished
+        LDA.l TextBoxDefer : BEQ +
+                STZ.w TextID : STZ.w TextID+1 ; reset decompression buffer
+                JSL.l Main_ShowTextMessage_Alt
+                LDA.b #$00 : STA.l TextBoxDefer
+        +
+        LDA.w ItemReceiptMethod : CMP.b #$01 : BNE +
+                LDA.b LinkDirection : BEQ +
+                        JSL.l IncrementChestTurnCounter
+        +
+        REP #$20
+        LDA.w TransparencyFlag : BNE .SP05
+                LDA.l PalettesCustom_off_black+$00 : STA.l PaletteBuffer+$0170
+                LDA.l PalettesCustom_off_black+$02 : STA.l PaletteBuffer+$0172
+                LDA.l PalettesCustom_off_black+$04 : STA.l PaletteBuffer+$0174
+                LDA.l PalettesCustom_off_black+$06 : STA.l PaletteBuffer+$0176
+                LDA.l PalettesCustom_off_black+$08 : STA.l PaletteBuffer+$0178
+                LDA.l PalettesCustom_off_black+$0A : STA.l PaletteBuffer+$017A
+                LDA.l PalettesCustom_off_black+$0C : STA.l PaletteBuffer+$017C
+                LDA.l PalettesCustom_off_black+$0E : STA.l PaletteBuffer+$017E
+                BRA .done
+        .SP05
+        LDA.l PalettesCustom_off_black+$00 : STA.l PaletteBuffer+$01B0
+        LDA.l PalettesCustom_off_black+$02 : STA.l PaletteBuffer+$01B2
+        LDA.l PalettesCustom_off_black+$04 : STA.l PaletteBuffer+$01B4
+        LDA.l PalettesCustom_off_black+$06 : STA.l PaletteBuffer+$01B6
+        LDA.l PalettesCustom_off_black+$08 : STA.l PaletteBuffer+$01B8
+        LDA.l PalettesCustom_off_black+$0A : STA.l PaletteBuffer+$01BA
+        LDA.l PalettesCustom_off_black+$0C : STA.l PaletteBuffer+$01BC
+        LDA.l PalettesCustom_off_black+$0E : STA.l PaletteBuffer+$01BE
+        .done
+        INC.b NMICGRAM
+        SEP #$20
 
-	LDA.l TextBoxDefer : BEQ +
-		STZ.w TextID : STZ.w TextID+1 ; reset decompression buffer
-		JSL.l Main_ShowTextMessage_Alt
-		LDA.b #$00 : STA.l TextBoxDefer
-	+
-
-	LDA.w ItemReceiptMethod : CMP.b #$01 : BNE +
-		LDA.b LinkDirection : BEQ +
-			JSL.l IncrementChestTurnCounter
-	+
-
-    STZ.w ItemReceiptMethod : LDA.w AncillaGet, X ; thing we wrote over to get here
+        STZ.w ItemReceiptMethod : LDA.w AncillaGet, X ; thing we wrote over to get here
 RTL
 ;--------------------------------------------------------------------------------

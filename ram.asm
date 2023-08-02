@@ -224,6 +224,8 @@ NoDamage = $7E037B                ; Prevents Link from receiving damage.
                                   ;
 AncillaGeneral = $7E039F          ; General use buffer for front slot ancillae. $0F bytes.
                                   ;
+AncillaTimer = $7E03B1            ; Used as a timer for ancilla.
+                                  ;
 AncillaSearch = $7E03C4           ; Used to search through ancilla when every front slot is occupied.
                                   ;
 ForceSwordUp = $7E03EF            ; $01 = Force sword up pose.
@@ -368,6 +370,8 @@ DelayTimer = $7E1CE9              ;
                                   ;
 TextID = $7E1CF0                  ; Message ID and page. Word length.
                                   ;
+UpdateHUD = $7E1E03               ; Flag used to mark HUD updates and avoid heavy code segments.
+                                  ;
 ToastBuffer = $7E1E0E             ; Multiworld buffer. Word length.
                                   ;
 MSUResumeTime = $7E1E6B           ; Mirrored MSU block
@@ -455,6 +459,7 @@ HUDArrowCount = $7EC760           ;
 HUDKeyDigits = $7EC764            ;
                                   ;
 BigRAM = $7EC900                  ; Big buffer of free ram (0x1F00)
+TotalItemCountTiles = $7ECB00     ; Cached total item count tiles for HUD. Four words high to low.
 
 ;================================================================================
 ; Bank 7F
@@ -544,7 +549,7 @@ OHKOFlag: skip 1                   ; Any non-zero write sets OHKO mode
 SpriteSwapper: skip 1              ; Loads new link sprite and glove/armor palette. No gfx or
                                    ; code currently in base ROM for this.
 BootsModifier: skip 1              ; $01 = Give dash ability
-skip 1                             ; Unused
+OHKOCached: skip 1                 ; "Old" OHKO flag state. Used to detect changes.
                                    ; Crypto Block ($7F50D0 - $7F51FF)
 KeyBase: skip $10                  ;
 y: skip 4                          ;
@@ -563,8 +568,9 @@ RxStatus: skip 1                   ;
 TxBuffer: skip $7F                 ;
 TxStatus: skip 1                   ;
 skip $10                           ; Unused
-CompassTotalsWRAM: skip $10        ; skip $10
-skip $40                           ; Reserved for general dungeon tracking data. May have over
+CompassTotalsWRAM: skip $10        ; \ Compass and map dungeon HUD display totals. Placed in WRAM
+MapTotalsWRAM: skip $10            ; / on boot for tracking.
+skip $30                           ; Reserved for general dungeon tracking data. May have over
                                    ; allocated here. Feel free to reassign.
 skip $40                           ; Unused
 skip $260                          ; Unused
@@ -938,6 +944,7 @@ endmacro
 %assertRAM(TxBuffer, $7F5380)
 %assertRAM(TxStatus, $7F53FF)
 %assertRAM(CompassTotalsWRAM, $7F5410)
+%assertRAM(MapTotalsWRAM, $7F5420)
 %assertRAM(DialogBuffer, $7F5700)
 %assertRAM(MiniGameTime, $7FFE00)
 %assertRAM(MiniGameTimeFinal, $7FFE04)

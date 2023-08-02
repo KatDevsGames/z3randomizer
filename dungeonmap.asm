@@ -4,7 +4,6 @@ DoDungeonMapBossIcon:
 	BEQ .dungeonmap
 
 .cave
-	CMP.b #$01
 	RTL
 
 .dungeonmap

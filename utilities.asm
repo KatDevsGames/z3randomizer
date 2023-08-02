@@ -249,10 +249,6 @@ SkipDrawEOR:
 	.normal
 	LDA.b ($08), Y : EOR.w Scrap04 ; thing we wrote over
 RTL
-;--------------------------------------------------------------------------------
-; Look up table of bit counts in the values $00-$0F
-NybbleBitCounts:
-db #00, #01, #01, #02, #01, #02, #02, #03, #01, #02, #02, #03, #02, #03, #03, #04
 
 ;--------------------------------------------------------------------------------
 ; WriteVRAMStripe
@@ -377,4 +373,10 @@ LoadItemPalette:
         SEP #$30
         PLB : PLY : PLX
         INC.b NMICGRAM
+RTL
+
+TransferVRAMStripes:
+        JSL.l TransferNumericStripes
+        JSL.l DoDungeonMapBossIcon
+        LDA.b NMISTRIPES : CMP.b #$01 ; What we wrote over
 RTL

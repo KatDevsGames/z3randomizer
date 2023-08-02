@@ -118,9 +118,13 @@ org $B08038 ; PC 0x180038
 LampConeSewers:
 db $01 ; #$00 = Off - #$01 = On (default)
 ;--------------------------------------------------------------------------------
-; 0x180039 - 0x18003A (Unused)
+org $308039 ; PC 0x180039
+ItemCounterHUD:
+db $00 ; $00 = Off | $01 = Display TotalItemCounter / TotalItemCount display on HUD
 ;--------------------------------------------------------------------------------
-org $B0803B ; PC 0x18003B - PC 0x18003C
+org $B0803A ; PC 0x18003A-0x18003C
+MapHUDMode:
+db #$00 ; #$00 = Off (default) - #$01 = Display Dungeon Count w/Map - #$02 = Display Dungeon Count Always
 MapMode:
 db $00 ; #$00 = Always On (default) - #$01 = Require Map Item
 CompassMode:
@@ -142,6 +146,9 @@ db $00
 ; #$06 = Light Speed
 ; #$07 = Require All Crystals and Crystal Bosses
 ; #$08 = Require All Crystal Bosses only
+; #$09 = Require All Dungeons No Agahnim
+; #$0A = Require 100% Item Collection
+; #$0B = Require 100% Item Collection and All Dungeons
 ;--------------------------------------------------------------------------------
 org $B0803F ; PC 0x18003F
 HammerableGanon:
@@ -925,6 +932,10 @@ db $01 ; #$00 = Instant win if last goal item collected. $01 = (Default) must tu
 org $B08195 ; PC 0x180195
 ByrnaCaveSpikeDamage:
 db $08 ; #$08 = 1 Heart (default) - #$02 = 1/4 Heart
+;--------------------------------------------------------------------------------
+org $308196 ; PC 0x180196-0x180197
+TotalItemCount: ; Total item count for HUD. Only counts items that use "item get" animation.
+dw $00D8        ; 216
 ;--------------------------------------------------------------------------------
 ; 0x180196 - 0x1801FF (unused)
 ;================================================================================
@@ -2554,6 +2565,10 @@ db $02             ; $FF to count ball and chain item for collection stats.
 org $B0F000 ; PC 0x187000-0x18700F
 CompassTotalsROM:
 db $08, $08, $06, $06, $02, $0A, $0E, $08, $08, $08, $06, $08, $0C, $1B, $00, $00
+
+org $30F010
+ChestKeys: ; PC 0x187010-0x18701F
+db $01, $01, $00, $01, $02, $01, $06, $03, $03, $02, $01, $01, $04, $04, $00, $00
 
 ;--------------------------------------------------------------------------------
 ; 0x187010 - 187FFF (unused)
