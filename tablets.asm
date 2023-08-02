@@ -31,23 +31,20 @@ RTS
 SpawnTabletItem:
 	JSL.l LoadOutdoorValue
         JSL.l ResolveLootIDLong
-	STA.w SpriteItemType, Y
+        PHA
+        LDA.b #$EB : STA.l MiniGameTime
+        JSL Sprite_SpawnDynamically
+        PLA
+        STA.w SpriteID,Y
+        TYX
 	JSL.l PrepDynamicTile_loot_resolved
 
-	LDA.b #$EB
-	STA.l MiniGameTime
-	JSL Sprite_SpawnDynamically
-
-	LDA.w SpriteItemType, Y ; Store item type
-	LDA.b LinkPosX   : STA.w SpritePosXLow, Y
-	LDA.b LinkPosX+1 : STA.w SpritePosXHigh, Y
-  
-	LDA.b LinkPosY   : STA.w SpritePosYLow, Y
-	LDA.b LinkPosY+1 : STA.w SpritePosYHigh, Y
-
-	LDA.b #$00 : STA.w SpriteLayer, Y
-
-	LDA.b #$7F : STA.w SpriteZCoord, Y ; spawn WAY up high
+        LDA.b LinkPosX   : STA.w SpritePosXLow, Y
+        LDA.b LinkPosX+1 : STA.w SpritePosXHigh, Y
+        LDA.b LinkPosY   : STA.w SpritePosYLow, Y
+        LDA.b LinkPosY+1 : STA.w SpritePosYHigh, Y
+        LDA.b #$00 : STA.w SpriteLayer, Y
+        LDA.b #$7F : STA.w SpriteZCoord, Y ; spawn WAY up high
 RTL
 ;--------------------------------------------------------------------------------
 MaybeUnlockTabletAnimation:

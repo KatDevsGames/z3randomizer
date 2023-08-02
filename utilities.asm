@@ -46,35 +46,36 @@ RTL
 
 ;--------------------------------------------------------------------------------
 ; PrepDynamicTile
-; in:	A - Loot ID
+; in: SpriteID,X - Loot ID
 ;-------------------------------------------------------------------------------- 20/8477
 PrepDynamicTile:
-	PHA : PHX : PHY : PHB
+	PHX : PHY : PHB
 	JSR.w ResolveLootID
         -
 	JSR.w LoadDynamicTileOAMTable
 	JSL TransferItemReceiptToBuffer_using_ReceiptID
         SEP #$30
-	PLB : PLY : PLX : PLA
+	PLB : PLY : PLX
 RTL
         .loot_resolved
-	PHA : PHX : PHY : PHB
+	PHX : PHY : PHB
         BRA -
 ;--------------------------------------------------------------------------------
 
 ;--------------------------------------------------------------------------------
 ; LoadDynamicTileOAMTable
-; in:	A - Loot ID
+; in: SpriteID,X - Loot ID
+; out: A - Loot ID
 ;-------------------------------------------------------------------------------- 20/847B
 LoadDynamicTileOAMTable:
-        PHA : PHP
+        PHP
         REP #$20
         LDA.w #$0000 : STA.l SpriteOAM : STA.l SpriteOAM+2
         LDA.w #$0200 : STA.l SpriteOAM+6
         SEP #$20
         LDA.b #$24 : STA.l SpriteOAM+4
 
-        LDA.w SpriteItemType,X
+        LDA.w SpriteID,X
         JSL.l GetSpritePalette_resolved
         STA.l SpriteOAM+5 : STA.l SpriteOAM+13
         PHX
@@ -88,8 +89,9 @@ LoadDynamicTileOAMTable:
         LDA.w #$3400 : STA.l SpriteOAM+11
 
         .done
+        TXA
         PLX
-        PLP : PLA
+        PLP
 RTS
 ;--------------------------------------------------------------------------------
 

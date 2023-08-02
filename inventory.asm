@@ -490,10 +490,14 @@ RTL
 ; LoadPowder:
 ;--------------------------------------------------------------------------------
 LoadPowder:
+        PHX
 	JSL.l Sprite_SpawnDynamically ; thing we wrote over
 	%GetPossiblyEncryptedItem(WitchItem, SpriteItemValues)
-	STA.w SpriteAuxTable, Y ; Store item type
-	JSL.l PrepDynamicTile
+        JSL.l ResolveLootIDLong
+	STA.w SpriteID, Y
+        TYX
+	JSL.l PrepDynamicTile_loot_resolved
+        PLX
 RTL
 ;--------------------------------------------------------------------------------
 
@@ -516,12 +520,12 @@ RTL
 DrawPowder:
 	LDA.w ItemReceiptPose : BNE .defer ; defer if link is buying a potion
 	LDA.l RedrawFlag : BEQ +
-		LDA.w SpriteAuxTable, X ; Retrieve stored item type
-		JSL.l PrepDynamicTile
+		; LDA.w SpriteAuxTable, X ; Retrieve stored item type
+		JSL.l PrepDynamicTile_loot_resolved
 		LDA.b #$00 : STA.l RedrawFlag ; reset redraw flag
 		BRA .defer
 	+
-	LDA.w SpriteAuxTable, X ; Retrieve stored item type
+	LDA.w SpriteID, X ; Retrieve stored item type
 	JSL.l DrawDynamicTile
 	.defer
 RTL
@@ -541,7 +545,7 @@ LoadMushroom:
 
 	LDA.b #$00 : STA.l RedrawFlag
 	%GetPossiblyEncryptedItem(MushroomItem, SpriteItemValues)
-	STA.w SpriteItemType, X ; Store item type
+	STA.w SpriteID,X
 	JSL.l PrepDynamicTile
 
 	.skip
@@ -559,7 +563,7 @@ DrawMushroom:
 		BRA .done ; don't draw on the init frame
 
 		.skipInit
-		LDA.w SpriteItemType, X ; Retrieve stored item type
+		LDA.w SpriteID, X ; Retrieve stored item type
 		JSL.l DrawDynamicTile
 
 		.done
@@ -571,14 +575,14 @@ RTL
 ; CollectPowder:
 ;--------------------------------------------------------------------------------
 CollectPowder:
-	LDY.w SpriteAuxTable, X ; Retrieve stored item type
-	BNE +
-		; if for any reason the item value is 0 reload it, just in case
-		%GetPossiblyEncryptedItem(WitchItem, SpriteItemValues) : TAY
-	+
-    STZ.w ItemReceiptMethod ; item from NPC
-    JSL.l Link_ReceiveItem
-	JSL.l ItemSet_Powder
+        LDY.w SpriteID, X ; Retrieve stored item type
+        BNE +
+	        ; if for any reason the item value is 0 reload it, just in case
+	        %GetPossiblyEncryptedItem(WitchItem, SpriteItemValues) : TAY
+        +
+        STZ.w ItemReceiptMethod ; item from NPC
+        JSL.l Link_ReceiveItem
+        JSL.l ItemSet_Powder
 RTL
 ;--------------------------------------------------------------------------------
 

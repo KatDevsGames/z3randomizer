@@ -3,7 +3,7 @@
 ;--------------------------------------------------------------------------------
 HeartPieceGet:
         PHX : PHY
-        LDY.w SpriteItemType, X ; load item value into Y register
+        LDY.w SpriteID, X ; load item value into Y register
         BNE +
                 JSL.l LoadHeartPieceRoomValue : TAY
         +
@@ -23,7 +23,7 @@ RTL
 HeartContainerGet:
 	PHX : PHY
 	JSL.l IncrementBossSword
-	LDY.w SpriteItemType, X : BNE +
+	LDY.w SpriteID, X : BNE +
 		JSL.l LoadHeartContainerRoomValue : TAY
 	+
 	BRA HeartPieceGet_skipLoad
@@ -36,7 +36,7 @@ DrawHeartPieceGFX:
                         JSL.l HeartPieceSpritePrep
                         JMP .done ; don't draw on the init frame
                 .skipInit
-                LDA.w SpriteItemType, X ; Retrieve stored item type
+                LDA.w SpriteID, X ; Retrieve stored item type
                 .skipLoad
                 PHA : PHX
                 TAX
@@ -66,7 +66,7 @@ DrawHeartContainerGFX:
 	BRA DrawHeartPieceGFX_done ; don't draw on the init frame
 	
 	.skipInit
-	LDA.w SpriteItemType, X ; Retrieve stored item type
+	LDA.w SpriteID, X ; Retrieve stored item type
 
 	BRA DrawHeartPieceGFX_skipLoad
 ;--------------------------------------------------------------------------------
@@ -110,7 +110,7 @@ HeartPieceSpritePrep:
 	LDA.b #$00 : STA.l RedrawFlag
 	JSL.l LoadHeartPieceRoomValue
         JSL.l ResolveLootIDLong
-	STA.w SpriteItemType, X
+	STA.w SpriteID, X
 	JSL.l PrepDynamicTile_loot_resolved
 	
 	.skip
@@ -123,7 +123,7 @@ HeartContainerSpritePrep:
 	LDA.b #$00 : STA.l RedrawFlag
 	JSL.l LoadHeartContainerRoomValue ; load item type
         JSL.l ResolveLootIDLong
-	STA.w SpriteItemType, X ; Store item type
+	STA.w SpriteID, X
 	JSL.l PrepDynamicTile_loot_resolved
 	
 	PLA

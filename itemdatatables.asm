@@ -42,7 +42,7 @@ endmacro
 %ReceiptProps($10, -4, 0, $1A, $F348, $01, skip, skip) ; 10 - Ether
 %ReceiptProps($11, -4, 0, $1C, $F349, $01, skip, skip) ; 11 - Quake
 %ReceiptProps($12, -4, 0, $14, $F34A, $01, skip, skip) ; 12 - Lamp
-%ReceiptProps($13, -4, 4, $19, $F34C, $01, skip, skip) ; 13 - Shovel
+%ReceiptProps($13, -4, 4, $19, $F34C, $01, shovel, skip) ; 13 - Shovel
 %ReceiptProps($14, -4, 0, $0C, $F34C, $02, flute_inactive, skip) ; 14 - Flute
 %ReceiptProps($15, -4, 4, $07, $F350, $01, skip, skip) ; 15 - Somaria
 %ReceiptProps($16, -4, 0, $1D, $F35C, $FF, skip, bottles) ; 16 - Bottle
@@ -102,7 +102,7 @@ endmacro
 %ReceiptProps($4C, -4, 0, $39, $F375, $32, bombs_50, skip) ; 4C - Bomb capacity (50)
 %ReceiptProps($4D, -4, 0, $3A, $F376, $46, arrows_70, skip) ; 4D - Arrow capacity (70)
 %ReceiptProps($4E, -4, 0, $3B, $F373, $80, magic_2, magic) ; 4E - 1/2 magic
-%ReceiptProps($4F, -4, 0, $3C, $F373, $80, magic_4, magic) ; 4F - 1/4 magic
+%ReceiptProps($4F, -4, 0, $3C, $F373, $80, magic_4, skip) ; 4F - 1/4 magic
 %ReceiptProps($50, -5, 4, $18, $F359, $02, master_sword_safe, skip) ; 50 - Safe master sword
 %ReceiptProps($51, -4, 0, $42, $F375, $FF, bombs_5, skip) ; 51 - Bomb capacity (+5)
 %ReceiptProps($52, -4, 0, $3E, $F375, $FF, bombs_10, skip) ; 52 - Bomb capacity (+10)
@@ -306,9 +306,9 @@ endmacro
 %SpriteProps($01, 0, 2, $05, $05, PalettesCustom_master_sword)          ; 01 - Master sword
 %SpriteProps($02, 0, 2, $05, $01, PalettesCustom_tempered_sword)        ; 02 - Tempered sword
 %SpriteProps($03, 0, 2, $05, $05, PalettesCustom_golden_sword)          ; 03 - Golden sword
-%SpriteProps($04, 0, 0, $05, $80, PalettesCustom_fighter_shield)        ; 04 - Fighter shield
-%SpriteProps($05, 2, 2, $05, $80, PalettesCustom_red_shield)            ; 05 - Fire shield
-%SpriteProps($06, 2, 2, $05, $80, PalettesCustom_mirror_shield)         ; 06 - Mirror shield
+%SpriteProps($04, 0, 0, $80, $80, PalettesCustom_fighter_shield)        ; 04 - Fighter shield
+%SpriteProps($05, 2, 2, $80, $80, PalettesCustom_red_shield)            ; 05 - Fire shield
+%SpriteProps($06, 2, 2, $80, $80, PalettesCustom_mirror_shield)         ; 06 - Mirror shield
 %SpriteProps($07, 0, 0, $01, $01, PalettesVanilla_red_melon+$0E)        ; 07 - Fire rod
 %SpriteProps($08, 0, 0, $02, $02, PalettesVanilla_blue_ice+$0E)         ; 08 - Ice rod
 %SpriteProps($09, 0, 0, $01, $01, PalettesVanilla_red_melon+$0E)        ; 09 - Hammer

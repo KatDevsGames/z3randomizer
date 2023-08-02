@@ -4,19 +4,19 @@
 LoadLibraryItemGFX:
         %GetPossiblyEncryptedItem(LibraryItem, SpriteItemValues)
         JSL.l ResolveLootIDLong
-        STA.w SpriteItemType, X
+        STA.w SpriteID, X
         JSL.l PrepDynamicTile_loot_resolved
 RTL
 ;--------------------------------------------------------------------------------
 DrawLibraryItemGFX:
         PHA
-        LDA.w SpriteItemType, X
+        LDA.w SpriteID, X
         JSL.l DrawDynamicTile
         PLA
 RTL
 ;--------------------------------------------------------------------------------
 SetLibraryItem:
-        LDY.w SpriteItemType, X
+        LDY.w SpriteID, X
         JSL.l ItemSet_Library ; contains thing we wrote over
 RTL
 ;--------------------------------------------------------------------------------
@@ -31,6 +31,7 @@ LoadBonkItemGFX_inner:
 	LDA.b #$00 : STA.l RedrawFlag
 	JSR LoadBonkItem
         STA.w SpriteItemType, X
+        STA.w SpriteID, X
 	JSL.l PrepDynamicTile
 RTL
 ;--------------------------------------------------------------------------------

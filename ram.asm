@@ -186,7 +186,8 @@ RaceGameFlag = $7E021B            ;
                                   ;
 MessageJunk = $7E0223             ; Zeroed but never used (?)
                                   ;
-CoolScratch = $7E0224             ; 0x5C bytes of free ram
+;CoolScratch = $7E0224             ; 0x5C bytes of free ram
+SpriteID = $7E0230                ;
                                   ;
 ItemReceiptID = $7E02D8           ;
 ItemReceiptPose = $7E02DA         ; $00 = No pose | $01 = One hand up | $02 = Two hands up
@@ -329,7 +330,7 @@ SpriteOAMProperties = $7E0E40     ; h m w o o o o o | h = Harmless       | m = m
 SpriteHitPoints = $7E0E50         ; Set from $0DB173
 SpriteControl = $7E0E60           ; n i o s p p p t | n = Death animation? | i = Immune to attack/collion?
                                   ; o = Shadow      | p = OAM prop palette | t = OAM prop name table
-SpriteItemType = $7E0E80          ; Sprite Item Type. $10 bytes.
+SpriteItemType = $7E0E80          ; Sprite Item Type. Also used for jump table local. $10 bytes.
                                   ;
 SpriteSpawnStep = $7E0ED0         ; Related to enemies spawning other sprites (eg pikit, zirro)
                                   ;

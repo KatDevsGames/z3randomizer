@@ -174,6 +174,9 @@ ItemBehavior:
         .flute_active
         LDA.l InventoryTracking : ORA.b #$01
         BRA .store_inventory_tracking
+
+        .shovel
+        LDA.l InventoryTracking : ORA.b #$04
         
         .store_inventory_tracking
         STA.l InventoryTracking
@@ -598,7 +601,9 @@ ResolveReceipt:
         RTS
 
 ResolveLootIDLong:
+        PHY
         JSR.w ResolveLootID
+        PLY
 RTL
 
 ResolveLootID:

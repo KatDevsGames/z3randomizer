@@ -52,18 +52,16 @@ RTL
 
 ItemCheck_TreeKid2:
 	LDA.l NpcFlags : AND.b #$08 : CMP.b #$08 ; FluteAardvark_InitialStateFromFluteState - 225: LDA FluteEquipment : AND.b #$03
+        TDC ; ?? TODO
 RTL
 
 ItemCheck_TreeKid3:
 	JSL $8DD030 ; FluteAardvark_Draw - thing we wrote over
 	LDA.l NpcFlags : AND.b #$08
 	BNE .done
-
 	LDA.b #$05
-
 .normal
 	LDA.w SpriteActivity, X
-
 .done
 	RTL
 
@@ -135,7 +133,7 @@ RTL
 ItemSet_Mushroom:
 	PHA
 		LDA.l NpcFlags+1 : ORA.b #$10 : STA.l NpcFlags+1
-		LDY.w SpriteItemType, X ; Retrieve stored item type
+		LDY.w SpriteID, X ; Retrieve stored item type
 		BNE +
 			; if for any reason the item value is 0 reload it, just in case
 			%GetPossiblyEncryptedItem(MushroomItem, SpriteItemValues) : TAY
@@ -189,7 +187,10 @@ JumpToSplashItemTarget:
 ;--------------------------------------------------------------------------------
 LoadCatfishItemGFX:
         LDA.l $9DE185 ; location randomizer writes catfish item to
-        JML PrepDynamicTile
+        JSL.l ResolveLootIDLong
+	STA.w SpriteID, Y
+        TYX
+	JML.l PrepDynamicTile_loot_resolved
 ;--------------------------------------------------------------------------------
 DrawThrownItem:
         LDA.b OverworldIndex : CMP.b #$81 : BNE .catfish
@@ -200,6 +201,7 @@ DrawThrownItem:
                 .catfish
                 LDA.l $9DE185 ; location randomizer writes catfish item to
                 .draw
+                LDA.w SpriteID,X
                 JML DrawDynamicTile
 ;--------------------------------------------------------------------------------
 MarkThrownItem:
