@@ -473,6 +473,7 @@ ItemBehavior:
 
         .free_map
         REP #$20
+        LSR
         AND.w #$000F : ASL : TAX
         LDA.w DungeonItemIDMap,X : TAX
         LDA.l DungeonMask,X : ORA.l MapField : STA.l MapField
@@ -485,6 +486,7 @@ ItemBehavior:
 
         .free_compass
         REP #$20
+        LSR
         AND.w #$000F : ASL : TAX
         LDA.w DungeonItemIDMap,X : TAX
         LDA.l DungeonMask,X : ORA.l CompassField : STA.l CompassField
@@ -497,6 +499,7 @@ ItemBehavior:
 
         .free_bigkey
         REP #$20
+        LSR
         AND.w #$000F : ASL : TAX
         LDA.w DungeonItemIDMap,X : TAX
         LDA.l DungeonMask,X : ORA.l BigKeyField : STA.l BigKeyField
@@ -509,6 +512,7 @@ ItemBehavior:
 
         .free_smallkey
         REP #$20
+        LSR
         AND.w #$000F : TAX
         ASL : CMP.w DungeonID : BEQ .same_dungeon
                 LSR : TAX

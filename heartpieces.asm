@@ -41,12 +41,13 @@ DrawHeartPieceGFX:
                 PHA : PHX
                 TAX
                 LDA.l SpriteProperties_standing_width,X : BNE +
+                        PLX
                         LDA.w SpriteControl, X : ORA.b #$20 : STA.w SpriteControl, X
-                        PLX : PLA
                         BRA .draw
                 +
-                PLX : PLA
+                PLX
                 .draw
+                PLA
                 JSL.l DrawDynamicTile
                 JSL.l Sprite_DrawShadowLong 
                 .done
