@@ -548,6 +548,7 @@ LoadMushroom:
 
 	LDA.b #$00 : STA.l RedrawFlag
 	%GetPossiblyEncryptedItem(MushroomItem, SpriteItemValues)
+        JSR.w ResolveLootID
 	STA.w SpriteID,X
 	JSL.l PrepDynamicTile
 

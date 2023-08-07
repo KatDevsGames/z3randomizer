@@ -585,7 +585,7 @@ org $87F52F
 dw $0191
 
 ;--------------------------------------------------------------------------------
-;Map Pendant / Crystal Indicators
+;Map Pendant / Crystal Indicators - DEPRECATED in favor of WorldMapIcon_tile, don't use
 
 org $8ABF2E ; PC 0x53F02
 dw $0100 ; #$6234 - Master Sword
