@@ -350,59 +350,59 @@ Shopkeeper_SetupHitboxes:
 RTS
 
 Shopkeeper_BuyItem:
-	PHX : PHY
-		TYX
+        PHX : PHY
+        TYX
 
-		LDA.l ShopInventory, X
-		CMP.b #$0E : BEQ .refill ; Bee Refill
-		CMP.b #$2E : BEQ .refill ; Red Potion Refill
-		CMP.b #$2F : BEQ .refill ; Green Potion Refill
-		CMP.b #$30 : BEQ .refill ; Blue Potion Refill
-		BRA +
-			.refill
-			JSL.l Sprite_GetEmptyBottleIndex : BMI .full_bottles
-		+
+        LDA.l ShopInventory, X
+        CMP.b #$0E : BEQ .refill ; Bee Refill
+        CMP.b #$2E : BEQ .refill ; Red Potion Refill
+        CMP.b #$2F : BEQ .refill ; Green Potion Refill
+        CMP.b #$30 : BEQ .refill ; Blue Potion Refill
+                BRA +
+        .refill
+        JSL.l Sprite_GetEmptyBottleIndex : BMI .full_bottles
+	        +
 
-		LDA.l ShopType : AND.b #$80 : BNE .buy ; don't charge if this is a take-any
-		REP #$20 : LDA.l CurrentRupees : CMP.l ShopInventory+1, X : SEP #$20 : !BGE .buy
+                LDA.l ShopType : AND.b #$80 : BNE .buy ; don't charge if this is a take-any
+                        REP #$20 : LDA.l CurrentRupees : CMP.l ShopInventory+1, X : SEP #$20 : !BGE .buy
 
-		.cant_afford
-	        LDA.b #$7A
-	        LDY.b #$01
-	        JSL.l Sprite_ShowMessageUnconditional
-			LDA.b #$3C : STA.w SFX2 ; error sound
-			JMP .done
-		.full_bottles
-	        LDA.b #$6B
-	        LDY.b #$01
-	        JSL.l Sprite_ShowMessageUnconditional
-			LDA.b #$3C : STA.w SFX2 ; error sound
-			JMP .done
-		.buy
-			LDA.l ShopType : AND.b #$80 : BNE ++ ; don't charge if this is a take-any
-				REP #$20 : LDA.l CurrentRupees : !SUB ShopInventory+1, X : STA.l CurrentRupees : SEP #$20 ; Take price away
-			++
-			LDA.l ShopInventory, X : TAY : JSL.l Link_ReceiveItem
-			LDA.l ShopInventory+3, X : INC : STA.l ShopInventory+3, X
+                .cant_afford
+                LDA.b #$7A
+                LDY.b #$01
+                JSL.l Sprite_ShowMessageUnconditional
+                LDA.b #$3C : STA.w SFX2 ; error sound
+                JMP .done
+        .full_bottles
+        LDA.b #$6B : LDY.b #$01
+        JSL.l Sprite_ShowMessageUnconditional
+        LDA.b #$3C : STA.w SFX2 ; error sound
+        JMP .done
+        .buy
+        LDA.l ShopType : AND.b #$80 : BNE ++ ; don't charge if this is a take-any
+                REP #$20 : LDA.l CurrentRupees : !SUB ShopInventory+1, X : STA.l CurrentRupees : SEP #$20 ; Take price away
+        ++
+        INC.w ShopPurchaseFlag
+        LDA.l ShopInventory, X : TAY : JSL.l Link_ReceiveItem
+        LDA.l ShopInventory+3, X : INC : STA.l ShopInventory+3, X
 
-			TXA : LSR #2 : TAX
-			LDA.l ShopType : BIT.b #$80 : BNE +
-				LDA.l ShopState : ORA.w Shopkeeper_ItemMasks, X : STA.l ShopState
-				PHX
-					TXA : !ADD ShopSRAMIndex : TAX
-					LDA.l PurchaseCounts, X : INC : BEQ +++ : STA.l PurchaseCounts, X : +++
-				PLX
-				BRA ++
-			+ ; Take-any
-				BIT.b #$20 : BNE .takeAll
-				.takeAny
-					LDA.l ShopState : ORA.b #$07 : STA.l ShopState
-					PHX : LDA.l ShopSRAMIndex : TAX : LDA.b #$01 : STA.l PurchaseCounts, X : PLX
-					BRA ++
-				.takeAll
-					LDA.l ShopState : ORA.w Shopkeeper_ItemMasks, X : STA.l ShopState
-					PHX : LDA.l ShopSRAMIndex : TAX : LDA.l ShopState : STA.l PurchaseCounts, X : PLX
-			++
+        TXA : LSR #2 : TAX
+        LDA.l ShopType : BIT.b #$80 : BNE +
+                LDA.l ShopState : ORA.w Shopkeeper_ItemMasks, X : STA.l ShopState
+                PHX
+                TXA : !ADD ShopSRAMIndex : TAX
+                LDA.l PurchaseCounts, X : INC : BEQ +++ : STA.l PurchaseCounts, X : +++
+                PLX
+                BRA ++
+        + ; Take-any
+        BIT.b #$20 : BNE .takeAll
+                .takeAny
+                LDA.l ShopState : ORA.b #$07 : STA.l ShopState
+                PHX : LDA.l ShopSRAMIndex : TAX : LDA.b #$01 : STA.l PurchaseCounts, X : PLX
+                BRA ++
+                .takeAll
+                LDA.l ShopState : ORA.w Shopkeeper_ItemMasks, X : STA.l ShopState
+                PHX : LDA.l ShopSRAMIndex : TAX : LDA.l ShopState : STA.l PurchaseCounts, X : PLX
+	++
 	.done
 	PLY : PLX
 RTS

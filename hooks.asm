@@ -560,7 +560,7 @@ org $86D192 ; <- 35192 - sprite_absorbable.asm : 274 (STA $7EF36F)
 JSL IncrementSmallKeysNoPrimary
 ;--------------------------------------------------------------------------------
 org $80F945 ; <- 7945 - Bank00.asm : 8557 (JSL SavePalaceDeaths)
-JSL StatTransitionCounter ; we're not bothering to restore the instruction we wrote over
+JSL OnDungeonBossExit
 ;--------------------------------------------------------------------------------
 org $89F443 ; <- 4F443 - module_death.asm : 257 (STA $7EF35C, X)
 JSL IncrementFairyRevivalCounter
@@ -928,13 +928,10 @@ org $88C6C8 ; 446C8 - ancilla_receive_item.asm:538 (LDA AddReceiveItem.propertie
 JSL CheckReceivedItemPropertiesBeforeLoad
 
 org $88C6DE ; 446DE - ancilla_receive_item.asm:550 (LDA .wide_item_flag, X)
-LDA.l SpriteProperties_chest_width, X
+JSL.l ItemReceiptWidthCheck
 
 org $88C6F9 ; 446F9 - ancilla_receive_item.asm:570 (LDA AddReceiveItem.properties, X)
 JSL CheckReceivedItemPropertiesBeforeLoad
-
-;org $88C70F ; 4470F - ancilla_receive_item.asm : 582 - (LDA.b #$00 : STA ($92), Y)
-;JSL LoadNarrowObject
 
 org $8985ED ; 485ED - ancilla_init.asm:693 (LDA $02E9 : CMP.b #$01)
 JSL AddReceivedItemExpandedGetItem : NOP
@@ -993,10 +990,32 @@ JSL LockAgahnimDoors : BNE Overworld_Entrance_BRANCH_EPSILON : NOP #6
 org $9BBCC1 ; <- DBCC1 - Bank1B.asm : 223 (LDA $0F8004, X : AND.w #$01FF : STA $00)
 Overworld_Entrance_BRANCH_EPSILON: ; go here to lock doors
 ;--------------------------------------------------------------------------------
-; -- HOOK THIS LATER TO FUCK WITH BOSS DROPS --
-org $81C73E ; <- C73E - Bank01.asm : 10377 (LDA $01C6FC, X : JSL Sprite_SpawnFallingItem)
-JSL DropSafeDungeon : NOP #4
+; Dungeon Drops
 ;--------------------------------------------------------------------------------
+org $81C50D : JSL.l CheckDungeonWorld
+org $81C517 : JSL.l CheckDungeonCompletion
+org $81C523 : JSL.l CheckDungeonCompletion
+org $81C710 : JSL.l CheckSpawnPrize
+BCS RoomTag_GetHeartForPrize_spawn_prize : BRA RoomTag_GetHeartForPrize_delete_tag
+org $81C742 : JSL.l SpawnDungeonPrize
+org $8799EA : JML.l SetItemPose
+org $88C415 : JSL.l PendantMusicCheck
+BCS Ancilla22_ItemReceipt_is_pendant : BRA Ancilla22_ItemReceipt_wait_for_music
+org $88C452 : JSL.l MaybeKeepLootID : NOP #2
+org $88C61D : JSL.l AnimatePrizeCutscene : NOP
+org $88C622 : BCC ItemReceipt_Animate_continue
+org $88C6BA : JSL.l CheckPoseItemCoordinates
+org $88CAD6 : JSL.l HandleDropSFX : NOP #2
+org $88CADC : BCC Ancilla29_MilestoneItemReceipt_skip_crystal_sfx
+org $88CAE9 : JSL.l PrepPrizeTile 
+org $88CB23 : JSL.l PrizeDropSparkle : BCC Ancilla29_MilestoneItemReceipt_no_sparkle : NOP #2
+org $88CB97 : JSL.l PrepPrizeOAMCoordinates : BRA + : NOP #$12 : +
+org $88CBFF : JSL.l PrepPrizeShadow
+org $88CC6C : JSL.l HandleCrystalsField
+org $88CCA6 : JSL.l PrepPrizeOAMCoordinates : NOP
+org $8985FA : JSL.l SetCutsceneFlag : NOP #3 : BCC AncillaAdd_ItemReceipt_not_crystal
+org $8988B2 : JSL.l SetPrizeCoords : NOP
+
 
 ;================================================================================
 ; Uncle / Sage Fixes - Old Man Fixes - Link's House Fixes
@@ -1569,11 +1588,6 @@ JSL HUDRebuildIndoorHole
 ; Pendant / Crystal Fixes
 ;--------------------------------------------------------------------------------
 ;================================================================================
-org $898BB0 ; <- 048BB0 - ancilla_init.asm:1663 - (STX $02D8 : JSR AddAncilla)
-JSL TryToSpawnCrystalUntilSuccess : NOP
-org $81C74B ; <- 00C74B - bank01.asm:10368 - (STZ $AE, X)
-NOP #2 ; this STZ is what makes the crystal never spawn if it fails to spawn on the first try
-;================================================================================
 org $8DE9C8 ; <- 6E9C8 - equipment.asm:1623 - (LDA $7EF3C5 : CMP.b #$03 : BCC .beforeAgahnim)
 JSL DrawPendantCrystalDiagram : RTS
 ;================================================================================
@@ -1596,21 +1610,13 @@ org $82B15C ; <- 1315C - Bank02.asm:7672 - (LDA $7EF3CA : EOR.b #$40 : STA $7EF3
 JSL IncrementOWMirror
 JSL FlipLWDWFlag : NOP #2
 ;================================================================================
-;Clear level to open doors
-org $81C50D ; 0xC50D - Bank01.asm:10032 - (LDA $7EF3CA : BNE .inDarkWorld)
-LDA CrystalPendantFlags_2, X
-;================================================================================
-;Kill enemy to clear level
-org $81C715 ; <- C715 - Bank01.asm:10358 - (LDA $7EF3CA : BNE .inDarkWorld)
-LDA CrystalPendantFlags_2, X
-;================================================================================
-org $8AC5BB ; < 545BB - Bank0A.asm:1856 - (LDA $7EF3C7 : CMP.b #$03 : BNE .fail)
-JSL OverworldMap_CheckObject : RTS
-org $8AC5D8 ; < 545D8 - Bank0A.asm:1885 - (LDA $7EF3C7 : CMP.b #$07 : BNE OverworldMap_CheckPendant_fail)
-JSL OverworldMap_CheckObject : RTS
+;org $8AC5BB ; < 545BB - Bank0A.asm:1856 - (LDA $7EF3C7 : CMP.b #$03 : BNE .fail)
+;JSL OverworldMap_CheckObject : RTS
+;org $8AC5D8 ; < 545D8 - Bank0A.asm:1885 - (LDA $7EF3C7 : CMP.b #$07 : BNE OverworldMap_CheckPendant_fail)
+;JSL OverworldMap_CheckObject : RTS
 ;================================================================================
 org $8AC53E ; <- 5453E - Bank0A.asm:1771 - (LDA $0AC50D, X : STA $0D)
-JSL GetCrystalNumber
+LDA.l CrystalNumberTable-1,X
 ;================================================================================
 ; EVERY INSTANCE OF STA $7EF3C7 IN THE ENTIRE CODEBASE
 org $829D51 : JSL SetLWDWMap
@@ -1625,28 +1631,11 @@ org $898687 : JSL SetLWDWMap
 org $9ECEDD : JSL SetLWDWMap
 org $9ECF0D : JSL SetLWDWMap
 ;================================================================================
-; EVERY INSTANCE OF LDA $7EF3C7 IN THE ENTIRE CODEBASE
 org $85DDFE : JSL GetMapMode
 org $85EE25 : JSL GetMapMode
 org $85F17D : JSL GetMapMode
 org $85FF7D : JSL GetMapMode
-
 org $8AC01A : JSL GetMapMode
-org $8AC037 : JSL GetMapMode
-org $8AC079 : JSL GetMapMode
-org $8AC0B8 : JSL GetMapMode
-org $8AC0F8 : JSL GetMapMode
-org $8AC137 : JSL GetMapMode
-org $8AC179 : JSL GetMapMode
-org $8AC1B3 : JSL GetMapMode
-org $8AC1F5 : JSL GetMapMode
-org $8AC22F : JSL GetMapMode
-org $8AC271 : JSL GetMapMode
-org $8AC2AB : JSL GetMapMode
-org $8AC2ED : JSL GetMapMode
-org $8AC327 : JSL GetMapMode
-org $8AC369 : JSL GetMapMode
-
 org $8DC849 : JSL GetMapMode
 ;================================================================================
 org $8AC012 ; <- 54012 - Bank0A.asm:1039 (LDA $7EF2DB : AND.b #$20 : BNE BRANCH_DELTA)
@@ -1746,9 +1735,7 @@ org $9ECE47 ; <- F4E47 - sprite_crystal_maiden.asm : 220
 JML MaidenCrystalScript
 ;--------------------------------------------------------------------------------
 org $9ECCEB ; <- F4CEB - sprite_crystal_maiden.asm : 25 ; skip all palette nonsense
-JML SkipCrystalPalette
-org $9ECD39
-SkipCrystalPalette:
+BRA CrystalCutscene_Initialize_skip_palette
 ;--------------------------------------------------------------------------------
 org $88C3FD ; <- 443FD - ancilla_receive_item.asm : 89
 BRA + : NOP #4 : +
@@ -2515,7 +2502,6 @@ org $82ADE9 : JSL TransferItemReceiptToBuffer_using_GraphicsID
 org $869261 : JSL TransferItemReceiptToBuffer_using_GraphicsID
 
 ; falling items
-org $88CAE9 : JSL TransferItemReceiptToBuffer_using_GraphicsID
 org $898BD2 : JSL TransferItemReceiptToBuffer_using_GraphicsID
 
 ; misc

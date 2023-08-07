@@ -62,6 +62,7 @@ incsrc ram.asm
 incsrc sram.asm
 incsrc registers.asm
 incsrc vanillalabels.asm
+incsrc overworldmap.asm ; Overwrites some code in bank $8A
 
 org $A08000 ; bank $20
 incsrc itemdowngrade.asm

@@ -21,7 +21,7 @@ RigChestRNG:
 RTL
 	.forceHeart
 	LDA.b #$33 : STA.b ScrapBufferBD+$0B ; assure the correct state if player talked to shopkeeper
-	LDA.w ItemsTaken : AND.b #$40 : BNE .notHeart
+	LDA.w RoomItemsTaken : AND.b #$40 : BNE .notHeart
 	LDA.b #$07 ; give prize item
 RTL
 	.notHeart

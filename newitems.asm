@@ -75,14 +75,6 @@ macro ProgrammableItemLogic(index)
 	?end:
 endmacro
 
-macro ValueShift()
-	TAX : LDA.b #$01
-	?start:
-		CPX #$00 : BEQ ?end
-		ASL
-		DEX
-	BRA ?start : ?end:
-endmacro
 ;--------------------------------------------------------------------------------
 ;carry clear if pass
 ;carry set if caught
@@ -109,7 +101,7 @@ ProcessEventItems:
                         REP #$20 ; set 16-bit accumulator
 			LDA.l GoalItemRequirement : BEQ ++
 			LDA.l GoalCounter : INC : STA.l GoalCounter
-			CMP.l GoalItemRequirement : !BLT ++
+			CMP.l GoalItemRequirement : BCC ++
 			LDA.l TurnInGoalItems : AND.w #$00FF : BNE ++
 				JSL.l ActivateGoal
 			++
@@ -139,6 +131,7 @@ AddReceivedItemExpandedGetItem:
         SEP #$30
 
         PLB : PLX
+        STZ.w ShopPurchaseFlag
 	LDA.w ItemReceiptMethod : CMP.b #$01 ; thing we wrote over
 RTL
 
@@ -187,42 +180,42 @@ ItemBehavior:
         LDX.b #$01
         JSR .increment_sword
         JSR .increment_shield
-        REP #$10
         RTS
 
         .master_sword
         SEP #$10
         LDX.b #$02
         JSR .increment_sword
-        REP #$10
         RTS
 
         .tempered_sword
         SEP #$10
         LDX.b #$03
         JSR .increment_sword
-        REP #$10
         RTS
 
         .gold_sword
         SEP #$10
         LDX.b #$04
         JSR .increment_sword
-        REP #$10
         RTS
 
         .fighter_shield
         SEP #$10
         LDX.b #$01
         JSR .increment_shield
-        REP #$10
         RTS
 
         .red_shield
         SEP #$10
-        LDX.b #$02
-        JSR .increment_shield
-        REP #$10
+        LDA.w ShopPurchaseFlag : BNE .shop_shield
+                -
+                LDX.b #$02
+                JSR .increment_shield
+                RTS
+        .shop_shield
+        TYX
+        LDA.l InventoryTable_properties,X : BIT.b #$02 : BNE -
         RTS
 
         .mirror_shield
@@ -291,10 +284,12 @@ ItemBehavior:
         REP #$20
         LDA.w DungeonID : CMP.w #$0003 : BCC ..hc_sewers
         TAX
-        LDA.l DungeonMask,X : ORA.l CompassField : STA.l CompassField
+        LDA.l DungeonItemMasks,X : TAY
+        ORA.l CompassField : STA.l CompassField
         JMP.w .increment_compass
         ..hc_sewers
-        LDA.w #$C000 : ORA.l CompassField : STA.l CompassField
+        LDA.w #$C000 : TAY
+        ORA.l CompassField : STA.l CompassField
         JMP.w .increment_compass
 
 
@@ -302,7 +297,7 @@ ItemBehavior:
         REP #$20
         LDA.w DungeonID : CMP.w #$0003 : BCC ..hc_sewers
         TAX
-        LDA.l DungeonMask,X : ORA.l BigKeyField : STA.l BigKeyField
+        LDA.l DungeonItemMasks,X : ORA.l BigKeyField : STA.l BigKeyField
         JMP.w .increment_bigkey
         ..hc_sewers
         LDA.w #$C000 : ORA.l BigKeyField : STA.l BigKeyField
@@ -312,10 +307,12 @@ ItemBehavior:
         REP #$20
         LDA.w DungeonID : CMP.w #$0003 : BCC ..hc_sewers
         TAX
-        LDA.l DungeonMask,X : ORA.l MapField : STA.l MapField
+        LDA.l DungeonItemMasks,X : TAY
+        ORA.l MapField : STA.l MapField
         JMP.w .increment_map
         ..hc_sewers
-        LDA.w #$C000 : ORA.l MapField : STA.l MapField
+        LDA.w #$C000 : TAY
+        ORA.l MapField : STA.l MapField
         JMP.w .increment_map
 
         .bow_and_arrows
@@ -451,7 +448,7 @@ ItemBehavior:
         REP #$20 ; set 16-bit accumulator
         LDA.l GoalItemRequirement : BEQ +
         LDA.l GoalCounter : INC : STA.l GoalCounter
-        CMP.w GoalItemRequirement : !BLT +
+        CMP.w GoalItemRequirement : BCC +
         LDA.l TurnInGoalItems : AND.w #$00FF : BNE +
                 JSL.l ActivateGoal
         +
@@ -479,12 +476,15 @@ ItemBehavior:
         LSR
         AND.w #$000F : ASL : TAX
         LDA.w DungeonItemIDMap,X : TAX
-        LDA.l DungeonMask,X : ORA.l MapField : STA.l MapField
+        LDA.l DungeonItemMasks,X : TAY
+        ORA.l MapField : STA.l MapField
         SEP #$20
         JMP.w .increment_map
 
         .hc_map
-        LDA.b #$C0 : ORA.l MapField+1 : STA.l MapField+1
+        REP #$20
+        LDA.w #$C000 : TAY
+        ORA.l MapField : STA.l MapField
         JMP.w .increment_map
 
         .free_compass
@@ -492,12 +492,16 @@ ItemBehavior:
         LSR
         AND.w #$000F : ASL : TAX
         LDA.w DungeonItemIDMap,X : TAX
-        LDA.l DungeonMask,X : ORA.l CompassField : STA.l CompassField
+        LDA.l DungeonItemMasks,X : TAY
+        ORA.l CompassField : STA.l CompassField
         SEP #$20
         JMP.w .increment_compass
 
         .hc_compass
-        LDA.b #$C0 : ORA.l CompassField+1 : STA.l CompassField+1
+        REP #$20
+        LDA.w #$C000 : TAY
+        ORA.l CompassField : STA.l CompassField
+        SEP #$20
         JMP.w .increment_compass
 
         .free_bigkey
@@ -505,7 +509,7 @@ ItemBehavior:
         LSR
         AND.w #$000F : ASL : TAX
         LDA.w DungeonItemIDMap,X : TAX
-        LDA.l DungeonMask,X : ORA.l BigKeyField : STA.l BigKeyField
+        LDA.l DungeonItemMasks,X : ORA.l BigKeyField : STA.l BigKeyField
         SEP #$20
         JMP.w .increment_bigkey
 
@@ -537,50 +541,68 @@ ItemBehavior:
                 LDA.l CurrentSmallKeys : INC : STA.l CurrentSmallKeys
                 RTS
         .normal
-        LDA.w DungeonID : CMP.b #$FF : BEQ .done
+        LDA.w DungeonID : BMI +
                 LDA.l CurrentSmallKeys : INC : STA.l CurrentSmallKeys
+                RTS
+        +
+        RTS
 
         .increment_sword
         LDA.l HighestSword
-        INC : STA.b Scrap04 : CPX.b Scrap04 : !BLT + ; don't increment unless we're getting a better sword
+        INC : STA.b Scrap04 : CPX.b Scrap04 : BCC + ; don't increment unless we're getting a better sword
                 TXA : STA.l HighestSword
         +
         RTS
 
         .increment_shield
         LDA.l HighestShield
-        INC : STA.b Scrap04 : CPX.b Scrap04 : !BLT + ; don't increment unless we're getting a better shield
+        INC : STA.b Scrap04 : CPX.b Scrap04 : BCC + ; don't increment unless we're getting a better shield
                 TXA : STA.l HighestShield
         +
         RTS
 
         .increment_mail
         LDA.l HighestMail
-        INC : STA.b Scrap04 : CPX.b Scrap04 : !BLT +   ; don't increment unless we're getting a better mail
+        INC : STA.b Scrap04 : CPX.b Scrap04 : BCC +   ; don't increment unless we're getting a better mail
                 TXA : STA.l HighestMail
         +
         RTS
 
         .increment_bigkey
-        SEP #$30
+        SEP #$20
         LDA.l BigKeysBigChests
         CLC : ADC.b #$10
         STA.l BigKeysBigChests
         RTS
 
         .increment_map
-        SEP #$30
+        SEP #$20
         LDA.l MapsCompasses
         CLC : ADC.b #$10
         STA.l MapsCompasses
+        JSL.l MaybeFlagMapTotalPickup
         RTS
 
         .increment_compass
-        SEP #$30
+        SEP #$20
         LDA.l MapsCompasses : INC : AND.b #$0F : TAX
         LDA.l MapsCompasses : AND.b #$F0 : STA.l MapsCompasses
         TXA : ORA.l MapsCompasses : STA.l MapsCompasses
         JSL MaybeFlagCompassTotalPickup
+        RTS
+
+        .free_crystal
+        REP #$20
+        LSR
+        AND.w #$000F : TAX
+        LDA.w #$0000
+        SEC
+        -
+                ROL
+                DEX
+        BPL -
+        SEP #$20
+        ORA.l CrystalsField : STA.l CrystalsField
 
         .done
         RTS
@@ -589,10 +611,10 @@ ResolveReceipt:
         PHA : PHX
         PHK : PLB
         JSL.l PreItemGet
-        LDA.w ItemReceiptID ; Item Value
+        LDA.w ItemReceiptID
         .get_item
         JSR.w AttemptItemSubstitution
-        JSR.w HandleBowTracking ; Progressive bows get resolved to new loot id
+        JSR.w HandleBowTracking
         JSR.w ResolveLootID
         .have_item
         STA.w ItemReceiptID
@@ -617,10 +639,10 @@ ResolveLootID:
         TAY
         REP #$30
         AND.w #$00FF : ASL : TAX
-        SEP #$30
         TYA
         JMP.w (ItemReceipts_resolution,X)
         .have_item
+        SEP #$30
         PLB : PLX
         RTS
 
@@ -628,14 +650,16 @@ ResolveLootID:
         JMP.w .have_item
 
         .bottles
-        JSR.w CountBottles : CMP.l BottleLimit : !BLT +
+        SEP #$30
+        JSR.w CountBottles : CMP.l BottleLimit : BCC +
                 LDA.l BottleLimitReplacement
                 JMP.w .get_item
         +
-        LDA.w ItemReceiptID
+        TYA
         JMP.w .have_item
 
         .magic
+        SEP #$20
         LDA.l MagicConsumption : TAX
         LDA.w ResolveLootID_magic_ids,X
         JMP.w .have_item
@@ -643,6 +667,7 @@ ResolveLootID:
         db $4E, $4F, $4F
 
         .prog_sword
+        SEP #$20
         LDA.l HighestSword
         CMP.l ProgressiveSwordLimit : BCC +
                 LDA.l ProgressiveSwordReplacement
@@ -655,6 +680,7 @@ ResolveLootID:
         db $49, $50, $02, $03, $03
 
         .shields
+        SEP #$20
         LDA.l HighestShield
         CMP.l ProgressiveShieldLimit : BCC +
                 LDA.l ProgressiveShieldReplacement
@@ -667,6 +693,7 @@ ResolveLootID:
         db $04, $05, $06, $06
 
         .armor
+        SEP #$20
         LDA.l HighestMail
         CMP.l ProgressiveArmorLimit : BCC +
                 LDA.l ProgressiveArmorReplacement
@@ -679,6 +706,7 @@ ResolveLootID:
 
 
         .gloves
+        SEP #$20
         LDA.l GloveEquipment : TAX
         LDA.w ResolveLootID_gloves_ids,X
         JMP.w .have_item
@@ -686,6 +714,7 @@ ResolveLootID:
         db $1B, $1C, $1C
 
         .progressive_bow
+        SEP #$20
         LDA.l BowEquipment : INC : LSR : CMP.l ProgressiveBowLimit : BCC +
                 LDA.l ProgressiveBowReplacement
                 JMP.w .get_item
@@ -696,6 +725,7 @@ ResolveLootID:
         JMP.w .get_item
 
         .progressive_bow_2
+        SEP #$20
         LDA.l BowEquipment : INC : LSR : CMP.l ProgressiveBowLimit : BCC +
                 LDA.l ProgressiveBowReplacement
                 JMP.w .get_item
@@ -826,7 +856,7 @@ GetRNGItemSingle:
 		LDX.b #$00
 		.single_reroll
 			JSL.l GetRandomInt : AND.b #$7F ; select random value
-			INX : CPX.b #$7F : !BLT + : LDA.b #$00 : BRA +++ : + ; default to 0 if too many attempts
+			INX : CPX.b #$7F : BCC + : LDA.b #$00 : BRA +++ : + ; default to 0 if too many attempts
 			CMP.l RNGSingleTableSize : !BGE .single_reroll
 		+++
 
@@ -837,9 +867,9 @@ GetRNGItemSingle:
 			TYA
 			JSR.w CheckSingleItem : BEQ .single_unused ; already used
 				LDA.w ScratchBufferV : INC ; increment index
-				CMP.l RNGSingleTableSize : !BLT +++ : LDA.b #$00 : +++ ; rollover index if needed
+				CMP.l RNGSingleTableSize : BCC +++ : LDA.b #$00 : +++ ; rollover index if needed
 				STA.w ScratchBufferV ; store index
-				INX : TAY : TXA : CMP.l RNGSingleTableSize : !BLT .recheck
+				INX : TAY : TXA : CMP.l RNGSingleTableSize : BCC .recheck
 				LDA.b #$5A ; everything is gone, default to null item - MAKE THIS AN OPTION FOR THIS AND THE OTHER ONE
 				BRA .single_done
 		.single_unused
@@ -891,7 +921,7 @@ GetRNGItemMulti:
 	LDX.b #$00
 	- ; reroll
 		JSL.l GetRandomInt : AND.b #$7F ; select random value
-		INX : CPX.b #$7F : !BLT + : LDA.b 00 : BRA .done : + ; default to 0 if too many attempts
+		INX : CPX.b #$7F : BCC + : LDA.b 00 : BRA .done : + ; default to 0 if too many attempts
 		CMP.l RNGMultiTableSize : !BGE -
 	.done
 	STA.l RNGLockIn
@@ -930,12 +960,13 @@ AttemptItemSubstitution:
                         TXA : LSR #2 : TAX
                         LDA.l ItemLimitCounts, X
                         PLX
-                        CMP.l ItemSubstitutionRules+1, X : !BLT +
+                        CMP.l ItemSubstitutionRules+1, X : BCC +
                                 LDA.l ItemSubstitutionRules+2, X : STA.b 1,S
-                        +: BEQ .exit
-                        .noMatch
+                        +
+                        BEQ .exit
+                                .noMatch
                                 INX #4
-                                BRA -
+        BRA -
         .exit
         PLA : PLX
 RTS
@@ -967,101 +998,66 @@ ChestPrep:
     LDY.b Scrap0C ; get item value
 	SEC
 RTL
+
 ;--------------------------------------------------------------------------------
-; Set a flag in SRAM if we pick up a compass in its own dungeon with HUD compass
-; counts on
 MaybeFlagCompassTotalPickup:
         LDA.l CompassMode : AND.b #$0F : BEQ .done
-        LDA.w DungeonID : CMP.b #$FF : BEQ .done
-        LSR : STA.b Scrap04 : LDA.b #$0F : !SUB Scrap04    ; Compute flag "index"
-        CPY.b #$25 : BEQ .setFlag                          ; Set flag if it's a compass for this dungeon
-                STA.b Scrap04
-                TYA : AND.b #$0F : CMP.b Scrap04 : BNE .done ; Check if compass is for this dungeon
-                        .setFlag
-                        CMP.b #$08 : !BGE ++
-                                %ValueShift()
-                                ORA.l CompassCountDisplay : STA.l CompassCountDisplay
-                                BRA .done
-                        ++
-                                !SUB #$08
-                                %ValueShift()
-                                BIT.b #$C0 : BEQ + : LDA.b #$C0 : + ; Make Hyrule Castle / Sewers Count for Both
-                                ORA.l CompassCountDisplay+1 : STA.l CompassCountDisplay+1
+        LDA.w DungeonID : BMI .done
+                LDA.w ItemReceiptID : CMP.b #$25 : BEQ .set_flag
+                        REP #$20
+                        AND.w #$000F : ASL : TAX
+                        LDA.w DungeonItemIDMap,X : CMP.w DungeonID : BNE .done
+                .set_flag
+                REP #$20
+                TYA : ORA.l CompassCountDisplay : STA.l CompassCountDisplay
         .done
 RTL
+
+MaybeFlagMapTotalPickup:
+        LDA.l MapHUDMode : AND.b #$0F : BEQ .done
+        LDA.w DungeonID : BMI .done
+                LDA.w ItemReceiptID : CMP.b #$33 : BEQ .set_flag
+                        REP #$20
+                        AND.w #$000F : ASL : TAX
+                        LDA.w DungeonItemIDMap,X : CMP.w DungeonID : BNE .done
+                .set_flag
+                REP #$20
+                TYA : ORA.l MapCountDisplay : STA.l MapCountDisplay
+        .done
+RTL
+
 ;--------------------------------------------------------------------------------
 ; Set the dungeon item count display flags if we're entering a dungeon and have the
 ; corresponding dungeon item
 MaybeFlagDungeonTotalsEntrance:
-        LDX.w DungeonID : CPX.b #$FF : BEQ .done ; Skip if we're not entering dungeon
-        LDA.l CompassMode : AND.w #$000F : BEQ .maps ; Skip if we're not showing compass counts
-                JSR.w FlagCompassCount
-        .maps
-        LDA.l MapHUDMode : AND.w #$000F : BEQ .done
-                LDX.w DungeonID
-                JSR.w FlagMapCount
+        LDX.w DungeonID : BMI .done ; Skip if we're not entering dungeon
+                REP #$10
+                LDA.l DungeonItemMasks,X : TAY
+                LDA.l CompassMode : AND.w #$000F : BEQ .maps ; Skip if we're not showing compass counts
+                        JSR.w FlagCompassCount
+                .maps
+                LDA.l MapHUDMode : AND.w #$000F : BEQ .done
+                        LDX.w DungeonID
+                        JSR.w FlagMapCount
         .done
 RTL
 ;--------------------------------------------------------------------------------
 FlagCompassCount:
-        CMP.w #$0002 : BEQ .compassShown
+        CMP.w #$0002 : BEQ .compass_shown
                 LDA.l CompassField : AND.l DungeonItemMasks, X : BEQ .done ; skip if we don't have compass
-                .compassShown
-                SEP #$20
-                TXA : LSR : STA.b Scrap04 : LDA.b #$0F : !SUB Scrap04 ; Compute flag index
-                CMP.b #$08 : !BGE ++
-                        %ValueShift()
-                        ORA.l CompassCountDisplay : STA.l CompassCountDisplay
-                        REP #$20
-                        BRA .done
-                ++
-                        !SUB #$08
-                        %ValueShift()
-                        BIT.b #$C0 : BEQ + : LDA.b #$C0 : + ; Make Hyrule Castle / Sewers Count for Both
-                        ORA.l CompassCountDisplay+1 : STA.l CompassCountDisplay+1
-                        REP #$20
+                        .compass_shown
+                        TYA : ORA.l CompassCountDisplay : STA.l CompassCountDisplay
         .done
 RTS
 ;--------------------------------------------------------------------------------
 FlagMapCount:
         CMP.w #$0002 : BEQ .mapShown
                 LDA.l MapField : AND.l DungeonItemMasks, X : BEQ .done ; skip if we don't have map
-                .mapShown
-                SEP #$20
-                TXA : LSR : STA.b Scrap04 : LDA.b #$0F : !SUB Scrap04 ; Compute flag index
-                CMP.b #$08 : !BGE ++
-                        %ValueShift()
-                        ORA.l MapCountDisplay : STA.l MapCountDisplay
-                        REP #$20
-                        BRA .done
-                ++
-                        !SUB #$08
-                        %ValueShift()
-                        BIT.b #$C0 : BEQ + : LDA.b #$C0 : + ; Make Hyrule Castle / Sewers Count for Both
-                        ORA.l MapCountDisplay+1 : STA.l MapCountDisplay+1
-                        REP #$20
+                        .mapShown
+                        TYA : ORA.l MapCountDisplay : STA.l MapCountDisplay
         .done
 RTS
-;--------------------------------------------------------------------------------
-MaybeFlagMapTotalPickup:
-        LDA.l MapHUDMode : AND.b #$0F : BEQ .done
-        LDA.w DungeonID : CMP.b #$FF : BEQ .done
-        LSR : STA.b Scrap04 : LDA.b #$0F : !SUB Scrap04 ; Compute flag "index"
-        CPY.b #$33 : BEQ .setFlag                       ; Set flag if it's a compass for this dungeon
-                STA.b Scrap04
-                TYA : AND.b #$0F : CMP.b Scrap04 : BNE .done ; Check if map is for this dungeon
-                        .setFlag
-                        CMP.b #$08 : !BGE ++
-                                %ValueShift()
-                                ORA.l MapCountDisplay : STA.l MapCountDisplay
-                                BRA .done
-                        ++
-                                !SUB #$08
-                                %ValueShift()
-                                BIT.b #$C0 : BEQ + : LDA.b #$C0 : + ; Make Hyrule Castle / Sewers Count for Both
-                                ORA.l MapCountDisplay+1 : STA.l MapCountDisplay+1
-        .done
-RTL
+
 ;--------------------------------------------------------------------------------
 DungeonItemIDMap: ; Maps lower four bits of our new dungeon items to DungeonID
 dw $FFFF

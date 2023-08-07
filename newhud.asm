@@ -177,7 +177,10 @@ NewHUD_DrawPrizeIcon:
         .prize
 	TYX
 	LDA.l CrystalPendantFlags_2,X
-	AND.w #$0040
+        BIT.w #$0080
+        BNE .no_icon
+
+	BIT.w #$0040
 	BNE .crystal
 
 	LDY.w #!PTile
@@ -185,6 +188,10 @@ NewHUD_DrawPrizeIcon:
 
 .crystal
 	LDY.w #!CTile
+        BRA .draw_prize
+
+.no_icon
+        LDY.w #!BlankTile
 
 .draw_prize
 	STY.w HUDPrizeIcon

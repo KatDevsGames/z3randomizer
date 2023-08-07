@@ -191,8 +191,11 @@ RTS
 RTS
 
 DungeonIncrement:
+        LDA.w InventoryTable_properties,Y : BIT.b #$40 : BEQ +
+                JSL.l CountChestKeyLong
+        +
 	LDA.b IndoorsFlag : BEQ .count
-	LDA.w DungeonID : CMP.b #$FF : BEQ .count
+	LDA.w DungeonID : BMI .count
                 CMP.l BallNChainDungeon : BNE +
                         CPY.b #$32 : BEQ .ballchain_bigkey
 	        +
@@ -266,6 +269,7 @@ RTS
 
 IncrementBossSword:
         PHX
+        LDA.l StatsLocked : BNE .done
         LDA.l SwordEquipment : CMP.b #$FF : BNE +
                 BRA .none
         +
@@ -281,6 +285,7 @@ IncrementBossSword:
 
         .none
         LDA.l SwordlessBossKills : INC : STA.l SwordlessBossKills
+        .done
         PLX
         RTL
         .fighter
@@ -307,15 +312,6 @@ IncrementBossSword:
         TXA : ORA.l SwordBossKills+1 : STA.l SwordBossKills+1
         PLX
         RTL
-
-SetDungeonCompletion:
-; TODO: move this
-        LDX.w DungeonID : BMI +
-                REP #$20
-                LDA.l DungeonMask, X : ORA.l DungeonsCompleted : STA.l DungeonsCompleted
-                SEP #$20
-        +
-RTS
 
 ;--------------------------------------------------------------------------------
 Link_ReceiveItem_HUDRefresh:

@@ -20,6 +20,10 @@ OnDungeonEntrance:
         INC.w UpdateHUD
 RTL
 ;--------------------------------------------------------------------------------
+OnDungeonBossExit:
+        JSL.l StatTransitionCounter
+RTL
+;--------------------------------------------------------------------------------
 OnPlayerDead:
 	PHA
 		JSL.l SetDeathWorldChecked

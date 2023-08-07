@@ -71,32 +71,27 @@ DrawHeartContainerGFX:
 	BRA DrawHeartPieceGFX_skipLoad
 ;--------------------------------------------------------------------------------
 HeartContainerSound:
-	CPY.b #$20 : BEQ + ; Skip for Crystal
-	CPY.b #$37 : BEQ + ; Skip for Pendants
-	CPY.b #$38 : BEQ +
-	CPY.b #$39 : BEQ +
-    JSL.l CheckIfBossRoom : BCC + ; Skip if not in a boss room
-	        LDA.b #$2E
-			SEC
-		RTL
+        LDA.w ItemReceiptMethod : CMP.b #$03 : BEQ +
+        JSL.l CheckIfBossRoom : BCC + ; Skip if not in a boss room
+                LDA.b #$2E
+                SEC
+                RTL
 	+
 	CLC
 RTL
 ;--------------------------------------------------------------------------------
 NormalItemSkipSound:
-	LDA.w AncillaGet, X ; thing we wrote over
-
-	CPY.b #$20 : BEQ + ; Skip for Crystal
-	CPY.b #$37 : BEQ + ; Skip for Pendants
-	CPY.b #$38 : BEQ +
-	CPY.b #$39 : BEQ +
-	
-	PHA
-        JSL.l CheckIfBossRoom
-	PLA
+; Out: C - skip sounds if set
+        JSL.l CheckIfBossRoom : BCS .boss_room
+	        LDA.b #$00
 RTL
-	+
-	CLC
+	.boss_room
+        LDA.w ItemReceiptMethod : CMP.b #$03 : BEQ +
+	        SEC
+                RTL
+        +
+        LDA.b #$20
+        CLC
 RTL
 ;--------------------------------------------------------------------------------
 HeartPieceSpritePrep:

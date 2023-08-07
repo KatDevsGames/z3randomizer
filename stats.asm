@@ -115,53 +115,56 @@ DecrementSmallKeys:
 	JSL.l UpdateKeys
 RTL
 ;--------------------------------------------------------------------------------
-CountChestKeyLong: ; called from ItemDowngradeFix in itemdowngrade.asm
-	JSR CountChestKey
+CountChestKeyLong:
+	JSR.w CountChestKey
 RTL
 ;--------------------------------------------------------------------------------
-CountChestKey: ; called by neighbor functions
+CountChestKey:
         PHA : PHX
-                CPY.b #$24 : BEQ +  ; small key for this dungeon - use DungeonID
-                        CPY.b #$A0 : !BLT .end ; Ignore most items
-                        CPY.b #$AE : !BGE .end ; Ignore reserved key and generic key
-                        TYA : AND.B #$0F
-                        TAX : BRA .count  ; use Key id instead of DungeonID (Keysanity)
-                +
-                LDA.w DungeonID : LSR : TAX
-                .count
-                LDA.l DungeonCollectedKeys, X : INC : STA.l DungeonCollectedKeys, X
+        LDA.l StatsLocked : BNE .done
+                CPY.b #$24 : BEQ .this_dungeon
+                        TYA
+                        AND.b #$0F : CMP.b #$02 : BCC .hc_sewers
+                                TAX
+                                LDA.l DungeonCollectedKeys,X : INC : STA.l DungeonCollectedKeys
+                                BRA .done
+                .this_dungeon
+                LDA.w DungeonID : CMP.b #$03 : BCC .hc_sewers
+                        LSR : TAX
+                        LDA.l DungeonCollectedKeys,X : INC : STA.l DungeonCollectedKeys,X
+                        BRA .done
 
-                CPX.b #$00 : BNE +
-                        STA.l HCCollectedKeys ; copy HC to sewers
-                +
-                CPX.b #$01 : BNE +
-                        STA.l SewerCollectedKeys ; copy sewers to HC
-                +
-        .end
+                .hc_sewers
+                LDA.l SewerCollectedKeys : INC
+                STA.l SewerCollectedKeys : STA.l HCCollectedKeys
+
+        .done
         PLX : PLA
 RTS
 ;--------------------------------------------------------------------------------
 CountBonkItem: ; called from GetBonkItem in bookofmudora.asm
-	LDA.b RoomIndex ; check room ID - only bonk keys in 2 rooms so we're just checking the lower byte
-	CMP.b #115 : BNE + ; Desert Bonk Key
-		LDA.l BonkKey_Desert : BRA ++
-	+ : CMP.b #140 : BNE + ; GTower Bonk Key
-		LDA.l BonkKey_GTower : BRA ++
-	+ LDA.b #$24 ; default to small key
-	++
-	CMP.b #$24 : BNE +
-		PHY
-			TAY : JSR CountChestKey
-		PLY
-	+
+        LDA.b RoomIndex
+        CMP.b #115 : BNE +
+                LDA.l BonkKey_Desert
+                BRA ++
+        +
+        CMP.b #140 : BNE +
+                LDA.l BonkKey_GTower : BRA ++
+        +
+        LDA.b #$24
+        ++
+        CMP.b #$24 : BNE +
+                PHY
+                TAY
+                JSR CountChestKey
+                PLY
+        +
 RTL
 ;--------------------------------------------------------------------------------
 IncrementAgahnim2Sword:
-	PHA
-		LDA.l StatsLocked : BNE +
-			JSL.l IncrementBossSword
-		+
-	PLA
+        PHA
+        JSL.l IncrementBossSword
+        PLA
 RTL
 ;--------------------------------------------------------------------------------
 IncrementDeathCounter:

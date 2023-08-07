@@ -28,6 +28,7 @@ LoadSelectScreenGfx                                        = $80E529
 PrepDungeonExit                                            = $80F945
 Mirror_InitHdmaSettings                                    = $80FDEE
 Dungeon_LoadRoom                                           = $81873A
+Underworld_HandleRoomTags                                  = $81C2FD
 Module_PreDungeon                                          = $82821E
 Module_PreDungeon_setAmbientSfx                            = $828296
 Dungeon_SaveRoomData                                       = $82A0A8
@@ -36,7 +37,7 @@ Dungeon_SaveRoomQuadrantData                               = $82B861
 LoadGearPalettes_bunny                                     = $82FD8A
 LoadGearPalettes_variable                                  = $82FD95
 Filter_Majorly_Whiten_Color                                = $82FEAB
-Sprite_SpawnFallingItem                                    = $85A51D
+Ancilla_SpawnFallingPrize                                  = $85A51D
 Sprite_DrawMultiple                                        = $85DF6C
 Sprite_DrawMultiple_quantity_preset                        = $85DF70
 Sprite_DrawMultiple_player_deferred                        = $85DF75
@@ -44,8 +45,10 @@ Sprite_ShowSolicitedMessageIfPlayerFacing                  = $85E1A7
 Sprite_ShowMessageFromPlayerContact                        = $85E1F0
 Sprite_ShowMessageUnconditional                            = $85E219
 Sprite_ZeldaLong                                           = $85EC96
+Sprite_EA_HeartContainer                                   = $85EF3F
 Sprite_EB_HeartPiece_handle_flags                          = $85F0C0
 Player_ApplyRumbleToSprites                                = $8680FA
+Sprite_Main                                                = $868328
 Utility_CheckIfHitBoxesOverlapLong                         = $8683E6
 Sprite_PrepAndDrawSingleLargeLong                          = $86DBF8
 Sprite_PrepAndDrawSingleSmallLong                          = $86DC00
@@ -58,13 +61,16 @@ OAM_AllocateDeferToPlayerLong                              = $86F86A
 Player_HaltDashAttackLong                                  = $8791B3
 Link_ReceiveItem                                           = $87999D
 Sprite_CheckIfPlayerPreoccupied                            = $87F4AA
+Ancilla_Main                                               = $888242
 Ancilla_ReceiveItem                                        = $88C3AE
 Ancilla_BreakTowerSeal_draw_single_crystal                 = $88CE93
 Ancilla_BreakTowerSeal_stop_spawning_sparkles              = $88CEC3
 BreakTowerSeal_ExecuteSparkles                             = $88CF59
 Ancilla_SetOam_XY_Long                                     = $88F710
 AddReceivedItem                                            = $8985E2
-AddPendantOrCrystal                                        = $898BAD
+AncillaAdd_ItemReceipt_not_crystal                         = $898605
+AncillaAdd_FallingPrize                                    = $898BAD
+AncillaAdd_FallingPrize_not_medallion                      = $898BD6
 AddWeathervaneExplosion                                    = $898CFD
 AddDashTremor                                              = $8993DF
 AddAncillaLong                                             = $899D04
@@ -114,13 +120,31 @@ Sprite_SpawnDynamically                                    = $9DF65D
 Sprite_SpawnDynamically_arbitrary                          = $9DF65F
 DiggingGameGuy_AttemptPrizeSpawn                           = $9DFD4B
 Sprite_GetEmptyBottleIndex                                 = $9EDE28
+CrystalCutscene_Initialize_skip_palette                    = $9ECD39
 Sprite_PlayerCantPassThrough                               = $9EF4E7
 
 ;===================================================================================================
 ; Local routines (use JSR)
 ;===================================================================================================
+RoomTag_PrizeTriggerDoor_open                              = $81C529
+RoomTag_PrizeTriggerDoor_exit                              = $81C529
+RoomTag_GetHeartForPrize                                   = $81C709
+RoomTag_GetHeartForPrize_spawn_prize                       = $81C731
+RoomTag_GetHeartForPrize_delete_tag                        = $81C749
 Chicken_SpawnAvengerChicken                                = $86A7DB
 Link_PerformOpenChest_no_replacement                       = $87B59F
+Sprite_EA_HeartContainer_main                              = $85EF47
+Ancilla_ExecuteAll                                         = $88832B
+Ancilla_ExecuteOne                                         = $88833C
+Ancilla22_ItemReceipt_is_pendant                           = $88C421
+Ancilla22_ItemReceipt_wait_for_music                       = $88C42B
+ItemReceipt_Animate_continue                               = $88C637
+AncillaDraw_ItemReceipt                                    = $88C6B4
+Ancilla29_MilestoneItemReceipt                             = $88CAB0
+Ancilla29_MilestoneItemReceipt_skip_crystal_sfx            = $88CAE5
+Ancilla29_MilestoneItemReceipt_no_sparkle                  = $88CB2E
+Ancilla_SetOAM_XY                                          = $88F6F3
+Ancilla_AddAncilla                                         = $899CCE
 DrawProgressIcons                                          = $8DE9C8
 ItemMenu_DrawEquippedYItem                                 = $8DEB3A
 ItemMenu_DrawEquippedYItem_exit                            = $8DECE6
@@ -130,11 +154,19 @@ DrawEquipment                                              = $8DED29
 ;===================================================================================================
 ; Palettes
 ;===================================================================================================
-PalettesVanillaBank                                               = $9B0000
-PalettesVanilla_none                                              = $9B0000
-PalettesVanilla_red_melon                                         = $9BD218
-PalettesVanilla_blue_ice                                          = $9BD236
-PalettesVanilla_green_blue_guard                                  = $9BD272
-PalettesVanilla_dark_world_melon                                  = $9BD290
-PalettesVanilla_blue_dark_ice                                     = $9BD2BC
-PalettesVanilla_spraux09                                          = $9BD47E
+PalettesVanillaBank                                        = $9B0000
+PalettesVanilla_none                                       = $9B0000
+PalettesVanilla_red_melon                                  = $9BD218
+PalettesVanilla_blue_ice                                   = $9BD236
+PalettesVanilla_green_blue_guard                           = $9BD272
+PalettesVanilla_dark_world_melon                           = $9BD290
+PalettesVanilla_blue_dark_ice                              = $9BD2BC
+PalettesVanilla_spraux09                                   = $9BD47E
+
+;===================================================================================================
+; Misc. Data
+;===================================================================================================
+WorldMapIcon_AdjustCoordinate                              = $8AC59B
+WorldMap_CalculateOAMCoordinates                           = $8AC3B1
+WorldMap_HandleSpriteBlink                                 = $8AC52E
+WorldMap_RedXChars                                         = $8ABF70

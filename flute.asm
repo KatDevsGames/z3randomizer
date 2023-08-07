@@ -5,9 +5,6 @@ SpawnHauntedGroveItem:
 	LDA.b OverworldIndex : CMP.b #$2A : BEQ + : RTL : + ; Skip if not the haunted grove
 	LDA.b IndoorsFlag : BEQ + : RTL : + ; Skip if indoors
 
-	%GetPossiblyEncryptedItem(HauntedGroveItem, HeartPieceOutdoorValues)
-	JSL.l PrepDynamicTile
-	
 	LDA.b #$EB
 	STA.l MiniGameTime
 	JSL Sprite_SpawnDynamically

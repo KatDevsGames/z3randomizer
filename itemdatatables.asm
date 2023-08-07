@@ -2,7 +2,6 @@ ItemReceipts:
 	.offset_y     : fillbyte $00   : fill 256
 	.offset_x     : fillbyte $00   : fill 256
 	.graphics     : fillbyte $00   : fill 256   ; item_graphics_indices
-	.width        : fillbyte $00   : fill 256   ; wide_item_flag
 	.target       : fillword $0000 : fill 256*2 ; item_target_addr
 	.value        : fillbyte $00   : fill 256   ; item_values
 	.behavior     : fillword $0000 : fill 256*2 ; ItemBehavior
@@ -64,14 +63,14 @@ endmacro
 %ReceiptProps($26, -4, 0, $03, $F36C, $FF, skip, skip) ; 26 - Heart container from 4/4
 %ReceiptProps($27, -4, 0, $13, $F375, $FF, skip, skip) ; 27 - Bomb
 %ReceiptProps($28, -4, 0, $01, $F375, $FF, skip, skip) ; 28 - 3 bombs
-%ReceiptProps($29, -4, 0, $1E, $F344, $FF, mushroom, skip) ; 29 - Mushroom
+%ReceiptProps($29, -4, 0, $1F, $F344, $FF, mushroom, skip) ; 29 - Mushroom
 %ReceiptProps($2A, -2, 5, $10, $F341, $02, red_boomerang, skip) ; 2A - Red boomerang
-%ReceiptProps($2B, -4, 0, $00, $F35C, $FF, skip, bottles) ; 2B - Full bottle (red)
-%ReceiptProps($2C, -4, 0, $00, $F35C, $FF, skip, bottles) ; 2C - Full bottle (green)
-%ReceiptProps($2D, -4, 0, $00, $F35C, $FF, skip, bottles) ; 2D - Full bottle (blue)
-%ReceiptProps($2E, -4, 0, $00, $F36D, $FF, skip, bottles) ; 2E - Potion refill (red)
-%ReceiptProps($2F, -4, 0, $00, $F36E, $FF, skip, bottles) ; 2F - Potion refill (green)
-%ReceiptProps($30, -4, 0, $00, $F36E, $FF, skip, bottles) ; 30 - Potion refill (blue)
+%ReceiptProps($2B, -4, 0, $1E, $F35C, $FF, skip, bottles) ; 2B - Full bottle (red)
+%ReceiptProps($2C, -4, 0, $1E, $F35C, $FF, skip, bottles) ; 2C - Full bottle (green)
+%ReceiptProps($2D, -4, 0, $1E, $F35C, $FF, skip, bottles) ; 2D - Full bottle (blue)
+%ReceiptProps($2E, -4, 0, $1E, $F36D, $FF, skip, bottles) ; 2E - Potion refill (red)
+%ReceiptProps($2F, -4, 0, $1E, $F36E, $FF, skip, bottles) ; 2F - Potion refill (green)
+%ReceiptProps($30, -4, 0, $1E, $F36E, $FF, skip, bottles) ; 30 - Potion refill (blue)
 %ReceiptProps($31, -4, 0, $30, $F375, $FF, skip, skip) ; 31 - 10 bombs
 %ReceiptProps($32, -4, 0, $22, $F366, $FF, dungeon_bigkey, skip) ; 32 - Big key
 %ReceiptProps($33, -4, 0, $21, $F368, $FF, dungeon_map, skip) ; 33 - Map
@@ -199,14 +198,14 @@ endmacro
 %ReceiptProps($AD, -4, 4, $0F, $F36A, $FF, free_smallkey, skip) ; AD - Small key of Ganon's Tower
 %ReceiptProps($AE, -4, 4, $0F, $F36A, $FF, skip, skip) ; AE - Reserved
 %ReceiptProps($AF, -4, 4, $0F, $F36A, $FF, generic_smallkey, skip) ; AF - Generic small key
-%ReceiptProps($B0, -4, 0, $49, $F36A, $FF, skip, skip) ; B0 - 
-%ReceiptProps($B1, -4, 0, $49, $F36A, $FF, skip, skip) ; B1 - 
-%ReceiptProps($B2, -4, 0, $49, $F36A, $FF, skip, skip) ; B2 - 
-%ReceiptProps($B3, -4, 0, $49, $F36A, $FF, skip, skip) ; B3 - 
-%ReceiptProps($B4, -4, 0, $49, $F36A, $FF, skip, skip) ; B4 - 
-%ReceiptProps($B5, -4, 0, $49, $F36A, $FF, skip, skip) ; B5 - 
-%ReceiptProps($B6, -4, 0, $49, $F36A, $FF, skip, skip) ; B6 - 
-%ReceiptProps($B7, -4, 0, $49, $F36A, $FF, skip, skip) ; B7 - 
+%ReceiptProps($B0, -4, 0, $28, $F36A, $FF, free_crystal, skip) ; B0 - Crystal 6 
+%ReceiptProps($B1, -4, 0, $28, $F36A, $FF, free_crystal, skip) ; B1 - Crystal 1 
+%ReceiptProps($B2, -4, 0, $28, $F36A, $FF, free_crystal, skip) ; B2 - Crystal 5 
+%ReceiptProps($B3, -4, 0, $28, $F36A, $FF, free_crystal, skip) ; B3 - Crystal 7 
+%ReceiptProps($B4, -4, 0, $28, $F36A, $FF, free_crystal, skip) ; B4 - Crystal 2 
+%ReceiptProps($B5, -4, 0, $28, $F36A, $FF, free_crystal, skip) ; B5 - Crystal 4 
+%ReceiptProps($B6, -4, 0, $28, $F36A, $FF, free_crystal, skip) ; B6 - Crystal 3 
+%ReceiptProps($B7, -4, 0, $49, $F36A, $FF, skip, skip) ; B7 - Reserved 
 %ReceiptProps($B8, -4, 0, $49, $F36A, $FF, skip, skip) ; B8 - 
 %ReceiptProps($B9, -4, 0, $49, $F36A, $FF, skip, skip) ; B9 - 
 %ReceiptProps($BA, -4, 0, $49, $F36A, $FF, skip, skip) ; BA - 
@@ -560,10 +559,11 @@ endmacro
 %SpriteProps($FF, 2, 2, $04, $04, $0000)                                ; FF - 
 
 ;------------------------------------------------------------------------------
-; Properties: - - w o a y s t
+; Properties: p k w o a y s t
 ; t = Count for total item counter | s = Count for total in shops
 ; y = Y item                       | a = A item
 ; o = Bomb item                    | w = Bow item
+; k = Chest Key                    | p = Crystal prize behavior (sparkle, etc) if set
 InventoryTable:
 	.properties : fillbyte $00   : fill 256   ; See above
 	.stamp      : fillword $0000 : fill 256*2 ; Address to stamp with 32-bit time (bank $7E)
@@ -577,55 +577,55 @@ macro InventoryItem(id, props, stamp, stat)
 	pullpc
 endmacro
 
-%InventoryItem($00, $01, SwordTime, $0000) ; 00 - Fighter sword & Shield
-%InventoryItem($01, $01, SwordTime, $0000) ; 01 - Master sword
+%InventoryItem($00, $81, SwordTime, $0000) ; 00 - Fighter sword & Shield
+%InventoryItem($01, $81, SwordTime, $0000) ; 01 - Master sword
 %InventoryItem($02, $01, SwordTime, $0000) ; 02 - Tempered sword
-%InventoryItem($03, $01, SwordTime, $0000) ; 03 - Butter sword
-%InventoryItem($04, $01, $0000, $0000) ; 04 - Fighter shield
-%InventoryItem($05, $01, $0000, $0000) ; 05 - Fire shield
-%InventoryItem($06, $01, $0000, $0000) ; 06 - Mirror shield
-%InventoryItem($07, $05, $0000, $0000) ; 07 - Fire rod
-%InventoryItem($08, $05, $0000, $0000) ; 08 - Ice rod
-%InventoryItem($09, $05, $0000, $0000) ; 09 - Hammer
-%InventoryItem($0A, $05, $0000, $0000) ; 0A - Hookshot
-%InventoryItem($0B, $25, $0000, $0000) ; 0B - Bow
-%InventoryItem($0C, $05, $0000, $0000) ; 0C - Blue Boomerang
-%InventoryItem($0D, $05, $0000, $0000) ; 0D - Powder
-%InventoryItem($0E, $01, $0000, $0000) ; 0E - Bottle refill (bee)
-%InventoryItem($0F, $05, $0000, $0000) ; 0F - Bombos
-%InventoryItem($10, $05, $0000, $0000) ; 10 - Ether
-%InventoryItem($11, $05, $0000, $0000) ; 11 - Quake
-%InventoryItem($12, $05, $0000, $0000) ; 12 - Lamp
-%InventoryItem($13, $05, $0000, $0000) ; 13 - Shovel
-%InventoryItem($14, $05, FluteTime, $0000) ; 14 - Flute (inactive)
-%InventoryItem($15, $05, $0000, $0000) ; 15 - Somaria
-%InventoryItem($16, $05, $0000, $0000) ; 16 - Bottle
+%InventoryItem($03, $81, SwordTime, $0000) ; 03 - Butter sword
+%InventoryItem($04, $81, $0000, $0000) ; 04 - Fighter shield
+%InventoryItem($05, $81, $0000, $0000) ; 05 - Fire shield
+%InventoryItem($06, $81, $0000, $0000) ; 06 - Mirror shield
+%InventoryItem($07, $85, $0000, $0000) ; 07 - Fire rod
+%InventoryItem($08, $85, $0000, $0000) ; 08 - Ice rod
+%InventoryItem($09, $85, $0000, $0000) ; 09 - Hammer
+%InventoryItem($0A, $85, $0000, $0000) ; 0A - Hookshot
+%InventoryItem($0B, $85, $0000, $0000) ; 0B - Bow
+%InventoryItem($0C, $85, $0000, $0000) ; 0C - Blue Boomerang
+%InventoryItem($0D, $85, $0000, $0000) ; 0D - Powder
+%InventoryItem($0E, $81, $0000, $0000) ; 0E - Bottle refill (bee)
+%InventoryItem($0F, $85, $0000, $0000) ; 0F - Bombos
+%InventoryItem($10, $85, $0000, $0000) ; 10 - Ether
+%InventoryItem($11, $85, $0000, $0000) ; 11 - Quake
+%InventoryItem($12, $85, $0000, $0000) ; 12 - Lamp
+%InventoryItem($13, $85, $0000, $0000) ; 13 - Shovel
+%InventoryItem($14, $85, FluteTime, $0000) ; 14 - Flute (inactive)
+%InventoryItem($15, $85, $0000, $0000) ; 15 - Somaria
+%InventoryItem($16, $85, $0000, $0000) ; 16 - Bottle
 %InventoryItem($17, $01, $0000, HeartPieceCounter) ; 17 - Heart piece
-%InventoryItem($18, $05, $0000, $0000) ; 18 - Byrna
-%InventoryItem($19, $05, $0000, $0000) ; 19 - Cape
-%InventoryItem($1A, $05, MirrorTime, $0000) ; 1A - Mirror
-%InventoryItem($1B, $09, $0000, $0000) ; 1B - Glove
-%InventoryItem($1C, $09, $0000, $0000) ; 1C - Mitts
-%InventoryItem($1D, $05, $0000, $0000) ; 1D - Book
-%InventoryItem($1E, $09, $0000, $0000) ; 1E - Flippers
-%InventoryItem($1F, $01, $0000, $0000) ; 1F - Pearl
-%InventoryItem($20, $00, $0000, CrystalCounter) ; 20 - Crystal
-%InventoryItem($21, $05, $0000, $0000) ; 21 - Net
-%InventoryItem($22, $01, $0000, $0000) ; 22 - Blue mail
-%InventoryItem($23, $01, $0000, $0000) ; 23 - Red mail
-%InventoryItem($24, $01, $0000, SmallKeyCounter) ; 24 - Small key
+%InventoryItem($18, $85, $0000, $0000) ; 18 - Byrna
+%InventoryItem($19, $85, $0000, $0000) ; 19 - Cape
+%InventoryItem($1A, $85, MirrorTime, $0000) ; 1A - Mirror
+%InventoryItem($1B, $89, $0000, $0000) ; 1B - Glove
+%InventoryItem($1C, $89, $0000, $0000) ; 1C - Mitts
+%InventoryItem($1D, $85, $0000, $0000) ; 1D - Book
+%InventoryItem($1E, $89, $0000, $0000) ; 1E - Flippers
+%InventoryItem($1F, $81, $0000, $0000) ; 1F - Pearl
+%InventoryItem($20, $80, $0000, CrystalCounter) ; 20 - Crystal
+%InventoryItem($21, $85, $0000, $0000) ; 21 - Net
+%InventoryItem($22, $81, $0000, $0000) ; 22 - Blue mail
+%InventoryItem($23, $81, $0000, $0000) ; 23 - Red mail
+%InventoryItem($24, $41, $0000, SmallKeyCounter) ; 24 - Small key
 %InventoryItem($25, $01, $0000, $0000) ; 25 - Compass
 %InventoryItem($26, $00, $0000, $0000) ; 26 - Heart container from 4/4
 %InventoryItem($27, $15, $0000, $0000) ; 27 - Bomb
 %InventoryItem($28, $15, $0000, $0000) ; 28 - 3 bombs
-%InventoryItem($29, $05, $0000, $0000) ; 29 - Mushroom
+%InventoryItem($29, $85, $0000, $0000) ; 29 - Mushroom
 %InventoryItem($2A, $05, $0000, $0000) ; 2A - Red boomerang
-%InventoryItem($2B, $05, $0000, $0000) ; 2B - Full bottle (red)
-%InventoryItem($2C, $05, $0000, $0000) ; 2C - Full bottle (green)
-%InventoryItem($2D, $05, $0000, $0000) ; 2D - Full bottle (blue)
-%InventoryItem($2E, $00, $0000, $0000) ; 2E - Potion refill (red)
-%InventoryItem($2F, $00, $0000, $0000) ; 2F - Potion refill (green)
-%InventoryItem($30, $00, $0000, $0000) ; 30 - Potion refill (blue)
+%InventoryItem($2B, $85, $0000, $0000) ; 2B - Full bottle (red)
+%InventoryItem($2C, $85, $0000, $0000) ; 2C - Full bottle (green)
+%InventoryItem($2D, $85, $0000, $0000) ; 2D - Full bottle (blue)
+%InventoryItem($2E, $80, $0000, $0000) ; 2E - Potion refill (red)
+%InventoryItem($2F, $80, $0000, $0000) ; 2F - Potion refill (green)
+%InventoryItem($30, $80, $0000, $0000) ; 30 - Potion refill (blue)
 %InventoryItem($31, $11, $0000, $0000) ; 31 - 10 bombs
 %InventoryItem($32, $01, $0000, $0000) ; 32 - Big key
 %InventoryItem($33, $01, $0000, $0000) ; 33 - Map
@@ -635,12 +635,12 @@ endmacro
 %InventoryItem($37, $00, $0000, PendantCounter) ; 37 - Green pendant
 %InventoryItem($38, $00, $0000, PendantCounter) ; 38 - Red pendant
 %InventoryItem($39, $00, $0000, PendantCounter) ; 39 - Blue pendant
-%InventoryItem($3A, $25, $0000, $0000) ; 3A - Bow And Arrows
-%InventoryItem($3B, $25, $0000, $0000) ; 3B - Silver Bow
-%InventoryItem($3C, $05, $0000, $0000) ; 3C - Full bottle (bee)
-%InventoryItem($3D, $05, $0000, $0000) ; 3D - Full bottle (fairy)
+%InventoryItem($3A, $A5, $0000, $0000) ; 3A - Bow And Arrows
+%InventoryItem($3B, $A5, $0000, $0000) ; 3B - Silver Bow
+%InventoryItem($3C, $85, $0000, $0000) ; 3C - Full bottle (bee)
+%InventoryItem($3D, $85, $0000, $0000) ; 3D - Full bottle (fairy)
 %InventoryItem($3E, $01, $0000, HeartContainerCounter) ; 3E - Boss heart
-%InventoryItem($3F, $01, $0000, HeartContainerCounter) ; 3F - Sanc heart
+%InventoryItem($3F, $81, $0000, HeartContainerCounter) ; 3F - Sanc heart
 %InventoryItem($40, $01, $0000, $0000) ; 40 - 100 rupees
 %InventoryItem($41, $01, $0000, $0000) ; 41 - 50 rupees
 %InventoryItem($42, $01, $0000, $0000) ; 42 - Heart
@@ -649,15 +649,15 @@ endmacro
 %InventoryItem($45, $01, $0000, $0000) ; 45 - Small magic
 %InventoryItem($46, $01, $0000, $0000) ; 46 - 300 rupees
 %InventoryItem($47, $01, $0000, $0000) ; 47 - 20 rupees green
-%InventoryItem($48, $05, $0000, $0000) ; 48 - Full bottle (good bee)
-%InventoryItem($49, $01, $0000, $0000) ; 49 - Tossed fighter sword
-%InventoryItem($4A, $05, FluteTime, $0000) ; 4A - Active Flute
-%InventoryItem($4B, $09, BootsTime, $0000) ; 4B - Boots
+%InventoryItem($48, $85, $0000, $0000) ; 48 - Full bottle (good bee)
+%InventoryItem($49, $81, $0000, $0000) ; 49 - Tossed fighter sword
+%InventoryItem($4A, $85, FluteTime, $0000) ; 4A - Active Flute
+%InventoryItem($4B, $89, BootsTime, $0000) ; 4B - Boots
 %InventoryItem($4C, $15, $0000, CapacityUpgrades) ; 4C - Bomb capacity (50)
 %InventoryItem($4D, $01, $0000, CapacityUpgrades) ; 4D - Arrow capacity (70)
-%InventoryItem($4E, $01, $0000, CapacityUpgrades) ; 4E - 1/2 magic
-%InventoryItem($4F, $01, $0000, CapacityUpgrades) ; 4F - 1/4 magic
-%InventoryItem($50, $01, SwordTime, $0000) ; 50 - Master Sword (safe)
+%InventoryItem($4E, $81, $0000, CapacityUpgrades) ; 4E - 1/2 magic
+%InventoryItem($4F, $81, $0000, CapacityUpgrades) ; 4F - 1/4 magic
+%InventoryItem($50, $81, SwordTime, $0000) ; 50 - Master Sword (safe)
 %InventoryItem($51, $15, $0000, CapacityUpgrades) ; 51 - Bomb capacity (+5)
 %InventoryItem($52, $15, $0000, CapacityUpgrades) ; 52 - Bomb capacity (+10)
 %InventoryItem($53, $01, $0000, CapacityUpgrades) ; 53 - Arrow capacity (+5)
@@ -665,27 +665,27 @@ endmacro
 %InventoryItem($55, $01, $0000, $0000) ; 55 - Programmable item 1
 %InventoryItem($56, $01, $0000, $0000) ; 56 - Programmable item 2
 %InventoryItem($57, $01, $0000, $0000) ; 57 - Programmable item 3
-%InventoryItem($58, $01, $0000, $0000) ; 58 - Upgrade-only Silver Arrows
+%InventoryItem($58, $81, $0000, $0000) ; 58 - Upgrade-only Silver Arrows
 %InventoryItem($59, $01, $0000, $0000) ; 59 - Rupoor
 %InventoryItem($5A, $01, $0000, $0000) ; 5A - Nothing
-%InventoryItem($5B, $01, $0000, $0000) ; 5B - Red clock
-%InventoryItem($5C, $01, $0000, $0000) ; 5C - Blue clock
-%InventoryItem($5D, $01, $0000, $0000) ; 5D - Green clock
-%InventoryItem($5E, $01, $0000, $0000) ; 5E - Progressive sword
-%InventoryItem($5F, $01, $0000, $0000) ; 5F - Progressive shield
-%InventoryItem($60, $01, $0000, $0000) ; 60 - Progressive armor
-%InventoryItem($61, $09, $0000, $0000) ; 61 - Progressive glove
+%InventoryItem($5B, $81, $0000, $0000) ; 5B - Red clock
+%InventoryItem($5C, $81, $0000, $0000) ; 5C - Blue clock
+%InventoryItem($5D, $81, $0000, $0000) ; 5D - Green clock
+%InventoryItem($5E, $81, $0000, $0000) ; 5E - Progressive sword
+%InventoryItem($5F, $81, $0000, $0000) ; 5F - Progressive shield
+%InventoryItem($60, $81, $0000, $0000) ; 60 - Progressive armor
+%InventoryItem($61, $89, $0000, $0000) ; 61 - Progressive glove
 %InventoryItem($62, $01, $0000, $0000) ; 62 - RNG pool item (single)
 %InventoryItem($63, $01, $0000, $0000) ; 63 - RNG pool item (multi)
-%InventoryItem($64, $25, $0000, $0000) ; 64 - Progressive bow
-%InventoryItem($65, $25, $0000, $0000) ; 65 - Progressive bow
+%InventoryItem($64, $A5, $0000, $0000) ; 64 - Progressive bow
+%InventoryItem($65, $A5, $0000, $0000) ; 65 - Progressive bow
 %InventoryItem($66, $01, $0000, $0000) ; 66 - 
 %InventoryItem($67, $01, $0000, $0000) ; 67 - 
 %InventoryItem($68, $01, $0000, $0000) ; 68 - 
 %InventoryItem($69, $01, $0000, $0000) ; 69 - 
-%InventoryItem($6A, $01, $0000, $0000) ; 6A - Triforce
-%InventoryItem($6B, $01, $0000, $0000) ; 6B - Power star
-%InventoryItem($6C, $01, $0000, $0000) ; 6C - Triforce Piece
+%InventoryItem($6A, $81, $0000, $0000) ; 6A - Triforce
+%InventoryItem($6B, $81, $0000, $0000) ; 6B - Power star
+%InventoryItem($6C, $81, $0000, $0000) ; 6C - Triforce Piece
 %InventoryItem($6D, $01, $0000, $0000) ; 6D - Server request item
 %InventoryItem($6E, $01, $0000, $0000) ; 6E - Server request item (dungeon drop)
 %InventoryItem($6F, $01, $0000, $0000) ; 6F - 
@@ -721,7 +721,7 @@ endmacro
 %InventoryItem($8D, $01, $0000, $0000) ; 8D - Compass of Eastern Palace
 %InventoryItem($8E, $01, $0000, $0000) ; 8E - Compass of Hyrule Castle
 %InventoryItem($8F, $01, $0000, $0000) ; 8F - Compass of Sewers
-%InventoryItem($90, $01, $0000, $0000) ; 90 - Skull key
+%InventoryItem($90, $81, $0000, $0000) ; 90 - Skull key
 %InventoryItem($91, $01, $0000, $0000) ; 91 - Reserved
 %InventoryItem($92, $01, $0000, $0000) ; 92 - Big key of Ganon's Tower
 %InventoryItem($93, $01, $0000, $0000) ; 93 - Big key of Turtle Rock
@@ -737,30 +737,30 @@ endmacro
 %InventoryItem($9D, $01, $0000, $0000) ; 9D - Big key of Eastern Palace
 %InventoryItem($9E, $01, $0000, $0000) ; 9E - Big key of Hyrule Castle
 %InventoryItem($9F, $01, $0000, $0000) ; 9F - Big key of Sewers
-%InventoryItem($A0, $01, $0000, SmallKeyCounter) ; A0 - Small key of Sewers
-%InventoryItem($A1, $01, $0000, SmallKeyCounter) ; A1 - Small key of Hyrule Castle
-%InventoryItem($A2, $01, $0000, SmallKeyCounter) ; A2 - Small key of Eastern Palace
-%InventoryItem($A3, $01, $0000, SmallKeyCounter) ; A3 - Small key of Desert Palace
-%InventoryItem($A4, $01, $0000, SmallKeyCounter) ; A4 - Small key of Agahnim's Tower
-%InventoryItem($A5, $01, $0000, SmallKeyCounter) ; A5 - Small key of Swamp Palace
-%InventoryItem($A6, $01, $0000, SmallKeyCounter) ; A6 - Small key of Dark Palace
-%InventoryItem($A7, $01, $0000, SmallKeyCounter) ; A7 - Small key of Misery Mire
-%InventoryItem($A8, $01, $0000, SmallKeyCounter) ; A8 - Small key of Skull Woods
-%InventoryItem($A9, $01, $0000, SmallKeyCounter) ; A9 - Small key of Ice Palace
-%InventoryItem($AA, $01, $0000, SmallKeyCounter) ; AA - Small key of Tower of Hera
-%InventoryItem($AB, $01, $0000, SmallKeyCounter) ; AB - Small key of Thieves' Town
-%InventoryItem($AC, $01, $0000, SmallKeyCounter) ; AC - Small key of Turtle Rock
-%InventoryItem($AD, $01, $0000, SmallKeyCounter) ; AD - Small key of Ganon's Tower
+%InventoryItem($A0, $41, $0000, SmallKeyCounter) ; A0 - Small key of Sewers
+%InventoryItem($A1, $41, $0000, SmallKeyCounter) ; A1 - Small key of Hyrule Castle
+%InventoryItem($A2, $41, $0000, SmallKeyCounter) ; A2 - Small key of Eastern Palace
+%InventoryItem($A3, $41, $0000, SmallKeyCounter) ; A3 - Small key of Desert Palace
+%InventoryItem($A4, $41, $0000, SmallKeyCounter) ; A4 - Small key of Agahnim's Tower
+%InventoryItem($A5, $41, $0000, SmallKeyCounter) ; A5 - Small key of Swamp Palace
+%InventoryItem($A6, $41, $0000, SmallKeyCounter) ; A6 - Small key of Dark Palace
+%InventoryItem($A7, $41, $0000, SmallKeyCounter) ; A7 - Small key of Misery Mire
+%InventoryItem($A8, $41, $0000, SmallKeyCounter) ; A8 - Small key of Skull Woods
+%InventoryItem($A9, $41, $0000, SmallKeyCounter) ; A9 - Small key of Ice Palace
+%InventoryItem($AA, $41, $0000, SmallKeyCounter) ; AA - Small key of Tower of Hera
+%InventoryItem($AB, $41, $0000, SmallKeyCounter) ; AB - Small key of Thieves' Town
+%InventoryItem($AC, $41, $0000, SmallKeyCounter) ; AC - Small key of Turtle Rock
+%InventoryItem($AD, $41, $0000, SmallKeyCounter) ; AD - Small key of Ganon's Tower
 %InventoryItem($AE, $01, $0000, $0000) ; AE - Reserved
 %InventoryItem($AF, $01, $0000, SmallKeyCounter) ; AF - Generic small key
-%InventoryItem($B0, $01, $0000, $0000) ; B0 - 
-%InventoryItem($B1, $01, $0000, $0000) ; B1 - 
-%InventoryItem($B2, $01, $0000, $0000) ; B2 - 
-%InventoryItem($B3, $01, $0000, $0000) ; B3 - 
-%InventoryItem($B4, $01, $0000, $0000) ; B4 - 
-%InventoryItem($B5, $01, $0000, $0000) ; B5 - 
-%InventoryItem($B6, $01, $0000, $0000) ; B6 - 
-%InventoryItem($B7, $01, $0000, $0000) ; B7 - 
+%InventoryItem($B0, $81, $0000, CrystalCounter) ; B0 - Crystal 6 
+%InventoryItem($B1, $81, $0000, CrystalCounter) ; B1 - Crystal 1 
+%InventoryItem($B2, $81, $0000, CrystalCounter) ; B2 - Crystal 5 
+%InventoryItem($B3, $81, $0000, CrystalCounter) ; B3 - Crystal 7 
+%InventoryItem($B4, $81, $0000, CrystalCounter) ; B4 - Crystal 2 
+%InventoryItem($B5, $81, $0000, CrystalCounter) ; B5 - Crystal 4 
+%InventoryItem($B6, $81, $0000, CrystalCounter) ; B6 - Crystal 3 
+%InventoryItem($B7, $01, $0000, $0000) ; B7 - Reserved 
 %InventoryItem($B8, $01, $0000, $0000) ; B8 - 
 %InventoryItem($B9, $01, $0000, $0000) ; B9 - 
 %InventoryItem($BA, $01, $0000, $0000) ; BA - 
@@ -1017,15 +1017,14 @@ ItemReceiptGraphicsOffsets:
 	dw BigDecompressionBuffer+$1DC0        ; AD - Small key of Ganon's Tower
 	dw $0                                  ; AE - Reserved
 	dw BigDecompressionBuffer+$1DC0        ; AF - Generic small key
-
-	dw $0                                  ; B0 -
-	dw $0                                  ; B1 -
-	dw $0                                  ; B2 -
-	dw $0                                  ; B3 -
-	dw $0                                  ; B4 -
-	dw $0                                  ; B5 -
-	dw $0                                  ; B6 -
-	dw $0                                  ; B7 -
+	dw BigDecompressionBuffer+$08A0        ; B0 - Crystal 6
+	dw BigDecompressionBuffer+$08A0        ; B1 - Crystal 1
+	dw BigDecompressionBuffer+$08A0        ; B2 - Crystal 5
+	dw BigDecompressionBuffer+$08A0        ; B3 - Crystal 7
+	dw BigDecompressionBuffer+$08A0        ; B4 - Crystal 2
+	dw BigDecompressionBuffer+$08A0        ; B5 - Crystal 4
+	dw BigDecompressionBuffer+$08A0        ; B6 - Crystal 3
+	dw $0                                  ; B7 - Reserved
 	dw $0                                  ; B8 -
 	dw $0                                  ; B9 -
 	dw $0                                  ; BA -
@@ -1288,15 +1287,14 @@ StandingItemGraphicsOffsets:
 	dw BigDecompressionBuffer+$1DC0        ; AD - Small key of Ganon's Tower
 	dw $0                                  ; AE - Reserved
 	dw BigDecompressionBuffer+$1DC0        ; AF - Generic small key
-
-	dw $0                                  ; B0 -
-	dw $0                                  ; B1 -
-	dw $0                                  ; B2 -
-	dw $0                                  ; B3 -
-	dw $0                                  ; B4 -
-	dw $0                                  ; B5 -
-	dw $0                                  ; B6 -
-	dw $0                                  ; B7 -
+	dw BigDecompressionBuffer+$08A0        ; B0 - Crystal 6
+	dw BigDecompressionBuffer+$08A0        ; B1 - Crystal 1
+	dw BigDecompressionBuffer+$08A0        ; B2 - Crystal 5
+	dw BigDecompressionBuffer+$08A0        ; B3 - Crystal 7
+	dw BigDecompressionBuffer+$08A0        ; B4 - Crystal 2
+	dw BigDecompressionBuffer+$08A0        ; B5 - Crystal 4
+	dw BigDecompressionBuffer+$08A0        ; B6 - Crystal 3
+	dw $0                                  ; B7 - Reserved
 	dw $0                                  ; B8 -
 	dw $0                                  ; B9 -
 	dw $0                                  ; BA -

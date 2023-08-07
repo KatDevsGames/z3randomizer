@@ -48,6 +48,8 @@ NMIHUD = $7E0016                  ; during NMI.
 NMIINCR = $7E0017                 ;
 NMIUP1100 = $7E0018               ;
 UPINCVH = $7E0019                 ; Incremental upload VRAM high byte
+LinkAbsoluteY = $7E0020           ; Link's absolute coordinates. Word length
+LinkAbsoluteX = $7E0022           ;
 FrameCounter = $7E001A            ; Increments every frame that the game isn't lagging
 IndoorsFlag = $7E001B             ; $00 = Outdoors | $01 = Indoors
 MAINDESQ = $7E001C                ; PPU register queues written during NMI
@@ -186,8 +188,12 @@ RaceGameFlag = $7E021B            ;
                                   ;
 MessageJunk = $7E0223             ; Zeroed but never used (?)
                                   ;
-;CoolScratch = $7E0224             ; 0x5C bytes of free ram
-SpriteID = $7E0230                ;
+ShopPurchaseFlag = $7E0224        ; $01 = Shop purchase item receipt.
+;CoolScratch = $7E0226            ; 0x5A bytes of free ram
+SpriteID = $7E0230                ; 0x0A bytes
+                                  ;
+AncillaVelocityZ = $7E0294        ; 0x0A bytes
+AncillaZCoord = $7E029E           ; 0x0A bytes
                                   ;
 ItemReceiptID = $7E02D8           ;
 ItemReceiptPose = $7E02DA         ; $00 = No pose | $01 = One hand up | $02 = Two hands up
@@ -196,7 +202,7 @@ BunnyFlag = $7E02E0               ; $00 = Link | $01 = Bunny
 Poofing = $7E02E1                 ; Flags cape and bunny poof.
 PoofTimer = $7E02E2               ; Countdown timer for poofing.
 SwordCooldown = $7E02E3           ; Cooldown for sword after dashing through an enemy.
-CutsceneFlag = $7E02E4            ; Flags various cutscenes. All non-zero behave the same.
+CutsceneFlag = $7E02E4            ; Flags various cutscenes.
                                   ;
 ItemReceiptMethod = $7E02E9       ;
                                   ;
@@ -233,7 +239,7 @@ FluteTimer = $7E03F0              ; Countdown timer for being able to use the fl
                                   ;
 YButtonOverride = $7E03FC         ; Y override for minigames. $00 = Selected item | $01 = Shovel | $02 = Bow
                                   ;
-ItemsTaken = $7E0403              ; Items taken in a room: b k u t s e h c
+RoomItemsTaken = $7E0403          ; Items taken in a room: b k u t s e h c
                                   ; b = boss kill/item         | k = key/heart piece (prevents crystals)
                                   ; u = 2nd key/heart piece    | t = chest 4/rupees/swamp drain/bomb floor/mire wall
                                   ; s = chest 3/pod or dp wall | e, h, c = chest 2, 1, 0
@@ -295,12 +301,19 @@ SaveFileIndex = $7E0B9D           ;
                                   ;
 SpriteAncillaInteract = $7E0BA0   ; If nonzero, ancillae do not interact with the sprite. $10 bytes.
                                   ;
+AncillaCoordYLow = $7E0BFA        ;
+AncillaCoordXLow = $7E0C04        ;
+AncillaCoordYHigh = $7E0C0E       ;
+AncillaCoordXHigh = $7E0C18       ;
+                                  ;
 AncillaVelocityY = $7E0C22        ; $0A bytes.
 AncillaVelocityX = $7E0C2C        ; $0A bytes.
                                   ;
 AncillaID = $7E0C4A               ; $0A bytes.
                                   ;
 AncillaGet = $7E0C5E              ; Used by varius ancilla in various ways. $0F bytes.
+                                  ;
+AncillaLayer = $7E0C7C            ;
                                   ;
 SpriteBump = $7E0CD2              ; See symbols_wram.asm. $10 bytes.
                                   ;
@@ -348,6 +361,8 @@ SpriteOAMProp = $7E0F50           ;
 SpriteZCoord = $7E0F70            ;
 SpriteVelocityZ = $7E0F80         ;
 SpriteSubPixelZ = $7E0F90         ;
+                                  ;
+CurrentSpriteSlot = $7E0FA0       ; Holds the current sprite/ancilla's index
                                   ;
 FreezeSprites = $7E0FC1           ; "Seems to freeze sprites"
                                   ;
@@ -572,7 +587,8 @@ CompassTotalsWRAM: skip $10        ; \ Compass and map dungeon HUD display total
 MapTotalsWRAM: skip $10            ; / on boot for tracking.
 skip $30                           ; Reserved for general dungeon tracking data. May have over
                                    ; allocated here. Feel free to reassign.
-skip $40                           ; Unused
+MapCompassFlag: skip 2             ; Used to flag overworld map drawing.
+skip $3E                           ; Unused
 skip $260                          ; Unused
 DialogBuffer: skip $100            ; Dialog Buffer
                                    ;
@@ -730,7 +746,7 @@ endmacro
 %assertRAM(ForceSwordUp, $7E03EF)
 %assertRAM(FluteTimer, $7E03F0)
 %assertRAM(YButtonOverride, $7E03FC)
-%assertRAM(ItemsTaken, $7E0403)
+%assertRAM(RoomItemsTaken, $7E0403)
 %assertRAM(DungeonID, $7E040C)
 %assertRAM(LayerAdjustment, $7E047A)
 %assertRAM(RoomIndexMirror, $7E048E)
@@ -768,6 +784,7 @@ endmacro
 %assertRAM(AncillaVelocityX, $7E0C2C)
 %assertRAM(AncillaID, $7E0C4A)
 %assertRAM(AncillaGet, $7E0C5E)
+%assertRAM(AncillaLayer, $7E0C7C)
 %assertRAM(SpriteBump, $7E0CD2)
 %assertRAM(SpritePosYLow, $7E0D00)
 %assertRAM(SpritePosXLow, $7E0D10)
@@ -826,6 +843,7 @@ endmacro
 %assertRAM(SpriteZCoord, $7E0F70)
 %assertRAM(SpriteVelocityZ, $7E0F80)
 %assertRAM(SpriteSubPixelZ, $7E0F90)
+%assertRAM(CurrentSpriteSlot, $7E0FA0)
 %assertRAM(FreezeSprites, $7E0FC1)
 %assertRAM(PrizePackIndexes, $7E0FC7)
 %assertRAM(SpriteCoordCacheX, $7E0FD8)
@@ -945,6 +963,7 @@ endmacro
 %assertRAM(TxStatus, $7F53FF)
 %assertRAM(CompassTotalsWRAM, $7F5410)
 %assertRAM(MapTotalsWRAM, $7F5420)
+%assertRAM(MapCompassFlag, $7F5460)
 %assertRAM(DialogBuffer, $7F5700)
 %assertRAM(MiniGameTime, $7FFE00)
 %assertRAM(MiniGameTimeFinal, $7FFE04)

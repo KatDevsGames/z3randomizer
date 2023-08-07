@@ -93,7 +93,6 @@ LoadDynamicTileOAMTable:
         PLX
         PLP
 RTS
-;--------------------------------------------------------------------------------
 
 ;--------------------------------------------------------------------------------
 ; DrawDynamicTile
@@ -334,13 +333,21 @@ RTL
 
 ;------------------------------------------------------------------------------
 CheckReceivedItemPropertiesBeforeLoad:
-        LDA.b RoomIndex : BEQ .normalCode
-        LDA.l RoomFade : BNE .load_palette
-        LDA.l SpriteProperties_chest_palette,X : BIT #$80 : BNE .load_palette
-        .normalCode
-RTL
-        .load_palette
-        JSL.l LoadItemPalette
+        PHX
+        LDX.w CurrentSpriteSlot
+        LDA.w AncillaID,X : CMP.b #$29 : BEQ .falling_sprite
+                PLX
+                LDA.b RoomIndex : BEQ .normalCode
+                LDA.l RoomFade : BNE .load_palette
+                        .normalCode
+                        LDA.l SpriteProperties_chest_palette,X : BIT #$80 : BNE .load_palette
+                        RTL
+                        .load_palette
+                        JSL.l LoadItemPalette
+                        RTL
+        .falling_sprite
+        PLX
+        LDA.l SpriteProperties_standing_palette,X : BIT #$80 : BNE .load_palette
 RTL
 
 ;------------------------------------------------------------------------------
@@ -379,4 +386,17 @@ TransferVRAMStripes:
         JSL.l TransferNumericStripes
         JSL.l DoDungeonMapBossIcon
         LDA.b NMISTRIPES : CMP.b #$01 ; What we wrote over
+RTL
+
+
+ItemReceiptWidthCheck:
+        PHX
+        LDX.w CurrentSpriteSlot
+        LDA.w AncillaID,X : CMP.b #$29 : BEQ .falling_sprite
+                PLX
+                LDA.l SpriteProperties_chest_width, X
+                RTL
+        .falling_sprite
+        PLX
+        LDA.l SpriteProperties_standing_width, X
 RTL

@@ -129,6 +129,7 @@ MapMode:
 db $00 ; #$00 = Always On (default) - #$01 = Require Map Item
 CompassMode:
 db $00 ; #$00 = Off (default) - #$01 = Display Dungeon Count w/Compass - #$02 = Display Dungeon Count Always
+       ; #$80 = Move prizes to custom postion - #$40 = Compasses are shuffled and must be obtained to show position if bit on
 ;--------------------------------------------------------------------------------
 org $B0803D ; PC 0x18003D
 PersistentFloodgate:
@@ -229,7 +230,7 @@ db $01 ; #$00 = Off - #$01 = On (default)
 ;--------------------------------------------------------------------------------
 org $B08050 ; PC 0x180050 - 0x18005C
 CrystalPendantFlags_2:
-    db $00 ; Sewers
+    db $02 ; Ganons Tower - because 5D is not available right now - sewers doesn't get one
 	db $00 ; Hyrule Castle
 	db $00 ; Eastern Palace
 	db $00 ; Desert Palace
@@ -245,6 +246,9 @@ CrystalPendantFlags_2:
 	db $40 ; Turtle Rock
 ;Pendant: $00
 ;Crystal: $40
+;No Icon: $80
+;Aga1:    $01
+;Aga2:    $02
 ;--------------------------------------------------------------------------------
 org $B0805E ; PC 0x18005E - Number of crystals required to enter GT
 NumberOfCrystalsRequiredForTower:
@@ -275,20 +279,20 @@ dl $000000
 ;--------------------------------------------------------------------------------
 org $B08070 ; PC 0x180070 - 0x18007F
 CrystalNumberTable:
-db $00 ;
+db $69 ; Eastern
+db $69 ; Hera
+db $69 ; Desert
+db $7F ; Darkness
+db $6C ; Skull
+db $7C ; TRock
+db $6D ; Thieves
+db $6F ; Mire
+db $6E ; Ice
 db $79 ; Swamp
 db $00 ;
-db $6E ; Ice
 db $00 ;
-db $6F ; Mire
 db $00 ;
-db $6D ; Thieves
-db $69 ; Desert
-db $7C ; TRock
-db $69 ; Hera
-db $6C ; Skull
-db $69 ; Eastern
-db $7F ; Darkness
+db $00 ;
 db $00 ;
 db $00 ;
 
@@ -588,7 +592,7 @@ dw $0100 ; #$6234 - Master Sword
 
 org $8ABEF8 ; PC 0x53EF8
 MapObject_Eastern:
-dw $6038 ; #$6038 - Green Pendant / Courage
+dw $6238 ; #$6038 - Green Pendant / Courage
 
 org $8ABF1C ; PC 0x53F1C
 MapObject_Desert:
@@ -658,6 +662,7 @@ CrystalPendantFlags:
 ;Dungeons with no drops should match their respective world's normal vanilla prize ;xxx
 ;--------------------------------------------------------------------------------
 org $81C6FC ; PC 0xC6FC - Bank01.asm:10344 - (db $00, $00, $01, $02, $00, $06, $06, $06, $06, $06, $03, $06, $06)
+DungeonPrizeReceiptID:
 	db $00 ; Sewers
 	db $00 ; Hyrule Castle
 	db $01 ; Eastern Palace
@@ -665,8 +670,8 @@ org $81C6FC ; PC 0xC6FC - Bank01.asm:10344 - (db $00, $00, $01, $02, $00, $06, $
 	db $00 ; Agahnim's Tower
 	db $06 ; Swamp Palace
 	db $06 ; Palace of Darkness
-	db $06 ; Misery Mire
-	db $06 ; Skull Woods
+	db $20 ; Misery Mire
+	db $20 ; Skull Woods
 	db $06 ; Ice Palace
 	db $03 ; Tower of Hera
 	db $06 ; Thieves' Town
@@ -815,7 +820,8 @@ db $01 ; #00 = Never Locked - #$01 = Locked During Escape (default) - #$02 = Loc
 org $B0816A ; PC 0x18016A
 FreeItemText:
 db $00 ; #00 = Off (default)
-;---o bmcs
+;--po bmcs
+;p - enabled for non-prize crystals
 ;o - enabled for outside dungeon items
 ;b - enabled for inside big key items
 ;m - enabled for inside map items
@@ -2575,9 +2581,139 @@ db $01, $01, $00, $01, $02, $01, $06, $03, $03, $02, $01, $01, $04, $04, $00, $0
 ;--------------------------------------------------------------------------------
 
 
+;--------------------------------------------------------------------------------
+; Overworld Map Tables
+;--------------------------------------------------------------------------------
+org $8ABDF6
+WorldMapIcon_posx_vanilla:
+dw $0F31 ; prize1
+dw $08D0 ; prize2
+dw $0108
+dw $0F40
 
+dw $0082
+dw $0F11
+dw $01D0
+dw $0100
 
+dw $0CA0
+dw $0759
+dw $FF00
+dw $FF00
 
+dw $FF00
+dw $FFFF ; reserved - not used
+dw $FFFF
+dw $FFFF
+
+org $8ABE16
+WorldMapIcon_posy_vanilla:
+dw $0620 ; prize1
+dw $0080 ; prize2
+dw $0D70
+dw $0620
+
+dw $00B0
+dw $0103
+dw $0780
+dw $0CA0
+
+dw $0DA0
+dw $0ED0
+dw $FF00
+dw $FF00
+
+dw $FF00
+dw $FFFF ; reserved - not used
+dw $FFFF
+dw $FFFF
+
+org $8ABE36
+WorldMapIcon_posx_located:
+dw $FF00 ; prize1
+dw $FF00 ; prize2
+dw $FF00
+dw $FF00
+
+dw $FF00
+dw $FF00
+dw $FF00
+dw $FF00
+
+dw $FF00
+dw $FF00
+dw $FF00
+dw $FF00
+
+dw $FF00
+dw $FFFF ; reserved - not used
+dw $FFFF
+dw $FFFF
+
+org $8ABE56
+WorldMapIcon_posy_located:
+dw $FF00 ; prize1
+dw $FF00 ; prize2
+dw $FF00
+dw $FF00
+
+dw $FF00
+dw $FF00
+dw $FF00
+dw $FF00
+
+dw $FF00
+dw $FF00
+dw $FF00
+dw $FF00
+
+dw $FF00
+dw $FFFF ; reserved - not used
+dw $FFFF
+dw $FFFF
+
+org $8ABE76
+WorldMapIcon_tile:
+db $38, $62 ; green pendant
+db $32, $60 ; red pendant
+db $34, $60 ; blue pendant
+db $34, $64 ; crystal
+
+db $34, $64 ; crystal
+db $34, $64 ; crystal
+db $34, $64 ; crystal
+db $32, $64 ; crystal
+
+db $32, $64 ; crystal
+db $34, $64 ; crystal
+db $32, $66 ; skull looking thing
+db $00, $00 ; red x
+
+db $00, $00 ; red x
+db $00, $00 ; unused red x's
+db $00, $00
+db $00, $00
+
+org $8ABE96
+CompassExists:
+; dw $37FC ; todo: convert to two bytes with masks? so much extra code...
+; eastern hera desert pod skull trock thieves mire ice swamp gt at escape
+db $01, $01, $01, $01, $01, $01, $01, $01, $01, $01, $01, $00, $00, $00, $00, $00
+
+; 0 = light world, 1 = dark world
+org $8ABEA6
+WorldCompassMask:
+; eastern desert hera pod skull trock thieves mire ice swamp gt at escape x1 x2 x3
+db $00, $00, $00, $01, $01, $01, $01, $01, $01, $01, $01, $00, $00, $00, $00, $00
+
+; eastern desert hera pod skull trock thieves mire ice swamp gt at escape
+MC_DungeonIdsForPrize:
+db $02, $0A, $03, $06, $08, $0C, $0B, $07, $09, $05, $00, $04, $01
+MC_SRAM_Offsets:
+db $01, $00, $01, $01, $00, $00, $00, $01, $00, $01, $00, $01, $01
+MC_Masks:
+;   EP   TH   DP   PD   SK   TR   TT   MM
+db $20, $20, $10, $02, $80, $08, $10, $01, $40, $04, $04, $08, $40
 
 
 

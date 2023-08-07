@@ -2,11 +2,6 @@
 ; Item Downgrade Fix
 ;--------------------------------------------------------------------------------
 ItemDowngradeFix:
-	JSR ItemDowngradeFixMain
-	JSL CountChestKeyLong
-RTL
-
-ItemDowngradeFixMain:
 	JSL.l AddInventory
 	BMI .dontWrite ; thing we wrote over part 1
 	
@@ -34,7 +29,7 @@ ItemDowngradeFixMain:
         .done
 	STA.b [Scrap00] ; thing we wrote over part 2
 	.dontWrite
-RTS
+RTL
 	.isPowerGloves
 	.isBlueShield
 	.isRedShield
@@ -43,7 +38,7 @@ RTS
 	.isBowAndArrows
 	CMP.b [$00] : !BGE .done ; finished if we're upgrading
 	LDA.b [$00] ; reload old value
-RTS
+RTL
 	.isSilverArrowBow
 	.isRedBoomerang
 	.isMagicPowder
@@ -54,10 +49,10 @@ RTS
 	LDA.b [Scrap00] : BNE + ; don't upgrade if we already have the toggle for it
 			PLA
 			STA.b [Scrap00]
-		RTS
+		RTL
 	+
 	PLA
-RTS
+RTL
 	.isSword
 	PHA
                 LDA.l HighestSword : STA.b Scrap04
@@ -77,5 +72,5 @@ JMP .done
                 INC.b Scrap00
                 LDA.l HighestShield : STA.b [Scrap00]
 	PLA
-RTS
+RTL
 ;================================================================================

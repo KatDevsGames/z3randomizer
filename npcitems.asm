@@ -47,11 +47,11 @@ ItemCheck_SickKid:
 RTL
 
 ItemCheck_TreeKid:
-	LDA.l NpcFlags : AND.b #$08 ; FluteBoy_Chillin - 73: LDA FluteEquipment
+	LDA.l NpcFlags : AND.b #$08
 RTL
 
 ItemCheck_TreeKid2:
-	LDA.l NpcFlags : AND.b #$08 : CMP.b #$08 ; FluteAardvark_InitialStateFromFluteState - 225: LDA FluteEquipment : AND.b #$03
+	LDA.l NpcFlags : AND.b #$08 : CMP.b #$08
         TDC ; ?? TODO
 RTL
 

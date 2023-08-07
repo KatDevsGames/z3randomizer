@@ -114,14 +114,19 @@ FreeDungeonItemNotice:
 	+ : LDA.l FreeItemText : AND.b #$08 : BEQ + ; show message for dungeon big key
 	LDA.w ScratchBufferV : AND.b #$F0 : CMP.b #$90 : BNE + ; big key of...
 		%CopyDialog(Notice_BigKeyOf)
-		BRA .dungeon
+		JMP .dungeon
 	+ : LDA.l FreeItemText : AND.b #$01 : BEQ + ; show message for dungeon small key
 	LDA.w ScratchBufferV : AND.b #$F0 : CMP.b #$A0 : BNE + ; small key of...
 		LDA.w ScratchBufferV : CMP.b #$AF : BNE ++ : JMP .skip : ++
 		%CopyDialog(Notice_SmallKeyOf)
 		LDA.b #$01 : STA.w ScratchBufferNV ; set up a flip for small keys
 		BRA .dungeon
-	+
+	+ : LDA.l FreeItemText : AND.b #$20 : BEQ + ; show message for crystal
+	LDA.w ScratchBufferV : CMP.b #$B0 : !BLT + ;  crystal #
+                               CMP.b #$B7 : !BGE +
+		%CopyDialog(Notice_Crystal)
+		JMP .crystal
+        +
 	JMP .skip ; it's not something we are going to give a notice for
 
 	.dungeon
@@ -170,12 +175,34 @@ FreeDungeonItemNotice:
 	+ : CMP.b #$0C : BNE + ; ...desert palace
 		%CopyDialog(Notice_Desert) : JMP .done
 	+ : CMP.b #$0D : BNE + ; ...eastern palace
-		%CopyDialog(Notice_Eastern) : BRA .done
+		%CopyDialog(Notice_Eastern) : JMP .done
 	+ : CMP.b #$0E : BNE + ; ...hyrule castle
-		%CopyDialog(Notice_Castle) : BRA .done
+		%CopyDialog(Notice_Castle) : JMP .done
 	+ : CMP.b #$0F : BNE + ; ...sewers
 		%CopyDialog(Notice_Sewers)
 	+
+        JMP .done
+
+        .crystal
+	LDA.l DialogReturnPointer : DEC #2 : STA.l DialogOffsetPointer
+	LDA.w ScratchBufferV
+	AND.b #$0F ; looking at low bits only
+	CMP.b #$00 : BNE +
+		%CopyDialog(Notice_Six) : JMP .done
+	+ : CMP.b #$01 : BNE +
+		%CopyDialog(Notice_One) : JMP .done
+	+ : CMP.b #$02 : BNE +
+		%CopyDialog(Notice_Five) : JMP .done
+	+ : CMP.b #$03 : BNE +
+		%CopyDialog(Notice_Seven) : JMP .done
+	+ : CMP.b #$04 : BNE +
+		%CopyDialog(Notice_Two) : JMP .done
+	+ : CMP.b #$05 : BNE +
+		%CopyDialog(Notice_Four) : JMP .done
+	+ : CMP.b #$06 : BNE +
+		%CopyDialog(Notice_Three) : JMP .done
+        +
+
 	.done
 
 	STZ.w TextID : STZ.w TextID+1 ; reset decompression buffer
