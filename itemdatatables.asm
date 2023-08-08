@@ -333,7 +333,7 @@ endmacro
 %SpriteProps($1D, 2, 2, $04, $04, PalettesVanilla_green_blue_guard+$0E) ; 1D - Book
 %SpriteProps($1E, 2, 2, $02, $02, PalettesVanilla_blue_ice+$0E)         ; 1E - Flippers
 %SpriteProps($1F, 2, 2, $01, $01, PalettesVanilla_red_melon+$0E)        ; 1F - Pearl
-%SpriteProps($20, 2, 2, $06, $06, PalettesCustom_crystal)               ; 20 - Crystal
+%SpriteProps($20, 2, 2, $86, $86, PalettesCustom_crystal)               ; 20 - Crystal
 %SpriteProps($21, 2, 2, $01, $01, PalettesVanilla_red_melon+$0E)        ; 21 - Net
 %SpriteProps($22, 2, 2, $02, $02, PalettesVanilla_blue_ice+$0E)         ; 22 - Blue mail
 %SpriteProps($23, 2, 2, $01, $01, PalettesVanilla_red_melon+$0E)        ; 23 - Red mail

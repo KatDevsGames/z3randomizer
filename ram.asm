@@ -507,8 +507,9 @@ skip 9                             ;
                                    ; Shop Block $7F5050 - $7F506F
 ShopId: skip 1                     ; Shop ID. Used for indexing and loading inventory for custom shops
 ShopType: skip 1                   ; Shop type. $FF = vanilla shop
-                                   ; t - - - - - - -
-                                   ; t = Take-any
+                                   ; t d a v - - q q
+                                   ; t = $01 - Take-any | d = $01 - Door check | a = $01 = Take-all
+                                   ; v = Use alt vram   | q = Number of items
 ShopInventory: skip $0D            ; For three possible shop items, row major:
                                    ; [Item ID][Price low][Price High][Purchase Count]
 ShopState: skip 1                  ; - - - - - l c r | Bitfield that determines whether to draw an item

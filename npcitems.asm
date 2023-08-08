@@ -174,8 +174,10 @@ RTL
 ; Randomize Zora King
 ;--------------------------------------------------------------------------------
 LoadZoraKingItemGFX:
-    LDA.l $9DE1C3 ; location randomizer writes zora item to
-	JML.l PrepDynamicTile
+        LDA.l $9DE1C3 ; location randomizer writes zora item to
+        JSL.l ResolveLootIDLong
+        STA.w SpriteID,X
+        JML.l PrepDynamicTile
 ;--------------------------------------------------------------------------------
 JumpToSplashItemTarget:
 	LDA.w SpriteMovement, X

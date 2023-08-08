@@ -2682,9 +2682,9 @@ db $34, $64 ; crystal
 db $34, $64 ; crystal
 db $34, $64 ; crystal
 db $34, $64 ; crystal
-db $32, $64 ; crystal
+db $34, $64 ; crystal
 
-db $32, $64 ; crystal
+db $34, $64 ; crystal
 db $34, $64 ; crystal
 db $32, $66 ; skull looking thing
 db $00, $00 ; red x

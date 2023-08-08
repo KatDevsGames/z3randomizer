@@ -1,6 +1,6 @@
 RenderCharSetColorExtended_init:
     stz.b Scrap0C
-    jsl $80d84e
+    jsl Attract_DecompressStoryGfx
     rtl
 
 RenderCharSetColorExtended_close:

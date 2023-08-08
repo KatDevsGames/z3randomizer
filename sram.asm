@@ -429,15 +429,6 @@ SaveBackupSRAM:                 ; Backup copy of save ram. Game will attempt to 
 base off
 
 ;================================================================================
-; Bank Definitions
-;--------------------------------------------------------------------------------
-; If these move (most likely by placing initsramtable.asm somewhere else) these
-; bank definitions need to be changed as well.
-;================================================================================
-!SRAMBank = $70
-!SRAMTableBank = $30|$80
-
-;================================================================================
 ; Assertions
 ;================================================================================
 macro assertSRAM(label, address)

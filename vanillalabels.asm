@@ -24,6 +24,7 @@ Tagalong_LoadGfx                                           = $80D463
 GetAnimatedSpriteTile                                      = $80D51B
 GetAnimatedSpriteTile_variable                             = $80D52D
 Attract_DecompressStoryGfx                                 = $80D84E
+InitializeTilesets                                         = $80E1DB
 LoadSelectScreenGfx                                        = $80E529
 PrepDungeonExit                                            = $80F945
 Mirror_InitHdmaSettings                                    = $80FDEE
@@ -126,6 +127,7 @@ Sprite_PlayerCantPassThrough                               = $9EF4E7
 ;===================================================================================================
 ; Local routines (use JSR)
 ;===================================================================================================
+LoadBackgroundGraphics                                     = $80E649
 RoomTag_PrizeTriggerDoor_open                              = $81C529
 RoomTag_PrizeTriggerDoor_exit                              = $81C529
 RoomTag_GetHeartForPrize                                   = $81C709
@@ -150,6 +152,9 @@ ItemMenu_DrawEquippedYItem                                 = $8DEB3A
 ItemMenu_DrawEquippedYItem_exit                            = $8DECE6
 ItemMenu_DrawEquipment_dungeonitems                        = $8DEDCC
 DrawEquipment                                              = $8DED29
+DecompressFontGFX                                          = $8EF572
+CopyDecompressedCharToTransferBuffer                       = $8EF5BC
+CopyDecompressedToFullBuffer                               = $8EF6A8
 
 ;===================================================================================================
 ; Palettes

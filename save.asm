@@ -4,25 +4,6 @@ WriteSaveChecksumAndBackup:
         CLC
         LDX.w #$004FC
         -
-                ADC.l SaveDataWRAM, X
-                DEX #2
-        BPL -
-        LDX.w #$0FFE
-        -
-                ADC.l ExtendedFileNameWRAM, X
-                DEX #2
-        BPL -
-        STA.b Scrap00
-        LDA.w #$5A5A
-        SEC : SBC.b Scrap00
-        STA.l InverseChecksumSRAM
-        BRA .backup_save
-
-        .from_sram
-        TDC
-        CLC
-        LDX.w #$004FC
-        -
                 ADC.l CartridgeSRAM, X
                 DEX #2
         BPL -
@@ -38,10 +19,10 @@ WriteSaveChecksumAndBackup:
         
         .backup_save
         PHB
-        LDA.w #$14FF             ; \
-        LDX.w #CartridgeSRAM     ;  | Copies $1500 bytes from beginning of cart SRAM to 
-        LDY.w #SaveBackupSRAM    ;  | $704000
-        MVN !SRAMBank, !SRAMBank ; /
+        LDA.w #$14FF
+        LDX.w #CartridgeSRAM
+        LDY.w #SaveBackupSRAM
+        MVN CartridgeSRAM>>16, CartridgeSRAM>>16
         PLB
         TDC
         TAX
@@ -80,13 +61,14 @@ ValidateSRAM:
                 LDA.w #$5A5A
                 SEC : SBC.b Scrap00
                 CMP.l SaveBackupSRAM+$4FE : BEQ +
-                        TDC : STA.l FileValiditySRAM ; Delete save by way of zeroing validity marker
-                        BRA .goodchecksum : +
+                        TDC : STA.l FileValiditySRAM ; Delete save
+                        BRA .goodchecksum
+                +
                 PHB
-                LDA.w #$14FF             ; \
-                LDX.w #SaveBackupSRAM    ;  | Copies $1500 bytes from backup on cart SRAM to 
-                LDY.w #CartridgeSRAM     ;  | main save location at $700000
-                MVN !SRAMBank, !SRAMBank ; /
+                LDA.w #$14FF
+                LDX.w #SaveBackupSRAM
+                LDY.w #CartridgeSRAM
+                MVN CartridgeSRAM>>16, CartridgeSRAM>>16
                 PLB
 
         .goodchecksum
@@ -182,7 +164,7 @@ CopyExtendedSaveFileToWRAM:
         LDA.w #$0FFF
         LDX.w #ExtendedSaveDataSRAM
         LDY.w #ExtendedSaveDataWRAM
-        MVN $7F, !SRAMBank
+        MVN ExtendedSaveDataWRAM>>16, CartridgeSRAM>>16
         PLB
         PLA
         STA.l $7EC00D ; What we wrote over. Keep this write last.
@@ -193,7 +175,7 @@ CopyExtendedWRAMSaveFileToSRAM:
         LDA.w #$0FFF
         LDX.w #ExtendedSaveDataSRAM
         LDY.w #ExtendedSaveDataWRAM
-        MVN !SRAMBank, $7F
+        MVN CartridgeSRAM>>16, ExtendedSaveDataWRAM>>16
         PLB
         TDC
         TAX

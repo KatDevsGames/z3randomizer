@@ -886,7 +886,7 @@ org $80D557 ; 5557 - Bank00.asm:3486 (LDA $00 : ADC $D469, X)
 JSL GetAnimatedSpriteBufferPointer : NOP
 
 org $8799F7 ; 399F7 - Bank07.asm:4107 (JSL AddReceivedItem)
-JSL AddReceivedItemLong
+JSL AddReceivedItemExpanded
 
 org $898611 ; 48611 - ancilla_init.asm:720 (LDA .item_target_addr+0, X)
 LDA.w ItemReceipts_target+0, X
@@ -2450,33 +2450,18 @@ JSL FixJingleGlitch
 ; Text Renderer
 ;--------------------------------------------------------------------------------
 if !FEATURE_NEW_TEXT
-	org $8EF51B
-		JML RenderCharExtended
-	org $8EF520
-		RenderCharExtended_returnOriginal:
-	org $8EF567
-		RenderCharExtended_returnUncompressed:
-
-	org $8EF356
-		JSL RenderCharLookupWidth
-	org $8EF3BA
-		JSL RenderCharLookupWidth
-	org $8EF48E
-		JML RenderCharLookupWidthDraw
-	org $8EF499
-		RenderCharLookupWidthDraw_return:
-
-	org $8EF6AA
-		JML RenderCharToMapExtended
-	org $8EF6C2
-		RenderCharToMapExtended_return:
-
-	org $8EFA50
-		JSL RenderCharSetColorExtended
-	org $8EEE5D
-		JSL RenderCharSetColorExtended_init
-	org $8EF285
-		JSL RenderCharSetColorExtended_close : NOP
+    org $8EF51B : JML RenderCharExtended
+    org $8EF520 : RenderCharExtended_returnOriginal:
+    org $8EF567 : RenderCharExtended_returnUncompressed:
+    org $8EF356 : JSL RenderCharLookupWidth
+    org $8EF3BA : JSL RenderCharLookupWidth
+    org $8EF48E : JML RenderCharLookupWidthDraw
+    org $8EF499 : RenderCharLookupWidthDraw_return:
+    org $8EF6AA : JML RenderCharToMapExtended
+    org $8EF6C2 : RenderCharToMapExtended_return:
+    org $8EFA50 : JSL RenderCharSetColorExtended
+    org $8EEE5D : JSL RenderCharSetColorExtended_init
+    org $8EF285 : JSL RenderCharSetColorExtended_close : NOP
 endif
 
 ;================================================================================

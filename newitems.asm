@@ -117,7 +117,7 @@ ProcessEventItems:
 	PLA : STA.b Scrap00
 RTS
 ;--------------------------------------------------------------------------------
-AddReceivedItemLong:
+AddReceivedItemExpanded:
         JSR.w ResolveReceipt
         PHB : PHK
 JML AddReceivedItem+2
@@ -699,6 +699,7 @@ ResolveLootID:
                 LDA.l ProgressiveArmorReplacement
                 JMP.w .get_item
         +
+        TAX
         LDA.w ResolveLootID_armor_ids,X
         JMP.w .have_item
         ..ids

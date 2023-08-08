@@ -88,21 +88,19 @@ OnAga2Defeated:
         JML.l IncrementAgahnim2Sword
 ;--------------------------------------------------------------------------------
 OnFileCreation:
-        ; Copy initial SRAM state from ROM to cart SRAM
-        ; If the inital SRAM table is move these addresses must be changed
         PHB
-        LDA.w #$03D7                  ; \
-        LDX.w #$B000                  ;  | Copies from beginning of inital sram table up to file name
-        LDY.w #$0000                  ;  | (exclusively)
-        MVN !SRAMBank, !SRAMTableBank ; /
-                                      ; Skip file name and validity value
-        LDA.w #$010C                  ; \
-        LDX.w #$B3E3                  ;  | Rando-Specific Assignments & Game Stats block
-        LDY.w #$03E3                  ;  |
-        MVN !SRAMBank, !SRAMTableBank ; /
+        LDA.w #$03D7
+        LDX.w #$B000
+        LDY.w #$0000
+        MVN CartridgeSRAM>>16, InitSRAMTable>>16
+        ; Skip file name and validity value
+        LDA.w #$010C
+        LDX.w #$B3E3
+        LDY.w #$03E3
+        MVN CartridgeSRAM>>16, InitSRAMTable>>16 
         PLB
 
-        ; resolve instant post-aga if standard
+        ; Resolve instant post-aga if standard
         SEP #$20
         LDA.l InitProgressIndicator : BIT #$80 : BEQ +
                 LDA.b #$00 : STA.l ProgressIndicatorSRAM  ; set post-aga after zelda rescue
@@ -110,9 +108,9 @@ OnFileCreation:
         +
         REP #$20
 
-        ; Set validity value and do some cleanup. Jump to checksum.
+        ; Set validity value and do some cleanup. Jump to checksum done.
         LDA.w #$55AA : STA.l FileValiditySRAM
-        JSL.l WriteSaveChecksumAndBackup_from_sram
+        JSL.l WriteSaveChecksumAndBackup
         STZ.b Scrap00
         STZ.b Scrap01
 

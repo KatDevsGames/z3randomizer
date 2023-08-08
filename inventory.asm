@@ -142,6 +142,7 @@ AddInventory:
 	PHA : PHX : PHY : PHP : PHB
         PHK : PLB
 	LDA.l StatsLocked : BNE .done
+        LDA.w InventoryTable_properties,Y : BIT #$01 : BEQ .done
         JSR.w ShopCheck : BCS .done
         JSR.w DungeonIncrement : BCS .done
                 LDA.b #$7E : STA.b Scrap0D 
@@ -149,7 +150,6 @@ AddInventory:
                 JSR.w IncrementByOne
                 SEP #$20
                 JSR.w IncrementYAItems
-                LDA.w InventoryTable_properties,Y : BIT #$01 : BEQ .done
                         REP #$20
                         LDA.l TotalItemCounter : INC : TAY
                         LDA.l BootsEquipment : BNE +
@@ -211,6 +211,9 @@ DungeonIncrement:
 	        +
         .count
         CLC
+RTS
+        .dont_count
+        SEC
 RTS
         .ballchain_bigkey
         LDA.l BigKeysBigChests

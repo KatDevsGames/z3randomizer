@@ -106,6 +106,7 @@ IncrementSmallKeysNoPrimary:
                 ++
                 PLP
         +
+        INC.w UpdateHUD
         JSL.l HUD_RebuildLong
         PLX
 RTL

@@ -80,7 +80,7 @@ PHX
 	.checkIfObtained
 	LDA.l MC_DungeonIdsForPrize, X
 	BPL +++ : CLC : BRA .done : +++ ; non-prize flags
-        CMP.b #$03 : BCC .hyrule_castle
+        CMP.b #$02 : BCC .hyrule_castle
         ASL : TAX
         REP #$20
         LDA.l DungeonsCompleted : AND.l DungeonItemMasks,X : BNE .fail

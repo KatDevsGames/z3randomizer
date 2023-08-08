@@ -1,5 +1,6 @@
 !FREE_TILE_BUFFER = $1180
-!FREE_TILE = $5A40
+!FREE_TILE = $5C60
+!FREE_TILE_ALT = $5A40
 
 ;--------------------------------------------------------------------------------
 ; $0A : Digit Offset
@@ -185,14 +186,19 @@ dw $0100, $0000
 ; X - Tile Buffer Offset
 ; Y - Item ID
 LoadTile:
-	TXA : LSR #2 : !ADD.w #!FREE_TILE : STA.w ItemGFXTarget  ; load offset from X
-        ;SEP #$30
+        LDA.l ShopType : BIT.w #$0010 : BNE .alt_vram
+	        TXA : LSR #2
+                CLC : ADC.w #!FREE_TILE
+                BRA .store_target
+        .alt_vram
+	TXA : LSR #2
+        CLC : ADC.w #!FREE_TILE_ALT
+        .store_target
+        STA.w ItemGFXTarget
 	TYA : ASL : TAX
         LDA.l StandingItemGraphicsOffsets,X : STA.w ItemGFXPtr
         JSL.l TransferItemToVRAM
         TDC
-	;JSL.l GetSpriteID ; convert loot id to sprite id
-	;JSL.l GetAnimatedSpriteTile_variable
 	REP #$10 ; set 16-bit index registers
         SEP #$20
 RTS
