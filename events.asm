@@ -1,10 +1,15 @@
 OnPrepFileSelect:
-	LDA.b GameSubMode : CMP.b #$03 : BNE +
-		LDA.b #$06 : STA.b NMISTRIPES ; thing we wrote over
-		RTL
-	+
-	JSL.l LoadAlphabetTilemap
-	JML.l LoadFullItemTiles
+        LDA.b GameSubMode : CMP.b #$03 : BNE +
+                LDA.b #$06 : STA.b NMISTRIPES ; thing we wrote over
+                RTL
+        +
+        PHA : PHX
+        REP #$10
+        JSL.l LoadAlphabetTilemap
+        JSL.l LoadFullItemTiles
+        SEP #$10
+        PLX : PLA
+RTL
 ;--------------------------------------------------------------------------------
 OnDrawHud:
 	JSL.l DrawChallengeTimer ; this has to come before NewDrawHud because the timer overwrites the compass counter

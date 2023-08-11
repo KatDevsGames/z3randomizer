@@ -141,10 +141,15 @@ FreeDungeonItemNotice:
 	LDA.w ScratchBufferNV+1
         ASL : TAX
         REP #$20
-        LDA.l DungeonItemIDMap,X : CMP.w DungeonID : BNE +
-                SEP #$20
-		%CopyDialog(Notice_Self)
-                JMP.w .done
+        LDA.l DungeonItemIDMap,X : CMP.w #$0003 : BCC .hc_sewers
+                                   CMP.w DungeonID : BNE +
+                BRA .self_notice
+                .hc_sewers
+                LDA.w DungeonID : CMP.b #$0003 : BCS +
+                        .self_notice
+                        SEP #$20
+		        %CopyDialog(Notice_Self)
+                        JMP.w .done
         +
         SEP #$20
 	LDA.w ScratchBufferNV+1

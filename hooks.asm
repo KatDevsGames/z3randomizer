@@ -211,6 +211,10 @@ RTL ;Just in case anybody ever removes the previous hook
 org $80E55D ; <- 0655D - Bank00.asm : 5473 (LDA.w #$7000 : STA $2116)
 LDA.w #$2000 ; Load file select screen graphics to VRAM word addres 0x2000 instead of 0x7000
 ;--------------------------------------------------------------------------------
+org $80E568 : LDX.w #$0EFF ; Load full decompressed character set into VRAM
+;--------------------------------------------------------------------------------
+org $80E581 : JSL.l LoadFileSelectVanillaItems : BRA + : NOP #13 : +
+;--------------------------------------------------------------------------------
 org $80833A ; <- 0033A - Bank00.asm : 481 (LDA.w #$007F)
 LDA.w #$0180 ; change which character is used as the blank character for the select screen
 ;--------------------------------------------------------------------------------
@@ -233,6 +237,7 @@ db $3D
 org $8CD6BD ; <- Y position table for Death Counts
 db $51
 ;--------------------------------------------------------------------------------
+org $8CD55F : LDA.w #$0600 ; Hearts tile offset
 
 ;================================================================================
 ; Name Entry Screen
@@ -589,6 +594,7 @@ NOP #4
 org $81ED75 ; <- ED75 - Bank01.asm : 13963 (JSL Dungeon_SaveRoomQuadrantData)
 JSL IncrementBigChestCounter
 ;--------------------------------------------------------------------------------
+org $8EE67A : STA.l PostGameCounter : BRA + : NOP #18 : +
 
 ;================================================================================
 ; DialogOverride
@@ -618,7 +624,7 @@ org $8EED15 ; <- PC 0x76D15 - Bank0E.asm : 3282 (LDA $E924, Y : STA $1008, X)
 JSL EndingSequenceTableOverride : NOP #2
 ;--------------------------------------------------------------------------------
 org $8EED2A ; <- PC 0x76D2A - Bank0E.asm : 3295 (LDA $E924, Y : AND.w #$00FF)
-JSL EndingSequenceTableLookupOverride : NOP #2
+JSL EndingSequenceTableLookupOverride : NOP #7
 ;--------------------------------------------------------------------------------
 
 ;================================================================================
@@ -1385,9 +1391,6 @@ org $8DFC37 ; <- 6FC37 - headsup_display.asm : 828 (LDA.w #$28F7)
 JSL DrawMagicHeader
 BRA + : NOP #15 : +
 ;--------------------------------------------------------------------------------
-org $8DFB29 ; <- headsup_display.asm : 688 (LDA.b #$86 : STA $7EC71E)
-JSL DrawHUDArrows : BRA + : NOP #18 : +
-;--------------------------------------------------------------------------------
 org $81CF67 ; <- CF67 - Bank01.asm : 11625 (STA $7EF36F)
 JSL DecrementSmallKeys
 ;--------------------------------------------------------------------------------
@@ -1400,8 +1403,8 @@ LDX.w #HUD_TileMap
 org $8DFA9C ; <- 6FA9C - headsup_display.asm : 629 (MVN $0D, $7E ; $Transfer 0x014A bytes from $6FE77 -> $7EC700)
 MVN $A17E
 ;--------------------------------------------------------------------------------
-org $8DFB1F ; 6FB1F - headsup_display.asm : 681 (LDA $7EF340 : BEQ .hastNoBow)
-JSL CheckHUDSilverArrows
+org $8DFB1F : JSL CheckHUDSilverArrows
+org $8DFB29 : BRA UpdateHUDBuffer_update_item_check_arrows
 ;--------------------------------------------------------------------------------
 org $8DF1AB
 JSR.w RebuildHUD_update
@@ -2379,40 +2382,33 @@ org $8DB516 : db $40 ; chain chomp
 ;--------------------------------------------------------------------------------
 ; Keep Firebar Damage on Same Layer
 ;--------------------------------------------------------------------------------
-org $86F425
-Sprite_AttemptDamageToPlayerPlusRecoilLong:
-
-org $9ED1B6
-JSL NewFireBarDamage
+org $9ED1B6 : JSL NewFireBarDamage
 
 ;================================================================================
 ; Remove heart beeps from 1/2 max HP
 org $8DDB60
 db $00, $00
-
+;================================================================================
+; Credits
+;================================================================================
+org $8EE651 : JSL LoadCreditsTiles
+org $8EEDAF : JSL NearEnding
+org $8EEDD9 : JSL EndingItems
+org $8EE828 : JSL PreparePointer : LDA.b [CreditsPtr],Y : NOP
+org $8EE83F : LDA.b [CreditsPtr],Y : NOP
+org $8EE853
+LDA.b [CreditsPtr],Y : NOP : AND.w #$00FF : ASL A : JSL CheckFontTable
+org $8EE86D : JSL RenderCreditsStatCounter : JMP.w AfterDeathCounterOutput
+org $82857D : JSL LoadOverworldCreditsTiles
 ;================================================================================
 ; Fast credits
-
-org $8EC2B1
-JSL FlagFastCredits
-
-org $82A096
-JSL DumbFlagForMSU
-
-org $8EC3AF
-JSL FastCreditsScrollOW : JMP.w $0EC3C7
-
-org $8EC41F
-JSL FastCreditsCutsceneUnderworldY
-
-org $8EC42C
-JSL FastCreditsCutsceneUnderworldX
-
-org $8EC488
-JSL FastCreditsCutsceneTimer
-
-org $8EE773
-JSL FastTextScroll : NOP
+org $8EC2B1 : JSL FlagFastCredits
+org $82A096 : JSL DumbFlagForMSU
+org $8EC3AF : JSL FastCreditsScrollOW : JMP.w $0EC3C7
+org $8EC41F : JSL FastCreditsCutsceneUnderworldY
+org $8EC42C : JSL FastCreditsCutsceneUnderworldX
+org $8EC488 : JSL FastCreditsCutsceneTimer
+org $8EE773 : JSL FastTextScroll : NOP
 
 ;================================================================================
 org $81FFEE : JSL IncrementDamageTakenCounter_Eight ; overworld pit

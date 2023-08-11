@@ -5,16 +5,6 @@ lorom
 !BLT = "BCC"
 !BGE = "BCS"
 
-org $A38000
-incsrc stats/credits.asm
-
-FontGfx:
-if !FEATURE_NEW_TEXT
-	incbin stats/font.2bpp
-else
-	incbin stats/font.gb
-endif
-FontGfxEnd:
 
 ; Custom addresses. Most are arbitrary. Feel free to make sure they're okay or moving them elsewhere within ZP
 CreditsPtr = $7C   ; 3 bytes
@@ -210,8 +200,8 @@ macro CountUnits(framesPerUnit, unitCounter)
 ?end:
 endmacro
 
-!ColonOffset = $83
-!PeriodOffset = $80
+!ColonOffset = $8A
+!PeriodOffset = $4D
 BlankCreditsTile = $883D
 
 RenderCreditsStatCounter:
@@ -513,79 +503,47 @@ RenderLineNumber:
 
 	RTS
 
-LoadModifiedFont:
-	; Based on CopyFontToVram(Bank00)
-	; copies font graphics to VRAM (for BG3)
+LoadCreditsTiles:
+        JSL.l CopyFontToVRAM ; What we wrote over
 
-	; set name base table to vram $4000 (word)
-	LDA.b #$02 : STA.w OBSEL
+        REP #$10
+        LDA.b #$80 : STA.w VMAIN
+        LDA.b #$01 : STA.w DMAP0
+        LDA.b #$18 : STA.w BBAD0
 
-	; increment on writes to $2119
-	LDA.b #$80 : STA.w VMAIN
+        ; Item tiles
+        LDX.w #$8200 : STX.w VMADDL
+        LDA.b #FileSelectNewGraphics>>16 : STA.w A1B0
+        LDX.w #FileSelectNewGraphics : STX.w A1T0L
+        LDX.w #$0C00 : STX.w DAS0L
+        LDA.b #$01 : STA.w MDMAEN
 
-	; set bank of the source address (see below)
-	LDA.b #FontGfx>>16 : STA.b Scrap02
+        ; Small characters A-Z
+        LDX.w #$7F00 : STX.w VMADDL
+        LDA.b #SmallCharacters>>16 : STA.w A1B0
+        LDX.w #SmallCharacters : STX.w A1T0L
+        LDX.w #$0200 : STX.w DAS0L
+        LDA.b #$01 : STA.w MDMAEN
 
-	REP #$30
+        SEP #$10
+RTL
 
-	; vram target address is $7000 (word)
-	LDA.w #$7000 : STA.w VMADDL
+LoadOverworldCreditsTiles:
+        JSL.l CopyFontToVRAM ; What we wrote over
+        REP #$10
 
-	; $00[3] = $0E8000 (offset for the font data)
-	LDA.w #FontGfx : STA.b Scrap00
+        ; Small characters A-Z
+        LDA.b #$80 : STA.w VMAIN
+        LDA.b #$01 : STA.w DMAP0
+        LDA.b #$18 : STA.w BBAD0
+        LDA.b #SmallCharacters>>16 : STA.w A1B0
+        LDX.w #SmallCharacters : STX.w A1T0L
+        LDX.w #$0200 : STX.w DAS0L
+        LDX.w #$7F00 : STX.w VMADDL
+        LDA.b #$01 : STA.w MDMAEN
 
-	; going to write 0x1000 bytes (0x800 words)
-	LDX.w #FontGfxEnd-FontGfx/2-1
-
-.nextWord
-
-	; read a word from the font data
-	LDA.b [$00] : STA.w VMDATAL
-
-	; increment source address by 2
-	INC.b Scrap00 : INC.b Scrap00
-
-	DEX : BPL .nextWord
-
-	SEP #$30
-	JSL LoadFullItemTilesCredits
-
-	RTL
-
-LoadFullItemTilesCredits:
-	; Based on CopyFontToVram(Bank00)
-	; copies font graphics to VRAM (for BG3)
-
-	; increment on writes to $2119
-	LDA.b #$80 : STA.w VMAIN
-
-	; set bank of the source address (see below)
-	LDA.b #FileSelectNewGraphics>>16 : STA.b Scrap02
-
-	REP #$30
-
-	; vram target address is $8000 (word) (Wraps to start of VRAM on normal SNES, but using the correct address so it works on extended VRAM machines)
-	LDA.w #$8000 : STA.w VMADDL
-
-	; $00[3] = $0E8000 (offset for the font data)
-	LDA.w #FileSelectNewGraphics : STA.b Scrap00
-
-	; going to write 0x1000 bytes (0x800 words)
-	LDX.w #$800-1
-
-	.nextWord
-
-	; read a word from the font data
-	LDA.b [$00] : STA.w VMDATAL
-
-	; increment source address by 2
-	INC.b Scrap00 : INC.b Scrap00
-
-	DEX : BPL .nextWord
-
-	SEP #$30
-
-	RTL
+        SEP #$10
+RTL
 
 CheckFontTable:
 	TAY
@@ -620,39 +578,27 @@ DrawEndingItems:
 	LDA.b #$01 : STA.b NMISTRIPES
 RTS
 
-FontTable:
-	incbin stats/fonttable.bin
-
-CreditsStats:
-incsrc stats/statConfig.asm
-dw $FFFF
-
-org $0EEDD9
-	JSL EndingItems
-
-org $0EEDAF
-	JSL NearEnding
-
-org $0EE651
-	JSL LoadModifiedFont
-
-org $0EE828
-	JSL PreparePointer
-	LDA.b [CreditsPtr],Y
-	NOP
-org $0EE83F
-	LDA.b [CreditsPtr],Y
-	NOP
-org $0EE853
-	LDA.b [CreditsPtr],Y
-	NOP
-	AND.w #$00FF
-	ASL A
-	JSL CheckFontTable
-
-org $0EE86D
-	JSL RenderCreditsStatCounter
-	JMP.w AfterDeathCounterOutput
-
-org $8EE8FD
-	AfterDeathCounterOutput:
+;================================================================================
+; Dialog Pointer Override
+;--------------------------------------------------------------------------------
+EndingSequenceTableOverride:
+        PHY
+        PHX
+        TYX
+        LDA.l EndingSequenceText, X
+        PLX
+        STA.w $1008, X
+        PLY
+RTL
+;--------------------------------------------------------------------------------
+EndingSequenceTableLookupOverride:
+        PHX : PHB
+        PHK : PLB
+        TYX
+        LDA.l EndingSequenceText, X : AND.w #$00FF
+        ASL
+        TAY
+        LDA.w FontTable,Y
+        PLB : PLX
+RTL
+;--------------------------------------------------------------------------------

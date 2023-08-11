@@ -10,13 +10,13 @@ FlagFastCredits:
 	AND.b Joy1B_All
 	TSB.b FastCreditsActive
 
-	LDA.b #$10
+	LDA.b #$20
 	AND.b Joy1A_New
 	EOR.b FastCreditsActive
 	STA.b FastCreditsActive
 
 	LDA.b FastCreditsActive
-	AND.b #$50
+	AND.b #$60
 	BEQ .slow
 
 	LDA.b #$01
@@ -36,7 +36,7 @@ FastCreditsCutsceneTimer:
 	INC
 
 	JSR IsFastCredits
-	BEQ .slow
+	BCC .slow
 
 	INC
 	INC
@@ -92,7 +92,7 @@ FastCreditsCutsceneScroll:
 	LDA.w #$0000
 
 ++	JSR IsFastCredits
-	BEQ .slow
+	BCC .slow
 
 	AND.w #$FFFF ; get sign of A
 	BPL .positive
@@ -111,11 +111,6 @@ FastCreditsCutsceneScroll:
 
 .slow
 	RTS
-
-
-
-
-
 
 FastCreditsCutsceneUnderworldX:
 	JSR FastCreditsCutsceneScrollX
@@ -136,14 +131,18 @@ FastCreditsCutsceneUnderworldY:
 
 
 FastTextScroll:
+        LDA.b FrameCounter
+        SEP #$10
 	JSR IsFastCredits
-	BEQ .slow
+	BCC .slow
 
 	AND.w #$0000
+        REP #$10
 	RTL
 
 .slow
 	AND.w #$0003
+        REP #$10
 	RTL
 
 DumbFlagForMSU:
@@ -152,9 +151,7 @@ DumbFlagForMSU:
 	RTL
 
 IsFastCredits:
-	PHA
-	LDA.b FastCreditsActive
-	AND.w #$0050
-	PLA
+	LDY.b FastCreditsActive
+        CPY.b #$20
 	RTS
 

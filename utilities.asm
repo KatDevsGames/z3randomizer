@@ -383,7 +383,7 @@ LoadItemPalette:
 RTL
 
 TransferVRAMStripes:
-        JSL.l TransferNumericStripes
+        JSL.l TransferNewNameStripes
         JSL.l DoDungeonMapBossIcon
         LDA.b NMISTRIPES : CMP.b #$01 ; What we wrote over
 RTL

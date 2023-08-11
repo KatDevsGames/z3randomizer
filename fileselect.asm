@@ -1,6 +1,4 @@
-
 ;FS prefix means file_select, since these defines and macros are specific to this screen
-
 !FS_COLOR_BROWN = $0000 ;(only used for: Shovel, hammer, powder)
 !FS_COLOR_RED = $0400
 !FS_COLOR_YELLOW = $0800
@@ -371,8 +369,8 @@ DrawPlayerFileShared:
 
 	LDA.l EquipmentSRAM+$0130 : AND.w #$00FF
 	JSL.l HexToDec
-	LDA.l HexToDecDigit4 : AND.w #$00FF : ORA.w #!FS_COLOR_BW|$02A0 : %fs_draw8x8(11,26)
-	LDA.l HexToDecDigit5 : AND.w #$00FF : ORA.w #!FS_COLOR_BW|$02A0 : %fs_draw8x8(11,27)
+	LDA.l HexToDecDigit4 : AND.w #$00FF : ORA.w #!FS_COLOR_BW|$02E0 : %fs_draw8x8(11,26)
+	LDA.l HexToDecDigit5 : AND.w #$00FF : ORA.w #!FS_COLOR_BW|$02E0 : %fs_draw8x8(11,27)
 
 	; Boots
 	%fs_drawItemBasic(EquipmentSRAM+$15,3,28,FileSelectItems_boots)
@@ -418,52 +416,52 @@ DrawPlayerFileShared:
 
 	; Crystals
 	LDA.l EquipmentSRAM+$3A : AND.w #$0002 : BEQ +
-		LDA.w #$0297|!FS_COLOR_BLUE
+		LDA.w #$02D7|!FS_COLOR_BLUE
 		BRA ++
 	+
-		LDA.w #$0287|!FS_COLOR_GRAY
+		LDA.w #$02C7|!FS_COLOR_GRAY
 	++ : %fs_draw16x8(13,18)
 
 	LDA.l EquipmentSRAM+$3A : AND.w #$0010 : BEQ +
-		LDA.w #$0297|!FS_COLOR_BLUE
+		LDA.w #$02D7|!FS_COLOR_BLUE
 		BRA ++
 	+
-		LDA.w #$0287|!FS_COLOR_GRAY
+		LDA.w #$02C7|!FS_COLOR_GRAY
 	++ : %fs_draw16x8(12,19)
 
 	LDA.l EquipmentSRAM+$3A : AND.w #$0040 : BEQ +
-		LDA.w #$0297|!FS_COLOR_BLUE
+		LDA.w #$02D7|!FS_COLOR_BLUE
 		BRA ++
 	+
-		LDA.w #$0287|!FS_COLOR_GRAY
+		LDA.w #$02C7|!FS_COLOR_GRAY
 	++ : %fs_draw16x8(13,20)
 
 	LDA.l EquipmentSRAM+$3A : AND.w #$0020 : BEQ +
-		LDA.w #$0297|!FS_COLOR_BLUE
+		LDA.w #$02D7|!FS_COLOR_BLUE
 		BRA ++
 	+
-		LDA.w #$0287|!FS_COLOR_GRAY
+		LDA.w #$02C7|!FS_COLOR_GRAY
 	++ : %fs_draw16x8(12,21)
 
 	LDA.l EquipmentSRAM+$3A : AND.w #$0004 : BEQ +
-		LDA.w #$0297|!FS_COLOR_RED
+		LDA.w #$02D7|!FS_COLOR_RED
 		BRA ++
 	+
-		LDA.w #$0287|!FS_COLOR_GRAY
+		LDA.w #$02C7|!FS_COLOR_GRAY
 	++ : %fs_draw16x8(13,22)
 
 	LDA.l EquipmentSRAM+$3A : AND.w #$0001 : BEQ +
-		LDA.w #$0297|!FS_COLOR_RED
+		LDA.w #$02D7|!FS_COLOR_RED
 		BRA ++
 	+
-		LDA.w #$0287|!FS_COLOR_GRAY
+		LDA.w #$02C7|!FS_COLOR_GRAY
 	++ : %fs_draw16x8(12,23)
 
 	LDA.l EquipmentSRAM+$3A : AND.w #$0008 : BEQ +
-		LDA.w #$0297|!FS_COLOR_BLUE
+		LDA.w #$02D7|!FS_COLOR_BLUE
 		BRA ++
 	+
-		LDA.w #$0287|!FS_COLOR_GRAY
+		LDA.w #$02C7|!FS_COLOR_GRAY
 	++ : %fs_draw16x8(13,24)
 
 
@@ -473,157 +471,157 @@ RTS
 
 FileSelectItems:
 	.empty_bow ;for an eventual update for retro mode
-	dw #$0201|!FS_COLOR_YELLOW, #$02B8|!FS_COLOR_YELLOW, #$02B7|!FS_COLOR_YELLOW, #$0212|!FS_COLOR_YELLOW
+	dw #$0241|!FS_COLOR_YELLOW, #$02F8|!FS_COLOR_YELLOW, #$02F7|!FS_COLOR_YELLOW, #$0252|!FS_COLOR_YELLOW
 	.bow
-	dw #$0201|!FS_COLOR_YELLOW, #$0202|!FS_COLOR_YELLOW, #$0211|!FS_COLOR_YELLOW, #$0212|!FS_COLOR_YELLOW
+	dw #$0241|!FS_COLOR_YELLOW, #$0242|!FS_COLOR_YELLOW, #$0251|!FS_COLOR_YELLOW, #$0252|!FS_COLOR_YELLOW
 	.silver_bow
-	dw #$0201|!FS_COLOR_YELLOW, #$0204|!FS_COLOR_YELLOW, #$0203|!FS_COLOR_RED, #$0212|!FS_COLOR_YELLOW
+	dw #$0241|!FS_COLOR_YELLOW, #$0244|!FS_COLOR_YELLOW, #$0243|!FS_COLOR_RED, #$0252|!FS_COLOR_YELLOW
 	.regular_arrow ;for an eventual update for retro mode
-	dw #$0200|!FS_COLOR_YELLOW, #$02BA|!FS_COLOR_YELLOW, #$02B9|!FS_COLOR_RED, #$0200|!FS_COLOR_YELLOW
+	dw #$0240|!FS_COLOR_YELLOW, #$02FA|!FS_COLOR_YELLOW, #$02F9|!FS_COLOR_RED, #$0240|!FS_COLOR_YELLOW
 	.silver_arrow
-	dw #$0200|!FS_COLOR_YELLOW, #$0214|!FS_COLOR_YELLOW, #$0213|!FS_COLOR_RED, #$0200|!FS_COLOR_YELLOW
+	dw #$0240|!FS_COLOR_YELLOW, #$0254|!FS_COLOR_YELLOW, #$0253|!FS_COLOR_RED, #$0240|!FS_COLOR_YELLOW
 	.blue_boomerang
-	dw #$0205|!FS_COLOR_BLUE, #$0206|!FS_COLOR_BLUE, #$0200|!FS_COLOR_BW, #$0216|!FS_COLOR_BLUE
+	dw #$0245|!FS_COLOR_BLUE, #$0246|!FS_COLOR_BLUE, #$0240|!FS_COLOR_BW, #$0256|!FS_COLOR_BLUE
 	.red_boomerang
-	dw #$0205|!FS_COLOR_RED, #$0206|!FS_COLOR_RED, #$0200|!FS_COLOR_BW, #$0216|!FS_COLOR_RED
+	dw #$0245|!FS_COLOR_RED, #$0246|!FS_COLOR_RED, #$0240|!FS_COLOR_BW, #$0256|!FS_COLOR_RED
 	.both_boomerang
-	dw #$02B6|!FS_COLOR_BLUE, #$02B6|!FS_COLOR_RED, #$02B6|!FS_COLOR_BLUE|!FS_VFLIP, #$02B6|!FS_COLOR_RED|!FS_VFLIP
+	dw #$02F6|!FS_COLOR_BLUE, #$02F6|!FS_COLOR_RED, #$02F6|!FS_COLOR_BLUE|!FS_VFLIP, #$02F6|!FS_COLOR_RED|!FS_VFLIP
 	.hookshot
-	dw #$0200|!FS_COLOR_RED, #$0215|!FS_COLOR_RED, #$0230|!FS_COLOR_RED, #$0200|!FS_COLOR_BW
+	dw #$0240|!FS_COLOR_RED, #$0255|!FS_COLOR_RED, #$0270|!FS_COLOR_RED, #$0240|!FS_COLOR_BW
 	.bombs
-	dw #$020C|!FS_COLOR_BLUE, #$020D|!FS_COLOR_BLUE, #$021C|!FS_COLOR_BLUE, #$021C|!FS_COLOR_BLUE|!FS_HFLIP
+	dw #$024C|!FS_COLOR_BLUE, #$024D|!FS_COLOR_BLUE, #$025C|!FS_COLOR_BLUE, #$025C|!FS_COLOR_BLUE|!FS_HFLIP
 	.fire_rod
-	dw #$0220|!FS_COLOR_RED, #$0210|!FS_COLOR_RED, #$0230|!FS_COLOR_RED, #$0231|!FS_COLOR_RED
+	dw #$0260|!FS_COLOR_RED, #$0250|!FS_COLOR_RED, #$0270|!FS_COLOR_RED, #$0271|!FS_COLOR_RED
 	.ice_rod
-	dw #$0220|!FS_COLOR_BLUE, #$0221|!FS_COLOR_BLUE, #$0230|!FS_COLOR_BLUE, #$0231|!FS_COLOR_BLUE
+	dw #$0260|!FS_COLOR_BLUE, #$0261|!FS_COLOR_BLUE, #$0270|!FS_COLOR_BLUE, #$0271|!FS_COLOR_BLUE
 	.bombos
-	dw #$0207|!FS_COLOR_YELLOW, #$0217|!FS_COLOR_YELLOW|!FS_HFLIP|!FS_VFLIP, #$0217|!FS_COLOR_YELLOW, #$0207|!FS_COLOR_YELLOW|!FS_HFLIP|!FS_VFLIP
+	dw #$0247|!FS_COLOR_YELLOW, #$0257|!FS_COLOR_YELLOW|!FS_HFLIP|!FS_VFLIP, #$0257|!FS_COLOR_YELLOW, #$0247|!FS_COLOR_YELLOW|!FS_HFLIP|!FS_VFLIP
 	.ether
-	dw #$0208|!FS_COLOR_YELLOW, #$0218|!FS_COLOR_YELLOW|!FS_HFLIP|!FS_VFLIP, #$0218|!FS_COLOR_YELLOW, #$0208|!FS_COLOR_YELLOW|!FS_HFLIP|!FS_VFLIP
+	dw #$0248|!FS_COLOR_YELLOW, #$0258|!FS_COLOR_YELLOW|!FS_HFLIP|!FS_VFLIP, #$0258|!FS_COLOR_YELLOW, #$0248|!FS_COLOR_YELLOW|!FS_HFLIP|!FS_VFLIP
 	.quake
-	dw #$0209|!FS_COLOR_YELLOW, #$0219|!FS_COLOR_YELLOW|!FS_HFLIP|!FS_VFLIP, #$0219|!FS_COLOR_YELLOW, #$0209|!FS_COLOR_YELLOW|!FS_HFLIP|!FS_VFLIP
+	dw #$0249|!FS_COLOR_YELLOW, #$0259|!FS_COLOR_YELLOW|!FS_HFLIP|!FS_VFLIP, #$0259|!FS_COLOR_YELLOW, #$0249|!FS_COLOR_YELLOW|!FS_HFLIP|!FS_VFLIP
 	.lamp
-	dw #$022C|!FS_COLOR_RED, #$022C|!FS_COLOR_RED|!FS_HFLIP, #$023C|!FS_COLOR_RED, #$023D|!FS_COLOR_RED
+	dw #$026C|!FS_COLOR_RED, #$026C|!FS_COLOR_RED|!FS_HFLIP, #$027C|!FS_COLOR_RED, #$027D|!FS_COLOR_RED
 	.hammer
-	dw #$0222|!FS_COLOR_BROWN, #$0223|!FS_COLOR_BROWN, #$0232|!FS_COLOR_BROWN, #$0233|!FS_COLOR_BROWN
+	dw #$0262|!FS_COLOR_BROWN, #$0263|!FS_COLOR_BROWN, #$0272|!FS_COLOR_BROWN, #$0273|!FS_COLOR_BROWN
 	.bugnet
-	dw #$0228|!FS_COLOR_YELLOW, #$0229|!FS_COLOR_YELLOW, #$0238|!FS_COLOR_YELLOW, #$0239|!FS_COLOR_YELLOW
+	dw #$0268|!FS_COLOR_YELLOW, #$0269|!FS_COLOR_YELLOW, #$0278|!FS_COLOR_YELLOW, #$0279|!FS_COLOR_YELLOW
 	.shovel
-	dw #$0224|!FS_COLOR_BROWN, #$0225|!FS_COLOR_BROWN, #$0234|!FS_COLOR_BROWN, #$0235|!FS_COLOR_BROWN
+	dw #$0264|!FS_COLOR_BROWN, #$0265|!FS_COLOR_BROWN, #$0274|!FS_COLOR_BROWN, #$0275|!FS_COLOR_BROWN
 	.flute
-	dw #$0226|!FS_COLOR_BLUE, #$0227|!FS_COLOR_BLUE, #$0236|!FS_COLOR_BLUE, #$0237|!FS_COLOR_BLUE
+	dw #$0266|!FS_COLOR_BLUE, #$0267|!FS_COLOR_BLUE, #$0276|!FS_COLOR_BLUE, #$0277|!FS_COLOR_BLUE
 	.book
-	dw #$022A|!FS_COLOR_GREEN, #$022B|!FS_COLOR_GREEN, #$023A|!FS_COLOR_GREEN, #$023B|!FS_COLOR_GREEN
+	dw #$026A|!FS_COLOR_GREEN, #$026B|!FS_COLOR_GREEN, #$027A|!FS_COLOR_GREEN, #$027B|!FS_COLOR_GREEN
 	.redcane
-	dw #$021D|!FS_COLOR_RED, #$021E|!FS_COLOR_RED, #$022D|!FS_COLOR_RED, #$022E|!FS_COLOR_RED
+	dw #$025D|!FS_COLOR_RED, #$025E|!FS_COLOR_RED, #$026D|!FS_COLOR_RED, #$026E|!FS_COLOR_RED
 	.bluecane
-	dw #$021D|!FS_COLOR_BLUE, #$021E|!FS_COLOR_BLUE, #$022D|!FS_COLOR_BLUE, #$022E|!FS_COLOR_BLUE
+	dw #$025D|!FS_COLOR_BLUE, #$025E|!FS_COLOR_BLUE, #$026D|!FS_COLOR_BLUE, #$026E|!FS_COLOR_BLUE
 	.cape
-	dw #$0248|!FS_COLOR_RED, #$0249|!FS_COLOR_RED, #$0258|!FS_COLOR_RED, #$0259|!FS_COLOR_RED
+	dw #$0288|!FS_COLOR_RED, #$0289|!FS_COLOR_RED, #$0298|!FS_COLOR_RED, #$0299|!FS_COLOR_RED
 	.mirror
-	dw #$024A|!FS_COLOR_BLUE, #$024B|!FS_COLOR_BLUE, #$025A|!FS_COLOR_BLUE, #$025B|!FS_COLOR_BLUE
+	dw #$028A|!FS_COLOR_BLUE, #$028B|!FS_COLOR_BLUE, #$029A|!FS_COLOR_BLUE, #$029B|!FS_COLOR_BLUE
 
 	.flippers
-	dw #$020E|!FS_COLOR_BLUE, #$020F|!FS_COLOR_BLUE, #$021F|!FS_COLOR_BLUE|!FS_HFLIP, #$021F|!FS_COLOR_BLUE
+	dw #$024E|!FS_COLOR_BLUE, #$024F|!FS_COLOR_BLUE, #$025F|!FS_COLOR_BLUE|!FS_HFLIP, #$025F|!FS_COLOR_BLUE
 
 	.boots
-	dw #$024C|!FS_COLOR_BOOTS, #$024D|!FS_COLOR_BOOTS, #$025C|!FS_COLOR_BOOTS, #$025D|!FS_COLOR_BOOTS
+	dw #$028C|!FS_COLOR_BOOTS, #$028D|!FS_COLOR_BOOTS, #$029C|!FS_COLOR_BOOTS, #$029D|!FS_COLOR_BOOTS
 
 	.pearl
-	dw #$0264|!FS_COLOR_RED, #$0265|!FS_COLOR_RED, #$0274|!FS_COLOR_RED, #$0275|!FS_COLOR_RED
+	dw #$02A4|!FS_COLOR_RED, #$02A5|!FS_COLOR_RED, #$02B4|!FS_COLOR_RED, #$02B5|!FS_COLOR_RED
 
 	.no_pendant
-	dw #$0285|!FS_COLOR_GRAY, #$0286|!FS_COLOR_GRAY, #$02B2|!FS_COLOR_GRAY, #$0296|!FS_COLOR_GRAY
+	dw #$02C5|!FS_COLOR_GRAY, #$02C6|!FS_COLOR_GRAY, #$02F2|!FS_COLOR_GRAY, #$02D6|!FS_COLOR_GRAY
 	.green_pendant
-	dw #$0285|!FS_COLOR_GREEN, #$0286|!FS_COLOR_GREEN, #$0295|!FS_COLOR_GREEN, #$0296|!FS_COLOR_GREEN
+	dw #$02C5|!FS_COLOR_GREEN, #$02C6|!FS_COLOR_GREEN, #$02D5|!FS_COLOR_GREEN, #$02D6|!FS_COLOR_GREEN
 	.blue_pendant
-	dw #$0285|!FS_COLOR_BLUE, #$0286|!FS_COLOR_BLUE, #$0295|!FS_COLOR_BLUE, #$0296|!FS_COLOR_BLUE
+	dw #$02C5|!FS_COLOR_BLUE, #$02C6|!FS_COLOR_BLUE, #$02D5|!FS_COLOR_BLUE, #$02D6|!FS_COLOR_BLUE
 	.red_pendant
-	dw #$0285|!FS_COLOR_RED, #$0286|!FS_COLOR_RED, #$0295|!FS_COLOR_RED, #$0296|!FS_COLOR_RED
+	dw #$02C5|!FS_COLOR_RED, #$02C6|!FS_COLOR_RED, #$02D5|!FS_COLOR_RED, #$02D6|!FS_COLOR_RED
 
 	.gloves
-	dw #$024E|!FS_COLOR_BROWN, #$024F|!FS_COLOR_BROWN, #$025E|!FS_COLOR_BROWN, #$025F|!FS_COLOR_BROWN
+	dw #$028E|!FS_COLOR_BROWN, #$028F|!FS_COLOR_BROWN, #$029E|!FS_COLOR_BROWN, #$029F|!FS_COLOR_BROWN
 	.mitts
-	dw #$0260|!FS_COLOR_YELLOW, #$0261|!FS_COLOR_YELLOW, #$0270|!FS_COLOR_YELLOW, #$0271|!FS_COLOR_YELLOW
+	dw #$02A0|!FS_COLOR_YELLOW, #$02A1|!FS_COLOR_YELLOW, #$02B0|!FS_COLOR_YELLOW, #$02B1|!FS_COLOR_YELLOW
 
 	.mushroom
-	dw #$0262|!FS_COLOR_RED, #$0263|!FS_COLOR_RED, #$0272|!FS_COLOR_RED, #$0273|!FS_COLOR_RED
+	dw #$02A2|!FS_COLOR_RED, #$02A3|!FS_COLOR_RED, #$02B2|!FS_COLOR_RED, #$02B3|!FS_COLOR_RED
 	.powder
-	dw #$020A|!FS_COLOR_BROWN, #$020B|!FS_COLOR_BROWN, #$021A|!FS_COLOR_BROWN, #$021B|!FS_COLOR_BROWN
+	dw #$024A|!FS_COLOR_BROWN, #$024B|!FS_COLOR_BROWN, #$025A|!FS_COLOR_BROWN, #$025B|!FS_COLOR_BROWN
 
 	.fighters_sword
-	dw #$0266|!FS_COLOR_BLUE, #$0267|!FS_COLOR_BLUE, #$0276|!FS_COLOR_BLUE, #$0277|!FS_COLOR_BLUE
+	dw #$02A6|!FS_COLOR_BLUE, #$02A7|!FS_COLOR_BLUE, #$02B6|!FS_COLOR_BLUE, #$02B7|!FS_COLOR_BLUE
 	.master_sword
-	dw #$0268|!FS_COLOR_BLUE, #$0269|!FS_COLOR_BLUE, #$0278|!FS_COLOR_RED, #$0279|!FS_COLOR_BLUE
+	dw #$02A8|!FS_COLOR_BLUE, #$02A9|!FS_COLOR_BLUE, #$02B8|!FS_COLOR_RED, #$02B9|!FS_COLOR_BLUE
 	.tempered_sword
-	dw #$0268|!FS_COLOR_RED, #$0269|!FS_COLOR_RED, #$0278|!FS_COLOR_GREEN, #$026A|!FS_COLOR_RED
+	dw #$02A8|!FS_COLOR_RED, #$02A9|!FS_COLOR_RED, #$02B8|!FS_COLOR_GREEN, #$02AA|!FS_COLOR_RED
 	.gold_sword
-	dw #$0268|!FS_COLOR_YELLOW, #$0269|!FS_COLOR_YELLOW, #$0278|!FS_COLOR_BLUE, #$027A|!FS_COLOR_YELLOW
+	dw #$02A8|!FS_COLOR_YELLOW, #$02A9|!FS_COLOR_YELLOW, #$02B8|!FS_COLOR_BLUE, #$02BA|!FS_COLOR_YELLOW
 
 	.fighters_shield
-	dw #$026B|!FS_COLOR_BLUE, #$026B|!FS_COLOR_BLUE|!FS_HFLIP, #$027B|!FS_COLOR_BLUE, #$027B|!FS_COLOR_BLUE|!FS_HFLIP
+	dw #$02AB|!FS_COLOR_BLUE, #$02AB|!FS_COLOR_BLUE|!FS_HFLIP, #$02BB|!FS_COLOR_BLUE, #$02BB|!FS_COLOR_BLUE|!FS_HFLIP
 	.fire_shield
-	dw #$026C|!FS_COLOR_BOOTS, #$026C|!FS_COLOR_BOOTS|!FS_HFLIP, #$027C|!FS_COLOR_BOOTS, #$027C|!FS_COLOR_BOOTS|!FS_HFLIP
+	dw #$02AC|!FS_COLOR_BOOTS, #$02AC|!FS_COLOR_BOOTS|!FS_HFLIP, #$02BC|!FS_COLOR_BOOTS, #$02BC|!FS_COLOR_BOOTS|!FS_HFLIP
 	.mirror_shield
-	dw #$026D|!FS_COLOR_YELLOW, #$026E|!FS_COLOR_YELLOW, #$027D|!FS_COLOR_YELLOW, #$027E|!FS_COLOR_YELLOW
+	dw #$02AD|!FS_COLOR_YELLOW, #$02AE|!FS_COLOR_YELLOW, #$02BD|!FS_COLOR_YELLOW, #$02BE|!FS_COLOR_YELLOW
 
 	.green_mail
-	dw #$026F|!FS_COLOR_GREEN, #$026F|!FS_COLOR_GREEN|!FS_HFLIP, #$027F|!FS_COLOR_GREEN, #$02B3|!FS_COLOR_GREEN
+	dw #$02AF|!FS_COLOR_GREEN, #$02AF|!FS_COLOR_GREEN|!FS_HFLIP, #$02BF|!FS_COLOR_GREEN, #$02F3|!FS_COLOR_GREEN
 	.blue_mail
-	dw #$026F|!FS_COLOR_BLUE, #$026F|!FS_COLOR_BLUE|!FS_HFLIP, #$027F|!FS_COLOR_BLUE, #$02B4|!FS_COLOR_BLUE
+	dw #$02AF|!FS_COLOR_BLUE, #$02AF|!FS_COLOR_BLUE|!FS_HFLIP, #$02BF|!FS_COLOR_BLUE, #$02F4|!FS_COLOR_BLUE
 	.red_mail
-	dw #$026F|!FS_COLOR_RED, #$026F|!FS_COLOR_RED|!FS_HFLIP, #$027F|!FS_COLOR_RED, #$02B5|!FS_COLOR_RED
+	dw #$02AF|!FS_COLOR_RED, #$02AF|!FS_COLOR_RED|!FS_HFLIP, #$02BF|!FS_COLOR_RED, #$02F5|!FS_COLOR_RED
 
 	.heart_piece_0_of_4
-	dw #$0280|!FS_COLOR_RED, #$0280|!FS_COLOR_RED|!FS_HFLIP, #$0290|!FS_COLOR_RED, #$0290|!FS_COLOR_RED|!FS_HFLIP
+	dw #$02C0|!FS_COLOR_RED, #$02C0|!FS_COLOR_RED|!FS_HFLIP, #$02D0|!FS_COLOR_RED, #$02D0|!FS_COLOR_RED|!FS_HFLIP
 	.heart_piece_1_of_4
-	dw #$0281|!FS_COLOR_RED, #$0280|!FS_COLOR_RED|!FS_HFLIP, #$0290|!FS_COLOR_RED, #$0290|!FS_COLOR_RED|!FS_HFLIP
+	dw #$02C1|!FS_COLOR_RED, #$02C0|!FS_COLOR_RED|!FS_HFLIP, #$02D0|!FS_COLOR_RED, #$02D0|!FS_COLOR_RED|!FS_HFLIP
 	.heart_piece_2_of_4
-	dw #$0281|!FS_COLOR_RED, #$0280|!FS_COLOR_RED|!FS_HFLIP, #$0291|!FS_COLOR_RED, #$0290|!FS_COLOR_RED|!FS_HFLIP
+	dw #$02C1|!FS_COLOR_RED, #$02C0|!FS_COLOR_RED|!FS_HFLIP, #$02D1|!FS_COLOR_RED, #$02D0|!FS_COLOR_RED|!FS_HFLIP
 	.heart_piece_3_of_4
-	dw #$0281|!FS_COLOR_RED, #$0281|!FS_COLOR_RED|!FS_HFLIP, #$0291|!FS_COLOR_RED, #$0290|!FS_COLOR_RED|!FS_HFLIP
+	dw #$02C1|!FS_COLOR_RED, #$02C1|!FS_COLOR_RED|!FS_HFLIP, #$02D1|!FS_COLOR_RED, #$02D0|!FS_COLOR_RED|!FS_HFLIP
 
 	.empty_bottle
-	dw #$0240|!FS_COLOR_BW, #$0241|!FS_COLOR_BW, #$0250|!FS_COLOR_BW, #$0251|!FS_COLOR_BW
+	dw #$0280|!FS_COLOR_BW, #$0281|!FS_COLOR_BW, #$0290|!FS_COLOR_BW, #$0291|!FS_COLOR_BW
 	.red_potion
-	dw #$0242|!FS_COLOR_RED, #$0242|!FS_COLOR_RED|!FS_HFLIP, #$0252|!FS_COLOR_RED, #$0243|!FS_COLOR_RED
+	dw #$0282|!FS_COLOR_RED, #$0282|!FS_COLOR_RED|!FS_HFLIP, #$0292|!FS_COLOR_RED, #$0283|!FS_COLOR_RED
 	.green_potion
-	dw #$0242|!FS_COLOR_GREEN, #$0242|!FS_COLOR_GREEN|!FS_HFLIP, #$0252|!FS_COLOR_GREEN, #$0244|!FS_COLOR_GREEN
+	dw #$0282|!FS_COLOR_GREEN, #$0282|!FS_COLOR_GREEN|!FS_HFLIP, #$0292|!FS_COLOR_GREEN, #$0284|!FS_COLOR_GREEN
 	.blue_potion
-	dw #$0242|!FS_COLOR_BLUE, #$0242|!FS_COLOR_BLUE|!FS_HFLIP, #$0252|!FS_COLOR_BLUE, #$0245|!FS_COLOR_BLUE
+	dw #$0282|!FS_COLOR_BLUE, #$0282|!FS_COLOR_BLUE|!FS_HFLIP, #$0292|!FS_COLOR_BLUE, #$0285|!FS_COLOR_BLUE
 	.fairy_bottle
-	dw #$0247|!FS_COLOR_YELLOW|!FS_HFLIP, #$0247|!FS_COLOR_YELLOW, #$0256|!FS_COLOR_BLUE, #$0257|!FS_COLOR_BLUE
+	dw #$0287|!FS_COLOR_YELLOW|!FS_HFLIP, #$0287|!FS_COLOR_YELLOW, #$0296|!FS_COLOR_BLUE, #$0297|!FS_COLOR_BLUE
 	.bee_bottle
-	dw #$0240|!FS_COLOR_BW, #$0241|!FS_COLOR_BW, #$0254|!FS_COLOR_YELLOW, #$0255|!FS_COLOR_YELLOW
+	dw #$0280|!FS_COLOR_BW, #$0281|!FS_COLOR_BW, #$0294|!FS_COLOR_YELLOW, #$0295|!FS_COLOR_YELLOW
 	.good_bee_bottle
-	dw #$0240|!FS_COLOR_BW, #$0241|!FS_COLOR_BW, #$0254|!FS_COLOR_YELLOW, #$0246|!FS_COLOR_YELLOW
+	dw #$0280|!FS_COLOR_BW, #$0281|!FS_COLOR_BW, #$0294|!FS_COLOR_YELLOW, #$0286|!FS_COLOR_YELLOW
 
 ;--------------------------------------------------------------------------------
 FileSelectDrawHudBar:
-        LDA.w #$029B|!FS_COLOR_GREEN : %fs_draw16x8(0,10)
+        LDA.w #$02DB|!FS_COLOR_GREEN : %fs_draw16x8(0,10)
         LDA.l DisplayRupeesSRAM
         JSL.l HUDHex4Digit_Long
-        LDA.b Scrap04 : AND.w #$00FF : !ADD.w #$210+!FS_COLOR_BW : %fs_draw8x8(1,9)
-        LDA.b Scrap05 : AND.w #$00FF : !ADD.w #$210+!FS_COLOR_BW : %fs_draw8x8(1,10)
-        LDA.b Scrap06 : AND.w #$00FF : !ADD.w #$210+!FS_COLOR_BW : %fs_draw8x8(1,11)
-        LDA.b Scrap07 : AND.w #$00FF : !ADD.w #$210+!FS_COLOR_BW : %fs_draw8x8(1,12)
+        LDA.b Scrap04 : AND.w #$00FF : !ADD.w #$0250+!FS_COLOR_BW : %fs_draw8x8(1,9)
+        LDA.b Scrap05 : AND.w #$00FF : !ADD.w #$0250+!FS_COLOR_BW : %fs_draw8x8(1,10)
+        LDA.b Scrap06 : AND.w #$00FF : !ADD.w #$0250+!FS_COLOR_BW : %fs_draw8x8(1,11)
+        LDA.b Scrap07 : AND.w #$00FF : !ADD.w #$0250+!FS_COLOR_BW : %fs_draw8x8(1,12)
 
-        LDA.w #$028B|!FS_COLOR_BLUE : %fs_draw16x8(0,14)
+        LDA.w #$02CB|!FS_COLOR_BLUE : %fs_draw16x8(0,14)
         LDA.l BombsEquipmentSRAM : AND.w #$00FF
         JSL.l HUDHex2Digit_Long
-        TYA : AND.w #$00FF : !ADD.w #$210+!FS_COLOR_BW : %fs_draw8x8(1,14)
-        TXA : AND.w #$00FF : !ADD.w #$210+!FS_COLOR_BW : %fs_draw8x8(1,15)
+        TYA : AND.w #$00FF : !ADD.w #$0250+!FS_COLOR_BW : %fs_draw8x8(1,14)
+        TXA : AND.w #$00FF : !ADD.w #$0250+!FS_COLOR_BW : %fs_draw8x8(1,15)
 
         LDA.l BowTrackingSRAM : AND.w #$0040 : BEQ +
-                LDA.w #$0299|!FS_COLOR_RED : %fs_draw16x8(0,17)
+                LDA.w #$02D9|!FS_COLOR_RED : %fs_draw16x8(0,17)
                 BRA ++
         +
-        LDA.w #$0289|!FS_COLOR_BROWN : %fs_draw16x8(0,17)
+        LDA.w #$02C9|!FS_COLOR_BROWN : %fs_draw16x8(0,17)
         ++
         LDA.l CurrentArrowsSRAM : AND.w #$00FF
         JSL.l HUDHex2Digit_Long
-        TYA : AND.w #$00FF : !ADD.w #$210+!FS_COLOR_BW : %fs_draw8x8(1,17)
-        TXA : AND.w #$00FF : !ADD.w #$210+!FS_COLOR_BW : %fs_draw8x8(1,18)
+        TYA : AND.w #$00FF : !ADD.w #$0250+!FS_COLOR_BW : %fs_draw8x8(1,17)
+        TXA : AND.w #$00FF : !ADD.w #$0250+!FS_COLOR_BW : %fs_draw8x8(1,18)
 RTS
 ;--------------------------------------------------------------------------------
 AltBufferTable:
@@ -758,44 +756,61 @@ RTL
 
 ;--------------------------------------------------------------------------------
 LoadFullItemTiles:
-	PHA : PHX
-		LDA.w DMAP0 : PHA ; preserve DMA parameters
-		LDA.w BBAD0 : PHA ; preserve DMA parameters
-		LDA.w A1T0L : PHA ; preserve DMA parameters
-		LDA.w A1T0H : PHA ; preserve DMA parameters
-		LDA.w A1B0 : PHA ; preserve DMA parameters
-		LDA.w DAS0L : PHA ; preserve DMA parameters
-		LDA.w DAS0H : PHA ; preserve DMA parameters
-		;--------------------------------------------------------------------------------
-		LDA.b #$80 : STA.w VMAIN ; write read increment on $2119
-		LDA.b #$01 : STA.w DMAP0 ; set DMA transfer direction A -> B, bus A auto increment, double-byte mode
-		LDA.b #$18 : STA.w BBAD0 ; set bus B destination to VRAM register
-
-		LDA.b #$00 : STA.w VMADDL ; write VRAM destination address
-		LDA.b #$30 : STA.w VMADDH ; write VRAM destination address
-
-		LDA.b #$31 : STA.w A1B0 ; set bus A source bank
-		LDA.b #FileSelectNewGraphics : STA.w A1T0L ; set bus A source address to ROM
-		LDA.b #FileSelectNewGraphics>>8 : STA.w A1T0H ; set bus A source address to ROM
-
-		LDA.w INIDISP : PHA : LDA.b #$80 : STA.w INIDISP ; save screen state & turn screen off
-
-		STZ.w DAS0L : LDA.b #$10 : STA.w DAS0H ; set transfer size to 0x1000
-		LDA.b #$01 : STA.w MDMAEN ; begin DMA transfer
-
-		PLA : STA.w INIDISP ; put screen back however it was before
-		;--------------------------------------------------------------------------------
-		PLA : STA.w DAS0H ; restore DMA parameters
-		PLA : STA.w DAS0L ; restore DMA parameters
-		PLA : STA.w A1B0 ; restore DMA parameters
-		PLA : STA.w A1T0H ; restore DMA parameters
-		PLA : STA.w A1T0L ; restore DMA parameters
-		PLA : STA.w BBAD0 ; restore DMA parameters
-		PLA : STA.w DMAP0 ; restore DMA parameters
-	PLX : PLA
+        LDA.b #$80 : STA.w VMAIN
+        LDA.b #$01 : STA.w DMAP0
+        LDA.b #$18 : STA.w BBAD0
+        LDX.w #$3200 : STX.w VMADDL
+        LDA.b #FileSelectNewGraphics>>16 : STA.w A1B0
+        LDX.w #FileSelectNewGraphics : STX.w A1T0L
+        LDX.w #$0C00 : STX.w DAS0L
+        LDA.b #$01 : STA.w MDMAEN
 RTL
 ;--------------------------------------------------------------------------------
+; z colon @
+; length $340
+; target vram $6C00
+; NewFont+$400
+LoadLowerCaseLettersSymbols:
+        LDA.b #$80 : STA.w VMAIN
+        LDA.b #$01 : STA.w DMAP0
+        LDA.b #$18 : STA.w BBAD0
 
+        ; Lower case letters
+        LDA.b #NewFont>>16 : STA.w A1B0
+        LDX.w #NewFont+$400 : STX.w A1T0L
+        LDX.w #$0400 : STX.w DAS0L
+        LDX.w #$2D00 : STX.w VMADDL
+        LDA.b #$01 : STA.w MDMAEN
+
+        ; : @ #
+        LDA.b #NewFont>>16 : STA.w A1B0
+        LDX.w #NewFont+$A80 : STX.w A1T0L
+        LDA.b #NewFont>>16 : STA.w A1B1
+        LDX.w #NewFont+$B80 : STX.w A1T1L
+        LDX.w #$0030 : STX.w DAS0L : STX.w DAS1L
+
+        LDX.w #$2E50 : STX.w VMADDL
+        LDA.b #$01 : STA.w MDMAEN
+        LDX.w #$2ED0 : STX.w VMADDL
+        LDA.b #$02 : STA.w MDMAEN
+RTL
+;--------------------------------------------------------------------------------
+LoadFileSelectVanillaItems:
+        REP #$10
+        LDA.b #$80 : STA.w VMAIN
+        LDA.b #$01 : STA.w DMAP0
+        LDA.b #$18 : STA.w BBAD0
+
+        ; Lower case letters
+        LDA.b #DecompBuffer2>>16 : STA.w A1B0
+        LDX.w #DecompBuffer2 : STX.w A1T0L
+        LDX.w #$0600 : STX.w DAS0L
+        LDX.w #$2F00 : STX.w VMADDL
+        LDA.b #$01 : STA.w MDMAEN
+
+        SEP #$10
+RTL
+;--------------------------------------------------------------------------------
 SetFileSelectPalette:
 	LDA.b GameMode : CMP.b #$04 : BNE +
 		; load the vanilla file select screen BG3 palette for naming screen
@@ -839,7 +854,7 @@ DrawPlayerFile_credits:
  
 	LDA.l EquipmentSRAM+$2C : AND.w #$00FF : LSR #3 : STA.b Scrap02
 	%fs_LDY_screenpos(0,20)
-	LDA.w #$028F|!FS_COLOR_RED
+	LDA.w #$02CF|!FS_COLOR_RED
 	LDX.w #$000A
 
 	.nextHeart

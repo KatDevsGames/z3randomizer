@@ -227,8 +227,6 @@ NewHUD_DrawItemCounter:
         LDA.b $06 : TAX : STX.w HUDGoalIndicator+$04
         LDA.b $07 : TAX : STX.w HUDGoalIndicator+$06
 
-
-
 ;================================================================================
 DrawMagicMeter_mp_tilemap = $0DFE0F
 NewHUD_DrawMagicMeter:

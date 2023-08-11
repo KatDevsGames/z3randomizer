@@ -316,14 +316,14 @@ ItemBehavior:
         JMP.w .increment_map
 
         .bow_and_arrows
-        BIT.b #$40 : BEQ +
+        LDA.l BowTracking : BIT.b #$40 : BEQ +
         LDA.l SilverArrowsUseRestriction : BNE +
                 LDA.b #03 : STA.l BowEquipment ; set bow to silver
         +
         RTS
 
         .silver_bow
-        LDA.b #$04 : ORA.l BowTracking : STA.l BowTracking
+        LDA.b #$40 : ORA.l BowTracking : STA.l BowTracking
         LDA.l SilverArrowsUseRestriction : BNE .noequip
         LDA.l SilverArrowsAutoEquip : AND.b #$01 : BEQ .noequip
         LDA.l ArrowsFiller : BNE + ; check arrows
@@ -333,7 +333,6 @@ ItemBehavior:
         ++
         STA.l BowEquipment
         .noequip
-        LDA.l BowTracking : ORA.b #$40 : STA.l BowTracking ; mark silver bow on y-toggle
         RTS
 
         .bombs_50
@@ -720,8 +719,7 @@ ResolveLootID:
                 LDA.l ProgressiveBowReplacement
                 JMP.w .get_item
         +
-        TAX
-        LDA.b #$80 : STA.l BowTrackingFlags
+        LDA.l BowEquipment : TAX
         LDA.w ResolveLootID_bows_ids,X
         JMP.w .get_item
 
@@ -731,14 +729,13 @@ ResolveLootID:
                 LDA.l ProgressiveBowReplacement
                 JMP.w .get_item
         +
-        TAX
-        LDA.b #$20 : STA.l BowTrackingFlags
+        LDA.l BowEquipment : TAX
         LDA.w ResolveLootID_bows_ids,X
         JMP.w .get_item
 
         .bows
         ..ids
-        db $3A, $3B, $3B
+        db $3A, $3B, $3B, $3B, $3B
 
         .null_chest
         ; JSL ChestItemServiceRequest
@@ -799,6 +796,7 @@ HandleBowTracking:
         LDA.b #$20
         .done
         ORA.l BowTracking : STA.l BowTracking
+        LDA.w ItemReceiptID
 RTS
 ;--------------------------------------------------------------------------------
 ;Return BowEquipment but also draw silver arrows if you have the upgrade even if you don't have the bow
@@ -1076,5 +1074,5 @@ dw $0008 ; CT
 dw $0006 ; DP
 dw $0004 ; EP
 dw $0002 ; HC
-dw $0000 ; SW
+dw $0000 ; Sewers
 

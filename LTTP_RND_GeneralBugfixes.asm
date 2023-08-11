@@ -134,7 +134,6 @@ incsrc glitched.asm
 incsrc hardmode.asm
 incsrc goalitem.asm
 incsrc quickswap.asm
-incsrc endingsequence.asm
 incsrc cuccostorm.asm
 incsrc retro.asm
 incsrc controllerjank.asm
@@ -177,7 +176,11 @@ incsrc utilities.asm
 incsrc inventory.asm
 
 org $A38000
+incsrc stats/credits.asm ; Statically mapped
 incsrc stats/main.asm
+incsrc stats/statConfig.asm
+FontTable:
+incsrc stats/fonttable.asm
 
 org $B08000 ; bank $30
 incsrc tables.asm
@@ -259,11 +262,14 @@ if !FEATURE_NEW_TEXT
 	incbin "data/newfont.bin"
 	NewFontInverted:
 	incbin "data/newfont_inverted.bin"
-
-	org $8CD7DF
-	incbin "data/text_unscramble1.bin"
-	org $8CE4D5
-	incbin "data/text_unscramble2.bin"
+        SmallCharacters:
+        incbin "data/smallchars.2bpp"
+        org $8CD7DF
+        incsrc data/playernamecharmap.asm
+        org $8CE73D
+        incbin data/playernamestripes_1.bin
+        org $8CE911
+        incbin data/playernamestripes_2.bin
 endif
 
 org $B28000
