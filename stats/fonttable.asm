@@ -53,10 +53,10 @@ dw $2DF6 ; W               ;
 dw $2DF7 ; X               ;
 dw $2DF8 ; Y               ;
 dw $2DF9 ; Z               ; $33
-dw $0000 ; Unused          ;
-dw $2DFB ; '               ;
-dw $0000 ; Unused          ;
-dw $0000 ; Unused          ;
+dw $2DFB ; ,               ;
+dw $2DFC ; '               ;
+dw $2DFD ; -               ;
+dw $2DFE ; .               ;
                            ;
 ; Small letters green      ;
 dw $29E0 ; A               ; $38

@@ -270,6 +270,7 @@ if !FEATURE_NEW_TEXT
         incbin data/playernamestripes_1.bin
         org $8CE911
         incbin data/playernamestripes_2.bin
+        incsrc data/kanjireplacements.asm ; Overwrites text gfx data and masks in bank $8E
 endif
 
 org $B28000
