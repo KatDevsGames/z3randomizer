@@ -390,7 +390,7 @@ FontProperties:
     dw $8001, $04C0     ; DC
     dw $8001, $04D0     ; DD
     dw $8001, $04E0     ; DE
-    dw $8001, $04F0     ; DF
+    dw $8001, $04F0     ; DF ; p
 
     dw $8001, $0600     ; E0 ; q
     dw $8001, $0610     ; E1
@@ -406,14 +406,14 @@ FontProperties:
     dw $8001, $0A90     ; EB ; @ (thin)
     dw $8001, $0AA0     ; EC ; # (thin)
     dw $8001, $0A00     ; ED ; _
-    dw $0000, $0000     ; EE ; bird
-    dw $0000, $0000     ; EF ; ankh
+    dw $0000, $0000     ; EE
+    dw $0000, $0000     ; EF
 
-    dw $0000, $0000     ; F0 ; wavy
-    dw $0000, $0000     ; F1 ; down arrow
-    dw $0000, $0000     ; F2 ; up arrow
-    dw $0000, $0000     ; F3 ; right arrow
-    dw $0000, $0000     ; F4 ; left arrow
+    dw $0000, $0000     ; F0
+    dw $0000, $0000     ; F1
+    dw $0000, $0000     ; F2
+    dw $0000, $0000     ; F3
+    dw $0000, $0000     ; F4
     dw $0000, $0000     ; F5
     dw $0000, $0000     ; F6
     dw $0000, $0000     ; F7

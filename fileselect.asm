@@ -145,7 +145,7 @@ DrawPlayerFile:
 		AND.w #$00FF
 		BEQ .flashing
 
-		LDA.w #$26BE
+		LDA.w #$26FE
 		BRA .draw_access_icon
 
 .flashing
