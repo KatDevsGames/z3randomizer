@@ -527,6 +527,8 @@ ItemBehavior:
         .same_dungeon
         SEP #$20
         LDA.l CurrentSmallKeys : INC : STA.l CurrentSmallKeys
+        LSR : TAX
+        LDA.l DungeonKeys,X : INC : STA.l DungeonKeys,X ; Update menu key count too
         RTS
 
         .hc_smallkey

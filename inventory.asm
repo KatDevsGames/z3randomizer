@@ -141,13 +141,13 @@ AddInventory:
 ; Uses $0B-$0D for long absolute addressing
 	PHA : PHX : PHY : PHP : PHB
         PHK : PLB
+        LDA.b #$7E : STA.b Scrap0D 
 	LDA.l StatsLocked : BNE .done
-        LDA.w InventoryTable_properties,Y : BIT #$01 : BEQ .done
         JSR.w ShopCheck : BCS .done
         JSR.w DungeonIncrement : BCS .done
-                LDA.b #$7E : STA.b Scrap0D 
-                JSR.w StampItem
                 JSR.w IncrementByOne
+                LDA.w InventoryTable_properties,Y : BIT #$01 : BEQ .done
+                JSR.w StampItem
                 SEP #$20
                 JSR.w IncrementYAItems
                         REP #$20
@@ -195,6 +195,7 @@ DungeonIncrement:
                 JSL.l CountChestKeyLong
         +
 	LDA.b IndoorsFlag : BEQ .count
+        LDA.w InventoryTable_properties,Y : BIT #$01 : BEQ .count ; Skip prizes but continue checks in AddInventory
 	LDA.w DungeonID : BMI .count
                 CMP.l BallNChainDungeon : BNE +
                         CPY.b #$32 : BEQ .ballchain_bigkey

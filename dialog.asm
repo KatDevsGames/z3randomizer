@@ -145,7 +145,7 @@ FreeDungeonItemNotice:
                                    CMP.w DungeonID : BNE +
                 BRA .self_notice
                 .hc_sewers
-                LDA.w DungeonID : CMP.b #$0003 : BCS +
+                LDA.w DungeonID : CMP.w #$0003 : BCS +
                         .self_notice
                         SEP #$20
 		        %CopyDialog(Notice_Self)

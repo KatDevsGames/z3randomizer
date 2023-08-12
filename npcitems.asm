@@ -176,8 +176,9 @@ RTL
 LoadZoraKingItemGFX:
         LDA.l $9DE1C3 ; location randomizer writes zora item to
         JSL.l ResolveLootIDLong
-        STA.w SpriteID,X
-        JML.l PrepDynamicTile
+        STA.w SpriteID,Y
+        TYX
+        JML.l PrepDynamicTile_loot_resolved
 ;--------------------------------------------------------------------------------
 JumpToSplashItemTarget:
 	LDA.w SpriteMovement, X
@@ -198,10 +199,8 @@ DrawThrownItem:
         LDA.b OverworldIndex : CMP.b #$81 : BNE .catfish
                 .zora
                 LDA.b #$01 : STA.l RedrawFlag
-                LDA.l $9DE1C3 ; location randomizer writes zora item to
                 BRA .draw
                 .catfish
-                LDA.l $9DE185 ; location randomizer writes catfish item to
                 .draw
                 LDA.w SpriteID,X
                 JML DrawDynamicTile

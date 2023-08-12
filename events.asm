@@ -46,8 +46,8 @@ OnDungeonExit:
         STA.w DungeonID : STZ.w Map16ChangeIndex ; thing we wrote over
 
         PHA : PHP
-        JSL.l HUD_RebuildLong
         INC.w UpdateHUD
+        JSL.l HUD_RebuildLong
         JSL.l FloodGateResetInner
         JSL.l SetSilverBowMode
         PLP : PLA
