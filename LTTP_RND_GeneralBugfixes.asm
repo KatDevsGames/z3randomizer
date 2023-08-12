@@ -34,7 +34,7 @@ db $20, $19, $08, $31 ; year/month/day
 
 ;================================================================================
 !ROM_VERSION_LOW ?= 1  ; ROM version (two 16-bit integers)
-!ROM_VERSION_HIGH ?= 3 ;
+!ROM_VERSION_HIGH ?= 4 ;
 
 org $80FFE0 ; Unused hardware vector
 RomVersion:
