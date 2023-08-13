@@ -156,6 +156,7 @@ ItemMenu_DrawEquippedYItem                                 = $8DEB3A
 ItemMenu_DrawEquippedYItem_exit                            = $8DECE6
 ItemMenu_DrawEquipment_dungeonitems                        = $8DEDCC
 DrawEquipment                                              = $8DED29
+DrawEquipment_in_a_dungeon                                 = $8DEDFE
 UpdateHUDBuffer_update_item_check_arrows                   = $8DFB41
 RenderText_DecompressAndDrawSingle                         = $8EF4FB
 DecompressFontGFX                                          = $8EF572

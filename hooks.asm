@@ -237,7 +237,7 @@ db $3D
 org $8CD6BD ; <- Y position table for Death Counts
 db $51
 ;--------------------------------------------------------------------------------
-org $8CD55F : LDA.w #$0600 ; Hearts tile offset
+org $8CD55F : JSL.l CheckHeartPaletteFileSelect : NOP #2
 
 ;================================================================================
 ; Name Entry Screen
@@ -1380,6 +1380,7 @@ JSL RNG_Enemy_Drops
 org $8DFDCB
 JSL UpdateHearts
 RTS
+org $8DF191 : JSL.l ColorAnimatedHearts : BRA + : NOP #7 : +
 
 org $8DFC4C ; <- 6FC4C - headsup_display.asm : 836 (LDA $7EF36E : AND.w #$00FF : ADD.w #$0007 : AND.w #$FFF8 : TAX)
 JML OnDrawHud : NOP #197 ; why? it's not hurting anyone lol
@@ -1417,11 +1418,16 @@ org $87A205
 JSL.l RebuildHUD_update_long
 org $8AEF62
 JSL.l RebuildHUD_update_long
+org $87A1CF
+JSL.l RebuildHUD_update_long
 ;--------------------------------------------------------------------------------
 org $8DFFE1
 RebuildHUD_update_long:
 JSR.w RebuildHUD_update : RTL
 warnpc $8E8000
+;--------------------------------------------------------------------------------
+org $8DEDE8
+JSL.l DrawHeartPiecesMenu : BRA DrawEquipment_in_a_dungeon
 
 ;================================================================================
 ; 300 Rupee NPC

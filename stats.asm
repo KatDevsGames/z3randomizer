@@ -342,7 +342,7 @@ StatsFinalPrep:
 		LDA.l StatsLocked : BNE .ramPostOnly
 		INC : STA.l StatsLocked
 	
-		JSL.l IncrementBossSword
+		JSL.l IncrementFinalSword
 	
 		LDA.l HighestMail : INC : STA.l HighestMail ; add green mail to mail count
 		

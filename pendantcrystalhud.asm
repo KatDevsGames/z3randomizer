@@ -111,7 +111,7 @@ CheckCloseItemMenu:
 	LDA.l MenuCollapse : BNE + 
 		LDA.b Joy1A_New : AND.b #$10 : RTL
 	+
-	LDA.b Joy1A_All : AND.b #$10 : EOR.b #$10
+	LDA.b Joy1A_All : EOR.b #$10
 RTL
 ;================================================================================
 ShowDungeonItems:
@@ -630,3 +630,38 @@ RestoreMenu_SetSubModule:
         LDA.b #$03 : STA.w SubModuleInterface
 RTL
 ;-------------------------------------------------------------------------------
+DrawHeartPiecesMenu:
+        LDA.l HUDHeartColors_index : AND.w #$00FF
+        ASL : TAX
+        LDA.l HUDHeartColors_masks_game_hud,X
+        STA.b Scrap0D
+
+        LDA.l HeartPieceQuarter : AND.w #$00FF
+        ASL #3 : TAX
+        LDY.w #$16F2
+
+        LDA.l HeartPieceMenuBaseTiles,X
+        ORA.b Scrap0D
+        STA.w $0000,Y
+
+        INX #2
+        LDA.l HeartPieceMenuBaseTiles,X
+        ORA.b Scrap0D
+        STA.w $0002,Y
+
+        INX #2
+        LDA.l HeartPieceMenuBaseTiles,X
+        ORA.b Scrap0D
+        STA.w $0040,Y
+
+        INX #2
+        LDA.l HeartPieceMenuBaseTiles,X
+        ORA.b Scrap0D
+        STA.w $0042,Y
+RTL
+
+HeartPieceMenuBaseTiles:
+dw $2084, $6084, $2085, $6085 ; 0 heart pieces
+dw $20AD, $6084, $2085, $6085 ; 1 heart piece
+dw $20AD, $6084, $20AE, $6085 ; 2 heart pieces
+dw $20AD, $60AD, $20AE, $6085 ; 3 heart pieces

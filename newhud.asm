@@ -64,10 +64,8 @@ NewHUD_DrawArrows:
 
 ;================================================================================
 NewHUD_DrawGoal:
-        LDA.w UpdateHUD : BEQ .no_goal
-        
         REP #$20
-
+        LDA.w UpdateHUD : BEQ .no_goal
         LDA.l GoalItemRequirement : BEQ .no_goal
 
         LDA.l GoalItemIcon : STA.w HUDGoalIndicator
@@ -390,9 +388,7 @@ RTL
 ;================================================================================
 UpdateHearts:
 	PHB
-
 	REP #$20
-
 	SEP #$10
 
 	LDX.b #$7E
@@ -418,7 +414,7 @@ UpdateHearts:
 	CPX.b #$01
 	BMI .done_hearts
 
-	LDA.w #$24A0
+        JSR.w CheckHeartPalette
 
 	CPY.b #$01
 	BPL .add_heart
@@ -459,13 +455,13 @@ UpdateHearts:
 	BEQ .skip_partial
 
 	CMP.w #$0005
-	LDA.w #$24A0
+
+        JSR.w CheckHeartPalette
 	BCS .more_than_half
 
 	INC
 
 .more_than_half
-
 	STA.b ($09)
 
 .skip_partial
@@ -473,3 +469,30 @@ UpdateHearts:
 
 	PLB
 	RTL
+
+CheckHeartPaletteFileSelect:
+        LDA.l HUDHeartColors_index : ASL : TAX
+        LDA.l HUDHeartColors_masks_file_select,X
+        ORA.w #$0200
+        LDX.w #$000A
+RTL
+
+CheckHeartPalette:
+        PHX
+        LDA.l HUDHeartColors_index : ASL : TAX
+        LDA.l HUDHeartColors_masks_game_hud,X
+        ORA.w #$20A0
+        PLX
+RTS
+
+ColorAnimatedHearts:
+        REP #$20
+        LDA.l HUDHeartColors_index : ASL : TAX
+        LDA.l HUDHeartColors_masks_game_hud,X
+        ORA.l HeartFramesBaseTiles,X
+        STA.b [Scrap00],Y
+        SEP #$20
+RTL
+
+HeartFramesBaseTiles:
+dw $20A3, $20A4, $20A3, $20A0

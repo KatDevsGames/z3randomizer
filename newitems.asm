@@ -539,7 +539,8 @@ ItemBehavior:
 
         .generic_smallkey
         LDA.l GenericKeys : BEQ .normal
-                LDA.l CurrentSmallKeys : INC : STA.l CurrentSmallKeys
+                LDA.l CurrentSmallKeys : INC
+                STA.l CurrentGenericKeys : STA.l CurrentSmallKeys
                 RTS
         .normal
         LDA.w DungeonID : BMI +
@@ -592,6 +593,16 @@ ItemBehavior:
         JSL MaybeFlagCompassTotalPickup
         RTS
 
+        .pendant
+        SEP #$20
+        LDA.l PendantCounter : INC : STA.l PendantCounter
+        RTS
+
+        .dungeon_crystal
+        SEP #$20
+        LDA.l CrystalCounter : INC : STA.l CrystalCounter
+        RTS
+
         .free_crystal
         REP #$20
         LSR
@@ -604,6 +615,7 @@ ItemBehavior:
         BPL -
         SEP #$20
         ORA.l CrystalsField : STA.l CrystalsField
+        LDA.l CrystalCounter : INC : STA.l CrystalCounter
 
         .done
         RTS

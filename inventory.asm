@@ -143,10 +143,10 @@ AddInventory:
         PHK : PLB
         LDA.b #$7E : STA.b Scrap0D 
 	LDA.l StatsLocked : BNE .done
+        LDA.w InventoryTable_properties,Y : BIT #$01 : BEQ .done
         JSR.w ShopCheck : BCS .done
-        JSR.w DungeonIncrement : BCS .done
+                JSR.w DungeonIncrement
                 JSR.w IncrementByOne
-                LDA.w InventoryTable_properties,Y : BIT #$01 : BEQ .done
                 JSR.w StampItem
                 SEP #$20
                 JSR.w IncrementYAItems
@@ -194,15 +194,14 @@ DungeonIncrement:
         LDA.w InventoryTable_properties,Y : BIT.b #$40 : BEQ +
                 JSL.l CountChestKeyLong
         +
-	LDA.b IndoorsFlag : BEQ .count
-        LDA.w InventoryTable_properties,Y : BIT #$01 : BEQ .count ; Skip prizes but continue checks in AddInventory
-	LDA.w DungeonID : BMI .count
+	LDA.b IndoorsFlag : BEQ .done
+        LDA.w DungeonID : BMI .done
                 CMP.l BallNChainDungeon : BNE +
                         CPY.b #$32 : BEQ .ballchain_bigkey
 	        +
                 CMP.b #$04 : BCS +
                         LDA.l SewersLocations : INC : STA.l SewersLocations : STA.l HCLocations
-                        BRA .count
+                        BRA .done
                 +
                 LSR : TAX : LDA.l DungeonLocationsChecked, X : INC : STA.l DungeonLocationsChecked, X
 	        CPX.b #$0D : BNE +
@@ -210,11 +209,7 @@ DungeonIncrement:
                                 LDA.l PreGTBKLocations : INC : STA.l PreGTBKLocations
                         ++
 	        +
-        .count
-        CLC
-RTS
-        .dont_count
-        SEC
+        .done
 RTS
         .ballchain_bigkey
         LDA.l BigKeysBigChests
@@ -264,11 +259,13 @@ RTS
 RTS
 
 IncrementByOne:
+        REP #$20
         LDA.w InventoryTable_stat,X : BEQ .skip
                 STA.b Scrap0B
                 SEP #$20
                 LDA.b #$01 : ADC.b [Scrap0B] : STA.b [Scrap0B]
         .skip
+        SEP #$20
 RTS
 
 IncrementBossSword:
@@ -317,6 +314,21 @@ IncrementBossSword:
         PLX
         RTL
 
+;--------------------------------------------------------------------------------
+IncrementFinalSword:
+        PHX
+        REP #$20
+        LDA.w RoomIndex : BNE .done
+                SEP #$20
+                LDA.l SwordEquipment : CMP.b #$FF : BNE +
+                        BRA IncrementBossSword_none
+                +
+                ASL : TAX
+                JMP.w (IncrementBossSword_vectors,X)
+        .done
+        SEP #$20
+        PLX
+RTL
 ;--------------------------------------------------------------------------------
 Link_ReceiveItem_HUDRefresh:
 	LDA.l BombsEquipment : BNE + ; skip if we have bombs

@@ -130,8 +130,11 @@ SpritePrep_ShopKeeper:
 			PLY : +++
 			
 			PHX : PHY
-				PHX : TYX : LDA.l ShopInventory, X : PLX : TAY
-				REP #$20 ; set 16-bit accumulator
+				PHX : TYX : LDA.l ShopInventory, X : PLX
+                                SEP #$10
+                                JSL.l ResolveLootIDLong
+                                TAY
+                                REP #$30
 				LDA.b 1,s : TAX : LDA.l .tile_offsets, X : TAX
 				JSR LoadTile
 			PLY : PLX
@@ -548,6 +551,8 @@ Shopkeeper_DrawNextItem:
 	PLY
 
 	LDA.l ShopInventory, X ; get item id
+        JSL.l ResolveLootIDLong
+        STA.b Scrap0D
 	CMP.b #$2E : BNE + : BRA .potion
 	+ CMP.b #$2F : BNE + : BRA .potion
 	+ CMP.b #$30 : BEQ .potion
@@ -565,14 +570,14 @@ Shopkeeper_DrawNextItem:
 
 	STA.l SpriteOAM+4
 
-	LDA.l ShopInventory, X
+	LDA.b Scrap0D
         PHX
 	JSL.l GetSpritePalette_resolved : STA.l SpriteOAM+5
         PLX
 
 	LDA.b #$00 : STA.l SpriteOAM+6
 
-	LDA.l ShopInventory, X
+	LDA.b Scrap0D
         PHX
         TAX
         LDA.l SpriteProperties_standing_width,X : BEQ .narrow

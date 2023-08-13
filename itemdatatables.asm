@@ -54,7 +54,7 @@ endmacro
 %ReceiptProps($1D, -4, 0, $0E, $F34E, $01, skip, skip) ; 1D - Book
 %ReceiptProps($1E, -4, 0, $11, $F356, $01, skip, skip) ; 1E - Flippers
 %ReceiptProps($1F, -4, 0, $17, $F357, $01, skip, skip) ; 1F - Pearl
-%ReceiptProps($20, -4, 0, $28, $F37A, $FF, skip, skip) ; 20 - Crystal
+%ReceiptProps($20, -4, 0, $28, $F37A, $FF, dungeon_crystal, skip) ; 20 - Crystal
 %ReceiptProps($21, -4, 0, $27, $F34D, $01, skip, skip) ; 21 - Net
 %ReceiptProps($22, -4, 0, $04, $F35B, $FF, blue_mail, skip) ; 22 - Blue mail
 %ReceiptProps($23, -5, 0, $04, $F35B, $02, red_mail, skip) ; 23 - Red mail
@@ -77,9 +77,9 @@ endmacro
 %ReceiptProps($34, -2, 4, $24, $F360, $FF, skip, skip) ; 34 - 1 rupee
 %ReceiptProps($35, -2, 4, $24, $F360, $FF, skip, skip) ; 35 - 5 rupees
 %ReceiptProps($36, -2, 4, $24, $F360, $EC, skip, skip) ; 36 - 20 rupees
-%ReceiptProps($37, -4, 0, $23, $F374, $FF, skip, skip) ; 37 - Green pendant
-%ReceiptProps($38, -4, 0, $39, $F374, $FF, skip, skip) ; 38 - Red pendant
-%ReceiptProps($39, -4, 0, $39, $F374, $FF, skip, skip) ; 39 - Blue pendant
+%ReceiptProps($37, -4, 0, $23, $F374, $FF, pendant, skip) ; 37 - Green pendant
+%ReceiptProps($38, -4, 0, $39, $F374, $FF, pendant, skip) ; 38 - Red pendant
+%ReceiptProps($39, -4, 0, $39, $F374, $FF, pendant, skip) ; 39 - Blue pendant
 %ReceiptProps($3A, -4, 0, $29, $F340, $01, bow_and_arrows, skip) ; 3A - Bow And Arrows
 %ReceiptProps($3B, -4, 0, $2A, $F340, $03, silver_bow, skip) ; 3B - Silver Bow
 %ReceiptProps($3C, -4, 0, $2C, $F35C, $FF, skip, skip) ; 3C - Full bottle (bee)
@@ -609,7 +609,7 @@ endmacro
 %InventoryItem($1D, $85, $0000, $0000) ; 1D - Book
 %InventoryItem($1E, $89, $0000, $0000) ; 1E - Flippers
 %InventoryItem($1F, $81, $0000, $0000) ; 1F - Pearl
-%InventoryItem($20, $80, $0000, CrystalCounter) ; 20 - Crystal
+%InventoryItem($20, $80, $0000, $0000) ; 20 - Crystal
 %InventoryItem($21, $85, $0000, $0000) ; 21 - Net
 %InventoryItem($22, $81, $0000, $0000) ; 22 - Blue mail
 %InventoryItem($23, $81, $0000, $0000) ; 23 - Red mail
@@ -632,9 +632,9 @@ endmacro
 %InventoryItem($34, $01, $0000, $0000) ; 34 - 1 rupee
 %InventoryItem($35, $01, $0000, $0000) ; 35 - 5 rupees
 %InventoryItem($36, $01, $0000, $0000) ; 36 - 20 rupees
-%InventoryItem($37, $00, $0000, PendantCounter) ; 37 - Green pendant
-%InventoryItem($38, $00, $0000, PendantCounter) ; 38 - Red pendant
-%InventoryItem($39, $00, $0000, PendantCounter) ; 39 - Blue pendant
+%InventoryItem($37, $00, $0000, $0000) ; 37 - Green pendant
+%InventoryItem($38, $00, $0000, $0000) ; 38 - Red pendant
+%InventoryItem($39, $00, $0000, $0000) ; 39 - Blue pendant
 %InventoryItem($3A, $A5, $0000, $0000) ; 3A - Bow And Arrows
 %InventoryItem($3B, $A5, $0000, $0000) ; 3B - Silver Bow
 %InventoryItem($3C, $85, $0000, $0000) ; 3C - Full bottle (bee)
@@ -753,13 +753,13 @@ endmacro
 %InventoryItem($AD, $41, $0000, SmallKeyCounter) ; AD - Small key of Ganon's Tower
 %InventoryItem($AE, $01, $0000, $0000) ; AE - Reserved
 %InventoryItem($AF, $01, $0000, SmallKeyCounter) ; AF - Generic small key
-%InventoryItem($B0, $81, $0000, CrystalCounter) ; B0 - Crystal 6 
-%InventoryItem($B1, $81, $0000, CrystalCounter) ; B1 - Crystal 1 
-%InventoryItem($B2, $81, $0000, CrystalCounter) ; B2 - Crystal 5 
-%InventoryItem($B3, $81, $0000, CrystalCounter) ; B3 - Crystal 7 
-%InventoryItem($B4, $81, $0000, CrystalCounter) ; B4 - Crystal 2 
-%InventoryItem($B5, $81, $0000, CrystalCounter) ; B5 - Crystal 4 
-%InventoryItem($B6, $81, $0000, CrystalCounter) ; B6 - Crystal 3 
+%InventoryItem($B0, $81, $0000, $0000) ; B0 - Crystal 6 
+%InventoryItem($B1, $81, $0000, $0000) ; B1 - Crystal 1 
+%InventoryItem($B2, $81, $0000, $0000) ; B2 - Crystal 5 
+%InventoryItem($B3, $81, $0000, $0000) ; B3 - Crystal 7 
+%InventoryItem($B4, $81, $0000, $0000) ; B4 - Crystal 2 
+%InventoryItem($B5, $81, $0000, $0000) ; B5 - Crystal 4 
+%InventoryItem($B6, $81, $0000, $0000) ; B6 - Crystal 3 
 %InventoryItem($B7, $01, $0000, $0000) ; B7 - Reserved 
 %InventoryItem($B8, $01, $0000, $0000) ; B8 - 
 %InventoryItem($B9, $01, $0000, $0000) ; B9 - 

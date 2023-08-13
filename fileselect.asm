@@ -354,17 +354,34 @@ DrawPlayerFileShared:
 	++
 
 	; Heart Pieces
+        LDA.l HUDHeartColors_index : ASL : TAX
 	LDA.l EquipmentSRAM+$2B : AND.w #$00FF : BNE +
-		%fs_drawItem(9,26,FileSelectItems_heart_piece_0_of_4)
-		BRA ++
+	        LDY.w #9*$20+26*2+$1004
+                LDA.w #$02C0 : ORA.l HUDHeartColors_masks_file_select,X : STA.w $0000, Y
+                LDA.w #$42C0 : ORA.l HUDHeartColors_masks_file_select,X : STA.w $0002, Y
+                LDA.w #$02D0 : ORA.l HUDHeartColors_masks_file_select,X : STA.w $0040, Y
+                LDA.w #$42D0 : ORA.l HUDHeartColors_masks_file_select,X : STA.w $0042, Y
+		JMP ++
 	+ : DEC : BNE +
-		%fs_drawItem(9,26,FileSelectItems_heart_piece_1_of_4)
-		BRA ++
+	        LDY.w #9*$20+26*2+$1004
+                LDA.w #$02C1 : ORA.l HUDHeartColors_masks_file_select,X : STA.w $0000, Y
+                LDA.w #$42C0 : ORA.l HUDHeartColors_masks_file_select,X : STA.w $0002, Y
+                LDA.w #$02D0 : ORA.l HUDHeartColors_masks_file_select,X : STA.w $0040, Y
+                LDA.w #$42D0 : ORA.l HUDHeartColors_masks_file_select,X : STA.w $0042, Y
+		JMP ++
 	+ : DEC : BNE +
-		%fs_drawItem(9,26,FileSelectItems_heart_piece_2_of_4)
-		BRA ++
+	        LDY.w #9*$20+26*2+$1004
+                LDA.w #$02C1 : ORA.l HUDHeartColors_masks_file_select,X : STA.w $0000, Y
+                LDA.w #$42C0 : ORA.l HUDHeartColors_masks_file_select,X : STA.w $0002, Y
+                LDA.w #$02D1 : ORA.l HUDHeartColors_masks_file_select,X : STA.w $0040, Y
+                LDA.w #$42D0 : ORA.l HUDHeartColors_masks_file_select,X : STA.w $0042, Y
+		JMP ++
 	+
-		%fs_drawItem(9,26,FileSelectItems_heart_piece_3_of_4)
+	        LDY.w #9*$20+26*2+$1004
+                LDA.w #$02C1 : ORA.l HUDHeartColors_masks_file_select,X : STA.w $0000, Y
+                LDA.w #$42C1 : ORA.l HUDHeartColors_masks_file_select,X : STA.w $0002, Y
+                LDA.w #$02D1 : ORA.l HUDHeartColors_masks_file_select,X : STA.w $0040, Y
+                LDA.w #$42D0 : ORA.l HUDHeartColors_masks_file_select,X : STA.w $0042, Y
 	++
 
 	LDA.l EquipmentSRAM+$0130 : AND.w #$00FF
@@ -571,15 +588,6 @@ FileSelectItems:
 	dw #$02AF|!FS_COLOR_BLUE, #$02AF|!FS_COLOR_BLUE|!FS_HFLIP, #$02BF|!FS_COLOR_BLUE, #$02F4|!FS_COLOR_BLUE
 	.red_mail
 	dw #$02AF|!FS_COLOR_RED, #$02AF|!FS_COLOR_RED|!FS_HFLIP, #$02BF|!FS_COLOR_RED, #$02F5|!FS_COLOR_RED
-
-	.heart_piece_0_of_4
-	dw #$02C0|!FS_COLOR_RED, #$02C0|!FS_COLOR_RED|!FS_HFLIP, #$02D0|!FS_COLOR_RED, #$02D0|!FS_COLOR_RED|!FS_HFLIP
-	.heart_piece_1_of_4
-	dw #$02C1|!FS_COLOR_RED, #$02C0|!FS_COLOR_RED|!FS_HFLIP, #$02D0|!FS_COLOR_RED, #$02D0|!FS_COLOR_RED|!FS_HFLIP
-	.heart_piece_2_of_4
-	dw #$02C1|!FS_COLOR_RED, #$02C0|!FS_COLOR_RED|!FS_HFLIP, #$02D1|!FS_COLOR_RED, #$02D0|!FS_COLOR_RED|!FS_HFLIP
-	.heart_piece_3_of_4
-	dw #$02C1|!FS_COLOR_RED, #$02C1|!FS_COLOR_RED|!FS_HFLIP, #$02D1|!FS_COLOR_RED, #$02D0|!FS_COLOR_RED|!FS_HFLIP
 
 	.empty_bottle
 	dw #$0280|!FS_COLOR_BW, #$0281|!FS_COLOR_BW, #$0290|!FS_COLOR_BW, #$0291|!FS_COLOR_BW

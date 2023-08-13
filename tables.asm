@@ -2572,12 +2572,29 @@ org $B0F000 ; PC 0x187000-0x18700F
 CompassTotalsROM:
 db $08, $08, $06, $06, $02, $0A, $0E, $08, $08, $08, $06, $08, $0C, $1B, $00, $00
 
-org $30F010
+org $B0F010
 ChestKeys: ; PC 0x187010-0x18701F
 db $01, $01, $00, $01, $02, $01, $06, $03, $03, $02, $01, $01, $04, $04, $00, $00
 
+org $B0F020
+HUDHeartColors: ; PC 0x187020
+.index          ; $00 = Red | $01 = Blue | $02 = Green | $03 = Yellow
+dw #$0000
+.masks_game_hud    ; PC 0x187022
+dw #$0400          ; Red
+dw #$0C00          ; Blue
+dw #$1C00          ; Green
+dw #$0800          ; Yellow
+.masks_file_select ; PC 0x18702A
+dw #$0400          ; Red
+dw #$0C00          ; Blue
+dw #$1800          ; Green
+dw #$0800          ; Yellow
+
+org $B0F032
+
 ;--------------------------------------------------------------------------------
-; 0x187010 - 187FFF (unused)
+; 0x187032 - 187FFF (unused)
 ;--------------------------------------------------------------------------------
 
 
@@ -2674,18 +2691,18 @@ dw $FFFF
 
 org $8ABE76
 WorldMapIcon_tile:
-db $38, $62 ; green pendant
-db $32, $60 ; red pendant
-db $34, $60 ; blue pendant
-db $34, $64 ; crystal
+db $38, $62 ; green pendant        ; Eastern Palace
+db $32, $60 ; red pendant          ; Hera
+db $34, $60 ; blue pendant         ; Desert
+db $34, $64 ; crystal              ; PoD
 
-db $34, $64 ; crystal
-db $34, $64 ; crystal
-db $34, $64 ; crystal
-db $34, $64 ; crystal
+db $34, $64 ; crystal              ; Skull Woods
+db $34, $64 ; crystal              ; Turtle Rock
+db $34, $64 ; crystal              ; Thieves Town
+db $34, $64 ; crystal              ; Misery Mire
 
-db $34, $64 ; crystal
-db $34, $64 ; crystal
+db $34, $64 ; crystal              ; Ice Palace
+db $34, $64 ; crystal              ; Swamp Palace
 db $32, $66 ; skull looking thing
 db $00, $00 ; red x
 
