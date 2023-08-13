@@ -189,9 +189,11 @@ RaceGameFlag = $7E021B            ;
 MessageJunk = $7E0223             ; Zeroed but never used (?)
                                   ;
 ShopPurchaseFlag = $7E0224        ; $01 = Shop purchase item receipt.
-;CoolScratch = $7E0226            ; 0x5A bytes of free ram
-SpriteID = $7E0230                ; 0x0A bytes
-                                  ;
+;CoolScratch = $7E0224            ; 0x5C bytes of free ram
+ItemQueuePtr = $7E0226            ; Pointer into Item GFX and VRAM target queues. Word length.
+SpriteID = $7E0230                ; 0x0A bytes. Receipt ID for main loop sprite we're handling.
+ItemGFXQueue = $7E0230            ; Pointers to decompressed item tiles deferred to NMI loading. $10 bytes
+ItemTargetQueue = $7E0240         ; Pointers to VRAM targets for ItemGFXQueue. $10 bytes
 AncillaVelocityZ = $7E0294        ; 0x0A bytes
 AncillaZCoord = $7E029E           ; 0x0A bytes
                                   ;

@@ -136,7 +136,7 @@ SpritePrep_ShopKeeper:
                                 TAY
                                 REP #$30
 				LDA.b 1,s : TAX : LDA.l .tile_offsets, X : TAX
-				JSR LoadTile
+				JSR.w SetupTileTransfer
 			PLY : PLX
 			INY #4
 		
@@ -144,11 +144,13 @@ SpritePrep_ShopKeeper:
 		INX #8
 	JMP -
 	.stop
+        REP #$20
+        LDA.w ItemQueuePtr
+        DEC #2
+        AND.w #$00E
+        STA.w ItemQueuePtr
+        SEP #$20
 	
-	;LDA.b #Shopkeeper_UploadVRAMTilesLong>>16 : STA.w NMIAux+2
-	;LDA.b #Shopkeeper_UploadVRAMTilesLong>>8 : STA.w NMIAux+1
-	;LDA.b #Shopkeeper_UploadVRAMTilesLong>>0 : STA.w NMIAux
-
 	.done
 	LDA.l ShopType : BIT.b #$20 : BEQ .notTakeAll ; Take-all
 	.takeAll
@@ -188,7 +190,7 @@ dw $0100, $0000
 ;--------------------------------------------------------------------------------
 ; X - Tile Buffer Offset
 ; Y - Item ID
-LoadTile:
+SetupTileTransfer:
         LDA.l ShopType : BIT.w #$0010 : BNE .alt_vram
 	        TXA : LSR #2
                 CLC : ADC.w #!FREE_TILE
@@ -197,10 +199,18 @@ LoadTile:
 	TXA : LSR #2
         CLC : ADC.w #!FREE_TILE_ALT
         .store_target
-        STA.w ItemGFXTarget
+        LDX.w ItemQueuePtr
+        STA.w ItemTargetQueue,X
+
 	TYA : ASL : TAX
-        LDA.l StandingItemGraphicsOffsets,X : STA.w ItemGFXPtr
-        JSL.l TransferItemToVRAM
+        LDA.l StandingItemGraphicsOffsets,X
+        LDX.w ItemQueuePtr
+        STA.w ItemGFXQueue,X
+
+        TXA
+        INC #2
+        AND.w #$000E
+        STA.w ItemQueuePtr
         TDC
 	REP #$10 ; set 16-bit index registers
         SEP #$20
