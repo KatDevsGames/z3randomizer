@@ -89,7 +89,7 @@ endmacro
 %ReceiptProps($40, -4, 0, $34, $F360, $9C, skip, skip) ; 40 - 100 rupees
 %ReceiptProps($41, -4, 0, $35, $F360, $CE, skip, skip) ; 41 - 50 rupees
 %ReceiptProps($42, -2, 4, $31, $F372, $FF, skip, skip) ; 42 - Heart
-%ReceiptProps($43, -2, 4, $33, $F376, $01, skip, skip) ; 43 - Arrow
+%ReceiptProps($43, -2, 4, $33, $F376, $01, single_arrow, skip) ; 43 - Arrow
 %ReceiptProps($44, -4, 0, $02, $F376, $0A, skip, skip) ; 44 - 10 arrows
 %ReceiptProps($45, -2, 4, $32, $F373, $FF, skip, skip) ; 45 - Small magic
 %ReceiptProps($46, -4, 0, $36, $F360, $FF, skip, skip) ; 46 - 300 rupees

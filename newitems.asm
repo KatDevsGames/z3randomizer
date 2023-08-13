@@ -202,18 +202,24 @@ ItemBehavior:
 
         .fighter_shield
         SEP #$10
-        LDX.b #$01
-        JSR .increment_shield
+        LDA.w ShopPurchaseFlag : BNE ..shop_shield
+                -
+                LDX.b #$01
+                JSR .increment_shield
+                RTS
+        ..shop_shield
+        TYX
+        LDA.l InventoryTable_properties,X : BIT.b #$02 : BNE -
         RTS
 
         .red_shield
         SEP #$10
-        LDA.w ShopPurchaseFlag : BNE .shop_shield
+        LDA.w ShopPurchaseFlag : BNE ..shop_shield
                 -
                 LDX.b #$02
                 JSR .increment_shield
                 RTS
-        .shop_shield
+        ..shop_shield
         TYX
         LDA.l InventoryTable_properties,X : BIT.b #$02 : BNE -
         RTS
@@ -409,6 +415,10 @@ ItemBehavior:
         LDA.l ArrowMode : BEQ +
                 LDA.b #$01 : STA.l ArrowsFiller
         +
+        RTS
+
+        .single_arrow
+        INC.w UpdateHUD
         RTS
 
         .rupoor
