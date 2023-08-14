@@ -127,7 +127,7 @@ CountChestKey:
                         TYA
                         AND.b #$0F : CMP.b #$02 : BCC .hc_sewers
                                 TAX
-                                LDA.l DungeonCollectedKeys,X : INC : STA.l DungeonCollectedKeys
+                                LDA.l DungeonCollectedKeys,X : INC : STA.l DungeonCollectedKeys,X
                                 BRA .done
                 .this_dungeon
                 LDA.w DungeonID : CMP.b #$03 : BCC .hc_sewers

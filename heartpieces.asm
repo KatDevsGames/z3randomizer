@@ -3,10 +3,9 @@
 ;--------------------------------------------------------------------------------
 HeartPieceGet:
         PHX : PHY
-        LDY.w SpriteID, X ; load item value into Y register
-        BNE +
-                JSL.l LoadHeartPieceRoomValue : TAY
-        +
+        JSL.l LoadHeartPieceRoomValue
+        JSL.l ResolveLootIDLong
+        TAY
         JSL.l MaybeMarkDigSpotCollected
         .skipLoad
         CPY.b #$26 : BNE .not_heart ; don't add a 1/4 heart if it's not a heart piece
@@ -83,14 +82,17 @@ RTL
 NormalItemSkipSound:
 ; Out: C - skip sounds if set
         JSL.l CheckIfBossRoom : BCS .boss_room
-	        LDA.b #$00
+                TDC
+                CPY #$17 : BEQ .skip
 RTL
-	.boss_room
+        .boss_room
         LDA.w ItemReceiptMethod : CMP.b #$03 : BEQ +
-	        SEC
+                .skip
+                SEC
                 RTL
         +
         LDA.b #$20
+        .dont_skip
         CLC
 RTL
 ;--------------------------------------------------------------------------------

@@ -145,7 +145,7 @@ AddInventory:
 	LDA.l StatsLocked : BNE .done
         LDA.w InventoryTable_properties,Y : BIT #$01 : BEQ .done
         JSR.w ShopCheck : BCS .done
-                JSR.w DungeonIncrement
+        JSR.w DungeonIncrement : BCS .done
                 JSR.w IncrementByOne
                 JSR.w StampItem
                 SEP #$20
@@ -210,6 +210,7 @@ DungeonIncrement:
                         ++
 	        +
         .done
+        CLC
 RTS
         .ballchain_bigkey
         LDA.l BigKeysBigChests
@@ -260,6 +261,7 @@ RTS
 
 IncrementByOne:
         REP #$20
+        TYA : ASL : TAX
         LDA.w InventoryTable_stat,X : BEQ .skip
                 STA.b Scrap0B
                 SEP #$20
