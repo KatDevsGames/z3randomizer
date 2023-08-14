@@ -1490,7 +1490,7 @@ dw $0000      ; 7F
 	dw !OWW_ArbitraryRLE
 	dw $021B ; tile
 	dw $3218, $3222, $3298, $32A2
-	dw $331A, $331C, $331E, $3320
+	dw $331A, $331C, $331E, $3320|!OWW_STOP
 
 
 	dw !OWW_CustomCommand, .map5B_pick_warp_tile
@@ -1501,7 +1501,6 @@ dw $0000      ; 7F
 	dw !OWW_SKIP, $02CC|!OWW_STOP
 
 	dw $02CC, $39D4
-	dw $02D5, $32D2
 
 	dw !OWW_Stripe|!OWW_Horizontal
 	dw $3A40 ; start
