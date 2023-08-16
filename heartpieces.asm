@@ -84,6 +84,7 @@ NormalItemSkipSound:
         JSL.l CheckIfBossRoom : BCS .boss_room
                 TDC
                 CPY #$17 : BEQ .skip
+                CLC
 RTL
         .boss_room
         LDA.w ItemReceiptMethod : CMP.b #$03 : BEQ +

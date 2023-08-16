@@ -88,9 +88,6 @@ db $01 ; #$00 = Classic Tempering Process - #$01 = Quick Item Get (default)
 SmithItem:
 db $02 ; #$02 = Tempered Sword (default)
 
-;org $86B48E ; PC 0x3348E ; sprite_smithy_bros.asm : 473
-;SmithSwordCheck:
-;db $03 ; #$03 = Tempered Sword (default) ; THESE VALUES ARE +1
 org $86B55C ; PC 0x3355C ; sprite_smithy_bros.asm : 634
 SmithSword:
 db $02 ; #$02 = Tempered Sword (default)
@@ -939,9 +936,12 @@ org $B08195 ; PC 0x180195
 ByrnaCaveSpikeDamage:
 db $08 ; #$08 = 1 Heart (default) - #$02 = 1/4 Heart
 ;--------------------------------------------------------------------------------
-org $308196 ; PC 0x180196-0x180197
+org $B08196 ; PC 0x180196-0x180197
 TotalItemCount: ; Total item count for HUD. Only counts items that use "item get" animation.
 dw $00D8        ; 216
+
+org $B08198             ; PC 0x180198-0x180199
+GanonsTowerOpenAddress: ; Target address for GT open check
 ;--------------------------------------------------------------------------------
 ; 0x180196 - 0x1801FF (unused)
 ;================================================================================
