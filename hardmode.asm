@@ -81,7 +81,7 @@ GetItemDamageValue:
 	CPX.b #$3d : BEQ .hookshot
 
 	.normal
-	LDA.l $0db8f1,x ;what we wrote over
+	LDA.l $8DB8F1,x ;what we wrote over
 RTL
 	.boomerang
 		LDA.l StunItemAction : AND.b #$01 : BNE .normal

@@ -3,31 +3,17 @@
 ;--------------------------------------------------------------------------------
 HeartPieceGet:
         PHX : PHY
-        LDY.w SpriteItemType, X ; load item value into Y register
-        BNE +
-                ; if for any reason the item value is 0 reload it, just in case
-                JSL.l LoadHeartPieceRoomValue : TAY
-        +
+        JSL.l LoadHeartPieceRoomValue
+        JSL.l ResolveLootIDLong
+        TAY
         JSL.l MaybeMarkDigSpotCollected
-
         .skipLoad
-
+        CPY.b #$26 : BNE .not_heart ; don't add a 1/4 heart if it's not a heart piece
+                LDA.l HeartPieceQuarter : INC A : AND.b #$03 : STA.l HeartPieceQuarter
+        .not_heart
+        JSL.l $8791B3 ; Player_HaltDashAttackLong
         STZ.w ItemReceiptMethod ; 0 = Receiving item from an NPC or message
-
-        CPY.b #$26 : BNE .notHeart ; don't add a 1/4 heart if it's not a heart piece
-        LDA.l HeartPieceQuarter : INC A : AND.b #$03 : STA.l HeartPieceQuarter : BNE .unfinished_heart ; add up heart quarters
-        BRA .giveItem
-
-        .notHeart
-        .giveItem
-        JSL.l $0791B3 ; Player_HaltDashAttackLong
         JSL.l Link_ReceiveItem
-        CLC ; return false
-        JMP .done ; finished
-
-        .unfinished_heart
-        SEC ; return true
-        .done
         JSL MaybeUnlockTabletAnimation
 
         PLY : PLX
@@ -35,42 +21,38 @@ RTL
 ;--------------------------------------------------------------------------------
 HeartContainerGet:
 	PHX : PHY
-	JSL.l AddInventory_incrementBossSwordLong
-	LDY.w SpriteItemType, X ; load item value into Y register
-	BNE +
-		; if for any reason the item value is 0 reload it, just in case
+	JSL.l IncrementBossSword
+	LDY.w SpriteID, X : BNE +
 		JSL.l LoadHeartContainerRoomValue : TAY
 	+
-
 	BRA HeartPieceGet_skipLoad
 ;--------------------------------------------------------------------------------
 DrawHeartPieceGFX:
-	PHP
-	JSL.l Sprite_IsOnscreen : BCC .offscreen
-	
-	PHA : PHY
-	LDA.l RedrawFlag : BEQ .skipInit ; skip init if already ready
-	JSL.l HeartPieceSpritePrep
-	JMP .done ; don't draw on the init frame
-	
-	.skipInit
-	LDA.w SpriteItemType, X ; Retrieve stored item type
-
-	.skipLoad
-	
-	PHA
-		JSL.l IsNarrowSprite : BCC +
-		LDA.w SpriteControl, X : ORA.b #$20 : STA.w SpriteControl, X
-	+
-    PLA
-	
-	JSL.l DrawDynamicTile
-	JSL.l Sprite_DrawShadowLong 
-	
-	.done
-	PLY : PLA
-	.offscreen
-	PLP
+        PHP
+        JSL.l Sprite_IsOnscreen : BCC .offscreen
+                PHA : PHY
+                LDA.l RedrawFlag : BEQ .skipInit ; skip init if already ready
+                        JSL.l HeartPieceSpritePrep
+                        JMP .done ; don't draw on the init frame
+                .skipInit
+                LDA.w SpriteID, X ; Retrieve stored item type
+                .skipLoad
+                PHA : PHX
+                TAX
+                LDA.l SpriteProperties_standing_width,X : BNE +
+                        PLX
+                        LDA.w SpriteControl, X : ORA.b #$20 : STA.w SpriteControl, X
+                        BRA .draw
+                +
+                PLX
+                .draw
+                PLA
+                JSL.l DrawDynamicTile
+                JSL.l Sprite_DrawShadowLong 
+                .done
+                PLY : PLA
+        .offscreen
+        PLP
 RTL
 ;--------------------------------------------------------------------------------
 DrawHeartContainerGFX:
@@ -83,37 +65,36 @@ DrawHeartContainerGFX:
 	BRA DrawHeartPieceGFX_done ; don't draw on the init frame
 	
 	.skipInit
-	LDA.w SpriteItemType, X ; Retrieve stored item type
+	LDA.w SpriteID, X ; Retrieve stored item type
 
 	BRA DrawHeartPieceGFX_skipLoad
 ;--------------------------------------------------------------------------------
 HeartContainerSound:
-	CPY.b #$20 : BEQ + ; Skip for Crystal
-	CPY.b #$37 : BEQ + ; Skip for Pendants
-	CPY.b #$38 : BEQ +
-	CPY.b #$39 : BEQ +
-    JSL.l CheckIfBossRoom : BCC + ; Skip if not in a boss room
-	        LDA.b #$2E
-			SEC
-		RTL
+        LDA.w ItemReceiptMethod : CMP.b #$03 : BEQ +
+        JSL.l CheckIfBossRoom : BCC + ; Skip if not in a boss room
+                LDA.b #$2E
+                SEC
+                RTL
 	+
 	CLC
 RTL
 ;--------------------------------------------------------------------------------
 NormalItemSkipSound:
-	LDA.w AncillaGet, X ; thing we wrote over
-
-	CPY.b #$20 : BEQ + ; Skip for Crystal
-	CPY.b #$37 : BEQ + ; Skip for Pendants
-	CPY.b #$38 : BEQ +
-	CPY.b #$39 : BEQ +
-	
-	PHA
-        JSL.l CheckIfBossRoom
-	PLA
+; Out: C - skip sounds if set
+        JSL.l CheckIfBossRoom : BCS .boss_room
+                TDC
+                CPY #$17 : BEQ .skip
+                CLC
 RTL
-	+
-	CLC
+        .boss_room
+        LDA.w ItemReceiptMethod : CMP.b #$03 : BEQ +
+                .skip
+                SEC
+                RTL
+        +
+        LDA.b #$20
+        .dont_skip
+        CLC
 RTL
 ;--------------------------------------------------------------------------------
 HeartPieceSpritePrep:
@@ -125,9 +106,10 @@ HeartPieceSpritePrep:
 	LDA.b LinkState : CMP.b #$14 : BEQ .skip ; skip if we're mid-mirror
 
 	LDA.b #$00 : STA.l RedrawFlag
-	JSL.l LoadHeartPieceRoomValue ; load item type
-	STA.w SpriteItemType, X ; Store item type
-	JSL.l PrepDynamicTile
+	JSL.l LoadHeartPieceRoomValue
+        JSL.l ResolveLootIDLong
+	STA.w SpriteID, X
+	JSL.l PrepDynamicTile_loot_resolved
 	
 	.skip
 	PLA
@@ -138,8 +120,9 @@ HeartContainerSpritePrep:
 	
 	LDA.b #$00 : STA.l RedrawFlag
 	JSL.l LoadHeartContainerRoomValue ; load item type
-	STA.w SpriteItemType, X ; Store item type
-	JSL.l PrepDynamicTile
+        JSL.l ResolveLootIDLong
+	STA.w SpriteID, X
+	JSL.l PrepDynamicTile_loot_resolved
 	
 	PLA
 RTL
@@ -155,7 +138,7 @@ LoadHeartPieceRoomValue:
 RTL
 ;--------------------------------------------------------------------------------
 HPItemReset:
-	JSL $09AD58 ; GiveRupeeGift - thing we wrote over
+	JSL $89AD58 ; GiveRupeeGift - thing we wrote over
 	PHA : LDA.b #$01 : STA.l RedrawFlag : PLA
 RTL
 ;--------------------------------------------------------------------------------
@@ -378,9 +361,9 @@ RTL
 ;#13 - Ganon's Tower - Agahnim II
 ;#0 - Pyramid of Power - Ganon
 ;--------------------------------------------------------------------------------
-;JSL $06DD40 ; DashKey_Draw
-;JSL $06DBF8 ; Sprite_PrepAndDrawSingleLargeLong
-;JSL $06DC00 ; Sprite_PrepAndDrawSingleSmallLong ; draw first cell correctly
-;JSL $00D51B ; GetAnimatedSpriteTile
-;JSL $00D52D ; GetAnimatedSpriteTile.variable
+;JSL $86DD40 ; DashKey_Draw
+;JSL $86DBF8 ; Sprite_PrepAndDrawSingleLargeLong
+;JSL $86DC00 ; Sprite_PrepAndDrawSingleSmallLong ; draw first cell correctly
+;JSL $80D51B ; GetAnimatedSpriteTile
+;JSL $80D52D ; GetAnimatedSpriteTile.variable
 ;================================================================================

@@ -64,7 +64,7 @@ FixBunnyOnExitToLightWorld:
         STZ.b LinkState ; set player mode to Normal
         STZ.w BunnyFlag : STZ.b BunnyFlagDP ; return player graphics to normal
     +
-RTS
+RTL
 ;--------------------------------------------------------------------------------
 
 ;--------------------------------------------------------------------------------
@@ -245,3 +245,10 @@ ParadoxCaveGfxFix:
     LDX.w #$00C0 : STX.w DAS0L
     BRA .uploadLine
 ;--------------------------------------------------------------------------------
+SetItemRiseTimer:
+        LDA.w ItemReceiptMethod : CMP #$01 : BNE .not_from_chest
+                LDA.b #$38 : STA.w AncillaTimer, X
+                RTL
+        .not_from_chest
+        TYA : STA.w AncillaTimer, X ; What we wrote over
+RTL

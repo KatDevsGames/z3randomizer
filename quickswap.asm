@@ -11,7 +11,7 @@ QuickSwap:
 	LDA.l QuickSwapFlag : BEQ .done
 	LDA.w ItemCursor : BEQ .done ; Skip everything if we don't have any items
 
-        LDY.b #$14
+	LDY.b #$14
 	PHX
 	XBA ; restore the stashed value
 	CMP.b #$30 : BNE +

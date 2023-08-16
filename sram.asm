@@ -382,6 +382,7 @@ InverseChecksumWRAM: skip 2     ; Vanilla Inverse Checksum. Don't write unless c
 ; beginning at $700500
 ;--------------------------------------------------------------------------------
 base $7F6000                     ; $1000 byte buffer we place beginning at second save file
+ExtendedSaveDataWRAM:            ;
 ExtendedFileNameWRAM: skip 24    ; File name, 12 word-length characters.
 RoomPotData: skip 592            ; Table for expanded pot shuffle. One word per room.
 SpritePotData: skip 592          ; Table for expanded pot shuffle. One word per room.
@@ -414,6 +415,7 @@ FileNameVanillaSRAM: skip 8     ; First four characters of file name
 FileValiditySRAM: skip 2        ;
 skip 283                        ;
 InverseChecksumSRAM: skip 2     ;
+ExtendedSaveDataSRAM:           ;
 ExtendedFileNameSRAM: skip 24   ; We read and write the file name directly from and to SRAM (24 bytes)
 skip $1AE4                      ;
 RomVersionSRAM: skip 4          ; ALTTPR ROM version. Low byte is the version, high byte writes
@@ -425,15 +427,6 @@ skip 8155                       ;
 SaveBackupSRAM:                 ; Backup copy of save ram. Game will attempt to use this if
                                 ; checksum on file select screen load fails.
 base off
-
-;================================================================================
-; Bank Definitions
-;--------------------------------------------------------------------------------
-; If these move (most likely by placing initsramtable.asm somewhere else) these
-; bank definitions need to be changed as well.
-;================================================================================
-!SRAMBank = $70
-!SRAMTableBank = $30|$80
 
 ;================================================================================
 ; Assertions
@@ -656,6 +649,7 @@ endmacro
 %assertSRAM(GTCollectedKeys, $7EF4ED)
 %assertSRAM(FileMarker, $7EF4F0)
 ;--------------------------------------------------------------------------------
+%assertSRAM(ExtendedSaveDataWRAM, $7F6000)
 %assertSRAM(ExtendedFileNameWRAM, $7F6000)
 %assertSRAM(RoomPotData, $7F6018)
 %assertSRAM(SpritePotData, $7F6268)
@@ -678,6 +672,7 @@ endmacro
 %assertSRAM(FileNameVanillaSRAM, $7003D9)
 %assertSRAM(FileValiditySRAM, $7003E1)
 %assertSRAM(InverseChecksumSRAM, $7004FE)
+%assertSRAM(ExtendedSaveDataSRAM, $700500)
 %assertSRAM(ExtendedFileNameSRAM, $700500)
 %assertSRAM(RomVersionSRAM, $701FFC)
 %assertSRAM(RomNameSRAM, $702000)

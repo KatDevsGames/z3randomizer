@@ -3,34 +3,40 @@
 ;================================================================================
 lorom
 
+;===================================================================================================
+
+; THIS NEEDS TO BE THE FIRST INCLUDE BECAUSE IT CHANGES THINGS EVERYWHERE
+; If this were to be included later, it would almost certainly overwrite other changes
+incsrc "fastrom.asm"
+
 ;================================================================================
 
-;org $00FFC0 ; <- 7FC0 - Bank00.asm : 9173 (db "THE LEGEND OF ZELDA  " ; 21 bytes)
-;db #$23, $4E
+;org $80FFC0 ; <- 7FC0 - Bank00.asm : 9173 (db "THE LEGEND OF ZELDA  " ; 21 bytes)
+;db $23, $4E
 
-org $00FFD5 ; <- 7FD5 - Bank00.asm : 9175 (db $20   ; rom layout)
-db #$30 ; set fast lorom
+org $80FFD5 ; <- 7FD5 - Bank00.asm : 9175 (db $20   ; rom layout)
+db $30 ; set fast lorom
 
-;org $00FFD6 ; <- 7FD6 - Bank00.asm : 9176 (db $02   ; cartridge type)
-;db #$55 ; enable S-RTC
+;org $80FFD6 ; <- 7FD6 - Bank00.asm : 9176 (db $02   ; cartridge type)
+;db $55 ; enable S-RTC
 
-org $00FFD7 ; <- 7FD7 - Bank00.asm : 9177 (db $0A   ; rom size)
-db #$0B ; mark rom as 16mbit
+org $80FFD7 ; <- 7FD7 - Bank00.asm : 9177 (db $0A   ; rom size)
+db $0B ; mark rom as 16mbit
 
-org $00FFD8 ; <- 7FD8 - Bank00.asm : 9178 (db $03   ; ram size (sram size))
-db #$05 ; mark sram as 32k
+org $80FFD8 ; <- 7FD8 - Bank00.asm : 9178 (db $03   ; ram size (sram size))
+db $05 ; mark sram as 32k
 
-org $3FFFFF ; <- 1FFFFF
-db #$00 ; expand file to 2mb
+org $BFFFFF ; <- 1FFFFF
+db $00 ; expand file to 2mb
 
-org $1FFFF8 ; <- FFFF8 timestamp rom
-db #$20, #$19, #$08, #$31 ; year/month/day
+org $9FFFF8 ; <- FFFF8 timestamp rom
+db $20, $19, $08, $31 ; year/month/day
 
 ;================================================================================
 !ROM_VERSION_LOW ?= 1  ; ROM version (two 16-bit integers)
-!ROM_VERSION_HIGH ?= 3 ;
+!ROM_VERSION_HIGH ?= 4 ;
 
-org $00FFE0 ; Unused hardware vector
+org $80FFE0 ; Unused hardware vector
 RomVersion:
 dw !ROM_VERSION_LOW
 dw !ROM_VERSION_HIGH
@@ -56,10 +62,9 @@ incsrc ram.asm
 incsrc sram.asm
 incsrc registers.asm
 incsrc vanillalabels.asm
+incsrc overworldmap.asm ; Overwrites some code in bank $8A
 
-;org $208000 ; bank #$20
-org $A08000 ; bank #$A0
-incsrc newitems.asm ; LEAVE THIS AS FIRST
+org $A08000 ; bank $20
 incsrc itemdowngrade.asm
 incsrc bugfixes.asm
 incsrc darkworldspawn.asm
@@ -67,7 +72,6 @@ incsrc lampmantlecone.asm
 incsrc floodgatesoftlock.asm
 incsrc heartpieces.asm
 incsrc npcitems.asm
-incsrc utilities.asm
 incsrc flipperkill.asm
 incsrc pendantcrystalhud.asm
 incsrc potions.asm
@@ -78,7 +82,6 @@ incsrc tablets.asm
 incsrc fairyfixes.asm
 incsrc rngfixes.asm
 incsrc medallions.asm
-incsrc inventory.asm
 incsrc zelda.asm
 incsrc maidencrystals.asm
 incsrc flute.asm
@@ -98,9 +101,9 @@ incsrc roomloading.asm
 incsrc icepalacegraphics.asm
 warnpc $A18000
 
-org $1C8000 ; text tables for translation
+org $9C8000 ; text tables for translation
 incbin "data/i18n_en.bin"
-warnpc $1CF356
+warnpc $9CF356
 
 org $A18000 ; static mapping area
 incsrc framehook.asm
@@ -111,7 +114,7 @@ incsrc hud.asm
 warnpc $A18800
 
 org $A18800 ; static mapping area
-incsrc zsnes.asm
+
 warnpc $A19000
 
 org $A1A000 ; static mapping area. Referenced by front end. Do not move.
@@ -131,7 +134,6 @@ incsrc glitched.asm
 incsrc hardmode.asm
 incsrc goalitem.asm
 incsrc quickswap.asm
-incsrc endingsequence.asm
 incsrc cuccostorm.asm
 incsrc retro.asm
 incsrc controllerjank.asm
@@ -144,7 +146,6 @@ incsrc hashalphabet.asm
 incsrc inverted.asm
 incsrc invertedmaps.asm
 incsrc newhud.asm
-incsrc compasses.asm
 incsrc save.asm
 incsrc password.asm
 incsrc enemy_adjustments.asm
@@ -152,110 +153,127 @@ incsrc hudtext.asm
 incsrc servicerequest.asm
 incsrc elder.asm
 incsrc toast.asm
-incsrc darkroomitems.asm
 incsrc fastcredits.asm
 incsrc msu.asm
 incsrc dungeonmap.asm
 incsrc hextodec.asm
 if !FEATURE_NEW_TEXT
-    incsrc textrenderer.asm
+	incsrc textrenderer.asm
 endif
 warnpc $A58000
 
 org $A28000
+ItemReceiptGraphicsROM:
+; we need some empty space here so that 0000 can mean nothing
+fillbyte $00 : fill 32
+incbin "data/customitems.4bpp"
+warnpc $A2B000
+org $A2B000
+incsrc itemdatatables.asm ; Statically mapped
+incsrc decompresseditemgraphics.asm
+incsrc newitems.asm
+incsrc utilities.asm
+incsrc inventory.asm
 
 org $A38000
+incsrc stats/credits.asm ; Statically mapped
 incsrc stats/main.asm
+incsrc stats/statConfig.asm
+FontTable:
+incsrc stats/fonttable.asm
 
-org $308000 ; bank #$30
+org $B08000 ; bank $30
 incsrc tables.asm
 
-org $348000
+org $B48000
 incsrc spc.asm
 
-org $318000 ; bank #$31
+org $B18000 ; bank $31
 GFX_Mire_Bombos:
 incbin "data/99ff1_bombos.gfx"
-warnpc $318800
+warnpc $B18800
 
-org $318800
+org $B18800
 GFX_Mire_Quake:
 incbin "data/99ff1_quake.gfx"
-warnpc $319000
+warnpc $B19000
 
-org $319000
+org $B19000
 GFX_TRock_Bombos:
 incbin "data/a6fc4_bombos.gfx"
-warnpc $319800
+warnpc $B19800
 
-org $319800
+org $B19800
 GFX_TRock_Ether:
 incbin "data/a6fc4_ether.gfx"
-warnpc $31A000
+warnpc $B1A000
 
-org $31A000
+org $B1A000
 GFX_HUD_Items:
 incbin "data/c2807_v4.gfx"
-warnpc $31A800
+warnpc $B1A800
 
-org $31A800
-GFX_New_Items:
-incbin "data/newitems.gfx"
-;incbin eventitems.gfx ; *EVENT*
-warnpc $31B000
+org $B1A800
 
-org $31B000
+warnpc $B1B000
+
+org $B1B000
 GFX_HUD_Main:
 incbin "data/c2e3e.gfx"
-warnpc $31B800
+warnpc $B1B800
 
-org $31C000
+org $B1C000
 IcePalaceFloorGfx:
 incbin "data/ice_palace_floor.bin"
-warnpc $31C801
+warnpc $B1C801
 
-org $31C800
+org $B1C800
 Damage_Table:
 incbin "data/damage_table.bin"
-warnpc $31D001
+warnpc $B1D001
 
-org $31D000
+org $B1D000
 FileSelectNewGraphics:
 incbin "data/fileselectgfx.2bpp"
-warnpc $31E001
+warnpc $B1E001
 
-org $31E000
+org $B1E000
 InvertedCastleHole: ;address used by front end. DO NOT MOVE!
 incbin "data/sheet73.gfx"
-warnpc $31E501
+warnpc $B1E501
 
-org $338000
+org $B38000
 GFX_HUD_Palette:
 incbin "data/hudpalette.pal"
-warnpc $338041
+warnpc $B38041
 
-org $339000
+org $B39000
+ExpandedTrinexx:
 incbin "data/sheet178.gfx"
-warnpc $339600
+warnpc $B39600
 
-org $339600
+org $B39600
 BossMapIconGFX:
 incbin "data/bossicons.4bpp"
 
 if !FEATURE_NEW_TEXT
-    org $339C00
-    NewFont:
-    incbin "data/newfont.bin"
-    NewFontInverted:
-    incbin "data/newfont_inverted.bin"
-
-    org $0CD7DF
-    incbin "data/text_unscramble1.bin"
-    org $0CE4D5
-    incbin "data/text_unscramble2.bin"
+	org $B39C00
+	NewFont:
+	incbin "data/newfont.bin"
+	NewFontInverted:
+	incbin "data/newfont_inverted.bin"
+        SmallCharacters:
+        incbin "data/smallchars.2bpp"
+        org $8CD7DF
+        incsrc data/playernamecharmap.asm
+        org $8CE73D
+        incbin data/playernamestripes_1.bin
+        org $8CE911
+        incbin data/playernamestripes_2.bin
+        incsrc data/kanjireplacements.asm ; Overwrites text gfx data and masks in bank $8E
 endif
 
-org $328000
+org $B28000
 Extra_Text_Table:
 if !FEATURE_NEW_TEXT
     incsrc itemtext_lower.asm
@@ -265,9 +283,13 @@ endif
 
 incsrc externalhooks.asm
 ;================================================================================
-org $119100 ; PC 0x89100
+org $919100 ; PC 0x89100
 incbin "data/map_icons.gfx"
-warnpc $119401
+warnpc $919401
+;================================================================================
+org $9BB1E0
+incsrc custompalettes.asm
+warnpc $9BB880
 ;================================================================================
 org $AF8000 ; PC 0x178000
 Static_RNG: ; each line below is 512 bytes of rng
@@ -318,25 +340,18 @@ warnpc $B08000
 ;$70:6000 (8K) Scratch buffers
 ;================================================================================
 
-org $00D09C ; 0x509C - HUD Items H
+org $80D09C ; 0x509C - HUD Items H
 db GFX_HUD_Items>>16
-org $00D17B ; 0x517B - HUD Items M
+org $80D17B ; 0x517B - HUD Items M
 db GFX_HUD_Items>>8
-org $00D25A ; 0x525A - HUD Items L
+org $80D25A ; 0x525A - HUD Items L
 db GFX_HUD_Items
 
-; this used to be a pointer to a dummy file
-org $00D065 ; 005065 - New Items H
-db GFX_New_Items>>16
-org $00D144 ; 005114 - New Items M
-db GFX_New_Items>>8
-org $00D223 ; 005223 - New Items L
-db GFX_New_Items
-
-org $00D09D ; 0x509D - HUD Main H
+org $80D09D ; 0x509D - HUD Main H
 db GFX_HUD_Main>>16
-org $00D17C ; 0x517C - HUD Main M
+org $80D17C ; 0x517C - HUD Main M
 db GFX_HUD_Main>>8
-org $00D25B ; 0x525B - HUD Main L
+org $80D25B ; 0x525B - HUD Main L
 db GFX_HUD_Main
+
 ;================================================================================

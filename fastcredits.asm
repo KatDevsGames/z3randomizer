@@ -1,21 +1,51 @@
+FastCreditsActive = $50
+
+;===================================================================================================
+
+
+FlagFastCredits:
+	LDA.b #$40
+	TRB.b FastCreditsActive
+
+	AND.b Joy1B_All
+	TSB.b FastCreditsActive
+
+	LDA.b #$20
+	AND.b Joy1A_New
+	EOR.b FastCreditsActive
+	STA.b FastCreditsActive
+
+	LDA.b FastCreditsActive
+	AND.b #$60
+	BEQ .slow
+
+	LDA.b #$01
+	TSB.b FastCreditsActive
+
+.slow
+	LDA.b $11
+	ASL
+	TAX
+
+	RTL
+
 ;===================================================================================================
 
 FastCreditsCutsceneTimer:
-	BIT.b Joy1B_All-1 : BVC .slow
-
-	LDA.w #$0001 : STA.b $50
-
 	LDA.b ScrapBufferBD+$0B
-	CLC
-	ADC.w #$0004
+	INC
+
+	JSR IsFastCredits
+	BCC .slow
+
+	INC
+	INC
+	INC
+
 	AND.w #$FFFE
-	STA.b ScrapBufferBD+$0B
-	SEP #$20
-	RTL
-	
 
 .slow
-	INC.b ScrapBufferBD+$0B
+	STA.b ScrapBufferBD+$0B
 
 	SEP #$20
 	RTL
@@ -49,18 +79,20 @@ FastCreditsCutsceneScrollY:
 
 FastCreditsCutsceneScroll:
 	LDA.w $00E2,Y
-	CMP.l $0EC308,X ; compare to target
+	CMP.l $8EC308,X ; compare to target
 
 	ROL.b Scrap00 ; put carry in here
-	LDA.l $0EC348,X ; get movement
+	LDA.l $8EC348,X ; get movement
 	BPL ++ ; if positive, leave saved carry alone
 	INC.b Scrap00 ; otherwise, flip it
 ++	ROR.b Scrap00 ; recover carry
 
 	BCC ++ ; scroll if carry not set
+
 	LDA.w #$0000
 
-++	BIT.b Joy1B_All-1 : BVC .slow ; check for X held
+++	JSR IsFastCredits
+	BCC .slow
 
 	AND.w #$FFFF ; get sign of A
 	BPL .positive
@@ -77,15 +109,8 @@ FastCreditsCutsceneScroll:
 	ASL
 	ASL
 
-
-
 .slow
 	RTS
-
-
-
-
-
 
 FastCreditsCutsceneUnderworldX:
 	JSR FastCreditsCutsceneScrollX
@@ -106,19 +131,27 @@ FastCreditsCutsceneUnderworldY:
 
 
 FastTextScroll:
-	LDA.b FrameCounter
-	BIT.b Joy1B_All-1 : BVC .slow
+        LDA.b FrameCounter
+        SEP #$10
+	JSR IsFastCredits
+	BCC .slow
 
 	AND.w #$0000
+        REP #$10
 	RTL
 
 .slow
 	AND.w #$0003
+        REP #$10
 	RTL
 
 DumbFlagForMSU:
 	STA.l CurrentWorld
-	STZ.b $50
+	STZ.b FastCreditsActive
 	RTL
 
+IsFastCredits:
+	LDY.b FastCreditsActive
+        CPY.b #$20
+	RTS
 

@@ -14,30 +14,30 @@
 fillword $0000 ; Zero out the table
 fill $500      ;
 
-org $30B000 ; PC 0x183000
+org $B0B000 ; PC 0x183000
 InitSRAMTable:
 InitRoomDataWRAM:
-org $30B060 ; PC 0x183060
+org $B0B060 ; PC 0x183060
 InitATAltarRoom: dw $0000 ; aga curtains
-org $30B092 ; PC 0x183092
+org $B0B092 ; PC 0x183092
 InitSWBackEntryRoom: dw $0000 ; skull woods curtains
 
-org $30B20C
+org $B0B20C
 dw $F000, $F000 ; Pre-open kak bomb hut & brewery
 
-org $30B280 ; PC 0x183280 - 0x1832FF
+org $B0B280 ; PC 0x183280 - 0x1832FF
 InitOverworldEvents:
-org $30B282 ; PC 0x183282 - Lumberjacks
+org $B0B282 ; PC 0x183282 - Lumberjacks
 InitLumberjackOW: db $00
-org $30B29B ; PC 0x18329B - Open castle gate
+org $B0B29B ; PC 0x18329B - Open castle gate
 InitHyruleCastleOW: db $20
-org $30B2DB ; PC 0x1832DB - Pyramid hole
+org $B0B2DB ; PC 0x1832DB - Pyramid hole
 InitPyramidOW: db $00
-org $30B2C3 ; PC 0x1832C3 - GT
+org $B0B2C3 ; PC 0x1832C3 - GT
 InitDDMWestOW: db $00
 
 
-org $30B340 ; PC 0x183340
+org $B0B340 ; PC 0x183340
 StartingEquipment:
 StartingBow: skip 1                     ; PC 0x183340
 StartingBoomerang: skip 1               ; PC 0x183341
@@ -129,13 +129,13 @@ InitDroppedFollowerIndoors: skip 1      ; PC 0x1833D1
 InitDroppedFollowerLayer: skip 1        ; PC 0x1833D2
 InitFollowerDropped: skip 1             ; PC 0x1833D3
 
-org $30B3D9 ; PC 0x1833D9 - 0x1833F0
+org $B0B3D9 ; PC 0x1833D9 - 0x1833F0
 StaticFileName: ; The validity value ($55AA) must be written manually on SRAM init at $7003E1
 dw $0181, $0068, $006E, $018C
 dw $0166, $0064, $0068, $018C
 dw $0165, $0068, $006D, $018C
 
-org $30B401 ; PC 0x183401
+org $B0B401 ; PC 0x183401
 InitDeathCounter:
 dw $FFFF
 
@@ -147,29 +147,29 @@ dw $FFFF
 ; excluding ~28 bytes (File name, validity value, and checksum.)
 ;--------------------------------------------------------------------------------
 
-org $30B414 ; PC 0x183414-0x183416
+org $B0B414 ; PC 0x183414-0x183416
 InitMapOverlay: dw $0000
 
-org $30B417 ; PC 0x183417
+org $B0B417 ; PC 0x183417
 InitHighestSword: db $00
 
-org $30B414 ; PC 0x183418-0x183419
+org $B0B414 ; PC 0x183418-0x183419
 InitGoalCounter: dw $0000
 
-org $30B422 ; PC 0x183422
+org $B0B422 ; PC 0x183422
 InitHighestShield: db $00
 
-org $30B428 ; PC 0x183428
+org $B0B428 ; PC 0x183428
 InitMapsCompasses: db $00
 
-org $30B429 ; PC 0x183429
+org $B0B429 ; PC 0x183429
 InitPendantCounter: db $00
 
-org $30B454 ; PC 0x183454-0x183457
+org $B0B454 ; PC 0x183454-0x183457
 InitChallengeTimer: dw $0000, $0000
 
-org $30B46E ; PC 0x18346E
+org $B0B46E ; PC 0x18346E
 InitHighestMail: db $00
 
-org $30B471 ; PC 0x183471
+org $B0B471 ; PC 0x183471
 InitCrystalCounter: db $00

@@ -1,4 +1,4 @@
-org $298000 ; 0x148000
+org $A98000 ; 0x148000
 Ext_OnFileCreate: ;x
 RTL : RTL : RTL : RTL : RTL
 Ext_OnFileLoad: ;x immediately after load

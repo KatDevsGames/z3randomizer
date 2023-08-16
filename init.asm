@@ -53,7 +53,10 @@ Init_Primary:
 	
 	LDA.b #$10 : STA.b PlayerSpriteBank ; set default player sprite bank
 	LDA.b #$81 : STA.w NMITIMEN ; thing we wrote over, turn on NMI & gamepad
-RTL
+
+JML ReturnFromInit
+
+
 ;--------------------------------------------------------------------------------
 ; Init_PostRAMClear
 ;--------------------------------------------------------------------------------
@@ -64,6 +67,35 @@ Init_PostRAMClear:
 
 	JSL MSUInit
 	JSL InitRNGPointerTable
-        JSL InitDungeonCounts
+	JSL DecompressAllItemGraphics
+        JSR InitDungeonCounts
 
-JML $00D463	; The original target of the jump table that we hijacked
+JML $80D463	; The original target of the jump table that we hijacked
+
+;===================================================================================================
+InitDungeonCounts:
+        PHB
+        LDX.b #$0F
+        -
+                LDA.l CompassTotalsROM, X : STA.l CompassTotalsWRAM, X
+                DEX
+        BPL -
+        LDX.b #$0F
+        -
+                LDA.l ChestKeys, X : STA.l MapTotalsWRAM, X
+                DEX
+        BPL -
+        
+        LDA.b #$7E
+        PHA : PLB
+        REP #$30
+        LDA.l TotalItemCount
+        JSL.l HUDHex4Digit_Long 
+        SEP #$20
+        LDA.b Scrap04 : TAX : STX.w TotalItemCountTiles+$00
+        LDA.b Scrap05 : TAX : STX.w TotalItemCountTiles+$02
+        LDA.b Scrap06 : TAX : STX.w TotalItemCountTiles+$04
+        LDA.b Scrap07 : TAX : STX.w TotalItemCountTiles+$06
+        SEP #$10
+        PLB
+RTS

@@ -51,70 +51,6 @@ GetCrystalNumber:
 	PLX
 RTL
 ;================================================================================
-OverworldMap_CheckObject:
-	PHX
-		;CPX.b #$01 : BNE + : JMP ++ : + : JMP .fail
-		LDA.l CurrentWorld : AND.b #$40 : BNE +
-			;LW Map
-			LDA.l MapMode : BEQ +++
-			LDA.l MapField : ORA.l MapOverlay : AND.b #$01 : BNE +++
-				PHX
-					LDA.l .lw_map_offsets, X : TAX ; put map offset into X
-					LDA.l MapField, X : ORA.l MapOverlay, X
-				PLX
-				AND.l .lw_map_masks, X : BNE +++
-				JMP .fail
-			+++
-			LDA.l .lw_offsets, X
-			BPL +++ : CLC : BRA .done : +++ ; don't display master sword
-			TAX : BRA ++
-		+
-			;DW Map
-			LDA.l MapMode : BEQ +++			
-			LDA.l MapField : ORA.l MapOverlay : AND.b #$02 : BNE +++
-				PHX
-					LDA.l .dw_map_offsets, X : TAX ; put map offset into X
-					LDA.l MapField, X : ORA.l MapOverlay, X
-				PLX
-				AND.l .dw_map_masks, X : BNE +++
-				JMP .fail
-			+++
-			LDA.l .dw_offsets, X
-			TAX : BRA ++
-	SEC
-	PLX
-RTL
-++
-		LDA.l CrystalPendantFlags_2, X
-		AND.b #$40 : BNE .checkCrystal
-		
-		.checkPendant
-		LDA.l PendantsField : AND.l CrystalPendantFlags, X : BNE .fail
-		CLC : BRA .done
-	
-		.checkCrystal
-		LDA.l CrystalsField : AND.l CrystalPendantFlags, X : BNE .fail
-		CLC : BRA .done
-	
-		.fail
-		SEC
-		.done
-	PLX
-RTL
-.lw_offsets
-db $02, $0A, $03, $FF
-.dw_offsets
-db $06, $08, $0C, $0B, $07, $09, $05
-.lw_map_offsets
-db $01, $00, $01
-; pod skull trock thieves mire ice swamp
-.dw_map_offsets
-db $01, $00, $00, $00, $01, $00, $01
-.lw_map_masks
-db $20, $20, $10, $00
-.dw_map_masks
-db $02, $80, $08, $10, $01, $40, $04
-;================================================================================
 SetLWDWMap:
 	PHP
 	SEP #$20 ; set 8-bit accumulator
@@ -175,7 +111,7 @@ CheckCloseItemMenu:
 	LDA.l MenuCollapse : BNE + 
 		LDA.b Joy1A_New : AND.b #$10 : RTL
 	+
-	LDA.b Joy1A_All : AND.b #$10 : EOR.b #$10
+	LDA.b Joy1A_All : EOR.b #$10
 RTL
 ;================================================================================
 ShowDungeonItems:
@@ -187,19 +123,23 @@ ShowDungeonItems:
 RTL
 ;--------------------------------------------------------------------------------
 UpdateKeys:
-        PHX : PHP
-        SEP #$30 ; set 8-bit accumulator & index registers
-                LDA.w DungeonID : CMP.b #$1F : !BGE .skip
-                LSR : TAX ; get dungeon index and store to X
-                LDA.l CurrentSmallKeys : STA.l DungeonKeys, X
-
-                CPX.b #$00 : BNE +
-                        STA.l HyruleCastleKeys ; copy HC to sewers
-                + : CPX.b #$01 : BNE +
-                        STA.l SewerKeys ; copy sewers to HC
-                +
-                .skip
-        PLP : PLX
+	PHX : PHP
+	SEP #$30 ; set 8-bit accumulator & index registers
+		LDA.w DungeonID : CMP.b #$1F : !BLT .skip
+		
+		LSR : TAX ; get dungeon index and store to X
+	
+		LDA.l CurrentSmallKeys ; load current key count
+		STA.l DungeonKeys, X ; save to main counts
+		
+		CPX.b #$00 : BNE +
+			STA.l HyruleCastleKeys ; copy HC to sewers
+		+ : CPX.b #$01 : BNE +
+			STA.l SewerKeys ; copy sewers to HC
+		+
+		.skip
+	JSL.l PostItemGet
+	PLP : PLX
 RTL
 ;$37C = Sewer Passage
 ;$37D = Hyrule Castle
@@ -284,7 +224,7 @@ DrawHUDDungeonItems:
 
 
 .dungeon_bitmasks
-		dw $4000 ; Hyrule Castle
+		dw $C000 ; Hyrule Castle
 		dw $2000 ; Eastern
 		dw $1000 ; Desert
 		dw $0020 ; Hera
@@ -690,3 +630,38 @@ RestoreMenu_SetSubModule:
         LDA.b #$03 : STA.w SubModuleInterface
 RTL
 ;-------------------------------------------------------------------------------
+DrawHeartPiecesMenu:
+        LDA.l HUDHeartColors_index : AND.w #$00FF
+        ASL : TAX
+        LDA.l HUDHeartColors_masks_game_hud,X
+        STA.b Scrap0D
+
+        LDA.l HeartPieceQuarter : AND.w #$00FF
+        ASL #3 : TAX
+        LDY.w #$16F2
+
+        LDA.l HeartPieceMenuBaseTiles,X
+        ORA.b Scrap0D
+        STA.w $0000,Y
+
+        INX #2
+        LDA.l HeartPieceMenuBaseTiles,X
+        ORA.b Scrap0D
+        STA.w $0002,Y
+
+        INX #2
+        LDA.l HeartPieceMenuBaseTiles,X
+        ORA.b Scrap0D
+        STA.w $0040,Y
+
+        INX #2
+        LDA.l HeartPieceMenuBaseTiles,X
+        ORA.b Scrap0D
+        STA.w $0042,Y
+RTL
+
+HeartPieceMenuBaseTiles:
+dw $2084, $6084, $2085, $6085 ; 0 heart pieces
+dw $20AD, $6084, $2085, $6085 ; 1 heart piece
+dw $20AD, $6084, $20AE, $6085 ; 2 heart pieces
+dw $20AD, $60AD, $20AE, $6085 ; 3 heart pieces

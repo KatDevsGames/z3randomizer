@@ -20,7 +20,7 @@ RTL
 RTL
 ;--------------------------------------------------------------------------------
 NewFireBarDamage:
-        LDA.w $00EE : CMP.w SpriteLayer, X : BNE .NotSameLayer
+        LDA.b LinkLayer : CMP.w SpriteLayer, X : BNE .NotSameLayer
                 JSL Sprite_AttemptDamageToPlayerPlusRecoilLong
                 RTL
 .NotSameLayer

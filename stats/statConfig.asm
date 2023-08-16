@@ -46,6 +46,7 @@ macro AddStat(address, type, shiftRight, bits, digits, xPos, lineNumber)
     dl <address>
 endmacro
 
+CreditsStats:
 %AddStat(SwordTime, 1, 0, 32, 4, !FIRST_SWORD_X, !FIRST_SWORD_Y)
 %AddStat(BootsTime, 1, 0, 32, 4, !PEGASUS_BOOTS_X, !PEGASUS_BOOTS_Y)
 %AddStat(FluteTime, 1, 0, 32, 4, !FLUTE_X, !FLUTE_Y)
@@ -65,3 +66,5 @@ endmacro
 %AddStat(LagTime, 1, 0, 32, 4, !TOTAL_LAG_TIME_X, !TOTAL_LAG_TIME_Y)
 %AddStat(TotalItemCounter, 0, 0, 16, 3, !COLLECTION_RATE_X, !COLLECTION_RATE_Y)
 %AddStat(NMIFrames, 1, 0, 32, 4, !TOTAL_TIME_X, !TOTAL_TIME_Y)
+
+dw $FFFF

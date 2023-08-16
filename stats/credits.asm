@@ -530,7 +530,7 @@ CreditsLineBlank:
 
 %blankline()
 
-%bigcredits("AND...")
+%bigcredits("AND&")
 
 %blankline()
 

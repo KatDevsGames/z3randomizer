@@ -1,4 +1,4 @@
-org $328000
+org $B28000
 ; You have found
 ; the map of
 Notice_MapOf:
@@ -26,6 +26,11 @@ Notice_SmallKeyOf:
 	db $74, $00, $BD, $00, $B1, $00, $B2, $00, $BC, $00, $FF, $00, $B2, $00, $BC, $00, $FF, $00, $AA
 	db $75, $00, $BC, $00, $B6, $00, $AA, $00, $B5, $00, $B5, $00, $FF, $00, $B4, $00, $AE, $00, $C2, $00, $FF, $00, $BD, $00, $B8
 	dw #$7F7F
+
+;
+Notice_Crystal:
+	db $74, $00, $C2, $00, $B8, $00, $BE, $00, $FF, $00, $B9, $00, $B2, $00, $AC, $00, $B4, $00, $AE, $00, $AD, $00, $FF, $00, $BE, $00, $B9
+        dw $7F7F
 
 ; light world
 Notice_LightWorld:
@@ -110,4 +115,33 @@ Notice_Sewers:
 ; This Dungeon
 Notice_Self:
 	db $76, $00, $BD, $00, $B1, $00, $B2, $00, $BC, $00, $FF, $00, $AD, $00, $BE, $00, $B7, $00, $B0, $00, $AE, $00, $B8, $00, $B7
+	dw #$7F7F
+
+; Crystal numbers
+Notice_One:
+        db $75, $00, $AC, $00, $BB, $00, $C2, $00, $BC, $00, $BD, $00, $AA, $00, $B5, $00, $FF, $00, $B8, $00, $B7, $00, $AE
+	dw #$7F7F
+
+Notice_Two:
+        db $75, $00, $AC, $00, $BB, $00, $C2, $00, $BC, $00, $BD, $00, $AA, $00, $B5, $00, $FF, $00, $BD, $00, $C0, $00, $B8
+	dw #$7F7F
+
+Notice_Three:
+        db $75, $00, $AC, $00, $BB, $00, $C2, $00, $BC, $00, $BD, $00, $AA, $00, $B5, $00, $FF, $00, $BD, $00, $B1, $00, $BB, $00, $AE, $00, $AE
+	dw #$7F7F
+
+Notice_Four:
+        db $75, $00, $AC, $00, $BB, $00, $C2, $00, $BC, $00, $BD, $00, $AA, $00, $B5, $00, $FF, $00, $AF, $00, $B8, $00, $BE, $00, $BB
+	dw #$7F7F
+
+Notice_Five:
+        db $75, $00, $AC, $00, $BB, $00, $C2, $00, $BC, $00, $BD, $00, $AA, $00, $B5, $00, $FF, $00, $AF, $00, $B2, $00, $BF, $00, $AE
+	dw #$7F7F
+
+Notice_Six:
+        db $75, $00, $AC, $00, $BB, $00, $C2, $00, $BC, $00, $BD, $00, $AA, $00, $B5, $00, $FF, $00, $BC, $00, $B2, $00, $C1
+	dw #$7F7F
+
+Notice_Seven:
+        db $75, $00, $AC, $00, $BB, $00, $C2, $00, $BC, $00, $BD, $00, $AA, $00, $B5, $00, $FF, $00, $BC, $00, $AE, $00, $BF, $00, $AE, $00, $B7
 	dw #$7F7F

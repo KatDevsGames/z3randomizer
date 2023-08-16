@@ -1,7 +1,7 @@
 Module_Password:
 	LDA.b GameSubMode
 
-	JSL.l UseImplicitRegIndexedLongJumpTable
+	JSL.l JumpTableLong
 
 	dl Password_BeginInit ; 0
 	dl Password_EndInit ; 1

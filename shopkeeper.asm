@@ -1,39 +1,7 @@
-;--------------------------------------------------------------------------------
-; 291 - Moldorm Cave
-; 286 - Northeast Dark Swamp Cave
-;--------------------------------------------------------------------------------
 !FREE_TILE_BUFFER = $1180
-; A = Tile ID
-macro UploadOAM(dest)
-	PHA : PHP
+!FREE_TILE = $5C60
+!FREE_TILE_ALT = $5A40
 
-	PHA
-		REP #$20 ; set 16-bit accumulator
-		LDA.w #$0000 : STA.l SpriteOAM
-		               STA.l SpriteOAM+2
-		LDA.w #$0200 : STA.l SpriteOAM+6
-		SEP #$20 ; set 8-bit accumulator
-		LDA.b <dest> : STA.l SpriteOAM+4
-
-	LDA.b $01,s
-
-		JSL.l GetSpritePalette
-		STA.l SpriteOAM+5 : STA.l SpriteOAM+13
-	PLA
-	JSL.l IsNarrowSprite : BCS .narrow
-
-	BRA .done
-
-	.narrow
-	REP #$20 ; set 16-bit accumulator
-	LDA.w #$0000 : STA.l SpriteOAM+7
-	               STA.l SpriteOAM+14
-	LDA.w #$0800 : STA.l SpriteOAM+9
-	LDA.w #$3400 : STA.l SpriteOAM+11
-
-	.done
-	PLP : PLA
-endmacro
 ;--------------------------------------------------------------------------------
 ; $0A : Digit Offset
 ; $0C-$0D : Value to Display
@@ -162,10 +130,13 @@ SpritePrep_ShopKeeper:
 			PLY : +++
 			
 			PHX : PHY
-				PHX : TYX : LDA.l ShopInventory, X : PLX : TAY
-				REP #$20 ; set 16-bit accumulator
+				PHX : TYX : LDA.l ShopInventory, X : PLX
+                                SEP #$10
+                                JSL.l ResolveLootIDLong
+                                TAY
+                                REP #$30
 				LDA.b 1,s : TAX : LDA.l .tile_offsets, X : TAX
-				JSR LoadTile
+				JSR.w SetupTileTransfer
 			PLY : PLX
 			INY #4
 		
@@ -173,11 +144,13 @@ SpritePrep_ShopKeeper:
 		INX #8
 	JMP -
 	.stop
+        REP #$20
+        LDA.w ItemQueuePtr
+        DEC #2
+        AND.w #$00E
+        STA.w ItemQueuePtr
+        SEP #$20
 	
-	LDA.b #Shopkeeper_UploadVRAMTilesLong>>16 : STA.w NMIAux+2
-	LDA.b #Shopkeeper_UploadVRAMTilesLong>>8 : STA.w NMIAux+1
-	LDA.b #Shopkeeper_UploadVRAMTilesLong>>0 : STA.w NMIAux
-
 	.done
 	LDA.l ShopType : BIT.b #$20 : BEQ .notTakeAll ; Take-all
 	.takeAll
@@ -217,114 +190,34 @@ dw $0100, $0000
 ;--------------------------------------------------------------------------------
 ; X - Tile Buffer Offset
 ; Y - Item ID
-LoadTile:
-	TXA : !ADD.w #!FREE_TILE_BUFFER : STA.l TileUploadOffsetOverride ; load offset from X
-	SEP #$30 ; set 8-bit accumulator & index registers
-	TYA ; load item ID from Y
-	JSL.l GetSpriteID ; convert loot id to sprite id
-	JSL.l GetAnimatedSpriteTile_variable
+SetupTileTransfer:
+        LDA.l ShopType : BIT.w #$0010 : BNE .alt_vram
+	        TXA : LSR #2
+                CLC : ADC.w #!FREE_TILE
+                BRA .store_target
+        .alt_vram
+	TXA : LSR #2
+        CLC : ADC.w #!FREE_TILE_ALT
+        .store_target
+        LDX.w ItemQueuePtr
+        STA.w ItemTargetQueue,X
+
+	TYA : ASL : TAX
+        LDA.l StandingItemGraphicsOffsets,X
+        LDX.w ItemQueuePtr
+        STA.w ItemGFXQueue,X
+
+        TXA
+        INC #2
+        AND.w #$000E
+        STA.w ItemQueuePtr
+        TDC
 	REP #$10 ; set 16-bit index registers
+        SEP #$20
 RTS
 ;--------------------------------------------------------------------------------
 ;ShopInventory, X
 ;[id][$lo][$hi][purchase_counter]
-;--------------------------------------------------------------------------------
-Shopkeeper_UploadVRAMTilesLong:
-	JSR.w Shopkeeper_UploadVRAMTiles
-RTL
-Shopkeeper_UploadVRAMTiles:
-		LDA.w DMAP0 : PHA ; preserve DMA parameters
-		LDA.w BBAD0 : PHA ; preserve DMA parameters
-		LDA.w A1T0L : PHA ; preserve DMA parameters
-		LDA.w A1T0H : PHA ; preserve DMA parameters
-		LDA.w A1B0 : PHA ; preserve DMA parameters
-		LDA.w DAS0L : PHA ; preserve DMA parameters
-		LDA.w DAS0H : PHA ; preserve DMA parameters
-		;--------------------------------------------------------------------------------
-		LDA.b #$01 : STA.w DMAP0 ; set DMA transfer direction A -> B, bus A auto increment, double-byte mode
-		LDA.b #$18 : STA.w BBAD0 ; set bus B destination to VRAM register
-		LDA.b #$80 : STA.w VMAIN ; set VRAM to increment by 2 on high register write
-
-		LDA.b #$80 : STA.w A1T0L ; set bus A source address to tile buffer
-		LDA.b #$A1 : STA.w A1T0H
-		LDA.b #$7E : STA.w A1B0
-
-		LDA.l ShopType : AND.b #$10 : BNE .special
-		JMP .normal
-
-	.special
-
-		LDA.b #$40 : STA.w DAS0L : STZ.b DAS0H ; set transfer size to 0x40
-		LDA.b #$40 : STA.w VMADDL ; set VRAM register destination address
-		LDA.b #$5A : STA.w VMADDH
-		LDA.b #$01 : STA.w MDMAEN ; begin DMA transfer
- 
-		LDA.b #$40 : STA.w DAS0L : STZ.b DAS0H ; set transfer size to 0x40
-		LDA.b #$40 : STA.w VMADDL ; set VRAM register destination address
-		LDA.b #$5B : STA.w VMADDH
-		LDA.b #$01 : STA.w MDMAEN ; begin DMA transfer
-
-		LDA.b #$40 : STA.w DAS0L : STZ.b DAS0H ; set transfer size to 0x40
-		LDA.b #$60 : STA.w VMADDL ; set VRAM register destination address
-		LDA.b #$5A : STA.w VMADDH
-		LDA.b #$01 : STA.w MDMAEN ; begin DMA transfer
-
-		LDA.b #$40 : STA.w DAS0L : STZ.b DAS0H ; set transfer size to 0x40
-		LDA.b #$60 : STA.w VMADDL ; set VRAM register destination address
-		LDA.b #$5B : STA.w VMADDH
-		LDA.b #$01 : STA.w MDMAEN ; begin DMA transfer
-
-		LDA.b #$40 : STA.w DAS0L : STZ.b DAS0H ; set transfer size to 0x40
-		LDA.b #$80 : STA.w VMADDL ; set VRAM register destination address
-		LDA.b #$5A : STA.w VMADDH
-		LDA.b #$01 : STA.w MDMAEN ; begin DMA transfer
-
-		LDA.b #$40 : STA.w DAS0L : STZ.b DAS0H ; set transfer size to 0x40
-		LDA.b #$80 : STA.w VMADDL ; set VRAM register destination address
-		LDA.b #$5B : STA.w VMADDH
-		LDA.b #$01 : STA.w MDMAEN ; begin DMA transfer
-		JMP .end
-
-	.normal 
-		LDA.b #$40 : STA.w DAS0L : STZ.b DAS0H ; set transfer size to 0x40
-		LDA.b #$60 : STA.w VMADDL ; set VRAM register destination address
-		LDA.b #$5C : STA.w VMADDH
-		LDA.b #$01 : STA.w MDMAEN ; begin DMA transfer
-
-		LDA.b #$40 : STA.w DAS0L : STZ.b DAS0H ; set transfer size to 0x40
-		LDA.b #$60 : STA.w VMADDL ; set VRAM register destination address
-		LDA.b #$5D : STA.w VMADDH
-		LDA.b #$01 : STA.w MDMAEN ; begin DMA transfer
-
-		LDA.b #$40 : STA.w DAS0L : STZ.b DAS0H ; set transfer size to 0x40
-		LDA.b #$80 : STA.w VMADDL ; set VRAM register destination address
-		LDA.b #$5C : STA.w VMADDH
-		LDA.b #$01 : STA.w MDMAEN ; begin DMA transfer
-
-		LDA.b #$40 : STA.w DAS0L : STZ.b DAS0H ; set transfer size to 0x40
-		LDA.b #$80 : STA.w VMADDL ; set VRAM register destination address
-		LDA.b #$5D : STA.w VMADDH
-		LDA.b #$01 : STA.w MDMAEN ; begin DMA transfer
-
-		LDA.b #$40 : STA.w DAS0L : STZ.b DAS0H ; set transfer size to 0x40
-		LDA.b #$A0 : STA.w VMADDL ; set VRAM register destination address
-		LDA.b #$5C : STA.w VMADDH
-		LDA.b #$01 : STA.w MDMAEN ; begin DMA transfer
-
-		LDA.b #$40 : STA.w DAS0L : STZ.b DAS0H ; set transfer size to 0x40
-		LDA.b #$A0 : STA.w VMADDL ; set VRAM register destination address
-		LDA.b #$5D : STA.w VMADDH
-		LDA.b #$01 : STA.w MDMAEN ; begin DMA transfer
-		;--------------------------------------------------------------------------------
-	.end
-		PLA : STA.w DAS0H ; restore DMA parameters
-		PLA : STA.w DAS0L ; restore DMA parameters
-		PLA : STA.w A1B0 ; restore DMA parameters
-		PLA : STA.w A1T0H ; restore DMA parameters
-		PLA : STA.w A1T0L ; restore DMA parameters
-		PLA : STA.w BBAD0 ; restore DMA parameters
-		PLA : STA.w DMAP0 ; restore DMA parameters
-RTS
 ;--------------------------------------------------------------------------------
 Shopkepeer_CallOriginal:
 	PLA : PLA : PLA
@@ -332,7 +225,7 @@ Shopkepeer_CallOriginal:
 	LDA.b #ShopkeeperJumpTable>>8 : PHA
 	LDA.b #ShopkeeperJumpTable : PHA
     LDA.w SpriteItemType, X
-    JML.l UseImplicitRegIndexedLocalJumpTable
+    JML.l JumpTableLocal
 ;--------------------------------------------------------------------------------
 Sprite_ShopKeeper:
 
@@ -476,59 +369,59 @@ Shopkeeper_SetupHitboxes:
 RTS
 
 Shopkeeper_BuyItem:
-	PHX : PHY
-		TYX
+        PHX : PHY
+        TYX
 
-		LDA.l ShopInventory, X
-		CMP.b #$0E : BEQ .refill ; Bee Refill
-		CMP.b #$2E : BEQ .refill ; Red Potion Refill
-		CMP.b #$2F : BEQ .refill ; Green Potion Refill
-		CMP.b #$30 : BEQ .refill ; Blue Potion Refill
-		BRA +
-			.refill
-			JSL.l Sprite_GetEmptyBottleIndex : BMI .full_bottles
-		+
+        LDA.l ShopInventory, X
+        CMP.b #$0E : BEQ .refill ; Bee Refill
+        CMP.b #$2E : BEQ .refill ; Red Potion Refill
+        CMP.b #$2F : BEQ .refill ; Green Potion Refill
+        CMP.b #$30 : BEQ .refill ; Blue Potion Refill
+                BRA +
+        .refill
+        JSL.l Sprite_GetEmptyBottleIndex : BMI .full_bottles
+	        +
 
-		LDA.l ShopType : AND.b #$80 : BNE .buy ; don't charge if this is a take-any
-		REP #$20 : LDA.l CurrentRupees : CMP.l ShopInventory+1, X : SEP #$20 : !BGE .buy
+                LDA.l ShopType : AND.b #$80 : BNE .buy ; don't charge if this is a take-any
+                        REP #$20 : LDA.l CurrentRupees : CMP.l ShopInventory+1, X : SEP #$20 : !BGE .buy
 
-		.cant_afford
-	        LDA.b #$7A
-	        LDY.b #$01
-	        JSL.l Sprite_ShowMessageUnconditional
-			LDA.b #$3C : STA.w SFX2 ; error sound
-			JMP .done
-		.full_bottles
-	        LDA.b #$6B
-	        LDY.b #$01
-	        JSL.l Sprite_ShowMessageUnconditional
-			LDA.b #$3C : STA.w SFX2 ; error sound
-			JMP .done
-		.buy
-			LDA.l ShopType : AND.b #$80 : BNE ++ ; don't charge if this is a take-any
-				REP #$20 : LDA.l CurrentRupees : !SUB ShopInventory+1, X : STA.l CurrentRupees : SEP #$20 ; Take price away
-			++
-			LDA.l ShopInventory, X : TAY : JSL.l Link_ReceiveItem
-			LDA.l ShopInventory+3, X : INC : STA.l ShopInventory+3, X
+                .cant_afford
+                LDA.b #$7A
+                LDY.b #$01
+                JSL.l Sprite_ShowMessageUnconditional
+                LDA.b #$3C : STA.w SFX2 ; error sound
+                JMP .done
+        .full_bottles
+        LDA.b #$6B : LDY.b #$01
+        JSL.l Sprite_ShowMessageUnconditional
+        LDA.b #$3C : STA.w SFX2 ; error sound
+        JMP .done
+        .buy
+        LDA.l ShopType : AND.b #$80 : BNE ++ ; don't charge if this is a take-any
+                REP #$20 : LDA.l CurrentRupees : !SUB ShopInventory+1, X : STA.l CurrentRupees : SEP #$20 ; Take price away
+        ++
+        INC.w ShopPurchaseFlag
+        LDA.l ShopInventory, X : TAY : JSL.l Link_ReceiveItem
+        LDA.l ShopInventory+3, X : INC : STA.l ShopInventory+3, X
 
-			TXA : LSR #2 : TAX
-			LDA.l ShopType : BIT.b #$80 : BNE +
-				LDA.l ShopState : ORA.w Shopkeeper_ItemMasks, X : STA.l ShopState
-				PHX
-					TXA : !ADD ShopSRAMIndex : TAX
-					LDA.l PurchaseCounts, X : INC : BEQ +++ : STA.l PurchaseCounts, X : +++
-				PLX
-				BRA ++
-			+ ; Take-any
-				BIT.b #$20 : BNE .takeAll
-				.takeAny
-					LDA.l ShopState : ORA.b #$07 : STA.l ShopState
-					PHX : LDA.l ShopSRAMIndex : TAX : LDA.b #$01 : STA.l PurchaseCounts, X : PLX
-					BRA ++
-				.takeAll
-					LDA.l ShopState : ORA.w Shopkeeper_ItemMasks, X : STA.l ShopState
-					PHX : LDA.l ShopSRAMIndex : TAX : LDA.l ShopState : STA.l PurchaseCounts, X : PLX
-			++
+        TXA : LSR #2 : TAX
+        LDA.l ShopType : BIT.b #$80 : BNE +
+                LDA.l ShopState : ORA.w Shopkeeper_ItemMasks, X : STA.l ShopState
+                PHX
+                TXA : !ADD ShopSRAMIndex : TAX
+                LDA.l PurchaseCounts, X : INC : BEQ +++ : STA.l PurchaseCounts, X : +++
+                PLX
+                BRA ++
+        + ; Take-any
+        BIT.b #$20 : BNE .takeAll
+                .takeAny
+                LDA.l ShopState : ORA.b #$07 : STA.l ShopState
+                PHX : LDA.l ShopSRAMIndex : TAX : LDA.b #$01 : STA.l PurchaseCounts, X : PLX
+                BRA ++
+                .takeAll
+                LDA.l ShopState : ORA.w Shopkeeper_ItemMasks, X : STA.l ShopState
+                PHX : LDA.l ShopSRAMIndex : TAX : LDA.l ShopState : STA.l PurchaseCounts, X : PLX
+	++
 	.done
 	PLY : PLX
 RTS
@@ -668,6 +561,8 @@ Shopkeeper_DrawNextItem:
 	PLY
 
 	LDA.l ShopInventory, X ; get item id
+        JSL.l ResolveLootIDLong
+        STA.b Scrap0D
 	CMP.b #$2E : BNE + : BRA .potion
 	+ CMP.b #$2F : BNE + : BRA .potion
 	+ CMP.b #$30 : BEQ .potion
@@ -685,19 +580,25 @@ Shopkeeper_DrawNextItem:
 
 	STA.l SpriteOAM+4
 
-	LDA.l ShopInventory, X ; get item palette
-	JSL.l GetSpritePalette : STA.l SpriteOAM+5
+	LDA.b Scrap0D
+        PHX
+	JSL.l GetSpritePalette_resolved : STA.l SpriteOAM+5
+        PLX
 
 	LDA.b #$00 : STA.l SpriteOAM+6
 
-	LDA.l ShopInventory, X ; get item palette
-	JSL.l IsNarrowSprite : BCS .narrow
+	LDA.b Scrap0D
+        PHX
+        TAX
+        LDA.l SpriteProperties_standing_width,X : BEQ .narrow
 	.full
+                PLX
 		LDA.b #$02
 		STA.l SpriteOAM+7
 		LDA.b #$01
 		BRA ++
 	.narrow
+                PLX
 		LDA.b #$00
 		STA.l SpriteOAM+7
 		JSR.w PrepNarrowLower

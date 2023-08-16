@@ -119,5 +119,5 @@ HandleOneMindController:
 .no_onemind
 	STZ.b NMIDoneFlag
 
-	JML $008034 ; reset frame loop
+	JML $808034 ; reset frame loop
 

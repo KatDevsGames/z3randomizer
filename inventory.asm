@@ -1,28 +1,6 @@
 ;================================================================================
 ; Inventory Updates
 ;================================================================================
-; InventoryTracking
-; ------oq brmpnskf
-; b = blue boomerang   | -
-; r = red boomerang    | -
-; m = mushroom current | -
-; p = magic powder     | -
-; n = mushroom past    | -
-; s = shovel           | -
-; k = fake flute       | o = any bomb acquired from item location
-; f = working flute    | q = quickswap locked
-;--------------------------------------------------------------------------------
-; BowTracking
-; Item Tracking Slot #2
-; bsp-----
-; b = bow
-; s = silver arrow bow
-; p = 2nd progressive bow
-; -
-; -
-; -
-; -
-; -
 ;--------------------------------------------------------------------------------
 ; ProcessMenuButtons:
 ; out:	Carry - 0 = No Button, 1 = Yes Button
@@ -129,10 +107,6 @@ ProcessBottleMenu:
 	.no_bottles
 	LDA.b #$00 ; pretend like the controller state was 0 from the overridden load
 RTL
-;	.y_not_pressed
-;	LDA.b Joy1A_New : AND.b #$0C ; thing we wrote over - load controller state
-;RTL
-;--------------------------------------------------------------------------------
 
 ;--------------------------------------------------------------------------------
 ;OpenBottleMenu:
@@ -162,522 +136,201 @@ RTL
 ;--------------------------------------------------------------------------------
 ; AddInventory:
 ;--------------------------------------------------------------------------------
-macro TopHalf(address)
-	LDA.l <address> : !ADD #$10 : STA.l <address>
-endmacro
-
-macro BottomHalf(address)
-	PHA : PHX
-		LDA.l <address> : INC : AND.b #$0F : TAX
-		LDA.l <address> : AND.b #$F0 : STA.l <address>
-		TXA : ORA.l <address> : STA.l <address>
-	PLX : PLA
-endmacro
-;--------------------------------------------------------------------------------
-FullInventoryExternal:
-	PHA : PHX : PHP : JMP AddInventory_incrementCounts
-;--------------------------------------------------------------------------------
 AddInventory:
-	PHA : PHX : PHP
-	CPY.b #$0C : BNE + ; Blue Boomerang
-		LDA.l InventoryTracking : ORA.b #$80 : STA.l InventoryTracking
-		JMP .incrementCounts
-	+ CPY.b #$2A : BNE + ; Red Boomerang
-		LDA.l InventoryTracking : ORA.b #$40 : STA.l InventoryTracking
-		JMP .incrementCounts
-	+ CPY.b #$29 : BNE + ; Mushroom
-		LDA.l InventoryTracking : ORA.b #$28 : STA.l InventoryTracking
-		JMP .incrementCounts
-	+ CPY.b #$0D : BNE + ; Magic Powder
-		LDA.l InventoryTracking : ORA.b #$10 : STA.l InventoryTracking
-		JMP .incrementCounts
-	+ CPY.b #$13 : BNE + ; Shovel
-		LDA.l InventoryTracking : ORA.b #$04 : STA.l InventoryTracking
-		JMP .incrementCounts
-	+ CPY.b #$14 : BNE + ; Flute (Inactive)
-		LDA.l InventoryTracking : ORA.b #$02 : STA.l InventoryTracking
-		JMP .incrementCounts
-	+ CPY.b #$4A : BNE + ; Flute (Active)
-		LDA.l InventoryTracking : ORA.b #$01 : STA.l InventoryTracking
-		JMP .incrementCounts
-	+ CPY.b #$0B : BNE + ; Bow
-		LDA.l ArrowMode : BNE +++
-			LDA.l BowTracking : ORA.b #$80 : STA.l BowTracking
-		+++
-		JMP .incrementCounts
-	+ CPY.b #$3A : BNE + ; Bow & Arrows
-		LDA.l BowTracking : ORA.b #$80 : STA.l BowTracking
-		JMP .incrementCounts
-	+ CPY.b #$3B : BNE + ; Bow & Silver Arrows
-		LDA.l BowTracking : ORA.b #$40 : STA.l BowTracking
-		LDA.l ArrowMode : BNE +++
-			LDA.l BowTracking : ORA.b #$80 : STA.l BowTracking ; activate wood arrows when not in rupee bow
-		+++
-		JMP .incrementCounts
-	+ CPY.b #$43 : BNE + ; Single arrow
-		LDA.l ArrowMode : BEQ +++
-			LDA.l BowTracking : ORA.b #$80 : STA.l BowTracking ; activate wood arrows in quick-swap
-		+++
-		JMP .incrementCounts
-	+ CPY.b #$58 : BNE + ; Upgrade-Only Silver Arrows
-		LDA.l BowTracking : ORA.b #$40 : STA.l BowTracking
+; In: Y - Receipt ID
+; Uses $0B-$0D for long absolute addressing
+	PHA : PHX : PHY : PHP : PHB
+        PHK : PLB
+        LDA.b #$7E : STA.b Scrap0D 
+	LDA.l StatsLocked : BNE .done
+        LDA.w InventoryTable_properties,Y : BIT #$01 : BEQ .done
+        JSR.w ShopCheck : BCS .done
+        JSR.w DungeonIncrement : BCS .done
+                JSR.w IncrementByOne
+                JSR.w StampItem
+                SEP #$20
+                JSR.w IncrementYAItems
+                        REP #$20
+                        LDA.l TotalItemCounter : INC : TAY
+                        LDA.l BootsEquipment : BNE +
+                                TYA : STA.l PreBootsLocations
+                        +
+                        LDA.l MirrorEquipment : BNE +
+                                TYA : STA.l PreMirrorLocations
+                        +
+                        LDA.l FluteEquipment : BNE +
+                                TYA : STA.l PreFluteLocations
+                        +
+                        TYA
+                        STA.l TotalItemCounter
+        .done
+	PLB : PLP : PLY : PLX : PLA
+RTL
+
+ShopCheck:
+        LDA.b IndoorsFlag : BEQ .count
+        LDA.w ItemReceiptMethod : CMP.b #$01 : BEQ .count
+        LDA.w InventoryTable_properties,Y : BIT.b #$02 : BNE .count
+                REP #$20
+                LDA.b RoomIndex
+                CMP.w #274 : BEQ .nocount ; dark world death mountain shop, ornamental shield shop
+                CMP.w #271 : BEQ .nocount ; villiage of outcasts shop, lumberjack shop, lake hylia shop, dark world magic shop
+                CMP.w #272 : BEQ .nocount ; red shield shop
+                CMP.w #284 : BEQ .nocount ; bomb shop
+                CMP.w #287 : BEQ .nocount ; kakariko shop
+                CMP.w #255 : BEQ .nocount ; light world death mountain shop
+                CMP.w #276 : BEQ .nocount ; waterfall fairy
+                CMP.w #277 : BEQ .nocount ; upgrade fairy (shop)
+                CMP.w #278 : BEQ .nocount ; pyramid fairy
+                SEP #$20
+        .count
+        CLC
+RTS
+        .nocount
+        SEP #$21
+RTS
+
+DungeonIncrement:
+        LDA.w InventoryTable_properties,Y : BIT.b #$40 : BEQ +
+                JSL.l CountChestKeyLong
+        +
+	LDA.b IndoorsFlag : BEQ .done
+        LDA.w DungeonID : BMI .done
+                CMP.l BallNChainDungeon : BNE +
+                        CPY.b #$32 : BEQ .ballchain_bigkey
+	        +
+                CMP.b #$04 : BCS +
+                        LDA.l SewersLocations : INC : STA.l SewersLocations : STA.l HCLocations
+                        BRA .done
+                +
+                LSR : TAX : LDA.l DungeonLocationsChecked, X : INC : STA.l DungeonLocationsChecked, X
+	        CPX.b #$0D : BNE +
+                        LDA.l BigKeyField : BIT.b #$04 : BNE ++
+                                LDA.l PreGTBKLocations : INC : STA.l PreGTBKLocations
+                        ++
+	        +
+        .done
+        CLC
+RTS
+        .ballchain_bigkey
+        LDA.l BigKeysBigChests
+        CLC : ADC.b #$10
+        STA.l BigKeysBigChests
+        SEC
+RTS
+
+StampItem:
+        REP #$30
+        TYA : ASL : TAX
+        LDA.w InventoryTable_stamp,X : BEQ .skip
+                STA.b Scrap0B
+                LDA.b [Scrap0B] : BNE .skip
+                        LDA.l NMIFrames : STA.b [Scrap0B]
+                        INC.b Scrap0B : INC.b Scrap0B
+                        LDA.l NMIFrames+2 : STA.b [Scrap0B]
+        .skip
+RTS
+
+IncrementYAItems:
+         LDA.w InventoryTable_properties,Y
+         BIT.b #$10 : BNE .bomb_check
+         BIT.b #$20 : BNE .bow_check
+         BIT.b #$04 : BEQ .not_y
+                 .y_item
+                 LDA.l YAItemCounter : !ADD #$08 : STA.l YAItemCounter
+                 BRA .done
+         .not_y
+         BIT.b #$08 : BEQ .done
+                 .a_item
+                 LDA.l YAItemCounter : INC : AND.b #$07 : TAX
+                 LDA.l YAItemCounter : AND.b #$F8 : STA.l YAItemCounter
+                 TXA : ORA.l YAItemCounter : STA.l YAItemCounter
+        .done
+RTS
+        .bow_check
+        LDA.l BowEquipment : BNE +
+                BRA .y_item
+        +
+RTS
+        .bomb_check
+	LDA.l InventoryTracking+1 : BIT.b #$02 : BNE +
+		ORA.b #$02 : STA.l InventoryTracking+1
+		BRA .y_item
 	+
+RTS
 
-	.incrementCounts
-	; don't count any of this stuff
-	CPY.b #$20 : BNE + : JMP .itemCounts : + ; Crystal
-	CPY.b #$26 : BNE + : JMP .itemCounts : + ; Heart Piece Completion Heart
-	CPY.b #$2E : BNE + : JMP .itemCounts : + ; Red Potion (Refill)
-	CPY.b #$2F : BNE + : JMP .itemCounts : + ; Green Potion (Refill)
-	CPY.b #$30 : BNE + : JMP .itemCounts : + ; Blue Potion (Refill)
-	CPY.b #$37 : BNE + : JMP .itemCounts : + ; Pendant
-	CPY.b #$38 : BNE + : JMP .itemCounts : + ; Pendant
-	CPY.b #$39 : BNE + : JMP .itemCounts : + ; Pendant
-	
-	CPY.b #$04 : !BLT .isSword ; Swords - Skip Shop/Fairy Check for Swords
-	CPY.b #$49 : BEQ .isSword
-	CPY.b #$50 : BEQ .isSword
-	CPY.b #$5E : BEQ .isSword
-	BRA +
-		.isSword
-		JMP .dungeonCounts
-	+
-	CPY.b #$3B : BNE + : JMP .dungeonCounts : + ; Silver Arrow Bow - Skip Shop/Fairy Check for Silver Arrow Bow
-
-	LDA.b IndoorsFlag : BEQ ++ ; skip shop check if outdoors
-	LDA.w ItemReceiptMethod : CMP.b #$01 : BEQ ++ ; skip shop check for chests
-		PHP : REP #$20 ; set 16-bit accumulator
-			LDA.b RoomIndex
-			CMP.w #274 : BNE + : JMP .shop : + ; dark world death mountain shop, ornamental shield shop
-			CMP.w #271 : BNE + : JMP .shop : + ; villiage of outcasts shop, lumberjack shop, lake hylia shop, dark world magic shop
-			CMP.w #272 : BNE + : JMP .shop : + ; red shield shop
-			CMP.w #284 : BNE + : JMP .shop : + ; bomb shop
-			;CMP.w #265 : BNE + : JMP .shop : + ; potion shop - commented this out because it's easier to just block potion refills because this one interferes with the powder item being counted
-			;CMP.w #271 : BNE + : JMP .shop : + ; lake hylia shop
-			CMP.w #287 : BNE + : JMP .shop : + ; kakariko shop
-			CMP.w #255 : BNE + : JMP .shop : + ; light world death mountain shop
-			CMP.w #276 : BNE + : JMP .shop : + ; waterfall fairy
-			CMP.w #277 : BNE + : JMP .shop : + ; upgrade fairy (shop)
-			CMP.w #278 : BNE + : JMP .shop : + ; pyramid fairy
-		PLP : BRA ++
-		.shop
-		PLP : JMP .done
-	++
-
-	.dungeonCounts
-	LDA.b IndoorsFlag : BNE + : JMP .fullItemCounts : +
-	SEP #$20 ; Set 8-bit Accumulator
-
-	LDA.w DungeonID ; get dungeon id
-        CMP.b #$FF : BEQ .fullItemCounts
-
-        CMP.l BallNChainDungeon : BNE +
-		CPY.b #$32 : BNE +
-                        JMP .done
-	+
-        CMP.b #$04 : BCS +
-                LDA.l SewersLocations : INC : STA.l SewersLocations
-                LDA.l HCLocations : INC : STA.l HCLocations
-                BRA .fullItemCounts
-        + LSR : TAX : LDA.l DungeonLocationsChecked, X : INC : STA.l DungeonLocationsChecked, X
-	++ CPX.b #$0D : BNE +
-		LDA.l BigKeyField : AND.b #$04 : BNE ++
-			JSR .incrementGTowerPreBigKey
-		++
-	+
-	; == END INDOOR-ONLY SECTION
-	.fullItemCounts
-
-	LDA.l BootsEquipment : BNE + ; Check for Boots
-		LDA.l PreBootsLocations : INC : STA.l PreBootsLocations ; Increment Pre Boots Counter
-	+
-
-	LDA.l MirrorEquipment : BNE + ; Check for Mirror
-		LDA.l PreMirrorLocations : INC : STA.l PreMirrorLocations ; Increment Pre Mirror Counter
-	+
-
-	LDA.l FluteEquipment : BNE + ; Check for Flute
-		LDA.l PreFluteLocations : INC : STA.l PreFluteLocations ; Increment Pre Mirror Counter
-	+
-
+IncrementByOne:
         REP #$20
-	LDA.l TotalItemCounter : INC : STA.l TotalItemCounter ; Increment Item Total
+        TYA : ASL : TAX
+        LDA.w InventoryTable_stat,X : BEQ .skip
+                STA.b Scrap0B
+                SEP #$20
+                LDA.b #$01 : ADC.b [Scrap0B] : STA.b [Scrap0B]
+        .skip
         SEP #$20
-
-	.itemCounts
-
-	CPY.b #$00 : BNE + ; Fighter's Sword & Fighter's Shield
-                LDX.b #$01
-		JSR .incrementSword
-		JSR .incrementShield
-		JMP .done
-	+ CPY.b #$01 : BNE + ; Master Sword
-                LDX.b #$02
-		JSR .incrementSword
-		JMP .done
-	+ CPY.b #$02 : BNE + ; Tempered Sword
-                LDX.b #$03
-		JSR .incrementSword
-		JMP .done
-	+ CPY.b #$03 : BNE + ; Golden Sword
-                LDX.b #$04
-		JSR .incrementSword
-		JMP .done
-	+ CPY.b #$04 : BNE + ; Fighter's Shield
-                LDX.b #$01
-		JSR .incrementShield
-		JMP .done
-	+ CPY.b #$05 : BNE + ; Red Shield
-                LDX.b #$02
-		JSR .incrementShield
-		JMP .done
-	+ CPY.b #$06 : BNE + ; Mirror Shield
-                LDX.b #$03
-		JSR .incrementShield
-		JMP .done
-	+ CPY.b #$07 : !BLT + ; Items $07 - $0D
-	  CPY.b #$0E : !BGE +
-		JSR .incrementY
-		JMP .done
-	+ CPY.b #$14 : BNE + ; Flute (Inactive) - LEAVE THIS ABOVE THE 0F-16 CONDITION - kkat
-		JSR .stampFlute
-		JSR .incrementY
-		JMP .done
-	+ CPY.b #$0F : !BLT + ; Items $0F - $16
-	  CPY.b #$17 : !BGE +
-		JSR .incrementY
-		JMP .done
-	+ CPY.b #$17 : BNE + ; Heart Piece
-		JSR .incrementHeartPiece
-		JMP .done
-	+ CPY.b #$18 : !BLT + ; Items $18 - $19
-	  CPY.b #$1A : !BGE +
-		JSR .incrementY
-		JMP .done
-	+ CPY.b #$1A : BNE + ; Magic Mirror
-		JSR .stampMirror
-		JSR .incrementY
-		JMP .done
-	+ CPY.b #$1D : BNE + ; Book of Mudora - LEAVE THIS ABOVE THE 1B-1F CONDITION - kkat
-		JSR .incrementY
-		JMP .done
-	+ CPY.b #$1B : !BLT + ; Items IndoorsFlag - $1F
-	  CPY.b #$20 : !BGE +
-		JSR .incrementA
-		JMP .done
-	+ CPY.b #$20 : BNE + ; Crystal
-		JSR .incrementCrystal
-                JSR .setDungeonCompletion
-		JMP .done
-	+ CPY.b #$21 : BNE + ; Bug Net
-		JSR .incrementY
-		JMP .done
-	+ CPY.b #$22 : BNE + ; Blue Mail
-                LDX.b #$01
-                JSR .incrementMail
-	+ CPY.b #$23 : BNE + ; Red Mail
-                LDX.b #$02
-                JSR .incrementMail
-	+ CPY.b #$24 : BNE + ; Small Key
-		JSR .incrementVanillaKey
-		JMP .done
-	+ CPY.b #$25 : BNE + ; Compass
-                JSL MaybeFlagCompassTotalPickup
-		JSR .incrementCompass
-		JMP .done
-	+ CPY.b #$26 : BNE + ; Liar Heart (Container)
-		;JSR .incrementHeartContainer
-		JMP .done
-	+ CPY.b #$27 : BNE + ; 1 Bomb
-		JSR .maybeIncrementBombs
-		JMP .done
-	+ CPY.b #$28 : BNE + ; 3 Bombs
-		JSR .maybeIncrementBombs
-		JMP .done
-	+ CPY.b #$29 : BNE + ; Mushroom
-		JSR .incrementY
-		JMP .done
-	+ CPY.b #$2A : !BLT + ; Items $2A - $2D
-	  CPY.b #$2E : !BGE +
-		JSR .incrementY
-		JMP .done
-	+ CPY.b #$31 : BNE + ; 10 Bombs
-		JSR .maybeIncrementBombs
-		JMP .done
-	+ CPY.b #$32 : BNE + ; Big Key
-		JSR .incrementBigKey
-		JMP .done
-	+ CPY.b #$33 : BNE + ; Map
-                JSL MaybeFlagMapTotalPickup
-		JSR .incrementMap
-		JMP .done
-	+ CPY.b #$37 : !BLT + ; Items $37 - $39 - Pendants
-	  CPY.b #$3A : !BGE +
-		JSR .incrementPendant
-                JSR .setDungeonCompletion
-		JMP .done
-	+ CPY.b #$3A : !BLT + ; Items $3A - $3B - Bow & Silver Arrows
-	  CPY.b #$3C : !BGE +
-		JSR .incrementBow
-		JMP .done
-	+ CPY.b #$3C : BNE + ; Bottle w/Bee
-		JSR .incrementY
-		JMP .done
-	+ CPY.b #$3D : BNE + ; Bottle w/Fairy
-		JSR .incrementY
-		JMP .done
-	+ CPY.b #$3E : !BLT + ; Items $3E - $3F - Heart Containers
-	  CPY.b #$40 : !BGE +
-		JSR .incrementHeartContainer
-		JMP .done
-	+ CPY.b #$48 : BNE + ; Bottle w/Gold Bee
-		JSR .incrementY
-		JMP .done
-	+ CPY.b #$49 : BNE + ; Fighter's Sword
-                LDX.b #$01
-		JSR .incrementSword
-		JMP .done
-	+ CPY.b #$4A : BNE + ; Flute (Active)
-		JSR .stampFlute
-		JSR .incrementY
-		JMP .done
-	+ CPY.b #$4B : BNE + ; Pegasus Boots
-		JSR .stampBoots
-		JSR .incrementA
-		JMP .done
-	+ CPY.b #$4C : BNE + ; 50 Bomb Capacity Upgrade
-		JSR .incrementCapacity
-		JSR .maybeIncrementBombs
-		JMP .done
-	+ CPY.b #$4D : !BLT + ; Items $4D - $4F - Capacity Upgrades
-	  CPY.b #$50 : !BGE +
-		JSR .incrementCapacity
-		JMP .done
-	+ CPY.b #$50 : BNE + ; Master Sword (Safe)
-                LDX.b #$02
-		JSR .incrementSword
-		JMP .done
-	+ CPY.b #$51 : BNE + ; 5 Bomb Capacity Upgrade
-                LDX.b #$02
-		JSR .maybeIncrementBombs
-		JMP .done
-	+ CPY.b #$52 : BNE + ; 10 Bomb Capacity Upgrade
-                LDX.b #$02
-		JSR .maybeIncrementBombs
-		JMP .done
-	+ CPY.b #$51 : !BLT + ; Items $51 - $54 - Capacity Upgrades
-	  CPY.b #$55 : !BGE +
-		JSR .incrementCapacity
-		JMP .done
-	+ CPY.b #$58 : BNE + ; Upgrade-Only Silver Arrows
-		JSR .incrementBow
-		JMP .done
-	+ CPY.b #$5E : BNE + ; Progressive Sword
-                LDA.l SwordEquipment : INC : TAX
-		JSR .incrementSword
-		JMP .done
-	+ CPY.b #$5F : BNE + ; Progressive Shield
-                LDA.l ShieldEquipment : INC : TAX
-		JSR .incrementShield
-		JMP .done
-	+ CPY.b #$60 : BNE + ; Progressive Armor
-                LDA.l ArmorEquipment : INC : TAX
-		JSR .incrementMail
-		JMP .done
-	+ CPY.b #$61 : BNE + ; Progressive Lifting Glove
-		JSR .incrementA
-		JMP .done
-	+ CPY.b #$64 : !BLT + ; Items $64 & $65 - Progressive Bow
-	  CPY.b #$66 : !BGE +
-		JSR .incrementBow
-		JMP .done
-	+ CPY.b #$70 : !BLT + ; Items $70 - $7F - Free Maps
-	  CPY.b #$80 : !BGE +
-                JSL MaybeFlagMapTotalPickup
-		JSR .incrementMap
-		JMP .done
-	+ CPY.b #$80 : !BLT + ; Items $80 - $8F - Free Compasses
-	  CPY.b #$90 : !BGE +
-                JSL MaybeFlagCompassTotalPickup
-		JSR .incrementCompass
-		JMP .done
-	+ CPY.b #$90 : !BLT + ; Items $90 - $9F - Free Big Keys
-	  CPY.b #$A0 : !BGE +
-		JSR .incrementBigKey
-		JMP .done
-	+ CPY.b #$A0 : !BLT + ; Items $A0 - $AF - Free Small Keys
-	  CPY.b #$B0 : !BGE +
-		JSR .incrementKey
-		JMP .done
-	+
-	.done
-	PLP : PLX : PLA
-RTL
-; WHICH BEE IS BOTTLED?
-; MAKE SURE FAIRY FOUNTAINS DON'T FUCK THE COUNTS UP
-
-.stampSword
-	REP #$20 ; set 16-bit accumulator
-	LDA.l SwordTime : BNE +
-	LDA.l SwordTime+2 : BNE +
-		LDA.l NMIFrames : STA.l SwordTime
-		LDA.l NMIFrames+2 : STA.l SwordTime+2
-	+
-	SEP #$20 ; set 8-bit accumulator
 RTS
 
-.stampBoots
-	REP #$20 ; set 16-bit accumulator
-	LDA.l BootsTime : BNE +
-	LDA.l BootsTime+2 : BNE +
-		LDA.l NMIFrames : STA.l BootsTime
-		LDA.l NMIFrames+2 : STA.l BootsTime+2
-	+
-	SEP #$20 ; set 8-bit accumulator
-RTS
-
-.stampFlute
-	REP #$20 ; set 16-bit accumulator
-	LDA.l FluteTime : BNE +
-	LDA.l FluteTime+2 : BNE +
-		LDA.l NMIFrames : STA.l FluteTime
-		LDA.l NMIFrames+2 : STA.l FluteTime+2
-	+
-	SEP #$20 ; set 8-bit accumulator
-RTS
-
-.stampMirror
-	REP #$20 ; set 16-bit accumulator
-	LDA.l MirrorTime : BNE +
-	LDA.l MirrorTime+2 : BNE +
-		LDA.l NMIFrames : STA.l MirrorTime
-		LDA.l NMIFrames+2 : STA.l MirrorTime+2
-	+
-	SEP #$20 ; set 8-bit accumulator
-RTS
-
-.incrementSword
-	JSR .stampSword
-        LDA.l HighestSword
-        INC : STA.b Scrap04 : CPX.b Scrap04 : !BLT + ; don't increment unless we're getting a better sword
-                TXA : STA.l HighestSword
+IncrementBossSword:
+        PHX
+        LDA.l StatsLocked : BNE .done
+        LDA.l SwordEquipment : CMP.b #$FF : BNE +
+                BRA .none
         +
-RTS
+        ASL : TAX
+        JMP.w (.vectors,X)
 
-.incrementShield
-        LDA.l HighestShield
-        INC : STA.b Scrap04 : CPX.b Scrap04 : !BLT + ; don't increment unless we're getting a better shield
-                TXA : STA.l HighestShield
-        +
-RTS
+        .vectors
+        dw .none
+        dw .fighter
+        dw .master
+        dw .tempered
+        dw .golden
 
-.incrementBow
-        LDA.l BowEquipment : BNE .dontCount ; Don't increment Y item count for extra bows
-.incrementY
-	LDA.l YAItemCounter : !ADD #$08 : STA.l YAItemCounter
-.dontCount
-RTS
-
-.incrementA
-	LDA.l YAItemCounter : INC : AND.b #$07 : TAX
-	LDA.l YAItemCounter : AND.b #$F8 : STA.l YAItemCounter
-	TXA : ORA.l YAItemCounter : STA.l YAItemCounter
-RTS
-
-.incrementPendant
-	LDA.l PendantCounter : INC : STA.l PendantCounter
-RTS
-
-.incrementCapacity
-	LDA.l CapacityUpgrades : INC : STA.l CapacityUpgrades
-RTS
-
-.incrementHeartPiece
-	LDA.l HeartPieceCounter : INC : STA.l HeartPieceCounter
-RTS
-
-.incrementHeartContainer
-	LDA.l HeartContainerCounter : INC : STA.l HeartContainerCounter
-RTS
-
-.incrementCrystal
-	LDA.l CrystalCounter : INC : STA.l CrystalCounter
-RTS
-
-.incrementMail
-        LDA.l HighestMail
-        INC : STA.b Scrap04 : CPX.b Scrap04 : !BLT +   ; don't increment unless we're getting a better mail
-                TXA : STA.l HighestMail
-        +
-RTS
-
-.incrementKeyLong
-	JSR .incrementKey
-RTL
-
-.incrementVanillaKey
-        JSL.l UpdateKeys
-
-.incrementKey
-        LDA.l SmallKeyCounter : INC : STA.l SmallKeyCounter
-RTS
-
-.incrementCompass
-	%BottomHalf(MapsCompasses)
-RTS
-
-.incrementBigKey
-	%TopHalf(BigKeysBigChests)
-RTS
-
-.incrementGTowerPreBigKey
-        LDA.l PreGTBKLocations : INC : STA.l PreGTBKLocations
-RTS
-
-.maybeIncrementBombs
-	LDA.l InventoryTracking+1 : AND.b #$02 : BNE +
-		LDA.l InventoryTracking+1 : ORA.b #$02 : STA.l InventoryTracking+1
-		JSR .incrementY
-	+
-RTS
-
-.incrementMap
-	%TopHalf(MapsCompasses)
-RTS
-
-.incrementBossSwordLong
-	JSR .incrementBossSword
-RTL
-
-.incrementBossSword
-	LDA.l SwordEquipment
-	BNE + : -
-                LDA.l SwordlessBossKills : INC : STA.l SwordlessBossKills
-                RTS
-	+ CMP.b #$FF : BEQ -
-	+ CMP.b #$01 : BNE +
-		%TopHalf(SwordBossKills) : RTS
-	+ CMP.b #$02 : BNE +
-		%BottomHalf(SwordBossKills) : RTS
-	+ CMP.b #$03 : BNE +
-		%TopHalf(SwordBossKills+1) : RTS
-	+ CMP.b #$04 : BNE +
-		%BottomHalf(SwordBossKills+1)
-	+
-RTS
-
-.setDungeonCompletion
-	LDX.w DungeonID : BMI +
-		REP #$20  ; 16 bit
-		LDA.l DungeonMask, X
-		ORA.l DungeonsCompleted : STA.l DungeonsCompleted
-		SEP #$20  ; 8 bit
-	+
-RTS
-;--------------------------------------------------------------------------------
+        .none
+        LDA.l SwordlessBossKills : INC : STA.l SwordlessBossKills
+        .done
+        PLX
+        RTL
+        .fighter
+        LDA.l SwordBossKills
+        CLC : ADC.b #$10
+        STA.l SwordBossKills
+        PLX
+        RTL
+        .master
+        LDA.l SwordBossKills : INC : AND.b #$0F : TAX
+        LDA.l SwordBossKills : AND.b #$F0 : STA.l SwordBossKills
+        TXA : ORA.l SwordBossKills : STA.l SwordBossKills
+        PLX
+        RTL
+        .tempered
+        LDA.l SwordBossKills+1
+        CLC : ADC.b #$10
+        STA.l SwordBossKills+1
+        PLX
+        RTL
+        .golden
+        LDA.l SwordBossKills+1 : INC : AND.b #$0F : TAX
+        LDA.l SwordBossKills+1 : AND.b #$F0 : STA.l SwordBossKills+1
+        TXA : ORA.l SwordBossKills+1 : STA.l SwordBossKills+1
+        PLX
+        RTL
 
 ;--------------------------------------------------------------------------------
-; Link_ReceiveItem_HUDRefresh:
+IncrementFinalSword:
+        PHX
+        REP #$20
+        LDA.w RoomIndex : BNE .done
+                SEP #$20
+                LDA.l SwordEquipment : CMP.b #$FF : BNE +
+                        BRA IncrementBossSword_none
+                +
+                ASL : TAX
+                JMP.w (IncrementBossSword_vectors,X)
+        .done
+        SEP #$20
+        PLX
+RTL
 ;--------------------------------------------------------------------------------
 Link_ReceiveItem_HUDRefresh:
 	LDA.l BombsEquipment : BNE + ; skip if we have bombs
@@ -835,7 +488,7 @@ ClearOWKeys:
 
 	JSL.l TurtleRockEntranceFix
 	JSL.l FakeWorldFix
-	JSR.w FixBunnyOnExitToLightWorld
+	JSL.l FixBunnyOnExitToLightWorld
 	LDA.l GenericKeys : BEQ +
 		PLA : LDA.l CurrentGenericKeys : STA.l CurrentSmallKeys
 		RTL
@@ -858,10 +511,14 @@ RTL
 ; LoadPowder:
 ;--------------------------------------------------------------------------------
 LoadPowder:
+        PHX
 	JSL.l Sprite_SpawnDynamically ; thing we wrote over
 	%GetPossiblyEncryptedItem(WitchItem, SpriteItemValues)
-	STA.w SpriteAuxTable, Y ; Store item type
-	JSL.l PrepDynamicTile
+        JSL.l ResolveLootIDLong
+	STA.w SpriteID, Y
+        TYX
+	JSL.l PrepDynamicTile_loot_resolved
+        PLX
 RTL
 ;--------------------------------------------------------------------------------
 
@@ -884,12 +541,12 @@ RTL
 DrawPowder:
 	LDA.w ItemReceiptPose : BNE .defer ; defer if link is buying a potion
 	LDA.l RedrawFlag : BEQ +
-		LDA.w SpriteAuxTable, X ; Retrieve stored item type
-		JSL.l PrepDynamicTile
+		; LDA.w SpriteAuxTable, X ; Retrieve stored item type
+		JSL.l PrepDynamicTile_loot_resolved
 		LDA.b #$00 : STA.l RedrawFlag ; reset redraw flag
 		BRA .defer
 	+
-	LDA.w SpriteAuxTable, X ; Retrieve stored item type
+	LDA.w SpriteID, X ; Retrieve stored item type
 	JSL.l DrawDynamicTile
 	.defer
 RTL
@@ -909,7 +566,8 @@ LoadMushroom:
 
 	LDA.b #$00 : STA.l RedrawFlag
 	%GetPossiblyEncryptedItem(MushroomItem, SpriteItemValues)
-	STA.w SpriteItemType, X ; Store item type
+        JSR.w ResolveLootID
+	STA.w SpriteID,X
 	JSL.l PrepDynamicTile
 
 	.skip
@@ -927,7 +585,7 @@ DrawMushroom:
 		BRA .done ; don't draw on the init frame
 
 		.skipInit
-		LDA.w SpriteItemType, X ; Retrieve stored item type
+		LDA.w SpriteID, X ; Retrieve stored item type
 		JSL.l DrawDynamicTile
 
 		.done
@@ -939,15 +597,14 @@ RTL
 ; CollectPowder:
 ;--------------------------------------------------------------------------------
 CollectPowder:
-	LDY.w SpriteAuxTable, X ; Retrieve stored item type
-	BNE +
-		; if for any reason the item value is 0 reload it, just in case
-		%GetPossiblyEncryptedItem(WitchItem, SpriteItemValues) : TAY
-	+
-    STZ.w ItemReceiptMethod ; item from NPC
-    JSL.l Link_ReceiveItem
-	;JSL.l FullInventoryExternal
-	JSL.l ItemSet_Powder
+        LDY.w SpriteID, X ; Retrieve stored item type
+        BNE +
+	        ; if for any reason the item value is 0 reload it, just in case
+	        %GetPossiblyEncryptedItem(WitchItem, SpriteItemValues) : TAY
+        +
+        STZ.w ItemReceiptMethod ; item from NPC
+        JSL.l Link_ReceiveItem
+        JSL.l ItemSet_Powder
 RTL
 ;--------------------------------------------------------------------------------
 

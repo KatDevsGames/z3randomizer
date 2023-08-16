@@ -1,6 +1,6 @@
 RenderCharSetColorExtended_init:
     stz.b Scrap0C
-    jsl $00d84e
+    jsl Attract_DecompressStoryGfx
     rtl
 
 RenderCharSetColorExtended_close:
@@ -26,9 +26,7 @@ RenderCharSetColorExtended:
 
 RenderCharToMapExtended:
     phx : tya : asl #2 : tax
-    lda.l FontProperties, x
-    and.w #$0001
-    bne .uncompressed
+    lda.l FontProperties, x : bit.w #$0001 : bne .uncompressed
 .compressed
     plx
     lda.w #$0000
@@ -104,9 +102,7 @@ RenderCharThinTable:
 RenderCharExtended:
     pha
     asl : asl : tax
-    lda.l FontProperties, x
-    and.w #$00ff
-    bne .renderUncompressed
+    lda.l FontProperties, x : and.w #$00ff : bne .renderUncompressed
 
 .renderOriginal
     pla : asl : tax : asl : adc.b Scrap0E
@@ -209,39 +205,39 @@ FontProperties:
     dw $0000, $0000     ; 2E
     dw $0000, $0000     ; 2F
 
-    dw $8001, $0400     ; 30 ; a
-    dw $8001, $0410     ; 31
-    dw $8001, $0420     ; 32
-    dw $8001, $0430     ; 33
-    dw $8001, $0440     ; 34
-    dw $8001, $0450     ; 35
-    dw $8001, $0460     ; 36
-    dw $8001, $0470     ; 37
-    dw $8001, $0480     ; 38
-    dw $8001, $0490     ; 39
-    dw $8001, $04A0     ; 3A
-    dw $8001, $04B0     ; 3B
-    dw $8001, $04C0     ; 3C
-    dw $8001, $04D0     ; 3D
-    dw $8001, $04E0     ; 3E
-    dw $8001, $04F0     ; 3F
+    dw $0000, $0000     ; 30
+    dw $0000, $0000     ; 31
+    dw $0000, $0000     ; 32
+    dw $0000, $0000     ; 33
+    dw $0000, $0000     ; 34
+    dw $0000, $0000     ; 35
+    dw $0000, $0000     ; 36
+    dw $0000, $0000     ; 37
+    dw $0000, $0000     ; 38
+    dw $0000, $0000     ; 39
+    dw $0000, $0000     ; 3A
+    dw $0000, $0000     ; 3B
+    dw $0000, $0000     ; 3C
+    dw $0000, $0000     ; 3D
+    dw $0000, $0000     ; 3E
+    dw $0000, $0000     ; 3F
 
-    dw $8001, $0600     ; 40
-    dw $8001, $0610     ; 41
-    dw $8001, $0620     ; 42
-    dw $8001, $0630     ; 43
-    dw $8001, $0640     ; 44
-    dw $8001, $0650     ; 45
-    dw $8001, $0660     ; 46
-    dw $8001, $0670     ; 47
-    dw $8001, $0680     ; 48
-    dw $8001, $0690     ; 49 ; z
-    dw $8001, $06F0     ; 4A ; :
-    dw $8001, $0A90     ; 4B ; @ (thin)
-    dw $8001, $0AA0     ; 4C ; # (thin)
-    dw $0000, $0000     ; 4D 
-    dw $0000, $0000     ; 4E 
-    dw $8001, $0EF0     ; 4F ; <sp>
+    dw $0000, $0000     ; 40
+    dw $0000, $0000     ; 41
+    dw $0000, $0000     ; 42
+    dw $0000, $0000     ; 43
+    dw $0000, $0000     ; 44
+    dw $0000, $0000     ; 45
+    dw $0000, $0000     ; 46
+    dw $0000, $0000     ; 47
+    dw $0000, $0000     ; 48
+    dw $0000, $0000     ; 49
+    dw $0000, $0000     ; 4A
+    dw $0000, $0000     ; 4B
+    dw $0000, $0000     ; 4C
+    dw $0000, $0000     ; 4D
+    dw $0000, $0000     ; 4E
+    dw $8001, $0DF0     ; 4F ; <sp>
 
     dw $0000, $0000     ; 50
     dw $0000, $0000     ; 51
@@ -318,15 +314,15 @@ FontProperties:
     dw $0000, $0000     ; 94
     dw $0000, $0000     ; 95
     dw $0000, $0000     ; 96
-    dw $0000, $0000     ; 97
-    dw $0000, $0000     ; 98
-    dw $0000, $0000     ; 99
-    dw $0000, $0000     ; 9A
-    dw $0000, $0000     ; 9B
-    dw $0000, $0000     ; 9C
-    dw $0000, $0000     ; 9D
-    dw $0000, $0000     ; 9E
-    dw $0000, $0000     ; 9F
+    dw $8001, $0AD0     ; 97 ; /
+    dw $8001, $0AE0     ; 98 ; •
+    dw $8001, $02A0     ; 99 ; Cursor |>
+    dw $0000, $0000     ; 9A ; smiley lookin JP char
+    dw $8001, $06A0     ; 9B ; Link face left
+    dw $8001, $06B0     ; 9C ; Link face right
+    dw $8001, $06E0     ; 9D ; '
+    dw $8001, $0AF0     ; 9E ; "
+    dw $8001, $02E0     ; 9F ; ellipsis ...
 
     dw $8001, $0800     ; A0 ; 0
     dw $8001, $0810     ; A1
@@ -372,44 +368,44 @@ FontProperties:
     dw $8001, $06C0     ; C7 ; !
     dw $8001, $02D0     ; C8 ; ,
     dw $8001, $02B0     ; C9 ; -
-    dw $8000, $0000     ; CA
-    dw $8000, $0000     ; CB
-    dw $8000, $02E0     ; CC ; ...
+    dw $8000, $0000     ; CA ; 🡄"
+    dw $8000, $0000     ; CB ; 🡆
+    dw $0000, $0000     ; CC ; Blank char
     dw $8001, $02C0     ; CD ; .
     dw $8001, $02F0     ; CE ; ~
-    dw $8000, $0000     ; CF
+    dw $8000, $0000     ; CF ;
 
-    dw $0000, $0000     ; D0
-    dw $0000, $0000     ; D1
-    dw $8001, $06a0     ; D2 ; Link face left
-    dw $8001, $06b0     ; D3 ; Link face right
-    dw $0000, $0000     ; D4
-    dw $0000, $0000     ; D5
-    dw $0000, $0000     ; D6
-    dw $0000, $0000     ; D7
-    dw $8001, $06E0     ; D8 ; '
-    dw $0000, $0000     ; D9
-    dw $0000, $0000     ; DA
-    dw $0000, $0000     ; DB
-    dw $0000, $0000     ; DC
-    dw $0000, $0000     ; DD
-    dw $0000, $0000     ; DE
-    dw $0000, $0000     ; DF
+    dw $8001, $0400     ; D0 ; a
+    dw $8001, $0410     ; D1
+    dw $8001, $0420     ; D2
+    dw $8001, $0430     ; D3
+    dw $8001, $0440     ; D4
+    dw $8001, $0450     ; D5
+    dw $8001, $0460     ; D6
+    dw $8001, $0470     ; D7
+    dw $8001, $0480     ; D8
+    dw $8001, $0490     ; D9
+    dw $8001, $04A0     ; DA
+    dw $8001, $04B0     ; DB
+    dw $8001, $04C0     ; DC
+    dw $8001, $04D0     ; DD
+    dw $8001, $04E0     ; DE
+    dw $8001, $04F0     ; DF ; p
 
-    dw $0000, $0000     ; E0
-    dw $0000, $0000     ; E1
-    dw $0000, $0000     ; E2
-    dw $0000, $0000     ; E3
-    dw $8001, $02A0     ; E4 ; Cursor |>
-    dw $0000, $0000     ; E5
-    dw $0000, $0000     ; E6
-    dw $0000, $0000     ; E7
-    dw $0000, $0000     ; E8
-    dw $0000, $0000     ; E9
-    dw $0000, $0000     ; EA
-    dw $0000, $0000     ; EB
-    dw $0000, $0000     ; EC
-    dw $0000, $0000     ; ED
+    dw $8001, $0600     ; E0 ; q
+    dw $8001, $0610     ; E1
+    dw $8001, $0620     ; E2
+    dw $8001, $0630     ; E3
+    dw $8001, $0640     ; E4
+    dw $8001, $0650     ; E5
+    dw $8001, $0660     ; E6
+    dw $8001, $0670     ; E7
+    dw $8001, $0680     ; E8
+    dw $8001, $0690     ; E9 ; z
+    dw $8001, $0A80     ; EA ; :
+    dw $8001, $0A90     ; EB ; @ (thin)
+    dw $8001, $0AA0     ; EC ; # (thin)
+    dw $8001, $0A00     ; ED ; _
     dw $0000, $0000     ; EE
     dw $0000, $0000     ; EF
 
@@ -428,4 +424,4 @@ FontProperties:
     dw $0000, $0000     ; FC
     dw $0000, $0000     ; FD
     dw $0000, $0000     ; FE
-    dw $8001, $0EF0     ; FF ; <sp>
+    dw $8001, $0DF0     ; FF ; <sp>

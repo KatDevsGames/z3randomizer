@@ -2,7 +2,7 @@
 ; Frame Hook
 ;--------------------------------------------------------------------------------
 FrameHookAction:
-        JSL $0080B5 ; Module_MainRouting
+        JSL $8080B5 ; Module_MainRouting
         JSL CheckMusicLoadRequest
         PHP : REP #$30 : PHA
         SEP #$20	
@@ -35,7 +35,27 @@ PostNMIHookAction:
                 .return
                 STZ.w NMIAux ; zero bank byte of NMI hook pointer
         +
+        JSR.w TransferItemGFX
         LDA.b INIDISPQ : STA.w INIDISP ; thing we wrote over, turn screen back on
 
 JML.l PostNMIHookReturn
 ;--------------------------------------------------------------------------------
+TransferItemGFX:
+; Only used for shops now but could be used for anything. We should look at how door rando does this
+; and try to unify one approach.
+        REP #$30
+        LDX.w ItemQueuePtr : BEQ .done
+                -
+                        LDA.w ItemGFXQueue,X : STA.w ItemGFXPtr
+                        LDA.w ItemTargetQueue,X : STA.w ItemGFXTarget
+                        PHX
+                        JSL.l TransferItemToVRAM
+                        REP #$10
+                        PLX
+                        DEX #2
+                BPL -
+
+        STZ.w ItemQueuePtr
+        .done
+        SEP #$30
+RTS

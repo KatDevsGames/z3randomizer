@@ -2,7 +2,7 @@ NewElderCode:
 {
 LDA.b OverworldIndex : CMP.b #$1B : BEQ .newCodeContinue
 ;Restore Jump we can keep the RTL so JML
-JML $05F0CD
+JML $85F0CD
 .newCodeContinue
 PHB : PHK : PLB
 LDA.b #$07 : STA.w SpriteOAMProp, X ; Palette 

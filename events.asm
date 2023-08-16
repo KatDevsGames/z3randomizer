@@ -1,10 +1,15 @@
 OnPrepFileSelect:
-	LDA.b GameSubMode : CMP.b #$03 : BNE +
-		LDA.b #$06 : STA.b NMISTRIPES ; thing we wrote over
-		RTL
-	+
-	JSL.l LoadAlphabetTilemap
-	JML.l LoadFullItemTiles
+        LDA.b GameSubMode : CMP.b #$03 : BNE +
+                LDA.b #$06 : STA.b NMISTRIPES ; thing we wrote over
+                RTL
+        +
+        PHA : PHX
+        REP #$10
+        JSL.l LoadAlphabetTilemap
+        JSL.l LoadFullItemTiles
+        SEP #$10
+        PLX : PLA
+RTL
 ;--------------------------------------------------------------------------------
 OnDrawHud:
 	JSL.l DrawChallengeTimer ; this has to come before NewDrawHud because the timer overwrites the compass counter
@@ -18,6 +23,10 @@ OnDungeonEntrance:
 	STA.l PegColor ; thing we wrote over
         JSL MaybeFlagDungeonTotalsEntrance
         INC.w UpdateHUD
+RTL
+;--------------------------------------------------------------------------------
+OnDungeonBossExit:
+        JSL.l StatTransitionCounter
 RTL
 ;--------------------------------------------------------------------------------
 OnPlayerDead:
@@ -37,8 +46,8 @@ OnDungeonExit:
         STA.w DungeonID : STZ.w Map16ChangeIndex ; thing we wrote over
 
         PHA : PHP
-        JSL.l HUD_RebuildLong
         INC.w UpdateHUD
+        JSL.l HUD_RebuildLong
         JSL.l FloodGateResetInner
         JSL.l SetSilverBowMode
         PLP : PLA
@@ -84,21 +93,19 @@ OnAga2Defeated:
         JML.l IncrementAgahnim2Sword
 ;--------------------------------------------------------------------------------
 OnFileCreation:
-        ; Copy initial SRAM state from ROM to cart SRAM
-        ; If the inital SRAM table is move these addresses must be changed
         PHB
-        LDA.w #$03D7                  ; \
-        LDX.w #$B000                  ;  | Copies from beginning of inital sram table up to file name
-        LDY.w #$0000                  ;  | (exclusively)
-        MVN !SRAMBank, !SRAMTableBank ; /
-                                      ; Skip file name and validity value
-        LDA.w #$010C                  ; \
-        LDX.w #$B3E3                  ;  | Rando-Specific Assignments & Game Stats block
-        LDY.w #$03E3                  ;  |
-        MVN !SRAMBank, !SRAMTableBank ; /
+        LDA.w #$03D7
+        LDX.w #$B000
+        LDY.w #$0000
+        MVN CartridgeSRAM>>16, InitSRAMTable>>16
+        ; Skip file name and validity value
+        LDA.w #$010C
+        LDX.w #$B3E3
+        LDY.w #$03E3
+        MVN CartridgeSRAM>>16, InitSRAMTable>>16 
         PLB
 
-        ; resolve instant post-aga if standard
+        ; Resolve instant post-aga if standard
         SEP #$20
         LDA.l InitProgressIndicator : BIT #$80 : BEQ +
                 LDA.b #$00 : STA.l ProgressIndicatorSRAM  ; set post-aga after zelda rescue
@@ -106,13 +113,13 @@ OnFileCreation:
         +
         REP #$20
 
-        ; Set validity value and do some cleanup. Jump to checksum.
+        ; Set validity value and do some cleanup. Jump to checksum done.
         LDA.w #$55AA : STA.l FileValiditySRAM
-        JSL.l WriteNewFileChecksum
+        JSL.l WriteSaveChecksumAndBackup
         STZ.b Scrap00
         STZ.b Scrap01
 
-JML.l InitializeSaveFile_done
+JML.l InitializeSaveFile_checksum_done
 ;--------------------------------------------------------------------------------
 OnFileLoad:
 	REP #$10 ; set 16 bit index registers
@@ -224,19 +231,40 @@ PostItemGet:
 RTL
 ;--------------------------------------------------------------------------------
 PostItemAnimation:
-	LDA.b #$00 : STA.l BusyItem ; mark item as finished
+        LDA.b #$00 : STA.l BusyItem ; mark item as finished
+        LDA.l TextBoxDefer : BEQ +
+                STZ.w TextID : STZ.w TextID+1 ; reset decompression buffer
+                JSL.l Main_ShowTextMessage_Alt
+                LDA.b #$00 : STA.l TextBoxDefer
+        +
+        LDA.w ItemReceiptMethod : CMP.b #$01 : BNE +
+                LDA.b LinkDirection : BEQ +
+                        JSL.l IncrementChestTurnCounter
+        +
+        REP #$20
+        LDA.w TransparencyFlag : BNE .SP05
+                LDA.l PalettesCustom_off_black+$00 : STA.l PaletteBuffer+$0170
+                LDA.l PalettesCustom_off_black+$02 : STA.l PaletteBuffer+$0172
+                LDA.l PalettesCustom_off_black+$04 : STA.l PaletteBuffer+$0174
+                LDA.l PalettesCustom_off_black+$06 : STA.l PaletteBuffer+$0176
+                LDA.l PalettesCustom_off_black+$08 : STA.l PaletteBuffer+$0178
+                LDA.l PalettesCustom_off_black+$0A : STA.l PaletteBuffer+$017A
+                LDA.l PalettesCustom_off_black+$0C : STA.l PaletteBuffer+$017C
+                LDA.l PalettesCustom_off_black+$0E : STA.l PaletteBuffer+$017E
+                BRA .done
+        .SP05
+        LDA.l PalettesCustom_off_black+$00 : STA.l PaletteBuffer+$01B0
+        LDA.l PalettesCustom_off_black+$02 : STA.l PaletteBuffer+$01B2
+        LDA.l PalettesCustom_off_black+$04 : STA.l PaletteBuffer+$01B4
+        LDA.l PalettesCustom_off_black+$06 : STA.l PaletteBuffer+$01B6
+        LDA.l PalettesCustom_off_black+$08 : STA.l PaletteBuffer+$01B8
+        LDA.l PalettesCustom_off_black+$0A : STA.l PaletteBuffer+$01BA
+        LDA.l PalettesCustom_off_black+$0C : STA.l PaletteBuffer+$01BC
+        LDA.l PalettesCustom_off_black+$0E : STA.l PaletteBuffer+$01BE
+        .done
+        INC.b NMICGRAM
+        SEP #$20
 
-	LDA.l TextBoxDefer : BEQ +
-		STZ.w TextID : STZ.w TextID+1 ; reset decompression buffer
-		JSL.l Main_ShowTextMessage_Alt
-		LDA.b #$00 : STA.l TextBoxDefer
-	+
-
-	LDA.w ItemReceiptMethod : CMP.b #$01 : BNE +
-		LDA.b LinkDirection : BEQ +
-			JSL.l IncrementChestTurnCounter
-	+
-
-    STZ.w ItemReceiptMethod : LDA.w AncillaGet, X ; thing we wrote over to get here
+        STZ.w ItemReceiptMethod : LDA.w AncillaGet, X ; thing we wrote over to get here
 RTL
 ;--------------------------------------------------------------------------------

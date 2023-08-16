@@ -33,7 +33,7 @@ DecrementSaveCounter:
 RTL
 ;--------------------------------------------------------------------------------
 DungeonHoleWarpTransition:
-	LDA.l $01C31F, X
+	LDA.l $81C31F, X
 	BRA StatTransitionCounter
 DungeonHoleEntranceTransition:
 	JSL EnableForceBlank
@@ -78,33 +78,37 @@ IncrementSmallKeys:
 	STA.l CurrentSmallKeys ; thing we wrote over, write small key count
 	PHX
 		LDA.l StatsLocked : BNE +
-			JSL AddInventory_incrementKeyLong
+                        LDA.l SmallKeyCounter : INC : STA.l SmallKeyCounter
 		+
 		JSL.l UpdateKeys
-		PHY : LDY.b #24 : JSL.l FullInventoryExternal : PLY
+		PHY : LDY.b #24 : JSL.l AddInventory : PLY
 		JSL.l HUD_RebuildLong
                 INC.w UpdateHUD
 	PLX
 RTL
 ;--------------------------------------------------------------------------------
 IncrementSmallKeysNoPrimary:
-	STA.l CurrentSmallKeys ; thing we wrote over, write small key count
-	PHX
-		LDA.l StatsLocked : BNE +
-			JSL AddInventory_incrementKeyLong
-		+
-		JSL.l UpdateKeys
-		LDA.b IndoorsFlag : BEQ + ; skip room check if outdoors
-			PHP : REP #$20 ; set 16-bit accumulator
-				LDA.b RoomIndex : CMP.w #$0087 : BNE ++ ; hera basement
-					PLP : PHY : LDY.b #$24 : JSL.l FullInventoryExternal
-					JSR CountChestKey : PLY : BRA +
-				++
-			PLP
-		+
-		JSL.l HUD_RebuildLong
-                INC.w UpdateHUD
-	PLX
+        STA.l CurrentSmallKeys ; thing we wrote over, write small key count
+        PHX
+        LDA.l StatsLocked : BNE +
+                LDA.l SmallKeyCounter : INC : STA.l SmallKeyCounter
+        +
+        JSL.l UpdateKeys
+        LDA.b IndoorsFlag : BEQ + ; skip room check if outdoors
+                PHP : REP #$20 ; set 16-bit accumulator
+                LDA.b RoomIndex : CMP.w #$0087 : BNE ++ ; hera basement
+                        PLP : PHY
+                        LDY.b #$24
+                        JSL.l AddInventory
+                        JSR CountChestKey
+                        PLY
+                        BRA +
+                ++
+                PLP
+        +
+        INC.w UpdateHUD
+        JSL.l HUD_RebuildLong
+        PLX
 RTL
 ;--------------------------------------------------------------------------------
 DecrementSmallKeys:
@@ -112,53 +116,56 @@ DecrementSmallKeys:
 	JSL.l UpdateKeys
 RTL
 ;--------------------------------------------------------------------------------
-CountChestKeyLong: ; called from ItemDowngradeFix in itemdowngrade.asm
-	JSR CountChestKey
+CountChestKeyLong:
+	JSR.w CountChestKey
 RTL
 ;--------------------------------------------------------------------------------
-CountChestKey: ; called by neighbor functions
+CountChestKey:
         PHA : PHX
-                CPY.b #$24 : BEQ +  ; small key for this dungeon - use DungeonID
-                        CPY.b #$A0 : !BLT .end ; Ignore most items
-                        CPY.b #$AE : !BGE .end ; Ignore reserved key and generic key
-                        TYA : AND.B #$0F
-                        TAX : BRA .count  ; use Key id instead of DungeonID (Keysanity)
-                +
-                LDA.w DungeonID : LSR : TAX
-                .count
-                LDA.l DungeonCollectedKeys, X : INC : STA.l DungeonCollectedKeys, X
+        LDA.l StatsLocked : BNE .done
+                CPY.b #$24 : BEQ .this_dungeon
+                        TYA
+                        AND.b #$0F : CMP.b #$02 : BCC .hc_sewers
+                                TAX
+                                LDA.l DungeonCollectedKeys,X : INC : STA.l DungeonCollectedKeys,X
+                                BRA .done
+                .this_dungeon
+                LDA.w DungeonID : CMP.b #$03 : BCC .hc_sewers
+                        LSR : TAX
+                        LDA.l DungeonCollectedKeys,X : INC : STA.l DungeonCollectedKeys,X
+                        BRA .done
 
-                CPX.b #$00 : BNE +
-                        STA.l HCCollectedKeys ; copy HC to sewers
-                +
-                CPX.b #$01 : BNE +
-                        STA.l SewerCollectedKeys ; copy sewers to HC
-                +
-        .end
+                .hc_sewers
+                LDA.l SewerCollectedKeys : INC
+                STA.l SewerCollectedKeys : STA.l HCCollectedKeys
+
+        .done
         PLX : PLA
 RTS
 ;--------------------------------------------------------------------------------
 CountBonkItem: ; called from GetBonkItem in bookofmudora.asm
-	LDA.b RoomIndex ; check room ID - only bonk keys in 2 rooms so we're just checking the lower byte
-	CMP.b #115 : BNE + ; Desert Bonk Key
-		LDA.l BonkKey_Desert : BRA ++
-	+ : CMP.b #140 : BNE + ; GTower Bonk Key
-		LDA.l BonkKey_GTower : BRA ++
-	+ LDA.b #$24 ; default to small key
-	++
-	CMP.b #$24 : BNE +
-		PHY
-			TAY : JSR CountChestKey
-		PLY
-	+
+        LDA.b RoomIndex
+        CMP.b #115 : BNE +
+                LDA.l BonkKey_Desert
+                BRA ++
+        +
+        CMP.b #140 : BNE +
+                LDA.l BonkKey_GTower : BRA ++
+        +
+        LDA.b #$24
+        ++
+        CMP.b #$24 : BNE +
+                PHY
+                TAY
+                JSR CountChestKey
+                PLY
+        +
 RTL
 ;--------------------------------------------------------------------------------
 IncrementAgahnim2Sword:
-	PHA
-		LDA.l StatsLocked : BNE +
-			JSL AddInventory_incrementBossSwordLong
-		+
-	PLA
+        PHA
+        JSL.l IncrementBossSword
+        PLA
 RTL
 ;--------------------------------------------------------------------------------
 IncrementDeathCounter:
@@ -215,12 +222,14 @@ DecrementItemCounter:
 RTL
 ;--------------------------------------------------------------------------------
 IncrementBigChestCounter:
-	JSL.l Dungeon_SaveRoomQuadrantData ; thing we wrote over
-	PHA
-		LDA.l StatsLocked : BNE +
-			%BottomHalf(BigKeysBigChests)
-		+
-	PLA
+        JSL.l Dungeon_SaveRoomQuadrantData ; thing we wrote over
+        PHA
+        LDA.l StatsLocked : BNE +
+                LDA.l BigKeysBigChests : INC : AND.b #$0F : TAX
+                LDA.l BigKeysBigChests : AND.b #$F0 : STA.l BigKeysBigChests
+                TXA : ORA.l BigKeysBigChests : STA.l BigKeysBigChests
+        +
+        PLA
 RTL
 ;--------------------------------------------------------------------------------
 IncrementDamageTakenCounter_Eight:
@@ -333,7 +342,7 @@ StatsFinalPrep:
 		LDA.l StatsLocked : BNE .ramPostOnly
 		INC : STA.l StatsLocked
 	
-		JSL.l AddInventory_incrementBossSwordLong
+		JSL.l IncrementFinalSword
 	
 		LDA.l HighestMail : INC : STA.l HighestMail ; add green mail to mail count
 		

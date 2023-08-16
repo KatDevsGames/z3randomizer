@@ -103,7 +103,7 @@ Overworld_FinishMirrorWarp:
     LDA.w #$0000 : STA.l FadeTimer : STA.l FadeDirection
 
     SEP #$20
-    JSL $00D7C8
+    JSL $80D7C8
     LDA.b #$80 : STA.b HDMAENQ
     LDX.b #$04  ; bunny theme
 
@@ -245,10 +245,10 @@ RTL
 ; 
 ; On entry, A = $8A (overworld area being loaded)
 Overworld_MosaicDarkWorldChecks:
-    CMP.b #$40 : beq .checkCrystals
-    CMP.b #$42 : beq .checkCrystals
-    CMP.b #$50 : beq .checkCrystals
-    CMP.b #$51 : bne .doFade
+    CMP.b #$40 : BEQ .checkCrystals
+    CMP.b #$42 : BEQ .checkCrystals
+    CMP.b #$50 : BEQ .checkCrystals
+    CMP.b #$51 : BNE .doFade
 
 .checkCrystals
     LDA.l CrystalsField : CMP.b #$7F : BEQ .done

@@ -64,10 +64,8 @@ NewHUD_DrawArrows:
 
 ;================================================================================
 NewHUD_DrawGoal:
-        LDA.w UpdateHUD : BEQ .no_goal
-        
         REP #$20
-
+        LDA.w UpdateHUD : BEQ .no_goal
         LDA.l GoalItemRequirement : BEQ .no_goal
 
         LDA.l GoalItemIcon : STA.w HUDGoalIndicator
@@ -172,13 +170,15 @@ NewHUD_DrawPrizeIcon:
 
 	LDA.l MapField
 	AND.l DungeonItemMasks,X
-
 	BEQ .no_prize
 
         .prize
 	TYX
 	LDA.l CrystalPendantFlags_2,X
-	AND.w #$0040
+        BIT.w #$0080
+        BNE .no_icon
+
+	BIT.w #$0040
 	BNE .crystal
 
 	LDY.w #!PTile
@@ -186,6 +186,10 @@ NewHUD_DrawPrizeIcon:
 
 .crystal
 	LDY.w #!CTile
+        BRA .draw_prize
+
+.no_icon
+        LDY.w #!BlankTile
 
 .draw_prize
 	STY.w HUDPrizeIcon
@@ -221,8 +225,6 @@ NewHUD_DrawItemCounter:
         LDA.b $06 : TAX : STX.w HUDGoalIndicator+$04
         LDA.b $07 : TAX : STX.w HUDGoalIndicator+$06
 
-
-
 ;================================================================================
 DrawMagicMeter_mp_tilemap = $0DFE0F
 NewHUD_DrawMagicMeter:
@@ -251,7 +253,6 @@ NewHUD_DrawMagicMeter:
         TDC
         .recolor
         TAX
-
         LDA.l MagicMeterColorMasks,X
 
         TYX
@@ -361,8 +362,6 @@ HUDHex2Digit:
 
         RTS
 
-;===================================================================================================
-
 HUDHex4Digit:
         JSL HexToDec
 
@@ -376,7 +375,6 @@ HUDHex4Digit:
         SEP #$20
         RTS
 
-;================================================================================
 HUDHex2Digit_Long:
         JSR HUDHex2Digit
         REP #$20
@@ -386,3 +384,115 @@ HUDHex4Digit_Long:
         JSR HUDHex4Digit
         REP #$20
 RTL
+
+;================================================================================
+UpdateHearts:
+	PHB
+	REP #$20
+	SEP #$10
+
+	LDX.b #$7E
+	PHX
+	PLB
+
+	LDA.w $7EF36C
+	LSR
+	LSR
+	LSR
+	AND.w #$1F1F
+
+
+	TAX
+	XBA
+	TAY
+
+	LDA.w #HUDTileMapBuffer+$068
+	STA.b $07
+	STA.b $09
+
+.next_filled_heart
+	CPX.b #$01
+	BMI .done_hearts
+
+        JSR.w CheckHeartPalette
+
+	CPY.b #$01
+	BPL .add_heart
+
+	INC
+	INC
+
+.add_heart
+	STA.b ($07)
+
+	DEY
+	DEX
+
+	LDA.b $07
+	INC
+	INC
+	CMP.w #HUDTileMapBuffer+$07C
+	BEQ .next_row
+
+	CMP.w #HUDTileMapBuffer+$0BC
+	BNE .fine
+
+.next_row
+	ADC.w #$002B
+
+.fine
+	STA.b $07
+
+	CPY.b #$00
+	BNE .next_filled_heart
+
+	STA.b $09
+	BRA .next_filled_heart
+
+.done_hearts
+	LDA.w $7EF36D
+	AND.w #$0007
+	BEQ .skip_partial
+
+	CMP.w #$0005
+
+        JSR.w CheckHeartPalette
+	BCS .more_than_half
+
+	INC
+
+.more_than_half
+	STA.b ($09)
+
+.skip_partial
+	SEP #$30
+
+	PLB
+	RTL
+
+CheckHeartPaletteFileSelect:
+        LDA.l HUDHeartColors_index : ASL : TAX
+        LDA.l HUDHeartColors_masks_file_select,X
+        ORA.w #$0200
+        LDX.w #$000A
+RTL
+
+CheckHeartPalette:
+        PHX
+        LDA.l HUDHeartColors_index : ASL : TAX
+        LDA.l HUDHeartColors_masks_game_hud,X
+        ORA.w #$20A0
+        PLX
+RTS
+
+ColorAnimatedHearts:
+        REP #$20
+        LDA.l HUDHeartColors_index : ASL : TAX
+        LDA.l HUDHeartColors_masks_game_hud,X
+        ORA.l HeartFramesBaseTiles,X
+        STA.b [Scrap00],Y
+        SEP #$20
+RTL
+
+HeartFramesBaseTiles:
+dw $20A3, $20A4, $20A3, $20A0

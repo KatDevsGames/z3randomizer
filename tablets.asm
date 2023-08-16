@@ -30,25 +30,21 @@ RTS
 ;--------------------------------------------------------------------------------
 SpawnTabletItem:
 	JSL.l LoadOutdoorValue
-	PHA
-	JSL.l PrepDynamicTile
+        JSL.l ResolveLootIDLong
+        PHA
+        LDA.b #$EB : STA.l MiniGameTime
+        JSL Sprite_SpawnDynamically
+        PLA
+        STA.w SpriteID,Y
+        TYX
+	JSL.l PrepDynamicTile_loot_resolved
 
-	JSL.l GetSpriteID
-
-	LDA.b #$EB
-	STA.l MiniGameTime
-	JSL Sprite_SpawnDynamically
-
-	PLA : STA.w SpriteItemType, Y ; Store item type
-	LDA.b LinkPosX   : STA.w SpritePosXLow, Y
-	LDA.b LinkPosX+1 : STA.w SpritePosXHigh, Y
-  
-	LDA.b LinkPosY   : STA.w SpritePosYLow, Y
-	LDA.b LinkPosY+1 : STA.w SpritePosYHigh, Y
-
-	LDA.b #$00 : STA.w SpriteLayer, Y
-
-	LDA.b #$7F : STA.w SpriteZCoord, Y ; spawn WAY up high
+        LDA.b LinkPosX   : STA.w SpritePosXLow, Y
+        LDA.b LinkPosX+1 : STA.w SpritePosXHigh, Y
+        LDA.b LinkPosY   : STA.w SpritePosYLow, Y
+        LDA.b LinkPosY+1 : STA.w SpritePosYHigh, Y
+        LDA.b #$00 : STA.w SpriteLayer, Y
+        LDA.b #$7F : STA.w SpriteZCoord, Y ; spawn WAY up high
 RTL
 ;--------------------------------------------------------------------------------
 MaybeUnlockTabletAnimation:
@@ -92,7 +88,7 @@ IsMedallion:
 RTL
 ;--------------------------------------------------------------------------------
 LoadNarrowObject:
-	LDA.l AddReceivedItemExpanded_wide_item_flag, X : STA.b ($92), Y ; AddReceiveItem.wide_item_flag?
+	LDA.l SpriteProperties_standing_width, X : STA.b ($92), Y ; AddReceiveItem.wide_item_flag?
 RTL
 ;--------------------------------------------------------------------------------
 CheckTabletItem:
