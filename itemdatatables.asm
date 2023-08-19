@@ -945,7 +945,7 @@ ItemReceiptGraphicsOffsets:
 	dw $0                                  ; 69 -
 	dw $0060                               ; 6A - Triforce
 	dw $11E0                               ; 6B - Power star
-	dw $0                                  ; 6C -
+	dw $0060                               ; 6C - Triforce Piece
 	dw $0                                  ; 6D - Server request item
 	dw $0                                  ; 6E - Server request item (dungeon drop)
 	dw $0                                  ; 6F -
@@ -1215,7 +1215,7 @@ StandingItemGraphicsOffsets:
 	dw $0                                  ; 69 -
 	dw $0060                               ; 6A - Triforce
 	dw $11E0                               ; 6B - Power star
-	dw $0                                  ; 6C -
+	dw $0060                               ; 6C - Triforce Piece
 	dw $0                                  ; 6D - Server request item
 	dw $0                                  ; 6E - Server request item (dungeon drop)
 	dw $0                                  ; 6F -

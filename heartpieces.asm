@@ -42,13 +42,18 @@ DrawHeartPieceGFX:
                 LDA.l SpriteProperties_standing_width,X : BNE +
                         PLX
                         LDA.w SpriteControl, X : ORA.b #$20 : STA.w SpriteControl, X
-                        BRA .draw
+                        PLA
+                        JSL.l DrawDynamicTile
+                        LDA.b Scrap00
+                        CLC : ADC.b #$04
+                        STA.b Scrap00
+                        JSL.l Sprite_DrawShadowLong
+                        BRA .done
                 +
                 PLX
-                .draw
                 PLA
                 JSL.l DrawDynamicTile
-                JSL.l Sprite_DrawShadowLong 
+                JSL.l Sprite_DrawShadowLong
                 .done
                 PLY : PLA
         .offscreen

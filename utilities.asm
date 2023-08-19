@@ -69,10 +69,6 @@ RTL
 ;-------------------------------------------------------------------------------- 20/847B
 LoadDynamicTileOAMTable:
         PHP
-        REP #$20
-        LDA.w #$0000 : STA.l SpriteOAM : STA.l SpriteOAM+2
-        LDA.w #$0200 : STA.l SpriteOAM+6
-        SEP #$20
         LDA.b #$24 : STA.l SpriteOAM+4
 
         LDA.w SpriteID,X
@@ -80,11 +76,17 @@ LoadDynamicTileOAMTable:
         STA.l SpriteOAM+5 : STA.l SpriteOAM+13
         PHX
         LDA.l SpriteProperties_standing_width,X : BEQ .narrow
+        REP #$20
+        LDA.w #$0000 : STA.l SpriteOAM : STA.l SpriteOAM+2
+        LDA.w #$0200 : STA.l SpriteOAM+6
         BRA .done
 
         .narrow
         REP #$20
-        LDA.w #$0000 : STA.l SpriteOAM+7 : STA.l SpriteOAM+14
+        LDA.w #$0004 : STA.l SpriteOAM
+        LDA.w #$0200 : STA.l SpriteOAM+6
+
+        LDA.w #$0400 : STA.l SpriteOAM+7 : STA.l SpriteOAM+14
         LDA.w #$0800 : STA.l SpriteOAM+9
         LDA.w #$3400 : STA.l SpriteOAM+11
 
