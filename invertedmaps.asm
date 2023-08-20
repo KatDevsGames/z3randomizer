@@ -783,7 +783,7 @@ dw $0000      ; 7F
 	dw !OWW_END
 
 .map1B_check_aga
-	LDA.w OverworldEventDataWRAM+$2B
+	LDA.l OverworldEventDataWRAM+$5B
 	AND.w #$0020
 	BNE ++
 
@@ -1533,6 +1533,8 @@ dw $0000      ; 7F
 	dw !OWW_END
 
 .map5B_pick_warp_tile
+        LDA.w #$3BBE
+        STA.b Scrap03
 	LDX.w #$0034
 
 	LDA.l ProgressIndicator
@@ -1542,7 +1544,8 @@ dw $0000      ; 7F
 
 	LDX.w #$0212
 
-++	STX.w $3BBE
+++      TXA
+        STA.b [Scrap03]
 
 	RTS
 

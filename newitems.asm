@@ -531,18 +531,23 @@ ItemBehavior:
         LSR
         AND.w #$000F : TAX
         ASL : CMP.w DungeonID : BEQ .same_dungeon
-                LSR : TAX
                 LDA.l DungeonKeys,X : INC : STA.l DungeonKeys,X
                 RTS
         .same_dungeon
         SEP #$20
         LDA.l CurrentSmallKeys : INC : STA.l CurrentSmallKeys
-        LSR : TAX
-        LDA.l DungeonKeys,X : INC : STA.l DungeonKeys,X ; Update menu key count too
+        LDA.l DungeonKeys,X : INC : STA.l DungeonKeys,X
+        RTS
+
+        .same_dungeon_hc
+        SEP #$20
+        LDA.l CurrentSmallKeys : INC : STA.l CurrentSmallKeys
+        LDA.l SewerKeys : INC
+        STA.l SewerKeys : STA.l HyruleCastleKeys
         RTS
 
         .hc_smallkey
-        LDA.w DungeonID : CMP.b #$03 : BCC .same_dungeon
+        LDA.w DungeonID : CMP.b #$03 : BCC .same_dungeon_hc
                 LDA.l HyruleCastleKeys : INC : STA.l HyruleCastleKeys
                 LDA.l SewerKeys : INC : STA.l SewerKeys
                 RTS
