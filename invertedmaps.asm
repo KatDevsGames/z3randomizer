@@ -1533,8 +1533,6 @@ dw $0000      ; 7F
 	dw !OWW_END
 
 .map5B_pick_warp_tile
-        LDA.w #$3BBE
-        STA.b Scrap03
 	LDX.w #$0034
 
 	LDA.l ProgressIndicator
@@ -1545,7 +1543,7 @@ dw $0000      ; 7F
 	LDX.w #$0212
 
 ++      TXA
-        STA.b [Scrap03]
+        STA.l $7E3BBE
 
 	RTS
 
