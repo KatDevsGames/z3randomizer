@@ -109,11 +109,11 @@ Overworld_LoadNewTiles:
 	!OWW_StripeRLEINC              = $8002
 	dw .stripe_rle_inc              ; 02
 
-	; dw !OWW_ArbitraryRLE
+	; dw !OWW_ArbTileCopy
 	; dw <tile>
 	; dw <pos1>, <pos2>, ... <posN>|!OWW_STOP
-	!OWW_ArbitraryRLE              = $8003
-	dw .arbitrary_rle               ; 03
+	!OWW_ArbTileCopy               = $8003
+	dw .arbitrary_tile_copy         ; 03
 
 	dw .nothing                     ; 04
 	dw .nothing                     ; 05
@@ -205,7 +205,6 @@ Overworld_LoadNewTiles:
 .dont_change_inverted
 	RTS
 
-
 ;---------------------------------------------------------------------------------------------------
 
 .get_increment
@@ -223,7 +222,8 @@ Overworld_LoadNewTiles:
 ;---------------------------------------------------------------------------------------------------
 
 .stripe
-        JSR .get_increment
+	JSR .get_increment
+
 	LDX.w $0000,Y
 
 	BRA ++ ; to increment at start of loop properly
@@ -257,7 +257,7 @@ Overworld_LoadNewTiles:
 ;---------------------------------------------------------------------------------------------------
 
 .stripe_rle_inc
-        JSR .get_increment
+	JSR .get_increment
 	JSR .get_rle_size_and_tile
 
 	LDX.w $0000,Y
@@ -276,7 +276,10 @@ Overworld_LoadNewTiles:
 
 	DEC.b OWWriteSize
 	BNE --
-	INY #2
+
+	INY
+	INY
+
 	RTS
 
 ;---------------------------------------------------------------------------------------------------
@@ -297,7 +300,7 @@ Overworld_LoadNewTiles:
 ;---------------------------------------------------------------------------------------------------
 
 .stripe_rle
-        JSR .get_increment
+	JSR .get_increment
 	JSR .get_rle_size_and_tile
 
 	LDX.w $0000,Y
@@ -314,27 +317,28 @@ Overworld_LoadNewTiles:
 
 	DEC.b OWWriteSize
 	BNE --
-        INY #2
+
+	INY
+	INY
+
 	RTS
 
 ;---------------------------------------------------------------------------------------------------
-
-.arbitrary_rle
+; Don't use SKIP with this, since that's not really meaningful anyways...
+;---------------------------------------------------------------------------------------------------
+.arbitrary_tile_copy
 	LDA.w $0000,Y
 
 --	INY
 	INY
 
 	LDX.w $0000,Y
-	BMI .last_arb_rle_maybe
+	BMI .last_arb
 
 	STA.l $7E0000,X
 	BRA --
 
-.last_arb_rle_maybe
-	CPX.w #!OWW_SKIP
-	BEQ --
-
+.last_arb
 	PHA
 
 	TXA
@@ -355,142 +359,143 @@ Overworld_LoadNewTiles:
 ;===================================================================================================
 
 OverworldMapChangePointers:
-; light world
-dw $0000      ; 00
-dw $0000      ; 01
-dw $0000      ; 02
-dw .map03     ; 03
-dw $0000      ; 04
-dw .map05     ; 05
-dw $0000      ; 06
-dw .map07     ; 07
-dw $0000      ; 08
-dw $0000      ; 09
-dw $0000      ; 0A
-dw $0000      ; 0B
-dw $0000      ; 0C
-dw $0000      ; 0D
-dw .map0E     ; 0E
-dw $0000      ; 0F
-dw .map10     ; 10
-dw $0000      ; 11
-dw $0000      ; 12
-dw $0000      ; 13
-dw .map14     ; 14
-dw $0000      ; 15
-dw $0000      ; 16
-dw $0000      ; 17
-dw $0000      ; 18
-dw $0000      ; 19
-dw $0000      ; 1A
-dw .map1B     ; 1B
-dw $0000      ; 1C
-dw $0000      ; 1D
-dw $0000      ; 1E
-dw $0000      ; 1F
-dw $0000      ; 20
-dw $0000      ; 21
-dw $0000      ; 22
-dw $0000      ; 23
-dw $0000      ; 24
-dw $0000      ; 25
-dw $0000      ; 26
-dw $0000      ; 27
-dw $0000      ; 28
-dw .map29     ; 29
-dw $0000      ; 2A
-dw $0000      ; 2B
-dw $0000      ; 2C
-dw $0000      ; 2D
-dw $0000      ; 2E
-dw $0000      ; 2F
-dw .map30     ; 30
-dw .map31     ; 31
-dw .map32     ; 32
-dw .map33     ; 33
-dw $0000      ; 34
-dw .map35     ; 35
-dw $0000      ; 36
-dw $0000      ; 37
-dw .map38     ; 38
-dw $0000      ; 39
-dw .map3A     ; 3A
-dw $0000      ; 3B
-dw .map3C     ; 3C
-dw $0000      ; 3D
-dw $0000      ; 3E
-dw $0000      ; 3F
+	; light world
+	dw $0000      ; 00
+	dw $0000      ; 01
+	dw $0000      ; 02
+	dw .map03     ; 03
+	dw $0000      ; 04
+	dw .map05     ; 05
+	dw $0000      ; 06
+	dw .map07     ; 07
+	dw $0000      ; 08
+	dw $0000      ; 09
+	dw $0000      ; 0A
+	dw $0000      ; 0B
+	dw $0000      ; 0C
+	dw $0000      ; 0D
+	dw .map0E     ; 0E
+	dw $0000      ; 0F
+	dw .map10     ; 10
+	dw $0000      ; 11
+	dw $0000      ; 12
+	dw $0000      ; 13
+	dw .map14     ; 14
+	dw $0000      ; 15
+	dw $0000      ; 16
+	dw $0000      ; 17
+	dw $0000      ; 18
+	dw $0000      ; 19
+	dw $0000      ; 1A
+	dw .map1B     ; 1B
+	dw $0000      ; 1C
+	dw $0000      ; 1D
+	dw $0000      ; 1E
+	dw $0000      ; 1F
+	dw $0000      ; 20
+	dw $0000      ; 21
+	dw $0000      ; 22
+	dw $0000      ; 23
+	dw $0000      ; 24
+	dw $0000      ; 25
+	dw $0000      ; 26
+	dw $0000      ; 27
+	dw $0000      ; 28
+	dw .map29     ; 29
+	dw $0000      ; 2A
+	dw $0000      ; 2B
+	dw $0000      ; 2C
+	dw $0000      ; 2D
+	dw $0000      ; 2E
+	dw $0000      ; 2F
+	dw .map30     ; 30
+	dw .map31     ; 31
+	dw .map32     ; 32
+	dw .map33     ; 33
+	dw $0000      ; 34
+	dw .map35     ; 35
+	dw $0000      ; 36
+	dw $0000      ; 37
+	dw .map38     ; 38
+	dw $0000      ; 39
+	dw .map3A     ; 3A
+	dw $0000      ; 3B
+	dw .map3C     ; 3C
+	dw $0000      ; 3D
+	dw $0000      ; 3E
+	dw $0000      ; 3F
 
-; dark world
-dw $0000      ; 40
-dw $0000      ; 41
-dw $0000      ; 42
-dw .map43     ; 43
-dw .map44     ; 44
-dw .map45     ; 45
-dw $0000      ; 46
-dw .map47     ; 47
-dw $0000      ; 48
-dw $0000      ; 49
-dw $0000      ; 4A
-dw $0000      ; 4B
-dw $0000      ; 4C
-dw $0000      ; 4D
-dw .map4E     ; 4E
-dw $0000      ; 4F
-dw .map50     ; 50
-dw $0000      ; 51
-dw $0000      ; 52
-dw $0000      ; 53
-dw .map54     ; 54
-dw $0000      ; 55
-dw $0000      ; 56
-dw $0000      ; 57
-dw $0000      ; 58
-dw $0000      ; 59
-dw $0000      ; 5A
-dw .map5B     ; 5B
-dw $0000      ; 5C
-dw $0000      ; 5D
-dw $0000      ; 5E
-dw $0000      ; 5F
-dw $0000      ; 60
-dw $0000      ; 61
-dw $0000      ; 62
-dw $0000      ; 63
-dw $0000      ; 64
-dw $0000      ; 65
-dw $0000      ; 66
-dw $0000      ; 67
-dw $0000      ; 68
-dw $0000      ; 69
-dw $0000      ; 6A
-dw $0000      ; 6B
-dw $0000      ; 6C
-dw $0000      ; 6D
-dw $0000      ; 6E
-dw .map6F     ; 6F
-dw .map70     ; 70
-dw $0000      ; 71
-dw $0000      ; 72
-dw .map73     ; 73
-dw $0000      ; 74
-dw .map75     ; 75
-dw $0000      ; 76
-dw $0000      ; 77
-dw .map78     ; 78
-dw $0000      ; 79
-dw $0000      ; 7A
-dw $0000      ; 7B
-dw $0000      ; 7C
-dw $0000      ; 7D
-dw $0000      ; 7E
-dw $0000      ; 7F
+	; dark world
+	dw $0000      ; 40
+	dw $0000      ; 41
+	dw $0000      ; 42
+	dw .map43     ; 43
+	dw .map44     ; 44
+	dw .map45     ; 45
+	dw $0000      ; 46
+	dw .map47     ; 47
+	dw $0000      ; 48
+	dw $0000      ; 49
+	dw $0000      ; 4A
+	dw $0000      ; 4B
+	dw $0000      ; 4C
+	dw $0000      ; 4D
+	dw .map4E     ; 4E
+	dw $0000      ; 4F
+	dw .map50     ; 50
+	dw $0000      ; 51
+	dw $0000      ; 52
+	dw $0000      ; 53
+	dw .map54     ; 54
+	dw $0000      ; 55
+	dw $0000      ; 56
+	dw $0000      ; 57
+	dw $0000      ; 58
+	dw $0000      ; 59
+	dw $0000      ; 5A
+	dw .map5B     ; 5B
+	dw $0000      ; 5C
+	dw $0000      ; 5D
+	dw $0000      ; 5E
+	dw $0000      ; 5F
+	dw $0000      ; 60
+	dw $0000      ; 61
+	dw $0000      ; 62
+	dw $0000      ; 63
+	dw $0000      ; 64
+	dw $0000      ; 65
+	dw $0000      ; 66
+	dw $0000      ; 67
+	dw $0000      ; 68
+	dw $0000      ; 69
+	dw $0000      ; 6A
+	dw $0000      ; 6B
+	dw $0000      ; 6C
+	dw $0000      ; 6D
+	dw $0000      ; 6E
+	dw .map6F     ; 6F
+	dw .map70     ; 70
+	dw $0000      ; 71
+	dw $0000      ; 72
+	dw .map73     ; 73
+	dw $0000      ; 74
+	dw .map75     ; 75
+	dw $0000      ; 76
+	dw $0000      ; 77
+	dw .map78     ; 78
+	dw $0000      ; 79
+	dw $0000      ; 7A
+	dw $0000      ; 7B
+	dw $0000      ; 7C
+	dw $0000      ; 7D
+	dw $0000      ; 7E
+	dw $0000      ; 7F
 
 ;---------------------------------------------------------------------------------------------------
 
 .map03
 	dw !OWW_InvertedOnly
+
 	; singles
 	dw $0034, $2BE0
 
@@ -498,7 +503,7 @@ dw $0000      ; 7F
 	dw $29B6 ; address
 	dw $021A, $01F3, $00A0, $0104|!OWW_STOP
 
-	dw !OWW_ArbitraryRLE
+	dw !OWW_ArbTileCopy
 	dw $00C6 ; tile
 	dw $2A34, $2A38, $2A3A|!OWW_STOP
 
@@ -508,7 +513,9 @@ dw $0000      ; 7F
 
 .map05
 	dw $0101, $2E18 ; OWG sign
+
 	dw !OWW_InvertedOnly
+
 	; singles
 	dw $0034, $21F2
 	dw $0034, $3D4A
@@ -548,23 +555,23 @@ dw $0000      ; 7F
 	dw !OWW_StripeRLEINC|!OWW_Horizontal|OWW_RLESize(2)
 	dw $01B3, $236C ; tile, start
 
-        dw !OWW_Stripe|!OWW_Horizontal
+	dw !OWW_Stripe|!OWW_Horizontal
 	dw $2970 ; address
 	dw $0139, $014B|!OWW_STOP
 
-	dw !OWW_ArbitraryRLE
+	dw !OWW_ArbTileCopy
 	dw $0130 ; tile
 	dw $21E2, $21F0, $22E2, $22F0|!OWW_STOP
 
-	dw !OWW_ArbitraryRLE
+	dw !OWW_ArbTileCopy
 	dw $0135 ; tile
 	dw $2262, $2270, $2362, $2370|!OWW_STOP
 
-	dw !OWW_ArbitraryRLE
+	dw !OWW_ArbTileCopy
 	dw $0136 ; tile
 	dw $2264, $2266, $226C, $226E|!OWW_STOP
 
-	dw !OWW_ArbitraryRLE
+	dw !OWW_ArbTileCopy
 	dw $0137 ; tile
 	dw $2268, $226A|!OWW_STOP
 
@@ -584,7 +591,7 @@ dw $0000      ; 7F
 	dw $0134, $26A4
 	dw $0034, $2826
 
-	dw !OWW_ArbitraryRLE
+	dw !OWW_ArbTileCopy
 	dw $021B ; tile
 	dw $259E, $25A2, $25A4, $261C
 	dw $2626, $269A, $26A8, $271A
@@ -632,151 +639,114 @@ dw $0000      ; 7F
 .map1B
 	dw !OWW_InvertedOnly
 
-	; TODO clean up and optimize
-	dw $0485, $2424
-	dw $0485, $2426
-	dw $0454, $24A4
-	dw $0454, $24A6
+	; singles
 	dw $0476, $2522
-	dw $0460, $2524
-	dw $0460, $2526
 	dw $04D7, $2528
-	dw $04DD, $2624
-	dw $04DE, $2626
-	dw $04E0, $26A4
-	dw $04E1, $26A6
-	dw $04E4, $2724
-	dw $04E5, $2726
-	dw $0034, $27A4
-	dw $0034, $27A6
 
-;Eye removed
-	dw $046D, $243E
-	dw $046D, $24BC
-	dw $046D, $24BE
-	dw $046D, $253E
-	dw $046D, $2440
-	dw $046D, $24C0
-	dw $046D, $24C2
-	dw $046D, $2540
+	dw !OWW_Stripe|!OWW_Vertical
+	dw $2424 ; address
+	dw $0485, $0454, $0460, !OWW_SKIP
+	dw $04DD, $04E0, $04E4, $0034|!OWW_STOP
 
-;new trees
+	dw !OWW_Stripe|!OWW_Vertical
+	dw $2426 ; address
+	dw $0485, $0454, $0460, !OWW_SKIP
+	dw $04DE, $04E1, $04E5, $0034|!OWW_STOP
+
+
+	; Eye removed
+	dw !OWW_ArbTileCopy
+	dw $046D ; tile
+	dw $243E, $24BC, $24BE, $253E
+	dw $2440, $24C0, $24C2, $2540|!OWW_STOP
+
+	; new trees
+
+	dw !OWW_Stripe|!OWW_Horizontal
+	dw $2D2C ; address
+	dw $00B0, $0014, $0015, $00A8
+	dw $04BB, $0034|!OWW_STOP
+
+	dw !OWW_Stripe|!OWW_Horizontal
+	dw $2DAC ; address
+	dw $0089, $001C, $001D, $0076
+	dw $04BA, $0034|!OWW_STOP
+
+	dw !OWW_Stripe|!OWW_Horizontal
+	dw $2E2C ; address
+	dw $00F1, $004E, $004F, $00D9
+	dw $04BB|!OWW_STOP
+
+	dw !OWW_ArbTileCopy
+	dw $0034 ; tile
+	dw $28AC, $28AE
+	dw $28B0, $28CE, $28D0, $28D2
+	dw $2C2C, $2C2E, $2CB6, $2EB6
+	dw $2F30, $2F36, $2FAA, $2FB0
+	dw $2FB4, $2FB6, $3028, $302C|!OWW_STOP
+
+	; TODO still need to optimize this last section ugh
 	dw $0035, $2C28
 	dw $0035, $2FAE
-	dw $0034, $2C2C
-	dw $0034, $2C2E
-	dw $0034, $2CB6
-	dw $0034, $2D36
-	dw $0034, $2DB6
-	dw $0034, $2EB6
-	dw $0034, $2F30
-	dw $0034, $2F36
-	dw $0034, $2FAA
-	dw $0034, $2FB0
-	dw $0034, $2FB4
-	dw $0034, $2FB6
-	dw $00E2, $2C36
-	dw $00E2, $2FA8
-	dw $00AE, $2CAC
-	dw $00AF, $2CAE
+	dw $0035, $302A
+	dw $0035, $3032
 	dw $007E, $2CB0
 	dw $007F, $2CB2
-	dw $04BA, $2CB4
-	dw $04BA, $2DB4
-	dw $04BA, $2EB4
-	dw $00B0, $2D2C
-	dw $0014, $2D2E
-	dw $0015, $2D30
-	dw $00A8, $2D32
-	dw $04BB, $2D34
-	dw $04BB, $2E34
-	dw $04BB, $2F34
-	dw $0089, $2DAC
-	dw $001C, $2DAE
-	dw $001D, $2DB0
-	dw $0076, $2DB2
-	dw $00F1, $2E2C
-	dw $004E, $2E2E
-	dw $004F, $2E30
-	dw $00D9, $2E32
+	dw $0095, $2EB2
 	dw $009A, $2EAC
 	dw $009B, $2EAE
 	dw $009C, $2EB0
-	dw $0095, $2EB2
-
-	dw $0034, $3028
-	dw $0034, $302C
-	dw $0035, $302A
-	dw $0035, $3032
+	dw $00AE, $2CAC
+	dw $00AF, $2CAE
 	dw $00DA, $302E
+	dw $00E2, $2C36
+	dw $00E2, $2FA8
 	dw $00E2, $3030
-
-
-
-	dw $0485, $2424
-	dw $0485, $2426
-	dw $0454, $24A4
-	dw $0454, $24A6
-	dw $0476, $2522
-	dw $0460, $2524
-	dw $0460, $2526
-	dw $04D7, $2528
-	dw $04DD, $2624
-	dw $04DE, $2626
-	dw $04E0, $26A4
-	dw $04E1, $26A6
-	dw $04E4, $2724
-	dw $04E5, $2726
-	dw $0034, $27A4
-	dw $0034, $27A6
-
-	dw $0486, $26B0
-	dw $0487, $26B2
-	dw $0454, $272C
-	dw $0454, $272E
-	dw $048E, $2730
-	dw $048F, $2732
-	dw $04CA, $27AC
-	dw $045E, $27AE
-	dw $0494, $27B0
-	dw $0495, $27B2
-	dw $049E, $27B4
-	dw $0499, $282C
+	dw $0451, $282E
 	dw $0451, $2830
-	dw $0034, $28AC
-	dw $0034, $28AE
-	dw $0034, $28B0
-	dw $0454, $274E
-	dw $0454, $2750
-	dw $0608, $2752
-	dw $0459, $27CE
-	dw $0459, $27D0
-	dw $045E, $27D2
 	dw $0451, $284E
 	dw $0451, $2850
 	dw $0451, $2852
-	dw $0451, $282E
-	dw $0034, $28CE
-	dw $0034, $28D0
-	dw $0034, $28D2
+	dw $0454, $272C
+	dw $0454, $272E
+	dw $0454, $274E
+	dw $0454, $2750
+	dw $0459, $27CE
+	dw $0459, $27D0
+	dw $045E, $27AE
+	dw $045E, $27D2
+	dw $0476, $2522
+	dw $0486, $26B0
+	dw $0487, $26B2
+	dw $048E, $2730
+	dw $048F, $2732
+	dw $0494, $27B0
+	dw $0495, $27B2
+	dw $0499, $282C
+	dw $049E, $27B4
+	dw $04BA, $2CB4
+	dw $04BA, $2EB4
+	dw $04BB, $2F34
+	dw $04CA, $27AC
+	dw $04D7, $2528
+	dw $0608, $2752
 
 	dw !OWW_CustomCommand, .map1B_check_aga
 
 	dw $046D, $243E
 	dw $0E39, $2440
-	dw $0E3A, $24BC
-	dw $0E3B, $24BE
-	dw $0E3C, $24C0
-	dw $0E3D, $24C2
-	dw $0E3E, $253C
-	dw $0E3F, $253E
-	dw $0E40, $2540
-	dw $0E41, $2542
+
+	dw !OWW_StripeRLEINC|!OWW_Horizontal|OWW_RLESize(4)
+	dw $0E3A, $24BC ; tile, start
+
+	dw !OWW_StripeRLEINC|!OWW_Horizontal|OWW_RLESize(4)
+	dw $0E3E, $253C ; tile, start
+
 	dw $0490, $25BE
 	dw $0491, $25C0
 
 .map1B_no_hole
-; add sign for Tower Entry
+	; add sign for tower entry
 	dw $0101, $222C
 	dw $0101, $2252
 
@@ -799,7 +769,7 @@ dw $0000      ; 7F
 	; singles
 	dw $0036, $2386
 
-	dw !OWW_ArbitraryRLE
+	dw !OWW_ArbTileCopy
 	dw $0034 ; tile
 	dw $2288, $2308, $2388, $2408
 	dw $2488, $248A|!OWW_STOP
@@ -809,198 +779,198 @@ dw $0000      ; 7F
 ;---------------------------------------------------------------------------------------------------
 .map30
 	dw !OWW_InvertedOnly
-        
-        dw $0178, $224E
-        dw $00D3, $22E2
-        dw $0302, $22E4
-        dw $00AA, $2368
-        dw $00AB, $236C
-        dw $01C2, $245C
-        dw $015C, $23E0
-        dw $0218, $245E
-        dw $0162, $2460
-        dw $0105, $255A
-        dw $01D4, $24DC
-        dw $0219, $24DE
-        dw $0171, $25DE
-        dw $0166, $255E
-        dw $0766, $2560
-        dw $06E1, $27D6
-        dw $00CF, $27DA
-        dw $0034, $3D94
 
-	dw !OWW_ArbitraryRLE
-        dw $017E
+	dw $0178, $224E
+	dw $00D3, $22E2
+	dw $0302, $22E4
+	dw $00AA, $2368
+	dw $00AB, $236C
+	dw $01C2, $245C
+	dw $015C, $23E0
+	dw $0218, $245E
+	dw $0162, $2460
+	dw $0105, $255A
+	dw $01D4, $24DC
+	dw $0219, $24DE
+	dw $0171, $25DE
+	dw $0166, $255E
+	dw $0766, $2560
+	dw $06E1, $27D6
+	dw $00CF, $27DA
+	dw $0034, $3D94
+
+	dw !OWW_ArbTileCopy
+	dw $017E
 	dw $2050, $20CE|!OWW_STOP
 
-        dw !OWW_StripeRLE|!OWW_Horizontal|OWW_RLESize(7)
+	dw !OWW_StripeRLE|!OWW_Horizontal|OWW_RLESize(7)
 	dw $00D1, $2052
 
-        dw !OWW_StripeRLE|!OWW_Horizontal|OWW_RLESize(6)
+	dw !OWW_StripeRLE|!OWW_Horizontal|OWW_RLESize(6)
 	dw $00D1, $21E6
 
-        dw !OWW_ArbitraryRLE
-        dw $00D2
+	dw !OWW_ArbTileCopy
+	dw $00D2
 	dw $2060, $20E2, $2164|!OWW_STOP
 
-        dw !OWW_ArbitraryRLE
-        dw $0183
+	dw !OWW_ArbTileCopy
+	dw $0183
 	dw $20D0, $214E|!OWW_STOP
 
-        dw !OWW_StripeRLE|!OWW_Horizontal|OWW_RLESize(7)
+	dw !OWW_StripeRLE|!OWW_Horizontal|OWW_RLESize(7)
 	dw $00C9, $20D2
 
-        dw !OWW_StripeRLE|!OWW_Horizontal|OWW_RLESize(7)
+	dw !OWW_StripeRLE|!OWW_Horizontal|OWW_RLESize(7)
 	dw $00C9, $2152
 
-        dw !OWW_StripeRLE|!OWW_Horizontal|OWW_RLESize(6)
+	dw !OWW_StripeRLE|!OWW_Horizontal|OWW_RLESize(6)
 	dw $00C9, $2266
-        dw $00C9, $22CC
+	dw $00C9, $22CC
 
-        dw !OWW_ArbitraryRLE
-        dw $00D0
+	dw !OWW_ArbTileCopy
+	dw $00D0
 	dw $20E0, $2162, $21E4|!OWW_STOP
 
-        dw !OWW_StripeRLE|!OWW_Vertical|OWW_RLESize(3)
+	dw !OWW_StripeRLE|!OWW_Vertical|OWW_RLESize(3)
 	dw $0153, $2150
 
-        dw !OWW_ArbitraryRLE
-        dw $0153
+	dw !OWW_ArbTileCopy
+	dw $0153
 	dw $21CE, $22CE|!OWW_STOP
 
-        dw !OWW_ArbitraryRLE
-        dw $00C8
+	dw !OWW_ArbTileCopy
+	dw $00C8
 	dw $2160, $21E2, $2264, $28DA, $295C|!OWW_STOP
 
-        dw !OWW_ArbitraryRLE
-        dw $00CA
+	dw !OWW_ArbTileCopy
+	dw $00CA
 	dw $21E0, $2262, $285A, $28DC|!OWW_STOP
 
-        dw !OWW_StripeRLE|!OWW_Horizontal|OWW_RLESize(7)
+	dw !OWW_StripeRLE|!OWW_Horizontal|OWW_RLESize(7)
 	dw $00DC, $21D2
-        dw $00DC, $224C
+	dw $00DC, $224C
 
-        dw !OWW_StripeRLE|!OWW_Horizontal|OWW_RLESize(2)
+	dw !OWW_StripeRLE|!OWW_Horizontal|OWW_RLESize(2)
 	dw $00E3, $2252
 
-        dw !OWW_ArbitraryRLE
-        dw $0186
+	dw !OWW_ArbTileCopy
+	dw $0186
 	dw $22D0, $234E|!OWW_STOP
 
-        dw !OWW_StripeRLE|!OWW_Vertical|OWW_RLESize(4)
+	dw !OWW_StripeRLE|!OWW_Vertical|OWW_RLESize(4)
 	dw $0034, $22D2
 
-        dw !OWW_StripeRLE|!OWW_Vertical|OWW_RLESize(7)
+	dw !OWW_StripeRLE|!OWW_Vertical|OWW_RLESize(7)
 	dw $0034, $22D4
 
-        dw !OWW_StripeRLE|!OWW_Vertical|OWW_RLESize(7)
+	dw !OWW_StripeRLE|!OWW_Vertical|OWW_RLESize(7)
 	dw $0034, $22D6
 
-        dw !OWW_StripeRLE|!OWW_Vertical|OWW_RLESize(2)
+	dw !OWW_StripeRLE|!OWW_Vertical|OWW_RLESize(2)
 	dw $0034, $2350
 
-        dw !OWW_ArbitraryRLE
-        dw $0034
+	dw !OWW_ArbTileCopy
+	dw $0034
 	dw $2458, $2656|!OWW_STOP
 
-        dw !OWW_StripeRLE|!OWW_Horizontal|OWW_RLESize(6)
+	dw !OWW_StripeRLE|!OWW_Horizontal|OWW_RLESize(6)
 	dw $00CC, $22E6
-        dw $00CC, $234C
+	dw $00CC, $234C
 
-        dw !OWW_StripeRLE|!OWW_Vertical|OWW_RLESize(2)
+	dw !OWW_StripeRLE|!OWW_Vertical|OWW_RLESize(2)
 	dw $00CE, $2362
 
-        dw !OWW_StripeRLE|!OWW_Vertical|OWW_RLESize(4)
+	dw !OWW_StripeRLE|!OWW_Vertical|OWW_RLESize(4)
 	dw $00CE, $25D8
 
-        dw !OWW_StripeRLE|!OWW_Vertical|OWW_RLESize(2)
+	dw !OWW_StripeRLE|!OWW_Vertical|OWW_RLESize(2)
 	dw $00C5, $2364
 
-        dw !OWW_StripeRLE|!OWW_Vertical|OWW_RLESize(4)
+	dw !OWW_StripeRLE|!OWW_Vertical|OWW_RLESize(4)
 	dw $00C5, $25DC
 
-        dw !OWW_StripeRLE|!OWW_Vertical|OWW_RLESize(4)
+	dw !OWW_StripeRLE|!OWW_Vertical|OWW_RLESize(4)
 	dw $06AB, $2366
 
-        dw !OWW_ArbitraryRLE
-        dw $06AB
+	dw !OWW_ArbTileCopy
+	dw $06AB
 	dw $24E4, $2760|!OWW_STOP
 
-        dw !OWW_ArbitraryRLE
-        dw $0384
+	dw !OWW_ArbTileCopy
+	dw $0384
 	dw $236A, $236E, $23EC, $246A|!OWW_STOP
 
-        dw !OWW_StripeRLE|!OWW_Horizontal|OWW_RLESize(4)
+	dw !OWW_StripeRLE|!OWW_Horizontal|OWW_RLESize(4)
 	dw $0384, $24E8
 
-        dw !OWW_ArbitraryRLE
-        dw $0759
+	dw !OWW_ArbTileCopy
+	dw $0759
 	dw $23C8, $244A, $24CC, $254E, $26D0, $2752, $27D4|!OWW_STOP
 
-        dw !OWW_ArbitraryRLE
-        dw $0757
+	dw !OWW_ArbTileCopy
+	dw $0757
 	dw $23CA, $244C, $24CE, $2550, $26D2, $2754|!OWW_STOP
 
-        dw !OWW_ArbitraryRLE
-        dw $01FF
+	dw !OWW_ArbTileCopy
+	dw $01FF
 	dw $23CC, $244E, $24D0, $2652, $26D4, $2756|!OWW_STOP
 
-        dw !OWW_ArbitraryRLE
-        dw $017C
+	dw !OWW_ArbTileCopy
+	dw $017C
 	dw $23CE, $2450, $24D2, $2654, $26D6|!OWW_STOP
 
-        dw !OWW_ArbitraryRLE
-        dw $0100
+	dw !OWW_ArbTileCopy
+	dw $0100
 	dw $245A, $24D8|!OWW_STOP
 
-        dw !OWW_ArbitraryRLE
+	dw !OWW_ArbTileCopy
 	dw $0104
-        dw $24DA, $2558|!OWW_STOP
+	dw $24DA, $2558|!OWW_STOP
 
-        dw !OWW_ArbitraryRLE
+	dw !OWW_ArbTileCopy
 	dw $0106
-        dw $2462, $24E0, $255C|!OWW_STOP
+	dw $2462, $24E0, $255C|!OWW_STOP
 
-        dw !OWW_ArbitraryRLE
+	dw !OWW_ArbTileCopy
 	dw $0107
-        dw $2464, $24E2|!OWW_STOP
+	dw $2464, $24E2|!OWW_STOP
 
-        dw !OWW_StripeRLE|!OWW_Vertical|OWW_RLESize(2)
+	dw !OWW_StripeRLE|!OWW_Vertical|OWW_RLESize(2)
 	dw $0179, $2552
 
-        dw !OWW_StripeRLE|!OWW_Horizontal|OWW_RLESize(8)
+	dw !OWW_StripeRLE|!OWW_Horizontal|OWW_RLESize(8)
 	dw $06B4, $2562
 
-        dw !OWW_StripeRLE|!OWW_Vertical|OWW_RLESize(2)
+	dw !OWW_StripeRLE|!OWW_Vertical|OWW_RLESize(2)
 	dw $06E5, $25D0
 
-        dw !OWW_StripeRLE|!OWW_Vertical|OWW_RLESize(4)
+	dw !OWW_StripeRLE|!OWW_Vertical|OWW_RLESize(4)
 	dw $00C4, $25DA
 
-        dw !OWW_StripeRLE|!OWW_Horizontal|OWW_RLESize(7)
+	dw !OWW_StripeRLE|!OWW_Horizontal|OWW_RLESize(7)
 	dw $0165, $25E4
 
-        dw !OWW_StripeRLE|!OWW_Vertical|OWW_RLESize(2)
+	dw !OWW_StripeRLE|!OWW_Vertical|OWW_RLESize(2)
 	dw $06E4, $27D2
 
-        dw !OWW_StripeRLE|!OWW_Vertical|OWW_RLESize(2)
+	dw !OWW_StripeRLE|!OWW_Vertical|OWW_RLESize(2)
 	dw $06E4, $2854
 
-        dw !OWW_StripeRLE|!OWW_Vertical|OWW_RLESize(3)
+	dw !OWW_StripeRLE|!OWW_Vertical|OWW_RLESize(3)
 	dw $06E4, $2856
 
-        dw !OWW_StripeRLE|!OWW_Vertical|OWW_RLESize(2)
+	dw !OWW_StripeRLE|!OWW_Vertical|OWW_RLESize(2)
 	dw $06E4, $2958
 	dw $06E4, $29DA
 
-        dw !OWW_StripeRLE|!OWW_Vertical|OWW_RLESize(2)
+	dw !OWW_StripeRLE|!OWW_Vertical|OWW_RLESize(2)
 	dw $02FD, $27D8
 
-        dw !OWW_ArbitraryRLE
+	dw !OWW_ArbTileCopy
 	dw $06E7
-        dw $28D8, $295A, $29DC|!OWW_STOP
+	dw $28D8, $295A, $29DC|!OWW_STOP
 
-        dw !OWW_END
+	dw !OWW_END
 ;---------------------------------------------------------------------------------------------------
 
 .map31
@@ -1071,24 +1041,24 @@ dw $0000      ; 7F
 .map3C
 	dw !OWW_InvertedOnly
 
-	dw !OWW_ArbitraryRLE
+	dw !OWW_ArbTileCopy
 	dw $02E5
 	dw $27AE, $282C, $282E, $2832
 	dw $28AC, $28AE, $2928, $292C
 	dw $29A8, $29B0, $2A28, $2A30
 	dw $2AAC, $2AB2|!OWW_STOP
 
-	dw !OWW_ArbitraryRLE
+	dw !OWW_ArbTileCopy
 	dw $078A
 	dw $28AA, $28B0, $2AAA, $2B2A
 	dw $2B30, $2BAE|!OWW_STOP
 
-	dw !OWW_ArbitraryRLE
+	dw !OWW_ArbTileCopy
 	dw $02EB
 	dw $28B4, $2930, $29AE, $2A2C
 	dw $2A32, $2AAE|!OWW_STOP
 
-	dw !OWW_ArbitraryRLE
+	dw !OWW_ArbTileCopy
 	dw $02EC
 	dw $2934, $2B28, $2B2C, $2B2E
 	dw $2B32|!OWW_STOP
@@ -1118,7 +1088,7 @@ dw $0000      ; 7F
 	dw !OWW_StripeRLE|!OWW_Vertical|OWW_RLESize(5)
 	dw $021C, $260A
 
-	dw !OWW_ArbitraryRLE
+	dw !OWW_ArbTileCopy
 	dw $0034
 	dw $270E, $278E, $2790, $2918, $291A, $2998, $299A, $291C, $291E, $2920|!OWW_STOP
 
@@ -1131,7 +1101,6 @@ dw $0000      ; 7F
 	dw !OWW_Stripe|!OWW_Horizontal
 	dw $288C
 	dw $01FA, $0034, $00DA|!OWW_STOP
-
 
 	dw !OWW_Stripe|!OWW_Horizontal
 	dw $290C
@@ -1154,115 +1123,84 @@ dw $0000      ; 7F
 
 	dw $0186, $2A04
 
-	; a couple of these will be over written in a second
+	; a couple of these will be overwritten in a second
 	dw !OWW_StripeRLE|!OWW_Horizontal|OWW_RLESize(13)
 	dw $0034, $2A06
 
-	; leave these after the above
-	dw $0071, $2A0E
-	dw $0071, $2A1A
-
-	; a couple of these will be over written in a second
 	dw !OWW_StripeRLE|!OWW_Horizontal|OWW_RLESize(13)
 	dw $0034, $2A84
 
 	; leave these after the above
+	dw $0071, $2A0E
+	dw $0071, $2A1A
 	dw $0035, $2A8C
 
-	; TODO clean up and optimize
-	dw $015C, $2A20
+	dw !OWW_StripeRLE|!OWW_Horizontal|OWW_RLESize(5)
+	dw $0034, $2B84
+
+	dw !OWW_StripeRLE|!OWW_Horizontal|OWW_RLESize(6)
+	dw $0034, $2C86
+
+	dw !OWW_ArbTileCopy
+	dw $0034 ; tile
+	dw $2B06, $2B0A, $2B0E, $2B12
+	dw $2B1A, $2B92, $2B94
+	dw $2B98, $2B9A, $2C04, $2C08
+	dw $2C0A, $2C0E, $2C12, $2C14
+	dw $2C18, $2C98
+	dw $2D0A, $2D0C, $2D10, $2D14
+	dw $2D16, $2D8A, $2D8C, $2D8E
+	dw $2D94|!OWW_STOP
+
+	dw !OWW_ArbTileCopy
+	dw $0035 ; tile
+	dw $2B08, $2C06, $2D0E, $2D90|!OWW_STOP
+
 	dw $0104, $2A22
 	dw $01D4, $2A24
-	dw $016A, $2A82
-	dw $015C, $2A9E
-	dw $0162, $2AA0
-	dw $016A, $2B02
-	dw $00E2, $2B04
-	dw $0034, $2B06
-	dw $0035, $2B08
-	dw $0034, $2B0A
-	dw $00E2, $2B0C
-	dw $0034, $2B0E
-	dw $00E2, $2B10
-	dw $0034, $2B12
-	dw $00DA, $2B14
-	dw $00DA, $2B16
-	dw $00DA, $2B18
-	dw $0034, $2B1A
-	dw $015C, $2B1C
-	dw $0162, $2B1E
-	dw $016A, $2B82
-	dw $0034, $2B84
-	dw $0034, $2B86
-	dw $0034, $2B88
-	dw $0034, $2B8A
-	dw $00E2, $2B8C
-	dw $0034, $2B8E
-	dw $00E2, $2B90
-	dw $0034, $2B92
-	dw $0034, $2B94
-	dw $00DA, $2B96
-	dw $0034, $2B98
-	dw $0034, $2B9A
-	dw $0162, $2B9C
-	dw $016A, $2C02
-	dw $0034, $2C04
-	dw $0035, $2C06
-	dw $0034, $2C08
-	dw $0034, $2C0A
-	dw $00E2, $2C0C
-	dw $0034, $2C0E
-	dw $00E2, $2C10
-	dw $0034, $2C12
-	dw $0034, $2C14
-	dw $00DA, $2C16
-	dw $0034, $2C18
 	dw $00F8, $2C1A
 	dw $00CE, $2C1C
-	dw $016A, $2C82
-	dw $0160, $2C84
-	dw $0034, $2C86
-	dw $0034, $2C88
-	dw $0034, $2C8A
 	dw $0071, $2C8C
-	dw $00E2, $2C8E
-	dw $0034, $2C90
-	dw $0034, $2C92
-	dw $0034, $2C94
-	dw $00DA, $2C96
-	dw $0034, $2C98
-	dw $015C, $2C9A
 	dw $00CE, $2C9C
 	dw $0167, $2D04
-	dw $0160, $2D06
-	dw $00DA, $2D08
-	dw $0034, $2D0A
-	dw $0034, $2D0C
-	dw $0035, $2D0E
-	dw $0034, $2D10
 	dw $0036, $2D12
-	dw $0034, $2D14
-	dw $0034, $2D16
-	dw $015C, $2D18
-	dw $0162, $2D1A
 	dw $0167, $2D86
-	dw $0160, $2D88
-	dw $0034, $2D8A
-	dw $0034, $2D8C
-	dw $0034, $2D8E
-	dw $0035, $2D90
-	dw $00DA, $2D92
-	dw $0034, $2D94
-	dw $015C, $2D96
-	dw $0162, $2D98
 	dw $0172, $2E08
-	dw $015E, $2E0A
-	dw $015E, $2E0C
-	dw $015E, $2E0E
-	dw $015E, $2E10
-	dw $015E, $2E12
-	dw $015E, $2E14
 	dw $0174, $2E16
+
+	dw !OWW_ArbTileCopy
+	dw $00DA ; tile
+	dw $2B14, $2B16, $2B18, $2B96
+	dw $2C16, $2C96, $2D08, $2D92|!OWW_STOP
+
+	dw !OWW_ArbTileCopy
+	dw $00E2 ; tile
+	dw $2B04, $2B0C, $2B10, $2B8C, $2B90
+	dw $2C0C, $2C10, $2C8E|!OWW_STOP
+
+	dw !OWW_ArbTileCopy
+	dw $015C ; tile
+	dw $2A20, $2A9E, $2B1C, $2C9A, $2D18
+	dw $2D96|!OWW_STOP
+
+	dw !OWW_ArbTileCopy
+	dw $015E ; tile
+	dw $2E0A, $2E0C, $2E0E, $2E10
+	dw $2E12, $2E14|!OWW_STOP
+
+	dw !OWW_ArbTileCopy
+	dw $0160 ; tile
+	dw $2C84, $2D06, $2D88|!OWW_STOP
+
+	dw !OWW_ArbTileCopy
+	dw $0162 ; tile
+	dw $2AA0, $2B1E, $2B9C, $2D1A
+	dw $2D98|!OWW_STOP
+
+	dw !OWW_ArbTileCopy
+	dw $016A ; tile
+	dw $2A82, $2B02, $2B82, $2C02
+	dw $2C82|!OWW_STOP
 
 	dw !OWW_END
 
@@ -1272,6 +1210,7 @@ dw $0000      ; 7F
 	dw !OWW_InvertedOnly
 
 	dw $0034, $22A8
+
 	dw !OWW_END
 
 ;---------------------------------------------------------------------------------------------------
@@ -1323,33 +1262,33 @@ dw $0000      ; 7F
 ;---------------------------------------------------------------------------------------------------
 
 .map43
-        dw !OWW_SkipIfInverted, .map43_inverted
+	dw !OWW_SkipIfInverted, .map43_inverted
 	dw $0101, $2550 ; GT sign
 
-        .map43_inverted
-        dw !OWW_InvertedOnly
+	.map43_inverted
+	dw !OWW_InvertedOnly
 
-        dw $0212, $2BE0
+	dw $0212, $2BE0
 	
-        dw !OWW_StripeRLE|!OWW_Vertical|OWW_RLESize(5)
+	dw !OWW_StripeRLE|!OWW_Vertical|OWW_RLESize(5)
 	dw $0E96, $235E
 
-        dw !OWW_StripeRLE|!OWW_Vertical|OWW_RLESize(5)
+	dw !OWW_StripeRLE|!OWW_Vertical|OWW_RLESize(5)
 	dw $0E97, $2360
 
-        dw !OWW_StripeRLEINC|!OWW_Horizontal|OWW_RLESize(2)
+	dw !OWW_StripeRLEINC|!OWW_Horizontal|OWW_RLESize(2)
 	dw $0E94, $25DE ; tile, start
 
-        dw !OWW_StripeRLEINC|!OWW_Horizontal|OWW_RLESize(2)
+	dw !OWW_StripeRLEINC|!OWW_Horizontal|OWW_RLESize(2)
 	dw $0180, $275E
 
-        dw !OWW_StripeRLE|!OWW_Vertical|OWW_RLESize(2)
+	dw !OWW_StripeRLE|!OWW_Vertical|OWW_RLESize(2)
 	dw $0184, $27DE
 
-        dw !OWW_StripeRLE|!OWW_Vertical|OWW_RLESize(2)
+	dw !OWW_StripeRLE|!OWW_Vertical|OWW_RLESize(2)
 	dw $0185, $27E0
 
-        dw !OWW_END
+	dw !OWW_END
 
 ;---------------------------------------------------------------------------------------------------
 
@@ -1379,9 +1318,11 @@ dw $0000      ; 7F
 ;---------------------------------------------------------------------------------------------------
 .map45
 	dw !OWW_InvertedOnly
-        dw $0239, $3D4A
+
+	dw $0239, $3D4A
 
 	dw !OWW_END
+
 ;---------------------------------------------------------------------------------------------------
 
 .map47
@@ -1463,14 +1404,14 @@ dw $0000      ; 7F
 	dw $03A2, $0232, $0235, $046A
 	dw $0333, $0333, $0333|!OWW_STOP
 
-	dw !OWW_ArbitraryRLE
+	dw !OWW_ArbTileCopy
 	dw $0034 ; tile
 	dw $3BB6, $3BBA, $3BBC, $3C3A
 	dw $3C3C, $3C3E|!OWW_STOP
 
 
 	; pegs
-	dw !OWW_ArbitraryRLE
+	dw !OWW_ArbTileCopy
 	dw $0034 ; tile
 	dw $321C, $329C, $32A0|!OWW_STOP
 
@@ -1487,7 +1428,7 @@ dw $0000      ; 7F
 	dw $00F2, $3BB8
 	dw $0108, $3C38
 
-	dw !OWW_ArbitraryRLE
+	dw !OWW_ArbTileCopy
 	dw $021B ; tile
 	dw $3218, $3222, $3298, $32A2
 	dw $331A, $331C, $331E, $3320|!OWW_STOP
@@ -1533,17 +1474,16 @@ dw $0000      ; 7F
 	dw !OWW_END
 
 .map5B_pick_warp_tile
-	LDX.w #$0034
-
 	LDA.l ProgressIndicator
 	AND.w #$00FF
 	CMP.w #$0003
-	BNE ++
 
-	LDX.w #$0212
+	LDA.w #$0034
+	BCC ++
 
-++      TXA
-        STA.l $7E3BBE
+	LDA.w #$0212
+
+++	STA.l $7E3BBE
 
 	RTS
 
@@ -1557,12 +1497,14 @@ dw $0000      ; 7F
 	dw !OWW_END
 
 ;---------------------------------------------------------------------------------------------------
+
 .map70
 	dw !OWW_InvertedOnly
 
-        dw $0239, $3D94
+	dw $0239, $3D94
 
 	dw !OWW_END
+
 ;---------------------------------------------------------------------------------------------------
 
 .map73
@@ -1600,7 +1542,7 @@ dw $0000      ; 7F
 	dw $30DA ; start
 	dw $0BAA, $0BC8, $0BCD|!OWW_STOP
 
-	dw !OWW_ArbitraryRLE
+	dw !OWW_ArbTileCopy
 	dw $0BA3 ; tile
 	dw $2F52, $2FCE, $2FD0|!OWW_STOP
 
