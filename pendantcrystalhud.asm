@@ -115,14 +115,14 @@ CheckCloseItemMenu:
 RTL
 ;================================================================================
 ShowDungeonItems:
-        REP #$30
 	LDA.w DungeonID-1 : BMI .no_dungeon
 	        LDA.l HudFlag : AND.w #$0040 : BEQ +
                         .no_dungeon
                         LDA.w #$0000
                         RTL
                 +
-	        LDA.w IndoorsFlag
+	        LDA.w DungeonID 
+                REP #$02
         .done
 RTL
 ;--------------------------------------------------------------------------------
