@@ -429,7 +429,7 @@ ItemBehavior:
                         +
                 ++
         LDA.l ArrowMode : BEQ +
-                LDA.b #$01 : STA.l CurrentArrows
+                LDA.b #$01 : STA.l ArrowsFiller
         +
         RTS
 

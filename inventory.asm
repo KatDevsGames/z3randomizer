@@ -270,8 +270,8 @@ IncrementByOne:
         TYA : ASL : TAX
         LDA.w InventoryTable_stat,X : BEQ .skip
                 STA.b Scrap0B
-                SEP #$20
-                LDA.b #$01 : ADC.b [Scrap0B] : STA.b [Scrap0B]
+                SEP #$21
+                LDA.b #$00 : ADC.b [Scrap0B] : STA.b [Scrap0B]
         .skip
         SEP #$20
 RTS
