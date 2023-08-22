@@ -255,7 +255,8 @@ MapOverlay: skip 2              ; Used to reveal dungeon prizes on the map in mo
                                 ;  | m = Misery Mire   | d = Palace of Darkness | s = Swamp Palace
                                 ;  | a = Aga Tower     | t = Desert Palace      | e = Eastern Palace
                                 ; /  h = Hyrule Castle | s = Sewer Passage
-HudFlag:                        ;
+HudFlag:                        ; - h c - - - - -
+                                ; c = show maps and compasses | h = show heart pieces
 IgnoreFaeries:                  ;
 HasGroveItem:                   ;
 GeneralFlags: skip 1            ; - - h - - i - g (bitfield)

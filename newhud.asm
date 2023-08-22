@@ -494,9 +494,11 @@ CheckHeartPalette:
 RTS
 
 ColorAnimatedHearts:
+        PHX
         REP #$20
         LDA.l HUDHeartColors_index : ASL : TAX
         LDA.l HUDHeartColors_masks_game_hud,X
+        PLX
         ORA.l HeartFramesBaseTiles,X
         STA.b [Scrap00],Y
         SEP #$20
