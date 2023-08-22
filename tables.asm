@@ -132,21 +132,7 @@ org $B0803D ; PC 0x18003D
 PersistentFloodgate:
 db $00 ; #$00 = Off (default) - #$01 = On
 ;--------------------------------------------------------------------------------
-org $B0803E ; PC 0x18003E
-InvincibleGanon:
-db $00
-; #$00 = Off (default)
-; #$01 = On
-; #$02 = Require All Dungeons
-; #$03 = Require "NumberOfCrystalsRequiredForGanon" Crystals and Aga2
-; #$04 = Require "NumberOfCrystalsRequiredForGanon" Crystals
-; #$05 = Require "GoalItemRequirement" Goal Items
-; #$06 = Light Speed
-; #$07 = Require All Crystals and Crystal Bosses
-; #$08 = Require All Crystal Bosses only
-; #$09 = Require All Dungeons No Agahnim
-; #$0A = Require 100% Item Collection
-; #$0B = Require 100% Item Collection and All Dungeons
+org $B0803E ; PC 0x18003E (unused)
 ;--------------------------------------------------------------------------------
 org $B0803F ; PC 0x18003F
 HammerableGanon:
@@ -247,12 +233,7 @@ CrystalPendantFlags_2:
 ;Aga1:    $01
 ;Aga2:    $02
 ;--------------------------------------------------------------------------------
-org $B0805E ; PC 0x18005E - Number of crystals required to enter GT
-NumberOfCrystalsRequiredForTower:
-db $07 ; #$07 = 7 Crystals
-org $B0805F ; PC 0x18005F - Number of crystals required to kill Ganon
-NumberOfCrystalsRequiredForGanon:
-db $07 ; #$07 = 7 Crystals
+org $B0805E ; PC 0x18005E - 0x18005F (Unused)
 ;--------------------------------------------------------------------------------
 org $B08060 ; PC 0x180060 - 0x18007E
 ProgrammableItemLogicJump_1:
@@ -936,14 +917,42 @@ org $B08195 ; PC 0x180195
 ByrnaCaveSpikeDamage:
 db $08 ; #$08 = 1 Heart (default) - #$02 = 1/4 Heart
 ;--------------------------------------------------------------------------------
-org $B08196 ; PC 0x180196-0x180197
+org $B08196     ; PC 0x180196-0x180197
 TotalItemCount: ; Total item count for HUD. Only counts items that use "item get" animation.
 dw $00D8        ; 216
 
-org $B08198             ; PC 0x180198-0x180199
-GanonsTowerOpenAddress: ; Target address for GT open check
+org $B08198             ; PC 0x180198-0x1801A9
+GanonsTowerOpenAddress: ; 0x180198-0x180199
+dw CrystalCounter       ; Target address for GT open check
+GanonsTowerOpenTarget:  ; 0x18019A-0x18019B
+dw $0007                ; Target amount for GT open modes to compare
+GanonsTowerOpenMode:    ; 0x18019C-0x18019D
+dw $0001                ; $00 = Vanilla | $01 = Compare target with address
+PedPullAddress:         ; 0x18019E-0x18019F
+dw PendantCounter       ; Target address for ped pull check
+PedPullTarget:          ; 0x1801A0-0x1801A1
+dw $0003                ; Target amount for ped pull modes to check
+PedCheckMode:           ; 0x1801A2-0x1801A3
+dw $0000                ; $00 = vanilla | $01 = Compare address to target value
+GanonVulnerableAddress: ; 0x1801A4-0x1801A5
+dw CrystalCounter       ; Target address for ped pull check
+GanonVulnerableTarget:  ; 0x1801A6-0x1801A7
+dw $0007                ; Target amount for Ganon vulnerability modes to compare
+GanonVulnerableMode:    ; 0x1801A8-0x1801A9
+dw $0000                ; #$00 = Off (default)
+                        ; #$01 = On
+                        ; #$02 = Require All Dungeons
+                        ; #$03 = Require "GanonVulnerableTarget" Crystals and Aga2
+                        ; #$04 = Require "GanonVulnerableTarget" Crystals
+                        ; #$05 = Require "GoalItemRequirement" Goal Items
+                        ; #$06 = Light Speed
+                        ; #$07 = Require All Crystals and Crystal Bosses
+                        ; #$08 = Require All Crystal Bosses only
+                        ; #$09 = Require All Dungeons No Agahnim
+                        ; #$0A = Require 100% Item Collection
+                        ; #$0B = Require 100% Item Collection and All Dungeons
 ;--------------------------------------------------------------------------------
-; 0x180196 - 0x1801FF (unused)
+; 0x18019A - 0x1801FF (unused)
 ;================================================================================
 org $B08200 ; PC 0x180200 - 0x18020B
 RedClockAmount:

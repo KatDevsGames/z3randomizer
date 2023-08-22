@@ -1009,7 +1009,7 @@ ItemReceiptGraphicsOffsets:
 	dw BigDecompressionBuffer+$0080        ; 38 - Blue pendant
 	dw BigDecompressionBuffer+$0080        ; 39 - Red pendant
 	dw BigDecompressionBuffer+$0920        ; 3A - Tossed bow
-	dw BigDecompressionBuffer+$08E0        ; 3B - Silvers
+	dw BigDecompressionBuffer+$08E0        ; 3B - Silver bow
 	dw BigDecompressionBuffer+$09A0        ; 3C - Full bottle (bee)
 	dw BigDecompressionBuffer+$0960        ; 3D - Full bottle (fairy)
 	dw BigDecompressionBuffer+$18C0        ; 3E - Boss heart

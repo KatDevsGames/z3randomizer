@@ -496,9 +496,8 @@ PreventEnterOnBonk_BRANCH_IX:
 ;================================================================================
 ; Crystals Mode
 ;--------------------------------------------------------------------------------
-org $899B7B ; <- ancilla_init.asm : 4136 (LDA $7EF37A : AND.b #$7F : CMP.b #$7F)
-JSL CheckEnoughCrystalsForTower : NOP #4
-db $90 ; BCC
+org $899B7F ; <- ancilla_init.asm : 4136 (LDA $7EF37A : AND.b #$7F : CMP.b #$7F)
+JSL CheckTowerOpen : BCC $899B6D
 ;--------------------------------------------------------------------------------
 org $88CE0C ; <- 44E0C - ancilla_break_tower_seal.asm : 168 (BEQ #$03 : JSR BreakTowerSeal_ExecuteSparkles : LDX.b #$06)
 JML GetRequiredCrystalsForTower : NOP #3
@@ -549,6 +548,8 @@ JSL GoalItemGanonCheck
 org $86F2EA ; <- 372EA - Bank06.asm : 5791 (LDA $0E20, X : CMP.b #$D6 : BCS .no_collision)
 JSL CheckGanonHammerDamage : NOP
 ;--------------------------------------------------------------------------------
+org $858922
+JSL.l CheckPedestalPull : BCC MasterSword_InPedestal_exit
 
 ;================================================================================
 ; Stat Hooks

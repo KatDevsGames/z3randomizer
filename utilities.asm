@@ -84,6 +84,7 @@ LoadDynamicTileOAMTable:
         .narrow
         REP #$20
         LDA.w #$0004 : STA.l SpriteOAM
+        LDA.w #$0000 : STA.l SpriteOAM+2
         LDA.w #$0200 : STA.l SpriteOAM+6
 
         LDA.w #$0400 : STA.l SpriteOAM+7 : STA.l SpriteOAM+14

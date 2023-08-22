@@ -168,6 +168,7 @@ AddInventory:
 RTL
 
 ShopCheck:
+; TODO: If we write all shops, we can use the ShopPurchase flag instead of this
         LDA.b IndoorsFlag : BEQ .count
         LDA.w ItemReceiptMethod : CMP.b #$01 : BEQ .count
         LDA.w InventoryTable_properties,Y : BIT.b #$02 : BNE .count

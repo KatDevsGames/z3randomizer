@@ -280,7 +280,9 @@ ItemBehavior:
         RTS
 
         .silversbow
+        LDA.l BowTracking : ORA.b #$80 : STA.l BowTracking
         LDA.l SilverArrowsUseRestriction : BNE +
+                LDA.l BowTracking : ORA.b #$40 : STA.l BowTracking
                 LDA.b #03 : STA.l BowEquipment ; set bow to silver
         +
         LDA.b #$01 : STA.l BowEquipment
@@ -322,22 +324,36 @@ ItemBehavior:
         JMP.w .increment_map
 
         .bow_and_arrows
-        LDA.l BowTracking : BIT.b #$40 : BEQ +
-        LDA.l SilverArrowsUseRestriction : BNE +
-                LDA.b #03 : STA.l BowEquipment ; set bow to silver
+        LDA.b #$80 : ORA.l BowTracking : STA.l BowTracking
+        LDA.l BowTracking : BIT.b #$40 : BEQ .no_silvers
+        LDA.l SilverArrowsUseRestriction : BNE .no_silvers
+                LDA.l CurrentArrows : BEQ +
+                        LDA.b #04 : STA.l BowEquipment
+                        BRA .store_bow
+                +
+                LDA.b #$03
+                BRA .store_bow
+        .no_silvers
+        LDA.l CurrentArrows : BEQ +
+                LDA.b #02
+                BRA .store_bow
         +
+        LDA.b #$01
+        .store_bow
+        STA.l BowEquipment
         RTS
 
         .silver_bow
-        LDA.b #$40 : ORA.l BowTracking : STA.l BowTracking
+        LDA.b #$80 : ORA.l BowTracking : STA.l BowTracking
         LDA.l SilverArrowsUseRestriction : BNE .noequip
-        LDA.l SilverArrowsAutoEquip : AND.b #$01 : BEQ .noequip
-        LDA.l ArrowsFiller : BNE + ; check arrows
-                        LDA.b #$03 : BRA ++ ; bow without arrow
-                +
-                LDA.b #$04 ; bow with arrow
-        ++
-        STA.l BowEquipment
+                LDA.b #$40 : ORA.l BowTracking : STA.l BowTracking
+                LDA.l SilverArrowsAutoEquip : AND.b #$01 : BEQ .noequip
+                LDA.l CurrentArrows : BNE + ; check arrows
+                                LDA.b #$03 : BRA ++ ; bow without arrow
+                        +
+                        LDA.b #$04 ; bow with arrow
+                ++
+                STA.l BowEquipment
         .noequip
         RTS
 
@@ -405,15 +421,15 @@ ItemBehavior:
         RTS
 
         .silver_arrows
-        LDA.l BowTracking : ORA.b #$40 : STA.l BowTracking
         LDA.l SilverArrowsUseRestriction : BNE ++
-        LDA.l SilverArrowsAutoEquip : AND.b #$01 : BEQ ++
-                LDA.l BowEquipment : BEQ ++ : CMP.b #$03 : !BGE +
-                        !ADD.b #$02 : STA.l BowEquipment ; switch to silver bow
-                +
-        ++
+                LDA.l BowTracking : ORA.b #$40 : STA.l BowTracking
+                LDA.l SilverArrowsAutoEquip : AND.b #$01 : BEQ ++
+                        LDA.l BowEquipment : BEQ ++ : CMP.b #$03 : !BGE +
+                                !ADD.b #$02 : STA.l BowEquipment ; switch to silver bow
+                        +
+                ++
         LDA.l ArrowMode : BEQ +
-                LDA.b #$01 : STA.l ArrowsFiller
+                LDA.b #$01 : STA.l CurrentArrows
         +
         RTS
 
@@ -819,10 +835,10 @@ HandleBowTracking:
         CMP.b #$65 : BEQ .prog_two
                 RTS
         .prog_one
-        LDA.b #$80
+        LDA.b #$90
         BRA .done
         .prog_two
-        LDA.b #$20
+        LDA.b #$A0
         .done
         ORA.l BowTracking : STA.l BowTracking
         LDA.w ItemReceiptID
