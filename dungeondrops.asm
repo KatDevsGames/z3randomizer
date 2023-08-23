@@ -103,7 +103,6 @@ SetCutsceneFlag:
                 CLC
                 RTL
         .dungeon_prize
-        JSR.w SetDungeonCompletion
         LDA.w ItemReceiptID : TAX
         LDA.l InventoryTable_properties,X : BPL .no_cutscene
                 PLX
@@ -171,14 +170,6 @@ CheckSpawnPrize:
         .spawn
         SEP #$21
 RTL
-
-SetDungeonCompletion:
-        LDX.w DungeonID : BMI +
-                REP #$20
-                LDA.l DungeonItemMasks, X : ORA.l DungeonsCompleted : STA.l DungeonsCompleted
-                SEP #$20
-        +
-RTS
 
 CheckDungeonCompletion:
         LDX.w DungeonID
