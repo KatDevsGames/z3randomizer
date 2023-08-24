@@ -177,8 +177,9 @@ InventoryTracking: skip 2       ; - - - - - - o q  b r m p n s k f (bitfield)
                                 ; p = Magic Powder     | n = Mushroom Past  | s = Shovel
                                 ; k = Inactive Flute   | f = Active Flute   | o = Any bomb acquired
                                 ; q = Quickswap locked
-BowTracking: skip 2             ; b s p - - - - -  - - - - - - - - (bitfield)
-                                ; b = Bow | s = Silver Arrows Upgrade | p = Second Progressive Bow
+BowTracking: skip 2             ; b s p f - - - -  - - - - - - - - (bitfield)
+                                ; b = Any Bow               | s = Silver Arrows Upgrade | p = Second Progressive Bow
+                                ; f = First progressive bow
                                 ; The front end writes two distinct progressive bow items. p
                                 ; indicates whether the "second" has been found independent of
                                 ; the first
@@ -254,7 +255,8 @@ MapOverlay: skip 2              ; Used to reveal dungeon prizes on the map in mo
                                 ;  | m = Misery Mire   | d = Palace of Darkness | s = Swamp Palace
                                 ;  | a = Aga Tower     | t = Desert Palace      | e = Eastern Palace
                                 ; /  h = Hyrule Castle | s = Sewer Passage
-HudFlag:                        ;
+HudFlag:                        ; - h c - - - - -
+                                ; c = show maps and compasses | h = show heart pieces
 IgnoreFaeries:                  ;
 HasGroveItem:                   ;
 GeneralFlags: skip 1            ; - - h - - i - g (bitfield)
@@ -314,11 +316,12 @@ MagicCounter: skip 2            ; Magic used by player (16-bit integer)
 HighestMail: skip 1             ; Highest mail level
 SmallKeyCounter: skip 1         ; Total Number of small keys collected (integer)
 HeartPieceCounter: skip 1       ; Total Number of heartpieces collected (integer)
-CrystalCounter: skip 1          ; Total Number of crystals collected (integer)
+skip 1                          ; Unused
 DungeonsCompleted: skip 2       ; Bitfield indicating whether a dungeon's prize has been collected.
                                 ; This has the same shape as the dungeon item bitfields.
 MapCountDisplay: skip 2         ;
-skip 42                         ; Unused
+CrystalCounter: skip 2          ; Total Number of crystals collected (integer)
+skip 40                         ; Unused
 ServiceSequence:                ; See servicerequest.asm
 ServiceSequenceRx: skip 8       ; Service sequence receive
 ServiceSequenceTx: skip 8       ; Service sequence transmit
@@ -594,9 +597,9 @@ endmacro
 %assertSRAM(HighestMail, $7EF46E)
 %assertSRAM(SmallKeyCounter, $7EF46F)
 %assertSRAM(HeartPieceCounter, $7EF470)
-%assertSRAM(CrystalCounter, $7EF471)
 %assertSRAM(DungeonsCompleted, $7EF472)
 %assertSRAM(MapCountDisplay, $7EF474)
+%assertSRAM(CrystalCounter, $7EF476)
 ;--------------------------------------------------------------------------------
 %assertSRAM(ServiceSequence, $7EF4A0)
 %assertSRAM(ServiceSequenceRx, $7EF4A0)

@@ -280,31 +280,31 @@ RTL
 ; s = silver arrow bow
 ; p = 2nd progressive bow
 DialogGanon2:
-    JSL.l CheckGanonVulnerability
-	
-	REP #$20
-	BCS +
+        JSL.l CheckGanonVulnerability
+
+        REP #$20
+        BCS +
         LDA.w #$018D : BRA ++
-    +
-		LDA.l BowTracking
+        +
+        LDA.l BowTracking
 
         BIT.w #$0080 : BNE + ; branch if bow
         LDA.w #$0192 : BRA ++
-    +
+        +
         BIT.w #$0040 : BEQ + ; branch if no silvers
         LDA.w #$0195 : BRA ++
-    +
+        +
         BIT.w #$0020 : BNE + ; branch if p bow
         LDA.w #$0194 : BRA ++
-    +
+        +
         BIT.w #$0080 : BEQ + ; branch if no bow
         LDA.w #$0193 : BRA ++
-    +
+        +
         LDA.w #$016E
-    ++
-	STA.w TextID
-	SEP #$20
-    JSL.l Sprite_ShowMessageMinimal_Alt
+        ++
+        STA.w TextID
+        SEP #$20
+        JSL.l Sprite_ShowMessageMinimal_Alt
 RTL
 ;--------------------------------------------------------------------------------
 DialogEtherTablet:
@@ -371,7 +371,7 @@ RTL
 
 ;---------------------------------------------------------------------------------------------------
 AgahnimAsksAboutPed:
-	LDA.l InvincibleGanon
+	LDA.l GanonVulnerableMode
 	CMP.b #$06 : BNE .vanilla
 
 	LDA.l OverworldEventDataWRAM+$80 ; check ped flag

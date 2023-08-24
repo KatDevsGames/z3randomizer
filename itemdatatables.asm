@@ -1,3 +1,118 @@
+;------------------------------------------------------------------------------
+; Item Data Tables
+;------------------------------------------------------------------------------
+; This module contains several statically mapped tables related to items, item
+; receipts, and item graphics. There are 256 item receipt indexes and the tables are
+; written column-major, meaning each "column" property of every table entry is
+; written adjacent to each other (e.g., ItemReceipts_offset_y is one byte per item.
+; All 256 bytes for each item are written in receipt ID order, then 256 bytes are
+; written for ItemReceipts_offset_x, etc.) The addresses and description of each
+; table and column are described immediately below. The tables themselves are below
+; the documentation.
+;
+; The tables and documentation here should provide the knowledge and capability
+; to add an item into an unclaimed receipt ID or replace some existing items, although
+; you should prefer to use unclaimed space or reuse randomizer item slots as some
+; vanilla behavior is still hard-coded.
+;
+; Some of the entries in these tables are word-length vectors, or pointers to
+; code the randomizer ROM runs on item pickup or resolution (e.g., resolving a
+; progressive sword that's a standing item.) We provide all our own routines plus
+; some for "skipping" these steps when not necessary. If you want an item to potentially
+; resolve to a different one, or to run some custom code on pickup, you will have to use
+; ItemSubstitutionRules in tables.asm or claim some free space in this bank to put your
+; own code with vectors to it in the appropriate tables.
+;
+; Currently our "skip" vectors are located at (SNES address, little-endian):
+; ItemReceipts_behavior: $CDBB
+; ItemReceipts_resolution: $D33F
+;------------------------------------------------------------------------------
+
+;------------------------------------------------------------------------------
+; ItemReceiptGraphicsROM - $A28000 (0x110000 PC)
+;------------------------------------------------------------------------------
+; Where the custom uncompressed 4bpp item graphics are stored. See customitems.4bpp
+; and customitems.png for reference. Offsets into this label should written to
+; ItemReceiptGraphicsOffsets & StandingItemGraphicsOffsets without the high byte
+; (0x8000) set.
+;
+; We can understand this buffer as being divided into an 8x8 grid with most sprites
+; occupying a 16x16 space and narrow sprites occupying an 8x16 space. The first 16x16
+; item tile is a blank one-color sprite, the second 16x16 is the triforce piece,
+; and the third is the fighter sword sprite. 
+;
+; Every 8x8 4bpp tile from left to right is offset by 0x20. From top to bottom
+; the offset is 0x200. This means that each "row" of 8x8 tiles should be written
+; contiguously, but to write the next tile(s) below the base upper-left address
+; should be incremented by 0x200.
+;------------------------------------------------------------------------------
+
+;------------------------------------------------------------------------------
+; ItemReceipts
+;------------------------------------------------------------------------------
+; .offset_y   [0x01] - $A2B000 (0x113000 PC)
+;             • Sprite Y offset from default position
+; .offset_x   [0x01] - $A2B100 (0x113100 PC)
+;             • Sprite X offset from default position
+; .graphics   [0x01] - $A2B200 (0x113200 PC)
+;             • Sprite index for compressed graphics
+; .target     [0x02] - $A2B300 (0x113300 PC)
+;             • Target address in save buffer in bank $7E
+; .value      [0x01] - $A2B500 (0x113500 PC)
+;             • Value written to target address
+; .behavior   [0x02] - $A2B600 (0x113600 PC)
+;             • Vector to code in this bank that runs on item pickup
+; .resolution [0x02] - $A2B600 (0x113600 PC)
+;             • Vector to code in this bank that can resolve to new item (e.g. for progressive items)
+;------------------------------------------------------------------------------
+
+;------------------------------------------------------------------------------
+; SpriteProperties
+;------------------------------------------------------------------------------
+; For the most part item sprites are identical in all contexts, but some
+; sprites have two graphics, chest/npc graphics and standing item graphics.
+;------------------------------------------------------------------------------
+; .chest_width      [0x01] - $A2BA00 (0x11CA00 PC)
+; .standing_width   [0x01] - $A2BB00 (0x11CB00 PC)
+;                   • $00 = 8x16 sprite | $02 = 16x16 sprite
+; .chest_palette    [0x01] - $A2BC00 (0x11CC00 PC)
+; .standing_palette [0x01] - $A2BD00 (0x11CD00 PC)
+;                   • l - - - - c c c
+;                   c = palette index | l = load palette from .palette_addr
+; .palette_addr     [0x02] - $A2BE00 (0x11CE00 PC)
+;                   • Pointer to 8-color palette in bank $9B (see custompalettes.asm)
+;------------------------------------------------------------------------------
+
+;------------------------------------------------------------------------------
+; InventoryTable
+;------------------------------------------------------------------------------
+; .properties [0x01] - $A2C000 (0x114000 PC)
+;             • p k w o a y s t
+;             t = Count for total item counter | s = Count for total in shops
+;             y = Y item                       | a = A item
+;             o = Bomb item                    | w = Bow item
+;             k = Chest Key                    | p = Crystal prize behavior (sparkle, etc) if set
+; .stat       [0x02] - $A2C100 (0x114100 PC)
+;             • Pointer to address in bank $7E. Increments byte by one if stats not locked.
+; .stamp      [0x02] - $A2C300 (0x114300 PC)
+;             • Pointer to address in bank $7E. Stamps 32-bit frame time if stats not locked.
+;------------------------------------------------------------------------------
+
+;------------------------------------------------------------------------------
+; ItemReceiptGraphicsOffsets & StandingItemGraphicsOffsets
+;------------------------------------------------------------------------------
+; Each receipt ID has one word-length entry. Decompressed vanilla item graphics
+; are located starting at BigDecompressionBuffer. The graphics routines use the
+; fact that the high bit is set for these in this table to know to load from the
+; buffer. Custom graphics are offset from ItemReceiptGraphicsRom, allocated in
+; LTTP_RND_GeneralBugfixes.asm and written to with decompressed customitems.4bpp
+; (see customitems.png for reference.)
+;
+; ItemReceiptGraphicsOffsets is used for chest items and items link holds up while
+; in an item receipt post. StandingItemGraphicsOffsets is for standing items in
+; heart piece, heart container, and shop locations.
+;------------------------------------------------------------------------------
+
 ItemReceipts:
 	.offset_y     : fillbyte $00   : fill 256
 	.offset_x     : fillbyte $00   : fill 256
@@ -894,7 +1009,7 @@ ItemReceiptGraphicsOffsets:
 	dw BigDecompressionBuffer+$0080        ; 38 - Blue pendant
 	dw BigDecompressionBuffer+$0080        ; 39 - Red pendant
 	dw BigDecompressionBuffer+$0920        ; 3A - Tossed bow
-	dw BigDecompressionBuffer+$08E0        ; 3B - Silvers
+	dw BigDecompressionBuffer+$08E0        ; 3B - Silver bow
 	dw BigDecompressionBuffer+$09A0        ; 3C - Full bottle (bee)
 	dw BigDecompressionBuffer+$0960        ; 3D - Full bottle (fairy)
 	dw BigDecompressionBuffer+$18C0        ; 3E - Boss heart
@@ -945,7 +1060,7 @@ ItemReceiptGraphicsOffsets:
 	dw $0                                  ; 69 -
 	dw $0060                               ; 6A - Triforce
 	dw $11E0                               ; 6B - Power star
-	dw $0                                  ; 6C -
+	dw $0060                               ; 6C - Triforce Piece
 	dw $0                                  ; 6D - Server request item
 	dw $0                                  ; 6E - Server request item (dungeon drop)
 	dw $0                                  ; 6F -
@@ -1215,7 +1330,7 @@ StandingItemGraphicsOffsets:
 	dw $0                                  ; 69 -
 	dw $0060                               ; 6A - Triforce
 	dw $11E0                               ; 6B - Power star
-	dw $0                                  ; 6C -
+	dw $0060                               ; 6C - Triforce Piece
 	dw $0                                  ; 6D - Server request item
 	dw $0                                  ; 6E - Server request item (dungeon drop)
 	dw $0                                  ; 6F -

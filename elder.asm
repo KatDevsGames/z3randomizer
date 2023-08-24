@@ -42,7 +42,7 @@ RTL
     {
         REP #$20
         LDA.l GoalItemRequirement : BEQ .despawn
-        LDA.l InvincibleGanon : AND.w #$00FF : CMP.w #$0005 : BEQ .despawn
+        LDA.l GanonVulnerableMode : AND.w #$00FF : CMP.w #$0005 : BEQ .despawn
         LDA.l TurnInGoalItems : AND.w #$00FF : BNE +
             .despawn
             SEP #$20

@@ -14,7 +14,7 @@ LockAgahnimDoors:
 		JSR.w LockAgahnimDoorsCore : BEQ .unlock
 		PHX : PHY
 		SEP #$30
-		JSL.l CheckEnoughCrystalsForTower
+		JSL.l CheckTowerOpen
 		REP #$30
 		PLY : PLX
 		!BGE .crystalOrUnlock

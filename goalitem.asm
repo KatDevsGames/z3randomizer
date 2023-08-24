@@ -15,7 +15,7 @@ RTL
 ;Carry set = ganon vulnerable
 CheckGanonVulnerability:
 	PHX
-	LDA.l InvincibleGanon
+	LDA.l GanonVulnerableMode
 	ASL
 	TAX
 
@@ -112,65 +112,86 @@ CheckGanonVulnerability:
 ;--------------------------------------------------------------------------------
 GetRequiredCrystalsForTower:
 	BEQ + : JSL.l BreakTowerSeal_ExecuteSparkles : + ; thing we wrote over
-	LDA.l NumberOfCrystalsRequiredForTower : CMP.b #$00 : BNE + : JML.l Ancilla_BreakTowerSeal_stop_spawning_sparkles : +
-	LDA.l NumberOfCrystalsRequiredForTower : CMP.b #$01 : BNE + : JML.l Ancilla_BreakTowerSeal_draw_single_crystal : +
-	LDA.l NumberOfCrystalsRequiredForTower : DEC #2 : TAX
+	LDA.l GanonsTowerOpenTarget : CMP.b #$00 : BNE + : JML.l Ancilla_BreakTowerSeal_stop_spawning_sparkles : +
+	LDA.l GanonsTowerOpenTarget : CMP.b #$01 : BNE + : JML.l Ancilla_BreakTowerSeal_draw_single_crystal : +
+	LDA.l GanonsTowerOpenTarget : DEC #2 : TAX
 JML.l GetRequiredCrystalsForTower_continue
 ;--------------------------------------------------------------------------------
 GetRequiredCrystalsInX:
-	LDA.l NumberOfCrystalsRequiredForTower : CMP.b #$00 : BNE +
+	LDA.l GanonsTowerOpenTarget : CMP.b #$00 : BNE +
 		TAX
 		RTL
 	+
 
 	TXA
 
-- 	CMP.l NumberOfCrystalsRequiredForTower : BCC +
-	SBC.l NumberOfCrystalsRequiredForTower ; carry guaranteed set
+- 	CMP.l GanonsTowerOpenTarget : BCC +
+	SBC.l GanonsTowerOpenTarget ; carry guaranteed set
 	BRA -
 
-	+ INC : CMP.l NumberOfCrystalsRequiredForTower : BNE +
+	+ INC : CMP.l GanonsTowerOpenTarget : BNE +
 		LDA.b #$08
 	+ : DEC : TAX
 RTL
 ;--------------------------------------------------------------------------------
 CheckEnoughCrystalsForGanon:
+        REP #$20
 	LDA.l CrystalCounter
-	CMP.l NumberOfCrystalsRequiredForGanon
+	CMP.l GanonVulnerableTarget
+        SEP #$20
 RTL
 ;--------------------------------------------------------------------------------
-CheckEnoughCrystalsForTower:
-	LDA.l CrystalCounter
-	CMP.l NumberOfCrystalsRequiredForTower
+CheckTowerOpen:
+        REP #$30
+        LDA.l GanonsTowerOpenMode : ASL : TAX
+        JSR.w (.tower_open_modes,X)
+        SEP #$30
 RTL
+        .tower_open_modes
+        dw .vanilla
+        dw .arbitrary_cmp
+
+        .vanilla
+        LDA.l CrystalsField
+        AND.w #$007F : CMP.w #$007F
+        RTS
+
+        .arbitrary_cmp
+        LDA.l GanonsTowerOpenAddress : TAX
+        LDA.l $7E0000,X
+        CMP.l GanonsTowerOpenTarget
+        RTS
 
 ;---------------------------------------------------------------------------------------------------
 CheckAgaForPed:
-	LDA.l InvincibleGanon
-	CMP.b #$06 : BNE .vanilla
+        REP #$20
+        LDA.l GanonVulnerableMode
+        CMP.w #$0006 : BNE .vanilla
 
 .light_speed
-	LDA.l OverworldEventDataWRAM+$80 ; check ped flag
-	AND.b #$40
-	BEQ .force_blue_ball
+        SEP #$20
+        LDA.l OverworldEventDataWRAM+$80 ; check ped flag
+        AND.b #$40
+        BEQ .force_blue_ball
 
 .vanilla ; run vanilla check for phase
-	LDA.w SpriteAux, X
-	CMP.b #$02
-	RTL
+        SEP #$20
+        LDA.w SpriteAux, X
+        CMP.b #$02
+        RTL
 
 .force_blue_ball
-	LDA.b #$01 : STA.w SpriteAuxTable, Y
-	LDA.b #$20 : STA.w SpriteTimer, Y
-	CLC ; skip the RNG check
-	RTL
+        LDA.b #$01 : STA.w SpriteAuxTable, Y
+        LDA.b #$20 : STA.w SpriteTimer, Y
+        CLC ; skip the RNG check
+        RTL
 
 ;---------------------------------------------------------------------------------------------------
 
 KillGanon:
 	STA.l ProgressIndicator ; vanilla game state stuff we overwrote
 
-	LDA.l InvincibleGanon
+	LDA.l GanonVulnerableMode
 	CMP.b #$06 : BNE .exit
 
 .light_speed
@@ -182,7 +203,6 @@ KillGanon:
 	RTL
 
 ;---------------------------------------------------------------------------------------------------
-
 CheckForCrystalBossesDefeated:
 	PHB : PHX : PHY
 
@@ -220,8 +240,34 @@ CheckForCrystalBossesDefeated:
 	SEP #$30
 	PLY : PLX : PLB
 
-	LDA.b Scrap00 : CMP.l NumberOfCrystalsRequiredForGanon
+	LDA.b Scrap00 : CMP.l GanonVulnerableTarget
 
 
 	RTS
+;---------------------------------------------------------------------------------------------------
+CheckPedestalPull:
+; Out: c - Successful ped pull if set, do nothing if unset.
+        PHX
+        LDA.l PedCheckMode : ASL : TAX
+        JSR.w (.pedestal_modes,X)
+        PLX
+RTL
 
+        .pedestal_modes
+        dw .vanilla
+        dw .arbitrary_cmp
+
+        .vanilla
+        LDA.l PendantsField
+        AND.b #$07 : CMP.b #$07 : BNE ..nopull
+                SEC
+                RTS
+        ..nopull
+        CLC
+        RTS
+
+        .arbitrary_cmp
+        LDA.l PedPullAddress : TAX
+        LDA.l $7E000,X
+        CMP.l PedPullTarget
+        RTS

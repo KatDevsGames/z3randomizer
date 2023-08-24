@@ -395,7 +395,7 @@ UpdateHearts:
 	PHX
 	PLB
 
-	LDA.w $7EF36C
+	LDA.w MaximumHealth
 	LSR
 	LSR
 	LSR
@@ -414,7 +414,11 @@ UpdateHearts:
 	CPX.b #$01
 	BMI .done_hearts
 
-        JSR.w CheckHeartPalette
+        PHX
+        LDA.l HUDHeartColors_index : ASL : TAX
+        LDA.l HUDHeartColors_masks_game_hud,X
+        PLX
+        ORA.w #$20A0
 
 	CPY.b #$01
 	BPL .add_heart
@@ -450,18 +454,22 @@ UpdateHearts:
 	BRA .next_filled_heart
 
 .done_hearts
-	LDA.w $7EF36D
+	LDA.w CurrentHealth
 	AND.w #$0007
 	BEQ .skip_partial
-
 	CMP.w #$0005
-
-        JSR.w CheckHeartPalette
 	BCS .more_than_half
 
-	INC
+        LDA.l HUDHeartColors_index : ASL : TAX
+        LDA.l HUDHeartColors_masks_game_hud,X
+        ORA.w #$20A1
+	STA.b ($09)
+        BRA .skip_partial
 
 .more_than_half
+        LDA.l HUDHeartColors_index : ASL : TAX
+        LDA.l HUDHeartColors_masks_game_hud,X
+        ORA.w #$20A0
 	STA.b ($09)
 
 .skip_partial
@@ -486,9 +494,11 @@ CheckHeartPalette:
 RTS
 
 ColorAnimatedHearts:
+        PHX
         REP #$20
         LDA.l HUDHeartColors_index : ASL : TAX
         LDA.l HUDHeartColors_masks_game_hud,X
+        PLX
         ORA.l HeartFramesBaseTiles,X
         STA.b [Scrap00],Y
         SEP #$20
