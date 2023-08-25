@@ -44,10 +44,12 @@ TransferItemGFX:
 ; Only used for shops now but could be used for anything. We should look at how door rando does this
 ; and try to unify one approach.
         REP #$30
-        LDX.w ItemQueuePtr : BEQ .done
+        LDX.w ItemStackPtr : BEQ .done
+        TXA : BIT #$0040 : BNE .fail ; Crash if we have more than 16 queued (should never happen.)
+                DEX #2
                 -
-                        LDA.w ItemGFXQueue,X : STA.w ItemGFXPtr
-                        LDA.w ItemTargetQueue,X : STA.w ItemGFXTarget
+                        LDA.l ItemGFXStack,X : STA.w ItemGFXPtr
+                        LDA.l ItemTargetStack,X : STA.w ItemGFXTarget
                         PHX
                         JSL.l TransferItemToVRAM
                         REP #$10
@@ -55,7 +57,9 @@ TransferItemGFX:
                         DEX #2
                 BPL -
 
-        STZ.w ItemQueuePtr
+        STZ.w ItemStackPtr
         .done
         SEP #$30
 RTS
+        .fail
+        BRK #$00

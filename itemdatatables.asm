@@ -1032,7 +1032,7 @@ ItemReceiptGraphicsOffsets:
 	dw $05A0                               ; 4D - Arrow capacity (70)
 	dw $01A0                               ; 4E - 1/2 magic
 	dw $01E0                               ; 4F - 1/4 magic
-	dw $0                                  ; 50 - Safe master sword
+	dw $00E0                               ; 50 - Safe master sword
 	dw $0420                               ; 51 - Bomb capacity (+5)
 	dw $0460                               ; 52 - Bomb capacity (+10)
 	dw $0520                               ; 53 - Arrow capacity (+5)
