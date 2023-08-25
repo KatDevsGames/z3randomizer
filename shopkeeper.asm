@@ -129,17 +129,17 @@ SpritePrep_ShopKeeper:
 				++
 			PLY : +++
 			
-			PHX : PHY
-				PHX : TYX : LDA.l ShopInventory, X : PLX
-                                SEP #$10
-                                JSL.l ResolveLootIDLong
-                                TAY
-                                REP #$30
-				LDA.b 1,s : TAX : LDA.l .tile_offsets, X : TAX
-				JSR.w SetupTileTransfer
-			PLY : PLX
-			INY #4
-		
+                        PHX : PHY
+                        PHX : TYX : LDA.l ShopInventory, X : PLX
+                        SEP #$10
+                        JSL.l AttemptItemSubstitution
+                        JSL.l ResolveLootIDLong
+                        TAY
+                        REP #$30
+                        LDA.b 1,s : TAX : LDA.l .tile_offsets, X : TAX
+                        JSR.w SetupTileTransfer
+                        PLY : PLX
+                        INY #4
 		.next
 		INX #8
 	JMP -
@@ -561,6 +561,7 @@ Shopkeeper_DrawNextItem:
 	PLY
 
 	LDA.l ShopInventory, X ; get item id
+        JSL.l AttemptItemSubstitution
         JSL.l ResolveLootIDLong
         STA.b Scrap0D
 	CMP.b #$2E : BNE + : BRA .potion

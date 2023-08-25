@@ -183,9 +183,9 @@ endmacro
 %ReceiptProps($2B, -4, 0, $1E, $F35C, $FF, skip, bottles) ; 2B - Full bottle (red)
 %ReceiptProps($2C, -4, 0, $1E, $F35C, $FF, skip, bottles) ; 2C - Full bottle (green)
 %ReceiptProps($2D, -4, 0, $1E, $F35C, $FF, skip, bottles) ; 2D - Full bottle (blue)
-%ReceiptProps($2E, -4, 0, $1E, $F36D, $FF, skip, bottles) ; 2E - Potion refill (red)
-%ReceiptProps($2F, -4, 0, $1E, $F36E, $FF, skip, bottles) ; 2F - Potion refill (green)
-%ReceiptProps($30, -4, 0, $1E, $F36E, $FF, skip, bottles) ; 30 - Potion refill (blue)
+%ReceiptProps($2E, -4, 0, $1E, $F36D, $FF, skip, skip) ; 2E - Potion refill (red)
+%ReceiptProps($2F, -4, 0, $1E, $F36E, $FF, skip, skip) ; 2F - Potion refill (green)
+%ReceiptProps($30, -4, 0, $1E, $F36E, $FF, skip, skip) ; 30 - Potion refill (blue)
 %ReceiptProps($31, -4, 0, $30, $F375, $FF, skip, skip) ; 31 - 10 bombs
 %ReceiptProps($32, -4, 0, $22, $F366, $FF, dungeon_bigkey, skip) ; 32 - Big key
 %ReceiptProps($33, -4, 0, $21, $F368, $FF, dungeon_map, skip) ; 33 - Map

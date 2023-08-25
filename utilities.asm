@@ -6,7 +6,7 @@
 ; out:	A - Sprite GFX ID
 ;--------------------------------------------------------------------------------
 GetSpriteID:
-	JSR.w AttemptItemSubstitution
+	JSL.l AttemptItemSubstitution
 	JSR.w ResolveLootID
         CMP.b #$6D : BEQ .server_F0 ; Server Request F0
         CMP.b #$6E : BEQ .server_F1 ; Server Request F1
@@ -32,7 +32,7 @@ RTL
 ; out:	A - Palette
 ;--------------------------------------------------------------------------------
 GetSpritePalette:
-        JSR AttemptItemSubstitution
+        JSL.l AttemptItemSubstitution
         JSR.w ResolveLootID
         .resolved
         TAX
@@ -359,23 +359,43 @@ LoadItemPalette:
 ; Out: A - Sprite palette index
         PHX : PHY : PHB
         LDA.b #PalettesVanillaBank>>16 : STA.b Scrap0C
-        LDA.b #$7E
-        PHA : PLB
+        PEA $7E00
+        PLB : PLB
         REP #$30
         
         TXA : ASL : TAX
         LDA.l SpriteProperties_palette_addr,X : STA.b Scrap0A
         LDY.w #$000E
-        LDA.w TransparencyFlag : BNE .SP05
+        LDA.l FadeTimer : BNE .aux
+                LDA.w TransparencyFlag : BNE .SP05
+                        -
+                                LDA.b [Scrap0A], Y
+                                STA.w PaletteBuffer+$0170,Y
+                                DEY #2
+                        BPL -
+                        LDA.w #$0003
+                        BRA .done
+                .SP05
                 -
-                        LDA.b [Scrap0A], Y : STA.w PaletteBuffer+$0170,Y
+                        LDA.b [Scrap0A], Y
+                        STA.w PaletteBuffer+$01B0,Y
+                        DEY #2
+                BPL -
+                LDA.w #$0005
+                BRA .done
+        .aux
+        LDA.w TransparencyFlag : BNE .SP05_aux
+                -
+                        LDA.b [Scrap0A], Y
+                        STA.w PaletteBufferAux+$0170,Y
                         DEY #2
                 BPL -
                 LDA.w #$0003
                 BRA .done
-        .SP05
+        .SP05_aux
         -
-                LDA.b [Scrap0A], Y : STA.w PaletteBuffer+$01B0,Y
+                LDA.b [Scrap0A], Y
+                STA.w PaletteBufferAux+$01B0,Y
                 DEY #2
         BPL -
         LDA.w #$0005

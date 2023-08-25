@@ -236,6 +236,7 @@ PostItemGet:
 RTL
 ;--------------------------------------------------------------------------------
 PostItemAnimation:
+        PHB
         LDA.b #$00 : STA.l BusyItem ; mark item as finished
         LDA.l TextBoxDefer : BEQ +
                 STZ.w TextID : STZ.w TextID+1 ; reset decompression buffer
@@ -247,29 +248,32 @@ PostItemAnimation:
                         JSL.l IncrementChestTurnCounter
         +
         REP #$20
+        PEA.w $7E00
+        PLB : PLB
         LDA.w TransparencyFlag : BNE .SP05
-                LDA.l PalettesCustom_off_black+$00 : STA.l PaletteBuffer+$0170
-                LDA.l PalettesCustom_off_black+$02 : STA.l PaletteBuffer+$0172
-                LDA.l PalettesCustom_off_black+$04 : STA.l PaletteBuffer+$0174
-                LDA.l PalettesCustom_off_black+$06 : STA.l PaletteBuffer+$0176
-                LDA.l PalettesCustom_off_black+$08 : STA.l PaletteBuffer+$0178
-                LDA.l PalettesCustom_off_black+$0A : STA.l PaletteBuffer+$017A
-                LDA.l PalettesCustom_off_black+$0C : STA.l PaletteBuffer+$017C
-                LDA.l PalettesCustom_off_black+$0E : STA.l PaletteBuffer+$017E
+                LDA.l PalettesCustom_off_black+$00 : STA.w PaletteBuffer+$0170 : STA.w PaletteBufferAux+$0170
+                LDA.l PalettesCustom_off_black+$02 : STA.w PaletteBuffer+$0172 : STA.w PaletteBufferAux+$0172
+                STA.w PaletteBuffer+$0174 : STA.w PaletteBufferAux+$0174
+                STA.w PaletteBuffer+$0176 : STA.w PaletteBufferAux+$0176
+                STA.w PaletteBuffer+$0178 : STA.w PaletteBufferAux+$0178
+                STA.w PaletteBuffer+$017A : STA.w PaletteBufferAux+$017A
+                STA.w PaletteBuffer+$017C : STA.w PaletteBufferAux+$017C
+                STA.w PaletteBuffer+$017E : STA.w PaletteBufferAux+$017E
                 BRA .done
         .SP05
-        LDA.l PalettesCustom_off_black+$00 : STA.l PaletteBuffer+$01B0
-        LDA.l PalettesCustom_off_black+$02 : STA.l PaletteBuffer+$01B2
-        LDA.l PalettesCustom_off_black+$04 : STA.l PaletteBuffer+$01B4
-        LDA.l PalettesCustom_off_black+$06 : STA.l PaletteBuffer+$01B6
-        LDA.l PalettesCustom_off_black+$08 : STA.l PaletteBuffer+$01B8
-        LDA.l PalettesCustom_off_black+$0A : STA.l PaletteBuffer+$01BA
-        LDA.l PalettesCustom_off_black+$0C : STA.l PaletteBuffer+$01BC
-        LDA.l PalettesCustom_off_black+$0E : STA.l PaletteBuffer+$01BE
+        LDA.l PalettesCustom_off_black+$00 : STA.w PaletteBuffer+$01B0 : STA.w PaletteBufferAux+$01B0
+        LDA.l PalettesCustom_off_black+$02 : STA.w PaletteBuffer+$01B2 : STA.w PaletteBufferAux+$01B2
+        STA.w PaletteBuffer+$01B4 : STA.w PaletteBufferAux+$01B4
+        STA.w PaletteBuffer+$01B6 : STA.w PaletteBufferAux+$01B6
+        STA.w PaletteBuffer+$01B8 : STA.w PaletteBufferAux+$01B8
+        STA.w PaletteBuffer+$01BA : STA.w PaletteBufferAux+$01BA
+        STA.w PaletteBuffer+$01BC : STA.w PaletteBufferAux+$01BC
+        STA.w PaletteBuffer+$01BE : STA.w PaletteBufferAux+$01BE
         .done
         INC.b NMICGRAM
         SEP #$20
 
         STZ.w ItemReceiptMethod : LDA.w AncillaGet, X ; thing we wrote over to get here
+        PLB
 RTL
 ;--------------------------------------------------------------------------------
