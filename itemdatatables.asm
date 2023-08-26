@@ -416,7 +416,7 @@ macro SpriteProps(id, chest_width, standing_width, chest_pal, standing_pal, addr
 	pullpc
 endmacro
 
-%SpriteProps($00, 2, 2, $02, $02, PalettesVanilla_blue_ice+$0E)         ; 00 - Fighter sword & Shield
+%SpriteProps($00, 0, 2, $05, $02, PalettesVanilla_blue_ice+$0E)         ; 00 - Fighter sword & Shield
 %SpriteProps($01, 0, 2, $05, $05, PalettesCustom_master_sword)          ; 01 - Master sword
 %SpriteProps($02, 0, 2, $05, $01, PalettesCustom_tempered_sword)        ; 02 - Tempered sword
 %SpriteProps($03, 0, 2, $05, $04, PalettesCustom_golden_sword)          ; 03 - Golden sword

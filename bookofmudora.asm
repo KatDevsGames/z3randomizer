@@ -39,8 +39,7 @@ LoadBonkItemGFX_inner:
         PHA : PHX
         LDA.w SpriteID,X : TAX
         LDA.l SpriteProperties_standing_width,X : BNE +
-                LDA.b #$00 : STA.l SpriteOAM   ; Move narrow items back to the left
-                LDA.b #$00 : STA.l SpriteOAM+8 ;
+                LDA.b #$00 : STA.l SpriteOAM : STA.l SpriteOAM+8
         +
         PLX : PLA
 RTL

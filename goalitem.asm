@@ -195,10 +195,9 @@ KillGanon:
 	CMP.b #$06 : BNE .exit
 
 .light_speed
-	LDA.l OverworldEventDataWRAM+$5B : ORA.b #$20 : STA.l OverworldEventDataWRAM+$5B ; pyramid hole
-	LDA.b #$08 : STA.l RoomDataWRAM[$00].high ; kill ganon
-	LDA.b #$02 : STA.l MoonPearlEquipment ; pearl but invisible in menu
-
+        REP #$20
+        LDA.w #$0019 : STA.b GameMode
+        SEP #$20
 .exit
 	RTL
 
