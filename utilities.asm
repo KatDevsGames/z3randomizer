@@ -366,23 +366,27 @@ LoadItemPalette:
         TXA : ASL : TAX
         LDA.l SpriteProperties_palette_addr,X : STA.b Scrap0A
         LDY.w #$000E
-        LDA.l FadeTimer : BNE .aux
-                LDA.w TransparencyFlag : BNE .SP05
-                        -
-                                LDA.b [Scrap0A], Y
-                                STA.w PaletteBuffer+$0170,Y
-                                DEY #2
-                        BPL -
-                        LDA.w #$0003
-                        BRA .done
-                .SP05
+        LDA.w RoomIndex : CMP.w #$008C : BEQ .aux
+        LDA.w TransparencyFlag : BNE .SP05
                 -
                         LDA.b [Scrap0A], Y
-                        STA.w PaletteBuffer+$01B0,Y
+                        STA.w PaletteBuffer+$0170,Y
                         DEY #2
                 BPL -
-                LDA.w #$0005
+                LDA.w #$0003
                 BRA .done
+        .SP05
+        -
+                LDA.b [Scrap0A], Y
+                STA.w PaletteBuffer+$01B0,Y
+                DEY #2
+        BPL -
+        LDA.w #$0005
+        .done
+        SEP #$30
+        PLB : PLY : PLX
+        INC.b NMICGRAM
+RTL
         .aux
         LDA.w TransparencyFlag : BNE .SP05_aux
                 -
@@ -399,11 +403,7 @@ LoadItemPalette:
                 DEY #2
         BPL -
         LDA.w #$0005
-        .done
-        SEP #$30
-        PLB : PLY : PLX
-        INC.b NMICGRAM
-RTL
+        BRA .done
 
 TransferVRAMStripes:
         JSL.l TransferNewNameStripes
