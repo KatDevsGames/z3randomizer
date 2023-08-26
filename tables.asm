@@ -87,7 +87,6 @@ SmithItemMode:
 db $01 ; #$00 = Classic Tempering Process - #$01 = Quick Item Get (default)
 SmithItem:
 db $02 ; #$02 = Tempered Sword (default)
-
 org $86B55C ; PC 0x3355C ; sprite_smithy_bros.asm : 634
 SmithSword:
 db $02 ; #$02 = Tempered Sword (default)

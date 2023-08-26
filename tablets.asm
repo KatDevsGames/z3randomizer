@@ -30,6 +30,7 @@ RTS
 ;--------------------------------------------------------------------------------
 SpawnTabletItem:
 	JSL.l LoadOutdoorValue
+        JSL.l AttemptItemSubstitution
         JSL.l ResolveLootIDLong
         PHA
         LDA.b #$EB : STA.l MiniGameTime

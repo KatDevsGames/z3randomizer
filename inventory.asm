@@ -520,6 +520,7 @@ LoadPowder:
         PHX
 	JSL.l Sprite_SpawnDynamically ; thing we wrote over
 	%GetPossiblyEncryptedItem(WitchItem, SpriteItemValues)
+        JSL.l AttemptItemSubstitution
         JSL.l ResolveLootIDLong
 	STA.w SpriteID, Y
         TYX
@@ -572,6 +573,7 @@ LoadMushroom:
 
 	LDA.b #$00 : STA.l RedrawFlag
 	%GetPossiblyEncryptedItem(MushroomItem, SpriteItemValues)
+        JSL.l AttemptItemSubstitution
         JSR.w ResolveLootID
 	STA.w SpriteID,X
 	JSL.l PrepDynamicTile

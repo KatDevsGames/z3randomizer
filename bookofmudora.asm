@@ -3,6 +3,7 @@
 ;--------------------------------------------------------------------------------
 LoadLibraryItemGFX:
         %GetPossiblyEncryptedItem(LibraryItem, SpriteItemValues)
+        JSL.l AttemptItemSubstitution
         JSL.l ResolveLootIDLong
         STA.w SpriteID, X
         JSL.l PrepDynamicTile_loot_resolved
@@ -30,6 +31,7 @@ LoadBonkItemGFX:
 LoadBonkItemGFX_inner:
 	LDA.b #$00 : STA.l RedrawFlag
 	JSR LoadBonkItem
+        JSL.l AttemptItemSubstitution
         JSL.l ResolveLootIDLong
         STA.w SpriteItemType, X
         STA.w SpriteID, X
