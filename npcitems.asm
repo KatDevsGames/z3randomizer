@@ -175,6 +175,7 @@ RTL
 ;--------------------------------------------------------------------------------
 LoadZoraKingItemGFX:
         LDA.l $9DE1C3 ; location randomizer writes zora item to
+        JSL.l AttemptItemSubstitution
         JSL.l ResolveLootIDLong
         STA.w SpriteID,Y
         TYX
@@ -190,6 +191,7 @@ JumpToSplashItemTarget:
 ;--------------------------------------------------------------------------------
 LoadCatfishItemGFX:
         LDA.l $9DE185 ; location randomizer writes catfish item to
+        JSL.l AttemptItemSubstitution
         JSL.l ResolveLootIDLong
 	STA.w SpriteID, Y
         TYX

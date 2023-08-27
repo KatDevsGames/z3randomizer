@@ -6,7 +6,7 @@
 ; out:	A - Sprite GFX ID
 ;--------------------------------------------------------------------------------
 GetSpriteID:
-	JSR.w AttemptItemSubstitution
+	JSL.l AttemptItemSubstitution
 	JSR.w ResolveLootID
         CMP.b #$6D : BEQ .server_F0 ; Server Request F0
         CMP.b #$6E : BEQ .server_F1 ; Server Request F1
@@ -32,7 +32,7 @@ RTL
 ; out:	A - Palette
 ;--------------------------------------------------------------------------------
 GetSpritePalette:
-        JSR AttemptItemSubstitution
+        JSL.l AttemptItemSubstitution
         JSR.w ResolveLootID
         .resolved
         TAX
@@ -69,6 +69,10 @@ RTL
 ;-------------------------------------------------------------------------------- 20/847B
 LoadDynamicTileOAMTable:
         PHP
+        REP #$20
+        LDA.w #$0000 : STA.l SpriteOAM : STA.l SpriteOAM+2
+        LDA.w #$0200 : STA.l SpriteOAM+6
+        SEP #$20
         LDA.b #$24 : STA.l SpriteOAM+4
 
         LDA.w SpriteID,X
@@ -76,27 +80,23 @@ LoadDynamicTileOAMTable:
         STA.l SpriteOAM+5 : STA.l SpriteOAM+13
         PHX
         LDA.l SpriteProperties_standing_width,X : BEQ .narrow
-        REP #$20
-        LDA.w #$0000 : STA.l SpriteOAM : STA.l SpriteOAM+2
-        LDA.w #$0200 : STA.l SpriteOAM+6
         BRA .done
 
         .narrow
         REP #$20
-        LDA.w #$0004 : STA.l SpriteOAM
-        LDA.w #$0000 : STA.l SpriteOAM+2
-        LDA.w #$0200 : STA.l SpriteOAM+6
-
         LDA.w #$0400 : STA.l SpriteOAM+7 : STA.l SpriteOAM+14
+        LDA.w #$0000 : STA.l SpriteOAM+14
         LDA.w #$0800 : STA.l SpriteOAM+9
         LDA.w #$3400 : STA.l SpriteOAM+11
+
+        SEP #$20
+        LDA.b #$04 : STA.l SpriteOAM
 
         .done
         TXA
         PLX
         PLP
 RTS
-
 ;--------------------------------------------------------------------------------
 ; DrawDynamicTile
 ; in:	A - Loot ID
@@ -359,23 +359,26 @@ LoadItemPalette:
 ; Out: A - Sprite palette index
         PHX : PHY : PHB
         LDA.b #PalettesVanillaBank>>16 : STA.b Scrap0C
-        LDA.b #$7E
-        PHA : PLB
+        PEA $7E00
+        PLB : PLB
         REP #$30
         
         TXA : ASL : TAX
         LDA.l SpriteProperties_palette_addr,X : STA.b Scrap0A
         LDY.w #$000E
+        LDA.w RoomIndex : CMP.w #$008C : BEQ .aux
         LDA.w TransparencyFlag : BNE .SP05
                 -
-                        LDA.b [Scrap0A], Y : STA.w PaletteBuffer+$0170,Y
+                        LDA.b [Scrap0A], Y
+                        STA.w PaletteBuffer+$0170,Y
                         DEY #2
                 BPL -
                 LDA.w #$0003
                 BRA .done
         .SP05
         -
-                LDA.b [Scrap0A], Y : STA.w PaletteBuffer+$01B0,Y
+                LDA.b [Scrap0A], Y
+                STA.w PaletteBuffer+$01B0,Y
                 DEY #2
         BPL -
         LDA.w #$0005
@@ -384,6 +387,23 @@ LoadItemPalette:
         PLB : PLY : PLX
         INC.b NMICGRAM
 RTL
+        .aux
+        LDA.w TransparencyFlag : BNE .SP05_aux
+                -
+                        LDA.b [Scrap0A], Y
+                        STA.w PaletteBufferAux+$0170,Y
+                        DEY #2
+                BPL -
+                LDA.w #$0003
+                BRA .done
+        .SP05_aux
+        -
+                LDA.b [Scrap0A], Y
+                STA.w PaletteBufferAux+$01B0,Y
+                DEY #2
+        BPL -
+        LDA.w #$0005
+        BRA .done
 
 TransferVRAMStripes:
         JSL.l TransferNewNameStripes

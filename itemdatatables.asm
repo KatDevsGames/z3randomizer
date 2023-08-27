@@ -183,9 +183,9 @@ endmacro
 %ReceiptProps($2B, -4, 0, $1E, $F35C, $FF, skip, bottles) ; 2B - Full bottle (red)
 %ReceiptProps($2C, -4, 0, $1E, $F35C, $FF, skip, bottles) ; 2C - Full bottle (green)
 %ReceiptProps($2D, -4, 0, $1E, $F35C, $FF, skip, bottles) ; 2D - Full bottle (blue)
-%ReceiptProps($2E, -4, 0, $1E, $F36D, $FF, skip, bottles) ; 2E - Potion refill (red)
-%ReceiptProps($2F, -4, 0, $1E, $F36E, $FF, skip, bottles) ; 2F - Potion refill (green)
-%ReceiptProps($30, -4, 0, $1E, $F36E, $FF, skip, bottles) ; 30 - Potion refill (blue)
+%ReceiptProps($2E, -4, 0, $1E, $F36D, $FF, skip, skip) ; 2E - Potion refill (red)
+%ReceiptProps($2F, -4, 0, $1E, $F36E, $FF, skip, skip) ; 2F - Potion refill (green)
+%ReceiptProps($30, -4, 0, $1E, $F36E, $FF, skip, skip) ; 30 - Potion refill (blue)
 %ReceiptProps($31, -4, 0, $30, $F375, $FF, skip, skip) ; 31 - 10 bombs
 %ReceiptProps($32, -4, 0, $22, $F366, $FF, dungeon_bigkey, skip) ; 32 - Big key
 %ReceiptProps($33, -4, 0, $21, $F368, $FF, dungeon_map, skip) ; 33 - Map
@@ -416,7 +416,7 @@ macro SpriteProps(id, chest_width, standing_width, chest_pal, standing_pal, addr
 	pullpc
 endmacro
 
-%SpriteProps($00, 2, 2, $02, $02, PalettesVanilla_blue_ice+$0E)         ; 00 - Fighter sword & Shield
+%SpriteProps($00, 0, 2, $05, $02, PalettesVanilla_blue_ice+$0E)         ; 00 - Fighter sword & Shield
 %SpriteProps($01, 0, 2, $05, $05, PalettesCustom_master_sword)          ; 01 - Master sword
 %SpriteProps($02, 0, 2, $05, $01, PalettesCustom_tempered_sword)        ; 02 - Tempered sword
 %SpriteProps($03, 0, 2, $05, $04, PalettesCustom_golden_sword)          ; 03 - Golden sword
@@ -452,7 +452,7 @@ endmacro
 %SpriteProps($21, 2, 2, $01, $01, PalettesVanilla_red_melon+$0E)        ; 21 - Net
 %SpriteProps($22, 2, 2, $02, $02, PalettesVanilla_blue_ice+$0E)         ; 22 - Blue mail
 %SpriteProps($23, 2, 2, $01, $01, PalettesVanilla_red_melon+$0E)        ; 23 - Red mail
-%SpriteProps($24, 0, 0, $02, $02, PalettesVanilla_blue_ice+$0E)         ; 24 - Small key
+%SpriteProps($24, 0, 0, $04, $04, PalettesVanilla_blue_ice+$0E)         ; 24 - Small key
 %SpriteProps($25, 2, 2, $02, $02, PalettesVanilla_blue_ice+$0E)         ; 25 - Compass
 %SpriteProps($26, 2, 2, $01, $01, PalettesVanilla_red_melon+$0E)        ; 26 - Heart container from 4/4
 %SpriteProps($27, 2, 2, $02, $02, PalettesVanilla_blue_ice+$0E)         ; 27 - Bomb
@@ -590,7 +590,7 @@ endmacro
 %SpriteProps($AB, 0, 0, $04, $04, PalettesVanilla_blue_ice+$0E)         ; AB - Small key of Thieves' Town
 %SpriteProps($AC, 0, 0, $04, $04, PalettesVanilla_blue_ice+$0E)         ; AC - Small key of Turtle Rock
 %SpriteProps($AD, 0, 0, $04, $04, PalettesVanilla_blue_ice+$0E)         ; AD - Small key of Ganon's Tower
-%SpriteProps($AE, 2, 2, $04, $04, $0000)                                ; AE - Reserved
+%SpriteProps($AE, 2, 2, $02, $02, $0000)                                ; AE - Reserved
 %SpriteProps($AF, 0, 0, $04, $04, PalettesVanilla_blue_ice+$0E)         ; AF - Generic small key
 %SpriteProps($B0, 2, 2, $80, $80, PalettesCustom_crystal)               ; B0 - Crystal 6
 %SpriteProps($B1, 2, 2, $80, $80, PalettesCustom_crystal)               ; B1 - Crystal 1
@@ -1032,7 +1032,7 @@ ItemReceiptGraphicsOffsets:
 	dw $05A0                               ; 4D - Arrow capacity (70)
 	dw $01A0                               ; 4E - 1/2 magic
 	dw $01E0                               ; 4F - 1/4 magic
-	dw $0                                  ; 50 - Safe master sword
+	dw $00E0                               ; 50 - Safe master sword
 	dw $0420                               ; 51 - Bomb capacity (+5)
 	dw $0460                               ; 52 - Bomb capacity (+10)
 	dw $0520                               ; 53 - Arrow capacity (+5)

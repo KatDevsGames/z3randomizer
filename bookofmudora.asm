@@ -3,6 +3,7 @@
 ;--------------------------------------------------------------------------------
 LoadLibraryItemGFX:
         %GetPossiblyEncryptedItem(LibraryItem, SpriteItemValues)
+        JSL.l AttemptItemSubstitution
         JSL.l ResolveLootIDLong
         STA.w SpriteID, X
         JSL.l PrepDynamicTile_loot_resolved
@@ -30,9 +31,17 @@ LoadBonkItemGFX:
 LoadBonkItemGFX_inner:
 	LDA.b #$00 : STA.l RedrawFlag
 	JSR LoadBonkItem
+        JSL.l AttemptItemSubstitution
+        JSL.l ResolveLootIDLong
         STA.w SpriteItemType, X
         STA.w SpriteID, X
 	JSL.l PrepDynamicTile
+        PHA : PHX
+        LDA.w SpriteID,X : TAX
+        LDA.l SpriteProperties_standing_width,X : BNE +
+                LDA.b #$00 : STA.l SpriteOAM : STA.l SpriteOAM+8
+        +
+        PLX : PLA
 RTL
 ;--------------------------------------------------------------------------------
 DrawBonkItemGFX: 
@@ -42,7 +51,7 @@ DrawBonkItemGFX:
         BRA .done ; don't draw on the init frame
         
 	.skipInit
-        JSR LoadBonkItem
+        LDA.w SpriteID,X
         JSL.l DrawDynamicTileNoShadow
 
         .done

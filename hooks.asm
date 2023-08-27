@@ -59,10 +59,8 @@ org $00FFEA : dw NMIBounce
 org $00FFEE : dw IRQBounce
 
 org $8098AB
-
-NMIBounce: JML $8080C9
-IRQBounce: JML $8082D8
-
+NMIBounce: JML.l $8080C9
+IRQBounce: JML.l $8082D8
 warnpc $8098C0
 
 ;================================================================================
@@ -1408,19 +1406,15 @@ MVN $A17E
 org $8DFB1F : JSL CheckHUDSilverArrows
 org $8DFB29 : BRA UpdateHUDBuffer_update_item_check_arrows
 ;--------------------------------------------------------------------------------
-org $8DF1AB
-JSR.w RebuildHUD_update
-org $8DDFC8
-JSR.w RebuildHUD_update
+org $8DF1AB : JSR.w RebuildHUD_update
+org $8DDFC8 : JSR.w RebuildHUD_update
 org $8DDB88 ; Don't rebuild HUD twice on icon refresh
 NOP #3      ; Not sure why this is here
 ;--------------------------------------------------------------------------------
-org $87A205
-JSL.l RebuildHUD_update_long
-org $8AEF62
-JSL.l RebuildHUD_update_long
-org $87A1CF
-JSL.l RebuildHUD_update_long
+org $87A205 : JSL.l RebuildHUD_update_long
+org $8AEF62 : JSL.l RebuildHUD_update_long
+org $87A1CF : JSL.l RebuildHUD_update_long
+org $87A235 : JSL.l RebuildHUD_update_long
 ;--------------------------------------------------------------------------------
 org $8DFFE1
 RebuildHUD_update_long:

@@ -142,10 +142,8 @@ CheckEnoughCrystalsForGanon:
 RTL
 ;--------------------------------------------------------------------------------
 CheckTowerOpen:
-        REP #$30
         LDA.l GanonsTowerOpenMode : ASL : TAX
         JSR.w (.tower_open_modes,X)
-        SEP #$30
 RTL
         .tower_open_modes
         dw .vanilla
@@ -153,13 +151,15 @@ RTL
 
         .vanilla
         LDA.l CrystalsField
-        AND.w #$007F : CMP.w #$007F
+        AND.b #$7F : CMP.b #$7F
         RTS
 
         .arbitrary_cmp
+        REP #$30
         LDA.l GanonsTowerOpenAddress : TAX
         LDA.l $7E0000,X
         CMP.l GanonsTowerOpenTarget
+        SEP #$30
         RTS
 
 ;---------------------------------------------------------------------------------------------------
@@ -195,10 +195,9 @@ KillGanon:
 	CMP.b #$06 : BNE .exit
 
 .light_speed
-	LDA.l OverworldEventDataWRAM+$5B : ORA.b #$20 : STA.l OverworldEventDataWRAM+$5B ; pyramid hole
-	LDA.b #$08 : STA.l RoomDataWRAM[$00].high ; kill ganon
-	LDA.b #$02 : STA.l MoonPearlEquipment ; pearl but invisible in menu
-
+        REP #$20
+        LDA.w #$0019 : STA.b GameMode
+        SEP #$20
 .exit
 	RTL
 
@@ -267,7 +266,9 @@ RTL
         RTS
 
         .arbitrary_cmp
+        REP #$30
         LDA.l PedPullAddress : TAX
-        LDA.l $7E000,X
+        LDA.l $7E0000,X
         CMP.l PedPullTarget
+        SEP #$30
         RTS

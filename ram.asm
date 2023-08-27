@@ -190,10 +190,10 @@ MessageJunk = $7E0223             ; Zeroed but never used (?)
                                   ;
 ShopPurchaseFlag = $7E0224        ; $01 = Shop purchase item receipt.
 ;CoolScratch = $7E0224            ; 0x5C bytes of free ram
-ItemQueuePtr = $7E0226            ; Pointer into Item GFX and VRAM target queues. Word length.
+ItemStackPtr = $7E0226            ; Pointer into Item GFX and VRAM target queues. Word length.
+                                  ; If not zero, pointer should always be left pointing at the
+                                  ; next available slot in the stack during the frame.
 SpriteID = $7E0230                ; 0x0A bytes. Receipt ID for main loop sprite we're handling.
-ItemGFXQueue = $7E0230            ; Pointers to decompressed item tiles deferred to NMI loading. $10 bytes
-ItemTargetQueue = $7E0240         ; Pointers to VRAM targets for ItemGFXQueue. $10 bytes
 AncillaVelocityZ = $7E0294        ; 0x0A bytes
 AncillaZCoord = $7E029E           ; 0x0A bytes
                                   ;
@@ -476,7 +476,10 @@ HUDArrowCount = $7EC760           ;
 HUDKeyDigits = $7EC764            ;
                                   ;
 BigRAM = $7EC900                  ; Big buffer of free ram (0x1F00)
-TotalItemCountTiles = $7ECB00     ; Cached total item count tiles for HUD. Four words high to low.
+ItemGFXStack = $7ECB00            ; Pointers to source of decompressed item tiles deferred to NMI loading.
+ItemGFXSBankStack = $7ECB20       ; Source bank byte for above.
+ItemTargetStack = $7ECB40         ; Pointers to VRAM targets for ItemGFXStack.
+TotalItemCountTiles = $7ECF00     ; Cached total item count tiles for HUD. Four words high to low.
 
 ;================================================================================
 ; Bank 7F
@@ -484,7 +487,6 @@ TotalItemCountTiles = $7ECB00     ; Cached total item count tiles for HUD. Four 
 DecompressionBuffer = $7F0000      ; Decompression Buffer. $2000 bytes.
 
 DecompBuffer2 = $7F4000            ; Another buffer
-
 
 base $7F5000
 RedrawFlag: skip 1                 ;

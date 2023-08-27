@@ -3,6 +3,7 @@
 ;--------------------------------------------------------------------------------
 SpawnDungeonPrize:
         PHX : PHB
+        JSL.l AttemptItemSubstitution
         JSL.l ResolveLootIDLong
         STA.w ItemReceiptID
         TAX
@@ -61,6 +62,7 @@ RTS
 PrepPrizeTile:
         PHA : PHX : PHY
         LDA.w AncillaGet, X
+        JSL.l AttemptItemSubstitution
         JSL.l ResolveLootIDLong
         STA.w SpriteID,X
         JSL.l TransferItemReceiptToBuffer_using_ReceiptID
@@ -69,6 +71,7 @@ RTL
 
 SetItemPose:
         PHA
+        LDA.w DungeonID : BMI .one_handed
         LDA.w RoomItemsTaken : BIT.b #$80 : BNE +
                 .one_handed
                 PLA
@@ -97,6 +100,7 @@ SetCutsceneFlag:
 ; Out: c - Cutscene flag $02 if set, $01 if unset.
         PHX
         LDY.b #$01 ; wrote over
+        LDA.w DungeonID : BMI .no_cutscene
         LDA.w RoomItemsTaken : BIT #$80 : BNE .dungeon_prize
                 .no_cutscene
                 PLX
@@ -112,6 +116,7 @@ RTL
 AnimatePrizeCutscene:
         LDA.w ItemReceiptMethod : CMP.b #$03 : BNE +
                 JSR.w CrystalOrPendantBehavior : BCC +
+                        LDA.w DungeonID : BMI +
                         LDA.w RoomItemsTaken : BIT #$80 : BEQ +
                                 SEC
                                 RTL
@@ -148,7 +153,9 @@ RTL
 
 MaybeKeepLootID:
         PHA
+        LDA.w DungeonID : BMI .no_prize
         LDA.w RoomItemsTaken : BIT #$80 : BNE .prize
+                .no_prize
                 STZ.w ItemReceiptID
                 STZ.w ItemReceiptPose
                 PLA

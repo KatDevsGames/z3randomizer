@@ -434,7 +434,10 @@ ItemBehavior:
         RTS
 
         .single_arrow
-        INC.w UpdateHUD
+        LDA.l ArrowMode : BEQ +
+                LDA.l CurrentArrows : INC : STA.l CurrentArrows ; Should be sole write to this address
+                INC.w UpdateHUD                                 ; in retro/rupee bow mode.
+        +
         RTS
 
         .rupoor
@@ -626,7 +629,12 @@ ItemBehavior:
 
         .pendant
         SEP #$20
-        LDA.l PendantCounter : INC : STA.l PendantCounter
+        LSR
+        SEC : SBC.b #$37
+        TAX
+        LDA.w PendantMasks,X : AND.l PendantsField : BNE +
+                LDA.l PendantCounter : INC : STA.l PendantCounter
+        +
         RTS
 
         .dungeon_crystal
@@ -645,9 +653,12 @@ ItemBehavior:
                 DEX
         BPL -
         SEP #$20
-        ORA.l CrystalsField : STA.l CrystalsField
-        LDA.l CrystalCounter : INC : STA.l CrystalCounter
-
+        TAX
+        AND.l CrystalsField : BNE +
+                TXA
+                ORA.l CrystalsField : STA.l CrystalsField
+                LDA.l CrystalCounter : INC : STA.l CrystalCounter
+        +
         .done
         RTS
 
@@ -657,7 +668,7 @@ ResolveReceipt:
         JSL.l PreItemGet
         LDA.w ItemReceiptID
         .get_item
-        JSR.w AttemptItemSubstitution
+        JSL.l AttemptItemSubstitution
         JSR.w HandleBowTracking
         JSR.w ResolveLootID
         .have_item
@@ -1013,7 +1024,7 @@ AttemptItemSubstitution:
         BRA -
         .exit
         PLA : PLX
-RTS
+RTL
 ;--------------------------------------------------------------------------------
 CountBottles:
         PHX
@@ -1121,3 +1132,5 @@ dw $0004 ; EP
 dw $0002 ; HC
 dw $0000 ; Sewers
 
+PendantMasks:
+db $04, 01, 02

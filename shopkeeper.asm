@@ -105,8 +105,8 @@ SpritePrep_ShopKeeper:
 	LDX.w #$0000
 	LDY.w #$0000
 	-
-		TYA : CMP.l ShopCapacity : !BLT ++ : JMP .stop : ++
-		LDA.l ShopContentsTable+1, X : CMP.b #$FF : BNE ++ : JMP .stop : ++
+		TYA : CMP.l ShopCapacity : !BLT ++ : JMP .done : ++
+		LDA.l ShopContentsTable+1, X : CMP.b #$FF : BNE ++ : JMP .done : ++
 		
 		LDA.l ShopContentsTable, X : CMP.l ShopId : BEQ ++ : JMP .next : ++
 			LDA.l ShopContentsTable+1, X : PHX : TYX : STA.l ShopInventory, X : PLX
@@ -129,29 +129,23 @@ SpritePrep_ShopKeeper:
 				++
 			PLY : +++
 			
-			PHX : PHY
-				PHX : TYX : LDA.l ShopInventory, X : PLX
-                                SEP #$10
-                                JSL.l ResolveLootIDLong
-                                TAY
-                                REP #$30
-				LDA.b 1,s : TAX : LDA.l .tile_offsets, X : TAX
-				JSR.w SetupTileTransfer
-			PLY : PLX
-			INY #4
-		
+                        PHX : PHY
+                        PHX : TYX : LDA.l ShopInventory, X : PLX
+                        SEP #$10
+                        JSL.l AttemptItemSubstitution
+                        JSL.l ResolveLootIDLong
+                        TAY
+                        REP #$30
+                        LDA.b 1,s : TAX : LDA.l .tile_offsets, X : TAX
+                        JSR.w SetupTileTransfer
+                        PLY : PLX
+                        INY #4
 		.next
 		INX #8
 	JMP -
-	.stop
-        REP #$20
-        LDA.w ItemQueuePtr
-        DEC #2
-        AND.w #$00E
-        STA.w ItemQueuePtr
-        SEP #$20
-	
+
 	.done
+        SEP #$20
 	LDA.l ShopType : BIT.b #$20 : BEQ .notTakeAll ; Take-all
 	.takeAll
 
@@ -199,19 +193,19 @@ SetupTileTransfer:
 	TXA : LSR #2
         CLC : ADC.w #!FREE_TILE_ALT
         .store_target
-        LDX.w ItemQueuePtr
-        STA.w ItemTargetQueue,X
+        LDX.w ItemStackPtr
+        STA.l ItemTargetStack,X
 
 	TYA : ASL : TAX
         LDA.l StandingItemGraphicsOffsets,X
-        LDX.w ItemQueuePtr
-        STA.w ItemGFXQueue,X
+        LDX.w ItemStackPtr
+        STA.l ItemGFXStack,X
 
         TXA
         INC #2
-        AND.w #$000E
-        STA.w ItemQueuePtr
-        TDC
+        STA.l ItemStackPtr
+
+        LDA.w #$0000
 	REP #$10 ; set 16-bit index registers
         SEP #$20
 RTS
@@ -561,6 +555,7 @@ Shopkeeper_DrawNextItem:
 	PLY
 
 	LDA.l ShopInventory, X ; get item id
+        JSL.l AttemptItemSubstitution
         JSL.l ResolveLootIDLong
         STA.b Scrap0D
 	CMP.b #$2E : BNE + : BRA .potion
