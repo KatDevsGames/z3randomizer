@@ -49,10 +49,11 @@ Init_Primary:
 	SEP #$30
 
 	LDA.l RomSpeed : STA.w MEMSEL ; enable fastrom access on upper banks
-	STA.l OneMindId
+	LDA.b #$01 : STA.l OneMindId
 	
 	LDA.b #$10 : STA.b PlayerSpriteBank ; set default player sprite bank
 	LDA.b #$81 : STA.w NMITIMEN ; thing we wrote over, turn on NMI & gamepad
+        LDA.b #(ReturnFromInit>>16)|$80 : PHA : PLB
 
 JML ReturnFromInit
 

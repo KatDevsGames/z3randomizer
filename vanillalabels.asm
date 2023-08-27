@@ -164,6 +164,8 @@ RenderText_DecompressAndDrawSingle                         = $8EF4FB
 DecompressFontGFX                                          = $8EF572
 CopyDecompressedCharToTransferBuffer                       = $8EF5BC
 CopyDecompressedToFullBuffer                               = $8EF6A8
+Trinexx_FinalPhase                                         = $9DADB5
+Trinexx_PreFinalPhase                                      = $9DB0D2
 
 ;===================================================================================================
 ; Palettes

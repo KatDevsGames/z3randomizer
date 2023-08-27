@@ -2601,7 +2601,7 @@ dw #$0800          ; Yellow
 
 org $B0F032 ; PC 0x187032
 RomSpeed:
-db $01      ; $01 = FastROM (default | $00 = SlowROM)
+db $01      ; $01 = FastROM (default) | $00 = SlowROM
 
 org $B0F033 ; PC 0x187033
 

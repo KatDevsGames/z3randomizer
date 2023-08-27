@@ -59,10 +59,8 @@ org $00FFEA : dw NMIBounce
 org $00FFEE : dw IRQBounce
 
 org $8098AB
-
-NMIBounce: JML $8080C9
-IRQBounce: JML $8082D8
-
+NMIBounce: JML.l $8080C9
+IRQBounce: JML.l $8082D8
 warnpc $8098C0
 
 ;================================================================================
