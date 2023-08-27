@@ -142,10 +142,8 @@ CheckEnoughCrystalsForGanon:
 RTL
 ;--------------------------------------------------------------------------------
 CheckTowerOpen:
-        REP #$30
         LDA.l GanonsTowerOpenMode : ASL : TAX
         JSR.w (.tower_open_modes,X)
-        SEP #$30
 RTL
         .tower_open_modes
         dw .vanilla
@@ -153,13 +151,15 @@ RTL
 
         .vanilla
         LDA.l CrystalsField
-        AND.w #$007F : CMP.w #$007F
+        AND.b #$7F : CMP.b #$7F
         RTS
 
         .arbitrary_cmp
+        REP #$30
         LDA.l GanonsTowerOpenAddress : TAX
         LDA.l $7E0000,X
         CMP.l GanonsTowerOpenTarget
+        SEP #$30
         RTS
 
 ;---------------------------------------------------------------------------------------------------
@@ -266,7 +266,9 @@ RTL
         RTS
 
         .arbitrary_cmp
+        REP #$30
         LDA.l PedPullAddress : TAX
-        LDA.l $7E000,X
+        LDA.l $7E0000,X
         CMP.l PedPullTarget
+        SEP #$30
         RTS

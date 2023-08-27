@@ -642,17 +642,17 @@ org $81C6FC ; PC 0xC6FC - Bank01.asm:10344 - (db $00, $00, $01, $02, $00, $06, $
 DungeonPrizeReceiptID:
 	db $00 ; Sewers
 	db $00 ; Hyrule Castle
-	db $01 ; Eastern Palace
-	db $02 ; Desert Palace
+	db $37 ; Eastern Palace
+	db $38 ; Desert Palace
 	db $00 ; Agahnim's Tower
-	db $06 ; Swamp Palace
-	db $06 ; Palace of Darkness
+	db $20 ; Swamp Palace
+	db $20 ; Palace of Darkness
 	db $20 ; Misery Mire
 	db $20 ; Skull Woods
-	db $06 ; Ice Palace
-	db $03 ; Tower of Hera
-	db $06 ; Thieves' Town
-	db $06 ; Turtle Rock
+	db $20 ; Ice Palace
+	db $39 ; Tower of Hera
+	db $20 ; Thieves' Town
+	db $20 ; Turtle Rock
 ;Ether/Nothing: $00
 ;Green Pendant: $01
 ;Blue Pendant: $02
@@ -2599,10 +2599,14 @@ dw #$0C00          ; Blue
 dw #$1800          ; Green
 dw #$0800          ; Yellow
 
-org $B0F032
+org $B0F032 ; PC 0x187032
+RomSpeed:
+db $01      ; $01 = FastROM (default | $00 = SlowROM)
+
+org $B0F033 ; PC 0x187033
 
 ;--------------------------------------------------------------------------------
-; 0x187032 - 187FFF (unused)
+; 0x187033 - 187FFF (unused)
 ;--------------------------------------------------------------------------------
 
 
