@@ -22,10 +22,6 @@
 ; resolve to a different one, or to run some custom code on pickup, you will have to use
 ; ItemSubstitutionRules in tables.asm or claim some free space in this bank to put your
 ; own code with vectors to it in the appropriate tables.
-;
-; Currently our "skip" vectors are located at (SNES address, little-endian):
-; ItemReceipts_behavior: $CDBB
-; ItemReceipts_resolution: $D33F
 ;------------------------------------------------------------------------------
 
 ;------------------------------------------------------------------------------
@@ -81,6 +77,8 @@
 ;                   c = palette index | l = load palette from .palette_addr
 ; .palette_addr     [0x02] - $A2BE00 (0x11CE00 PC)
 ;                   • Pointer to 8-color palette in bank $9B (see custompalettes.asm)
+;                   • If an item has two sprites, this should be the chest sprite for
+;                     dark rooms.
 ;------------------------------------------------------------------------------
 
 ;------------------------------------------------------------------------------
@@ -420,9 +418,9 @@ endmacro
 %SpriteProps($01, 0, 2, $05, $05, PalettesCustom_master_sword)          ; 01 - Master sword
 %SpriteProps($02, 0, 2, $05, $01, PalettesCustom_tempered_sword)        ; 02 - Tempered sword
 %SpriteProps($03, 0, 2, $05, $04, PalettesCustom_golden_sword)          ; 03 - Golden sword
-%SpriteProps($04, 0, 0, $80, $80, PalettesCustom_fighter_shield)        ; 04 - Fighter shield
-%SpriteProps($05, 2, 2, $80, $80, PalettesCustom_red_shield)            ; 05 - Fire shield
-%SpriteProps($06, 2, 2, $80, $80, PalettesCustom_mirror_shield)         ; 06 - Mirror shield
+%SpriteProps($04, 0, 0, $05, $80, PalettesCustom_fighter_shield)        ; 04 - Fighter shield
+%SpriteProps($05, 2, 2, $05, $80, PalettesCustom_red_shield)            ; 05 - Fire shield
+%SpriteProps($06, 2, 2, $05, $80, PalettesCustom_mirror_shield)         ; 06 - Mirror shield
 %SpriteProps($07, 0, 0, $01, $01, PalettesVanilla_red_melon+$0E)        ; 07 - Fire rod
 %SpriteProps($08, 0, 0, $02, $02, PalettesVanilla_blue_ice+$0E)         ; 08 - Ice rod
 %SpriteProps($09, 0, 0, $01, $01, PalettesVanilla_red_melon+$0E)        ; 09 - Hammer

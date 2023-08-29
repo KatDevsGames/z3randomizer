@@ -366,22 +366,22 @@ LoadItemPalette:
         TXA : ASL : TAX
         LDA.l SpriteProperties_palette_addr,X : STA.b Scrap0A
         LDY.w #$000E
-        LDA.w RoomIndex : CMP.w #$008C : BEQ .aux
-        LDA.w TransparencyFlag : BNE .SP05
+        JSR.w GTTorchCheck : BCS .aux
+                LDA.w TransparencyFlag : BNE .SP05
+                        -
+                                LDA.b [Scrap0A], Y
+                                STA.w PaletteBuffer+$0170,Y
+                                DEY #2
+                        BPL -
+                        LDA.w #$0003
+                        BRA .done
+                .SP05
                 -
                         LDA.b [Scrap0A], Y
-                        STA.w PaletteBuffer+$0170,Y
+                        STA.w PaletteBuffer+$01B0,Y
                         DEY #2
                 BPL -
-                LDA.w #$0003
-                BRA .done
-        .SP05
-        -
-                LDA.b [Scrap0A], Y
-                STA.w PaletteBuffer+$01B0,Y
-                DEY #2
-        BPL -
-        LDA.w #$0005
+                LDA.w #$0005
         .done
         SEP #$30
         PLB : PLY : PLX
@@ -423,3 +423,19 @@ ItemReceiptWidthCheck:
         PLX
         LDA.l SpriteProperties_standing_width, X
 RTL
+
+GTTorchCheck:
+        PHX
+        SEP #$30
+        LDA.w RoomIndex : CMP.b #$8C : BNE .done
+                LDX.w CurrentSpriteSlot
+                LDA.w SpriteTypeTable,X : CMP.b #$3B : BNE .done; Bonk Item
+                        SEC
+                        REP #$30
+                        PLX
+                        RTS
+        .done
+        CLC
+        REP #$30
+        PLX
+RTS

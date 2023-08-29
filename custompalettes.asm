@@ -2,7 +2,7 @@ PalettesCustom:
 .master_sword
 dw $0000, $7E4E, $6FF4, $1CF5, $7FFF, $1CE7, $7A10, $64A5
 .tempered_sword
-dw $0000, $7FFF, $1979, $14B6, $39DC, $14A5, $66F7, $45EF
+dw $7FFF, $093B, $169F, $7E8D, $7FFF, $1CE7, $7A10, $64A5
 .golden_sword
 dw $0000, $033F, $7FFF, $2640, $7FFF, $1CE7, $7A10, $64A5
 .fighter_shield
