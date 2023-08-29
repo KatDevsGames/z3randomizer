@@ -28,10 +28,15 @@ RTL
 OnDungeonBossExit:
         JSL.l StatTransitionCounter
         LDX.w DungeonID : BMI +
-                REP #$20
-                LDA.l DungeonItemMasks, X : ORA.l DungeonsCompleted : STA.l DungeonsCompleted
-                SEP #$20
+                LDA.w RoomIndex : CMP.b #$0D : BEQ .aga2
+                        .set_completed
+                        REP #$20
+                        LDA.l DungeonItemMasks, X : ORA.l DungeonsCompleted : STA.l DungeonsCompleted
+                        SEP #$20
         +
+RTL
+        .aga2
+        CPX.b #$1A : BEQ .set_completed
 RTL
 ;--------------------------------------------------------------------------------
 OnPlayerDead:

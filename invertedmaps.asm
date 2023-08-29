@@ -1362,11 +1362,11 @@ OverworldMapChangePointers:
 
 	dw !OWW_Stripe|!OWW_Vertical
 	dw $2422
-	dw $02F3, $00C9, $00E3
+	dw $02F3, $00C9, $00E3|!OWW_STOP
 
 	dw !OWW_Stripe|!OWW_Vertical
 	dw $2424
-	dw $02F3, $00C9, $00E3
+	dw $02F3, $00C9, $00E3|!OWW_STOP
 
 	dw !OWW_END
 
