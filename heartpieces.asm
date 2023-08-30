@@ -211,7 +211,10 @@ LoadIndoorValue:
 		LDA.l StandingKey_Hera
 		JMP .done
 	+
-	LDA.w #$0017 ; default to a normal hp
+        PHX
+        LDX.w CurrentSpriteSlot ; If we're on a different screen ID via glitches load the sprite
+        LDA.w SpriteID,X        ; we can see and are interacting with
+        PLX
 	.done
 	AND.w #$00FF ; the loads are words but the values are 1-byte so we need to clear the top half of the accumulator - no guarantee it was 8-bit before
 	PLP
@@ -274,7 +277,10 @@ LoadOutdoorValue:
 		%GetPossiblyEncryptedItem(HeartPiece_Zora, HeartPieceOutdoorValues)
 		JMP .done
 	+
-	LDA.w #$0017 ; default to a normal hp
+        PHX
+        LDX.w CurrentSpriteSlot ; If we're on a different screen ID via glitches load the sprite
+        LDA.w SpriteID,X        ; we can see and are interacting with.
+        PLX
 	.done
 	AND.w #$00FF ; the loads are words but the values are 1-byte so we need to clear the top half of the accumulator - no guarantee it was 8-bit before
 	PLP
