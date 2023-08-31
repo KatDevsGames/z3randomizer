@@ -107,10 +107,11 @@ SetCutsceneFlag:
                 CLC
                 RTL
         .dungeon_prize
-        LDA.w ItemReceiptID : TAX
-        LDA.l InventoryTable_properties,X : BPL .no_cutscene
-                PLX
-                SEC
+        LDA.w ItemReceiptMethod : CMP.b #$01 : BEQ .no_cutscene
+                LDA.w ItemReceiptID : TAX
+                LDA.l InventoryTable_properties,X : BPL .no_cutscene
+                        PLX
+                        SEC
 RTL
 
 AnimatePrizeCutscene:
@@ -324,3 +325,4 @@ CheckDungeonWorld:
         .dark_world
         SEP #$02
 RTL
+
