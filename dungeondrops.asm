@@ -107,7 +107,7 @@ SetCutsceneFlag:
                 CLC
                 RTL
         .dungeon_prize
-        JSR.w PrizeAncillaCheck : BCC .no_cutscene
+        LDA.w ItemReceiptMethod : CMP.b #$01 : BEQ .no_cutscene
                 LDA.w ItemReceiptID : TAX
                 LDA.l InventoryTable_properties,X : BPL .no_cutscene
                         PLX
@@ -326,14 +326,3 @@ CheckDungeonWorld:
         SEP #$02
 RTL
 
-PrizeAncillaCheck:
-        PHX
-        LDX.w CurrentSpriteSlot
-        LDA.w AncillaVelocityZ,X : BNE .prize ; Only prizes should have Z velocity after
-                PLX                           ; room boss heart container is collected
-                CLC
-                RTS
-        .prize
-        PLX
-        SEC
-RTS
