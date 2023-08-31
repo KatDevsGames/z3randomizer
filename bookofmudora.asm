@@ -60,7 +60,7 @@ RTL
 ;--------------------------------------------------------------------------------
 GiveBonkItem:
 	JSR LoadBonkItem
-	CMP.b #$24 : BNE .notKey
+        JSR.w AbsorbKeyCheck : BCC .notKey
 	.key
 		PHY : LDY.b #$24 : JSL.l AddInventory : PLY ; do inventory processing for a small key
 		LDA.l CurrentSmallKeys : INC A : STA.l CurrentSmallKeys
@@ -83,4 +83,20 @@ LoadBonkItem:
 	+
 		LDA.b #$24 ; default to small key
 	++
+RTS
+;--------------------------------------------------------------------------------
+AbsorbKeyCheck:
+        PHA
+	CMP.b #$24 : BEQ .key
+        CMP.b #$A0 : BCC .not_key
+        CMP.b #$B0 : BCS .not_key
+                AND.b #$0F : ASL
+                CMP.w DungeonID : BNE .not_key
+                        .key
+                        PLA
+                        SEC
+                        RTS
+        .not_key
+        PLA
+        CLC
 RTS
