@@ -148,35 +148,40 @@ AddInventory:
         PHK : PLB
         LDA.b #$7E : STA.b Scrap0D 
 	LDA.l StatsLocked : BNE .done
-        LDA.w InventoryTable_properties,Y : BIT #$01 : BEQ .done
-        JSR.w ShopCheck : BCS .done
-        JSR.w DungeonIncrement : BCS .done
-                JSR.w IncrementByOne
-                JSR.w StampItem
+                REP #$30
+                TYA : AND.w #$00FF : ASL : TAX
                 SEP #$20
-                JSR.w IncrementYAItems
-                        REP #$20
-                        LDA.l TotalItemCounter : INC : TAY
-                        LDA.l BootsEquipment : BNE +
-                                TYA : STA.l PreBootsLocations
-                        +
-                        LDA.l MirrorEquipment : BNE +
-                                TYA : STA.l PreMirrorLocations
-                        +
-                        LDA.l FluteEquipment : BNE +
-                                TYA : STA.l PreFluteLocations
-                        +
-                        TYA
-                        STA.l TotalItemCounter
+                LDA.w InventoryTable_properties,X : BIT.b #$01 : BEQ .done
+                JSR.w ShopCheck : BCS .done
+                JSR.w DungeonIncrement : BCS .done
+                        JSR.w IncrementByOne
+                        JSR.w StampItem
+                        SEP #$20
+                        JSR.w IncrementYAItems
+                                REP #$20
+                                LDA.l TotalItemCounter : INC : TAY
+                                LDA.l BootsEquipment : BNE +
+                                        TYA : STA.l PreBootsLocations
+                                +
+                                LDA.l MirrorEquipment : BNE +
+                                        TYA : STA.l PreMirrorLocations
+                                +
+                                LDA.l FluteEquipment : BNE +
+                                        TYA : STA.l PreFluteLocations
+                                +
+                                TYA
+                                STA.l TotalItemCounter
         .done
+        SEP #$30
 	PLB : PLP : PLY : PLX : PLA
 RTL
 
 ShopCheck:
+; In: X - Receipt ID << 1
 ; TODO: If we write all shops, we can use the ShopPurchase flag instead of this
         LDA.b IndoorsFlag : BEQ .count
         LDA.w ItemReceiptMethod : CMP.b #$01 : BEQ .count
-        LDA.w InventoryTable_properties,Y : BIT.b #$02 : BNE .count
+        LDA.w InventoryTable_properties,X : BIT.b #$02 : BNE .count
                 REP #$20
                 LDA.b RoomIndex
                 CMP.w #274 : BEQ .nocount ; dark world death mountain shop, ornamental shield shop
@@ -197,40 +202,47 @@ RTS
 RTS
 
 DungeonIncrement:
-        LDA.w InventoryTable_properties,Y : BIT.b #$40 : BEQ +
+; In: X - Receipt ID << 1
+        PHX
+        LDA.w InventoryTable_properties,X : BIT.b #$40 : BEQ +
                 JSL.l CountChestKeyLong
         +
 	LDA.b IndoorsFlag : BEQ .done
         LDA.w DungeonID : BMI .done
                 CMP.l BallNChainDungeon : BNE +
-                        CPY.b #$32 : BEQ .ballchain_bigkey
+                        CPY.w #$0032 : BEQ .ballchain_bigkey
 	        +
                 CMP.b #$04 : BCS +
                         LDA.l SewersLocations : INC : STA.l SewersLocations : STA.l HCLocations
                         BRA .done
                 +
-                LSR : TAX : LDA.l DungeonLocationsChecked, X : INC : STA.l DungeonLocationsChecked, X
-	        CPX.b #$0D : BNE +
+                LSR : TAX
+                LDA.l DungeonLocationsChecked, X : INC : STA.l DungeonLocationsChecked, X
+	        CPX.w #$000D : BNE +
                         LDA.l BigKeyField : BIT.b #$04 : BNE ++
                                 LDA.l PreGTBKLocations : INC : STA.l PreGTBKLocations
                         ++
 	        +
         .done
+        PLX
         CLC
 RTS
         .ballchain_bigkey
         LDA.l BigKeysBigChests
         CLC : ADC.b #$10
         STA.l BigKeysBigChests
+        PLX
         SEC
 RTS
 
 StampItem:
         REP #$30
-        TYA : ASL : TAX
         LDA.w InventoryTable_stamp,X : BEQ .skip
                 STA.b Scrap0B
                 LDA.b [Scrap0B] : BNE .skip
+                INC.b Scrap0B : INC.b Scrap0B
+                LDA.b [Scrap0B] : BNE .skip
+                        DEC.b Scrap0B : DEC.b Scrap0B
                         LDA.l NMIFrames : STA.b [Scrap0B]
                         INC.b Scrap0B : INC.b Scrap0B
                         LDA.l NMIFrames+2 : STA.b [Scrap0B]
@@ -238,7 +250,7 @@ StampItem:
 RTS
 
 IncrementYAItems:
-         LDA.w InventoryTable_properties,Y
+         LDA.w InventoryTable_properties,X
          BIT.b #$10 : BNE .bomb_check
          BIT.b #$20 : BNE .bow_check
          BIT.b #$04 : BEQ .not_y
@@ -267,7 +279,6 @@ RTS
 
 IncrementByOne:
         REP #$20
-        TYA : ASL : TAX
         LDA.w InventoryTable_stat,X : BEQ .skip
                 STA.b Scrap0B
                 SEP #$21

@@ -187,21 +187,6 @@ CheckAgaForPed:
         RTL
 
 ;---------------------------------------------------------------------------------------------------
-
-KillGanon:
-	STA.l ProgressIndicator ; vanilla game state stuff we overwrote
-
-	LDA.l GanonVulnerableMode
-	CMP.b #$06 : BNE .exit
-
-.light_speed
-        REP #$20
-        LDA.w #$0019 : STA.b GameMode
-        SEP #$20
-.exit
-	RTL
-
-;---------------------------------------------------------------------------------------------------
 CheckForCrystalBossesDefeated:
 	PHB : PHX : PHY
 

@@ -1150,6 +1150,7 @@ OverworldMapChangePointers:
 	dw $2C18, $2C98
 	dw $2D0A, $2D0C, $2D10, $2D14
 	dw $2D16, $2D8A, $2D8C, $2D8E
+	dw $2C94, $2C92, $2B8E
 	dw $2D94|!OWW_STOP
 
 	dw !OWW_ArbTileCopy

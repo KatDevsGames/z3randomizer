@@ -208,7 +208,6 @@ ItemBehavior:
                 JSR .increment_shield
                 RTS
         ..shop_shield
-        TYX
         LDA.l InventoryTable_properties,X : BIT.b #$02 : BNE -
         RTS
 
@@ -220,7 +219,6 @@ ItemBehavior:
                 JSR .increment_shield
                 RTS
         ..shop_shield
-        TYX
         LDA.l InventoryTable_properties,X : BIT.b #$02 : BNE -
         RTS
 

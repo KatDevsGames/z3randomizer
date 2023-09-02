@@ -27,20 +27,6 @@ RTL
 ;--------------------------------------------------------------------------------
 OnDungeonBossExit:
         JSL.l StatTransitionCounter
-        LDX.w DungeonID : BMI +
-                LDA.w RoomIndex : CMP.b #$0D : BEQ .aga2
-                LDA.w RoomIndex : CMP.b #$20 : BEQ .aga
-                        .set_completed
-                        REP #$20
-                        LDA.l DungeonItemMasks, X : ORA.l DungeonsCompleted : STA.l DungeonsCompleted
-                        SEP #$20
-        +
-RTL
-        .aga2
-        CPX.b #$1A : BEQ .set_completed
-RTL
-        .aga
-        CPX.b #$08 : BEQ .set_completed
 RTL
 ;--------------------------------------------------------------------------------
 OnPlayerDead:
@@ -100,10 +86,28 @@ OnUncleItemGet:
         +
 RTL
 ;--------------------------------------------------------------------------------
+OnAga1Defeated:
+        STA.l ProgressIndicator ; vanilla game state stuff we overwrote
+        LDA.l GanonVulnerableMode
+        CMP.b #$06 : BNE +
+                .light_speed
+                REP #$20
+                LDA.w #$0019 : STA.b GameMode
+                SEP #$20
+        +
+        LDA.b #$08 : CMP.w DungeonID : BNE +
+                ORA.l DungeonsCompleted+1 : STA.l DungeonsCompleted+1
+        +
+.exit
+RTL
+;--------------------------------------------------------------------------------
 OnAga2Defeated:
         JSL.l Dungeon_SaveRoomData_justKeys ; thing we wrote over, make sure this is first
         LDA.b #$FF : STA.w DungeonID
         LDA.b #$01 : STA.l Aga2Duck
+        LDA.w DungeonID : CMP.b #$1A : BNE +
+                LDA.l DungeonsCompleted : ORA.b #$04 : STA.l DungeonsCompleted
+        +
         JML.l IncrementAgahnim2Sword
 ;--------------------------------------------------------------------------------
 OnFileCreation:

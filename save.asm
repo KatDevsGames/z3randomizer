@@ -173,8 +173,8 @@ RTL
 CopyExtendedWRAMSaveFileToSRAM:
         PHB
         LDA.w #$0FFF
-        LDX.w #ExtendedSaveDataSRAM
-        LDY.w #ExtendedSaveDataWRAM
+        LDX.w #ExtendedSaveDataWRAM
+        LDY.w #ExtendedSaveDataSRAM
         MVN CartridgeSRAM>>16, ExtendedSaveDataWRAM>>16
         PLB
         TDC
