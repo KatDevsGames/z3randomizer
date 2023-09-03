@@ -147,16 +147,17 @@ AddInventory:
 	PHA : PHX : PHY : PHP : PHB
         PHK : PLB
         LDA.b #$7E : STA.b Scrap0D 
+
 	LDA.l StatsLocked : BNE .done
                 REP #$30
                 TYA : AND.w #$00FF : ASL : TAX
                 SEP #$20
+
                 LDA.w InventoryTable_properties,X : BIT.b #$01 : BEQ .done
                 JSR.w ShopCheck : BCS .done
                 JSR.w DungeonIncrement : BCS .done
                         JSR.w IncrementByOne
                         JSR.w StampItem
-                        SEP #$20
                         JSR.w IncrementYAItems
                                 REP #$20
                                 LDA.l TotalItemCounter : INC : TAY
@@ -179,6 +180,7 @@ RTL
 ShopCheck:
 ; In: X - Receipt ID << 1
 ; TODO: If we write all shops, we can use the ShopPurchase flag instead of this
+        PHX
         LDA.b IndoorsFlag : BEQ .count
         LDA.w ItemReceiptMethod : CMP.b #$01 : BEQ .count
         LDA.w InventoryTable_properties,X : BIT.b #$02 : BNE .count
@@ -196,9 +198,11 @@ ShopCheck:
                 SEP #$20
         .count
         CLC
+        PLX
 RTS
         .nocount
         SEP #$21
+        PLX
 RTS
 
 DungeonIncrement:
@@ -207,10 +211,11 @@ DungeonIncrement:
         LDA.w InventoryTable_properties,X : BIT.b #$40 : BEQ +
                 JSL.l CountChestKeyLong
         +
+        SEP #$10
 	LDA.b IndoorsFlag : BEQ .done
         LDA.w DungeonID : BMI .done
                 CMP.l BallNChainDungeon : BNE +
-                        CPY.w #$0032 : BEQ .ballchain_bigkey
+                        CPY.b #$32 : BEQ .ballchain_bigkey
 	        +
                 CMP.b #$04 : BCS +
                         LDA.l SewersLocations : INC : STA.l SewersLocations : STA.l HCLocations
@@ -218,19 +223,17 @@ DungeonIncrement:
                 +
                 LSR : TAX
                 LDA.l DungeonLocationsChecked, X : INC : STA.l DungeonLocationsChecked, X
-	        CPX.w #$000D : BNE +
+	        CPX.b #$0D : BNE +
                         LDA.l BigKeyField : BIT.b #$04 : BNE ++
                                 LDA.l PreGTBKLocations : INC : STA.l PreGTBKLocations
                         ++
 	        +
         .done
+        REP #$11
         PLX
-        CLC
 RTS
         .ballchain_bigkey
-        LDA.l BigKeysBigChests
-        CLC : ADC.b #$10
-        STA.l BigKeysBigChests
+        REP #$10
         PLX
         SEC
 RTS
@@ -247,37 +250,40 @@ StampItem:
                         INC.b Scrap0B : INC.b Scrap0B
                         LDA.l NMIFrames+2 : STA.b [Scrap0B]
         .skip
+        SEP #$20
 RTS
 
 IncrementYAItems:
-         LDA.w InventoryTable_properties,X
-         BIT.b #$10 : BNE .bomb_check
-         BIT.b #$20 : BNE .bow_check
-         BIT.b #$04 : BEQ .not_y
-                 .y_item
-                 LDA.l YAItemCounter : !ADD #$08 : STA.l YAItemCounter
-                 BRA .done
-         .not_y
-         BIT.b #$08 : BEQ .done
-                 .a_item
-                 LDA.l YAItemCounter : INC : AND.b #$07 : TAX
-                 LDA.l YAItemCounter : AND.b #$F8 : STA.l YAItemCounter
-                 TXA : ORA.l YAItemCounter : STA.l YAItemCounter
+        PHX
+        LDA.w InventoryTable_properties,X
+        BIT.b #$10 : BNE .bomb_check
+        BIT.b #$20 : BNE .bow_check
+        BIT.b #$04 : BEQ .not_y
+                .y_item
+                LDA.l YAItemCounter : !ADD #$08 : STA.l YAItemCounter
+                BRA .done
+        .not_y
+        BIT.b #$08 : BEQ .done
+                .a_item
+                LDA.l YAItemCounter : INC : AND.b #$07 : TAX
+                LDA.l YAItemCounter : AND.b #$F8 : STA.l YAItemCounter
+                TXA : ORA.l YAItemCounter : STA.l YAItemCounter
         .done
+        PLX
 RTS
         .bow_check
         LDA.l BowEquipment : BNE +
                 BRA .y_item
-        +
-RTS
         .bomb_check
-	LDA.l InventoryTracking+1 : BIT.b #$02 : BNE +
-		ORA.b #$02 : STA.l InventoryTracking+1
-		BRA .y_item
-	+
+        LDA.l InventoryTracking+1 : BIT.b #$02 : BNE +
+                ORA.b #$02 : STA.l InventoryTracking+1
+                BRA .y_item
+        +
+        PLX
 RTS
 
 IncrementByOne:
+        PHX
         REP #$20
         LDA.w InventoryTable_stat,X : BEQ .skip
                 STA.b Scrap0B
@@ -285,6 +291,7 @@ IncrementByOne:
                 LDA.b #$00 : ADC.b [Scrap0B] : STA.b [Scrap0B]
         .skip
         SEP #$20
+        PLX
 RTS
 
 IncrementBossSword:

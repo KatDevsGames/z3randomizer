@@ -103,11 +103,11 @@ RTL
 ;--------------------------------------------------------------------------------
 OnAga2Defeated:
         JSL.l Dungeon_SaveRoomData_justKeys ; thing we wrote over, make sure this is first
-        LDA.b #$FF : STA.w DungeonID
         LDA.b #$01 : STA.l Aga2Duck
         LDA.w DungeonID : CMP.b #$1A : BNE +
                 LDA.l DungeonsCompleted : ORA.b #$04 : STA.l DungeonsCompleted
         +
+        LDA.b #$FF : STA.w DungeonID
         JML.l IncrementAgahnim2Sword
 ;--------------------------------------------------------------------------------
 OnFileCreation:
