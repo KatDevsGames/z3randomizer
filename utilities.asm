@@ -366,7 +366,7 @@ LoadItemPalette:
         TXA : ASL : TAX
         LDA.l SpriteProperties_palette_addr,X : STA.b Scrap0A
         LDY.w #$000E
-        JSR.w GTTorchCheck : BCS .aux
+        JSR.w AuxPaletteCheck : BCS .aux
                 LDA.w TransparencyFlag : BNE .SP05
                         -
                                 LDA.b [Scrap0A], Y
@@ -424,18 +424,23 @@ ItemReceiptWidthCheck:
         LDA.l SpriteProperties_standing_width, X
 RTL
 
-GTTorchCheck:
+AuxPaletteCheck:
+; Out: c - write to aux palette buffer if set, main buffer if unset.
+;
+; We have to put an item's palette in the aux buffer in rooms where standing
+; item gfx are loaded in the middle of a fade-in/out such as the spiral staircase
+; fade for GT torch room and the Hera cage.
         PHX
         SEP #$30
-        LDA.w RoomIndex : CMP.b #$8C : BNE .done
-                LDX.w CurrentSpriteSlot
-                LDA.w SpriteTypeTable,X : CMP.b #$3B : BNE .done; Bonk Item
-                        SEC
-                        REP #$30
-                        PLX
-                        RTS
-        .done
-        CLC
+        LDA.w ItemReceiptMethod : BNE .main_buffer     ; Never use aux if we're actually receiving an item
+        LDA.w RoomIndex : CMP.b #$8C : BEQ .aux_buffer ; GT torch/Hope room
+        LDA.w RoomIndex : CMP.b #$87 : BEQ .aux_buffer ; Hera cage/basement
+                .main_buffer
+                REP #$31
+                PLX
+                RTS
+        .aux_buffer
+        SEC
         REP #$30
         PLX
 RTS
