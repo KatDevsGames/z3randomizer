@@ -117,7 +117,10 @@ DecrementSmallKeys:
 RTL
 ;--------------------------------------------------------------------------------
 CountChestKeyLong:
+        PHX : PHP
+        SEP #$30
 	JSR.w CountChestKey
+        PLP : PLX
 RTL
 ;--------------------------------------------------------------------------------
 CountChestKey:

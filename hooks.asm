@@ -525,10 +525,6 @@ JSL AgahnimAsksAboutPed
 org $9ED6E8
 JSL CheckAgaForPed : NOP
 
-; kill ganon when aga dies in light speed
-org $80F970
-JSL KillGanon
-
 ;================================================================================
 ; Zelda Sprite Fixes
 ;--------------------------------------------------------------------------------
@@ -699,6 +695,8 @@ JSL GetItemDamageValue
 ;================================================================================
 ; Misc Stats
 ;--------------------------------------------------------------------------------
+org $80F970
+JSL OnAga1Defeated
 org $829E2E ; <- 11E2E - module_ganon_emerges.asm : 59 (JSL Dungeon_SaveRoomDataWRAM.justKeys)
 JSL OnAga2Defeated
 ;--------------------------------------------------------------------------------
@@ -1413,6 +1411,7 @@ NOP #3      ; Not sure why this is here
 ;--------------------------------------------------------------------------------
 org $87A205 : JSL.l RebuildHUD_update_long
 org $8AEF62 : JSL.l RebuildHUD_update_long
+org $87A1A4 : JSL.l RebuildHUD_update_long
 org $87A1CF : JSL.l RebuildHUD_update_long
 org $87A235 : JSL.l RebuildHUD_update_long
 ;--------------------------------------------------------------------------------
@@ -2446,20 +2445,18 @@ JSL FixJingleGlitch
 ;================================================================================
 ; Text Renderer
 ;--------------------------------------------------------------------------------
-if !FEATURE_NEW_TEXT
-    org $8EF51B : JML RenderCharExtended
-    org $8EF520 : RenderCharExtended_returnOriginal:
-    org $8EF567 : RenderCharExtended_returnUncompressed:
-    org $8EF356 : JSL RenderCharLookupWidth
-    org $8EF3BA : JSL RenderCharLookupWidth
-    org $8EF48E : JML RenderCharLookupWidthDraw
-    org $8EF499 : RenderCharLookupWidthDraw_return:
-    org $8EF6AA : JML RenderCharToMapExtended
-    org $8EF6C2 : RenderCharToMapExtended_return:
-    org $8EFA50 : JSL RenderCharSetColorExtended
-    org $8EEE5D : JSL RenderCharSetColorExtended_init
-    org $8EF285 : JSL RenderCharSetColorExtended_close : NOP
-endif
+org $8EF51B : JML RenderCharExtended
+org $8EF520 : RenderCharExtended_returnOriginal:
+org $8EF567 : RenderCharExtended_returnUncompressed:
+org $8EF356 : JSL RenderCharLookupWidth
+org $8EF3BA : JSL RenderCharLookupWidth
+org $8EF48E : JML RenderCharLookupWidthDraw
+org $8EF499 : RenderCharLookupWidthDraw_return:
+org $8EF6AA : JML RenderCharToMapExtended
+org $8EF6C2 : RenderCharToMapExtended_return:
+org $8EFA50 : JSL RenderCharSetColorExtended
+org $8EEE5D : JSL RenderCharSetColorExtended_init
+org $8EF285 : JSL RenderCharSetColorExtended_close : NOP
 
 ;================================================================================
 ; VRAM

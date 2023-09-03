@@ -208,7 +208,6 @@ ItemBehavior:
                 JSR .increment_shield
                 RTS
         ..shop_shield
-        TYX
         LDA.l InventoryTable_properties,X : BIT.b #$02 : BNE -
         RTS
 
@@ -220,7 +219,6 @@ ItemBehavior:
                 JSR .increment_shield
                 RTS
         ..shop_shield
-        TYX
         LDA.l InventoryTable_properties,X : BIT.b #$02 : BNE -
         RTS
 
@@ -606,25 +604,31 @@ ItemBehavior:
 
         .increment_bigkey
         SEP #$20
-        LDA.l BigKeysBigChests
-        CLC : ADC.b #$10
-        STA.l BigKeysBigChests
+        LDA.l StatsLocked : BNE +
+                LDA.l BigKeysBigChests
+                CLC : ADC.b #$10
+                STA.l BigKeysBigChests
+        +
         RTS
 
         .increment_map
         SEP #$20
-        LDA.l MapsCompasses
-        CLC : ADC.b #$10
-        STA.l MapsCompasses
-        JSL.l MaybeFlagMapTotalPickup
+        LDA.l StatsLocked : BNE +
+                LDA.l MapsCompasses
+                CLC : ADC.b #$10
+                STA.l MapsCompasses
+                JSL.l MaybeFlagMapTotalPickup
+        +
         RTS
 
         .increment_compass
         SEP #$20
-        LDA.l MapsCompasses : INC : AND.b #$0F : TAX
-        LDA.l MapsCompasses : AND.b #$F0 : STA.l MapsCompasses
-        TXA : ORA.l MapsCompasses : STA.l MapsCompasses
-        JSL MaybeFlagCompassTotalPickup
+        LDA.l StatsLocked : BNE +
+                LDA.l MapsCompasses : INC : AND.b #$0F : TAX
+                LDA.l MapsCompasses : AND.b #$F0 : STA.l MapsCompasses
+                TXA : ORA.l MapsCompasses : STA.l MapsCompasses
+                JSL MaybeFlagCompassTotalPickup
+        +
         RTS
 
         .pendant

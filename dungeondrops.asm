@@ -103,15 +103,19 @@ SetCutsceneFlag:
         LDA.w DungeonID : BMI .no_cutscene
         LDA.w RoomItemsTaken : BIT #$80 : BNE .dungeon_prize
                 .no_cutscene
+                SEP #$30
                 PLX
                 CLC
                 RTL
         .dungeon_prize
-        LDA.w ItemReceiptMethod : CMP.b #$01 : BEQ .no_cutscene
-                LDA.w ItemReceiptID : TAX
-                LDA.l InventoryTable_properties,X : BPL .no_cutscene
+        LDA.w ItemReceiptMethod : CMP.b #$03 : BCC .no_cutscene
+                JSR.w SetDungeonCompleted
+                LDA.w ItemReceiptID
+                REP #$30
+                AND.w #$00FF : ASL : TAX
+                LDA.l InventoryTable_properties,X : BIT.w #$0080 : BEQ .no_cutscene
+                        SEP #$31
                         PLX
-                        SEC
 RTL
 
 AnimatePrizeCutscene:
@@ -186,36 +190,20 @@ CheckDungeonCompletion:
         SEP #$20
 RTL
 
-MaybeOpenDoor:
-        ;LDA.w ItemReceiptID : TAX
-        LDA.w DungeonID : LSR : TAX
-        LDA.l DungeonPrizeReceiptID,X : TAX
-        LDA.l InventoryTable_properties,X : BMI .no_open
-                REP #$20
-                LDX.w DungeonID
-                LDA.l DungeonMask,X : AND.l DungeonsCompleted
-                SEP #$20
-                SEC
-                RTL
-        .no_open
-        REP #$20
-        LDX.w DungeonID
-        LDA.l DungeonMask,X : AND.l DungeonsCompleted
-        SEP #$20
-        CLC
-RTL
-
 PendantMusicCheck:
 ; In: A - Item receipt ID
         PHX
         TAY
         LDA.w ItemReceiptMethod : CMP.b #$03 : BNE .dont_wait
-                TYX
-                LDA.l InventoryTable_properties,X : BMI .dont_wait
+                TYA
+                REP #$30
+                AND.w #$00FF : ASL : TAX
+                LDA.l InventoryTable_properties,X : BIT.w #$0080 : BNE .dont_wait
+                        SEP #$31
                         PLX
-                        SEC
                         RTL
         .dont_wait
+        SEP #$30
         PLX
         CLC
 RTL
@@ -273,8 +261,8 @@ PrepPrizeOAMCoordinates:
                 CLC : ADC.w #$0008 : STA.b Scrap08
                 LDA.b Scrap02 : STA.b Scrap0A
         .wide
-        PLY : PLX
         SEP #$20
+        PLY : PLX
 RTL
 
 PrepPrizeShadow:
@@ -307,14 +295,16 @@ RTL
 CrystalOrPendantBehavior:
 ; Out: c - Crystal Behavior if set, pendant if unset
         PHA : PHX
-        LDA.w AncillaGet,X : TAX
-        LDA.l InventoryTable_properties,X : BMI .crystal_behavior
+        LDA.w AncillaGet,X
+        REP #$31
+        AND.w #$00FF : ASL : TAX
+        LDA.l InventoryTable_properties,X : BIT.w #$0080 : BNE .crystal_behavior
+                SEP #$30
                 PLX : PLA
-                CLC
                 RTS
         .crystal_behavior
+        SEP #$31
         PLX : PLA
-        SEC
 RTS
 
 CheckDungeonWorld:
@@ -326,3 +316,10 @@ CheckDungeonWorld:
         SEP #$02
 RTL
 
+SetDungeonCompleted:
+        LDX.w DungeonID : BMI +
+                REP #$20
+                LDA.l DungeonItemMasks, X : ORA.l DungeonsCompleted : STA.l DungeonsCompleted
+                SEP #$20
+        +
+RTS

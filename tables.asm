@@ -643,14 +643,14 @@ DungeonPrizeReceiptID:
 	db $00 ; Sewers
 	db $00 ; Hyrule Castle
 	db $37 ; Eastern Palace
-	db $38 ; Desert Palace
+	db $39 ; Desert Palace
 	db $00 ; Agahnim's Tower
 	db $20 ; Swamp Palace
 	db $20 ; Palace of Darkness
 	db $20 ; Misery Mire
 	db $20 ; Skull Woods
 	db $20 ; Ice Palace
-	db $39 ; Tower of Hera
+	db $38 ; Tower of Hera
 	db $20 ; Thieves' Town
 	db $20 ; Turtle Rock
 ;Ether/Nothing: $00

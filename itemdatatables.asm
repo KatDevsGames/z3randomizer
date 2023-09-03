@@ -85,19 +85,20 @@
 ; InventoryTable
 ;------------------------------------------------------------------------------
 ; .properties [0x01] - $A2C000 (0x114000 PC)
-;             • p k w o a y s t
+;             • - - - - - - - -  p k w o a y s t
 ;             t = Count for total item counter | s = Count for total in shops
 ;             y = Y item                       | a = A item
 ;             o = Bomb item                    | w = Bow item
 ;             k = Chest Key                    | p = Crystal prize behavior (sparkle, etc) if set
-; .stat       [0x02] - $A2C100 (0x114100 PC)
-;             • Pointer to address in bank $7E. Increments byte by one if stats not locked.
-; .stamp      [0x02] - $A2C300 (0x114300 PC)
+; .stamp      [0x02] - $A2C200 (0x114200 PC)
 ;             • Pointer to address in bank $7E. Stamps 32-bit frame time if stats not locked.
+; .stat       [0x02] - $A2C400 (0x114400 PC)
+;             • Pointer to address in bank $7E. Increments byte by one if stats not locked.
 ;------------------------------------------------------------------------------
 
 ;------------------------------------------------------------------------------
-; ItemReceiptGraphicsOffsets & StandingItemGraphicsOffsets
+; ItemReceiptGraphicsOffsets - $22C600 (0x114600)
+; StandingItemGraphicsOffsets - $22C800 (0x114800)
 ;------------------------------------------------------------------------------
 ; Each receipt ID has one word-length entry. Decompressed vanilla item graphics
 ; are located starting at BigDecompressionBuffer. The graphics routines use the
@@ -672,280 +673,280 @@ endmacro
 %SpriteProps($FF, 2, 2, $04, $04, $0000)                                ; FF - 
 
 ;------------------------------------------------------------------------------
-; Properties: p k w o a y s t
+; Properties: - - - - - - - -  p k w o a y s t
 ; t = Count for total item counter | s = Count for total in shops
 ; y = Y item                       | a = A item
 ; o = Bomb item                    | w = Bow item
 ; k = Chest Key                    | p = Crystal prize behavior (sparkle, etc) if set
 InventoryTable:
-	.properties : fillbyte $00   : fill 256   ; See above
+	.properties : fillword $0000 : fill 256*2 ; See above
 	.stamp      : fillword $0000 : fill 256*2 ; Address to stamp with 32-bit time (bank $7E)
 	.stat       : fillword $0000 : fill 256*2 ; Address to increment by one (bank $7E)
 
 macro InventoryItem(id, props, stamp, stat)
 	pushpc
-	org InventoryTable_properties+<id> : db <props>
-	org InventoryTable_stamp+<id>+<id> : dw <stamp>
-	org InventoryTable_stat+<id>+<id>  : dw <stat>
+	org InventoryTable_properties+<id>+<id> : dw <props>
+	org InventoryTable_stamp+<id>+<id>      : dw <stamp>
+	org InventoryTable_stat+<id>+<id>       : dw <stat>
 	pullpc
 endmacro
 
-%InventoryItem($00, $81, SwordTime, $0000) ; 00 - Fighter sword & Shield
-%InventoryItem($01, $81, SwordTime, $0000) ; 01 - Master sword
-%InventoryItem($02, $01, SwordTime, $0000) ; 02 - Tempered sword
-%InventoryItem($03, $81, SwordTime, $0000) ; 03 - Butter sword
-%InventoryItem($04, $81, $0000, $0000) ; 04 - Fighter shield
-%InventoryItem($05, $81, $0000, $0000) ; 05 - Fire shield
-%InventoryItem($06, $81, $0000, $0000) ; 06 - Mirror shield
-%InventoryItem($07, $85, $0000, $0000) ; 07 - Fire rod
-%InventoryItem($08, $85, $0000, $0000) ; 08 - Ice rod
-%InventoryItem($09, $85, $0000, $0000) ; 09 - Hammer
-%InventoryItem($0A, $85, $0000, $0000) ; 0A - Hookshot
-%InventoryItem($0B, $85, $0000, $0000) ; 0B - Bow
-%InventoryItem($0C, $85, $0000, $0000) ; 0C - Blue Boomerang
-%InventoryItem($0D, $85, $0000, $0000) ; 0D - Powder
-%InventoryItem($0E, $81, $0000, $0000) ; 0E - Bottle refill (bee)
-%InventoryItem($0F, $85, $0000, $0000) ; 0F - Bombos
-%InventoryItem($10, $85, $0000, $0000) ; 10 - Ether
-%InventoryItem($11, $85, $0000, $0000) ; 11 - Quake
-%InventoryItem($12, $85, $0000, $0000) ; 12 - Lamp
-%InventoryItem($13, $85, $0000, $0000) ; 13 - Shovel
-%InventoryItem($14, $85, FluteTime, $0000) ; 14 - Flute (inactive)
-%InventoryItem($15, $85, $0000, $0000) ; 15 - Somaria
-%InventoryItem($16, $85, $0000, $0000) ; 16 - Bottle
-%InventoryItem($17, $01, $0000, HeartPieceCounter) ; 17 - Heart piece
-%InventoryItem($18, $85, $0000, $0000) ; 18 - Byrna
-%InventoryItem($19, $85, $0000, $0000) ; 19 - Cape
-%InventoryItem($1A, $85, MirrorTime, $0000) ; 1A - Mirror
-%InventoryItem($1B, $89, $0000, $0000) ; 1B - Glove
-%InventoryItem($1C, $89, $0000, $0000) ; 1C - Mitts
-%InventoryItem($1D, $85, $0000, $0000) ; 1D - Book
-%InventoryItem($1E, $89, $0000, $0000) ; 1E - Flippers
-%InventoryItem($1F, $81, $0000, $0000) ; 1F - Pearl
-%InventoryItem($20, $80, $0000, $0000) ; 20 - Crystal
-%InventoryItem($21, $85, $0000, $0000) ; 21 - Net
-%InventoryItem($22, $81, $0000, $0000) ; 22 - Blue mail
-%InventoryItem($23, $81, $0000, $0000) ; 23 - Red mail
-%InventoryItem($24, $41, $0000, SmallKeyCounter) ; 24 - Small key
-%InventoryItem($25, $01, $0000, $0000) ; 25 - Compass
-%InventoryItem($26, $00, $0000, $0000) ; 26 - Heart container from 4/4
-%InventoryItem($27, $15, $0000, $0000) ; 27 - Bomb
-%InventoryItem($28, $15, $0000, $0000) ; 28 - 3 bombs
-%InventoryItem($29, $85, $0000, $0000) ; 29 - Mushroom
-%InventoryItem($2A, $05, $0000, $0000) ; 2A - Red boomerang
-%InventoryItem($2B, $85, $0000, $0000) ; 2B - Full bottle (red)
-%InventoryItem($2C, $85, $0000, $0000) ; 2C - Full bottle (green)
-%InventoryItem($2D, $85, $0000, $0000) ; 2D - Full bottle (blue)
-%InventoryItem($2E, $80, $0000, $0000) ; 2E - Potion refill (red)
-%InventoryItem($2F, $80, $0000, $0000) ; 2F - Potion refill (green)
-%InventoryItem($30, $80, $0000, $0000) ; 30 - Potion refill (blue)
-%InventoryItem($31, $11, $0000, $0000) ; 31 - 10 bombs
-%InventoryItem($32, $01, $0000, $0000) ; 32 - Big key
-%InventoryItem($33, $01, $0000, $0000) ; 33 - Map
-%InventoryItem($34, $01, $0000, $0000) ; 34 - 1 rupee
-%InventoryItem($35, $01, $0000, $0000) ; 35 - 5 rupees
-%InventoryItem($36, $01, $0000, $0000) ; 36 - 20 rupees
-%InventoryItem($37, $00, $0000, $0000) ; 37 - Green pendant
-%InventoryItem($38, $00, $0000, $0000) ; 38 - Red pendant
-%InventoryItem($39, $00, $0000, $0000) ; 39 - Blue pendant
-%InventoryItem($3A, $A5, $0000, $0000) ; 3A - Bow And Arrows
-%InventoryItem($3B, $A5, $0000, $0000) ; 3B - Silver Bow
-%InventoryItem($3C, $85, $0000, $0000) ; 3C - Full bottle (bee)
-%InventoryItem($3D, $85, $0000, $0000) ; 3D - Full bottle (fairy)
-%InventoryItem($3E, $01, $0000, HeartContainerCounter) ; 3E - Boss heart
-%InventoryItem($3F, $81, $0000, HeartContainerCounter) ; 3F - Sanc heart
-%InventoryItem($40, $01, $0000, $0000) ; 40 - 100 rupees
-%InventoryItem($41, $01, $0000, $0000) ; 41 - 50 rupees
-%InventoryItem($42, $01, $0000, $0000) ; 42 - Heart
-%InventoryItem($43, $01, $0000, $0000) ; 43 - Arrow
-%InventoryItem($44, $01, $0000, $0000) ; 44 - 10 arrows
-%InventoryItem($45, $01, $0000, $0000) ; 45 - Small magic
-%InventoryItem($46, $01, $0000, $0000) ; 46 - 300 rupees
-%InventoryItem($47, $01, $0000, $0000) ; 47 - 20 rupees green
-%InventoryItem($48, $85, $0000, $0000) ; 48 - Full bottle (good bee)
-%InventoryItem($49, $81, $0000, $0000) ; 49 - Tossed fighter sword
-%InventoryItem($4A, $85, FluteTime, $0000) ; 4A - Active Flute
-%InventoryItem($4B, $89, BootsTime, $0000) ; 4B - Boots
-%InventoryItem($4C, $15, $0000, CapacityUpgrades) ; 4C - Bomb capacity (50)
-%InventoryItem($4D, $01, $0000, CapacityUpgrades) ; 4D - Arrow capacity (70)
-%InventoryItem($4E, $81, $0000, CapacityUpgrades) ; 4E - 1/2 magic
-%InventoryItem($4F, $81, $0000, CapacityUpgrades) ; 4F - 1/4 magic
-%InventoryItem($50, $81, SwordTime, $0000) ; 50 - Master Sword (safe)
-%InventoryItem($51, $15, $0000, CapacityUpgrades) ; 51 - Bomb capacity (+5)
-%InventoryItem($52, $15, $0000, CapacityUpgrades) ; 52 - Bomb capacity (+10)
-%InventoryItem($53, $01, $0000, CapacityUpgrades) ; 53 - Arrow capacity (+5)
-%InventoryItem($54, $01, $0000, CapacityUpgrades) ; 54 - Arrow capacity (+10)
-%InventoryItem($55, $01, $0000, $0000) ; 55 - Programmable item 1
-%InventoryItem($56, $01, $0000, $0000) ; 56 - Programmable item 2
-%InventoryItem($57, $01, $0000, $0000) ; 57 - Programmable item 3
-%InventoryItem($58, $81, $0000, $0000) ; 58 - Upgrade-only Silver Arrows
-%InventoryItem($59, $01, $0000, $0000) ; 59 - Rupoor
-%InventoryItem($5A, $01, $0000, $0000) ; 5A - Nothing
-%InventoryItem($5B, $81, $0000, $0000) ; 5B - Red clock
-%InventoryItem($5C, $81, $0000, $0000) ; 5C - Blue clock
-%InventoryItem($5D, $81, $0000, $0000) ; 5D - Green clock
-%InventoryItem($5E, $81, $0000, $0000) ; 5E - Progressive sword
-%InventoryItem($5F, $81, $0000, $0000) ; 5F - Progressive shield
-%InventoryItem($60, $81, $0000, $0000) ; 60 - Progressive armor
-%InventoryItem($61, $89, $0000, $0000) ; 61 - Progressive glove
-%InventoryItem($62, $01, $0000, $0000) ; 62 - RNG pool item (single)
-%InventoryItem($63, $01, $0000, $0000) ; 63 - RNG pool item (multi)
-%InventoryItem($64, $A5, $0000, $0000) ; 64 - Progressive bow
-%InventoryItem($65, $A5, $0000, $0000) ; 65 - Progressive bow
-%InventoryItem($66, $01, $0000, $0000) ; 66 - 
-%InventoryItem($67, $01, $0000, $0000) ; 67 - 
-%InventoryItem($68, $01, $0000, $0000) ; 68 - 
-%InventoryItem($69, $01, $0000, $0000) ; 69 - 
-%InventoryItem($6A, $81, $0000, $0000) ; 6A - Triforce
-%InventoryItem($6B, $81, $0000, $0000) ; 6B - Power star
-%InventoryItem($6C, $81, $0000, $0000) ; 6C - Triforce Piece
-%InventoryItem($6D, $01, $0000, $0000) ; 6D - Server request item
-%InventoryItem($6E, $01, $0000, $0000) ; 6E - Server request item (dungeon drop)
-%InventoryItem($6F, $01, $0000, $0000) ; 6F - 
-%InventoryItem($70, $01, $0000, $0000) ; 70 - Map of Light World
-%InventoryItem($71, $01, $0000, $0000) ; 71 - Map of Dark World
-%InventoryItem($72, $01, $0000, $0000) ; 72 - Map of Ganon's Tower
-%InventoryItem($73, $01, $0000, $0000) ; 73 - Map of Turtle Rock
-%InventoryItem($74, $01, $0000, $0000) ; 74 - Map of Thieves' Town
-%InventoryItem($75, $01, $0000, $0000) ; 75 - Map of Tower of Hera
-%InventoryItem($76, $01, $0000, $0000) ; 76 - Map of Ice Palace
-%InventoryItem($77, $01, $0000, $0000) ; 77 - Map of Skull Woods
-%InventoryItem($78, $01, $0000, $0000) ; 78 - Map of Misery Mire
-%InventoryItem($79, $01, $0000, $0000) ; 79 - Map of Dark Palace
-%InventoryItem($7A, $01, $0000, $0000) ; 7A - Map of Swamp Palace
-%InventoryItem($7B, $01, $0000, $0000) ; 7B - Map of Agahnim's Tower
-%InventoryItem($7C, $01, $0000, $0000) ; 7C - Map of Desert Palace
-%InventoryItem($7D, $01, $0000, $0000) ; 7D - Map of Eastern Palace
-%InventoryItem($7E, $01, $0000, $0000) ; 7E - Map of Hyrule Castle
-%InventoryItem($7F, $01, $0000, $0000) ; 7F - Map of Sewers
-%InventoryItem($80, $01, $0000, $0000) ; 80 - Compass of Light World
-%InventoryItem($81, $01, $0000, $0000) ; 81 - Compass of Dark World
-%InventoryItem($82, $01, $0000, $0000) ; 82 - Compass of Ganon's Tower
-%InventoryItem($83, $01, $0000, $0000) ; 83 - Compass of Turtle Rock
-%InventoryItem($84, $01, $0000, $0000) ; 84 - Compass of Thieves' Town
-%InventoryItem($85, $01, $0000, $0000) ; 85 - Compass of Tower of Hera
-%InventoryItem($86, $01, $0000, $0000) ; 86 - Compass of Ice Palace
-%InventoryItem($87, $01, $0000, $0000) ; 87 - Compass of Skull Woods
-%InventoryItem($88, $01, $0000, $0000) ; 88 - Compass of Misery Mire
-%InventoryItem($89, $01, $0000, $0000) ; 89 - Compass of Dark Palace
-%InventoryItem($8A, $01, $0000, $0000) ; 8A - Compass of Swamp Palace
-%InventoryItem($8B, $01, $0000, $0000) ; 8B - Compass of Agahnim's Tower
-%InventoryItem($8C, $01, $0000, $0000) ; 8C - Compass of Desert Palace
-%InventoryItem($8D, $01, $0000, $0000) ; 8D - Compass of Eastern Palace
-%InventoryItem($8E, $01, $0000, $0000) ; 8E - Compass of Hyrule Castle
-%InventoryItem($8F, $01, $0000, $0000) ; 8F - Compass of Sewers
-%InventoryItem($90, $81, $0000, $0000) ; 90 - Skull key
-%InventoryItem($91, $01, $0000, $0000) ; 91 - Reserved
-%InventoryItem($92, $01, $0000, $0000) ; 92 - Big key of Ganon's Tower
-%InventoryItem($93, $01, $0000, $0000) ; 93 - Big key of Turtle Rock
-%InventoryItem($94, $01, $0000, $0000) ; 94 - Big key of Thieves' Town
-%InventoryItem($95, $01, $0000, $0000) ; 95 - Big key of Tower of Hera
-%InventoryItem($96, $01, $0000, $0000) ; 96 - Big key of Ice Palace
-%InventoryItem($97, $01, $0000, $0000) ; 97 - Big key of Skull Woods
-%InventoryItem($98, $01, $0000, $0000) ; 98 - Big key of Misery Mire
-%InventoryItem($99, $01, $0000, $0000) ; 99 - Big key of Dark Palace
-%InventoryItem($9A, $01, $0000, $0000) ; 9A - Big key of Swamp Palace
-%InventoryItem($9B, $01, $0000, $0000) ; 9B - Big key of Agahnim's Tower
-%InventoryItem($9C, $01, $0000, $0000) ; 9C - Big key of Desert Palace
-%InventoryItem($9D, $01, $0000, $0000) ; 9D - Big key of Eastern Palace
-%InventoryItem($9E, $01, $0000, $0000) ; 9E - Big key of Hyrule Castle
-%InventoryItem($9F, $01, $0000, $0000) ; 9F - Big key of Sewers
-%InventoryItem($A0, $41, $0000, SmallKeyCounter) ; A0 - Small key of Sewers
-%InventoryItem($A1, $41, $0000, SmallKeyCounter) ; A1 - Small key of Hyrule Castle
-%InventoryItem($A2, $41, $0000, SmallKeyCounter) ; A2 - Small key of Eastern Palace
-%InventoryItem($A3, $41, $0000, SmallKeyCounter) ; A3 - Small key of Desert Palace
-%InventoryItem($A4, $41, $0000, SmallKeyCounter) ; A4 - Small key of Agahnim's Tower
-%InventoryItem($A5, $41, $0000, SmallKeyCounter) ; A5 - Small key of Swamp Palace
-%InventoryItem($A6, $41, $0000, SmallKeyCounter) ; A6 - Small key of Dark Palace
-%InventoryItem($A7, $41, $0000, SmallKeyCounter) ; A7 - Small key of Misery Mire
-%InventoryItem($A8, $41, $0000, SmallKeyCounter) ; A8 - Small key of Skull Woods
-%InventoryItem($A9, $41, $0000, SmallKeyCounter) ; A9 - Small key of Ice Palace
-%InventoryItem($AA, $41, $0000, SmallKeyCounter) ; AA - Small key of Tower of Hera
-%InventoryItem($AB, $41, $0000, SmallKeyCounter) ; AB - Small key of Thieves' Town
-%InventoryItem($AC, $41, $0000, SmallKeyCounter) ; AC - Small key of Turtle Rock
-%InventoryItem($AD, $41, $0000, SmallKeyCounter) ; AD - Small key of Ganon's Tower
-%InventoryItem($AE, $01, $0000, $0000) ; AE - Reserved
-%InventoryItem($AF, $01, $0000, SmallKeyCounter) ; AF - Generic small key
-%InventoryItem($B0, $81, $0000, $0000) ; B0 - Crystal 6 
-%InventoryItem($B1, $81, $0000, $0000) ; B1 - Crystal 1 
-%InventoryItem($B2, $81, $0000, $0000) ; B2 - Crystal 5 
-%InventoryItem($B3, $81, $0000, $0000) ; B3 - Crystal 7 
-%InventoryItem($B4, $81, $0000, $0000) ; B4 - Crystal 2 
-%InventoryItem($B5, $81, $0000, $0000) ; B5 - Crystal 4 
-%InventoryItem($B6, $81, $0000, $0000) ; B6 - Crystal 3 
-%InventoryItem($B7, $01, $0000, $0000) ; B7 - Reserved 
-%InventoryItem($B8, $01, $0000, $0000) ; B8 - 
-%InventoryItem($B9, $01, $0000, $0000) ; B9 - 
-%InventoryItem($BA, $01, $0000, $0000) ; BA - 
-%InventoryItem($BB, $01, $0000, $0000) ; BB - 
-%InventoryItem($BC, $01, $0000, $0000) ; BC - 
-%InventoryItem($BD, $01, $0000, $0000) ; BD - 
-%InventoryItem($BE, $01, $0000, $0000) ; BE - 
-%InventoryItem($BF, $01, $0000, $0000) ; BF - 
-%InventoryItem($C0, $01, $0000, $0000) ; C0 - 
-%InventoryItem($C1, $01, $0000, $0000) ; C1 - 
-%InventoryItem($C2, $01, $0000, $0000) ; C2 - 
-%InventoryItem($C3, $01, $0000, $0000) ; C3 - 
-%InventoryItem($C4, $01, $0000, $0000) ; C4 - 
-%InventoryItem($C5, $01, $0000, $0000) ; C5 - 
-%InventoryItem($C6, $01, $0000, $0000) ; C6 - 
-%InventoryItem($C7, $01, $0000, $0000) ; C7 - 
-%InventoryItem($C8, $01, $0000, $0000) ; C8 - 
-%InventoryItem($C9, $01, $0000, $0000) ; C9 - 
-%InventoryItem($CA, $01, $0000, $0000) ; CA - 
-%InventoryItem($CB, $01, $0000, $0000) ; CB - 
-%InventoryItem($CC, $01, $0000, $0000) ; CC - 
-%InventoryItem($CD, $01, $0000, $0000) ; CD - 
-%InventoryItem($CE, $01, $0000, $0000) ; CE - 
-%InventoryItem($CF, $01, $0000, $0000) ; CF - 
-%InventoryItem($D0, $01, $0000, $0000) ; D0 - 
-%InventoryItem($D1, $01, $0000, $0000) ; D1 - 
-%InventoryItem($D2, $01, $0000, $0000) ; D2 - 
-%InventoryItem($D3, $01, $0000, $0000) ; D3 - 
-%InventoryItem($D4, $01, $0000, $0000) ; D4 - 
-%InventoryItem($D5, $01, $0000, $0000) ; D5 - 
-%InventoryItem($D6, $01, $0000, $0000) ; D6 - 
-%InventoryItem($D7, $01, $0000, $0000) ; D7 - 
-%InventoryItem($D8, $01, $0000, $0000) ; D8 - 
-%InventoryItem($D9, $01, $0000, $0000) ; D9 - 
-%InventoryItem($DA, $01, $0000, $0000) ; DA - 
-%InventoryItem($DB, $01, $0000, $0000) ; DB - 
-%InventoryItem($DC, $01, $0000, $0000) ; DC - 
-%InventoryItem($DD, $01, $0000, $0000) ; DD - 
-%InventoryItem($DE, $01, $0000, $0000) ; DE - 
-%InventoryItem($DF, $01, $0000, $0000) ; DF - 
-%InventoryItem($E0, $01, $0000, $0000) ; E0 - 
-%InventoryItem($E1, $01, $0000, $0000) ; E1 - 
-%InventoryItem($E2, $01, $0000, $0000) ; E2 - 
-%InventoryItem($E3, $01, $0000, $0000) ; E3 - 
-%InventoryItem($E4, $01, $0000, $0000) ; E4 - 
-%InventoryItem($E5, $01, $0000, $0000) ; E5 - 
-%InventoryItem($E6, $01, $0000, $0000) ; E6 - 
-%InventoryItem($E7, $01, $0000, $0000) ; E7 - 
-%InventoryItem($E8, $01, $0000, $0000) ; E8 - 
-%InventoryItem($E9, $01, $0000, $0000) ; E9 - 
-%InventoryItem($EA, $01, $0000, $0000) ; EA - 
-%InventoryItem($EB, $01, $0000, $0000) ; EB - 
-%InventoryItem($EC, $01, $0000, $0000) ; EC - 
-%InventoryItem($ED, $01, $0000, $0000) ; ED - 
-%InventoryItem($EE, $01, $0000, $0000) ; EE - 
-%InventoryItem($EF, $01, $0000, $0000) ; EF - 
-%InventoryItem($F0, $01, $0000, $0000) ; F0 - 
-%InventoryItem($F1, $01, $0000, $0000) ; F1 - 
-%InventoryItem($F2, $01, $0000, $0000) ; F2 - 
-%InventoryItem($F3, $01, $0000, $0000) ; F3 - 
-%InventoryItem($F4, $01, $0000, $0000) ; F4 - 
-%InventoryItem($F5, $01, $0000, $0000) ; F5 - 
-%InventoryItem($F6, $01, $0000, $0000) ; F6 - 
-%InventoryItem($F7, $01, $0000, $0000) ; F7 - 
-%InventoryItem($F8, $01, $0000, $0000) ; F8 - 
-%InventoryItem($F9, $01, $0000, $0000) ; F9 - 
-%InventoryItem($FA, $01, $0000, $0000) ; FA - 
-%InventoryItem($FB, $01, $0000, $0000) ; FB - 
-%InventoryItem($FC, $01, $0000, $0000) ; FC - 
-%InventoryItem($FD, $01, $0000, $0000) ; FD - 
-%InventoryItem($FE, $01, $0000, $0000) ; FE - Server request (async)
-%InventoryItem($FF, $01, $0000, $0000) ; FF -
+%InventoryItem($00, $0081, SwordTime, $0000) ; 00 - Fighter sword & Shield
+%InventoryItem($01, $0081, SwordTime, $0000) ; 01 - Master sword
+%InventoryItem($02, $0001, SwordTime, $0000) ; 02 - Tempered sword
+%InventoryItem($03, $0081, SwordTime, $0000) ; 03 - Butter sword
+%InventoryItem($04, $0081, $0000, $0000) ; 04 - Fighter shield
+%InventoryItem($05, $0081, $0000, $0000) ; 05 - Fire shield
+%InventoryItem($06, $0081, $0000, $0000) ; 06 - Mirror shield
+%InventoryItem($07, $0085, $0000, $0000) ; 07 - Fire rod
+%InventoryItem($08, $0085, $0000, $0000) ; 08 - Ice rod
+%InventoryItem($09, $0085, $0000, $0000) ; 09 - Hammer
+%InventoryItem($0A, $0085, $0000, $0000) ; 0A - Hookshot
+%InventoryItem($0B, $0085, $0000, $0000) ; 0B - Bow
+%InventoryItem($0C, $0085, $0000, $0000) ; 0C - Blue Boomerang
+%InventoryItem($0D, $0085, $0000, $0000) ; 0D - Powder
+%InventoryItem($0E, $0081, $0000, $0000) ; 0E - Bottle refill (bee)
+%InventoryItem($0F, $0085, $0000, $0000) ; 0F - Bombos
+%InventoryItem($10, $0085, $0000, $0000) ; 10 - Ether
+%InventoryItem($11, $0085, $0000, $0000) ; 11 - Quake
+%InventoryItem($12, $0085, $0000, $0000) ; 12 - Lamp
+%InventoryItem($13, $0085, $0000, $0000) ; 13 - Shovel
+%InventoryItem($14, $0085, FluteTime, $0000) ; 14 - Flute (inactive)
+%InventoryItem($15, $0085, $0000, $0000) ; 15 - Somaria
+%InventoryItem($16, $0085, $0000, $0000) ; 16 - Bottle
+%InventoryItem($17, $0001, $0000, HeartPieceCounter) ; 17 - Heart piece
+%InventoryItem($18, $0085, $0000, $0000) ; 18 - Byrna
+%InventoryItem($19, $0085, $0000, $0000) ; 19 - Cape
+%InventoryItem($1A, $0085, MirrorTime, $0000) ; 1A - Mirror
+%InventoryItem($1B, $0089, $0000, $0000) ; 1B - Glove
+%InventoryItem($1C, $0089, $0000, $0000) ; 1C - Mitts
+%InventoryItem($1D, $0085, $0000, $0000) ; 1D - Book
+%InventoryItem($1E, $0089, $0000, $0000) ; 1E - Flippers
+%InventoryItem($1F, $0081, $0000, $0000) ; 1F - Pearl
+%InventoryItem($20, $0080, $0000, $0000) ; 20 - Crystal
+%InventoryItem($21, $0085, $0000, $0000) ; 21 - Net
+%InventoryItem($22, $0081, $0000, $0000) ; 22 - Blue mail
+%InventoryItem($23, $0081, $0000, $0000) ; 23 - Red mail
+%InventoryItem($24, $0041, $0000, SmallKeyCounter) ; 24 - Small key
+%InventoryItem($25, $0001, $0000, $0000) ; 25 - Compass
+%InventoryItem($26, $0000, $0000, $0000) ; 26 - Heart container from 4/4
+%InventoryItem($27, $0015, $0000, $0000) ; 27 - Bomb
+%InventoryItem($28, $0015, $0000, $0000) ; 28 - 3 bombs
+%InventoryItem($29, $0085, $0000, $0000) ; 29 - Mushroom
+%InventoryItem($2A, $0005, $0000, $0000) ; 2A - Red boomerang
+%InventoryItem($2B, $0085, $0000, $0000) ; 2B - Full bottle (red)
+%InventoryItem($2C, $0085, $0000, $0000) ; 2C - Full bottle (green)
+%InventoryItem($2D, $0085, $0000, $0000) ; 2D - Full bottle (blue)
+%InventoryItem($2E, $0080, $0000, $0000) ; 2E - Potion refill (red)
+%InventoryItem($2F, $0080, $0000, $0000) ; 2F - Potion refill (green)
+%InventoryItem($30, $0080, $0000, $0000) ; 30 - Potion refill (blue)
+%InventoryItem($31, $0011, $0000, $0000) ; 31 - 10 bombs
+%InventoryItem($32, $0001, $0000, $0000) ; 32 - Big key
+%InventoryItem($33, $0001, $0000, $0000) ; 33 - Map
+%InventoryItem($34, $0001, $0000, $0000) ; 34 - 1 rupee
+%InventoryItem($35, $0001, $0000, $0000) ; 35 - 5 rupees
+%InventoryItem($36, $0001, $0000, $0000) ; 36 - 20 rupees
+%InventoryItem($37, $0000, $0000, $0000) ; 37 - Green pendant
+%InventoryItem($38, $0000, $0000, $0000) ; 38 - Red pendant
+%InventoryItem($39, $0000, $0000, $0000) ; 39 - Blue pendant
+%InventoryItem($3A, $00A5, $0000, $0000) ; 3A - Bow And Arrows
+%InventoryItem($3B, $00A5, $0000, $0000) ; 3B - Silver Bow
+%InventoryItem($3C, $0085, $0000, $0000) ; 3C - Full bottle (bee)
+%InventoryItem($3D, $0085, $0000, $0000) ; 3D - Full bottle (fairy)
+%InventoryItem($3E, $0001, $0000, HeartContainerCounter) ; 3E - Boss heart
+%InventoryItem($3F, $0081, $0000, HeartContainerCounter) ; 3F - Sanc heart
+%InventoryItem($40, $0001, $0000, $0000) ; 40 - 100 rupees
+%InventoryItem($41, $0001, $0000, $0000) ; 41 - 50 rupees
+%InventoryItem($42, $0001, $0000, $0000) ; 42 - Heart
+%InventoryItem($43, $0001, $0000, $0000) ; 43 - Arrow
+%InventoryItem($44, $0001, $0000, $0000) ; 44 - 10 arrows
+%InventoryItem($45, $0001, $0000, $0000) ; 45 - Small magic
+%InventoryItem($46, $0001, $0000, $0000) ; 46 - 300 rupees
+%InventoryItem($47, $0001, $0000, $0000) ; 47 - 20 rupees green
+%InventoryItem($48, $0085, $0000, $0000) ; 48 - Full bottle (good bee)
+%InventoryItem($49, $0081, $0000, $0000) ; 49 - Tossed fighter sword
+%InventoryItem($4A, $0085, FluteTime, $0000) ; 4A - Active Flute
+%InventoryItem($4B, $0089, BootsTime, $0000) ; 4B - Boots
+%InventoryItem($4C, $0015, $0000, CapacityUpgrades) ; 4C - Bomb capacity (50)
+%InventoryItem($4D, $0001, $0000, CapacityUpgrades) ; 4D - Arrow capacity (70)
+%InventoryItem($4E, $0081, $0000, CapacityUpgrades) ; 4E - 1/2 magic
+%InventoryItem($4F, $0081, $0000, CapacityUpgrades) ; 4F - 1/4 magic
+%InventoryItem($50, $0081, SwordTime, $0000) ; 50 - Master Sword (safe)
+%InventoryItem($51, $0015, $0000, CapacityUpgrades) ; 51 - Bomb capacity (+5)
+%InventoryItem($52, $0015, $0000, CapacityUpgrades) ; 52 - Bomb capacity (+10)
+%InventoryItem($53, $0001, $0000, CapacityUpgrades) ; 53 - Arrow capacity (+5)
+%InventoryItem($54, $0001, $0000, CapacityUpgrades) ; 54 - Arrow capacity (+10)
+%InventoryItem($55, $0001, $0000, $0000) ; 55 - Programmable item 1
+%InventoryItem($56, $0001, $0000, $0000) ; 56 - Programmable item 2
+%InventoryItem($57, $0001, $0000, $0000) ; 57 - Programmable item 3
+%InventoryItem($58, $0081, $0000, $0000) ; 58 - Upgrade-only Silver Arrows
+%InventoryItem($59, $0001, $0000, $0000) ; 59 - Rupoor
+%InventoryItem($5A, $0001, $0000, $0000) ; 5A - Nothing
+%InventoryItem($5B, $0081, $0000, $0000) ; 5B - Red clock
+%InventoryItem($5C, $0081, $0000, $0000) ; 5C - Blue clock
+%InventoryItem($5D, $0081, $0000, $0000) ; 5D - Green clock
+%InventoryItem($5E, $0081, $0000, $0000) ; 5E - Progressive sword
+%InventoryItem($5F, $0081, $0000, $0000) ; 5F - Progressive shield
+%InventoryItem($60, $0081, $0000, $0000) ; 60 - Progressive armor
+%InventoryItem($61, $0089, $0000, $0000) ; 61 - Progressive glove
+%InventoryItem($62, $0001, $0000, $0000) ; 62 - RNG pool item (single)
+%InventoryItem($63, $0001, $0000, $0000) ; 63 - RNG pool item (multi)
+%InventoryItem($64, $00A5, $0000, $0000) ; 64 - Progressive bow
+%InventoryItem($65, $00A5, $0000, $0000) ; 65 - Progressive bow
+%InventoryItem($66, $0001, $0000, $0000) ; 66 -
+%InventoryItem($67, $0001, $0000, $0000) ; 67 -
+%InventoryItem($68, $0001, $0000, $0000) ; 68 -
+%InventoryItem($69, $0001, $0000, $0000) ; 69 -
+%InventoryItem($6A, $0081, $0000, $0000) ; 6A - Triforce
+%InventoryItem($6B, $0081, $0000, $0000) ; 6B - Power star
+%InventoryItem($6C, $0081, $0000, $0000) ; 6C - Triforce Piece
+%InventoryItem($6D, $0001, $0000, $0000) ; 6D - Server request item
+%InventoryItem($6E, $0001, $0000, $0000) ; 6E - Server request item (dungeon drop)
+%InventoryItem($6F, $0001, $0000, $0000) ; 6F -
+%InventoryItem($70, $0001, $0000, $0000) ; 70 - Map of Light World
+%InventoryItem($71, $0001, $0000, $0000) ; 71 - Map of Dark World
+%InventoryItem($72, $0001, $0000, $0000) ; 72 - Map of Ganon's Tower
+%InventoryItem($73, $0001, $0000, $0000) ; 73 - Map of Turtle Rock
+%InventoryItem($74, $0001, $0000, $0000) ; 74 - Map of Thieves' Town
+%InventoryItem($75, $0001, $0000, $0000) ; 75 - Map of Tower of Hera
+%InventoryItem($76, $0001, $0000, $0000) ; 76 - Map of Ice Palace
+%InventoryItem($77, $0001, $0000, $0000) ; 77 - Map of Skull Woods
+%InventoryItem($78, $0001, $0000, $0000) ; 78 - Map of Misery Mire
+%InventoryItem($79, $0001, $0000, $0000) ; 79 - Map of Dark Palace
+%InventoryItem($7A, $0001, $0000, $0000) ; 7A - Map of Swamp Palace
+%InventoryItem($7B, $0001, $0000, $0000) ; 7B - Map of Agahnim's Tower
+%InventoryItem($7C, $0001, $0000, $0000) ; 7C - Map of Desert Palace
+%InventoryItem($7D, $0001, $0000, $0000) ; 7D - Map of Eastern Palace
+%InventoryItem($7E, $0001, $0000, $0000) ; 7E - Map of Hyrule Castle
+%InventoryItem($7F, $0001, $0000, $0000) ; 7F - Map of Sewers
+%InventoryItem($80, $0001, $0000, $0000) ; 80 - Compass of Light World
+%InventoryItem($81, $0001, $0000, $0000) ; 81 - Compass of Dark World
+%InventoryItem($82, $0001, $0000, $0000) ; 82 - Compass of Ganon's Tower
+%InventoryItem($83, $0001, $0000, $0000) ; 83 - Compass of Turtle Rock
+%InventoryItem($84, $0001, $0000, $0000) ; 84 - Compass of Thieves' Town
+%InventoryItem($85, $0001, $0000, $0000) ; 85 - Compass of Tower of Hera
+%InventoryItem($86, $0001, $0000, $0000) ; 86 - Compass of Ice Palace
+%InventoryItem($87, $0001, $0000, $0000) ; 87 - Compass of Skull Woods
+%InventoryItem($88, $0001, $0000, $0000) ; 88 - Compass of Misery Mire
+%InventoryItem($89, $0001, $0000, $0000) ; 89 - Compass of Dark Palace
+%InventoryItem($8A, $0001, $0000, $0000) ; 8A - Compass of Swamp Palace
+%InventoryItem($8B, $0001, $0000, $0000) ; 8B - Compass of Agahnim's Tower
+%InventoryItem($8C, $0001, $0000, $0000) ; 8C - Compass of Desert Palace
+%InventoryItem($8D, $0001, $0000, $0000) ; 8D - Compass of Eastern Palace
+%InventoryItem($8E, $0001, $0000, $0000) ; 8E - Compass of Hyrule Castle
+%InventoryItem($8F, $0001, $0000, $0000) ; 8F - Compass of Sewers
+%InventoryItem($90, $0081, $0000, $0000) ; 90 - Skull key
+%InventoryItem($91, $0001, $0000, $0000) ; 91 - Reserved
+%InventoryItem($92, $0001, $0000, $0000) ; 92 - Big key of Ganon's Tower
+%InventoryItem($93, $0001, $0000, $0000) ; 93 - Big key of Turtle Rock
+%InventoryItem($94, $0001, $0000, $0000) ; 94 - Big key of Thieves' Town
+%InventoryItem($95, $0001, $0000, $0000) ; 95 - Big key of Tower of Hera
+%InventoryItem($96, $0001, $0000, $0000) ; 96 - Big key of Ice Palace
+%InventoryItem($97, $0001, $0000, $0000) ; 97 - Big key of Skull Woods
+%InventoryItem($98, $0001, $0000, $0000) ; 98 - Big key of Misery Mire
+%InventoryItem($99, $0001, $0000, $0000) ; 99 - Big key of Dark Palace
+%InventoryItem($9A, $0001, $0000, $0000) ; 9A - Big key of Swamp Palace
+%InventoryItem($9B, $0001, $0000, $0000) ; 9B - Big key of Agahnim's Tower
+%InventoryItem($9C, $0001, $0000, $0000) ; 9C - Big key of Desert Palace
+%InventoryItem($9D, $0001, $0000, $0000) ; 9D - Big key of Eastern Palace
+%InventoryItem($9E, $0001, $0000, $0000) ; 9E - Big key of Hyrule Castle
+%InventoryItem($9F, $0001, $0000, $0000) ; 9F - Big key of Sewers
+%InventoryItem($A0, $0041, $0000, SmallKeyCounter) ; A0 - Small key of Sewers
+%InventoryItem($A1, $0041, $0000, SmallKeyCounter) ; A1 - Small key of Hyrule Castle
+%InventoryItem($A2, $0041, $0000, SmallKeyCounter) ; A2 - Small key of Eastern Palace
+%InventoryItem($A3, $0041, $0000, SmallKeyCounter) ; A3 - Small key of Desert Palace
+%InventoryItem($A4, $0041, $0000, SmallKeyCounter) ; A4 - Small key of Agahnim's Tower
+%InventoryItem($A5, $0041, $0000, SmallKeyCounter) ; A5 - Small key of Swamp Palace
+%InventoryItem($A6, $0041, $0000, SmallKeyCounter) ; A6 - Small key of Dark Palace
+%InventoryItem($A7, $0041, $0000, SmallKeyCounter) ; A7 - Small key of Misery Mire
+%InventoryItem($A8, $0041, $0000, SmallKeyCounter) ; A8 - Small key of Skull Woods
+%InventoryItem($A9, $0041, $0000, SmallKeyCounter) ; A9 - Small key of Ice Palace
+%InventoryItem($AA, $0041, $0000, SmallKeyCounter) ; AA - Small key of Tower of Hera
+%InventoryItem($AB, $0041, $0000, SmallKeyCounter) ; AB - Small key of Thieves' Town
+%InventoryItem($AC, $0041, $0000, SmallKeyCounter) ; AC - Small key of Turtle Rock
+%InventoryItem($AD, $0041, $0000, SmallKeyCounter) ; AD - Small key of Ganon's Tower
+%InventoryItem($AE, $0001, $0000, $0000) ; AE - Reserved
+%InventoryItem($AF, $0001, $0000, SmallKeyCounter) ; AF - Generic small key
+%InventoryItem($B0, $0080, $0000, $0000) ; B0 - Crystal 6
+%InventoryItem($B1, $0080, $0000, $0000) ; B1 - Crystal 1
+%InventoryItem($B2, $0080, $0000, $0000) ; B2 - Crystal 5
+%InventoryItem($B3, $0080, $0000, $0000) ; B3 - Crystal 7
+%InventoryItem($B4, $0080, $0000, $0000) ; B4 - Crystal 2
+%InventoryItem($B5, $0080, $0000, $0000) ; B5 - Crystal 4
+%InventoryItem($B6, $0080, $0000, $0000) ; B6 - Crystal 3
+%InventoryItem($B7, $0000, $0000, $0000) ; B7 - Reserved
+%InventoryItem($B8, $0001, $0000, $0000) ; B8 -
+%InventoryItem($B9, $0001, $0000, $0000) ; B9 -
+%InventoryItem($BA, $0001, $0000, $0000) ; BA -
+%InventoryItem($BB, $0001, $0000, $0000) ; BB -
+%InventoryItem($BC, $0001, $0000, $0000) ; BC -
+%InventoryItem($BD, $0001, $0000, $0000) ; BD -
+%InventoryItem($BE, $0001, $0000, $0000) ; BE -
+%InventoryItem($BF, $0001, $0000, $0000) ; BF -
+%InventoryItem($C0, $0001, $0000, $0000) ; C0 -
+%InventoryItem($C1, $0001, $0000, $0000) ; C1 -
+%InventoryItem($C2, $0001, $0000, $0000) ; C2 -
+%InventoryItem($C3, $0001, $0000, $0000) ; C3 -
+%InventoryItem($C4, $0001, $0000, $0000) ; C4 -
+%InventoryItem($C5, $0001, $0000, $0000) ; C5 -
+%InventoryItem($C6, $0001, $0000, $0000) ; C6 -
+%InventoryItem($C7, $0001, $0000, $0000) ; C7 -
+%InventoryItem($C8, $0001, $0000, $0000) ; C8 -
+%InventoryItem($C9, $0001, $0000, $0000) ; C9 -
+%InventoryItem($CA, $0001, $0000, $0000) ; CA -
+%InventoryItem($CB, $0001, $0000, $0000) ; CB -
+%InventoryItem($CC, $0001, $0000, $0000) ; CC -
+%InventoryItem($CD, $0001, $0000, $0000) ; CD -
+%InventoryItem($CE, $0001, $0000, $0000) ; CE -
+%InventoryItem($CF, $0001, $0000, $0000) ; CF -
+%InventoryItem($D0, $0001, $0000, $0000) ; D0 -
+%InventoryItem($D1, $0001, $0000, $0000) ; D1 -
+%InventoryItem($D2, $0001, $0000, $0000) ; D2 -
+%InventoryItem($D3, $0001, $0000, $0000) ; D3 -
+%InventoryItem($D4, $0001, $0000, $0000) ; D4 -
+%InventoryItem($D5, $0001, $0000, $0000) ; D5 -
+%InventoryItem($D6, $0001, $0000, $0000) ; D6 -
+%InventoryItem($D7, $0001, $0000, $0000) ; D7 -
+%InventoryItem($D8, $0001, $0000, $0000) ; D8 -
+%InventoryItem($D9, $0001, $0000, $0000) ; D9 -
+%InventoryItem($DA, $0001, $0000, $0000) ; DA -
+%InventoryItem($DB, $0001, $0000, $0000) ; DB -
+%InventoryItem($DC, $0001, $0000, $0000) ; DC -
+%InventoryItem($DD, $0001, $0000, $0000) ; DD -
+%InventoryItem($DE, $0001, $0000, $0000) ; DE -
+%InventoryItem($DF, $0001, $0000, $0000) ; DF -
+%InventoryItem($E0, $0001, $0000, $0000) ; E0 -
+%InventoryItem($E1, $0001, $0000, $0000) ; E1 -
+%InventoryItem($E2, $0001, $0000, $0000) ; E2 -
+%InventoryItem($E3, $0001, $0000, $0000) ; E3 -
+%InventoryItem($E4, $0001, $0000, $0000) ; E4 -
+%InventoryItem($E5, $0001, $0000, $0000) ; E5 -
+%InventoryItem($E6, $0001, $0000, $0000) ; E6 -
+%InventoryItem($E7, $0001, $0000, $0000) ; E7 -
+%InventoryItem($E8, $0001, $0000, $0000) ; E8 -
+%InventoryItem($E9, $0001, $0000, $0000) ; E9 -
+%InventoryItem($EA, $0001, $0000, $0000) ; EA -
+%InventoryItem($EB, $0001, $0000, $0000) ; EB -
+%InventoryItem($EC, $0001, $0000, $0000) ; EC -
+%InventoryItem($ED, $0001, $0000, $0000) ; ED -
+%InventoryItem($EE, $0001, $0000, $0000) ; EE -
+%InventoryItem($EF, $0001, $0000, $0000) ; EF -
+%InventoryItem($F0, $0001, $0000, $0000) ; F0 -
+%InventoryItem($F1, $0001, $0000, $0000) ; F1 -
+%InventoryItem($F2, $0001, $0000, $0000) ; F2 -
+%InventoryItem($F3, $0001, $0000, $0000) ; F3 -
+%InventoryItem($F4, $0001, $0000, $0000) ; F4 -
+%InventoryItem($F5, $0001, $0000, $0000) ; F5 -
+%InventoryItem($F6, $0001, $0000, $0000) ; F6 -
+%InventoryItem($F7, $0001, $0000, $0000) ; F7 -
+%InventoryItem($F8, $0001, $0000, $0000) ; F8 -
+%InventoryItem($F9, $0001, $0000, $0000) ; F9 -
+%InventoryItem($FA, $0001, $0000, $0000) ; FA -
+%InventoryItem($FB, $0001, $0000, $0000) ; FB -
+%InventoryItem($FC, $0001, $0000, $0000) ; FC -
+%InventoryItem($FD, $0001, $0000, $0000) ; FD -
+%InventoryItem($FE, $0001, $0000, $0000) ; FE - Server request (async)
+%InventoryItem($FF, $0001, $0000, $0000) ; FF -
 
 ItemReceiptGraphicsOffsets:
 	dw $0860                               ; 00 - Fighter Sword and Shield
@@ -1022,7 +1023,7 @@ ItemReceiptGraphicsOffsets:
 	dw BigDecompressionBuffer+$0000        ; 47 - 20 rupees green
 	dw BigDecompressionBuffer+$09A0        ; 48 - Full bottle (good bee)
 	dw BigDecompressionBuffer+$1C20        ; 49 - Tossed fighter sword
-	dw BigDecompressionBuffer+$09A0        ; 4A - Bottle refill (good bee)
+	dw BigDecompressionBuffer+$0C40        ; 4A - Active Flute
 	dw BigDecompressionBuffer+$0040        ; 4B - Boots
 
 	; Rando items
@@ -1292,7 +1293,7 @@ StandingItemGraphicsOffsets:
 	dw BigDecompressionBuffer+$0000        ; 47 - 20 rupees green
 	dw BigDecompressionBuffer+$09A0        ; 48 - Full bottle (good bee)
 	dw $00A0                               ; 49 - Tossed fighter sword
-	dw BigDecompressionBuffer+$09A0        ; 4A - Bottle refill (good bee)
+	dw BigDecompressionBuffer+$0C40        ; 4A - Active Flute
 	dw BigDecompressionBuffer+$0040        ; 4B - Boots
 
 	; Rando items
