@@ -862,13 +862,13 @@ DrawPlayerFile_credits:
  
 	LDA.l EquipmentSRAM+$2C : AND.w #$00FF : LSR #3 : STA.b Scrap02
 	%fs_LDY_screenpos(0,20)
-	LDA.w #$02CF|!FS_COLOR_RED
+        LDA.l HUDHeartColors_index : ASL : TAX
+        LDA.l HUDHeartColors_masks_file_select,X
+	ORA.w #$02CF
 	LDX.w #$000A
 
 	.nextHeart
-
 	STA.w $0000, Y
-
 	INY #2 : DEX : BNE +
 		PHA
 		TYA : !ADD.w #$40-$14 : TAY
