@@ -552,8 +552,7 @@ ItemBehavior:
                 RTS
         .same_dungeon
         SEP #$20
-        LDA.l CurrentSmallKeys : INC : STA.l CurrentSmallKeys
-        LDA.l DungeonKeys,X : INC : STA.l DungeonKeys,X
+        LDA.l CurrentSmallKeys : INC : STA.l CurrentSmallKeys : STA.l DungeonKeys,X
         RTS
 
         .same_dungeon_hc
