@@ -131,7 +131,6 @@ AddReceivedItemExpandedGetItem:
         SEP #$30
 
         PLB : PLX
-        STZ.w ShopPurchaseFlag
 	LDA.w ItemReceiptMethod : CMP.b #$01 ; thing we wrote over
 RTL
 
@@ -272,13 +271,11 @@ ItemBehavior:
         RTS
 
         .bow
-        LDA.l BowTracking : ORA.b #$80 : STA.l BowTracking
         BIT #$40 : BNE .silversbow
                 LDA.b #$01 : STA.l BowEquipment
         RTS
 
         .silversbow
-        LDA.l BowTracking : ORA.b #$80 : STA.l BowTracking
         LDA.l SilverArrowsUseRestriction : BNE +
                 LDA.l BowTracking : ORA.b #$40 : STA.l BowTracking
                 LDA.b #03 : STA.l BowEquipment ; set bow to silver
@@ -322,7 +319,6 @@ ItemBehavior:
         JMP.w .increment_map
 
         .bow_and_arrows
-        LDA.b #$80 : ORA.l BowTracking : STA.l BowTracking
         LDA.l BowTracking : BIT.b #$40 : BEQ .no_silvers
         LDA.l SilverArrowsUseRestriction : BNE .no_silvers
                 LDA.l CurrentArrows : BEQ +
@@ -342,7 +338,6 @@ ItemBehavior:
         RTS
 
         .silver_bow
-        LDA.b #$80 : ORA.l BowTracking : STA.l BowTracking
         LDA.l SilverArrowsUseRestriction : BNE .noequip
                 LDA.b #$40 : ORA.l BowTracking : STA.l BowTracking
                 LDA.l SilverArrowsAutoEquip : AND.b #$01 : BEQ .noequip
@@ -719,7 +714,7 @@ ResolveLootID:
         .magic
         SEP #$20
         LDA.l MagicConsumption : TAX
-        LDA.w ResolveLootID_magic_ids,X
+        LDA.w .magic_ids,X
         JMP.w .have_item
         ..ids
         db $4E, $4F, $4F
@@ -732,7 +727,7 @@ ResolveLootID:
                 JMP.w .get_item
         +
         TAX
-        LDA.w ResolveLootID_prog_sword_ids,X
+        LDA.w .prog_sword_ids,X
         JMP.w .have_item
         ..ids
         db $49, $50, $02, $03, $03
@@ -745,7 +740,7 @@ ResolveLootID:
                 JMP.w .get_item
         +
         TAX
-        LDA.w ResolveLootID_shields_ids,X
+        LDA.w .shields_ids,X
         JMP.w .have_item
         ..ids
         db $04, $05, $06, $06
@@ -758,7 +753,7 @@ ResolveLootID:
                 JMP.w .get_item
         +
         TAX
-        LDA.w ResolveLootID_armor_ids,X
+        LDA.w .armor_ids,X
         JMP.w .have_item
         ..ids
         db $22, $23, $23
@@ -767,29 +762,39 @@ ResolveLootID:
         .gloves
         SEP #$20
         LDA.l GloveEquipment : TAX
-        LDA.w ResolveLootID_gloves_ids,X
+        LDA.w .gloves_ids,X
         JMP.w .have_item
         ..ids
         db $1B, $1C, $1C
 
         .progressive_bow
-        SEP #$20
+        ; For non-chest progressive bows we assign the tracking bits to SpriteMetaData,X
+        ; (where X is that sprite's slot) so the bit can be set on pickup.
+        SEP #$30
         LDA.l BowEquipment : INC : LSR : CMP.l ProgressiveBowLimit : BCC +
                 LDA.l ProgressiveBowReplacement
                 JMP.w .get_item
         +
+        LDA.w ItemReceiptMethod : CMP.b #$01 : BEQ +
+                LDX.w CurrentSpriteSlot
+                LDA.b #$10 : STA.w SpriteMetaData,X
+        +
         LDA.l BowEquipment : TAX
-        LDA.w ResolveLootID_bows_ids,X
+        LDA.w .bows_ids,X
         JMP.w .get_item
 
         .progressive_bow_2
-        SEP #$20
+        SEP #$30
         LDA.l BowEquipment : INC : LSR : CMP.l ProgressiveBowLimit : BCC +
                 LDA.l ProgressiveBowReplacement
                 JMP.w .get_item
         +
+        LDA.w ItemReceiptMethod : CMP.b #$01 : BEQ +
+                LDX.w CurrentSpriteSlot
+                LDA.b #$20 : STA.w SpriteMetaData,X
+        +
         LDA.l BowEquipment : TAX
-        LDA.w ResolveLootID_bows_ids,X
+        LDA.w .bows_ids,X
         JMP.w .get_item
 
         .bows
@@ -845,17 +850,33 @@ PotionListExpanded:
 ;--------------------------------------------------------------------------------
 HandleBowTracking:
 ; In: A - Item Receipt ID
+        PHA
         CMP.b #$64 : BEQ .prog_one
         CMP.b #$65 : BEQ .prog_two
+        CMP.b #$0B : BEQ .vanilla_bow
+        CMP.b #$3A : BEQ .vanilla_bow
+        CMP.b #$3B : BEQ .vanilla_bow
+                PLA
                 RTS
         .prog_one
-        LDA.b #$90
+        LDA.b #$10
         BRA .done
         .prog_two
-        LDA.b #$A0
+        LDA.b #$20
+        BRA .done
+        .vanilla_bow
+        ; A non-chest progressive bow will always have been resolved to a vanilla bow ID
+        ; at this point.
+        LDA.w ItemReceiptMethod : CMP.b #$01 : BEQ +
+                LDX.w CurrentSpriteSlot
+                LDA.w SpriteMetaData,X : BEQ +
+                        BRA .done
+        +
+        LDA.b #$00
         .done
-        ORA.l BowTracking : STA.l BowTracking
-        LDA.w ItemReceiptID
+        ORA.b #$80 : ORA.l BowTracking
+        STA.l BowTracking
+        PLA
 RTS
 ;--------------------------------------------------------------------------------
 ;Return BowEquipment but also draw silver arrows if you have the upgrade even if you don't have the bow

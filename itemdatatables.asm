@@ -451,7 +451,7 @@ endmacro
 %SpriteProps($21, 2, 2, $01, $01, PalettesVanilla_red_melon+$0E)        ; 21 - Net
 %SpriteProps($22, 2, 2, $02, $02, PalettesVanilla_blue_ice+$0E)         ; 22 - Blue mail
 %SpriteProps($23, 2, 2, $01, $01, PalettesVanilla_red_melon+$0E)        ; 23 - Red mail
-%SpriteProps($24, 0, 0, $04, $04, PalettesVanilla_blue_ice+$0E)         ; 24 - Small key
+%SpriteProps($24, 0, 0, $02, $04, PalettesVanilla_blue_ice+$0E)         ; 24 - Small key
 %SpriteProps($25, 2, 2, $02, $02, PalettesVanilla_blue_ice+$0E)         ; 25 - Compass
 %SpriteProps($26, 2, 2, $01, $01, PalettesVanilla_red_melon+$0E)        ; 26 - Heart container from 4/4
 %SpriteProps($27, 2, 2, $02, $02, PalettesVanilla_blue_ice+$0E)         ; 27 - Bomb
@@ -575,22 +575,22 @@ endmacro
 %SpriteProps($9D, 2, 2, $04, $04, PalettesVanilla_green_blue_guard+$0E) ; 9D - Big key of Eastern Palace
 %SpriteProps($9E, 2, 2, $04, $04, PalettesVanilla_green_blue_guard+$0E) ; 9E - Big key of Hyrule Castle
 %SpriteProps($9F, 2, 2, $04, $04, PalettesVanilla_green_blue_guard+$0E) ; 9F - Big key of Sewers
-%SpriteProps($A0, 0, 0, $04, $04, PalettesVanilla_blue_ice+$0E)         ; A0 - Small key of Sewers
-%SpriteProps($A1, 0, 0, $04, $04, PalettesVanilla_blue_ice+$0E)         ; A1 - Small key of Hyrule Castle
-%SpriteProps($A2, 0, 0, $04, $04, PalettesVanilla_blue_ice+$0E)         ; A2 - Small key of Eastern Palace
-%SpriteProps($A3, 0, 0, $04, $04, PalettesVanilla_blue_ice+$0E)         ; A3 - Small key of Desert Palace
-%SpriteProps($A4, 0, 0, $04, $04, PalettesVanilla_blue_ice+$0E)         ; A4 - Small key of Agahnim's Tower
-%SpriteProps($A5, 0, 0, $04, $04, PalettesVanilla_blue_ice+$0E)         ; A5 - Small key of Swamp Palace
-%SpriteProps($A6, 0, 0, $04, $04, PalettesVanilla_blue_ice+$0E)         ; A6 - Small key of Dark Palace
-%SpriteProps($A7, 0, 0, $04, $04, PalettesVanilla_blue_ice+$0E)         ; A7 - Small key of Misery Mire
-%SpriteProps($A8, 0, 0, $04, $04, PalettesVanilla_blue_ice+$0E)         ; A8 - Small key of Skull Woods
-%SpriteProps($A9, 0, 0, $04, $04, PalettesVanilla_blue_ice+$0E)         ; A9 - Small key of Ice Palace
-%SpriteProps($AA, 0, 0, $04, $04, PalettesVanilla_blue_ice+$0E)         ; AA - Small key of Tower of Hera
-%SpriteProps($AB, 0, 0, $04, $04, PalettesVanilla_blue_ice+$0E)         ; AB - Small key of Thieves' Town
-%SpriteProps($AC, 0, 0, $04, $04, PalettesVanilla_blue_ice+$0E)         ; AC - Small key of Turtle Rock
-%SpriteProps($AD, 0, 0, $04, $04, PalettesVanilla_blue_ice+$0E)         ; AD - Small key of Ganon's Tower
+%SpriteProps($A0, 0, 0, $02, $04, PalettesVanilla_blue_ice+$0E)         ; A0 - Small key of Sewers
+%SpriteProps($A1, 0, 0, $02, $04, PalettesVanilla_blue_ice+$0E)         ; A1 - Small key of Hyrule Castle
+%SpriteProps($A2, 0, 0, $02, $04, PalettesVanilla_blue_ice+$0E)         ; A2 - Small key of Eastern Palace
+%SpriteProps($A3, 0, 0, $02, $04, PalettesVanilla_blue_ice+$0E)         ; A3 - Small key of Desert Palace
+%SpriteProps($A4, 0, 0, $02, $04, PalettesVanilla_blue_ice+$0E)         ; A4 - Small key of Agahnim's Tower
+%SpriteProps($A5, 0, 0, $02, $04, PalettesVanilla_blue_ice+$0E)         ; A5 - Small key of Swamp Palace
+%SpriteProps($A6, 0, 0, $02, $04, PalettesVanilla_blue_ice+$0E)         ; A6 - Small key of Dark Palace
+%SpriteProps($A7, 0, 0, $02, $04, PalettesVanilla_blue_ice+$0E)         ; A7 - Small key of Misery Mire
+%SpriteProps($A8, 0, 0, $02, $04, PalettesVanilla_blue_ice+$0E)         ; A8 - Small key of Skull Woods
+%SpriteProps($A9, 0, 0, $02, $04, PalettesVanilla_blue_ice+$0E)         ; A9 - Small key of Ice Palace
+%SpriteProps($AA, 0, 0, $02, $04, PalettesVanilla_blue_ice+$0E)         ; AA - Small key of Tower of Hera
+%SpriteProps($AB, 0, 0, $02, $04, PalettesVanilla_blue_ice+$0E)         ; AB - Small key of Thieves' Town
+%SpriteProps($AC, 0, 0, $02, $04, PalettesVanilla_blue_ice+$0E)         ; AC - Small key of Turtle Rock
+%SpriteProps($AD, 0, 0, $02, $04, PalettesVanilla_blue_ice+$0E)         ; AD - Small key of Ganon's Tower
 %SpriteProps($AE, 2, 2, $02, $02, $0000)                                ; AE - Reserved
-%SpriteProps($AF, 0, 0, $04, $04, PalettesVanilla_blue_ice+$0E)         ; AF - Generic small key
+%SpriteProps($AF, 0, 0, $02, $04, PalettesVanilla_blue_ice+$0E)         ; AF - Generic small key
 %SpriteProps($B0, 2, 2, $80, $80, PalettesCustom_crystal)               ; B0 - Crystal 6
 %SpriteProps($B1, 2, 2, $80, $80, PalettesCustom_crystal)               ; B1 - Crystal 1
 %SpriteProps($B2, 2, 2, $80, $80, PalettesCustom_crystal)               ; B2 - Crystal 5
