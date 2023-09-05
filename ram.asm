@@ -193,7 +193,8 @@ ShopPurchaseFlag = $7E0224        ; $01 = Shop purchase item receipt.
 ItemStackPtr = $7E0226            ; Pointer into Item GFX and VRAM target queues. Word length.
                                   ; If not zero, pointer should always be left pointing at the
                                   ; next available slot in the stack during the frame.
-SpriteID = $7E0230                ; 0x0A bytes. Receipt ID for main loop sprite we're handling.
+SpriteID = $7E0230                ; 0x10 bytes. Receipt ID for main loop sprite we're handling.
+SpriteMetaData = $7E0240          ; 0x10 bytes. Sprite metadata. Used for prog bow tracking.
 AncillaVelocityZ = $7E0294        ; 0x0A bytes
 AncillaZCoord = $7E029E           ; 0x0A bytes
                                   ;
