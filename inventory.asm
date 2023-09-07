@@ -159,15 +159,15 @@ AddInventory:
                         JSR.w IncrementByOne
                         JSR.w StampItem
                         JSR.w IncrementYAItems
-                                REP #$20
+                                REP #$30
                                 LDA.l TotalItemCounter : INC : TAY
-                                LDA.l BootsEquipment : BNE +
+                                LDA.l BootsEquipment : AND.w #$00FF : BNE +
                                         TYA : STA.l PreBootsLocations
                                 +
-                                LDA.l MirrorEquipment : BNE +
+                                LDA.l MirrorEquipment : AND.w #$00FF : BNE +
                                         TYA : STA.l PreMirrorLocations
                                 +
-                                LDA.l FluteEquipment : BNE +
+                                LDA.l FluteEquipment : AND.w #$00FF : BNE +
                                         TYA : STA.l PreFluteLocations
                                 +
                                 TYA
