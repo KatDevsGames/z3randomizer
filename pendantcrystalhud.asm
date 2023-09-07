@@ -17,7 +17,7 @@ RTL
 ;================================================================================
 HUDRebuildIndoorHole:
 	PHA
-        INC.w UpdateHUD
+        INC.w UpdateHUDFlag
 	LDA.l GenericKeys : BEQ .normal
 	.generic
 	PLA
@@ -30,7 +30,7 @@ RTL
 RTL
 ;================================================================================
 HUDRebuildIndoor:
-        INC.w UpdateHUD
+        INC.w UpdateHUDFlag
 	LDA.l GenericKeys : BEQ .normal
 	.generic
 	LDA.b #$00 : STA.l RoomDarkness

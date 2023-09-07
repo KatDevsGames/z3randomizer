@@ -429,7 +429,7 @@ ItemBehavior:
         .single_arrow
         LDA.l ArrowMode : BEQ +
                 LDA.l CurrentArrows : INC : STA.l CurrentArrows ; Should be sole write to this address
-                INC.w UpdateHUD                                 ; in retro/rupee bow mode.
+                INC.w UpdateHUDFlag                             ; in retro/rupee bow mode.
         +
         RTS
 
