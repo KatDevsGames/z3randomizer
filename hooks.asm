@@ -1406,7 +1406,8 @@ org $8DFB29 : BRA UpdateHUDBuffer_update_item_check_arrows
 ;--------------------------------------------------------------------------------
 org $8DF1AB : JSR.w RebuildHUD_update
 org $8DDFC8 : JSR.w RebuildHUD_update
-org $8DDB85 : JSR.w RebuildHUD_IconExpanded
+org $8DDB85
+JSR.w RebuildHUD : BRA + : NOP : +
 ;--------------------------------------------------------------------------------
 org $87A205 : JSL.l RebuildHUD_update_long
 org $8AEF62 : JSL.l RebuildHUD_update_long
@@ -1422,14 +1423,6 @@ warnpc $8E8000
 org $8DEDE8
 JSL.l DrawHeartPiecesMenu : BRA DrawEquipment_in_a_dungeon
 ;--------------------------------------------------------------------------------
-org $8DAFDD
-RebuildHUD_IconExpanded:
-JSR.w UpdateHUD
-JSR.w RebuildHUD
-INC.w UpdateHUDFlag
-RTS
-
-warnpc $8DB080
 
 ;================================================================================
 ; 300 Rupee NPC
