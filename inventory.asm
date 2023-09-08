@@ -365,7 +365,7 @@ Link_ReceiveItem_HUDRefresh:
 	+
 
 	JSL.l HUD_RefreshIconLong ; thing we wrote over
-        INC.w UpdateHUD
+        INC.w UpdateHUDFlag
 	JSL.l PostItemGet
 RTL
 ;--------------------------------------------------------------------------------
@@ -380,7 +380,7 @@ HandleBombAbsorbtion:
 		LDA.b #$04 : STA.w ItemCursor ; set selected item to bombs
 		LDA.b #$01 : STA.w CurrentYItem ; set selected item to bombs
 		JSL.l HUD_RebuildLong
-                INC.w UpdateHUD
+                INC.w UpdateHUDFlag
 	+
 RTL
 ;--------------------------------------------------------------------------------

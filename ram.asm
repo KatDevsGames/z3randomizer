@@ -388,7 +388,7 @@ DelayTimer = $7E1CE9              ;
                                   ;
 TextID = $7E1CF0                  ; Message ID and page. Word length.
                                   ;
-UpdateHUD = $7E1E03               ; Flag used to mark HUD updates and avoid heavy code segments.
+UpdateHUDFlag = $7E1E03           ; Flag used to mark HUD updates and avoid heavy code segments.
                                   ;
 ToastBuffer = $7E1E0E             ; Multiworld buffer. Word length.
                                   ;

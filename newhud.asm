@@ -65,7 +65,7 @@ NewHUD_DrawArrows:
 ;================================================================================
 NewHUD_DrawGoal:
         REP #$20
-        LDA.w UpdateHUD : BEQ .no_goal
+        LDA.w UpdateHUDFlag : BEQ .no_goal
         LDA.l GoalItemRequirement : BEQ .no_goal
 
         LDA.l GoalItemIcon : STA.w HUDGoalIndicator
@@ -122,7 +122,7 @@ NewHUD_DrawKeys:
 
 ;================================================================================
 NewHUD_DrawDungeonCounters:
-        LDA.w UpdateHUD : BEQ NewHUD_DrawPrizeIcon
+        LDA.w UpdateHUDFlag : BEQ NewHUD_DrawPrizeIcon
         LDA.l CompassMode : ORA.l MapHUDMode : BIT.b #$03 : BEQ NewHUD_DrawPrizeIcon
         LDX.b IndoorsFlag : BNE +
         JMP.w NewHUD_DrawMagicMeter
@@ -147,7 +147,7 @@ NewHUD_DrawPrizeIcon:
 	LDA.b GameMode
         CMP.b #$12 : BEQ .no_prize
         CMP.b #$0E : BEQ +
-        LDA.w UpdateHUD : BEQ NewHUD_DrawItemCounter
+        LDA.w UpdateHUDFlag : BEQ NewHUD_DrawItemCounter
 	+
         LDA.w DungeonID
 	CMP.b #$1A : BCS .no_prize
@@ -197,7 +197,7 @@ NewHUD_DrawPrizeIcon:
 ;================================================================================
 NewHUD_DrawItemCounter:
         REP #$20
-        LDA.w UpdateHUD : BEQ NewHUD_DrawMagicMeter
+        LDA.w UpdateHUDFlag : BEQ NewHUD_DrawMagicMeter
         LDA.l ItemCounterHUD : AND.w #$00FF : BEQ NewHUD_DrawMagicMeter
         LDA.w #!SlashTile : STA.w HUDGoalIndicator+$08
         LDA.l TotalItemCount : CMP.w #1000 : BCS .item_four_digits
@@ -263,7 +263,7 @@ NewHUD_DrawMagicMeter:
 
 ;================================================================================
 NewHUD_DoneDrawing:
-        STZ.w UpdateHUD
+        STZ.w UpdateHUDFlag
         PLB
 RTL
 
