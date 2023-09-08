@@ -153,6 +153,7 @@ Ancilla29_MilestoneItemReceipt_no_sparkle                  = $88CB2E
 Ancilla_SetOAM_XY                                          = $88F6F3
 Ancilla_AddAncilla                                         = $899CCE
 UpdateHUD                                                  = $8DDFA9
+UpdateEquippedItem                                         = $8DDFAF
 DrawProgressIcons                                          = $8DE9C8
 ItemMenu_DrawEquippedYItem                                 = $8DEB3A
 ItemMenu_DrawEquippedYItem_exit                            = $8DECE6
