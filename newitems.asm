@@ -276,8 +276,8 @@ ItemBehavior:
         RTS
 
         .silversbow
+        LDA.l BowTracking : ORA.b #$40 : STA.l BowTracking
         LDA.l SilverArrowsUseRestriction : BNE +
-                LDA.l BowTracking : ORA.b #$40 : STA.l BowTracking
                 LDA.b #03 : STA.l BowEquipment ; set bow to silver
         +
         LDA.b #$01 : STA.l BowEquipment
@@ -338,8 +338,8 @@ ItemBehavior:
         RTS
 
         .silver_bow
+        LDA.b #$40 : ORA.l BowTracking : STA.l BowTracking
         LDA.l SilverArrowsUseRestriction : BNE .noequip
-                LDA.b #$40 : ORA.l BowTracking : STA.l BowTracking
                 LDA.l SilverArrowsAutoEquip : AND.b #$01 : BEQ .noequip
                 LDA.l CurrentArrows : BNE + ; check arrows
                                 LDA.b #$03 : BRA ++ ; bow without arrow
@@ -414,8 +414,8 @@ ItemBehavior:
         RTS
 
         .silver_arrows
+        LDA.l BowTracking : ORA.b #$40 : STA.l BowTracking
         LDA.l SilverArrowsUseRestriction : BNE ++
-                LDA.l BowTracking : ORA.b #$40 : STA.l BowTracking
                 LDA.l SilverArrowsAutoEquip : AND.b #$01 : BEQ ++
                         LDA.l BowEquipment : BEQ ++ : CMP.b #$03 : !BGE +
                                 !ADD.b #$02 : STA.l BowEquipment ; switch to silver bow
