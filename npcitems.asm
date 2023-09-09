@@ -51,8 +51,8 @@ ItemCheck_TreeKid:
 RTL
 
 ItemCheck_TreeKid2:
-	LDA.l NpcFlags : AND.b #$08 : CMP.b #$08
-        TDC ; ?? TODO
+	LDA.l NpcFlags : AND.b #$08
+        LSR #2
 RTL
 
 ItemCheck_TreeKid3:

@@ -1406,18 +1406,24 @@ org $8DFB29 : BRA UpdateHUDBuffer_update_item_check_arrows
 ;--------------------------------------------------------------------------------
 org $8DF1AB : JSR.w RebuildHUD_update
 org $8DDFC8 : JSR.w RebuildHUD_update
-org $8DDB85
-JSR.w RebuildHUD : BRA + : NOP : +
+org $8DDB85 : JSR.w RefreshIcon_UpdateHUD : BRA + : NOP : +
 ;--------------------------------------------------------------------------------
 org $87A205 : JSL.l RebuildHUD_update_long
-org $8AEF62 : JSL.l RebuildHUD_update_long
 org $87A1A4 : JSL.l RebuildHUD_update_long
 org $87A1CF : JSL.l RebuildHUD_update_long
+org $87A21D : JSL.l RebuildHUD_update_long
 org $87A235 : JSL.l RebuildHUD_update_long
+org $8AEF62 : JSL.l RebuildHUD_update_long
 ;--------------------------------------------------------------------------------
 org $8DFFE1
 RebuildHUD_update_long:
 JSR.w RebuildHUD_update : RTL
+
+RefreshIcon_UpdateHUD:
+INC.w UpdateHUDFlag
+JSR.w RebuildHUD
+JSR.w UpdateEquippedItem
+RTS
 warnpc $8E8000
 ;--------------------------------------------------------------------------------
 org $8DEDE8
