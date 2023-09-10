@@ -764,7 +764,7 @@ endmacro
 %InventoryItem($46, $0001, $0000, $0000) ; 46 - 300 rupees
 %InventoryItem($47, $0001, $0000, $0000) ; 47 - 20 rupees green
 %InventoryItem($48, $0085, $0000, $0000) ; 48 - Full bottle (good bee)
-%InventoryItem($49, $0081, $0000, $0000) ; 49 - Tossed fighter sword
+%InventoryItem($49, $0081, SwordTime, $0000) ; 49 - Tossed fighter sword
 %InventoryItem($4A, $0085, FluteTime, $0000) ; 4A - Active Flute
 %InventoryItem($4B, $0089, BootsTime, $0000) ; 4B - Boots
 %InventoryItem($4C, $0015, $0000, CapacityUpgrades) ; 4C - Bomb capacity (50)
