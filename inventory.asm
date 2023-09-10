@@ -245,10 +245,9 @@ StampItem:
                 LDA.b [Scrap0B] : BNE .skip
                 INC.b Scrap0B : INC.b Scrap0B
                 LDA.b [Scrap0B] : BNE .skip
+                        LDA.l NMIFrames+2 : STA.b [Scrap0B]
                         DEC.b Scrap0B : DEC.b Scrap0B
                         LDA.l NMIFrames : STA.b [Scrap0B]
-                        INC.b Scrap0B : INC.b Scrap0B
-                        LDA.l NMIFrames+2 : STA.b [Scrap0B]
         .skip
         SEP #$20
 RTS
