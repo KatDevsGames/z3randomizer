@@ -869,7 +869,7 @@ HandleBowTracking:
         ; at this point.
         LDA.w ItemReceiptMethod : CMP.b #$01 : BEQ +
                 LDX.w CurrentSpriteSlot
-                LDA.w SpriteMetaData,X : BEQ +
+                LDA.w SpriteMetaData,X : BEQ .done
                         BRA .done
         +
         LDA.b #$00

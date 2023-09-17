@@ -339,40 +339,30 @@ IndoorSubtileTransitionCounter:
 JMP StatTransitionCounter
 ;--------------------------------------------------------------------------------
 StatsFinalPrep:
-	PHA : PHX : PHP
-		SEP #$30 ; set 8-bit accumulator and index registers
-		
-		LDA.l StatsLocked : BNE .ramPostOnly
-		INC : STA.l StatsLocked
-	
-		JSL.l IncrementFinalSword
-	
-		LDA.l HighestMail : INC : STA.l HighestMail ; add green mail to mail count
-		
-		LDA.l ScreenTransitions : DEC : STA.l ScreenTransitions ; remove extra transition from exiting gtower via duck
-		
-		.ramPostOnly
-		LDA.l SwordBossKills : LSR #4 : !ADD SwordBossKills : STA.l BossKills
-		LDA.l SwordBossKills+1 : LSR #4 : !ADD SwordBossKills+1 : !ADD BossKills : AND.b #$0F : STA.l BossKills
-	
-		LDA.l NMIFrames : !SUB LoopFrames : STA.l LagTime
-		LDA.l NMIFrames+1 : SBC LoopFrames+1 : STA.l LagTime+1
-		LDA.l NMIFrames+2 : SBC LoopFrames+2 : STA.l LagTime+2
-		LDA.l NMIFrames+3 : SBC LoopFrames+3 : STA.l LagTime+3
+        PHA : PHX : PHP
+        SEP #$30
+        LDA.l StatsLocked : BNE .ramPostOnly
+                INC : STA.l StatsLocked
+                JSL.l IncrementFinalSword
+                LDA.l Aga2Duck : BEQ .ramPostOnly
+                        LDA.l ScreenTransitions : DEC : STA.l ScreenTransitions ; remove extra transition from exiting gtower via duck
+        .ramPostOnly
+        LDA.l SwordBossKills : LSR #4 : !ADD SwordBossKills : STA.l BossKills
+        LDA.l SwordBossKills+1 : LSR #4 : !ADD SwordBossKills+1 : !ADD BossKills : AND.b #$0F : STA.l BossKills
 
-		LDA.l RupeesSpent : !ADD DisplayRupees : STA.l RupeesCollected
-		LDA.l RupeesSpent+1 : ADC DisplayRupees+1 : STA.l RupeesCollected+1
+        LDA.l NMIFrames : !SUB LoopFrames : STA.l LagTime
+        LDA.l NMIFrames+1 : SBC LoopFrames+1 : STA.l LagTime+1
+        LDA.l NMIFrames+2 : SBC LoopFrames+2 : STA.l LagTime+2
+        LDA.l NMIFrames+3 : SBC LoopFrames+3 : STA.l LagTime+3
 
-                REP #$20
-		LDA.l TotalItemCounter : !SUB ChestsOpened : STA.l NonChestCounter
+        LDA.l RupeesSpent : !ADD DisplayRupees : STA.l RupeesCollected
+        LDA.l RupeesSpent+1 : ADC DisplayRupees+1 : STA.l RupeesCollected+1
 
-		.done
-	PLP : PLX : PLA
-	LDA.b #$19 : STA.b GameMode ; thing we wrote over, load triforce room
+        REP #$20
+        LDA.l TotalItemCounter : !SUB ChestsOpened : STA.l NonChestCounter
+        .done
+        PLP : PLX : PLA
+        LDA.b #$19 : STA.b GameMode ; thing we wrote over, load triforce room
         STZ.b GameSubMode
         STZ.b SubSubModule
 RTL
-;--------------------------------------------------------------------------------
-; Notes:
-; s&q counter
-;================================================================================
