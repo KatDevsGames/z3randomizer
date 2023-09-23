@@ -13,6 +13,44 @@ db 2
 db 55
 db "                            " ; $238020
 
+!FEATURE_PATREON_SUPPORTERS ?= 0
+
+table "data/creditscharmapbighi.txt"
+PatronCredit1Hi:
+db 2
+db 55
+db "                            " ; $238002
+
+table "data/creditscharmapbiglo.txt"
+PatronCredit1Lo:
+db 2
+db 55
+db "                            " ; $238020
+
+table "data/creditscharmapbighi.txt"
+PatronCredit2Hi:
+db 2
+db 55
+db "                            " ; $238038
+
+table "data/creditscharmapbiglo.txt"
+PatronCredit2Lo:
+db 2
+db 55
+db "                            " ; $238056
+
+table "data/creditscharmapbighi.txt"
+PatronCredit3Hi:
+db 2
+db 55
+db "                            " ; $238074
+
+table "data/creditscharmapbiglo.txt"
+PatronCredit3Lo:
+db 2
+db 55
+db "                            " ; $238092
+
 ;===================================================================================================
 
 CreditsLineTable:
@@ -498,6 +536,23 @@ CreditsLineBlank:
 %blankline()
 %blankline()
 
+if !FEATURE_PATREON_SUPPORTERS
+	%smallcredits("PATREON SUPPORTERS", "yellow")
+
+	%addarbline(PatronCredit1Hi)
+	%addarbline(PatronCredit1Lo)
+
+	%blankline()
+	%addarbline(PatronCredit2Hi)
+	%addarbline(PatronCredit2Lo)
+
+	%blankline()
+	%addarbline(PatronCredit3Hi)
+	%addarbline(PatronCredit3Lo)
+
+	%blankline()
+endif
+
 %smallcredits("SPECIAL THANKS", "red")
 
 %blankline()
@@ -530,7 +585,7 @@ CreditsLineBlank:
 
 %blankline()
 
-%bigcredits("AND&")
+%bigcredits("AND")
 
 %blankline()
 
@@ -556,16 +611,19 @@ CreditsLineBlank:
 %emptyline()
 %emptyline()
 %emptyline()
-%emptyline()
-%emptyline()
-%emptyline()
-%emptyline()
-%emptyline()
-%emptyline()
-%emptyline()
-%emptyline()
-%emptyline()
-%emptyline()
+
+if !FEATURE_PATREON_SUPPORTERS == 0
+	%emptyline()
+	%emptyline()
+	%emptyline()
+	%emptyline()
+	%emptyline()
+	%emptyline()
+	%emptyline()
+	%emptyline()
+	%emptyline()
+	%emptyline()
+endif
 
 ;===================================================================================================
 
