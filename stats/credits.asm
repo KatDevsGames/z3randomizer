@@ -19,37 +19,37 @@ table "data/creditscharmapbighi.txt"
 PatronCredit1Hi:
 db 2
 db 55
-db "                            " ; $238002
+db "                            " ; $23803E
 
 table "data/creditscharmapbiglo.txt"
 PatronCredit1Lo:
 db 2
 db 55
-db "                            " ; $238020
+db "                            " ; $23805C
 
 table "data/creditscharmapbighi.txt"
 PatronCredit2Hi:
 db 2
 db 55
-db "                            " ; $238038
+db "                            " ; $23807A
 
 table "data/creditscharmapbiglo.txt"
 PatronCredit2Lo:
 db 2
 db 55
-db "                            " ; $238056
+db "                            " ; $238098
 
 table "data/creditscharmapbighi.txt"
 PatronCredit3Hi:
 db 2
 db 55
-db "                            " ; $238074
+db "                            " ; $2380B6
 
 table "data/creditscharmapbiglo.txt"
 PatronCredit3Lo:
 db 2
 db 55
-db "                            " ; $238092
+db "                            " ; $2380D4
 
 ;===================================================================================================
 
