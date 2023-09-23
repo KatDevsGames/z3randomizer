@@ -551,6 +551,7 @@ if !FEATURE_PATREON_SUPPORTERS
 	%addarbline(PatronCredit3Lo)
 
 	%blankline()
+	%blankline()
 endif
 
 %smallcredits("SPECIAL THANKS", "red")
@@ -610,9 +611,9 @@ endif
 %emptyline()
 %emptyline()
 %emptyline()
-%emptyline()
 
 if !FEATURE_PATREON_SUPPORTERS == 0
+	%emptyline()
 	%emptyline()
 	%emptyline()
 	%emptyline()
