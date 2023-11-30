@@ -146,25 +146,6 @@ CountChestKey:
         PLX : PLA
 RTS
 ;--------------------------------------------------------------------------------
-CountBonkItem: ; called from GetBonkItem in bookofmudora.asm
-        LDA.b RoomIndex
-        CMP.b #115 : BNE +
-                LDA.l BonkKey_Desert
-                BRA ++
-        +
-        CMP.b #140 : BNE +
-                LDA.l BonkKey_GTower : BRA ++
-        +
-        LDA.b #$24
-        ++
-        CMP.b #$24 : BNE +
-                PHY
-                TAY
-                JSR CountChestKey
-                PLY
-        +
-RTL
-;--------------------------------------------------------------------------------
 IncrementAgahnim2Sword:
         PHA
         JSL.l IncrementBossSword
