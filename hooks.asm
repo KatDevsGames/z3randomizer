@@ -1000,7 +1000,7 @@ org $81C517 : JSL.l CheckDungeonCompletion
 org $81C523 : JSL.l CheckDungeonCompletion
 org $81C710 : JSL.l CheckSpawnPrize
 BCS RoomTag_GetHeartForPrize_spawn_prize : BRA RoomTag_GetHeartForPrize_delete_tag
-org $81C742 : JSL.l SpawnDungeonPrize
+org $81C742 : JSL.l SpawnDungeonPrize : PLA : RTS
 org $8799EA : JML.l SetItemPose
 org $88C415 : JSL.l PendantMusicCheck
 BCS Ancilla22_ItemReceipt_is_pendant : BRA Ancilla22_ItemReceipt_wait_for_music

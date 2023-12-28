@@ -3,6 +3,9 @@
 ;--------------------------------------------------------------------------------
 SpawnDungeonPrize:
         PHX : PHB
+        TAX
+        LDA.b $06,S : STA.b ScrapBuffer72 ; Store current RoomTag index
+        TXA
         JSL.l AttemptItemSubstitution
         JSL.l ResolveLootIDLong
         STA.w ItemReceiptID
@@ -14,6 +17,7 @@ SpawnDungeonPrize:
                 LDA.w ItemReceiptID
                 STA.w AncillaGet,X : STA.w SpriteID,X
                 JSR.w AddDungeonPrizeAncilla
+                LDX.b ScrapBuffer72 : STZ.b RoomTag,X
         .failed_spawn
         PLB : PLX
 RTL
