@@ -45,9 +45,11 @@ DrawHeartPieceGFX:
                         LDA.w SpriteControl, X : ORA.b #$20 : STA.w SpriteControl, X
                         PLA
                         JSL.l DrawDynamicTile
+                        REP #$21
                         LDA.b Scrap00
-                        CLC : ADC.b #$04
+                        ADC.w #$0004
                         STA.b Scrap00
+                        SEP #$20
                         JSL.l Sprite_DrawShadowLong
                         BRA .done
                 +
