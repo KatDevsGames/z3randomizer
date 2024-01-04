@@ -1420,7 +1420,7 @@ RebuildHUD_update_long:
 JSR.w RebuildHUD_update : RTL
 
 RefreshIcon_UpdateHUD:
-INC.w UpdateHUDFlag
+LDA.b #$01 : STA.l UpdateHUDFlag
 JSR.w RebuildHUD
 JSR.w UpdateEquippedItem
 RTS

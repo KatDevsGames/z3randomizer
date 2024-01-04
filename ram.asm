@@ -376,6 +376,13 @@ SpriteCoordCacheY = $7E0FDA       ;
                                   ;
 NoMenu = $7E0FFC                  ; When set prevents menu, mirror, medallions
                                   ;
+;===================================================================================================
+;===================================================================================================
+; DO NOT ADD ANY RANDOMIZER VARIABLES TO THE SPACE FROM $1100 to $1FFF
+;---------------------------------------------------------------------------------------------------
+; It causes isses with major glitches
+;===================================================================================================
+;===================================================================================================
 GFXStripes = $7E1000              ; Used by stripes for arbitrary VRAM transfers. $100 bytes.
 RoomStripes = $7E1100             ; Used for room drawing.
                                   ;
@@ -388,26 +395,7 @@ DelayTimer = $7E1CE9              ;
                                   ;
 TextID = $7E1CF0                  ; Message ID and page. Word length.
                                   ;
-UpdateHUDFlag = $7E1E03           ; Flag used to mark HUD updates and avoid heavy code segments.
-                                  ;
-ToastBuffer = $7E1E0E             ; Multiworld buffer. Word length.
-                                  ;
-MSUResumeTime = $7E1E6B           ; Mirrored MSU block
-MSUResumeControl = $7E1E6F        ;
-MSUFallbackTable = $7E1E70        ;
-MSUDelayedCommand = $7E1E79       ;
-MSUPackCount = $7E1E7A            ;
-MSUPackCurrent = $7E1E7B          ;
-MSUPackRequest = $7E1E7C          ;
-MSULoadedTrack = $7E1E7D          ;
-MSUResumeTrack = $7E1E7F          ;
 
-ClockHours = $7E1E90              ; Clock Hours
-ClockMinutes = $7E1E94            ; Clock Minutes
-ClockSeconds = $7E1E98            ; Clock Seconds
-ClockBuffer = $7E1E9C             ; Clock Temporary
-ScratchBufferNV = $7E1EA0         ; Non-volatile scratch buffer. Must preserve values through return.
-ScratchBufferV = $7E1EB0          ; Volatile scratch buffer. Can clobber at will.
 
 ;================================================================================
 ; UNMIRRORED WRAM
@@ -419,6 +407,28 @@ TileUploadBuffer = $7EA180        ; 0x300 bytes
                                   ;
 ItemGetGFX = $7EBD40              ; Item receipt graphics location
                                   ;
+UpdateHUDFlag = $7EBE00           ; Flag used to mark HUD updates and avoid heavy code segments.
+                                  ;
+ToastBuffer = $7EBE02             ; Multiworld buffer. Word length.
+                                  ;
+
+MSUResumeTime = $7EBE6B           ; Mirrored MSU block
+MSUResumeControl = $7EBE6F        ;
+MSUFallbackTable = $7EBE70        ;
+MSUDelayedCommand = $7EBE79       ;
+MSUPackCount = $7EBE7A            ;
+MSUPackCurrent = $7EBE7B          ;
+MSUPackRequest = $7EBE7C          ;
+MSULoadedTrack = $7EBE7D          ;
+MSUResumeTrack = $7EBE7F          ;
+
+ClockHours = $7EBE90              ; Clock Hours
+ClockMinutes = $7EBE94            ; Clock Minutes
+ClockSeconds = $7EBE98            ; Clock Seconds
+ClockBuffer = $7EBE9C             ; Clock Temporary
+ScratchBufferNV = $7EBEA0         ; Non-volatile scratch buffer. Must preserve values through return.
+ScratchBufferV = $7EBEB0          ; Volatile scratch buffer. Can clobber at will.
+
 RoomFade = $7EC005                ; Flags fade to black on room transitions. Word length.
 FadeTimer = $7EC007               ; Timer for transition fading and mosaics. Word length.
 FadeDirection = $7EC009           ; Word length
@@ -861,23 +871,23 @@ endmacro
 %assertRAM(MessageSubModule, $7E1CD8)
 %assertRAM(MessageCursor, $7E1CE8)
 %assertRAM(DelayTimer, $7E1CE9)
-%assertRAM(TextID, $7E1CF0)
-%assertRAM(ToastBuffer, $7E1E0E)
-%assertRAM(MSUResumeTime, $7E1E6B)
-%assertRAM(MSUResumeControl, $7E1E6F)
-%assertRAM(MSUFallbackTable, $7E1E70)
-%assertRAM(MSUDelayedCommand, $7E1E79)
-%assertRAM(MSUPackCount, $7E1E7A)
-%assertRAM(MSUPackCurrent, $7E1E7B)
-%assertRAM(MSUPackRequest, $7E1E7C)
-%assertRAM(MSULoadedTrack, $7E1E7D)
-%assertRAM(MSUResumeTrack, $7E1E7F)
-%assertRAM(ClockHours, $7E1E90)
-%assertRAM(ClockMinutes, $7E1E94)
-%assertRAM(ClockSeconds, $7E1E98)
-%assertRAM(ClockBuffer, $7E1E9C)
-%assertRAM(ScratchBufferNV, $7E1EA0)
-%assertRAM(ScratchBufferV, $7E1EB0)
+;%assertRAM(TextID, $7E1CF0)
+;%assertRAM(ToastBuffer, $7E1E0E)
+;%assertRAM(MSUResumeTime, $7E1E6B)
+;%assertRAM(MSUResumeControl, $7E1E6F)
+;%assertRAM(MSUFallbackTable, $7E1E70)
+;%assertRAM(MSUDelayedCommand, $7E1E79)
+;%assertRAM(MSUPackCount, $7E1E7A)
+;%assertRAM(MSUPackCurrent, $7E1E7B)
+;%assertRAM(MSUPackRequest, $7E1E7C)
+;%assertRAM(MSULoadedTrack, $7E1E7D)
+;%assertRAM(MSUResumeTrack, $7E1E7F)
+;%assertRAM(ClockHours, $7E1E90)
+;%assertRAM(ClockMinutes, $7E1E94)
+;%assertRAM(ClockSeconds, $7E1E98)
+;%assertRAM(ClockBuffer, $7E1E9C)
+;%assertRAM(ScratchBufferNV, $7E1EA0)
+;%assertRAM(ScratchBufferV, $7E1EB0)
 %assertRAM(TileUploadBuffer, $7EA180)
 %assertRAM(RoomFade, $7EC005)
 %assertRAM(FadeTimer, $7EC007)

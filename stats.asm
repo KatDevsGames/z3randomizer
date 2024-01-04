@@ -78,12 +78,12 @@ IncrementSmallKeys:
 	STA.l CurrentSmallKeys ; thing we wrote over, write small key count
 	PHX
 		LDA.l StatsLocked : BNE +
-                        LDA.l SmallKeyCounter : INC : STA.l SmallKeyCounter
+		LDA.l SmallKeyCounter : INC : STA.l SmallKeyCounter
 		+
 		JSL.l UpdateKeys
 		PHY : LDY.b #24 : JSL.l AddInventory : PLY
 		JSL.l HUD_RebuildLong
-                INC.w UpdateHUDFlag
+		LDA.b #$01 : STA.l UpdateHUDFlag
 	PLX
 RTL
 ;--------------------------------------------------------------------------------
@@ -106,7 +106,7 @@ IncrementSmallKeysNoPrimary:
                 ++
                 PLP
         +
-        INC.w UpdateHUDFlag
+        LDA.b #$01 : STA.l UpdateHUDFlag
         JSL.l HUD_RebuildLong
         PLX
 RTL
