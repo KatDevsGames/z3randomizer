@@ -4,8 +4,9 @@
 ; in:	X(w) - Length in Tiles
 ;--------------------------------------------------------------------------------
 DoToast:
-        PHY : PHP
-                LDY.w ToastBuffer
+        PHY : PHP : PHA
+                LDA.l ToastBuffer : TAY
+				PLA
                 JSL.l WriteVRAMBlock
         PLP : PLY
 RTL

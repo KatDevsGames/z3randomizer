@@ -61,7 +61,7 @@ LoadDialogAddressIndirect:
 RTL
 ;--------------------------------------------------------------------------------
 FreeDungeonItemNotice:
-        STA.w ScratchBufferV
+        STA.l ScratchBufferV
 
         PHA : PHX : PHY
         PHP
@@ -70,59 +70,59 @@ FreeDungeonItemNotice:
         REP #$10 ; set 16-bit index registers
         PEI.b (Scrap00)
         LDA.b Scrap02 : PHA
-        LDA.w ScratchBufferNV : PHA
-        LDA.w ScratchBufferNV+1 : PHA
+        LDA.l ScratchBufferNV : PHA
+        LDA.l ScratchBufferNV+1 : PHA
 	;--------------------------------
 
 	LDA.l FreeItemText : BNE + : JMP .skip : +
 
-	LDA.b #$00 : STA.w ScratchBufferNV ; initialize scratch
+	LDA.b #$00 : STA.l ScratchBufferNV ; initialize scratch
 	LDA.l FreeItemText : AND.b #$01 : BEQ + ; show message for general small key
-	LDA.w ScratchBufferV : CMP.b #$24 : BNE + ; general small key
+	LDA.l ScratchBufferV : CMP.b #$24 : BNE + ; general small key
 		%CopyDialog(Notice_SmallKeyOf)
 		LDA.l DialogReturnPointer : DEC #2 : STA.l DialogOffsetPointer
 		%CopyDialog(Notice_Self)
 		JMP .done
 	+ : LDA.l FreeItemText : AND.b #$02 : BEQ + ; show message for general compass
-	LDA.w ScratchBufferV : CMP.b #$25 : BNE + ; general compass
+	LDA.l ScratchBufferV : CMP.b #$25 : BNE + ; general compass
 		%CopyDialog(Notice_CompassOf)
 		LDA.l DialogReturnPointer : DEC #2 : STA.l DialogOffsetPointer
 		%CopyDialog(Notice_Self)
 		JMP .done
 	+ : LDA.l FreeItemText : AND.b #$04 : BEQ + ; show message for general map
-	LDA.w ScratchBufferV : CMP.b #$33 : BNE + ; general map
+	LDA.l ScratchBufferV : CMP.b #$33 : BNE + ; general map
 		%CopyDialog(Notice_MapOf)
 		LDA.l DialogReturnPointer : DEC #2 : STA.l DialogOffsetPointer
 		%CopyDialog(Notice_Self)
 		JMP .done
 	+ : LDA.l FreeItemText : AND.b #$08 : BEQ + ; show message for general big key
-	LDA.w ScratchBufferV : CMP.b #$32 : BNE + ; general big key
+	LDA.l ScratchBufferV : CMP.b #$32 : BNE + ; general big key
 		%CopyDialog(Notice_BigKeyOf)
 		LDA.l DialogReturnPointer : DEC #2 : STA.l DialogOffsetPointer
 		%CopyDialog(Notice_Self)
 		JMP .done
 	+
 	LDA.l FreeItemText : AND.b #$04 : BEQ + ; show message for dungeon map
-	LDA.w ScratchBufferV : AND.b #$F0 ; looking at high bits only
+	LDA.l ScratchBufferV : AND.b #$F0 ; looking at high bits only
 	CMP.b #$70 : BNE + ; map of...
 		%CopyDialog(Notice_MapOf)
 		JMP .dungeon
 	+ : LDA.l FreeItemText : AND.b #$02 : BEQ + ; show message for dungeon compass
-	LDA.w ScratchBufferV : AND.b #$F0 : CMP.b #$80 : BNE + ; compass of...
+	LDA.l ScratchBufferV : AND.b #$F0 : CMP.b #$80 : BNE + ; compass of...
 		%CopyDialog(Notice_CompassOf)
 		JMP .dungeon
 	+ : LDA.l FreeItemText : AND.b #$08 : BEQ + ; show message for dungeon big key
-	LDA.w ScratchBufferV : AND.b #$F0 : CMP.b #$90 : BNE + ; big key of...
+	LDA.l ScratchBufferV : AND.b #$F0 : CMP.b #$90 : BNE + ; big key of...
 		%CopyDialog(Notice_BigKeyOf)
 		JMP .dungeon
 	+ : LDA.l FreeItemText : AND.b #$01 : BEQ + ; show message for dungeon small key
-	LDA.w ScratchBufferV : AND.b #$F0 : CMP.b #$A0 : BNE + ; small key of...
-		LDA.w ScratchBufferV : CMP.b #$AF : BNE ++ : JMP .skip : ++
+	LDA.l ScratchBufferV : AND.b #$F0 : CMP.b #$A0 : BNE + ; small key of...
+		LDA.l ScratchBufferV : CMP.b #$AF : BNE ++ : JMP .skip : ++
 		%CopyDialog(Notice_SmallKeyOf)
-		LDA.b #$01 : STA.w ScratchBufferNV ; set up a flip for small keys
+		LDA.b #$01 : STA.l ScratchBufferNV ; set up a flip for small keys
 		BRA .dungeon
 	+ : LDA.l FreeItemText : AND.b #$20 : BEQ + ; show message for crystal
-	LDA.w ScratchBufferV : CMP.b #$B0 : !BLT + ;  crystal #
+	LDA.l ScratchBufferV : CMP.b #$B0 : !BLT + ;  crystal #
                                CMP.b #$B7 : !BGE +
 		%CopyDialog(Notice_Crystal)
 		JMP .crystal
@@ -131,14 +131,14 @@ FreeDungeonItemNotice:
 
 	.dungeon
 	LDA.l DialogReturnPointer : DEC #2 : STA.l DialogOffsetPointer
-	LDA.w ScratchBufferV
+	LDA.l ScratchBufferV
 	AND.b #$0F
-	STA.w ScratchBufferNV+1
-	LDA.w ScratchBufferNV : BEQ +
-		LDA.w ScratchBufferNV
-		LDA.b #$0F : !SUB.w ScratchBufferNV+1 : STA.w ScratchBufferNV+1 ; flip the values for small keys
+	STA.l ScratchBufferNV+1
+	LDA.l ScratchBufferNV : BEQ +
+		LDA.l ScratchBufferNV
+		LDA.b #$0F : !SUB.l ScratchBufferNV+1 : STA.l ScratchBufferNV+1 ; flip the values for small keys
 	+
-	LDA.w ScratchBufferNV+1
+	LDA.l ScratchBufferNV+1
         ASL : TAX
         REP #$20
         LDA.l DungeonItemIDMap,X : CMP.w #$0003 : BCC .hc_sewers
@@ -152,7 +152,7 @@ FreeDungeonItemNotice:
                         JMP.w .done
         +
         SEP #$20
-	LDA.w ScratchBufferNV+1
+	LDA.l ScratchBufferNV+1
 	CMP.b #$00 : BNE + ; ...light world
 		%CopyDialog(Notice_LightWorld) : JMP .done
 	+ : CMP.b #$01 : BNE + ; ...dark world
@@ -190,7 +190,7 @@ FreeDungeonItemNotice:
 
         .crystal
 	LDA.l DialogReturnPointer : DEC #2 : STA.l DialogOffsetPointer
-	LDA.w ScratchBufferV
+	LDA.l ScratchBufferV
 	AND.b #$0F ; looking at low bits only
 	CMP.b #$00 : BNE +
 		%CopyDialog(Notice_Six) : JMP .done
@@ -216,8 +216,8 @@ FreeDungeonItemNotice:
 
 	;--------------------------------
 	.skip
-        PLA : STA.w ScratchBufferNV+1
-        PLA : STA.w ScratchBufferNV
+        PLA : STA.l ScratchBufferNV+1
+        PLA : STA.l ScratchBufferNV
         PLA : STA.b Scrap02
         REP #$20
         PLA : STA.b Scrap00

@@ -36,12 +36,12 @@ endmacro
 ;--------------------------------------------------------------------------------
 CalculateTimer:
 	LDA.w #$0000
-	STA.w ClockHours ; clear digit storage
-	STA.w ClockHours+2
-	STA.w ClockMinutes
-	STA.w ClockMinutes+2
-	STA.w ClockSeconds
-	STA.w ClockSeconds+2
+	STA.l ClockHours ; clear digit storage
+	STA.l ClockHours+2
+	STA.l ClockMinutes
+	STA.l ClockMinutes+2
+	STA.l ClockSeconds
+	STA.l ClockSeconds+2
 
 	LDA.l TimerStyle : AND.w #$00FF : CMP.w #$0002 : BNE + ; Stopwatch Mode
 		%Sub32(NMIFrames,ChallengeTimer,ClockBuffer)
@@ -57,8 +57,8 @@ CalculateTimer:
 			LDA.l NMIFrames+2 : STA.l ChallengeTimer+2
 			RTS
 		++ CMP.w #$0001 : BNE ++ ; Negative Time
-			LDA.w ClockBuffer : EOR.w #$FFFF : !ADD.w #$0001 : STA.w ClockBuffer
-			LDA.w ClockBuffer+2 : EOR.w #$FFFF : ADC.w #$0000 : STA.w ClockBuffer+2
+			LDA.l ClockBuffer : EOR.w #$FFFF : !ADD.w #$0001 : STA.l ClockBuffer
+			LDA.l ClockBuffer+2 : EOR.w #$FFFF : ADC.w #$0000 : STA.l ClockBuffer+2
 			LDA.w #$0001 : STA.l ClockStatus ; Set Negative Mode
 			BRA .prepDigits
 		++ CMP.w #$0002 : BNE ++ ; OHKO
@@ -92,12 +92,12 @@ CalculateTimer:
 		%Sub32(ClockBuffer,.second,ClockBuffer) : BRA -
 	+
 
-	LDA.w ClockHours : !ADD.w #$2490 : STA.w ClockHours ; convert decimal values to tiles
-	LDA.w ClockHours+2 : !ADD.w #$2490 : STA.w ClockHours+2
-	LDA.w ClockMinutes : !ADD.w #$2490 : STA.w ClockMinutes
-	LDA.w ClockMinutes+2 : !ADD.w #$2490 : STA.w ClockMinutes+2
-	LDA.w ClockSeconds : !ADD.w #$2490 : STA.w ClockSeconds
-	LDA.w ClockSeconds+2 : !ADD.w #$2490 : STA.w ClockSeconds+2
+	LDA.l ClockHours : !ADD.w #$2490 : STA.l ClockHours ; convert decimal values to tiles
+	LDA.l ClockHours+2 : !ADD.w #$2490 : STA.l ClockHours+2
+	LDA.l ClockMinutes : !ADD.w #$2490 : STA.l ClockMinutes
+	LDA.l ClockMinutes+2 : !ADD.w #$2490 : STA.l ClockMinutes+2
+	LDA.l ClockSeconds : !ADD.w #$2490 : STA.l ClockSeconds
+	LDA.l ClockSeconds+2 : !ADD.w #$2490 : STA.l ClockSeconds+2
 RTS
 ;--------------------------------------------------------------------------------
 .hour
@@ -148,14 +148,14 @@ DrawChallengeTimer:
 			BRA ++
 		+ ; Show Timer
 	    	LDA.l ClockStatus : AND.w #$0001 : !ADD.w #$2804 : STA.l HUDTileMapBuffer+$94
-			LDA.w ClockHours+2 : STA.l HUDTileMapBuffer+$96
-			LDA.w ClockHours : STA.l HUDTileMapBuffer+$98
+			LDA.l ClockHours+2 : STA.l HUDTileMapBuffer+$96
+			LDA.l ClockHours : STA.l HUDTileMapBuffer+$98
 	    	LDA.w #$2806 : STA.l HUDTileMapBuffer+$9A
-			LDA.w ClockMinutes+2 : STA.l HUDTileMapBuffer+$9C
-			LDA.w ClockMinutes : STA.l HUDTileMapBuffer+$9E
+			LDA.l ClockMinutes+2 : STA.l HUDTileMapBuffer+$9C
+			LDA.l ClockMinutes : STA.l HUDTileMapBuffer+$9E
 	    	LDA.w #$2806 : STA.l HUDTileMapBuffer+$A0
-			LDA.w ClockSeconds+2 : STA.l HUDTileMapBuffer+$A2
-			LDA.w ClockSeconds : STA.l HUDTileMapBuffer+$A4
+			LDA.l ClockSeconds+2 : STA.l HUDTileMapBuffer+$A2
+			LDA.l ClockSeconds : STA.l HUDTileMapBuffer+$A4
 		++
 		LDA.b FrameCounter : AND.w #$001F : BNE + : JSR CalculateTimer : +
 
@@ -174,12 +174,11 @@ RTL
 CheckOHKO:
         SEP #$20
         LDA.l OHKOFlag : CMP.l OHKOCached : BNE .change
-                REP #$20
-                CLC
+                REP #$21
                 RTS
         .change
         STA.l OHKOCached
-        INC.w UpdateHUDFlag
+        LDA.b #$01 : STA.l UpdateHUDFlag
         REP #$20
         SEC
 RTS
