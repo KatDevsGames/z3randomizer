@@ -182,8 +182,9 @@ incsrc stats/statConfig.asm
 FontTable:
 incsrc stats/fonttable.asm
 
+; Eventual doors upstream merge
 ;bank 28/A8 for keydrop shuffle / standing items / pottery lottery
-incsrc keydrop/standing_items.asm
+; incsrc keydrop/standing_items.asm
 
 org $B08000 ; bank #$30
 incsrc tables.asm
