@@ -263,7 +263,7 @@ NewHUD_DrawMagicMeter:
 
 ;================================================================================
 NewHUD_DoneDrawing:
-        LDA.b #$00 : STA.l UpdateHUDFlag
+        LDA.w #$0000 : STA.l UpdateHUDFlag
         PLB
 RTL
 
