@@ -11,8 +11,9 @@ LoadBombCount16:
 	.infinite
 RTL
 StoreBombCount:
+	PHA
 	LDA.b #$01 : STA.l UpdateHUDFlag
-	PHA : LDA.l InfiniteBombs : BEQ .finite
+	LDA.l InfiniteBombs : BEQ .finite
 	.infinite
 		PLA : LDA.b #$01 : RTL
 	.finite
