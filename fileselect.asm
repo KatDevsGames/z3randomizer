@@ -390,7 +390,13 @@ DrawPlayerFileShared:
 	LDA.l HexToDecDigit5 : AND.w #$00FF : ORA.w #!FS_COLOR_BW|$02E0 : %fs_draw8x8(11,27)
 
 	; Boots
-	%fs_drawItemBasic(EquipmentSRAM+$15,3,28,FileSelectItems_boots)
+	LDA.l EquipmentSRAM+$15 : AND.w #$00FF : BNE +
+		LDA.l FakeBoots : AND.w #$00FF : BEQ +
+			%fs_drawItem(3,28,FileSelectItems_fakeBoots)
+			BRA ++
+	+
+		%fs_drawItemBasic(EquipmentSRAM+$15,3,28,FileSelectItems_boots)
+	++
 
 	; Gloves
 	LDA.l EquipmentSRAM+$14 : AND.w #$00FF : BNE +
@@ -543,6 +549,8 @@ FileSelectItems:
 
 	.boots
 	dw #$028C|!FS_COLOR_BOOTS, #$028D|!FS_COLOR_BOOTS, #$029C|!FS_COLOR_BOOTS, #$029D|!FS_COLOR_BOOTS
+	.fakeBoots
+	dw #$028C|!FS_COLOR_BLUE, #$028D|!FS_COLOR_BLUE, #$029C|!FS_COLOR_BLUE, #$029D|!FS_COLOR_BLUE
 
 	.pearl
 	dw #$02A4|!FS_COLOR_RED, #$02A5|!FS_COLOR_RED, #$02B4|!FS_COLOR_RED, #$02B5|!FS_COLOR_RED
