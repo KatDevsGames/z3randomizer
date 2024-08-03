@@ -2568,3 +2568,25 @@ org $1ED122 : JMP ++ : ++
 org $1ED141 : JMP ++ : ++
 
 ;===================================================================================================
+; New room headers
+;===================================================================================================
+org $01B5D8
+	JSL SetUpRoomHeaderPointer
+	JMP.w $01B5EA
+
+org $01B64B
+	JSL SetUpSpriteSheets
+	NOP
+
+org $00D761 : JSL GetSpriteSheet1
+org $00D77F : JSL GetSpriteSheet2
+org $00D79D : JSL GetSpriteSheet3
+org $00D7BB : JSL GetSpriteSheet4
+
+org $00E204 : JSL GetSpriteSheet1
+org $00E213 : JSL GetSpriteSheet2
+org $00E222 : JSL GetSpriteSheet3
+org $00E231 : JSL GetSpriteSheet4
+
+
+
