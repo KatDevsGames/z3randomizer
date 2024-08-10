@@ -192,6 +192,9 @@ incsrc tables.asm
 org $B48000
 incsrc spc.asm
 
+org $B58000
+incsrc roomheaders.asm
+
 org $B18000 ; bank #$31
 GFX_Mire_Bombos:
 incbin "data/99ff1_bombos.gfx"
