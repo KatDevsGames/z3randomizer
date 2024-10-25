@@ -36,8 +36,10 @@ SetDeathWorldChecked:
 JMP DoWorldFix
 
 	.dungeon
+	LDA.l MosaicLevel : BNE .dontfix ; this is a sanc & quit
 	LDA.l Bugfix_PreAgaDWDungeonDeathToFakeDW : BNE .done ; if the bugfix is enabled, we do nothing on death in dungeon
-JMP DoWorldFix_skip_mirror_check
+	.dontfix
+	JMP DoWorldFix_skip_mirror_check
 
 	.pyramid
 	LDA.b #$40 : STA.l CurrentWorld ; set flag to dark world
@@ -72,8 +74,10 @@ SetDeathWorldChecked_Inverted:
 JMP DoWorldFix
 
 	.dungeon
+	LDA.l MosaicLevel : BNE .dontfix ; this is a sanc & quit
 	LDA.l Bugfix_PreAgaDWDungeonDeathToFakeDW : BNE .done ; if the bugfix is enabled, we do nothing on death in dungeon
-JMP DoWorldFix_Inverted_skip_mirror_check
+  .dontfix
+	JMP DoWorldFix_Inverted_skip_mirror_check
 
 	.castle
 	LDA.b #$00 : STA.l CurrentWorld ; set flag to dark world
