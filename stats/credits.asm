@@ -503,6 +503,8 @@ CreditsLineBlank:
 
 %smallcredits("YOUR SPRITE BY", "yellow")
 
+%blankline()
+
 %addarbline(YourSpriteCreditsHi)
 %addarbline(YourSpriteCreditsLo)
 
@@ -538,6 +540,8 @@ CreditsLineBlank:
 
 if !FEATURE_PATREON_SUPPORTERS
 	%smallcredits("PATREON SUPPORTERS", "yellow")
+
+	%blankline()
 
 	%addarbline(PatronCredit1Hi)
 	%addarbline(PatronCredit1Lo)
@@ -609,10 +613,9 @@ endif
 %emptyline()
 %emptyline()
 %emptyline()
-%emptyline()
-%emptyline()
 
 if !FEATURE_PATREON_SUPPORTERS == 0
+	%emptyline()
 	%emptyline()
 	%emptyline()
 	%emptyline()
