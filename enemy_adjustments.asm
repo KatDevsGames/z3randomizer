@@ -25,3 +25,17 @@ NewFireBarDamage:
                 RTL
 .NotSameLayer
 RTL
+
+;--------------------------------------------------------------------------------
+; Moldorm_UpdateOamPosition:
+; adjust oam space to the maximum of 8 possible eyes
+;--------------------------------------------------------------------------------
+Moldorm_UpdateOamPosition:
+	REP #$21
+	LDA.b $90
+	ADC.w #$0020
+	STA.b $90
+	LDA.b $92
+	ADC.w #$08
+	STA.b $92
+RTL

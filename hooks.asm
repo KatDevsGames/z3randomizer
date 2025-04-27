@@ -2588,5 +2588,10 @@ org $00E213 : JSL GetSpriteSheet2
 org $00E222 : JSL GetSpriteSheet3
 org $00E231 : JSL GetSpriteSheet4
 
-
+;================================================================================
+; Moldorm eye drawing for more than two eyes
+;--------------------------------------------------------------------------------
+org $1DD88C ; <- bank_1D.asm
+JSL Moldorm_UpdateOamPosition
+JMP.w $1DD89A
 
