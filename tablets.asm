@@ -19,8 +19,14 @@ RTL
 ;--------------------------------------------------------------------------------
 SetTabletItemFlag:     
         PHA
-                LDA.b OverworldIndex : CMP.b #$03 : BEQ .ether ; if we're on the map where ether is, we're the ether tablet
-                .bombos
+                ; Rain state fix: convert DW screen ID to LW if in rain state
+                LDA.b OverworldIndex
+				BIT.b #$40 : BEQ + 
+						LDA.l ProgressIndicator : CMP.b #$02
+						LDA.b OverworldIndex : BCS ++ : AND.b #$BF
+					++
+				+
+                CMP.b #$03 : BEQ .ether ; if we're on the map where ether is, we're the ether tablet                .bombos
                 JSR ItemSet_BombosTablet : BRA .done
                 .ether
                 JSR ItemSet_EtherTablet
@@ -70,6 +76,12 @@ RTL
 IsMedallion:
 	REP #$20 ; set 16-bit accumulator
 	LDA.b OverworldIndex
+	; Rain state fix: In rain state DW, use LW screen ID for tablet lookup
+	BIT.w #$0040 : BEQ + 
+			LDA.l ProgressIndicator : AND.w #$00FF : CMP.w #$0002
+			LDA.b OverworldIndex : BCS ++ : AND.w #$00BF
+		++
+	+
 	CMP.w #$03 : BNE + ; Death Mountain
 		LDA.b LinkPosX : CMP.w #1890 : !BGE ++
 			SEC

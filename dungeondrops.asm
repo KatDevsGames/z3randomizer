@@ -3,6 +3,16 @@
 ;--------------------------------------------------------------------------------
 SpawnDungeonPrize:
         PHX : PHB
+
+        PHA
+        ; Don't spawn prize in Cave state, Hyrule Castle, Escape, Castle Tower, or Ganon's Tower
+        LDA.w DungeonID : BMI .skip_prize_drop ; Cave state
+        CMP.b #$00 : BEQ .skip_prize_drop ; Escape
+        CMP.b #$02 : BEQ .skip_prize_drop ; Hyrule Castle
+        CMP.b #$1A : BEQ .skip_prize_drop ; Ganon's Tower
+        CMP.b #$08 : BEQ .skip_prize_drop ; Agahnim's Tower (Castle Tower)
+        PLA
+
         TAX
         LDA.b $06,S : STA.b ScrapBuffer72 ; Store current RoomTag index
         TXA
@@ -20,6 +30,10 @@ SpawnDungeonPrize:
                 LDX.b ScrapBuffer72 : STZ.b RoomTag,X
         .failed_spawn
         PLB : PLX
+RTL
+
+.skip_prize_drop:
+        PLA : PLB : PLX
 RTL
 
 AddDungeonPrizeAncilla:
