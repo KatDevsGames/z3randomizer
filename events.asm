@@ -346,7 +346,7 @@ SelectSpawnPointOverride:
 	BEQ .vanilla_behavior
 
 	CPX.b #$02 ; if option 3 is selected, stay normal
-	BEQ .vanilla_behavior
+	BEQ .old_man_selected
 
 	LDA.b #$00 ; clear follower
 	STA.l $7EF3CC
@@ -354,4 +354,8 @@ SelectSpawnPointOverride:
 
 .vanilla_behavior
 	LDA.l SpawnPoints,X
+	RTL
+
+.old_man_selected
+	LDA.b #$05 ; use old man spawn pointer
 	RTL
