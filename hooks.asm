@@ -458,6 +458,8 @@ JSL AllowStartFromSingleEntranceCave
 org $828496 ; <- 15496 - Bank02.asm : 959  (LDA $7EF3C8 : PHA)
 JML AllowStartFromExit
 AllowStartFromExitReturn:
+org $82849E
+JSL SelectSpawnPointOverride
 ;--------------------------------------------------------------------------------
 org $9BC2A7 ; <- DC2A7 - Bank1B.asm : 1143 (Overworld_CreatePyramidHole:)
 JSL Overworld_CreatePyramidHoleModified : RTL

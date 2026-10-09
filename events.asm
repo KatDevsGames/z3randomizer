@@ -301,7 +301,6 @@ TestOldManSQ:
 
 	JML $8280ED ; LoadUnderworldRoomRebuildHUD
 
-
 .old_man_spawn_point
 	LDA.l OldManSqChange
 	BEQ .vanilla_behavior
@@ -330,21 +329,29 @@ TestOldManSQ:
 
 	SEP #$20
 
-	LDA.b #$00
-	STA.l $7EF3CC
-
 	INC
 	STA.w $04AA ; make sure this is set
 
-	LDA.l $7EF3C5
-	CMP.b #$02
-
-	LDA.b #$03 ; uncle spawn
-	BCC .not_zelda_rescued
-
-	LDA.b #$00 ; Link's house spawn
-
-.not_zelda_rescued
-	STA.l $7EF3C8
-
 	JML $8280FD ; sets message to use
+
+;===================================================================================================
+
+SpawnPoints = $828481
+
+SelectSpawnPointOverride:
+	CMP.b #$05
+	BNE .vanilla_behavior
+
+	LDA.l OldManSqChange
+	BEQ .vanilla_behavior
+
+	CPX.b #$02 ; if option 3 is selected, stay normal
+	BEQ .vanilla_behavior
+
+	LDA.b #$00 ; clear follower
+	STA.l $7EF3CC
+	STA 5,S ; override spawn point that was pushed to stack with Link's house
+
+.vanilla_behavior
+	LDA.l SpawnPoints,X
+	RTL
