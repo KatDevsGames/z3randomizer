@@ -955,11 +955,11 @@ dw $0000                ; #$00 = Off (default)
 ;================================================================================
 org $B08200 ; PC 0x180200 - 0x18020B
 RedClockAmount:
-dw $4650, #$0000 ; $00004650 = +5 minutes
+dd $00004650 ; $00004650 = +5 minutes
 BlueClockAmount:
-dw $B9B0, #$FFFF ; $FFFFB9B0 = -5 minutes
+dd $FFFFB9B0 ; $FFFFB9B0 = -5 minutes
 GreenClockAmount:
-dw $0000, #$0000
+dd $0000
 ;--------------------------------------------------------------------------------
 ; 0x18020C-0x18020F (unused)
 ;--------------------------------------------------------------------------------
@@ -1741,26 +1741,31 @@ db $01, $01, $00, $01, $02, $01, $06, $03, $03, $02, $01, $01, $04, $04, $00, $0
 org $B0F020
 HUDHeartColors: ; PC 0x187020
 .index          ; $00 = Red | $01 = Blue | $02 = Green | $03 = Yellow
-dw #$0000
+dw $0000
 .masks_game_hud    ; PC 0x187022
-dw #$0400          ; Red
-dw #$0C00          ; Blue
-dw #$1C00          ; Green
-dw #$0800          ; Yellow
+dw $0400           ; Red
+dw $0C00           ; Blue
+dw $1C00           ; Green
+dw $0800           ; Yellow
 .masks_file_select ; PC 0x18702A
-dw #$0400          ; Red
-dw #$0C00          ; Blue
-dw #$1800          ; Green
-dw #$0800          ; Yellow
+dw $0400           ; Red
+dw $0C00           ; Blue
+dw $1800           ; Green
+dw $0800           ; Yellow
 
 org $B0F032 ; PC 0x187032
 RomSpeed:
 db $01      ; $01 = FastROM (default) | $00 = SlowROM
 
+
 org $B0F033 ; PC 0x187033
+OldManSqChange:
+db $00      ; $00 = vanilla behavior | $01 = despawn when SQ and use 2 option entrance | $02 = despawn and 3 options
+
+org $B0F034 ; PC 0x187034
 
 ;--------------------------------------------------------------------------------
-; 0x187033 - 187FFF (unused)
+; 0x187034 - 187FFF (unused)
 ;--------------------------------------------------------------------------------
 
 

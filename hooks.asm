@@ -1848,6 +1848,9 @@ JSL PostItemAnimation : NOP #2
 org $9EE90A ; <- F690A
 JSL ItemCheck_OldMan : NOP #2
 ;--------------------------------------------------------------------------------
+org $8280E5 ; check for old man to allow save and quit selection
+JML TestOldManSQ
+;---------------------------------------------------------------------------------
 org $8280F2 ; <- 100F2
 JSL ItemCheck_OldMan : NOP #2
 ;--------------------------------------------------------------------------------
@@ -2595,3 +2598,21 @@ org $1DD88C ; <- bank_1D.asm
 JSL Moldorm_UpdateOamPosition
 JMP.w $1DD89A
 
+;===================================================================================================
+; Enemizer enemy improvements
+;===================================================================================================
+; make stalfos color based on subtype
+org $0690E7 : JMP.w $0690EC
+
+; make beetle color based on subtype
+org $06912B
+	LDA.w $0E30,X
+	AND.b #$FF ; for alignment
+
+; make tektite color based on subtype
+org $068D9B
+TektitePrep:
+	LDA.w $0E30,X
+	CMP.b #$01
+	ROL
+	NOP

@@ -294,3 +294,57 @@ PostItemAnimation:
         PLB
 RTL
 ;--------------------------------------------------------------------------------
+TestOldManSQ:
+	LDA.l $7EF3C8
+	CMP.b #$05
+	BEQ .old_man_spawn_point
+
+	JML $8280ED ; LoadUnderworldRoomRebuildHUD
+
+
+.old_man_spawn_point
+	LDA.l OldManSqChange
+	BEQ .vanilla_behavior
+
+	CMP.b #$01 : BEQ .two_options
+	CMP.b #$02 : BEQ .three_options
+
+.vanilla_behavior
+	JML $828118
+
+;---------------------------------------------------------------------------------------------------
+
+.two_options
+	REP #$30
+	LDA.l $8280FA+1 ; read message from ROM instead of an immediate in case it changes
+	BRA .adjust_spawn_point	
+
+.three_options
+	REP #$30
+	LDA.l $8280EF+1 ; read message from ROM instead of an immediate in case it changes
+
+;---------------------------------------------------------------------------------------------------
+
+.adjust_spawn_point
+	TAX
+
+	SEP #$20
+
+	LDA.b #$00
+	STA.l $7EF3CC
+
+	INC
+	STA.w $04AA ; make sure this is set
+
+	LDA.l $7EF3C5
+	CMP.b #$02
+
+	LDA.b #$03 ; uncle spawn
+	BCC .not_zelda_rescued
+
+	LDA.b #$00 ; Link's house spawn
+
+.not_zelda_rescued
+	STA.l $7EF3C8
+
+	JML $8280FD ; sets message to use
