@@ -13,23 +13,16 @@ LoadSwordForDamage:
 RTL
 ;================================================================================
 LookupDamageLevel:
-	CPX.w #$0918 : BNE +
-		LDA.l StalfosBombDamage
-		RTL
-	+
-	PHP
-		REP #$20 ; set 16-bit accumulator
-		TXA : LSR : TAX : BCS .lower
-.upper
-	PLP
-	LDA.l Damage_Table, X
-	LSR #4
-RTL
-.lower
-	PLP
-	LDA.l Damage_Table, X
-	AND.b #$0F
-RTL
+	CPX.w #$0918 : BEQ .stalfos_knight
+
+.vanilla
+	LDA.l DamageTable, X
+	RTL
+
+.stalfos_knight
+	LDA.l StalfosBombDamage
+	RTL
+
 ;================================================================================
 LoadModifiedSwordLevel: ; returns short
 	LDA.l SwordModifier : BEQ +
