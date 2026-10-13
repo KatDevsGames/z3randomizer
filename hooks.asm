@@ -2604,20 +2604,16 @@ JMP.w $1DD89A
 ; Enemizer enemy improvements
 ;===================================================================================================
 ; make stalfos color based on subtype
-org $0690E7 : JMP.w $0690EC
+org $0690E7 : JSL StalfosPrep : NOP
 
 ; make beetle color based on subtype
-org $06912B
-	LDA.w $0E30,X
-	AND.b #$FF ; for alignment
+org $06912B : JSL BeetlePrep : NOP
 
 ; make tektite color based on subtype
 org $068D9B
-TektitePrep:
-	LDA.w $0E30,X
-	CMP.b #$01
-	ROL
-	NOP
+	JSL TektitePrep
+	CMP.b #$01 : ROL
+warnpc $068DA2
 
 ;===================================================================================================
 ; Mimic ID changes
@@ -2659,5 +2655,3 @@ MimicVector:
 	PLB
 	RTL
 warnpc $9ECB8D
-
-
