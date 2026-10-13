@@ -350,7 +350,7 @@ SelectSpawnPointOverride:
 
 	LDA.b #$00 ; clear follower
 	STA.l $7EF3CC
-	STA 5,S ; override spawn point that was pushed to stack with Link's house
+	STA 4,S ; override spawn point that was pushed to stack with Link's house
 
 .vanilla_behavior
 	LDA.l SpawnPoints,X
