@@ -294,3 +294,68 @@ PostItemAnimation:
         PLB
 RTL
 ;--------------------------------------------------------------------------------
+TestOldManSQ:
+	LDA.l $7EF3C8
+	CMP.b #$05
+	BEQ .old_man_spawn_point
+
+	JML $8280ED ; LoadUnderworldRoomRebuildHUD
+
+.old_man_spawn_point
+	LDA.l OldManSqChange
+	BEQ .vanilla_behavior
+
+	CMP.b #$01 : BEQ .two_options
+	CMP.b #$02 : BEQ .three_options
+
+.vanilla_behavior
+	JML $828118
+
+;---------------------------------------------------------------------------------------------------
+
+.two_options
+	REP #$30
+	LDA.l $8280FA+1 ; read message from ROM instead of an immediate in case it changes
+	BRA .adjust_spawn_point	
+
+.three_options
+	REP #$30
+	LDA.l $8280EF+1 ; read message from ROM instead of an immediate in case it changes
+
+;---------------------------------------------------------------------------------------------------
+
+.adjust_spawn_point
+	TAX
+
+	SEP #$20
+
+	INC
+	STA.w $04AA ; make sure this is set
+
+	JML $8280FD ; sets message to use
+
+;===================================================================================================
+
+SpawnPoints = $828481
+
+SelectSpawnPointOverride:
+	CMP.b #$05
+	BNE .vanilla_behavior
+
+	LDA.l OldManSqChange
+	BEQ .vanilla_behavior
+
+	CPX.b #$02 ; if option 3 is selected, stay normal
+	BEQ .old_man_selected
+
+	LDA.b #$00 ; clear follower
+	STA.l $7EF3CC
+	STA 4,S ; override spawn point that was pushed to stack with Link's house
+
+.vanilla_behavior
+	LDA.l SpawnPoints,X
+	RTL
+
+.old_man_selected
+	LDA.b #$05 ; use old man spawn pointer
+	RTL

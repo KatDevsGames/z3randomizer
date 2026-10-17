@@ -186,7 +186,7 @@ incsrc stats/fonttable.asm
 ;bank 28/A8 for keydrop shuffle / standing items / pottery lottery
 ; incsrc keydrop/standing_items.asm
 
-org $B08000 ; bank #$30
+org $B08000 ; bank $30
 incsrc tables.asm
 
 org $B48000
@@ -195,7 +195,7 @@ incsrc spc.asm
 org $B58000
 incsrc roomheaders.asm
 
-org $B18000 ; bank #$31
+org $B18000 ; bank $31
 GFX_Mire_Bombos:
 incbin "data/99ff1_bombos.gfx"
 warnpc $B18800
@@ -234,20 +234,18 @@ IcePalaceFloorGfx:
 incbin "data/ice_palace_floor.bin"
 warnpc $B1C801
 
-org $B1C800
-Damage_Table:
-incbin "data/damage_table.bin"
-warnpc $B1D001
+org $B1C800 ; DO NOT MOVE address used by front end
+DamageTable:
+incsrc "damage_table.asm"
+warnpc $B1D801
 
-org $B1D000
-FileSelectNewGraphics:
-incbin "data/fileselectgfx.2bpp"
-warnpc $B1E001
 
 org $B1E000
-InvertedCastleHole: ;address used by front end. DO NOT MOVE!
+InvertedCastleHole: ; DO NOT MOVE address used by front end
 incbin "data/sheet73.gfx"
-warnpc $B1E501
+
+FileSelectNewGraphics:
+incbin "data/fileselectgfx.2bpp"
 
 org $B38000
 GFX_HUD_Palette:

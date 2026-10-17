@@ -458,6 +458,8 @@ JSL AllowStartFromSingleEntranceCave
 org $828496 ; <- 15496 - Bank02.asm : 959  (LDA $7EF3C8 : PHA)
 JML AllowStartFromExit
 AllowStartFromExitReturn:
+org $82849E
+JSL SelectSpawnPointOverride
 ;--------------------------------------------------------------------------------
 org $9BC2A7 ; <- DC2A7 - Bank1B.asm : 1143 (Overworld_CreatePyramidHole:)
 JSL Overworld_CreatePyramidHoleModified : RTL
@@ -1848,6 +1850,9 @@ JSL PostItemAnimation : NOP #2
 org $9EE90A ; <- F690A
 JSL ItemCheck_OldMan : NOP #2
 ;--------------------------------------------------------------------------------
+org $8280E5 ; check for old man to allow save and quit selection
+JML TestOldManSQ
+;---------------------------------------------------------------------------------
 org $8280F2 ; <- 100F2
 JSL ItemCheck_OldMan : NOP #2
 ;--------------------------------------------------------------------------------
@@ -2595,3 +2600,58 @@ org $1DD88C ; <- bank_1D.asm
 JSL Moldorm_UpdateOamPosition
 JMP.w $1DD89A
 
+;===================================================================================================
+; Enemizer enemy improvements
+;===================================================================================================
+; make stalfos color based on subtype
+org $0690E7 : JSL StalfosPrep : NOP
+
+; make beetle color based on subtype
+org $06912B : JSL BeetlePrep : NOP
+
+; make tektite color based on subtype
+org $068D9B
+	JSL TektitePrep
+	CMP.b #$01 : ROL
+warnpc $068DA2
+
+;===================================================================================================
+; Mimic ID changes
+;===================================================================================================
+RedMimicId = $07
+
+; Eyegores and mimics no longer need a sprite prep with their own ID
+org $068665 : dw NoMimicPrep
+org $068669 : dw NoMimicPrep
+org $068761 : dw NoMimicPrep
+org $068763 : dw NoMimicPrep
+
+; commandeer the old prep bounce
+org $0691B6
+MimicVector_bounce:
+	JSL MimicVector
+
+NoMimicPrep:
+	RTS
+
+org $069294 : dw MimicVector_bounce
+org $069298 : dw MimicVector_bounce
+
+; change eyegores to go directly to eyegore code (required to elide prep)
+org $1E8B47 : dw $1EC833
+org $1E8B49 : dw $1EC833
+
+; update old sprite id references
+org $1EC7C4 : CPY.b #RedMimicId
+org $1EC800 : CMP.b #RedMimicId
+
+; lol this barely fits
+org $9EC6FA
+MimicVector:
+	PHB
+	PHK
+	PLB
+	JSR.w $1EC79D ; jump right to mimic code
+	PLB
+	RTL
+warnpc $9ECB8D

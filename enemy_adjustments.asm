@@ -39,3 +39,19 @@ Moldorm_UpdateOamPosition:
 	ADC.w #$08
 	STA.b $92
 RTL
+
+;===================================================================================================
+
+TektitePrep: ; they actually end up being identical code
+BeetlePrep:
+StalfosPrep:
+	LDA.b $1B : BEQ .overworld
+
+	LDA.w $0E30,X ; retain value
+	RTL
+
+	; vanilla in overworld
+.overworld
+	LDA.w $0D10,X
+	AND.b #$010
+	RTL
