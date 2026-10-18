@@ -172,7 +172,7 @@ incsrc newitems.asm
 incsrc utilities.asm
 incsrc inventory.asm
 
-org $AB8000
+org $AB8000 ; DO NOT MOVE
 incsrc overworldoutlets.asm
 
 org $A38000
