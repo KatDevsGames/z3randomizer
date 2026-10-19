@@ -79,3 +79,15 @@ ArrowGame:
 			PLX
 	+
 RTL
+
+;===================================================================================================
+
+StealArrowCheck:
+	LDA.l ArrowMode : BNE .rupees
+
+	LDA.l CurrentArrows
+	RTL
+
+.rupees
+	LDA.b #$00
+	RTL

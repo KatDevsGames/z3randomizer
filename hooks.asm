@@ -480,7 +480,27 @@ org $9AF5C1 ; <- sprite_waterfall.asm : 40 (LDA $8A : CMP.b #$43)
 JSL GanonTowerInvertedCheck
 ;--------------------------------------------------------------------------------
 org $82EC8D ; <- bank02.asm : 11981 (LDA.w #$020F : LDX $8A : CPX.w #$0033 : BNE .noRock)
-JSL HardcodedRocks : NOP #19 ;23 bytes removed with the JSL
+JSL HardcodedRocks : JMP.w $02ECA4 ;23 bytes removed with the JSL
+;--------------------------------------------------------------------------------
+org $0280A2 : JSL CheckInvertedWorldSram
+org $0283DC : JSL CheckInvertedWorld
+org $02B349 : JSL CheckInvertedWorld
+
+org $05AF75 : JSL CheckInvertedWorldSram
+
+org $07A3F0 : JSL CheckInvertedWorld
+org $07A93F : JSL CheckInvertedWorld
+org $07A967 : JSL CheckInvertedWorldWithStore : BRA ++ : ++
+
+org $08D408 : JSL CheckInvertedWorld
+
+org $0ABFB6 : JSL CheckInvertedWorldInCarry : NOP
+
+;---------------------------------------------------------------------------------
+org $06B2AA : JSL FroggyMessage
+
+;--------------------------------------------------------------------------------
+;--------------------------------------------------------------------------------
 ;--------------------------------------------------------------------------------
 org $84E7AE ; <- bank0E.asm : 4230 (LDA $7EF287 : AND.w #$0020)
 JSL TurtleRockPegSolved
@@ -2211,6 +2231,12 @@ JSL ArrowGame : BRA ++ : NOP #12 : ++
 
 org $87A06C ; <- Bank07.asm:5215 (LDA $7EF377 : BEQ BRANCH_EPSILON)
 JSL DecrementArrows : SKIP 2 : NOP : LDA CurrentArrows
+
+org $1DCB4E : JSL StealArrowCheck
+org $1E8D96 : JSL StealArrowCheck
+
+
+
 ;================================================================================
 
 ;================================================================================
