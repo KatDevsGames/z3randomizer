@@ -2674,3 +2674,15 @@ org $9EB1D7
 DoDrawBlob = $9EB1DC
 
 ;===================================================================================================
+; Fix song bug with kak snitch
+;===================================================================================================
+org $09C081 : JML FinalizeSnitchGuard
+
+org $05CC50
+BoltGuard_TriggerChaseTheme:
+	JSL TryGuardMusic
+	RTS
+
+org $06F962
+	JSL TryUndoGuardMusic
+	JMP.w $06F976
