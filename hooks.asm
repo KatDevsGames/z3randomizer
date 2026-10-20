@@ -689,17 +689,6 @@ org $8CCC89 ; <- 0x64C89 Bank0C.asm : 1598 (JSL EnableForceBlank)
 JSL OnInitFileSelect
 
 ;================================================================================
-; Hyrule Castle Rain Sequence Guards (allowing Gloves in Link's house)
-;--------------------------------------------------------------------------------
-org $89C8B7 ; <- 4C8B7
-dw CastleRainSpriteData
-
-org $89F7BD ; <- 4F7BD
-CastleRainSpriteData:
-db $06, $1F, $40, $12, $01, $3F, $14, $01, $3F, $13, $1F, $42, $1A, $1F, $4B, $1A, $20, $4B, $25, $2D, $3F, $29, $20, $3F, $2A, $3C, $3F, $FF
-;--------------------------------------------------------------------------------
-
-;================================================================================
 ; Sprite_DrawMultiple
 ;--------------------------------------------------------------------------------
 org $85DFB1 ; <- 2DFB1 - Bank05.asm : 2499
@@ -2332,19 +2321,6 @@ Dungeon_OpenKeyedObject_smallChest:
 ;--------------------------------------------------------------------------------
 org $86C092 ; bank06.asm:1864 (JSL Sprite_ElderLong) [22 CD F0 05]
 JSL NewElderCode
-;--------------------------------------------------------------------------------
-; Add him to Castle Map post-rain, and post aga1
-;--------------------------------------------------------------------------------
-org $89D0AC
-db $18, $0F, $43, $FF ; remove heart from tree adjancent map [LW1]
-db $12, $19, $16 ; add sahasrala in castle Y, X, Sprite ID
-org $89C937
-db $B0, $D0 ; change [LW1] map 01C pointers
-org $89D421
-db $18, $0F, $45, $FF ; remove heart from tree adjancent map [LW2]
-db $12, $19, $16 ; add sahasrala in castle Y, X, Sprite ID
-org $89CA57
-db $25, $D4 ; change [LW2] map 01C pointers
 ;--------------------------------------------------------------------------------
 ; Expanded trinexx sheet gfx.
 ;--------------------------------------------------------------------------------
