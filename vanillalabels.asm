@@ -58,6 +58,7 @@ Sprite_PrepAndDrawSingleLargeLong                          = $86DBF8
 Sprite_PrepAndDrawSingleSmallLong                          = $86DC00
 Sprite_DrawShadowLong                                      = $86DC5C
 DashKey_Draw                                               = $86DD40
+GetScreenCoordinates_long                                  = $86E41C
 Sprite_ApplySpeedTowardsPlayerLong                         = $86EA18
 Sprite_DirectionToFacePlayerLong                           = $86EAA6
 Sprite_CheckDamageToPlayerSameLayerLong                    = $86F12F

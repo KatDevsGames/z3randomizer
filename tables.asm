@@ -1763,7 +1763,11 @@ org $B0F033 ; PC 0x187033
 OldManSqChange:
 db $00      ; $00 = vanilla behavior | $01 = despawn when SQ and use 2 option entrance | $02 = despawn and 3 options
 
-org $B0F034 ; PC 0x187034
+org $B0F034
+VisibleHiddenEnemies:
+db $00 ; $01 for visible
+
+org $B0F035 ; PC 0x187034
 
 ;--------------------------------------------------------------------------------
 ; 0x187034 - 187FFF (unused)

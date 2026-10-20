@@ -55,3 +55,52 @@ StalfosPrep:
 	LDA.w $0D10,X
 	AND.b #$010
 	RTL
+
+;===================================================================================================
+
+GeldmanDrawCheck:
+	LDA.l VisibleHiddenEnemies
+	BNE .unhide
+
+.vanilla
+	LDA.w $0D80,X
+	CMP.b #$02
+	RTL
+
+.unhide
+	LDA.b #$01
+	STA.w $0DC0,X
+	RTL
+
+;===================================================================================================
+
+StalfosKnightDrawCheck:
+	LDA.l VisibleHiddenEnemies
+	BNE .unhide
+
+.vanilla
+	JML GetScreenCoordinates_long
+
+.unhide
+	JSL GetScreenCoordinates_long
+	JML Sprite_DrawShadowLong
+
+;===================================================================================================
+
+BlobDrawCheck:
+	LDA.l VisibleHiddenEnemies
+	BNE .unhide
+
+.vanilla
+	LDA.b $0D80,X
+	BEQ .invisible
+
+	JML DoDrawBlob
+
+.invisible
+	JML $9EB209
+
+.unhide
+	LDA.b #$05
+	STA.w $0DC0,X
+	JML DoDrawBlob
