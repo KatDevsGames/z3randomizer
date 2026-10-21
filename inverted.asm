@@ -239,27 +239,122 @@ JML.l MirrorBonk_BranchGamma
 
 .bonkRectanglesTable
    ;X1     X2      Y1      Y2
-dw #$0290, #$02C8, #$0CA8, #$0CF8 ;Desert checkerboard cave2
-dw #$05F8, #$0A00, #$0600, #$0660 ;Castle Top
-dw #$05B0, #$06A0, #$0660, #$0830 ;Castle Top
-dw #$06A0, #$0770, #$0660, #$0680 ;Castle Top
-dw #$0880, #$0950, #$0660, #$0688 ;Castle Top
-dw #$0950, #$0A00, #$0660, #$0830 ;Castle Top
-dw #$07B8, #$0848, #$08E0, #$0970 ;Castle Bridge
-dw #$02EF, #$0321, #$0C16, #$0CA2 ;Desert (Mazeblock cave)
-dw #$0048, #$008F, #$0B10, #$0B48 
-dw #$0358, #$0440, #$0E08, #$0ED0 
-dw #$03B8, #$0420, #$0ED0, #$0FE8 
-dw #$0360, #$03C8, #$0EC0, #$0F20 
-dw #$0C68, #$0D00, #$0D78, #$0DC8 
-dw #$0F40, #$0F70, #$0618, #$0640 ;Pod/eastern entrance
-dw #$0E28, #$0E78, #$0298, #$02E8 
-dw #$0F10, #$0F80, #$01F8, #$0238 
-dw #$0AA8, #$0B90, #$02C8, #$0320 
-dw #$0D18, #$0D80, #$0040, #$0070 
-dw #$0EF0, #$0F30, #$0120, #$0160 
-dw #$0AD0, #$0B00, #$0B50, #$0B70 ;Bridge Left
-dw #$0B30, #$0B60, #$0B50, #$0B70 ;Bridge Right
-dw #$0678, #$06F0, #$0010, #$0040 ;Ether Island
-dw #$02A8, #$02E8, #$0C90, #$0CC0 ;Desert Checkerboard Cave3
+dw $0290, $02C8, $0CA8, $0CF8 ;Desert checkerboard cave2
+dw $05F8, $0A00, $0600, $0660 ;Castle Top
+dw $05B0, $06A0, $0660, $0830 ;Castle Top
+dw $06A0, $0770, $0660, $0680 ;Castle Top
+dw $0880, $0950, $0660, $0688 ;Castle Top
+dw $0950, $0A00, $0660, $0830 ;Castle Top
+dw $07B8, $0848, $08E0, $0970 ;Castle Bridge
+dw $02EF, $0321, $0C16, $0CA2 ;Desert (Mazeblock cave)
+dw $0048, $008F, $0B10, $0B48 
+dw $0358, $0440, $0E08, $0ED0 
+dw $03B8, $0420, $0ED0, $0FE8 
+dw $0360, $03C8, $0EC0, $0F20 
+dw $0C68, $0D00, $0D78, $0DC8 
+dw $0F40, $0F70, $0618, $0640 ;Pod/eastern entrance
+dw $0E28, $0E78, $0298, $02E8 
+dw $0F10, $0F80, $01F8, $0238 
+dw $0AA8, $0B90, $02C8, $0320 
+dw $0D18, $0D80, $0040, $0070 
+dw $0EF0, $0F30, $0120, $0160 
+dw $0AD0, $0B00, $0B50, $0B70 ;Bridge Left
+dw $0B30, $0B60, $0B50, $0B70 ;Bridge Right
+dw $0678, $06F0, $0010, $0040 ;Ether Island
+dw $02A8, $02E8, $0C90, $0CC0 ;Desert Checkerboard Cave3
 .tableEnd
+
+;===================================================================================================
+
+CheckInvertedWorld:
+	LDA.l InvertedMode
+	BNE .inverted
+
+.vanilla
+	LDA.b $8A
+	AND.b #$40
+	RTL
+
+.inverted
+	LDA.b $8A
+	AND.b #$40
+	EOR.b #$40
+	RTL
+
+;===================================================================================================
+
+CheckInvertedWorldWithStore:
+	LDA.l InvertedMode
+	BNE .inverted
+
+.vanilla
+	LDA.b $8A
+	AND.b #$40
+	STA.b $7B
+	RTL
+
+.inverted
+	LDA.b $8A
+	AND.b #$40
+	STA.b $7B ; save the real world
+
+	EOR.b #$40 ; but invert this to swap behavior
+	RTL
+
+;===================================================================================================
+
+CheckInvertedWorldInCarry:
+	LDA.b $8A
+	BMI .special_overworld ; this should always set carry
+
+	CMP.b #$40
+
+	LDA.l InvertedMode
+	BNE .inverted
+
+	RTL
+
+.special_overworld
+.inverted_light_world
+	SEC
+	RTL
+
+.inverted
+	BCC .inverted_light_world
+
+	CLC
+	RTL
+
+;===================================================================================================
+
+CheckInvertedWorldSram:
+	LDA.l InvertedMode
+	BNE .inverted
+
+.vanilla
+	LDA.l $7EF3CA
+	RTL
+
+.inverted
+	LDA.l $7EF3CA
+	BEQ .invert_zero
+
+	LDA.b #$00
+	RTL
+
+.invert_zero
+	LDA.b #$40
+	RTL
+
+;===================================================================================================
+
+FroggyMessage:
+	LDA.l InvertedMode
+	BNE .inverted
+
+.vanilla
+	JML Sprite_ShowSolicitedMessageIfPlayerFacing
+
+.inverted
+	JML Sprite_ShowMessageFromPlayerContact
+

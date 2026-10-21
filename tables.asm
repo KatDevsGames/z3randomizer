@@ -1649,7 +1649,8 @@ dw $0000
 ;--------------------------------------------------------------------------------
 ; Outlet IDs - 0x186B00
 ;--------------------------------------------------------------------------------
-org $30EB00
+; DO NOT MOVE
+org $B0EB00
 RoomToOutlet:
 db $FF, $FF, $FF, $3D, $FF, $FF, $FF, $FF ; 0x000-0x007
 db $39, $FF, $FF, $FF, $38, $FF, $2E, $FF ; 0x008-0x00F
@@ -1708,7 +1709,7 @@ db $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF ; 0x198-0x19F
 ;--------------------------------------------------------------------------------
 ; Exit data table pointers - 0x186CA0
 ;--------------------------------------------------------------------------------
-org $30ECA0
+org $B0ECA0
 dl NewOutletData_overworld_id
 dl NewOutletData_exit_vram_addr
 dl NewOutletData_vertical_scroll

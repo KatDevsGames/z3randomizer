@@ -1,65 +1,3 @@
-
-;---------------------------------------------------------------------------------------------------
-FindOutletID:
-	REP #$10
-	TAX
-	CPX.w #$1000
-	BCS .credits
-
-	LDA.l RoomToOutlet,X
-
-.check_exit
-	AND.w #$00FF
-	CMP.w #$00FF
-	BNE .good
-
-	; temporary measure (or permanent?!)
-	BRK #$00
-
-.good
-	ASL
-	TAX
-	RTL
-
-.credits
-	CPX.w #$101A
-	BCS .fail
-
-	LDA.l .credits_exits-$1000,X
-	BRA .check_exit
-
-.fail
-	LDA.w #$FFFF
-	BRA .check_exit
-
-.credits_exits
-	db $3E ; 1000
-	db $FF ; 1001
-	db $3E ; 1002
-	db $FF ; 1003
-	db $40 ; 1004
-	db $FF ; 1005
-	db $41 ; 1006
-	db $FF ; 1007
-	db $42 ; 1008
-	db $FF ; 1009
-	db $43 ; 100A
-	db $FF ; 100B
-	db $44 ; 100C
-	db $FF ; 100D
-	db $45 ; 100E
-	db $FF ; 100F
-	db $46 ; 1010
-	db $FF ; 1011
-	db $47 ; 1012
-	db $FF ; 1013
-	db $48 ; 1014
-	db $FF ; 1015
-	db $49 ; 1016
-	db $FF ; 1017
-	db $4A ; 1018
-	db $FF ; 1019
-
 ; Lost Woods Gamble                 ; 0x4F
 ; Snitch Lady (West)                ; 0x50
 ; Snitch Lady (East)                ; 0x51
@@ -130,8 +68,12 @@ FindOutletID:
 ; Dam                               ; 0x92
 ; C-Shaped House                    ; 0x93
 
+;===================================================================================================
+; This table will be fixed in place.
+;===================================================================================================
+
 NewOutletData:
-.overworld_id
+.overworld_id ; $AB8000
 	db $2C ; 0x00
 	db $13 ; 0x01
 	db $1B ; 0x02
@@ -391,10 +333,11 @@ NewOutletData:
 	db $00 ; 0xFC
 	db $00 ; 0xFD
 	db $00 ; 0xFE
+	db $00 ; 0xFF
 
 ;---------------------------------------------------------------------------------------------------
 
-.exit_vram_addr
+.exit_vram_addr ; $AB8100
 	dw $0506 ; 0x00
 	dw $001C ; 0x01
 	dw $0016 ; 0x02
@@ -654,10 +597,11 @@ NewOutletData:
 	dw $0000 ; 0xFC
 	dw $0000 ; 0xFD
 	dw $0000 ; 0xFE
+	dw $0000 ; 0xFF
 
 ;---------------------------------------------------------------------------------------------------
 
-.vertical_scroll
+.vertical_scroll ; $AB8300
 	dw $0A9A ; 0x00
 	dw $0400 ; 0x01
 	dw $0600 ; 0x02
@@ -917,10 +861,11 @@ NewOutletData:
 	dw $0000 ; 0xFC
 	dw $0000 ; 0xFD
 	dw $0000 ; 0xFE
+	dw $0000 ; 0xFF
 
 ;---------------------------------------------------------------------------------------------------
 
-.horizontal_scroll
+.horizontal_scroll ; $AB8500
 	dw $0832 ; 0x00
 	dw $06DE ; 0x01
 	dw $06AE ; 0x02
@@ -1180,10 +1125,11 @@ NewOutletData:
 	dw $0000 ; 0xFC
 	dw $0000 ; 0xFD
 	dw $0000 ; 0xFE
+	dw $0000 ; 0xFF
 
 ;---------------------------------------------------------------------------------------------------
 
-.y_coordinate
+.y_coordinate ; $AB8700
 	dw $0AE8 ; 0x00
 	dw $0414 ; 0x01
 	dw $0604 ; 0x02
@@ -1443,10 +1389,11 @@ NewOutletData:
 	dw $0000 ; 0xFC
 	dw $0000 ; 0xFD
 	dw $0000 ; 0xFE
+	dw $0000 ; 0xFF
 
 ;---------------------------------------------------------------------------------------------------
 
-.x_coordinate
+.x_coordinate ; $AB8900
 	dw $08B8 ; 0x00
 	dw $0758 ; 0x01
 	dw $0728 ; 0x02
@@ -1706,10 +1653,11 @@ NewOutletData:
 	dw $0000 ; 0xFC
 	dw $0000 ; 0xFD
 	dw $0000 ; 0xFE
+	dw $0000 ; 0xFF
 
 ;---------------------------------------------------------------------------------------------------
 
-.camera_trigger_y
+.camera_trigger_y ; $AB8B00
 	dw $0B07 ; 0x00
 	dw $046D ; 0x01
 	dw $066D ; 0x02
@@ -1969,10 +1917,11 @@ NewOutletData:
 	dw $0000 ; 0xFC
 	dw $0000 ; 0xFD
 	dw $0000 ; 0xFE
+	dw $0000 ; 0xFF
 
 ;---------------------------------------------------------------------------------------------------
 
-.camera_trigger_x
+.camera_trigger_x ; $AB8D00
 	dw $08BF ; 0x00
 	dw $0763 ; 0x01
 	dw $0733 ; 0x02
@@ -2232,10 +2181,11 @@ NewOutletData:
 	dw $0000 ; 0xFC
 	dw $0000 ; 0xFD
 	dw $0000 ; 0xFE
+	dw $0000 ; 0xFF
 
 ;---------------------------------------------------------------------------------------------------
 
-.scroll_mod_y
+.scroll_mod_y ; $AB8F00
 	db $06 ; 0x00
 	db $00 ; 0x01
 	db $00 ; 0x02
@@ -2495,10 +2445,11 @@ NewOutletData:
 	db $00 ; 0xFC
 	db $00 ; 0xFD
 	db $00 ; 0xFE
+	db $00 ; 0xFF
 
 ;---------------------------------------------------------------------------------------------------
 
-.scroll_mod_x
+.scroll_mod_x ; $AB9000
 	db $FE ; 0x00
 	db $02 ; 0x01
 	db $02 ; 0x02
@@ -2758,10 +2709,11 @@ NewOutletData:
 	db $00 ; 0xFC
 	db $00 ; 0xFD
 	db $00 ; 0xFE
+	db $00 ; 0xFF
 
 ;---------------------------------------------------------------------------------------------------
 
-.door_graphic
+.door_graphic ; $AB9100
 	dw $0816 ; 0x00
 	dw $0000 ; 0x01
 	dw $0000 ; 0x02
@@ -3021,10 +2973,11 @@ NewOutletData:
 	dw $0000 ; 0xFC
 	dw $0000 ; 0xFD
 	dw $0000 ; 0xFE
+	dw $0000 ; 0xFF
 
 ;---------------------------------------------------------------------------------------------------
 
-.door_graphic_location
+.door_graphic_location ; $AB9300
 	dw $0000 ; 0x00
 	dw $01AA ; 0x01
 	dw $8124 ; 0x02
@@ -3284,3 +3237,69 @@ NewOutletData:
 	dw $0000 ; 0xFC
 	dw $0000 ; 0xFD
 	dw $0000 ; 0xFE
+	dw $0000 ; 0xFF
+
+
+
+
+
+;---------------------------------------------------------------------------------------------------
+FindOutletID:
+	REP #$10
+	TAX
+	CPX.w #$1000
+	BCS .credits
+
+	LDA.l RoomToOutlet,X
+
+.check_exit
+	AND.w #$00FF
+	CMP.w #$00FF
+	BNE .good
+
+	; temporary measure (or permanent?!)
+	BRK #$00
+
+.good
+	ASL
+	TAX
+	RTL
+
+.credits
+	CPX.w #$101A
+	BCS .fail
+
+	LDA.l .credits_exits-$1000,X
+	BRA .check_exit
+
+.fail
+	LDA.w #$FFFF
+	BRA .check_exit
+
+.credits_exits
+	db $3E ; 1000
+	db $FF ; 1001
+	db $3E ; 1002
+	db $FF ; 1003
+	db $40 ; 1004
+	db $FF ; 1005
+	db $41 ; 1006
+	db $FF ; 1007
+	db $42 ; 1008
+	db $FF ; 1009
+	db $43 ; 100A
+	db $FF ; 100B
+	db $44 ; 100C
+	db $FF ; 100D
+	db $45 ; 100E
+	db $FF ; 100F
+	db $46 ; 1010
+	db $FF ; 1011
+	db $47 ; 1012
+	db $FF ; 1013
+	db $48 ; 1014
+	db $FF ; 1015
+	db $49 ; 1016
+	db $FF ; 1017
+	db $4A ; 1018
+	db $FF ; 1019

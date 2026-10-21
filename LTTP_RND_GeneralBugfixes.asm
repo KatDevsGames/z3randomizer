@@ -54,6 +54,7 @@ function hexto555(h) = ((((h&$FF)/8)<<10)|(((h>>8&$FF)/8)<<5)|(((h>>16&$FF)/8)<<
 ;================================================================================
 
 incsrc hooks.asm
+incsrc local_debug_only.asm
 incsrc spriteswap.asm
 incsrc hashalphabethooks.asm
 incsrc sharedplayerpalettefix.asm
@@ -172,7 +173,7 @@ incsrc newitems.asm
 incsrc utilities.asm
 incsrc inventory.asm
 
-org $AB8000
+org $AB8000 ; DO NOT MOVE
 incsrc overworldoutlets.asm
 
 org $A38000
