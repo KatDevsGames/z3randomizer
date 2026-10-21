@@ -59,17 +59,20 @@ StalfosPrep:
 ;===================================================================================================
 
 GeldmanDrawCheck:
+	LDA.w $0D80,X
+	CMP.b #$02
+	BCS .vanilla
+
 	LDA.l VisibleHiddenEnemies
 	BNE .unhide
 
 .vanilla
-	LDA.w $0D80,X
-	CMP.b #$02
 	RTL
 
 .unhide
 	LDA.b #$01
 	STA.w $0DC0,X
+	SEC
 	RTL
 
 ;===================================================================================================
@@ -83,19 +86,18 @@ StalfosKnightDrawCheck:
 
 .unhide
 	JSL GetScreenCoordinates_long
-	JML Sprite_DrawShadowLong
+
+	LDA.b #$12
+	JML Sprite_DrawShadow_custom_height_long
 
 ;===================================================================================================
 
 BlobDrawCheck:
+	LDA.w $0D80,X
+	BNE .draw
+
 	LDA.l VisibleHiddenEnemies
 	BNE .unhide
-
-.vanilla
-	LDA.b $0D80,X
-	BEQ .invisible
-
-	JML DoDrawBlob
 
 .invisible
 	JML $9EB209
@@ -103,6 +105,8 @@ BlobDrawCheck:
 .unhide
 	LDA.b #$05
 	STA.w $0DC0,X
+
+.draw
 	JML DoDrawBlob
 
 ;===================================================================================================
@@ -136,7 +140,6 @@ TryUndoGuardMusic:
 	LDA.w SnitchGuardMusic,X
 	BEQ .exit
 
-	
 	LDY.w $0136 ; check for overworld song bank
 	BNE .exit
 

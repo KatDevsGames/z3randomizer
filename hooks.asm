@@ -2669,7 +2669,7 @@ org $1EAAAC
 	JSL StalfosKnightDrawCheck
 
 org $9EB1D7
-	JSL BlobDrawCheck
+	JML BlobDrawCheck
 	NOP
 DoDrawBlob = $9EB1DC
 

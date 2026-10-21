@@ -57,6 +57,7 @@ Utility_CheckIfHitBoxesOverlapLong                         = $8683E6
 Sprite_PrepAndDrawSingleLargeLong                          = $86DBF8
 Sprite_PrepAndDrawSingleSmallLong                          = $86DC00
 Sprite_DrawShadowLong                                      = $86DC5C
+Sprite_DrawShadow_custom_height_long                       = $86DC64
 DashKey_Draw                                               = $86DD40
 GetScreenCoordinates_long                                  = $86E41C
 Sprite_ApplySpeedTowardsPlayerLong                         = $86EA18
