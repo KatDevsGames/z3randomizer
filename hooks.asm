@@ -2655,3 +2655,32 @@ MimicVector:
 	PLB
 	RTL
 warnpc $9ECB8D
+
+;===================================================================================================
+; Visible enemies
+;===================================================================================================
+org $05B8B3
+	JSL GeldmanDrawCheck
+	NOP
+
+org $1EAAAC
+	JSL StalfosKnightDrawCheck
+
+org $9EB1D7
+	JML BlobDrawCheck
+	NOP
+DoDrawBlob = $9EB1DC
+
+;===================================================================================================
+; Fix song bug with kak snitch
+;===================================================================================================
+org $09C081 : JML FinalizeSnitchGuard
+
+org $05CC50
+BoltGuard_TriggerChaseTheme:
+	JSL TryGuardMusic
+	RTS
+
+org $06F962
+	JSL TryUndoGuardMusic
+	JMP.w $06F976

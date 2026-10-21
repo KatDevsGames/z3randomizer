@@ -55,3 +55,110 @@ StalfosPrep:
 	LDA.w $0D10,X
 	AND.b #$010
 	RTL
+
+;===================================================================================================
+
+GeldmanDrawCheck:
+	LDA.w $0D80,X
+	CMP.b #$02
+	BCS .vanilla
+
+	LDA.l VisibleHiddenEnemies
+	BNE .unhide
+
+.vanilla
+	RTL
+
+.unhide
+	LDA.b #$01
+	STA.w $0DC0,X
+	SEC
+	RTL
+
+;===================================================================================================
+
+StalfosKnightDrawCheck:
+	LDA.l VisibleHiddenEnemies
+	BNE .unhide
+
+.vanilla
+	JML GetScreenCoordinates_long
+
+.unhide
+	JSL GetScreenCoordinates_long
+
+	LDA.b #$12
+	JML Sprite_DrawShadow_custom_height_long
+
+;===================================================================================================
+
+BlobDrawCheck:
+	LDA.w $0D80,X
+	BNE .draw
+
+	LDA.l VisibleHiddenEnemies
+	BNE .unhide
+
+.invisible
+	JML $9EB209
+
+.unhide
+	LDA.b #$05
+	STA.w $0DC0,X
+
+.draw
+	JML DoDrawBlob
+
+;===================================================================================================
+
+SnitchGuardMusic = $0E90 ; this seems safe?
+
+TryGuardMusic:
+	; check if we were spawned by a snitch
+	LDA.w SnitchGuardMusic,X
+	BEQ .exit
+
+	LDA.w $0136 ; check for overworld song bank
+	BNE .fail
+
+	LDA.b #$0C ; SONG 0C
+	CMP.w $0130
+	BEQ .fail ; don't duplicate
+
+	STA.w $012C
+
+.exit
+	RTL
+
+.fail
+	STZ.w SnitchGuardMusic,X
+	RTL
+
+;---------------------------------------------------------------------------------------------------
+
+TryUndoGuardMusic:
+	LDA.w SnitchGuardMusic,X
+	BEQ .exit
+
+	LDY.w $0136 ; check for overworld song bank
+	BNE .exit
+
+	CPY.w $0130 ; don't duplicate
+	BEQ .exit
+
+	LDY.w $012C ; don't override
+	BNE .exit
+
+	STA.w $012C
+
+.exit
+	RTL
+
+;---------------------------------------------------------------------------------------------------
+; only used when actually called by a snitch
+;---------------------------------------------------------------------------------------------------
+FinalizeSnitchGuard:
+	LDA.b #$0B : STA.w $0F50,Y
+	LDA.w $0130 : STA.w SnitchGuardMusic,Y ; remember last song played
+	PLB
+	RTL
