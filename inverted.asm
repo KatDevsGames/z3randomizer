@@ -296,14 +296,17 @@ CheckInvertedWorldWithStore:
 .inverted
 	LDA.b $8A
 	AND.b #$40
-	STA.b $7B
-	EOR.b #$40
+	STA.b $7B ; save the real world
+
+	EOR.b #$40 ; but invert this to swap behavior
 	RTL
 
 ;===================================================================================================
 
 CheckInvertedWorldInCarry:
 	LDA.b $8A
+	BMI .special_overworld ; this should always set carry
+
 	CMP.b #$40
 
 	LDA.l InvertedMode
@@ -311,11 +314,15 @@ CheckInvertedWorldInCarry:
 
 	RTL
 
+.special_overworld
+.inverted_light_world
+	SEC
+	RTL
+
 .inverted
-	; flip carry
-	ROL
-	EOR.b #$01
-	ROR
+	BCC .inverted_light_world
+
+	CLC
 	RTL
 
 ;===================================================================================================
