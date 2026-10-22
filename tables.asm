@@ -114,7 +114,7 @@ org $B08038 ; PC 0x180038
 LampConeSewers:
 db $01 ; #$00 = Off - #$01 = On (default)
 ;--------------------------------------------------------------------------------
-org $308039 ; PC 0x180039
+org $B08039 ; PC 0x180039
 ItemCounterHUD:
 db $00 ; $00 = Off | $01 = Display TotalItemCounter / TotalItemCount display on HUD
 ;--------------------------------------------------------------------------------
