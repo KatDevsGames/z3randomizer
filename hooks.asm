@@ -2647,7 +2647,7 @@ org $1E8B49 : dw $1EC833
 org $1EC7C4 : CPY.b #RedMimicId
 org $1EC800 : CMP.b #RedMimicId
 
-; lol this barely fits
+; commandeer their former sprite prep
 org $9EC6FA
 MimicVector:
 	PHB
@@ -2656,7 +2656,7 @@ MimicVector:
 	JSR.w $1EC79D ; jump right to mimic code
 	PLB
 	RTL
-warnpc $9ECB8D
+warnpc $9EC71A
 
 ;===================================================================================================
 ; Visible enemies
@@ -2686,3 +2686,15 @@ BoltGuard_TriggerChaseTheme:
 org $06F962
 	JSL TryUndoGuardMusic
 	JMP.w $06F976
+
+;===================================================================================================
+; Fix Kholdstare's shell bug
+;===================================================================================================
+org $1E9460 : JSR ShellActivity
+
+org $1ECB85
+ShellActivity:
+	STZ.w $0F00,X ; This is normally set by the draw routine, but the shell lacks one
+	JMP.w $1EFE73
+
+warnpc $1ECB8D
